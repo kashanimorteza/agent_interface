@@ -1,0 +1,1103 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/plan.yaml"
+  path_note: "Mutable Plans, Groups, Tasks, counts and progress."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current Plan Component and the active operation's ownership rules."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read task_count, then the Plan selected by stable Target phase identifier, with its Groups and Tasks in nesting order."
+  selection: "A requested phase resolves to the Plan keyed by that phase identifier; a Task resolves within its containing Group and Plan."
+  absence: "No matching Plan means no current planning record exists for that phase."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "task_count"
+  - "plans"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  task_count: "Total number of stored Tasks."
+  plans: "Current phase Plans and their Groups and Tasks."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  task_count: 31
+  plans:
+    P1:
+      id: "P1"
+      title: "Model"
+      order: 1
+      target: "Model"
+      does: "Implement the independent Model layer and its reusable package from the defined models, fields, relationships, and rules."
+      constraints: []
+      task_count: 31
+      groups:
+
+        P1-G1:
+          id: "P1-G1"
+          title: "Library structure"
+          description: "The Model library as an independent, reusable Component with its four layers separated by responsibility. Every other Group builds inside it."
+          area: "Model library packaging and layer separation"
+          does: "Model exists as an independently obtainable library whose Interface, Entity, Declaration, and Foundation layers are separated, ready to receive the Entities."
+          constraints: []
+          task_count: 1
+          tasks:
+            P1-G1-T1:
+              id: "P1-G1-T1"
+              source_id: "002"
+              title: "Establish the Model library"
+              description: "Bring the Model Component into existence as an independently obtainable library in which the Interface, Entity, Declaration, and Foundation layers are separated by responsibility. It depends on no other project Component."
+              reason: "Database and Logic consume Model as a shared library, so it must exist on its own before any Entity or behaviour can be placed in it."
+              inputs:
+                - "Model's layer responsibilities"
+                - "Model's technical selections and the Development shared defaults"
+              skills:
+                - "python-skills:python-guidelines"
+              expected_result: "An empty but complete Model library that a consumer can obtain and import, with the four layers present and separated."
+              depends_on: []
+              constraints: []
+              acceptance: "The library can be obtained and imported in an environment containing no other project Component; its four layers are distinguishable by responsibility; it declares no dependency on another project Component."
+              verify: "Observe that a clean environment holding no other project Component can obtain and import the library, and that the four layers are separately identifiable."
+              status: "done"
+              log:
+                - at: "2026-09-25T20:52:07Z"
+                  transition: "todo -> claimed"
+                  by: "003"
+                  entry: "Claimed; no dependencies. Beginning by establishing the Model Component as its own library folder at the project root."
+                - at: "2026-09-25T20:52:55Z"
+                  transition: "claimed -> done"
+                  by: "003"
+                  entry: "Model Component established as its own uv library folder at the project root (folder model/, distribution trading-assistant-model, import package trading_assistant_model under src/), Python 3.14 (uv latest), sqlmodel 0.0.47 (pydantic 2.13.5, sqlalchemy 2.0.54), dev tools ruff 0.16.9 and pyright 1.1.414. No Interface source fixes a Component location; this choice follows the project-root Component folders already referenced by .gitignore. Four layer packages exist (interface, entity, declaration, foundation), each documented by its responsibility. Check (transient): built a wheel, created an empty venv outside the project, installed only that wheel, imported the package from site-packages, imported all four layers, read the distribution's requirements. Result: passed. Requires only sqlmodel; no other project Component installed or required."
+
+        P1-G2:
+          id: "P1-G2"
+          title: "Declaration"
+          description: "The private layer that records each Entity's technology-independent data meaning, without runtime behaviour."
+          area: "Declaration layer"
+          does: "Declaration can record every kind of Field-level and structure-level meaning the Target declares, in usable structured form and independent of any language, package, database, or Engine."
+          constraints: []
+          task_count: 2
+          tasks:
+            P1-G2-T1:
+              id: "P1-G2-T1"
+              source_id: "002"
+              title: "Record Field-level meaning in Declaration"
+              description: "Let Declaration record, for each Field, its logical Type, presence and nullability, default, sensitivity, immutability, length, and any other declared restriction such as range, pattern, precision, or scale, as structured meaning that validation and storage realization can use."
+              reason: "Validation and storage realization must apply the same Field restriction consistently, which prose alone cannot support."
+              inputs:
+                - "Model Principles for Declaration"
+              skills:
+                - "python-skills:python-guidelines"
+              expected_result: "Declaration can hold every Field-level property the Target declares and gives it back exactly as recorded, including an explicit null or false."
+              depends_on:
+                - "P1-G1-T1"
+              constraints: []
+              acceptance: "Every recorded Field property is readable exactly as given, an omitted property is distinguishable from an explicit null, and Declaration performs no validation or other runtime behaviour itself."
+              verify: "Record a representative Field carrying each kind of property, including an explicit null and an explicit false, and observe that each property is read back unchanged and that Declaration does nothing beyond holding it."
+              status: "done"
+              log:
+                - at: "2026-09-25T20:53:21Z"
+                  transition: "todo -> claimed"
+                  by: "003"
+                  entry: "Claimed; dependency P1-G1-T1 done. Building Declaration's Field-level vocabulary as pure data with no behaviour."
+                - at: "2026-09-25T20:54:09Z"
+                  transition: "claimed -> done"
+                  by: "003"
+                  entry: "Declaration layer provides FieldDeclaration with logical Type (FieldType StrEnum: integer, string, boolean, decimal, float, datetime) plus nullable, default, sensitive, immutable, length (maximum length), free-form restrictions mapping, and generation. Unstated properties hold an OMITTED marker, distinct from explicit None or False. All Declaration classes are frozen dataclasses with no methods. Check (transient script): recorded a Field with every property including default=None and sensitive=False and read each back unchanged; an unstated property reads OMITTED; explicit null/false are not OMITTED; every declaration class has zero user-defined methods and is frozen; mutation raises FrozenInstanceError. First run of the companion T2 check failed on a substring false positive (immu-table contained table); the check was corrected to whole-word matching and rerun. Result: passed. ruff format, ruff check, pyright clean."
+
+            P1-G2-T2:
+              id: "P1-G2-T2"
+              source_id: "002"
+              title: "Record structure-level meaning in Declaration"
+              description: "Let Declaration record an Entity's Identity as its Primary Key, Uniqueness Constraints over one Field or a combination of Fields, Relationships expressed as References that name the target Entity and the identity referred to, Index intentions, and Value Generation by auto increment, generated identifier, or generated timestamp."
+              reason: "Database derives keys, unique constraints, and foreign keys from this meaning, so it must be complete and independent of any physical storage choice."
+              inputs:
+                - "Model Principles for Declaration"
+              skills:
+                - "python-skills:python-guidelines"
+              expected_result: "Declaration can hold every structure-level property the Target declares and gives it back exactly as recorded, without choosing any physical storage detail."
+              depends_on:
+                - "P1-G1-T1"
+              constraints: []
+              acceptance: "A recorded Identity, single-Field and combined-Field Uniqueness Constraint, Reference, Index intention, and Value Generation are each readable exactly as given; a Reference names both its target Entity and the identity it refers to; no table, column, or storage syntax appears."
+              verify: "Record a representative Entity that uses each structure-level kind, including a combined-Field uniqueness and a Reference, and observe that each is read back unchanged and that no physical storage detail is introduced."
+              status: "done"
+              log:
+                - at: "2026-09-25T20:53:21Z"
+                  transition: "todo -> claimed"
+                  by: "003"
+                  entry: "Claimed; dependency P1-G1-T1 done. Building Declaration's structure-level vocabulary (identity, uniqueness, references, indexes, value generation) as pure data."
+                - at: "2026-09-25T20:54:09Z"
+                  transition: "claimed -> done"
+                  by: "003"
+                  entry: "Declaration records Identity (primary_key), UniqueConstraint over one or several Fields, Reference (fields, target entity, identity fields), Index intentions, and per-Field ValueGeneration (auto_increment, generated_identifier, generated_timestamp), all as frozen data. Check (transient script): recorded a representative Entity with a primary key, a single-Field and a combined-Field uniqueness, a Reference naming target Entity and identity, two Index intentions, and auto-increment and generated-timestamp generation; each read back unchanged; empty defaults for absent kinds; vocabulary field names contain no table, column, SQL, foreign, engine or delete words. Result: passed. ruff format, ruff check, pyright clean."
+
+        P1-G3:
+          id: "P1-G3"
+          title: "Foundation"
+          description: "The private layer that gives every Entity the same validation and JSON conversion behaviour, without contributing domain meaning."
+          area: "Foundation layer"
+          does: "Any Entity that records its meaning in Declaration gets validation at construction and in both JSON directions, safe handling of sensitive and immutable Fields, and no Field or rule it did not declare."
+          constraints: []
+          task_count: 7
+          tasks:
+            P1-G3-T1:
+              id: "P1-G3-T1"
+              source_id: "002"
+              title: "Verify Entity data against Declaration on direct construction"
+              description: "Let Foundation check the data of an Entity against that Entity's Declaration whenever the Entity is constructed directly, rejecting data that breaks a Field constraint or an Intrinsic Rule. Foundation adds no Field, constraint, or meaning of its own."
+              reason: "Every instance that reaches a consuming Component must conform to its Entity, and one shared implementation keeps that consistent."
+              inputs:
+                - "Declaration's recorded Field-level meaning"
+              skills:
+                - "sqlmodel"
+                - "pydantic:pydantic"
+                - "python-skills:python-guidelines"
+              expected_result: "A representative Entity constructed directly is accepted when its data conforms to its Declaration and rejected when it does not."
+              depends_on:
+                - "P1-G2-T1"
+              constraints: []
+              acceptance: "Conforming data constructs an instance; data violating any recorded Field constraint or Intrinsic Rule is rejected; the instance carries exactly the Fields its own Declaration lists."
+              verify: "Construct a representative Entity with conforming data and with data violating each kind of recorded constraint, and observe acceptance and rejection respectively and the absence of any extra Field."
+              status: "done"
+              log:
+                - at: "2026-09-25T20:56:38Z"
+                  transition: "todo -> claimed"
+                  by: "003"
+                  entry: "Claimed; dependency P1-G2-T1 done. Probe of SQLModel 0.0.47 showed table models skip validation on direct construction, so Foundation will validate through model_validate and initialise from the checked values."
+                - at: "2026-09-25T20:58:25Z"
+                  transition: "claimed -> done"
+                  by: "003"
+                  entry: "Foundation base (SQLModel subclass, strict validation) checks every directly constructed Entity against its Declaration: SQLModel table models skip validation on init, so init runs model_validate under a re-entrancy guard, then applies the Declaration's declared restrictions (min, max, pattern, allowed_values, precision, scale), then initialises from the checked values. Class definition fails with TypeError when an Entity's fields, types, nullability or length disagree with its Declaration, or when a restriction cannot be enforced. Foundation itself carries no Field. Check (transient script, representative probe Entities): conforming data constructs with exactly the declared Fields; rejected: too-long string, wrong type, missing required Field, restriction min and max, bool for integer, string for integer, explicit null on a non-nullable Field, pattern, allowed values, precision, scale, float for exact decimal; inclusive bounds accepted; SQLite persist and reload of a table model works; five deliberately mismatched classes (type, nullability, extra field, length, unknown restriction) are refused at definition. Two test defects were corrected during the run (a precision example of exactly 5 digits was in fact valid); no code change was needed for them. Result: passed. ruff format, ruff check, pyright clean."
+                - at: "2026-09-25T20:58:35Z"
+                  transition: "done -> done"
+                  by: "003"
+                  entry: "Correction to the completion entry above: exactly one test defect occurred (the precision example of exactly 5 digits was valid), not two. No Foundation code changed because of it."
+
+            P1-G3-T2:
+              id: "P1-G3-T2"
+              source_id: "002"
+              title: "Apply declared defaults and distinguish omission from explicit null"
+              description: "When an input omits a Field, let construction apply that Field's declared default; when an input supplies an explicit null, keep it as null and validate it as such."
+              reason: "The Target declares defaults and nullability, and treating an omitted value as an explicit null would change the domain meaning."
+              inputs:
+                - "Declaration's recorded defaults and nullability"
+              skills:
+                - "sqlmodel"
+                - "pydantic:pydantic"
+                - "python-skills:python-guidelines"
+              expected_result: "Omitted and explicitly null values behave differently and correctly for every Field of a representative Entity."
+              depends_on:
+                - "P1-G3-T1"
+              constraints: []
+              acceptance: "An omitted Field takes its declared default; an explicit null is retained where the Field is nullable and rejected where it is not; the two inputs never produce the same result unless the declaration makes them identical."
+              verify: "Construct a representative Entity with a Field omitted, with the same Field explicitly null, and with a non-nullable Field explicitly null, and observe the default applied, the null retained, and the null rejected."
+              status: "done"
+              log:
+                - at: "2026-09-25T20:58:57Z"
+                  transition: "todo -> claimed"
+                  by: "003"
+                  entry: "Claimed; dependency P1-G3-T1 done. Adding a class-definition check that declared defaults match the Entity's defaults, and confirming omission versus explicit null behave differently."
+                - at: "2026-09-25T21:00:06Z"
+                  transition: "claimed -> done"
+                  by: "003"
+                  entry: "Declared defaults are applied when a Field is omitted (SQLModel validation), an explicit null is kept on nullable Fields and rejected on non-nullable ones, and a Field with declared value generation may stay null until generated. Foundation now also refuses, at class definition, any Entity whose Field default differs from its Declaration (value, type, required versus defaulted, or null default). Check (transient script, probe Entity with integer, string, boolean, exact decimal, float and date-time Fields): omitted Fields took int 2, string x, None, True, Decimal 0 (a Decimal, not int) and 0.0 and were absent from model_fields_set; explicit None on a nullable Field with a non-null default stayed None while omission gave x, and was present in model_fields_set; explicit None rejected for name, qty, active, amount and ratio; pending id accepted; five deliberately mismatched defaults were refused at definition. Result: passed. ruff format, ruff check, pyright clean."
+
+            P1-G3-T3:
+              id: "P1-G3-T3"
+              source_id: "002"
+              title: "Ignore unknown input Fields"
+              description: "Let construction ignore any supplied input Field that the Entity's Declaration does not list, rather than failing or adding it."
+              reason: "Consumers may pass wider data, and Model must preserve exactly the Entity's declared Fields."
+              inputs:
+                - "Declaration's recorded Field list"
+              skills:
+                - "sqlmodel"
+                - "pydantic:pydantic"
+                - "python-skills:python-guidelines"
+              expected_result: "Input carrying undeclared Fields produces an instance with only the declared Fields."
+              depends_on:
+                - "P1-G3-T1"
+              constraints: []
+              acceptance: "An undeclared input Field neither causes rejection nor appears on the resulting instance or in its JSON."
+              verify: "Construct a representative Entity from input that includes an undeclared Field, and observe that construction succeeds and that the Field is absent from the instance and its JSON."
+              status: "done"
+              log:
+                - at: "2026-09-25T20:58:58Z"
+                  transition: "todo -> claimed"
+                  by: "003"
+                  entry: "Claimed; dependency P1-G3-T1 done. Making unknown-input handling explicit; its completion check needs JSON conversion (P1-G3-T5), so it will be completed after that Task."
+                - at: "2026-09-25T21:00:06Z"
+                  transition: "claimed -> done"
+                  by: "003"
+                  entry: "Unknown-input handling is now explicit in Foundation's configuration (extra ignored). Check (transient script, probe Entity): construction with undeclared inputs zzz, other, declaration and model_config succeeded; the instance has no such attribute; they are absent from model_dump and from the JSON produced by conversion (P1-G3-T5, in progress, was used only to observe that output), whose keys are exactly the declared Fields; the class-level declaration was unchanged; unknown input alongside a too-long value or a missing required Field is still rejected. Result: passed."
+
+            P1-G3-T4:
+              id: "P1-G3-T4"
+              source_id: "002"
+              title: "Create an Entity instance from JSON"
+              description: "Provide once, through Foundation, the creation of a validated Entity instance from JSON, applying the same checks, defaults, null handling, and unknown-Field handling as direct construction."
+              reason: "Consumers receive Entity data as JSON and need it validated on entry without reimplementing that behaviour."
+              inputs:
+                - "Foundation's construction validation, default handling, and unknown-Field handling"
+              skills:
+                - "sqlmodel"
+                - "pydantic:pydantic"
+                - "python-skills:python-guidelines"
+              expected_result: "A representative Entity can be created from JSON when the JSON conforms and is refused when it does not."
+              depends_on:
+                - "P1-G3-T1"
+                - "P1-G3-T2"
+                - "P1-G3-T3"
+              constraints: []
+              acceptance: "Conforming JSON yields an instance equal to direct construction from the same data; nonconforming JSON is rejected; the outcome is identical to direct construction for omitted, null, and unknown inputs."
+              verify: "Create a representative Entity from conforming and nonconforming JSON, including omitted, explicitly null, and undeclared Fields, and compare each outcome with direct construction from the same data."
+              status: "done"
+              log:
+                - at: "2026-09-25T21:00:22Z"
+                  transition: "todo -> claimed"
+                  by: "003"
+                  entry: "Claimed; dependencies P1-G3-T1, T2 and T3 done. Adding creation from JSON text or a parsed JSON object that decodes JSON's string forms of exact decimals and date-times and then follows the same construction route as direct construction."
+                - at: "2026-09-25T21:01:25Z"
+                  transition: "claimed -> done"
+                  by: "003"
+                  entry: "Foundation.from_json accepts JSON text, bytes or an already parsed JSON object. It reads JSON's string forms of exact decimals (and integers as decimals), ISO date-times and integers for float Fields, then constructs through the same route as direct construction, so all checks, defaults, null handling and unknown-input handling are shared. Structurally invalid JSON or a non-object raises ValueError (raised outside the except block so no input text is chained); nonconforming data raises the validation error. Check (transient script, probe Entity): a full JSON object built the same values and set of supplied Fields as direct construction for text, bytes and parsed-object input, and == held for the two instances; omitted, explicit-null, unknown, null-on-non-nullable, missing and null-name inputs each produced the identical outcome via JSON and via direct construction; 14 nonconforming payloads rejected (too long, wrong types, float for exact decimal, malformed decimal, boolean for decimal, naive and malformed date-time, string for boolean and float, empty object); integers accepted for decimal and float Fields; eight structurally invalid inputs raised ValueError; conversion to JSON and back reproduced equal values and identical JSON. Result: passed. ruff format, ruff check, pyright clean."
+
+            P1-G3-T5:
+              id: "P1-G3-T5"
+              source_id: "002"
+              title: "Convert an Entity instance to JSON"
+              description: "Provide once, through Foundation, the conversion of an Entity instance to JSON, verifying the instance against its Declaration as it is converted."
+              reason: "Data leaving Model toward a consumer must also conform to the Entity."
+              inputs:
+                - "Foundation's construction validation"
+              skills:
+                - "sqlmodel"
+                - "pydantic:pydantic"
+                - "python-skills:python-guidelines"
+              expected_result: "A valid instance converts to JSON that carries exactly its declared Fields, and an instance that no longer conforms is refused."
+              depends_on:
+                - "P1-G3-T1"
+              constraints: []
+              acceptance: "Conversion of a conforming instance yields JSON containing only declared Fields; converting that JSON back yields an equal instance; an instance that violates its Declaration is not converted."
+              verify: "Convert a representative instance to JSON and back and observe equality, and observe that an instance made nonconforming after construction is refused."
+              status: "done"
+              log:
+                - at: "2026-09-25T20:58:57Z"
+                  transition: "todo -> claimed"
+                  by: "003"
+                  entry: "Claimed; dependency P1-G3-T1 done. Adding conversion to JSON that re-verifies the instance against its Declaration first."
+                - at: "2026-09-25T21:01:25Z"
+                  transition: "claimed -> done"
+                  by: "003"
+                  entry: "Foundation.to_json re-verifies the instance against its Declaration, then writes JSON text holding every declared Field, with exact decimals and date-times as strings (UTC written with a Z suffix). Sensitive values are included so a round trip is possible; whether to expose them is a consumer decision. Check (transient script): JSON keys equal the declared Fields in order, amount is the string 1.50, pending id is null; conversion to JSON and back through from_json (P1-G3-T4) rebuilt equal values and identical JSON, including for an instance with all-default Fields; instances damaged after construction by bypassing every check (too-long string, wrong type, null on a non-nullable Field, string for integer, float for exact decimal) were each refused, while an undamaged instance converted. Result: passed. ruff format, ruff check, pyright clean."
+
+            P1-G3-T6:
+              id: "P1-G3-T6"
+              source_id: "002"
+              title: "Keep sensitive values out of validation diagnostics"
+              description: "Let Foundation apply the sensitivity that Declaration records, so that a supplied value of a sensitive Field never appears in any validation failure message or detail."
+              reason: "Credentials must not leak through error output during normal model handling."
+              inputs:
+                - "Declaration's recorded sensitivity"
+                - "Foundation's construction validation and JSON creation"
+              skills:
+                - "sqlmodel"
+                - "pydantic:pydantic"
+                - "python-skills:python-guidelines"
+              expected_result: "Failed validation involving a sensitive Field reports the failure without reproducing the supplied value."
+              depends_on:
+                - "P1-G2-T1"
+                - "P1-G3-T1"
+                - "P1-G3-T4"
+              constraints: []
+              acceptance: "For both direct construction and creation from JSON, the diagnostic for a rejected sensitive Field contains no part of the supplied value, while diagnostics for non-sensitive Fields still show theirs."
+              verify: "Supply an invalid value to a sensitive Field and to a non-sensitive Field of a representative Entity by each route, and observe that only the non-sensitive value appears in its diagnostic."
+              status: "done"
+              log:
+                - at: "2026-09-25T21:02:01Z"
+                  transition: "todo -> claimed"
+                  by: "003"
+                  entry: "Claimed; dependencies P1-G2-T1, P1-G3-T1 and P1-G3-T4 done. Adding redaction of sensitive input values in every validation failure raised by direct construction, JSON creation, assignment and JSON conversion."
+                - at: "2026-09-25T21:03:29Z"
+                  transition: "claimed -> done"
+                  by: "003"
+                  entry: "Every validation failure Foundation raises is rebuilt so that the input value of a sensitive Field is replaced by [hidden] (also inside the whole-input mapping shown by a missing-Field error, and in declared-restriction failures); non-sensitive values are shown unchanged. The failure is raised after the handler has exited, so no original exception is chained. Applies to direct construction, JSON creation, assignment and conversion to JSON. Check (transient script, probe Entity with sensitive string, integer, pattern-restricted and immutable Fields; marker strings searched in str, repr, errors(), json(), the formatted traceback and __cause__/__context__): 14 scenarios plus a damaged instance, none leaked; the failure still names the Field and rule; a non-sensitive too-long value appears in its diagnostic by both routes, and in a mixed failure it appears while the sensitive value does not. One test defect corrected during the run: the traceback printed the test's own call-site source containing a literal marker, so the marker is now built at run time; no library change resulted. Not covered by this Task: sensitive values still appear in an instance's repr and in JSON conversion output, which are not validation diagnostics. Result: passed. All earlier Foundation and Declaration checks re-run after this change and passed. ruff format, ruff check, pyright clean."
+
+            P1-G3-T7:
+              id: "P1-G3-T7"
+              source_id: "002"
+              title: "Prevent changes to immutable Fields"
+              description: "Let Foundation apply the immutability that Declaration records, so that a Field declared immutable cannot be changed after the instance is constructed."
+              reason: "Immutable domain facts must stay stable once an instance exists."
+              inputs:
+                - "Declaration's recorded immutability"
+              skills:
+                - "sqlmodel"
+                - "pydantic:pydantic"
+                - "python-skills:python-guidelines"
+              expected_result: "A Field recorded as immutable rejects any later change while mutable Fields remain changeable."
+              depends_on:
+                - "P1-G2-T1"
+                - "P1-G3-T1"
+              constraints: []
+              acceptance: "A change to an immutable Field after construction is refused and leaves the value unchanged; a change to a mutable Field is allowed and still validated."
+              verify: "Change an immutable and a mutable Field of a representative constructed instance and observe refusal with the value unchanged for the first and a validated change for the second."
+              status: "done"
+              log:
+                - at: "2026-09-25T21:02:01Z"
+                  transition: "todo -> claimed"
+                  by: "003"
+                  entry: "Claimed; dependencies P1-G2-T1 and P1-G3-T1 done. Adding refusal of any change to a Field declared immutable once the instance is constructed, and validated assignment for mutable Fields."
+                - at: "2026-09-25T21:03:29Z"
+                  transition: "claimed -> done"
+                  by: "003"
+                  entry: "Foundation refuses any assignment to a Field whose Declaration marks it immutable, with a frozen_field validation failure that leaves the value unchanged (also when the Field was left unset at construction), and validates every assignment to a mutable Field against the same rules as construction, including declared restrictions, before applying it. Construction, JSON creation and SQLAlchemy loading are unaffected. Check (transient script, probe Entities): immutable Field refused three times (new value, null, same value) with type frozen_field at the Field, value unchanged; unset immutable Field could not be set later; mutable name changed to xyz; invalid changes (too long, null, string for integer, bool for integer) refused with value unchanged; restriction min refused on assignment; immutable Field still set by construction and by JSON creation; SQLite persist and reload assigned the database id without error, a loaded instance refused an immutable change and accepted a mutable one. Result: passed. All earlier checks re-run and passed. ruff format, ruff check, pyright clean."
+
+        P1-G4:
+          id: "P1-G4"
+          title: "Identity and platform Entities"
+          description: "The Entities that identify who uses the system and which trading platforms and connection instances it reaches."
+          area: "User, Trading Platform, and Instance Entities"
+          does: "The User, Trading Platform, and Instance Entities exist exactly as the Target declares them, with their relationships."
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G4-T1:
+              id: "P1-G4-T1"
+              source_id: "002"
+              title: "Provide the User Entity"
+              description: "Provide the User Domain Entity, the independent user of the system, exactly as the Target declares it."
+              reason: "User is the owner that most other Entities refer to, so it is the first Entity the rest depend on."
+              inputs:
+                - "The Target's User definition"
+                - "Declaration and Foundation behaviour"
+              skills:
+                - "sqlmodel"
+                - "python-skills:python-guidelines"
+              expected_result: "A User Entity with exactly the declared Fields, types, nullability, defaults, identity, and uniqueness, with its credential Fields classified sensitive."
+              depends_on:
+                - "P1-G2-T2"
+                - "P1-G3-T4"
+                - "P1-G3-T5"
+                - "P1-G3-T6"
+              constraints: []
+              acceptance: "The declared meaning of User matches the Target's User definition Field for Field, including the uniqueness of name and username and the sensitivity of password and api_key, with nothing added; valid data constructs and round-trips through JSON, and violating data is rejected."
+              verify: "Compare the declared meaning of the User Entity with the Target's User definition, then observe construction and JSON round-trip with valid data and rejection with data violating a declared rule."
+              status: "done"
+              log:
+                - at: "2026-09-25T21:06:33Z"
+                  transition: "todo -> claimed"
+                  by: "003"
+                  entry: "Claimed; dependencies P1-G2-T2, P1-G3-T4, P1-G3-T5 and P1-G3-T6 done. Generating the User Entity from the Target's User definition."
+                - at: "2026-09-25T21:07:05Z"
+                  transition: "claimed -> done"
+                  by: "003"
+                  entry: "User Entity provided in its own module in the Entity layer, generated from the Target's User definition (source of truth: the Target). Seven Fields: id (auto-increment identity), name and username (each unique), password and api_key (credentials, classified sensitive), is_active (default true), description (nullable). Nothing added; no storage treatment such as hashing is applied here (a Target rule for Database). Check (transient independent checker, separate parser of the Target): Declaration and SQLModel Fields equal the Target Field for Field (names, order, type, nullability, defaults with type, generation, sensitivity, no invented property), primary key and both uniqueness constraints match, no references; behaviour: valid data constructs, JSON round-trip yields equal values and identical JSON, omitted Fields take defaults, missing required, wrong type and null on non-nullable each rejected, explicit null kept on the nullable Field, unknown input ignored, wrong-typed credential values absent from diagnostics, SQLite persist and reload works. The checker itself was mutation-tested: 10 of 10 deliberate Target/Entity mismatches were caught. Result: passed. ruff format, ruff check, pyright clean."
+
+            P1-G4-T2:
+              id: "P1-G4-T2"
+              source_id: "002"
+              title: "Provide the Trading Platform Entity"
+              description: "Provide the Trading Platform Domain Entity, a supported trading API standard independent of any specific exchange or broker, exactly as the Target declares it."
+              reason: "Instances and Positions refer to a Trading Platform to say which trading API standard they use."
+              inputs:
+                - "The Target's Trading Platform definition"
+                - "Declaration and Foundation behaviour"
+              skills:
+                - "sqlmodel"
+                - "python-skills:python-guidelines"
+              expected_result: "A Trading Platform Entity with exactly the declared Fields, types, nullability, defaults, identity, and uniqueness."
+              depends_on:
+                - "P1-G2-T2"
+                - "P1-G3-T4"
+                - "P1-G3-T5"
+              constraints: []
+              acceptance: "The declared meaning of Trading Platform matches the Target's definition Field for Field, including the uniqueness of name and the implementation code Field, with nothing added; valid data constructs and round-trips through JSON, and violating data is rejected."
+              verify: "Compare the declared meaning of the Trading Platform Entity with the Target's definition, then observe construction and JSON round-trip with valid data and rejection with data violating a declared rule."
+              status: "done"
+              log:
+                - at: "2026-09-25T21:06:33Z"
+                  transition: "todo -> claimed"
+                  by: "003"
+                  entry: "Claimed; dependencies P1-G2-T2, P1-G3-T4 and P1-G3-T5 done. Generating the Trading Platform Entity from the Target's Trading Platform definition."
+                - at: "2026-09-25T21:07:05Z"
+                  transition: "claimed -> done"
+                  by: "003"
+                  entry: "Trading Platform Entity provided (class TradingPlatform) from the Target's Trading Platform definition: id (auto-increment identity), name (unique), code, is_active (default true), description (nullable). Nothing added. Check (transient independent checker): Declaration and SQLModel Fields equal the Target, uniqueness of name recorded, no references; construction, JSON round-trip, omitted defaults, missing/wrong-type/null rejections, unknown input, and SQLite persist/reload all behaved as declared. Result: passed. ruff format, ruff check, pyright clean."
+
+            P1-G4-T3:
+              id: "P1-G4-T3"
+              source_id: "002"
+              title: "Provide the Instance Entity"
+              description: "Provide the Instance Domain Entity, a user-owned connection through which the system reaches a Trading Platform, exactly as the Target declares it, related explicitly to User and to Trading Platform."
+              reason: "Accounts connect to a trading platform through an Instance."
+              inputs:
+                - "The Target's Instance definition"
+                - "The User and Trading Platform Entities"
+              skills:
+                - "sqlmodel"
+                - "python-skills:python-guidelines"
+              expected_result: "An Instance Entity with exactly the declared Fields, nullability, defaults, identity, and combined uniqueness, referencing its owning User and its Trading Platform, with its credential Fields classified sensitive."
+              depends_on:
+                - "P1-G2-T2"
+                - "P1-G3-T4"
+                - "P1-G3-T5"
+                - "P1-G3-T6"
+                - "P1-G4-T1"
+                - "P1-G4-T2"
+              constraints: []
+              acceptance: "The declared meaning of Instance matches the Target's definition Field for Field, including the combined uniqueness of owner and name, the References to User and Trading Platform, and the sensitivity of password and api_key, with nothing added; valid data constructs and round-trips through JSON, and violating data is rejected."
+              verify: "Compare the declared meaning of the Instance Entity with the Target's definition, including its References, then observe construction and JSON round-trip with valid data and rejection with data violating a declared rule."
+              status: "done"
+              log:
+                - at: "2026-09-25T21:07:12Z"
+                  transition: "todo -> claimed"
+                  by: "003"
+                  entry: "Claimed; all dependencies done. Generating the Instance Entity from the Target's Instance definition."
+                - at: "2026-09-25T21:07:34Z"
+                  transition: "claimed -> done"
+                  by: "003"
+                  entry: "Instance Entity provided from the Target's Instance definition: ten Fields with references to User (user_id) and Trading Platform (trading_platform_id), the combined uniqueness of user_id and name, nullable connection Fields, and password and api_key classified sensitive. Left out on purpose: the Target rules that the selected Trading Platform defines which connection Fields are required, and that Instance and Account credentials must not be duplicated; both span Entities, which Model's Principles place outside Model (for Logic). Check (transient independent checker, separate parser of the Target): Declaration and SQLModel Fields equal the Target Field for Field (names, order, type, nullability, defaults with type, generation, sensitivity, no invented property); primary key, uniqueness and References (target Entity and identity) match, and every *_id Field is a Reference; construction, JSON round-trip, omitted defaults, missing/wrong-type/null rejections, explicit null on nullable Fields, unknown input, credential redaction where applicable, and SQLite persist/reload all behaved as declared. Result: passed. ruff format, ruff check, pyright clean."
+
+        P1-G5:
+          id: "P1-G5"
+          title: "Reference-data Entities"
+          description: "The Entities that describe currencies, brokers, and the assets each broker offers."
+          area: "Currency, Broker, and Asset Entities"
+          does: "The Currency, Broker, and Asset Entities exist exactly as the Target declares them, with their relationships."
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G5-T1:
+              id: "P1-G5-T1"
+              source_id: "002"
+              title: "Provide the Currency Entity"
+              description: "Provide the Currency Domain Entity, a currency usable by the trading system with its code, symbol, country or region, and monetary precision, exactly as the Target declares it, referencing its owning User."
+              reason: "Accounts use a Currency as their base currency."
+              inputs:
+                - "The Target's Currency definition"
+                - "The User Entity"
+              skills:
+                - "sqlmodel"
+                - "python-skills:python-guidelines"
+              expected_result: "A Currency Entity with exactly the declared Fields, sizes, nullability, defaults, identity, and combined uniqueness, referencing User."
+              depends_on:
+                - "P1-G2-T2"
+                - "P1-G3-T4"
+                - "P1-G3-T5"
+                - "P1-G4-T1"
+              constraints: []
+              acceptance: "The declared meaning of Currency matches the Target's definition Field for Field, including the fixed code size, the decimal-digits default, the combined uniqueness of owner and code, and the Reference to User, with nothing added; valid data constructs and round-trips through JSON, and violating data is rejected."
+              verify: "Compare the declared meaning of the Currency Entity with the Target's definition, then observe construction and JSON round-trip with valid data and rejection with a code of the wrong size."
+              status: "done"
+              log:
+                - at: "2026-09-25T21:07:12Z"
+                  transition: "todo -> claimed"
+                  by: "003"
+                  entry: "Claimed; all dependencies done. Generating the Currency Entity from the Target's Currency definition."
+                - at: "2026-09-25T21:07:34Z"
+                  transition: "claimed -> done"
+                  by: "003"
+                  entry: "Currency Entity provided from the Target's Currency definition: eight Fields, reference to User, combined uniqueness of user_id and code, decimal_digits default 2. The Target declares Size 3 for code; it is recorded as a maximum length of 3 (a value longer than 3 is rejected, a shorter one is accepted), since the Target states no exact-length rule. Check (transient independent checker, separate parser of the Target): Declaration and SQLModel Fields equal the Target Field for Field (names, order, type, nullability, defaults with type, generation, sensitivity, no invented property); primary key, uniqueness and References (target Entity and identity) match, and every *_id Field is a Reference; construction, JSON round-trip, omitted defaults, missing/wrong-type/null rejections, explicit null on nullable Fields, unknown input, credential redaction where applicable, and SQLite persist/reload all behaved as declared. Result: passed. ruff format, ruff check, pyright clean."
+
+            P1-G5-T2:
+              id: "P1-G5-T2"
+              source_id: "002"
+              title: "Provide the Broker Entity"
+              description: "Provide the Broker Domain Entity, a supported broker independent of any one Trading Platform, exactly as the Target declares it, referencing the User that owns its configuration."
+              reason: "Assets, Accounts, and Positions refer to a Broker."
+              inputs:
+                - "The Target's Broker definition"
+                - "The User Entity"
+              skills:
+                - "sqlmodel"
+                - "python-skills:python-guidelines"
+              expected_result: "A Broker Entity with exactly the declared Fields, nullability, defaults, identity, and combined uniqueness, referencing User."
+              depends_on:
+                - "P1-G2-T2"
+                - "P1-G3-T4"
+                - "P1-G3-T5"
+                - "P1-G4-T1"
+              constraints: []
+              acceptance: "The declared meaning of Broker matches the Target's definition Field for Field, including the combined uniqueness of owner and name and the Reference to User, with nothing added and no coupling to a Trading Platform; valid data constructs and round-trips through JSON, and violating data is rejected."
+              verify: "Compare the declared meaning of the Broker Entity with the Target's definition, then observe construction and JSON round-trip with valid data and rejection with data violating a declared rule."
+              status: "done"
+              log:
+                - at: "2026-09-25T21:07:12Z"
+                  transition: "todo -> claimed"
+                  by: "003"
+                  entry: "Claimed; all dependencies done. Generating the Broker Entity from the Target's Broker definition."
+                - at: "2026-09-25T21:07:34Z"
+                  transition: "claimed -> done"
+                  by: "003"
+                  entry: "Broker Entity provided from the Target's Broker definition: five Fields, reference to User, combined uniqueness of user_id and name, no coupling to Trading Platform. Check (transient independent checker, separate parser of the Target): Declaration and SQLModel Fields equal the Target Field for Field (names, order, type, nullability, defaults with type, generation, sensitivity, no invented property); primary key, uniqueness and References (target Entity and identity) match, and every *_id Field is a Reference; construction, JSON round-trip, omitted defaults, missing/wrong-type/null rejections, explicit null on nullable Fields, unknown input, credential redaction where applicable, and SQLite persist/reload all behaved as declared. Result: passed. ruff format, ruff check, pyright clean."
+
+            P1-G5-T3:
+              id: "P1-G5-T3"
+              source_id: "002"
+              title: "Provide the Asset Entity"
+              description: "Provide the Asset Domain Entity, a tradable asset with its category, point size, and price digits, exactly as the Target declares it, referencing the Broker that provides it."
+              reason: "Actions choose the asset they trade from the available Assets."
+              inputs:
+                - "The Target's Asset definition"
+                - "The Broker Entity"
+              skills:
+                - "sqlmodel"
+                - "python-skills:python-guidelines"
+              expected_result: "An Asset Entity with exactly the declared Fields, types, nullability, defaults, identity, and combined uniqueness, referencing Broker."
+              depends_on:
+                - "P1-G2-T2"
+                - "P1-G3-T4"
+                - "P1-G3-T5"
+                - "P1-G5-T2"
+              constraints: []
+              acceptance: "The declared meaning of Asset matches the Target's definition Field for Field, including the point-size and digits defaults, the combined uniqueness of broker and symbol, and the Reference to Broker, with nothing added; valid data constructs and round-trips through JSON, and violating data is rejected."
+              verify: "Compare the declared meaning of the Asset Entity with the Target's definition, then observe construction and JSON round-trip with valid data and rejection with data violating a declared rule."
+              status: "done"
+              log:
+                - at: "2026-09-25T21:07:44Z"
+                  transition: "todo -> claimed"
+                  by: "003"
+                  entry: "Claimed; all dependencies done. Generating the Asset Entity from the Target's Asset definition."
+                - at: "2026-09-25T21:08:08Z"
+                  transition: "claimed -> done"
+                  by: "003"
+                  entry: "Asset Entity provided from the Target's Asset definition: eight Fields, reference to Broker (broker_id), combined uniqueness of broker_id and symbol, point_size default 0.0 (float) and digits default 0 (integer). Check (transient independent checker, separate parser of the Target): Declaration and SQLModel Fields equal the Target Field for Field (names, order, type, nullability, defaults with type, generation, sensitivity, no invented property); primary key, uniqueness and References (target Entity and identity) match, and every *_id Field is a Reference; construction, JSON round-trip, omitted defaults, missing/wrong-type/null rejections, explicit null on nullable Fields, unknown input, credential redaction where applicable, and SQLite persist/reload all behaved as declared. Result: passed. ruff format, ruff check, pyright clean."
+
+        P1-G6:
+          id: "P1-G6"
+          title: "Account Entities"
+          description: "The Entities that organize trading accounts and describe each funded account."
+          area: "Account Group and Account Entities"
+          does: "The Account Group and Account Entities exist exactly as the Target declares them, with their relationships."
+          constraints: []
+          task_count: 2
+          tasks:
+            P1-G6-T1:
+              id: "P1-G6-T1"
+              source_id: "002"
+              title: "Provide the Account Group Entity"
+              description: "Provide the Account Group Domain Entity, an independent grouping of trading accounts owned by one user, exactly as the Target declares it."
+              reason: "Accounts belong to an Account Group."
+              inputs:
+                - "The Target's Account Group definition"
+                - "The User Entity"
+              skills:
+                - "sqlmodel"
+                - "python-skills:python-guidelines"
+              expected_result: "An Account Group Entity with exactly the declared Fields, nullability, defaults, identity, and combined uniqueness, referencing User."
+              depends_on:
+                - "P1-G2-T2"
+                - "P1-G3-T4"
+                - "P1-G3-T5"
+                - "P1-G4-T1"
+              constraints: []
+              acceptance: "The declared meaning of Account Group matches the Target's definition Field for Field, including the combined uniqueness of owner and name and the Reference to User, with nothing added; valid data constructs and round-trips through JSON, and violating data is rejected."
+              verify: "Compare the declared meaning of the Account Group Entity with the Target's definition, then observe construction and JSON round-trip with valid data and rejection with data violating a declared rule."
+              status: "done"
+              log:
+                - at: "2026-09-25T21:07:13Z"
+                  transition: "todo -> claimed"
+                  by: "003"
+                  entry: "Claimed; all dependencies done. Generating the Account Group Entity from the Target's Account Group definition."
+                - at: "2026-09-25T21:07:34Z"
+                  transition: "claimed -> done"
+                  by: "003"
+                  entry: "Account Group Entity provided from the Target's Account Group definition: five Fields, reference to User, combined uniqueness of user_id and name. Check (transient independent checker, separate parser of the Target): Declaration and SQLModel Fields equal the Target Field for Field (names, order, type, nullability, defaults with type, generation, sensitivity, no invented property); primary key, uniqueness and References (target Entity and identity) match, and every *_id Field is a Reference; construction, JSON round-trip, omitted defaults, missing/wrong-type/null rejections, explicit null on nullable Fields, unknown input, credential redaction where applicable, and SQLite persist/reload all behaved as declared. Result: passed. ruff format, ruff check, pyright clean."
+
+            P1-G6-T2:
+              id: "P1-G6-T2"
+              source_id: "002"
+              title: "Provide the Account Entity"
+              description: "Provide the Account Domain Entity, a funded trading account through which the system executes trades, exactly as the Target declares it, related explicitly to Account Group, Broker, Instance, and Currency."
+              reason: "Actions and Positions execute through an Account."
+              inputs:
+                - "The Target's Account definition"
+                - "The Account Group, Broker, Instance, and Currency Entities"
+              skills:
+                - "sqlmodel"
+                - "python-skills:python-guidelines"
+              expected_result: "An Account Entity with exactly the declared Fields, types, nullability, defaults, identity, and combined uniqueness, referencing its Account Group, Broker, Instance, and base Currency, with its credential Field classified sensitive."
+              depends_on:
+                - "P1-G2-T2"
+                - "P1-G3-T4"
+                - "P1-G3-T5"
+                - "P1-G3-T6"
+                - "P1-G4-T3"
+                - "P1-G5-T1"
+                - "P1-G5-T2"
+                - "P1-G6-T1"
+              constraints: []
+              acceptance: "The declared meaning of Account matches the Target's definition Field for Field, including the uniqueness of name, the combined uniqueness of group, broker, and instance, the four References, the balance default, and the sensitivity of password, with nothing added; valid data constructs and round-trips through JSON, and violating data is rejected."
+              verify: "Compare the declared meaning of the Account Entity with the Target's definition, including its four References, then observe construction and JSON round-trip with valid data and rejection with data violating a declared rule."
+              status: "done"
+              log:
+                - at: "2026-09-25T21:07:44Z"
+                  transition: "todo -> claimed"
+                  by: "003"
+                  entry: "Claimed; all dependencies done. Generating the Account Entity from the Target's Account definition."
+                - at: "2026-09-25T21:08:08Z"
+                  transition: "claimed -> done"
+                  by: "003"
+                  entry: "Account Entity provided from the Target's Account definition: thirteen Fields; references to Account Group (group_id), Broker (broker_id), Instance (instance_id) and Currency as base currency (base_currency_id); uniqueness of name and the combined uniqueness of group_id, broker_id and instance_id; balance default 0 held as an exact Decimal; password classified sensitive. Left out on purpose: the Target rule that Instance and Account credentials must not be duplicated across both Entities, which spans Entities and belongs outside Model. A generator style finding (ruff prefers Decimal(0) over Decimal of the string 0) was fixed and the Entity regenerated before verification. Check (transient independent checker, separate parser of the Target): Declaration and SQLModel Fields equal the Target Field for Field (names, order, type, nullability, defaults with type, generation, sensitivity, no invented property); primary key, uniqueness and References (target Entity and identity) match, and every *_id Field is a Reference; construction, JSON round-trip, omitted defaults, missing/wrong-type/null rejections, explicit null on nullable Fields, unknown input, credential redaction where applicable, and SQLite persist/reload all behaved as declared. Result: passed. ruff format, ruff check, pyright clean."
+
+        P1-G7:
+          id: "P1-G7"
+          title: "Position-management rule Entities"
+          description: "The Entities that define how open positions are managed: trailing of Stop Loss and Take Profit, and partial closing."
+          area: "Trailing Group, Trailing Rule, Partial Group, and Partial Rule Entities"
+          does: "The Trailing Group, Trailing Rule, Partial Group, and Partial Rule Entities exist exactly as the Target declares them, with their relationships."
+          constraints: []
+          task_count: 4
+          tasks:
+            P1-G7-T1:
+              id: "P1-G7-T1"
+              source_id: "002"
+              title: "Provide the Trailing Group Entity"
+              description: "Provide the Trailing Group Domain Entity, an independent group of trailing rules owned by one user, exactly as the Target declares it."
+              reason: "Trailing Rules, Actions, and Positions refer to a Trailing Group."
+              inputs:
+                - "The Target's Trailing Group definition"
+                - "The User Entity"
+              skills:
+                - "sqlmodel"
+                - "python-skills:python-guidelines"
+              expected_result: "A Trailing Group Entity with exactly the declared Fields, nullability, defaults, identity, and combined uniqueness, referencing User."
+              depends_on:
+                - "P1-G2-T2"
+                - "P1-G3-T4"
+                - "P1-G3-T5"
+                - "P1-G4-T1"
+              constraints: []
+              acceptance: "The declared meaning of Trailing Group matches the Target's definition Field for Field, including the combined uniqueness of owner and name and the Reference to User, with nothing added; valid data constructs and round-trips through JSON, and violating data is rejected."
+              verify: "Compare the declared meaning of the Trailing Group Entity with the Target's definition, then observe construction and JSON round-trip with valid data and rejection with data violating a declared rule."
+              status: "done"
+              log:
+                - at: "2026-09-25T21:07:13Z"
+                  transition: "todo -> claimed"
+                  by: "003"
+                  entry: "Claimed; all dependencies done. Generating the Trailing Group Entity from the Target's Trailing Group definition."
+                - at: "2026-09-25T21:07:35Z"
+                  transition: "claimed -> done"
+                  by: "003"
+                  entry: "Trailing Group Entity provided from the Target's Trailing Group definition: five Fields, reference to User, combined uniqueness of user_id and name. Check (transient independent checker, separate parser of the Target): Declaration and SQLModel Fields equal the Target Field for Field (names, order, type, nullability, defaults with type, generation, sensitivity, no invented property); primary key, uniqueness and References (target Entity and identity) match, and every *_id Field is a Reference; construction, JSON round-trip, omitted defaults, missing/wrong-type/null rejections, explicit null on nullable Fields, unknown input, credential redaction where applicable, and SQLite persist/reload all behaved as declared. Result: passed. ruff format, ruff check, pyright clean."
+
+            P1-G7-T2:
+              id: "P1-G7-T2"
+              source_id: "002"
+              title: "Provide the Trailing Rule Entity"
+              description: "Provide the Trailing Rule Domain Entity, an individual rule stating when and how Take Profit and Stop Loss are adjusted, exactly as the Target declares it, referencing its Trailing Group."
+              reason: "A Trailing Group is defined by the rules it contains."
+              inputs:
+                - "The Target's Trailing Rule definition"
+                - "The Trailing Group Entity"
+              skills:
+                - "sqlmodel"
+                - "python-skills:python-guidelines"
+              expected_result: "A Trailing Rule Entity with exactly the declared Fields, types, nullability, defaults, identity, and combined uniqueness, referencing Trailing Group."
+              depends_on:
+                - "P1-G2-T2"
+                - "P1-G3-T4"
+                - "P1-G3-T5"
+                - "P1-G7-T1"
+              constraints: []
+              acceptance: "The declared meaning of Trailing Rule matches the Target's definition Field for Field, including the uniqueness of name, the optional adjustments, the combined uniqueness of group and trigger percentage, and the Reference to Trailing Group, with nothing added; valid data constructs and round-trips through JSON, and violating data is rejected."
+              verify: "Compare the declared meaning of the Trailing Rule Entity with the Target's definition, then observe construction and JSON round-trip with valid data and rejection with data violating a declared rule."
+              status: "done"
+              log:
+                - at: "2026-09-25T21:07:44Z"
+                  transition: "todo -> claimed"
+                  by: "003"
+                  entry: "Claimed; all dependencies done. Generating the Trailing Rule Entity from the Target's Trailing Rule definition."
+                - at: "2026-09-25T21:08:09Z"
+                  transition: "claimed -> done"
+                  by: "003"
+                  entry: "Trailing Rule Entity provided from the Target's Trailing Rule definition: eight Fields, reference to Trailing Group, uniqueness of name and combined uniqueness of trailing_group_id and trigger_percentage, exact decimal trigger percentage, nullable take-profit and stop-loss adjustments. Check (transient independent checker, separate parser of the Target): Declaration and SQLModel Fields equal the Target Field for Field (names, order, type, nullability, defaults with type, generation, sensitivity, no invented property); primary key, uniqueness and References (target Entity and identity) match, and every *_id Field is a Reference; construction, JSON round-trip, omitted defaults, missing/wrong-type/null rejections, explicit null on nullable Fields, unknown input, credential redaction where applicable, and SQLite persist/reload all behaved as declared. Result: passed. ruff format, ruff check, pyright clean."
+
+            P1-G7-T3:
+              id: "P1-G7-T3"
+              source_id: "002"
+              title: "Provide the Partial Group Entity"
+              description: "Provide the Partial Group Domain Entity, an independent group of rules for closing portions of an open trade, owned by one user, exactly as the Target declares it."
+              reason: "Partial Rules, Actions, and Positions refer to a Partial Group."
+              inputs:
+                - "The Target's Partial Group definition"
+                - "The User Entity"
+              skills:
+                - "sqlmodel"
+                - "python-skills:python-guidelines"
+              expected_result: "A Partial Group Entity with exactly the declared Fields, nullability, defaults, identity, and combined uniqueness, referencing User."
+              depends_on:
+                - "P1-G2-T2"
+                - "P1-G3-T4"
+                - "P1-G3-T5"
+                - "P1-G4-T1"
+              constraints: []
+              acceptance: "The declared meaning of Partial Group matches the Target's definition Field for Field, including the combined uniqueness of owner and name and the Reference to User, with nothing added; valid data constructs and round-trips through JSON, and violating data is rejected."
+              verify: "Compare the declared meaning of the Partial Group Entity with the Target's definition, then observe construction and JSON round-trip with valid data and rejection with data violating a declared rule."
+              status: "done"
+              log:
+                - at: "2026-09-25T21:07:13Z"
+                  transition: "todo -> claimed"
+                  by: "003"
+                  entry: "Claimed; all dependencies done. Generating the Partial Group Entity from the Target's Partial Group definition."
+                - at: "2026-09-25T21:07:35Z"
+                  transition: "claimed -> done"
+                  by: "003"
+                  entry: "Partial Group Entity provided from the Target's Partial Group definition: five Fields, reference to User, combined uniqueness of user_id and name. Check (transient independent checker, separate parser of the Target): Declaration and SQLModel Fields equal the Target Field for Field (names, order, type, nullability, defaults with type, generation, sensitivity, no invented property); primary key, uniqueness and References (target Entity and identity) match, and every *_id Field is a Reference; construction, JSON round-trip, omitted defaults, missing/wrong-type/null rejections, explicit null on nullable Fields, unknown input, credential redaction where applicable, and SQLite persist/reload all behaved as declared. Result: passed. ruff format, ruff check, pyright clean."
+
+            P1-G7-T4:
+              id: "P1-G7-T4"
+              source_id: "002"
+              title: "Provide the Partial Rule Entity"
+              description: "Provide the Partial Rule Domain Entity, an individual rule stating under which profit condition part of an open position is closed and how much, exactly as the Target declares it, referencing its Partial Group."
+              reason: "A Partial Group is defined by the rules it contains."
+              inputs:
+                - "The Target's Partial Rule definition"
+                - "The Partial Group Entity"
+              skills:
+                - "sqlmodel"
+                - "python-skills:python-guidelines"
+              expected_result: "A Partial Rule Entity with exactly the declared Fields, types, nullability, defaults, identity, and combined uniqueness, referencing Partial Group."
+              depends_on:
+                - "P1-G2-T2"
+                - "P1-G3-T4"
+                - "P1-G3-T5"
+                - "P1-G7-T3"
+              constraints: []
+              acceptance: "The declared meaning of Partial Rule matches the Target's definition Field for Field, including the uniqueness of name, the combined uniqueness of group and profit percentage, and the Reference to Partial Group, with nothing added; valid data constructs and round-trips through JSON, and violating data is rejected."
+              verify: "Compare the declared meaning of the Partial Rule Entity with the Target's definition, then observe construction and JSON round-trip with valid data and rejection with data violating a declared rule."
+              status: "done"
+              log:
+                - at: "2026-09-25T21:07:45Z"
+                  transition: "todo -> claimed"
+                  by: "003"
+                  entry: "Claimed; all dependencies done. Generating the Partial Rule Entity from the Target's Partial Rule definition."
+                - at: "2026-09-25T21:08:09Z"
+                  transition: "claimed -> done"
+                  by: "003"
+                  entry: "Partial Rule Entity provided from the Target's Partial Rule definition: seven Fields, reference to Partial Group, uniqueness of name and combined uniqueness of partial_group_id and profit_percentage, exact decimal profit and close percentages. Check (transient independent checker, separate parser of the Target): Declaration and SQLModel Fields equal the Target Field for Field (names, order, type, nullability, defaults with type, generation, sensitivity, no invented property); primary key, uniqueness and References (target Entity and identity) match, and every *_id Field is a Reference; construction, JSON round-trip, omitted defaults, missing/wrong-type/null rejections, explicit null on nullable Fields, unknown input, credential redaction where applicable, and SQLite persist/reload all behaved as declared. Result: passed. ruff format, ruff check, pyright clean."
+
+        P1-G8:
+          id: "P1-G8"
+          title: "Trading Entities"
+          description: "The Entities that describe how positions are opened and the positions themselves."
+          area: "Action Group, Action, and Position Entities"
+          does: "The Action Group, Action, and Position Entities exist exactly as the Target declares them, with their relationships."
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G8-T1:
+              id: "P1-G8-T1"
+              source_id: "002"
+              title: "Provide the Action Group Entity"
+              description: "Provide the Action Group Domain Entity, an independent grouping of trading actions by risk profile, owned by one user, exactly as the Target declares it."
+              reason: "Actions and Positions refer to an Action Group."
+              inputs:
+                - "The Target's Action Group definition"
+                - "The User Entity"
+              skills:
+                - "sqlmodel"
+                - "python-skills:python-guidelines"
+              expected_result: "An Action Group Entity with exactly the declared Fields, nullability, defaults, identity, and combined uniqueness, referencing User."
+              depends_on:
+                - "P1-G2-T2"
+                - "P1-G3-T4"
+                - "P1-G3-T5"
+                - "P1-G4-T1"
+              constraints: []
+              acceptance: "The declared meaning of Action Group matches the Target's definition Field for Field, including the combined uniqueness of owner and name and the Reference to User, with nothing added; valid data constructs and round-trips through JSON, and violating data is rejected."
+              verify: "Compare the declared meaning of the Action Group Entity with the Target's definition, then observe construction and JSON round-trip with valid data and rejection with data violating a declared rule."
+              status: "done"
+              log:
+                - at: "2026-09-25T21:07:13Z"
+                  transition: "todo -> claimed"
+                  by: "003"
+                  entry: "Claimed; all dependencies done. Generating the Action Group Entity from the Target's Action Group definition."
+                - at: "2026-09-25T21:07:35Z"
+                  transition: "claimed -> done"
+                  by: "003"
+                  entry: "Action Group Entity provided from the Target's Action Group definition: five Fields, reference to User, combined uniqueness of user_id and name. Check (transient independent checker, separate parser of the Target): Declaration and SQLModel Fields equal the Target Field for Field (names, order, type, nullability, defaults with type, generation, sensitivity, no invented property); primary key, uniqueness and References (target Entity and identity) match, and every *_id Field is a Reference; construction, JSON round-trip, omitted defaults, missing/wrong-type/null rejections, explicit null on nullable Fields, unknown input, credential redaction where applicable, and SQLite persist/reload all behaved as declared. Result: passed. ruff format, ruff check, pyright clean."
+
+            P1-G8-T2:
+              id: "P1-G8-T2"
+              source_id: "002"
+              title: "Provide the Action Entity"
+              description: "Provide the Action Domain Entity, which defines how a position must be opened, exactly as the Target declares it, related explicitly to Action Group, Asset, Account, Partial Group, and Trailing Group."
+              reason: "Positions are created from an Action."
+              inputs:
+                - "The Target's Action definition"
+                - "The Action Group, Asset, Account, Partial Group, and Trailing Group Entities"
+              skills:
+                - "sqlmodel"
+                - "python-skills:python-guidelines"
+              expected_result: "An Action Entity with exactly the declared Fields, types, nullability, defaults, identity, and combined uniqueness, referencing its Action Group, Asset, Account, Partial Group, and Trailing Group."
+              depends_on:
+                - "P1-G2-T2"
+                - "P1-G3-T4"
+                - "P1-G3-T5"
+                - "P1-G5-T3"
+                - "P1-G6-T2"
+                - "P1-G7-T1"
+                - "P1-G7-T3"
+                - "P1-G8-T1"
+              constraints: []
+              acceptance: "The declared meaning of Action matches the Target's definition Field for Field, including the combined uniqueness of action group and name and the five References, with nothing added; valid data constructs and round-trips through JSON, and violating data is rejected."
+              verify: "Compare the declared meaning of the Action Entity with the Target's definition, including its five References, then observe construction and JSON round-trip with valid data and rejection with data violating a declared rule."
+              status: "done"
+              log:
+                - at: "2026-09-25T21:08:14Z"
+                  transition: "todo -> claimed"
+                  by: "003"
+                  entry: "Claimed; all dependencies done. Generating the Action Entity from the Target's Action definition."
+                - at: "2026-09-25T21:08:24Z"
+                  transition: "claimed -> done"
+                  by: "003"
+                  entry: "Action Entity provided from the Target's Action definition: twelve Fields; references to Action Group, Asset, Account, Partial Group and Trailing Group; combined uniqueness of action_group_id and name; exact decimal risk_by_reward, take_profit and stop_loss; is_active default true. Check (transient independent checker, separate parser of the Target): Declaration and SQLModel Fields equal the Target Field for Field, primary key, uniqueness and all five References match and every *_id Field is a Reference; construction, JSON round-trip with exact decimals, omitted defaults, missing/wrong-type/null rejections, unknown input and SQLite persist/reload all behaved as declared. Result: passed. ruff format, ruff check, pyright clean."
+
+            P1-G8-T3:
+              id: "P1-G8-T3"
+              source_id: "002"
+              title: "Provide the Position Entity"
+              description: "Provide the Position Domain Entity, the complete record of a position created by the system, whether opened or still pending, exactly as the Target declares it, related explicitly to User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and Action."
+              reason: "Tracking positions is the purpose of the trading system."
+              inputs:
+                - "The Target's Position definition"
+                - "Every Entity that Position references"
+              skills:
+                - "sqlmodel"
+                - "python-skills:python-guidelines"
+              expected_result: "A Position Entity with exactly the declared Fields, types, nullability, defaults, identity, and uniqueness, referencing each of its eight related Entities."
+              depends_on:
+                - "P1-G2-T2"
+                - "P1-G3-T4"
+                - "P1-G3-T5"
+                - "P1-G4-T1"
+                - "P1-G4-T2"
+                - "P1-G5-T2"
+                - "P1-G6-T2"
+                - "P1-G7-T1"
+                - "P1-G7-T3"
+                - "P1-G8-T1"
+                - "P1-G8-T2"
+              constraints: []
+              acceptance: "The declared meaning of Position matches the Target's definition Field for Field, including the uniqueness of name, the execution-state and profit defaults, and the eight References, with nothing added; valid data constructs and round-trips through JSON, and violating data is rejected."
+              verify: "Compare the declared meaning of the Position Entity with the Target's definition, including its eight References, then observe construction and JSON round-trip with valid data and rejection with data violating a declared rule."
+              status: "done"
+              log:
+                - at: "2026-09-25T21:08:24Z"
+                  transition: "todo -> claimed"
+                  by: "003"
+                  entry: "Claimed; all dependencies done (P1-G8-T2 was the last). Generating the Position Entity from the Target's Position definition."
+                - at: "2026-09-25T21:08:38Z"
+                  transition: "claimed -> done"
+                  by: "003"
+                  entry: "Position Entity provided from the Target's Position definition: twenty-one Fields; references to User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group and Action; uniqueness of name; timezone-aware date-time (a naive date-time is rejected); exact decimal volume, profit (default 0), and base and real take-profit and stop-loss; is_executed default false and is_active default true. Check (transient independent checker, separate parser of the Target): Declaration and SQLModel Fields equal the Target Field for Field, primary key, uniqueness and all eight References match and every *_id Field is a Reference; construction, JSON round-trip with exact decimals and a UTC date-time, omitted defaults, missing/wrong-type/null rejections, unknown input and SQLite persist/reload all behaved as declared. Result: passed. ruff format, ruff check, pyright clean."
+
+        P1-G9:
+          id: "P1-G9"
+          title: "Public Interface"
+          description: "Model's only public layer, through which consumers use the Entities and their declared meaning."
+          area: "Interface layer"
+          does: "A consumer can use every Entity and read every Entity's declared meaning through Interface alone."
+          constraints: []
+          task_count: 2
+          tasks:
+            P1-G9-T1:
+              id: "P1-G9-T1"
+              source_id: "002"
+              title: "Present every Entity through Interface"
+              description: "Let Interface present the consumer-facing class of each of the fifteen Entities, so that a consumer imports and uses them through Interface alone and no private layer is presented as public."
+              reason: "Database and Logic must depend on one supported surface while Model stays free to change internally."
+              inputs:
+                - "Every provided Entity"
+              skills:
+                - "python-skills:python-guidelines"
+              expected_result: "All fifteen Entities are importable and usable through Interface, and Interface presents nothing from the Entity, Declaration, or Foundation layers as its own public content beyond what consumers are meant to use."
+              depends_on:
+                - "P1-G4-T1"
+                - "P1-G4-T2"
+                - "P1-G4-T3"
+                - "P1-G5-T1"
+                - "P1-G5-T2"
+                - "P1-G5-T3"
+                - "P1-G6-T1"
+                - "P1-G6-T2"
+                - "P1-G7-T1"
+                - "P1-G7-T2"
+                - "P1-G7-T3"
+                - "P1-G7-T4"
+                - "P1-G8-T1"
+                - "P1-G8-T2"
+                - "P1-G8-T3"
+              constraints: []
+              acceptance: "A consumer that has only the library and uses only Interface can import, construct, convert to JSON, and create from JSON every one of the fifteen Entities."
+              verify: "From outside the library, using only what Interface presents, import and exercise construction and both JSON directions for each Entity, and observe success without touching any private layer."
+              status: "done"
+              log:
+                - at: "2026-09-25T21:09:02Z"
+                  transition: "todo -> claimed"
+                  by: "003"
+                  entry: "Claimed; all fifteen Entity dependencies done. Presenting every Entity class through the Interface layer."
+                - at: "2026-09-25T21:09:45Z"
+                  transition: "claimed -> done"
+                  by: "003"
+                  entry: "Interface layer presents the consumer-facing class of each of the fifteen Entities and nothing from the Entity, Declaration or Foundation layers as its own content. Check (transient consumer script): built a wheel, installed only that wheel into a fresh environment away from the project, ran a consumer in isolated mode whose own source was scanned to confirm it imports only from Interface; dir(Interface) and __all__ both equalled exactly the fifteen Entity names and no private-layer name; for every Entity the consumer constructed valid data, converted it to JSON (keys equal the declared Fields), created it from the JSON text and from the parsed object with equal values and identical re-conversion. Result: passed. ruff format, ruff check, pyright clean. Note: P1-G9-T2 will add the declared-meaning vocabulary to Interface, so this Task's exact-name assertion applies to the state at this completion."
+
+            P1-G9-T2:
+              id: "P1-G9-T2"
+              source_id: "002"
+              title: "Expose each Entity's declared meaning through Interface"
+              description: "Let a consumer read, through Interface, every Entity's declared Identity, Uniqueness Constraints, References, Index intentions, Value Generation, and Field-level meaning, so Database can derive storage structure without inventing any."
+              reason: "Database realizes keys, constraints, and relationships from Model's published meaning and must not need any private Model resource."
+              inputs:
+                - "Every Entity's Declaration"
+              skills:
+                - "python-skills:python-guidelines"
+              expected_result: "For each Entity, its complete declared meaning is readable through Interface and matches what the Target declares."
+              depends_on:
+                - "P1-G9-T1"
+              constraints: []
+              acceptance: "For every Entity, the meaning read through Interface includes each Target-declared Field property, Identity, Uniqueness Constraint, Reference, Index intention, and Value Generation, and contains no physical storage detail."
+              verify: "For each Entity, read its declared meaning through Interface alone and compare it with the Target's definition, observing that every declared property is present and no storage syntax is."
+              status: "done"
+              log:
+                - at: "2026-09-25T21:09:45Z"
+                  transition: "todo -> claimed"
+                  by: "003"
+                  entry: "Claimed; dependency P1-G9-T1 done. Exposing the declared-meaning vocabulary through Interface so a consumer can read each Entity's complete declared meaning without importing a private layer."
+                - at: "2026-09-25T21:10:44Z"
+                  transition: "claimed -> done"
+                  by: "003"
+                  entry: "Interface now also presents the vocabulary in which declared meaning is read (Declaration, FieldDeclaration, FieldType, ValueGeneration, UniqueConstraint, Reference, Index, Omitted, OMITTED); each Entity's complete declared meaning is read through its declaration attribute. The private layers themselves remain unpublished. Check (transient consumer script run from a wheel installed into a fresh environment, isolated mode, source scanned to confirm it imports only from Interface, Target parsed independently): for all 15 Entities and 124 Fields the meaning read through Interface equals the Target (names and order, type, nullability, generation, defaults with type, length, sensitivity, primary key, single and combined uniqueness, References with target Entity and identity, no Index); every kind of structure meaning was actually exercised (generation in 15 Entities, combined uniqueness in 12, single in 6, References in 13, sensitivity in 3, length in 1, defaults in 15); the published meaning contains no storage syntax and the built tables carry only the primary key (no unique, index or foreign key). Two defects in my check were corrected during the run (an assertion that matched SQLModel's internal metadata object, whose unique and index attributes are merely undefined; replaced by a check of the real table columns); no library change resulted. Result: passed. ruff format, ruff check, pyright clean."
+                - at: "2026-09-25T21:10:50Z"
+                  transition: "done -> done"
+                  by: "003"
+                  entry: "Correction to the completion entry above: exactly one defect in my check occurred (the assertion that matched SQLModel's internal metadata object), not two. No library change resulted."
+
+        P1-G10:
+          id: "P1-G10"
+          title: "Quality and documentation"
+          description: "The conditions that make the finished Model library conform to the project's development standards and be usable by its consumers."
+          area: "Model quality gates and documentation"
+          does: "The Model library conforms to the project's quality standards and documents its public surface, usage, and operation for consumers."
+          constraints: []
+          task_count: 4
+          tasks:
+            P1-G10-T1:
+              id: "P1-G10-T1"
+              source_id: "002"
+              title: "Bring the Model library to the project's quality standards"
+              description: "Make the complete Model library conform to the project's formatting, linting, and type-checking standards with no outstanding finding."
+              reason: "The Development standards apply to every Component and downstream Components rely on a type-correct library."
+              inputs:
+                - "The Development quality standards"
+                - "The completed Model library"
+              skills:
+                - "python-skills:python-guidelines"
+              expected_result: "Formatting, linting, and type-checking each report no finding across the library."
+              depends_on:
+                - "P1-G9-T1"
+                - "P1-G9-T2"
+              constraints: []
+              acceptance: "Each quality check reports zero findings over the whole library, with no finding suppressed merely to obtain that result."
+              verify: "Run each of the project's declared quality checks over the whole library and observe zero findings and no blanket suppression."
+              status: "done"
+              log:
+                - at: "2026-09-25T21:13:05Z"
+                  transition: "todo -> claimed"
+                  by: "003"
+                  entry: "Claimed; dependencies P1-G9-T1 and P1-G9-T2 done. Running the project's declared checks (formatter, linter, type checker) over the whole library and removing any suppressed finding."
+                - at: "2026-09-25T21:13:59Z"
+                  transition: "claimed -> done"
+                  by: "003"
+                  entry: "The whole Model library (source and documentation examples) conforms to the project's declared checks with nothing suppressed: ruff format --check reports 23 files formatted, ruff check reports all checks passed, pyright reports 0 errors, 0 warnings, 0 informations (ruff 0.16.9, pyright 1.1.414, default configuration, no tool settings and no ignore or exclusion). Two real findings were fixed: (1) one type-ignore comment I had left in the decimal scale restriction was removed by handling non-finite decimals properly (they now fail a scale restriction, since they have no scale); (2) this ruff version also formats Python examples inside Markdown, and one README example was over-long, so the formatter was applied to it. A final search for noqa, type-ignore, pyright-ignore and ruff-disable comments across the source and project file found none. Because Foundation and the README changed, every earlier check was re-run afterwards and passed: Declaration, all seven Foundation checks, the fifteen-Entity check, the declared-meaning check, the descriptions check and the README examples. Result: passed."
+
+            P1-G10-T2:
+              id: "P1-G10-T2"
+              source_id: "002"
+              title: "Describe every Entity and Field"
+              description: "Give every Domain Entity and every Field a description, in the form consumers read alongside the library, taking their meaning from the Target."
+              reason: "Consumers must understand each Entity and Field without reading internal implementation."
+              inputs:
+                - "The Target's Entity and Field purposes"
+                - "The completed Entities"
+              skills: []
+              expected_result: "No Entity or Field lacks a description."
+              depends_on:
+                - "P1-G9-T1"
+              constraints: []
+              acceptance: "All fifteen Entities and every one of their Fields have a description that agrees with the Target's stated purpose and none describes storage, workflow, or application behaviour."
+              verify: "Enumerate every Entity and Field of the library and observe that each has a description consistent with the Target and free of storage or workflow content."
+              status: "done"
+              log:
+                - at: "2026-09-25T21:11:09Z"
+                  transition: "todo -> claimed"
+                  by: "003"
+                  entry: "Claimed; dependency P1-G9-T1 done. Adding a description to every Entity (its class documentation) and every Field (its Field description) taken from the Target's stated purposes; the Entities are regenerated from the Target with descriptions included."
+                - at: "2026-09-25T21:11:56Z"
+                  transition: "claimed -> done"
+                  by: "003"
+                  entry: "Every Entity now carries a description (its class documentation) and every Field a description (its Field description, also published in the JSON schema), each equal to the purpose the Target states for it; the identity Fields, for which the Target states none, carry a short description of the automatically assigned identifier. The Entities were regenerated from the Target with descriptions included. Check (transient script, Target parsed independently, read through Interface): 15 Entities and 124 Fields all described; every Entity description equals the Target's Purpose and every Field description equals the Target's Field purpose after whitespace normalisation; no description contains storage or workflow wording (table, column, database, SQL, persist, index, hash, encrypt, endpoint, workflow); descriptions appear in the published JSON schema. One real defect was found and fixed during the run: the line wrapping of the generated class documentation split the hyphenated word account-level across lines, altering its text; hyphen breaking was disabled and everything regenerated. Result: passed. All earlier Declaration, Foundation, Entity and Interface checks were re-run afterwards and passed. ruff format, ruff check, pyright clean."
+
+            P1-G10-T3:
+              id: "P1-G10-T3"
+              source_id: "002"
+              title: "Document how consumers use Model"
+              description: "Document, for each kind of Model, how a consumer imports it through Interface, constructs it directly, converts it to JSON and creates it from JSON, and add a usage example that uses placeholders rather than usable credentials."
+              reason: "A consumer should be able to use the library from its documentation alone."
+              inputs:
+                - "The Interface presentation of the Entities"
+                - "The Development Documentation Standard"
+              skills: []
+              expected_result: "Documentation of the interface section that a consumer can follow to use any Entity."
+              depends_on:
+                - "P1-G9-T2"
+              constraints: []
+              acceptance: "Following the documentation alone, a reader can import, directly construct, convert to JSON, and create from JSON a representative Entity, and the example contains no usable secret."
+              verify: "Follow the documentation literally with a representative Entity and observe that each documented step works and that no example holds a usable credential."
+              status: "done"
+              log:
+                - at: "2026-09-25T21:11:09Z"
+                  transition: "todo -> claimed"
+                  by: "003"
+                  entry: "Claimed; dependency P1-G9-T2 done. Writing the overview and interface sections of the Component documentation."
+                - at: "2026-09-25T21:13:02Z"
+                  transition: "claimed -> done"
+                  by: "003"
+                  entry: "Component documentation now has an Overview (what Model is, that it is a library, the fifteen Entities, the four layers with Interface as the only public one) and an Interface section (direct construction, validated assignment, conversion to and from JSON, declared meaning, descriptions), all with placeholder-only examples; it states that to_json includes credential Fields, that exact decimals must be Decimal, and that date-times need a time zone. The Setup, Run, Verify and Troubleshooting sections belong to P1-G10-T4. Check (transient script): the six documented Python examples were extracted and executed literally, in order, in a fresh environment holding only the installed wheel (isolated mode) and every step worked, including a hidden sensitive value in a failure, exact-decimal JSON round trip and reading declared meaning; the documented Entity list equals the fifteen Entities Interface presents; five credential examples are all angle-bracket placeholders (plus one deliberate wrong-typed value used to show a hidden failure) and no token-like string appears in the document; sections are in the Documentation Standard's order so far. Result: passed."
+
+            P1-G10-T4:
+              id: "P1-G10-T4"
+              source_id: "002"
+              title: "Document setup, running, verification, and troubleshooting"
+              description: "Document how to set up the library, how to run it, how to verify it, and how to resolve its failures, and arrange the complete Component documentation in the Development Documentation Standard's order."
+              reason: "The Development Documentation Standard applies to every Component and requires these subjects in a fixed order."
+              inputs:
+                - "The Development Documentation Standard"
+                - "The completed library, its quality checks, and its documentation"
+              skills: []
+              expected_result: "Complete Component documentation in the required order that covers overview, interface, setup, run, verify, and troubleshooting."
+              depends_on:
+                - "P1-G10-T1"
+                - "P1-G10-T2"
+                - "P1-G10-T3"
+              constraints: []
+              acceptance: "The documentation contains the six required subjects in the required order, and following its setup and verification steps on a clean environment succeeds."
+              verify: "Check the order and presence of the six subjects, then follow the setup and verification steps in a clean environment and observe success."
+              status: "done"
+              log:
+                - at: "2026-09-25T21:14:00Z"
+                  transition: "todo -> claimed"
+                  by: "003"
+                  entry: "Claimed; dependencies P1-G10-T1, T2 and T3 done. Writing the Setup, Run, Verify and Troubleshooting sections and confirming the whole document follows the Documentation Standard's order."
+                - at: "2026-09-25T21:15:38Z"
+                  transition: "claimed -> done"
+                  by: "003"
+                  entry: "Component documentation is complete and in the Documentation Standard's order: Overview, Interface, Setup, Run, Verify, Troubleshooting. Setup covers working on Model and adding it to a consumer; there is no configuration or secret. Run explains that a library has nothing to start and gives a one-line demonstration. Verify gives the three quality checks and a short end-to-end check, and states that Model ships no test suite. Troubleshooting covers construction and assignment failures, hidden credential values, invalid JSON, decimal and date-time forms, a declaration mismatch while changing Model, a name missing from Interface, and a missing Python. Check (transient script): section order and non-emptiness confirmed; a fresh copy of the Component without an environment was set up with the documented commands, and Run and both Verify commands were executed exactly as written (format 23 files clean, lint passed, type check 0 errors, end-to-end printed Model verified); a brand-new consumer project was created and the documented consumer setup followed with the real path, and the documented Run command printed User there; the six Python examples were re-run against the final document in that installed consumer environment (7 credential examples, all placeholders); each observable troubleshooting symptom was reproduced and matched the documentation (both invalid-JSON messages, without echoing the text; float refused and string accepted for an exact decimal; date-time accepted with an offset or Z and refused without; hidden credential value in errors(); ImportError for a private name). One inaccuracy was found by re-reading my own draft before the check and corrected: it claimed importing a private layer raises ImportError, which Python does not do; the entry now describes the real symptom (a name missing from Interface). Result: passed. ruff format, ruff check, pyright clean."

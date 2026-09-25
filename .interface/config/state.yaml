@@ -1,0 +1,251 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/state.yaml"
+  path_note: "Mutable State Config: active Workflow position, aggregate phase progress, and the preserved execution Log."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current State Schema. Reconciliation preserves existing operational records and never replaces them with defaults."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read active for the current Workflow position, phases for aggregate progress, then log for recorded execution history."
+  selection: "A phase resolves to the entry keyed by its stable Target phase identifier; a Log Entry resolves by its id."
+  absence: "An empty phases mapping means no phase identity has been recorded; an empty log means no execution has been recorded."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "active"
+  - "phases"
+  - "log"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  active: "The active Workflow mode, phase, and the reason, author, and time of the last change."
+  phases: "Aggregate planning, development, and review progress keyed by stable Target phase identifier."
+  log: "The project's preserved history of recorded Skill executions and their outcomes."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  active:
+    mode: "development"
+    phase: "P1"
+    mode_reason: "Developing phase P1 was invoked."
+    set_by: "my-interface-develop"
+    set_at: "2026-09-25T20:46:07Z"
+  phases:
+    P1:
+      id: "P1"
+      planning: "completed"
+      development: "completed"
+      review: "not started"
+      completed_at: null
+    P2:
+      id: "P2"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      completed_at: null
+    P3:
+      id: "P3"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      completed_at: null
+    P4:
+      id: "P4"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      completed_at: null
+    P5:
+      id: "P5"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      completed_at: null
+    P6:
+      id: "P6"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      completed_at: null
+    P7:
+      id: "P7"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      completed_at: null
+  log:
+    - id: "001"
+      skill: "my-interface-configure"
+      phase: null
+      event: "configure"
+      outcome: "completed"
+      started_at: "2026-09-25T20:37:44Z"
+      completed_at: "2026-09-25T20:38:04Z"
+      duration: "20 seconds"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used:
+        - name: "my-interface-configure"
+          duration: null
+          token_usage:
+            input: null
+            output: null
+            total: null
+          report: "Generated the three declared Config Records from their Schemas."
+      open_questions: []
+      blockers: []
+      report: "Generated application.yaml, plan.yaml, and state.yaml from their Schemas composed with the general YAML structure; every record conforms to its Schema. The State Schema declares no generation block, so State's meta, policy, resolution, read_order, and content_map values were derived from its own structure, sections, and initialization rules. started_at is the time State was first written, after the Interface and Configure sources were read."
+      data:
+        generated:
+          - ".interface/config/application.yaml"
+          - ".interface/config/plan.yaml"
+          - ".interface/config/state.yaml"
+        drift:
+          - "State Schema has no generation block; its file-specific frame values were derived, not read."
+          - "Configure Skill names duration_ms; the State Schema defines only duration, so duration_ms is not recorded."
+    - id: "002"
+      skill: "my-interface-plan"
+      phase: "P1"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-09-25T20:38:52Z"
+      completed_at: "2026-09-25T20:44:18Z"
+      duration: "5:26"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used:
+        - name: "sqlmodel"
+          duration: null
+          token_usage:
+            input: null
+            output: null
+            total: null
+          report: "Read to check the selected modeling package's guidance against Model's Preferences; it recommends no alternative to a project choice."
+      open_questions: []
+      blockers: []
+      report: "Planned phase P1 (Model): one new Plan of 10 Groups and 31 Tasks, all todo. Plan Config and State Config were valid before planning. Interface Understanding and Target Understanding were established from current sources; no earlier Plan existed, so nothing was preserved, replaced, or removed."
+      data:
+        selection:
+          requested: "1"
+          resolved: "P1"
+          reason: "The Target identifies phases as P1 to P7; '1' matches Phase 1, id P1, which is enabled, ready, and first in order."
+        task_changes:
+          added:
+            - "All 31 Tasks in P1-G1 through P1-G10 (source_id 002): new Plan, no existing Task to reconcile."
+          changed: []
+          removed: []
+          preserved: []
+          replaced: []
+        structure:
+          - "P1-G1 Library structure: 1 Task"
+          - "P1-G2 Declaration: 2 Tasks"
+          - "P1-G3 Foundation: 7 Tasks"
+          - "P1-G4 Identity and platform Entities: 3 Tasks"
+          - "P1-G5 Reference-data Entities: 3 Tasks"
+          - "P1-G6 Account Entities: 2 Tasks"
+          - "P1-G7 Position-management rule Entities: 4 Tasks"
+          - "P1-G8 Trading Entities: 3 Tasks"
+          - "P1-G9 Public Interface: 2 Tasks"
+          - "P1-G10 Quality and documentation: 4 Tasks"
+        state_reconciliation:
+          - "Phase records P1 to P7 were created with initialization defaults from the Target's stable phase identifiers; only P1 planning changed (not started, in progress, completed)."
+        decisions:
+          - "One Entity per Task, with dependencies drawn from each Entity's declared References, so Entities can be developed in dependency order."
+          - "Model Preferences set testing to false, so every Task's verification is a transient check recorded in its Task Log; no Task widens the testing scope."
+          - "Initial Data is not planned: Model does not own it, and Target phase P2 covers it."
+          - "The Task Skills named (sqlmodel, pydantic:pydantic, python-skills:python-guidelines) are guidance only; sqlmodel is the Skill Model's Preferences name."
+        observations:
+          - "For Database planning (P2): the Target requires hash storage at rest for User credentials and encrypted storage at rest for Instance and Account credentials. Model records the credential Fields as sensitive but does not own storage treatment, so this reaches P2 only through the Target."
+          - "For Develop: the SQLModel Skill notes that direct construction of a table model skips validation, while Model requires validation at direct construction. P1-G3-T1 states the required behaviour; how to achieve it is Develop's decision."
+          - "The Non-Technical Definition is empty; Target meaning came from the Technical Definition alone."
+        drift:
+          - "Plan Skill names duration_ms; the State Schema defines only duration, so duration_ms is not recorded."
+          - "The interface-boundary-guard hook blocked one read-only validation command that referenced .interface/ paths. The same check was run from a scratchpad script reading only the Plan Config. The hook may be over-matching read-only commands."
+    - id: "003"
+      skill: "my-interface-develop"
+      phase: "P1"
+      event: "develop"
+      outcome: "completed"
+      started_at: "2026-09-25T20:46:07Z"
+      completed_at: "2026-09-25T21:16:00Z"
+      duration: "29:53"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used:
+        - name: "python-skills:python-guidelines"
+          duration: null
+          token_usage:
+            input: null
+            output: null
+            total: null
+          report: "Read and followed: uv as package manager, no speculative abstraction, behaviour verified by running it before relying on it."
+        - name: "pydantic:pydantic"
+          duration: null
+          token_usage:
+            input: null
+            output: null
+            total: null
+          report: "Read. It advises against Pydantic for classes instantiated in user code, which differs from Model Preferences; the Human was asked and chose to keep SQLModel."
+        - name: "sqlmodel"
+          duration: null
+          token_usage:
+            input: null
+            output: null
+            total: null
+          report: "Read. It notes that direct construction of a table model skips validation; Foundation validates through model_validate instead."
+      open_questions: []
+      blockers: []
+      report: "Developed phase P1 (Model): all 31 planned Tasks executed, each claimed before work and completed only after its own check passed, and each with its evidence in its Task Log. The Model library now exists as its own uv project with the Interface, Entity, Declaration and Foundation layers, fifteen Entities generated from the Target, descriptions, and complete documentation. The project's format, lint and type checks report nothing, and every check was re-run after later changes. Review has not run, so the phase is not yet reviewed or satisfied."
+      data:
+        selection:
+          requested: "1"
+          resolved: "P1"
+        tasks:
+          executed: 31
+          done: 31
+          blocked: 0
+          replaced: 0
+          by_group:
+            - "P1-G1 Library structure: 1 of 1"
+            - "P1-G2 Declaration: 2 of 2"
+            - "P1-G3 Foundation: 7 of 7"
+            - "P1-G4 to P1-G8 Entities: 15 of 15"
+            - "P1-G9 Public Interface: 2 of 2"
+            - "P1-G10 Quality and documentation: 4 of 4"
+          task_log_corrections:
+            - "P1-G3-T1 and P1-G9-T2 each have an appended correction entry: my completion entries miscounted the test defects found (one, not two). Nothing else changed."
+        human_decision:
+          question: "Keep SQLModel table models for Entities and Foundation (current Model Preference), or adopt the pydantic Skill's alternative of plain dataclasses?"
+          answer: "Keep SQLModel."
+        evidence:
+          - "Model's testing capability is false, so no test suite was persisted. Every check was a transient script kept outside the project, and each Task Log records the check and its outcome."
+          - "An independent checker that parses the Target separately compared all 15 Entities and 124 Fields with the Target; it was mutation-tested and caught 10 of 10 deliberate mismatches."
+          - "Consumers were simulated from a wheel installed into fresh environments in isolated mode, importing only from Interface."
+          - "The documented setup, run and verify steps were followed literally in a fresh copy and in a new consumer project."
+        decisions_others_must_live_with:
+          - "Component location: model/ at the project root, distribution trading-assistant-model, import package trading_assistant_model, Python 3.14 managed by uv, dependency sqlmodel 0.0.47 (pydantic 2.13.5, sqlalchemy 2.0.54), dev tools ruff 0.16.9 and pyright 1.1.414. No Interface source fixes a Component location; the choice follows the Component folders already referenced by the project ignore file. The Application Manifest was NOT updated (see gaps)."
+          - "Consumers import only from trading_assistant_model.interface. Interface presents the 15 Entity classes and the vocabulary for reading declared meaning (Declaration, FieldDeclaration, FieldType, ValueGeneration, UniqueConstraint, Reference, Index, Omitted, OMITTED); each Entity publishes its meaning as Entity.declaration."
+          - "to_json returns JSON text; from_json accepts JSON text, bytes or an already parsed object. Exact decimals and date-times are strings in JSON; a float is refused for an exact decimal; a date-time must carry a time zone."
+          - "The Target's Size 3 on Currency.code is a maximum length (not an exact length)."
+          - "A nullable Field with no declared default is optional and null when omitted; a Field with value generation (the identity) may be null until the value is generated."
+          - "Entities carry no unique, index or foreign-key setting; only the primary key is set on the table. Uniqueness, references and indexes are published through Declaration for Database to realize."
+          - "Sensitive values are hidden in every validation failure (replaced by [hidden]), but they still appear in an instance's repr and in to_json output."
+        gaps_and_observations:
+          - "Application Manifest: the model section of the Application Config is still empty. No planned Task publishes Model's public metadata, so it was not written (it would be package name trading_assistant_model, folder model, entry point trading_assistant_model.interface). Needs Plan or the Human to decide."
+          - "Two Target rules span Entities and were left out of Model as its Principles require: the selected Trading Platform defines which Instance connection Fields are required, and Instance and Account credentials must not be duplicated. They belong to Logic (P3)."
+          - "For Database (P2): the Target requires hashed storage for User credentials and encrypted storage for Instance and Account credentials; Model only marks those Fields sensitive."
+          - "Non-finite decimals and floats (NaN, Infinity) are not rejected because the Target declares no such restriction; to_json would write them as NaN or Infinity, which is not strict JSON."
+          - "The generated project file lists an author name and email that uv copied from the local git configuration."
+          - "The Foundation design relies on SQLModel 0.0.47 behaviour verified here (table models skip validation on construction and re-enter their initializer inside model_validate); a SQLModel upgrade should be re-verified by Review."
+        drift:
+          - "Develop Skill names duration_ms; the State Schema defines only duration, so duration_ms is not recorded."

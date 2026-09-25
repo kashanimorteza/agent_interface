@@ -1,0 +1,42 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/application.yaml"
+  path_note: "Shared Application Manifest public Component metadata."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current Application Schema and preserve valid public metadata."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read public metadata by canonical Component identifier."
+  selection: "Select the section whose key is the Component being described."
+  absence: "An empty section means that its owner has published no public metadata."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "components"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  components: "Public metadata for each declared Implementation Component."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  components:
+    development: {}
+    model: {}
+    database: {}
+    logic: {}
+    api: {}
+    presentation: {}
+    platform: {}
+    configure: {}
+    plan: {}
+    develop: {}
+    review: {}
+    implement: {}
+    launch: {}
+    reset: {}
+    state: {}
