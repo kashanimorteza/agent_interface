@@ -27,7 +27,7 @@ Model defines flat, technology-independent Domain Entities. Each Entity carries 
 
 ### Purpose
 
-Model gives Database and Logic one shared, technology-independent definition of each domain concept.
+Model gives Database and Logic one shared, technology-independent Entity representation of each domain concept.
 
 ### How It Works
 
@@ -52,7 +52,7 @@ Each Entity stands alone in its own unit under the Entity directory. Declaration
 - **Index** — a declared access intention for one Field or a declared combination of Fields.
 - **Value Generation** — a declared way to supply a Field value automatically, including Auto Increment, generated identifier, or generated timestamp.
 - **Declaration** — the public class that records an Entity's technology-independent data meaning and metadata without providing runtime behaviour.
-- **Foundation** — the public class that provides shared validation, `to_json()`, and `from_json()` behaviour without defining domain meaning.
+- **Foundation** — the public class that provides shared `to_json()` and `from_json()` behaviour without defining domain meaning.
 - **Intrinsic Rule** — a rule evaluated only from the data of the Domain Entity it governs.
 - **Interface** — a public Model file that presents the Entity classes and capabilities that consuming Components may import and use.
 
@@ -116,7 +116,7 @@ Declaration
 
 ### Foundation
 
-A public file that provides shared validation and conversion behaviour:
+A public file that provides shared conversion behaviour:
 
 ```text
 Foundation
@@ -154,7 +154,7 @@ Every Principle below is mandatory.
 
 **Rule:** Every meaningful Target concept has exactly one authoritative Domain Entity in Model, originating in domain meaning rather than a tool or consumer and never independently redefined elsewhere.
 
-**Why:** One authority prevents competing domain definitions from drifting apart.
+**Why:** One authority prevents competing Domain Entities from drifting apart.
 
 **Boundary:** Implementation-only structures without domain meaning do not require a Domain Entity.
 
@@ -182,7 +182,7 @@ Every Principle below is mandatory.
 
 ### Foundation provides shared Model behaviour
 
-**Rule:** Every Entity uses Foundation to verify its own data against Declaration during direct construction, `from_json()`, and `to_json()`. Foundation also converts an Instance to JSON through `to_json()` or creates an Instance from JSON through `from_json()`, without injecting Fields, constraints, or domain meaning.
+**Rule:** Foundation converts an Instance to JSON through `to_json()` or creates an Instance from JSON through `from_json()`, without injecting Fields, constraints, or domain meaning.
 
 **Why:** The library has one consistent implementation of its common behaviour without imposing a shared domain structure.
 
@@ -210,16 +210,6 @@ Every Principle below is mandatory.
 
 <br>
 
-### Model validates intrinsic data meaning
-
-**Rule:** Each Entity validates its own Field constraints and Intrinsic Rules against its Declaration during direct construction, conversion from JSON, and conversion to JSON. Construction applies declared defaults when an input omits a Field, distinguishes an omitted value from an explicit null, ignores unknown input Fields, and validates the resulting Instance.
-
-**Why:** Each instance entering or leaving a consuming Component has data that conforms to its Model Entity.
-
-**Boundary:** Cross-Model, stored-data, workflow, authorization, and external-context rules remain outside Model.
-
-<br>
-
 ### Declaration makes data structure available
 
 **Rule:** Declaration preserves and exposes every Target-declared Identity, Uniqueness Constraint, Relationship, Index intention, and Value Generation. A Reference identifies its target Entity and the identity it refers to; a Uniqueness Constraint or Index may cover one Field or a declared combination of Fields.
@@ -234,19 +224,9 @@ Every Principle below is mandatory.
 
 **Rule:** Declaration preserves each Field's logical Type, presence semantics, default, sensitivity, immutability, and every Target-declared restriction as usable structured meaning, including applicable value range, length, pattern, precision, scale, allowed values, or comparable constraint.
 
-**Why:** Validation and storage realization need more than descriptive prose to apply the same domain restriction consistently.
+**Why:** Consumers and storage realization need more than descriptive prose to use the same domain restriction consistently.
 
 **Boundary:** Declaration does not impose a fixed vocabulary or representation for a constraint that the Target does not declare.
-
-<br>
-
-### Foundation handles sensitive and immutable Fields safely
-
-**Rule:** Foundation applies the sensitivity and immutability that Declaration records: a sensitive supplied value does not appear in validation diagnostics, and a declared immutable Field cannot change after construction.
-
-**Why:** Sensitive data stays protected during normal model handling, while immutable domain facts remain stable.
-
-**Boundary:** Foundation does not own secrets management, encryption, authorization, audit history, or storage-level protection.
 
 <br>
 
@@ -313,7 +293,7 @@ Every obligation in the file, under the Principle it comes from.
 **Each domain concept has one authoritative Domain Entity**
 
 - **Must** — Define each meaningful Target concept once.
-- **Never** — Create competing or implementation-only domain definitions.
+- **Never** — Create competing or implementation-only Domain Entities.
 
 **Model preserves explicit Target meaning**
 
@@ -327,7 +307,7 @@ Every obligation in the file, under the Principle it comes from.
 
 **Foundation provides shared Model behaviour**
 
-- **Must** — Use Foundation to verify Entity data during construction, `to_json()`, and `from_json()`.
+- **Must** — Use Foundation for `to_json()` and `from_json()` conversion.
 - **Never** — Let Foundation define domain meaning or Fields.
 
 **Declaration records technology-independent data meaning**
@@ -340,11 +320,6 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — Keep Interface, Entity, Declaration, and Foundation public; present Entity classes and capabilities through Interface as a convenient entry point.
 - **Never** — Let public access duplicate Foundation behaviour or transfer Entity ownership to a consumer.
 
-**Model validates intrinsic data meaning**
-
-- **Must** — Let each Entity validate its own data during construction and both JSON conversion directions; apply declared defaults and ignore unknown input Fields.
-- **Never** — Treat an omitted value as an explicit null or own stored-data, workflow, or external-context rules.
-
 **Declaration makes data structure available**
 
 - **Must** — Expose every declared Identity, Uniqueness Constraint, Relationship, Index intention, and Value Generation for Database consumption.
@@ -352,13 +327,8 @@ Every obligation in the file, under the Principle it comes from.
 
 **Declaration preserves structured Field meaning**
 
-- **Must** — Keep each declared Field Type, rule, default, sensitivity, immutability, and restriction usable for validation and storage realization.
+- **Must** — Keep each declared Field Type, rule, default, sensitivity, immutability, and restriction usable by consumers and storage realization.
 - **Never** — Invent a constraint or force one constraint representation.
-
-**Foundation handles sensitive and immutable Fields safely**
-
-- **Must** — Apply declared sensitivity and immutability; keep sensitive input out of validation diagnostics.
-- **Never** — Own encryption, secret management, authorization, or audit history.
 
 **Model names express domain meaning**
 
