@@ -2,7 +2,7 @@
 meta:
   path: ".interface/implementation/development/model/model.yaml"
   path_note: "The Preferences layer of the Model Component."
-  purpose: "Configurable component, layout, verification, and technical implementation choices for Model."
+  purpose: "Configurable component, layout, data validation, and technical implementation choices for Model."
   standard: "Agent Project Interface"
   version: "12.7"
   updated: "2026-09-25"
@@ -18,9 +18,9 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read component, layout, and verification for Model's defaults and checks; then read development for technical implementation defaults. Preserve every explicit Target property, including false and null, and never write resolved values back into this file."
+  consumption: "Read component, layout, and data_validation for Model's defaults and data checks; then read Model's development section for technical implementation choices. Use Development Defaults only when Model leaves a shared choice unstated. Preserve every explicit Target property, including false and null, and never write resolved values back into this file."
   selection: "When the Target leaves a Model-owned choice unstated and this file supplies no default, use compatible professional judgment under Model Principles and record a consequential implementation choice with the implementation."
-  version_resolution: "development resolves every versioned technical item assigned to Model."
+  version_resolution: "Model's development section resolves Model-owned versioned technical items. Development resolves only its shared Defaults."
   matching: "An explicit Target property takes priority. A Preference default applies only to a missing property of an existing Field when the Target leaves that property unstated; otherwise no default applies. A Preference never creates, removes, or renames Target meaning."
 
 
@@ -29,7 +29,7 @@ read_order:
   - "component"
   - "capabilities"
   - "layout"
-  - "verification"
+  - "data_validation"
   - "development"
 
 
@@ -37,8 +37,8 @@ read_order:
 content_map:
   component: "The Model Component's type, language, and platform."
   capabilities: "Component capabilities that are currently inactive."
-  layout: "Layer-directory defaults and casing."
-  verification: "The checks used to verify the Model library."
+  layout: "Layer and directory names, Core class names, Foundation method names, and casing."
+  data_validation: "The responsibility and moments for Entity data validation."
   development: "The selected Pydantic implementation defaults."
 
 
@@ -61,18 +61,32 @@ content:
   # <!-------------------------------------------- layout -->
   layout:
     directories:
-      public_interface: "public_interface"
-      definitions: "entity"
-      supporting_content: "supporting"
+      public_interface: "model_interface"
+      definitions:
+        directory: "definitions"
+        entities: "entity"
+        value_objects: "value_object"
+        enumerations: "enumeration"
+      core:
+        directory: "core"
+        declaration: "declaration"
+        foundation: "foundation"
+    classes:
+      declaration: "Declaration"
+      foundation: "Foundation"
+    foundation:
+      methods:
+        to_json: "to_json"
+        from_json: "from_json"
     casing: "Spell every name in the selected language's own casing standard, and name files and folders by the same standard, as development.languages states it."
 
-  # <!-------------------------------------------- verification -->
-  verification:
-    checks:
-      - "public interface"
-      - "direct construction and JSON conversion"
-      - "declaration vocabulary publishing"
-      - "definition separation: one independent Domain Definition per unit and Model Foundation in its own"
+  # <!-------------------------------------------- data_validation -->
+  data_validation:
+    responsibility: "Each Entity verifies its own data against its Declaration through Foundation."
+    moments:
+      - "direct construction"
+      - "from_json"
+      - "to_json"
 
   # <!-------------------------------------------- development -->
   development:
@@ -86,6 +100,8 @@ content:
           guidance:
             project_rules:
               source_of_truth: "Generate each Model from its Domain Definition. Do not add Fields, constraints, defaults, or behavior that the Definition does not declare."
-              foundation: "Every Model inherits the shared Foundation. Foundation owns common validation and the two JSON conversion functions; a concrete Model owns only its declared Fields and validation rules."
-              definition_unit: "Create one Model class per Domain Definition and place it in its own module under the configured Definitions directory."
-              flat_structure: "Do not create nested, recursive, or cross-Model structures."
+              declaration: "Every Model uses the configured Declaration class to expose its technology-independent Fields, Types, Field Rules, Primary Key, Uniqueness Constraints, Relationships, Index intentions, and Value Generation. Declaration provides no runtime behaviour."
+              foundation: "Every Entity uses the configured Foundation class to verify its own data against Declaration during direct construction, from_json, and to_json. Foundation owns common behaviour; a concrete Model owns only its declared meaning."
+              definition_unit: "Create one Model class per Domain Definition and place it in its own module beneath the configured Entities, Value Objects, or Enumerations directory."
+              public_interface: "Expose every supported Model class, Definition, Type, and method through the configured Public Interface. Do not require a consumer to use a private Model resource."
+              flat_structure: "Do not nest, inherit, or copy Definitions. Record every Target-declared cross-Definition connection as an explicit Relationship or Reference."

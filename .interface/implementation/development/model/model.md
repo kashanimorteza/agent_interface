@@ -23,7 +23,7 @@ Model defines the Target's logical data concepts as a reusable library for Datab
 
 ### Overview
 
-Model defines flat Domain Definitions: their names, descriptions, Fields, logical types, constraints, defaults, kinds, and explicit Relationships. Definitions never nest within one another. Storage and application behaviour belong to other Components.
+Model defines flat, technology-independent Domain Definitions. Definitions are grouped as Entities, Value Objects, and Enumerations; each carries its own meaning, Fields, and explicit Relationships without nesting another Definition.
 
 ### Purpose
 
@@ -31,7 +31,7 @@ Model gives Database and Logic one shared, technology-independent definition of 
 
 ### How It Works
 
-Each Definition stands alone in the Definitions layer. Logic reaches the library through its Public Interface to import Models, construct Instances, and convert them to or from JSON. Database uses that same Interface to read each Model's Entity and Field meaning before realizing storage. Model Foundation gives every Model shared validation and conversion to and from JSON.
+Each Definition stands alone in the Definitions layer. The Core separates Declaration from Foundation: Declaration records technology-independent meaning, while Foundation provides shared behaviour. The Public Interface publishes every supported Model capability. Logic uses Model capabilities in programming; Database uses Definitions to create its Tables.
 
 <br>
 
@@ -39,16 +39,24 @@ Each Definition stands alone in the Definitions layer. Logic reaches the library
 ## Terms
 
 - **Domain Definition** — the authoritative logical definition of one meaningful concept in the Target's domain.
-- **Definitions** — the Model layer that contains one separate unit for each Domain Definition.
+- **Definitions** — the Model layer that contains every Entity, Value Object, and Enumeration in a separate unit.
+- **Entity** — a Domain Definition with an Identity that distinguishes one instance from another.
+- **Value Object** — a Domain Definition identified by its declared value rather than an independent Identity.
+- **Enumeration** — a Domain Definition whose complete allowed values are declared explicitly.
 - **Field** — one named value of a Domain Definition, with its domain meaning, logical type, and applicable constraints.
+- **Type** — the technology-independent category of values a Field may hold.
+- **Field Rule** — a declared rule for a Field's presence, default, sensitivity, immutability, length, or constraint.
 - **Relationship** — an explicit domain reference from one Domain Definition to another, without nesting either Definition inside the other.
 - **Identity** — the Field or Fields that distinguish one Entity from every other Entity of the same Definition.
+- **Primary Key** — the storage-facing expression of an Entity's declared Identity.
 - **Uniqueness Constraint** — a condition requiring one Field or a declared combination of Fields to have no duplicate value within its Definition.
 - **Reference** — the Field-level expression of a Relationship that identifies a value belonging to another Definition.
-- **Model Foundation** — the shared, technology-independent mechanisms through which Model realizations validate their data and convert to or from JSON.
+- **Index** — a declared access intention for one Field or a declared combination of Fields.
+- **Value Generation** — a declared way to supply a Field value automatically, including Auto Increment, generated identifier, or generated timestamp.
+- **Declaration** — the Core class that records a Definition's technology-independent data meaning and metadata without providing runtime behaviour.
+- **Foundation** — the Core class that provides shared validation, `to_json()`, and `from_json()` behaviour without defining domain meaning.
 - **Intrinsic Rule** — a rule evaluated only from the data of the Domain Definition it governs.
-- **Public Interface** — the only surface through which Logic imports and uses Models, and Database reads Model and Field meaning to realize storage.
-- **Supporting Content** — the Model Foundation and other common mechanisms supporting Definitions and the Public Interface.
+- **Public Interface** — the only surface through which consuming Components access every published Model class, Definition, Type, and method.
 
 <br>
 
@@ -60,7 +68,30 @@ Model
 └── Layers
     ├── Public Interface
     ├── Definitions
-    └── Supporting Content
+    │   ├── Entities
+    │   ├── Value Objects
+    │   └── Enumerations
+    └── Core
+        ├── Declaration
+        │   ├── Types
+        │   ├── Field Rules
+        │   │   ├── Required and Nullability
+        │   │   ├── Default Values
+        │   │   ├── Sensitivity
+        │   │   ├── Immutability
+        │   │   ├── Length
+        │   │   └── Constraints
+        │   ├── Primary Keys
+        │   ├── Relationships
+        │   ├── Unique Constraints
+        │   ├── Indexes
+        │   └── Value Generation
+        │       ├── Auto Increment
+        │       ├── Generated Identifier
+        │       └── Generated Timestamp
+        └── Foundation
+            ├── to_json()
+            └── from_json()
 ```
 
 <br>
@@ -68,19 +99,19 @@ Model
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Database** — reads each Model's Entity and Field meaning through the Public Interface to derive storage structure, including applicable identity, uniqueness, references, defaults, and constraints.
-- **Logic** — imports Model Definitions through the Public Interface, constructs validated Instances, and converts them to or from JSON.
+- **Database** — uses Definitions and their Declaration meaning through the Public Interface to create Tables and their applicable keys, relationships, constraints, defaults, and indexes.
+- **Logic** — uses published Model classes, Definitions, Types, and methods through the Public Interface in application programming.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-- **Public Interface** — provides Model import tools to consuming Components.
-- **Definitions** — contains each independent Domain Definition and its own content.
-- **Supporting Content** — provides Model Foundation and other shared content.
+- **Public Interface** — publishes every supported Model class, Definition, Type, and method for use by other Components.
+- **Definitions** — contains separate Entity, Value Object, and Enumeration units.
+- **Core** — contains Declaration, Foundation, and the shared rules and implementation standards required to realize Model.
 
-Technical choices, defaults, and directory names for these layers belong to Model Preferences. Each realization selects the structure through which it records and exposes Model meaning.
+Technical choices, names, and layout for these layers belong to Model Preferences. Declaration meaning remains independent of language, package, database, and Engine.
 
 <br>
 
@@ -136,29 +167,39 @@ Every Principle below is mandatory.
 
 <br>
 
-### Model Foundation provides common validation and JSON conversion
+### Foundation provides shared Model behaviour
 
-**Rule:** Every Model uses Model Foundation for shared validation and for converting an instance to JSON or creating an instance from JSON. Foundation never injects domain Fields or domain meaning.
+**Rule:** Every Entity uses Foundation to verify its own data against Declaration during direct construction, `from_json()`, and `to_json()`. Foundation also converts an Instance to JSON through `to_json()` or creates an Instance from JSON through `from_json()`, without injecting Fields, constraints, or domain meaning.
 
-**Why:** The library has one consistent implementation of its common functions without imposing a shared domain structure.
+**Why:** The library has one consistent implementation of its common behaviour without imposing a shared domain structure.
 
-**Boundary:** Foundation supplies only these common mechanisms; each Model retains its own Definition and validation rules.
+**Boundary:** Foundation supplies behaviour only. Declaration remains the owner of every Definition's meaning and metadata.
+
+<br>
+
+### Declaration records technology-independent data meaning
+
+**Rule:** Every Definition has a Declaration that records its Fields and applicable Types, Field Rules, Primary Keys, Uniqueness Constraints, Relationships, Index intentions, and Value Generation. Declaration provides no runtime behaviour.
+
+**Why:** Logic and Database can consume one complete data meaning without coupling that meaning to a language, package, database, or Engine.
+
+**Boundary:** Declaration does not choose Python types, table names, SQL syntax, index implementation, or database-specific auto-increment behaviour.
 
 <br>
 
 ### Model exposes one Public Interface
 
-**Rule:** Database and Logic use Model only through its Public Interface. Logic receives the tools required to import Models, construct Instances, and convert them to or from JSON. Database receives each Model's Entity and Field meaning, including applicable identity, uniqueness, references, defaults, and constraints, to derive storage structure. JSON conversion functions remain on the imported Model and come from Foundation.
+**Rule:** Database and Logic use Model only through its Public Interface. The Public Interface publishes every supported Model class, Definition, Type, and method. Logic uses those published capabilities in application programming. Database uses published Definitions and their Declaration meaning to create Tables and their applicable keys, relationships, constraints, defaults, and indexes.
 
 **Why:** One surface gives each consumer the information it needs while Model implementations remain free to change internally.
 
-**Boundary:** Consumers do not depend on private Model resources or reimplement Model conversion functions.
+**Boundary:** Consumers do not depend on private Model resources or reimplement Foundation behaviour.
 
 <br>
 
 ### Model validates intrinsic data meaning
 
-**Rule:** Model validates Field constraints and Intrinsic Rules evaluable from the data of one Model. Construction applies declared defaults when an input omits a Field, distinguishes an omitted value from an explicit null, ignores unknown input Fields, and validates the resulting instance.
+**Rule:** Each Entity validates its own Field constraints and Intrinsic Rules against its Declaration during direct construction, conversion from JSON, and conversion to JSON. Construction applies declared defaults when an input omits a Field, distinguishes an omitted value from an explicit null, ignores unknown input Fields, and validates the resulting Instance.
 
 **Why:** Each instance entering or leaving a consuming Component has data that conforms to its Model Definition.
 
@@ -166,33 +207,33 @@ Every Principle below is mandatory.
 
 <br>
 
-### Model makes identity, uniqueness, and references available
+### Declaration makes data structure available
 
-**Rule:** Model preserves and exposes every Target-declared Identity, Uniqueness Constraint, and Relationship. A Reference identifies its target Definition and the identity it refers to; a Uniqueness Constraint may cover one Field or a declared combination of Fields.
+**Rule:** Declaration preserves and exposes every Target-declared Identity, Uniqueness Constraint, Relationship, Index intention, and Value Generation. A Reference identifies its target Definition and the identity it refers to; a Uniqueness Constraint or Index may cover one Field or a declared combination of Fields.
 
 **Why:** Database can derive primary keys, unique constraints, and foreign keys from domain meaning without inventing relationships or persistence rules.
 
-**Boundary:** Model describes the domain facts. Database decides the table, column, index, foreign-key syntax, and physical enforcement used to realize them.
+**Boundary:** Declaration describes domain facts. Database decides the table, column, index implementation, foreign-key syntax, and physical enforcement used to realize them.
 
 <br>
 
-### Model preserves structured Field constraints
+### Declaration preserves structured Field meaning
 
-**Rule:** When Target meaning declares a Field restriction, Model preserves it as usable structured meaning, including applicable value range, length, pattern, precision, scale, allowed values, or comparable constraint.
+**Rule:** Declaration preserves each Field's logical Type, presence semantics, default, sensitivity, immutability, and every Target-declared restriction as usable structured meaning, including applicable value range, length, pattern, precision, scale, allowed values, or comparable constraint.
 
 **Why:** Validation and storage realization need more than descriptive prose to apply the same domain restriction consistently.
 
-**Boundary:** Model does not impose a fixed vocabulary or representation for constraints that the Target does not declare.
+**Boundary:** Declaration does not impose a fixed vocabulary or representation for a constraint that the Target does not declare.
 
 <br>
 
-### Model handles sensitive and immutable Fields safely
+### Foundation handles sensitive and immutable Fields safely
 
-**Rule:** Model preserves a Field's sensitivity classification and prevents a sensitive supplied value from appearing in validation diagnostics. When Target meaning declares a Field immutable, Model prevents that Field from changing after construction.
+**Rule:** Foundation applies the sensitivity and immutability that Declaration records: a sensitive supplied value does not appear in validation diagnostics, and a declared immutable Field cannot change after construction.
 
 **Why:** Sensitive data stays protected during normal model handling, while immutable domain facts remain stable.
 
-**Boundary:** Model does not own secrets management, encryption, authorization, audit history, or storage-level protection.
+**Boundary:** Foundation does not own secrets management, encryption, authorization, audit history, or storage-level protection.
 
 <br>
 
@@ -216,9 +257,9 @@ Every Principle below is mandatory.
 
 <br>
 
-### Model exposes complete logical meaning
+### Definitions expose complete logical meaning
 
-**Rule:** Every Model realization preserves each Definition's Target-derived meaning, including its Fields, constraints, defaults, identity, uniqueness, and references when applicable, in a form that Database and Logic can use through the Public Interface.
+**Rule:** Every Definition preserves its Target-derived meaning through Declaration, including its Fields, Types, Field Rules, Primary Key, Uniqueness Constraints, Relationships, Index intentions, and Value Generation when applicable, in a form that Database and Logic can use through the Public Interface.
 
 **Why:** Consumers receive complete domain information without prescribing one storage format or implementation structure.
 
@@ -232,13 +273,13 @@ Every Principle below is mandatory.
 
 **Why:** Flat Definitions prevent hidden structural coupling while explicit Relationships preserve the Target's domain connections.
 
-**Boundary:** A Relationship does not create nesting, inheritance, copied Fields, or shared ownership between Definitions. An Enumeration remains an independent Domain Definition with its own content.
+**Boundary:** A Relationship does not create nesting, inheritance, copied Fields, or shared ownership between Definitions. Entities, Value Objects, and Enumerations remain separate Definition kinds.
 
 <br>
 
 ### Each Domain Definition stands in its own unit
 
-**Rule:** Every Domain Definition has one unit of its own in the Definitions layer. Content used by exactly one Definition remains with it; shared content belongs to Supporting Content.
+**Rule:** Every Domain Definition has one unit of its own in the applicable Entities, Value Objects, or Enumerations branch of the Definitions layer. Content used by exactly one Definition remains with it; shared behaviour and metadata classes belong to Core.
 
 **Why:** One Definition per unit keeps domain boundaries visible and independently changeable.
 
@@ -266,42 +307,67 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — Preserve explicit Target Fields, constraints, defaults, and sensitivity classification.
 - **Never** — Invent or override Target meaning.
 
-**Model Foundation provides common validation and JSON conversion**
+**Logical Model meaning is independent of implementation technology**
 
-- **Must** — Use Foundation for validation and conversion to and from JSON.
-- **Never** — Let Foundation define domain meaning.
+- **Must** — Keep Definition meaning understandable without a language, package, database, Engine, runtime, or platform.
+- **Never** — Let a technical realization redefine logical meaning.
+
+**Foundation provides shared Model behaviour**
+
+- **Must** — Use Foundation to verify Entity data during construction, `to_json()`, and `from_json()`.
+- **Never** — Let Foundation define domain meaning or Fields.
+
+**Declaration records technology-independent data meaning**
+
+- **Must** — Keep Definition meaning and metadata in Declaration.
+- **Never** — Put runtime behaviour or technology-specific storage choices in Declaration.
 
 **Model exposes one Public Interface**
 
-- **Must** — Let Logic import and use Models, and let Database read their Entity and Field meaning, through the Public Interface.
-- **Never** — Depend on private Model resources or duplicate conversion functions.
+- **Must** — Publish every supported Model class, Definition, Type, and method through the Public Interface.
+- **Never** — Depend on private Model resources or duplicate Foundation behaviour.
 
 **Model validates intrinsic data meaning**
 
-- **Must** — Validate Field constraints and local Model rules; apply declared defaults and ignore unknown input Fields.
+- **Must** — Let each Entity validate its own data during construction and both JSON conversion directions; apply declared defaults and ignore unknown input Fields.
 - **Never** — Treat an omitted value as an explicit null or own stored-data, workflow, or external-context rules.
 
-**Model makes identity, uniqueness, and references available**
+**Declaration makes data structure available**
 
-- **Must** — Expose every declared Identity, Uniqueness Constraint, and Relationship for Database consumption.
+- **Must** — Expose every declared Identity, Uniqueness Constraint, Relationship, Index intention, and Value Generation for Database consumption.
 - **Never** — Choose physical storage details.
 
-**Model preserves structured Field constraints**
+**Declaration preserves structured Field meaning**
 
-- **Must** — Keep each declared Field restriction usable for validation and storage realization.
+- **Must** — Keep each declared Field Type, rule, default, sensitivity, immutability, and restriction usable for validation and storage realization.
 - **Never** — Invent a constraint or force one constraint representation.
 
-**Model handles sensitive and immutable Fields safely**
+**Foundation handles sensitive and immutable Fields safely**
 
-- **Must** — Preserve sensitivity and declared immutability; keep sensitive input out of validation diagnostics.
+- **Must** — Apply declared sensitivity and immutability; keep sensitive input out of validation diagnostics.
 - **Never** — Own encryption, secret management, authorization, or audit history.
 
-**Model exposes complete logical meaning**
+**Model names express domain meaning**
 
-- **Must** — Expose each Definition's logical meaning, including applicable identity, uniqueness, defaults, and references.
+- **Must** — Name every Model from Target domain meaning.
+- **Never** — Name a Model after an implementation tool or consumer representation.
+
+**Model remains separate from external concerns**
+
+- **Must** — Keep Model focused on logical Definitions.
+- **Never** — Own records, storage operations, transport, workflow orchestration, technical selection, or platform operation.
+
+**Definitions expose complete logical meaning**
+
+- **Must** — Expose each Definition's applicable Fields, Types, Field Rules, Primary Key, Uniqueness Constraints, Relationships, Index intentions, and Value Generation.
 - **Never** — Prescribe one declaration format or storage realization.
 
 **Definitions are flat and explicitly related**
 
 - **Must** — Keep every Definition flat and record every Target-declared cross-Definition connection explicitly.
 - **Never** — Nest, inherit, or copy one Definition into another.
+
+**Each Domain Definition stands in its own unit**
+
+- **Must** — Keep each Definition in its own unit under the applicable Definitions branch.
+- **Never** — Put Definition-specific content in Core.
