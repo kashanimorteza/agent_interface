@@ -1,0 +1,63 @@
+meta:
+  path: ".interface/config/application.yaml"
+  path_note: "Shared Application Manifest public Component metadata."
+
+policy:
+  agent_may_edit: true
+  rule: "Apply the current Application Schema and preserve valid public metadata."
+
+resolution:
+  consumption: "Read public metadata by canonical Component identifier."
+  selection: "Select the section whose key is the Component being described."
+  absence: "An empty section means that its owner has published no public metadata."
+
+read_order: ["components"]
+
+content_map:
+  components: "Public metadata for each declared Implementation Component."
+
+content:
+  components:
+    development: {}
+    model:
+      package_name: "my_model"
+      path: "my_model"
+      public_entrypoint: "my_model.interface"
+      public_interface:
+        - "Account"
+        - "AccountGroup"
+        - "Action"
+        - "ActionGroup"
+        - "Asset"
+        - "AtRest"
+        - "Broker"
+        - "Currency"
+        - "Declaration"
+        - "FieldDeclaration"
+        - "FieldType"
+        - "Foundation"
+        - "Generation"
+        - "GenerationKind"
+        - "Instance"
+        - "PartialGroup"
+        - "PartialRule"
+        - "Position"
+        - "Reference"
+        - "Sensitivity"
+        - "TradingPlatform"
+        - "TrailingGroup"
+        - "TrailingRule"
+        - "User"
+    database: {}
+    logic: {}
+    api: {}
+    presentation: {}
+    platform: {}
+    configure: {}
+    plan: {}
+    develop: {}
+    review: {}
+    implement: {}
+    launch: {}
+    reset: {}
+    state: {}

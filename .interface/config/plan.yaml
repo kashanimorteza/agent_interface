@@ -1,0 +1,1012 @@
+meta:
+  path: ".interface/config/plan.yaml"
+  path_note: "Mutable Plans, Groups, Tasks, counts and progress."
+
+policy:
+  agent_may_edit: true
+  rule: "Apply the current Plan Component and the active operation's ownership rules."
+
+resolution:
+  consumption: "Read task_count, then the Plan selected by stable Target phase identifier, with its Groups and Tasks in nesting order."
+  selection: "A requested phase resolves to the Plan keyed by that phase identifier; a Task resolves within its containing Group and Plan."
+  absence: "No matching Plan means no current planning record exists for that phase."
+
+read_order: ["task_count", "plans"]
+
+content_map:
+  task_count: "Total number of stored Tasks."
+  plans: "Current phase Plans and their Groups and Tasks."
+
+content:
+  task_count: 24
+  plans:
+    P1:
+      id: P1
+      title: Model
+      order: 1
+      target: Model
+      does: Deliver the independent, reusable Model library that defines every Target-declared Entity exactly as declared, with its Fields, relationships, and rules.
+      constraints: []
+      task_count: 24
+      groups:
+        P1-G1:
+          id: P1-G1
+          title: Shared Model layers
+          description: 'The shared mechanisms every Entity depends on: recording technology-independent Entity meaning and the common JSON conversion behaviour.'
+          area: Declaration and Foundation layers
+          does: Every Entity can record its technology-independent meaning and convert to and from JSON through shared, domain-neutral layers.
+          constraints: []
+          task_count: 2
+          tasks:
+            P1-G1-T1:
+              id: P1-G1-T1
+              source_id: '002'
+              title: Provide the Declaration layer
+              description: Provide the shared layer through which an Entity records its Fields with their Types and Field Rules, its Primary Key, Uniqueness Constraints, Relationships, Index intentions, and Value Generation, as structured meaning a consumer can read without any runtime behaviour.
+              reason: Every Entity must carry complete logical meaning that Database and Logic can consume without inventing structure.
+              inputs: []
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A public Declaration layer that can record every kind of Entity fact named above in structured, readable form and holds no runtime behaviour.
+              depends_on: []
+              constraints: []
+              acceptance: An Entity can record each kind of logical fact through Declaration and a consumer can read every recorded fact back in structured form; Declaration itself performs no runtime action.
+              verify: Recording a sample Entity's facts of every kind through the public Declaration layer and reading them back yields exactly what was recorded, and the layer exposes no operational behaviour.
+              status: done
+              log:
+              - at: '2026-09-26T03:54:48+03:30'
+                log_entry: '003'
+                event: claimed
+                from_status: todo
+                to_status: claimed
+                note: Claimed before creating the shared Declaration and Foundation layers.
+              - at: '2026-09-26T03:55:58+03:30'
+                log_entry: '003'
+                event: completed
+                from_status: claimed
+                to_status: done
+                check: Transient script recorded a sample Entity's facts of every kind (fields with Types/rules/sensitivity/at-rest/length/immutability, primary key, single and combined uniqueness, reference, index, all three Value Generation kinds, cross-Entity rule) and read them back; asserted exact equality, immutability, and that no record type exposes callable behaviour.
+                outcome: 'passed: all assertions held'
+                locations: my_model/src/my_model/declaration.py
+            P1-G1-T2:
+              id: P1-G1-T2
+              source_id: '002'
+              title: Provide the Foundation layer
+              description: Provide the shared layer that converts an Entity instance to JSON and creates an instance from JSON, without adding Fields, constraints, or domain meaning of its own.
+              reason: Every Entity needs one consistent implementation of the common conversion behaviour rather than a copy per Entity.
+              inputs: []
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A public Foundation layer offering instance-to-JSON conversion and JSON-to-instance creation that any Entity can use.
+              depends_on: []
+              constraints: []
+              acceptance: Converting an instance to JSON and creating an instance from that JSON returns an instance with identical values, and the layer contributes no Field or constraint.
+              verify: Round-tripping a sample instance through the public Foundation conversion returns equal values, and the sample exposes no Fields beyond those it declares.
+              status: done
+              log:
+              - at: '2026-09-26T03:54:48+03:30'
+                log_entry: '003'
+                event: claimed
+                from_status: todo
+                to_status: claimed
+                note: Claimed before creating the shared Declaration and Foundation layers.
+              - at: '2026-09-26T03:55:59+03:30'
+                log_entry: '003'
+                event: completed
+                from_status: claimed
+                to_status: done
+                check: Transient script round-tripped a plain and a table Entity (Decimal, aware datetime, nullable string) through to_json then from_json from both str and bytes; asserted equal values, same type, and that Foundation itself declares no Fields and adds none.
+                outcome: 'passed: all assertions held'
+                locations: my_model/src/my_model/foundation.py
+        P1-G2:
+          id: P1-G2
+          title: Access and connectivity Entities
+          description: The Entities that identify who uses the system and how it reaches supported trading platforms.
+          area: Entities identifying users, trading platforms, and platform connections
+          does: User, Trading Platform, and Instance exist as complete, independent Domain Entities.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G2-T1:
+              id: P1-G2-T1
+              source_id: '002'
+              title: Provide the User Entity
+              description: Provide the Entity for an independent system user whose settings stay distinct from every other user's, including the sensitivity classification of its credential Fields.
+              reason: Every user-owned Entity refers to a User, so the ownership anchor must exist before the Entities that reference it.
+              inputs:
+              - The Target's declared definition of User
+              - Declaration layer
+              - Foundation layer
+              skills:
+              - sqlmodel
+              - python-skills:python-guidelines
+              expected_result: A public User Entity carrying every Field, Field Rule, Identity, Uniqueness Constraint, and Value Generation the Target declares for it.
+              depends_on:
+              - P1-G1-T1
+              - P1-G1-T2
+              constraints: []
+              acceptance: The User Entity presents exactly the meaning the Target declares for it, including which Fields are credentials and which values must be unique.
+              verify: The User Entity's Declaration exposes each declared Field with its Type, nullability, default, and sensitivity, plus its identity and uniqueness; a User built directly with declared values converts to JSON and back unchanged.
+              status: done
+              log:
+              - at: '2026-09-26T03:58:08+03:30'
+                log_entry: '003'
+                event: claimed
+                from_status: todo
+                to_status: claimed
+                note: Claimed before generating the User and Trading Platform Entities.
+              - at: '2026-09-26T03:58:36+03:30'
+                log_entry: '003'
+                event: completed
+                from_status: claimed
+                to_status: done
+                check: 'Transient check parsed the Target''s own definition of the Entity and compared it with the Entity''s Declaration and its table columns: field order, names, Types, nullability, defaults (with exact Python type), length, purposes, primary key and Auto Increment generation, single and combined uniqueness (Declaration and table), references (Declaration and foreign key targets), credential sensitivity with at-rest protection. It then built an instance directly and round-tripped it through to_json/from_json (str and bytes), also with nullable Fields set.'
+                outcome: 'passed: User matched the Target on every compared point'
+                locations: my_model/src/my_model/entity/user.py
+            P1-G2-T2:
+              id: P1-G2-T2
+              source_id: '002'
+              title: Provide the Trading Platform Entity
+              description: Provide the Entity for a supported trading platform standard, kept independent of any exchange or broker and identifying which platform implementation applies.
+              reason: Instances and Positions must refer to a platform without coupling the system to one exchange or broker.
+              inputs:
+              - The Target's declared definition of Trading Platform
+              - Declaration layer
+              - Foundation layer
+              skills:
+              - sqlmodel
+              - python-skills:python-guidelines
+              expected_result: A public Trading Platform Entity carrying every Field and rule the Target declares for it.
+              depends_on:
+              - P1-G1-T1
+              - P1-G1-T2
+              constraints: []
+              acceptance: The Trading Platform Entity presents exactly the meaning the Target declares for it, including its unique name and its implementation-identifying code.
+              verify: The Trading Platform Entity's Declaration exposes every declared Field, default, and uniqueness; a Trading Platform built directly with declared values converts to JSON and back unchanged.
+              status: done
+              log:
+              - at: '2026-09-26T03:58:08+03:30'
+                log_entry: '003'
+                event: claimed
+                from_status: todo
+                to_status: claimed
+                note: Claimed before generating the User and Trading Platform Entities.
+              - at: '2026-09-26T03:58:37+03:30'
+                log_entry: '003'
+                event: completed
+                from_status: claimed
+                to_status: done
+                check: 'Transient check parsed the Target''s own definition of the Entity and compared it with the Entity''s Declaration and its table columns: field order, names, Types, nullability, defaults (with exact Python type), length, purposes, primary key and Auto Increment generation, single and combined uniqueness (Declaration and table), references (Declaration and foreign key targets), credential sensitivity with at-rest protection. It then built an instance directly and round-tripped it through to_json/from_json (str and bytes), also with nullable Fields set.'
+                outcome: 'passed: Trading Platform matched the Target on every compared point'
+                locations: my_model/src/my_model/entity/trading_platform.py
+            P1-G2-T3:
+              id: P1-G2-T3
+              source_id: '002'
+              title: Provide the Instance Entity
+              description: Provide the Entity for a user-owned connection through which the system reaches a supported trading platform, including the sensitivity classification of its credential Fields.
+              reason: Accounts connect to a trading platform through an Instance, so the connection concept needs its own Entity.
+              inputs:
+              - The Target's declared definition of Instance
+              - Declaration layer
+              - Foundation layer
+              - Completed User Entity
+              - Completed Trading Platform Entity
+              skills:
+              - sqlmodel
+              - python-skills:python-guidelines
+              expected_result: A public Instance Entity carrying every declared Field and rule, with explicit references to its owning User and its Trading Platform.
+              depends_on:
+              - P1-G1-T1
+              - P1-G1-T2
+              - P1-G2-T1
+              - P1-G2-T2
+              constraints: []
+              acceptance: The Instance Entity presents exactly the meaning the Target declares for it, including both references, its per-owner name uniqueness, and which Fields are credentials.
+              verify: The Instance Entity's Declaration exposes both references with their target Entity and identity, the combined uniqueness, and each Field's sensitivity; an Instance built directly with declared values converts to JSON and back unchanged.
+              status: done
+              log:
+              - at: '2026-09-26T03:58:37+03:30'
+                log_entry: '003'
+                event: claimed
+                from_status: todo
+                to_status: claimed
+                note: Claimed before generating this layer of Entities; their dependencies were done.
+              - at: '2026-09-26T03:59:00+03:30'
+                log_entry: '003'
+                event: completed
+                from_status: claimed
+                to_status: done
+                check: 'Transient check parsed the Target''s own definition of the Entity and compared it with the Entity''s Declaration and its table columns: field order, names, Types, nullability, defaults (with exact Python type), length, purposes, primary key and Auto Increment generation, single and combined uniqueness (Declaration and table), references (Declaration and foreign key targets), credential sensitivity with at-rest protection, and any cross-Entity rule text. It then built an instance directly and round-tripped it through to_json/from_json (str and bytes), also with nullable Fields set.'
+                outcome: 'passed: Instance matched the Target on every compared point'
+                locations: my_model/src/my_model/entity/instance.py
+        P1-G3:
+          id: P1-G3
+          title: Reference data Entities
+          description: The Entities that describe currencies, brokers, and the assets a broker makes tradable.
+          area: Entities for currencies, brokers, and tradable assets
+          does: Currency, Broker, and Asset exist as complete, independent Domain Entities.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G3-T1:
+              id: P1-G3-T1
+              source_id: '002'
+              title: Provide the Currency Entity
+              description: Provide the Entity for a currency the trading system can use, identifying its standard code, display symbol, associated country or region, and monetary decimal precision.
+              reason: Accounts state their base currency by reference, so currencies need their own Entity.
+              inputs:
+              - The Target's declared definition of Currency
+              - Declaration layer
+              - Foundation layer
+              - Completed User Entity
+              skills:
+              - sqlmodel
+              - python-skills:python-guidelines
+              expected_result: A public Currency Entity carrying every declared Field and rule, with an explicit reference to its owning User.
+              depends_on:
+              - P1-G1-T1
+              - P1-G1-T2
+              - P1-G2-T1
+              constraints: []
+              acceptance: The Currency Entity presents exactly the meaning the Target declares for it, including the declared code length and the per-owner uniqueness of the code.
+              verify: The Currency Entity's Declaration exposes the code length restriction, the default precision, the owner reference, and the combined uniqueness; a Currency built directly with declared values converts to JSON and back unchanged.
+              status: done
+              log:
+              - at: '2026-09-26T03:58:37+03:30'
+                log_entry: '003'
+                event: claimed
+                from_status: todo
+                to_status: claimed
+                note: Claimed before generating this layer of Entities; their dependencies were done.
+              - at: '2026-09-26T03:59:00+03:30'
+                log_entry: '003'
+                event: completed
+                from_status: claimed
+                to_status: done
+                check: 'Transient check parsed the Target''s own definition of the Entity and compared it with the Entity''s Declaration and its table columns: field order, names, Types, nullability, defaults (with exact Python type), length, purposes, primary key and Auto Increment generation, single and combined uniqueness (Declaration and table), references (Declaration and foreign key targets), credential sensitivity with at-rest protection, and any cross-Entity rule text. It then built an instance directly and round-tripped it through to_json/from_json (str and bytes), also with nullable Fields set.'
+                outcome: 'passed: Currency matched the Target on every compared point'
+                locations: my_model/src/my_model/entity/currency.py
+            P1-G3-T2:
+              id: P1-G3-T2
+              source_id: '002'
+              title: Provide the Broker Entity
+              description: Provide the Entity for a supported broker and the user who owns its configuration, without coupling it to one trading platform.
+              reason: Assets, Accounts, and Positions all refer to a broker, so a broker needs its own Entity.
+              inputs:
+              - The Target's declared definition of Broker
+              - Declaration layer
+              - Foundation layer
+              - Completed User Entity
+              skills:
+              - sqlmodel
+              - python-skills:python-guidelines
+              expected_result: A public Broker Entity carrying every declared Field and rule, with an explicit reference to its owning User.
+              depends_on:
+              - P1-G1-T1
+              - P1-G1-T2
+              - P1-G2-T1
+              constraints: []
+              acceptance: The Broker Entity presents exactly the meaning the Target declares for it, including its owner reference and per-owner name uniqueness.
+              verify: The Broker Entity's Declaration exposes the owner reference, the default active state, and the combined uniqueness; a Broker built directly with declared values converts to JSON and back unchanged.
+              status: done
+              log:
+              - at: '2026-09-26T03:58:37+03:30'
+                log_entry: '003'
+                event: claimed
+                from_status: todo
+                to_status: claimed
+                note: Claimed before generating this layer of Entities; their dependencies were done.
+              - at: '2026-09-26T03:59:00+03:30'
+                log_entry: '003'
+                event: completed
+                from_status: claimed
+                to_status: done
+                check: 'Transient check parsed the Target''s own definition of the Entity and compared it with the Entity''s Declaration and its table columns: field order, names, Types, nullability, defaults (with exact Python type), length, purposes, primary key and Auto Increment generation, single and combined uniqueness (Declaration and table), references (Declaration and foreign key targets), credential sensitivity with at-rest protection, and any cross-Entity rule text. It then built an instance directly and round-tripped it through to_json/from_json (str and bytes), also with nullable Fields set.'
+                outcome: 'passed: Broker matched the Target on every compared point'
+                locations: my_model/src/my_model/entity/broker.py
+            P1-G3-T3:
+              id: P1-G3-T3
+              source_id: '002'
+              title: Provide the Asset Entity
+              description: Provide the Entity for a tradable asset offered by a broker, identifying its category, point size, and price precision.
+              reason: Actions select the asset to trade, so the complete set of tradable assets must be modelled.
+              inputs:
+              - The Target's declared definition of Asset
+              - Declaration layer
+              - Foundation layer
+              - Completed Broker Entity
+              skills:
+              - sqlmodel
+              - python-skills:python-guidelines
+              expected_result: A public Asset Entity carrying every declared Field and rule, with an explicit reference to its Broker.
+              depends_on:
+              - P1-G1-T1
+              - P1-G1-T2
+              - P1-G3-T2
+              constraints: []
+              acceptance: The Asset Entity presents exactly the meaning the Target declares for it, including its Broker reference and the uniqueness of a symbol within one broker.
+              verify: The Asset Entity's Declaration exposes the Broker reference, the declared defaults, and the combined uniqueness; an Asset built directly with declared values converts to JSON and back unchanged.
+              status: done
+              log:
+              - at: '2026-09-26T03:59:01+03:30'
+                log_entry: '003'
+                event: claimed
+                from_status: todo
+                to_status: claimed
+                note: Claimed before generating this layer of Entities; their dependencies were done.
+              - at: '2026-09-26T03:59:09+03:30'
+                log_entry: '003'
+                event: completed
+                from_status: claimed
+                to_status: done
+                check: 'Transient check parsed the Target''s own definition of the Entity and compared it with the Entity''s Declaration and its table columns: field order, names, Types, nullability, defaults (with exact Python type), length, purposes, primary key and Auto Increment generation, single and combined uniqueness (Declaration and table), references (Declaration and foreign key targets), credential sensitivity with at-rest protection, and any cross-Entity rule text. It then built an instance directly and round-tripped it through to_json/from_json (str and bytes), also with nullable Fields set.'
+                outcome: 'passed: Asset matched the Target on every compared point'
+                locations: my_model/src/my_model/entity/asset.py
+        P1-G4:
+          id: P1-G4
+          title: Account Entities
+          description: The Entities that organize trading accounts and describe each funded account.
+          area: Entities for account organization and funded trading accounts
+          does: Account Group and Account exist as complete, independent Domain Entities.
+          constraints: []
+          task_count: 2
+          tasks:
+            P1-G4-T1:
+              id: P1-G4-T1
+              source_id: '002'
+              title: Provide the Account Group Entity
+              description: Provide the Entity for an independent group one user uses to organize trading accounts.
+              reason: Accounts belong to a group, so the grouping concept needs its own Entity.
+              inputs:
+              - The Target's declared definition of Account Group
+              - Declaration layer
+              - Foundation layer
+              - Completed User Entity
+              skills:
+              - sqlmodel
+              - python-skills:python-guidelines
+              expected_result: A public Account Group Entity carrying every declared Field and rule, with an explicit reference to its owning User.
+              depends_on:
+              - P1-G1-T1
+              - P1-G1-T2
+              - P1-G2-T1
+              constraints: []
+              acceptance: The Account Group Entity presents exactly the meaning the Target declares for it, including its owner reference and per-owner name uniqueness.
+              verify: The Account Group Entity's Declaration exposes the owner reference, the default active state, and the combined uniqueness; an Account Group built directly with declared values converts to JSON and back unchanged.
+              status: done
+              log:
+              - at: '2026-09-26T03:58:37+03:30'
+                log_entry: '003'
+                event: claimed
+                from_status: todo
+                to_status: claimed
+                note: Claimed before generating this layer of Entities; their dependencies were done.
+              - at: '2026-09-26T03:59:00+03:30'
+                log_entry: '003'
+                event: completed
+                from_status: claimed
+                to_status: done
+                check: 'Transient check parsed the Target''s own definition of the Entity and compared it with the Entity''s Declaration and its table columns: field order, names, Types, nullability, defaults (with exact Python type), length, purposes, primary key and Auto Increment generation, single and combined uniqueness (Declaration and table), references (Declaration and foreign key targets), credential sensitivity with at-rest protection, and any cross-Entity rule text. It then built an instance directly and round-tripped it through to_json/from_json (str and bytes), also with nullable Fields set.'
+                outcome: 'passed: Account Group matched the Target on every compared point'
+                locations: my_model/src/my_model/entity/account_group.py
+            P1-G4-T2:
+              id: P1-G4-T2
+              source_id: '002'
+              title: Provide the Account Entity
+              description: Provide the Entity for a funded trading account, holding its account-level login details and its explicit connections to its group, broker, connection Instance, and base currency, including the sensitivity classification of its credential.
+              reason: Trades and positions are executed through an Account, so it must express every declared connection to the rest of the domain.
+              inputs:
+              - The Target's declared definition of Account
+              - Declaration layer
+              - Foundation layer
+              - Completed Account Group Entity
+              - Completed Broker Entity
+              - Completed Instance Entity
+              - Completed Currency Entity
+              skills:
+              - sqlmodel
+              - python-skills:python-guidelines
+              expected_result: A public Account Entity carrying every declared Field and rule, with explicit references to its Account Group, Broker, Instance, and base Currency.
+              depends_on:
+              - P1-G1-T1
+              - P1-G1-T2
+              - P1-G4-T1
+              - P1-G3-T2
+              - P1-G2-T3
+              - P1-G3-T1
+              constraints: []
+              acceptance: The Account Entity presents exactly the meaning the Target declares for it, including every reference, the uniqueness of its group, broker, and instance combination, and its credential classification.
+              verify: The Account Entity's Declaration exposes every reference with its target Entity and identity, the combined uniqueness, the declared defaults, and the credential sensitivity; an Account built directly with declared values converts to JSON and back unchanged.
+              status: done
+              log:
+              - at: '2026-09-26T03:59:01+03:30'
+                log_entry: '003'
+                event: claimed
+                from_status: todo
+                to_status: claimed
+                note: Claimed before generating this layer of Entities; their dependencies were done.
+              - at: '2026-09-26T03:59:09+03:30'
+                log_entry: '003'
+                event: completed
+                from_status: claimed
+                to_status: done
+                check: 'Transient check parsed the Target''s own definition of the Entity and compared it with the Entity''s Declaration and its table columns: field order, names, Types, nullability, defaults (with exact Python type), length, purposes, primary key and Auto Increment generation, single and combined uniqueness (Declaration and table), references (Declaration and foreign key targets), credential sensitivity with at-rest protection, and any cross-Entity rule text. It then built an instance directly and round-tripped it through to_json/from_json (str and bytes), also with nullable Fields set.'
+                outcome: 'passed: Account matched the Target on every compared point'
+                locations: my_model/src/my_model/entity/account.py
+        P1-G5:
+          id: P1-G5
+          title: Position management rule Entities
+          description: The Entities that define the rule sets managing Stop Loss, Take Profit, and partial closing of open trades.
+          area: Entities for trailing and partial-close rule sets
+          does: Trailing Group, Trailing Rule, Partial Group, and Partial Rule exist as complete, independent Domain Entities.
+          constraints: []
+          task_count: 4
+          tasks:
+            P1-G5-T1:
+              id: P1-G5-T1
+              source_id: '002'
+              title: Provide the Trailing Group Entity
+              description: Provide the Entity for an independent group of rules that manage Stop Loss and Take Profit during a trade.
+              reason: Trailing Rules, Actions, and Positions refer to a rule set, so the group needs its own Entity.
+              inputs:
+              - The Target's declared definition of Trailing Group
+              - Declaration layer
+              - Foundation layer
+              - Completed User Entity
+              skills:
+              - sqlmodel
+              - python-skills:python-guidelines
+              expected_result: A public Trailing Group Entity carrying every declared Field and rule, with an explicit reference to its owning User.
+              depends_on:
+              - P1-G1-T1
+              - P1-G1-T2
+              - P1-G2-T1
+              constraints: []
+              acceptance: The Trailing Group Entity presents exactly the meaning the Target declares for it, including its owner reference and per-owner name uniqueness.
+              verify: The Trailing Group Entity's Declaration exposes the owner reference, the default active state, and the combined uniqueness; a Trailing Group built directly with declared values converts to JSON and back unchanged.
+              status: done
+              log:
+              - at: '2026-09-26T03:58:37+03:30'
+                log_entry: '003'
+                event: claimed
+                from_status: todo
+                to_status: claimed
+                note: Claimed before generating this layer of Entities; their dependencies were done.
+              - at: '2026-09-26T03:59:01+03:30'
+                log_entry: '003'
+                event: completed
+                from_status: claimed
+                to_status: done
+                check: 'Transient check parsed the Target''s own definition of the Entity and compared it with the Entity''s Declaration and its table columns: field order, names, Types, nullability, defaults (with exact Python type), length, purposes, primary key and Auto Increment generation, single and combined uniqueness (Declaration and table), references (Declaration and foreign key targets), credential sensitivity with at-rest protection, and any cross-Entity rule text. It then built an instance directly and round-tripped it through to_json/from_json (str and bytes), also with nullable Fields set.'
+                outcome: 'passed: Trailing Group matched the Target on every compared point'
+                locations: my_model/src/my_model/entity/trailing_group.py
+            P1-G5-T2:
+              id: P1-G5-T2
+              source_id: '002'
+              title: Provide the Trailing Rule Entity
+              description: Provide the Entity for one rule within a Trailing Group, defining its activation threshold and the Take Profit and Stop Loss adjustments to apply.
+              reason: A group only organizes rules; each rule's activation condition and adjustments need their own Entity.
+              inputs:
+              - The Target's declared definition of Trailing Rule
+              - Declaration layer
+              - Foundation layer
+              - Completed Trailing Group Entity
+              skills:
+              - sqlmodel
+              - python-skills:python-guidelines
+              expected_result: A public Trailing Rule Entity carrying every declared Field and rule, with an explicit reference to its Trailing Group.
+              depends_on:
+              - P1-G1-T1
+              - P1-G1-T2
+              - P1-G5-T1
+              constraints: []
+              acceptance: The Trailing Rule Entity presents exactly the meaning the Target declares for it, including its membership in exactly one Trailing Group and the uniqueness of its trigger threshold within that group.
+              verify: The Trailing Rule Entity's Declaration exposes the group reference, the optional adjustments as nullable, and the combined uniqueness; a Trailing Rule built directly with declared values converts to JSON and back unchanged.
+              status: done
+              log:
+              - at: '2026-09-26T03:59:01+03:30'
+                log_entry: '003'
+                event: claimed
+                from_status: todo
+                to_status: claimed
+                note: Claimed before generating this layer of Entities; their dependencies were done.
+              - at: '2026-09-26T03:59:09+03:30'
+                log_entry: '003'
+                event: completed
+                from_status: claimed
+                to_status: done
+                check: 'Transient check parsed the Target''s own definition of the Entity and compared it with the Entity''s Declaration and its table columns: field order, names, Types, nullability, defaults (with exact Python type), length, purposes, primary key and Auto Increment generation, single and combined uniqueness (Declaration and table), references (Declaration and foreign key targets), credential sensitivity with at-rest protection, and any cross-Entity rule text. It then built an instance directly and round-tripped it through to_json/from_json (str and bytes), also with nullable Fields set.'
+                outcome: 'passed: Trailing Rule matched the Target on every compared point'
+                locations: my_model/src/my_model/entity/trailing_rule.py
+            P1-G5-T3:
+              id: P1-G5-T3
+              source_id: '002'
+              title: Provide the Partial Group Entity
+              description: Provide the Entity for an independent group of rules that decide how much of an open trade to close at given profit or loss thresholds.
+              reason: Partial Rules, Actions, and Positions refer to a rule set, so the group needs its own Entity.
+              inputs:
+              - The Target's declared definition of Partial Group
+              - Declaration layer
+              - Foundation layer
+              - Completed User Entity
+              skills:
+              - sqlmodel
+              - python-skills:python-guidelines
+              expected_result: A public Partial Group Entity carrying every declared Field and rule, with an explicit reference to its owning User.
+              depends_on:
+              - P1-G1-T1
+              - P1-G1-T2
+              - P1-G2-T1
+              constraints: []
+              acceptance: The Partial Group Entity presents exactly the meaning the Target declares for it, including its owner reference and per-owner name uniqueness.
+              verify: The Partial Group Entity's Declaration exposes the owner reference, the default active state, and the combined uniqueness; a Partial Group built directly with declared values converts to JSON and back unchanged.
+              status: done
+              log:
+              - at: '2026-09-26T03:58:37+03:30'
+                log_entry: '003'
+                event: claimed
+                from_status: todo
+                to_status: claimed
+                note: Claimed before generating this layer of Entities; their dependencies were done.
+              - at: '2026-09-26T03:59:01+03:30'
+                log_entry: '003'
+                event: completed
+                from_status: claimed
+                to_status: done
+                check: 'Transient check parsed the Target''s own definition of the Entity and compared it with the Entity''s Declaration and its table columns: field order, names, Types, nullability, defaults (with exact Python type), length, purposes, primary key and Auto Increment generation, single and combined uniqueness (Declaration and table), references (Declaration and foreign key targets), credential sensitivity with at-rest protection, and any cross-Entity rule text. It then built an instance directly and round-tripped it through to_json/from_json (str and bytes), also with nullable Fields set.'
+                outcome: 'passed: Partial Group matched the Target on every compared point'
+                locations: my_model/src/my_model/entity/partial_group.py
+            P1-G5-T4:
+              id: P1-G5-T4
+              source_id: '002'
+              title: Provide the Partial Rule Entity
+              description: Provide the Entity for one Partial Close rule, defining the condition under which part of an open position is closed and how much of its volume is closed.
+              reason: A group only organizes rules; each rule's condition and closing amount need their own Entity.
+              inputs:
+              - The Target's declared definition of Partial Rule
+              - Declaration layer
+              - Foundation layer
+              - Completed Partial Group Entity
+              skills:
+              - sqlmodel
+              - python-skills:python-guidelines
+              expected_result: A public Partial Rule Entity carrying every declared Field and rule, with an explicit reference to its Partial Group.
+              depends_on:
+              - P1-G1-T1
+              - P1-G1-T2
+              - P1-G5-T3
+              constraints: []
+              acceptance: The Partial Rule Entity presents exactly the meaning the Target declares for it, including its membership in exactly one Partial Group and the uniqueness of its profit threshold within that group.
+              verify: The Partial Rule Entity's Declaration exposes the group reference, the declared defaults, and the combined uniqueness; a Partial Rule built directly with declared values converts to JSON and back unchanged.
+              status: done
+              log:
+              - at: '2026-09-26T03:59:01+03:30'
+                log_entry: '003'
+                event: claimed
+                from_status: todo
+                to_status: claimed
+                note: Claimed before generating this layer of Entities; their dependencies were done.
+              - at: '2026-09-26T03:59:09+03:30'
+                log_entry: '003'
+                event: completed
+                from_status: claimed
+                to_status: done
+                check: 'Transient check parsed the Target''s own definition of the Entity and compared it with the Entity''s Declaration and its table columns: field order, names, Types, nullability, defaults (with exact Python type), length, purposes, primary key and Auto Increment generation, single and combined uniqueness (Declaration and table), references (Declaration and foreign key targets), credential sensitivity with at-rest protection, and any cross-Entity rule text. It then built an instance directly and round-tripped it through to_json/from_json (str and bytes), also with nullable Fields set.'
+                outcome: 'passed: Partial Rule matched the Target on every compared point'
+                locations: my_model/src/my_model/entity/partial_rule.py
+        P1-G6:
+          id: P1-G6
+          title: Action and position Entities
+          description: The Entities that define how positions are opened and record every position the system creates.
+          area: Entities for action definitions and the positions created from them
+          does: Action Group, Action, and Position exist as complete, independent Domain Entities.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G6-T1:
+              id: P1-G6-T1
+              source_id: '002'
+              title: Provide the Action Group Entity
+              description: Provide the Entity for an independent grouping of trading actions by risk profile.
+              reason: Actions are organized and selected by risk level, so the grouping needs its own Entity.
+              inputs:
+              - The Target's declared definition of Action Group
+              - Declaration layer
+              - Foundation layer
+              - Completed User Entity
+              skills:
+              - sqlmodel
+              - python-skills:python-guidelines
+              expected_result: A public Action Group Entity carrying every declared Field and rule, with an explicit reference to its owning User.
+              depends_on:
+              - P1-G1-T1
+              - P1-G1-T2
+              - P1-G2-T1
+              constraints: []
+              acceptance: The Action Group Entity presents exactly the meaning the Target declares for it, including its owner reference and per-owner name uniqueness.
+              verify: The Action Group Entity's Declaration exposes the owner reference, the default active state, and the combined uniqueness; an Action Group built directly with declared values converts to JSON and back unchanged.
+              status: done
+              log:
+              - at: '2026-09-26T03:58:37+03:30'
+                log_entry: '003'
+                event: claimed
+                from_status: todo
+                to_status: claimed
+                note: Claimed before generating this layer of Entities; their dependencies were done.
+              - at: '2026-09-26T03:59:01+03:30'
+                log_entry: '003'
+                event: completed
+                from_status: claimed
+                to_status: done
+                check: 'Transient check parsed the Target''s own definition of the Entity and compared it with the Entity''s Declaration and its table columns: field order, names, Types, nullability, defaults (with exact Python type), length, purposes, primary key and Auto Increment generation, single and combined uniqueness (Declaration and table), references (Declaration and foreign key targets), credential sensitivity with at-rest protection, and any cross-Entity rule text. It then built an instance directly and round-tripped it through to_json/from_json (str and bytes), also with nullable Fields set.'
+                outcome: 'passed: Action Group matched the Target on every compared point'
+                locations: my_model/src/my_model/entity/action_group.py
+            P1-G6-T2:
+              id: P1-G6-T2
+              source_id: '002'
+              title: Provide the Action Entity
+              description: Provide the Entity that defines how a position must be opened, selecting the asset and account and supplying the risk, Take Profit, Stop Loss, Partial Group, and Trailing Group settings.
+              reason: Positions are created from Actions, so the opening definition needs its own Entity connected to everything it selects.
+              inputs:
+              - The Target's declared definition of Action
+              - Declaration layer
+              - Foundation layer
+              - Completed Action Group Entity
+              - Completed Asset Entity
+              - Completed Account Entity
+              - Completed Partial Group Entity
+              - Completed Trailing Group Entity
+              skills:
+              - sqlmodel
+              - python-skills:python-guidelines
+              expected_result: A public Action Entity carrying every declared Field and rule, with explicit references to its Action Group, Asset, Account, Partial Group, and Trailing Group.
+              depends_on:
+              - P1-G1-T1
+              - P1-G1-T2
+              - P1-G6-T1
+              - P1-G3-T3
+              - P1-G4-T2
+              - P1-G5-T3
+              - P1-G5-T1
+              constraints: []
+              acceptance: The Action Entity presents exactly the meaning the Target declares for it, including every reference and the uniqueness of its name within one Action Group.
+              verify: The Action Entity's Declaration exposes every reference with its target Entity and identity and the combined uniqueness; an Action built directly with declared values converts to JSON and back unchanged.
+              status: done
+              log:
+              - at: '2026-09-26T03:59:10+03:30'
+                log_entry: '003'
+                event: claimed
+                from_status: todo
+                to_status: claimed
+                note: Claimed before generating the Action Entity; its dependencies were done.
+              - at: '2026-09-26T03:59:10+03:30'
+                log_entry: '003'
+                event: completed
+                from_status: claimed
+                to_status: done
+                check: 'Transient check parsed the Target''s own definition of the Entity and compared it with the Entity''s Declaration and its table columns: field order, names, Types, nullability, defaults (with exact Python type), length, purposes, primary key and Auto Increment generation, single and combined uniqueness (Declaration and table), references (Declaration and foreign key targets), credential sensitivity with at-rest protection, and any cross-Entity rule text. It then built an instance directly and round-tripped it through to_json/from_json (str and bytes), also with nullable Fields set.'
+                outcome: 'passed: Action matched the Target on every compared point'
+                locations: my_model/src/my_model/entity/action.py
+            P1-G6-T3:
+              id: P1-G6-T3
+              source_id: '002'
+              title: Provide the Position Entity
+              description: Provide the Entity that stores the complete information of every position the system creates, whether already executed or still pending.
+              reason: The system must identify and track positions from creation through execution, so they need their own Entity connected to everything that shaped them.
+              inputs:
+              - The Target's declared definition of Position
+              - Declaration layer
+              - Foundation layer
+              - Completed User Entity
+              - Completed Trading Platform Entity
+              - Completed Broker Entity
+              - Completed Account Entity
+              - Completed Trailing Group Entity
+              - Completed Partial Group Entity
+              - Completed Action Group Entity
+              - Completed Action Entity
+              skills:
+              - sqlmodel
+              - python-skills:python-guidelines
+              expected_result: A public Position Entity carrying every declared Field and rule, with explicit references to its User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and Action.
+              depends_on:
+              - P1-G1-T1
+              - P1-G1-T2
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G3-T2
+              - P1-G4-T2
+              - P1-G5-T1
+              - P1-G5-T3
+              - P1-G6-T1
+              - P1-G6-T2
+              constraints: []
+              acceptance: The Position Entity presents exactly the meaning the Target declares for it, including every reference, the unique name, and the defaults that mark a new position as pending.
+              verify: The Position Entity's Declaration exposes every reference with its target Entity and identity, the unique name, and each declared default; a Position built directly with declared values converts to JSON and back unchanged.
+              status: done
+              log:
+              - at: '2026-09-26T03:59:11+03:30'
+                log_entry: '003'
+                event: claimed
+                from_status: todo
+                to_status: claimed
+                note: Claimed before generating the Position Entity; its dependencies were done.
+              - at: '2026-09-26T03:59:30+03:30'
+                log_entry: '003'
+                event: completed
+                from_status: claimed
+                to_status: done
+                check: 'Transient check parsed the Target''s own definition of the Entity and compared it with the Entity''s Declaration and its table columns: field order, names, Types, nullability, defaults (with exact Python type), length, purposes, primary key and Auto Increment generation, single and combined uniqueness (Declaration and table), references (Declaration and foreign key targets), credential sensitivity with at-rest protection, and any cross-Entity rule text. It then built an instance directly and round-tripped it through to_json/from_json (str and bytes), also with nullable Fields set. Whole-model check: all 15 tables were created in a throwaway in-memory database, so every foreign key resolved.'
+                outcome: 'passed: Position matched the Target on every compared point, including all eight references'
+                locations: my_model/src/my_model/entity/position.py
+        P1-G7:
+          id: P1-G7
+          title: Public surface
+          description: How consumers and other Components reach the Model library's Entities and public layers.
+          area: Interface layer, reusable library, and public metadata
+          does: Consumers can reach every Entity and public layer through one convenient entry point, and the library's public description is published.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G7-T1:
+              id: P1-G7-T1
+              source_id: '002'
+              title: Provide the Interface entry point
+              description: Present every Entity and the shared capabilities that consuming Components may use through one public entry point, while every other Model layer remains public as well.
+              reason: Consumers need one convenient way to reach the Model without depending on its internal arrangement.
+              inputs:
+              - Every completed Entity
+              - Declaration layer
+              - Foundation layer
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A public Interface layer presenting every Entity and the shared capabilities.
+              depends_on:
+              - P1-G1-T1
+              - P1-G1-T2
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              - P1-G3-T1
+              - P1-G3-T2
+              - P1-G3-T3
+              - P1-G4-T1
+              - P1-G4-T2
+              - P1-G5-T1
+              - P1-G5-T2
+              - P1-G5-T3
+              - P1-G5-T4
+              - P1-G6-T1
+              - P1-G6-T2
+              - P1-G6-T3
+              constraints: []
+              acceptance: A consumer can obtain every Target-declared Entity and the shared capabilities through Interface alone, while the Entity, Declaration, and Foundation layers remain individually usable.
+              verify: From outside the Model library, every Target-declared Entity is obtainable through Interface and each remaining public layer is separately usable; no Entity is missing or duplicated.
+              status: done
+              log:
+              - at: '2026-09-26T03:59:30+03:30'
+                log_entry: '003'
+                event: claimed
+                from_status: todo
+                to_status: claimed
+                note: Claimed before creating the Interface entry point; all Entity Tasks and both shared layers were done.
+              - at: '2026-09-26T03:59:56+03:30'
+                log_entry: '003'
+                event: completed
+                from_status: claimed
+                to_status: done
+                check: Transient script, run in a fresh interpreter from outside the library, parsed the Target's Models tree (15 Entities) and asserted each is obtainable through the Interface as a table Entity built on Foundation whose Declaration names it, that no Entity is missing or duplicated in the Interface exports, that every shared capability (Foundation, Declaration and its record/enum types) is exported, and that the Entity, Declaration, and Foundation layers remain separately importable and identical to the Interface's objects.
+                outcome: 'passed: 15 of 15 Target Entities obtainable, none missing or duplicated'
+                locations: my_model/src/my_model/interface.py
+            P1-G7-T2:
+              id: P1-G7-T2
+              source_id: '002'
+              title: Make Model consumable as a reusable library
+              description: Make the Model available as a self-contained reusable library that other Components can consume through its public layers without reaching any private resource.
+              reason: Database and Logic consume Model through their declared Connections and need it as an independent library.
+              inputs:
+              - Completed Interface layer
+              - Every public Model layer
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A reusable Model library that a separate consumer can use through every public layer.
+              depends_on:
+              - P1-G7-T1
+              constraints: []
+              acceptance: A consumer outside the Model library can use every public layer once the library is made available to it, with no dependency on any other application Component.
+              verify: A consumer created outside the Model library uses the library's public layers successfully, and the library declares no dependency on another application Component.
+              status: done
+              log:
+              - at: '2026-09-26T03:59:57+03:30'
+                log_entry: '003'
+                event: claimed
+                from_status: todo
+                to_status: claimed
+                note: Claimed before verifying the Model as a reusable library; the library scaffold, packaging, and public layers were already in place.
+              - at: '2026-09-26T04:00:17+03:30'
+                log_entry: '003'
+                event: completed
+                from_status: claimed
+                to_status: done
+                check: Transient check built the library into a wheel, confirmed its metadata declares only sqlmodel as a dependency (no other application Component) and that it ships the typing marker, then installed that wheel into a separate throwaway project and, from there, imported the Interface, Declaration, Foundation, and Entity layers, built a User, round-tripped it through JSON, and read a Currency Declaration.
+                outcome: 'passed: consumer outside the library used every public layer; sole dependency is sqlmodel'
+                locations: 'my_model (Component root: pyproject and package layout)'
+            P1-G7-T3:
+              id: P1-G7-T3
+              source_id: '002'
+              title: Publish the Model's public metadata
+              description: Record the Model's non-secret public metadata in its section of the shared Application Manifest so other Components can discover it.
+              reason: Components discover and compose one another through the Application Manifest rather than by reading private resources.
+              inputs:
+              - The completed reusable library's public surface
+              skills: []
+              expected_result: The Model section of the Application Manifest states its non-secret public metadata as the Application Manifest defines it.
+              depends_on:
+              - P1-G7-T2
+              constraints: []
+              acceptance: The Model section of the Application Manifest publishes accurate non-secret public metadata that matches the library as it exists and contains no secret or private detail.
+              verify: Every public metadata value published for Model corresponds to the library's actual public surface, and the section holds no secret value or private implementation detail.
+              status: done
+              log:
+              - at: '2026-09-26T04:00:17+03:30'
+                log_entry: '003'
+                event: claimed
+                from_status: todo
+                to_status: claimed
+                note: Claimed before publishing Model's public metadata to the Application Manifest.
+              - at: '2026-09-26T04:00:43+03:30'
+                log_entry: '003'
+                event: completed
+                from_status: claimed
+                to_status: done
+                check: 'Transient script loaded the Application Manifest and the library from disk and asserted: the Model section holds exactly the four public metadata fields; its package name equals the project''s declared name and the package directory exists at the stated path; the entry point imports and its published interface equals the Interface''s actual sorted exports with no duplicates; nothing secret-like appears in the section; the other 14 Component sections remain empty.'
+                outcome: 'passed: published metadata matches the library''s actual public surface'
+                locations: .interface/config/application.yaml (components.model)
+        P1-G8:
+          id: P1-G8
+          title: Quality
+          description: Assurance that the Model library meets the shared engineering quality standards.
+          area: Model source quality
+          does: The Model library satisfies the shared formatting, linting, and type-checking standards.
+          constraints: []
+          task_count: 1
+          tasks:
+            P1-G8-T1:
+              id: P1-G8-T1
+              source_id: '002'
+              title: Bring the Model library to the shared quality standards
+              description: Ensure the completed Model source satisfies the shared formatting, linting, and type-checking standards the Development Subsystem declares, correcting any deviation without changing Entity meaning.
+              reason: Development declares shared quality standards that generated source must meet before later Components build on Model.
+              inputs:
+              - The completed Model library
+              skills:
+              - python-skills:python-guidelines
+              expected_result: The whole Model library passes all three shared quality checks with no unresolved finding.
+              depends_on:
+              - P1-G7-T2
+              constraints: []
+              acceptance: Formatting, linting, and type checking each report no unresolved issue for the whole Model library, and every Entity's meaning is unchanged.
+              verify: Each of the three shared quality checks completes cleanly over the whole Model library, and the public Entity meaning is unchanged from before the checks.
+              status: done
+              log:
+              - at: '2026-09-26T04:00:43+03:30'
+                log_entry: '003'
+                event: claimed
+                from_status: todo
+                to_status: claimed
+                note: Claimed before running the shared quality checks over the completed library.
+              - at: '2026-09-26T04:01:29+03:30'
+                log_entry: '003'
+                event: completed
+                from_status: claimed
+                to_status: done
+                check: 'Ran the three shared quality tools over the whole Model source: formatter check, linter, and type checker. The linter first reported 4 style findings (verbose Decimal constructor); the tool''s own fix was applied, which yields equal values. Afterwards all three tools reported nothing, and the full Entity check, Interface check, and shared-layer checks were re-run and still passed, so no Entity meaning changed.'
+                outcome: 'passed: formatter 20 files already formatted; linter all checks passed; type checker 0 errors, 0 warnings'
+                locations: my_model/src/my_model (whole library)
+        P1-G9:
+          id: P1-G9
+          title: Documentation
+          description: The Model library's own documentation for its consumers.
+          area: Model documentation
+          does: A consumer can understand, set up, use, and troubleshoot the Model library from its documentation alone.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G9-T1:
+              id: P1-G9-T1
+              source_id: '002'
+              title: Document the Overview and the Interface
+              description: Document the Model's Overview and the Interface listing of its public Entities.
+              reason: Consumers must be able to understand the Model's domain surface without reading its internals.
+              inputs:
+              - Completed Interface layer
+              - Every completed Entity
+              skills: []
+              expected_result: Documentation containing an Overview and an Interface section that cover every public Entity.
+              depends_on:
+              - P1-G7-T1
+              constraints: []
+              acceptance: Every public Entity appears in the Interface section with its Fields, and the Overview gives an accurate example.
+              verify: Every Entity reachable through Interface is documented and each documented Field matches that Entity's actual Declaration; the Overview example works as written.
+              status: done
+              log:
+              - at: '2026-09-26T04:01:29+03:30'
+                log_entry: '003'
+                event: claimed
+                from_status: todo
+                to_status: claimed
+                note: Claimed before writing the Overview and Interface documentation; the Interface layer was done.
+              - at: '2026-09-26T04:02:15+03:30'
+                log_entry: '003'
+                event: completed
+                from_status: claimed
+                to_status: done
+                check: 'Transient script generated the Interface tables from the real Declarations, then re-read the documentation and asserted: the Overview example runs as written and prints what the text says; the Interface section has no code blocks; exactly the 15 public Entities appear once each; for every Entity the purpose, import line, rules, combined uniqueness, and every Field row (name, Type, nullability, purpose, length, credential protection, references) match the Entity''s actual Declaration.'
+                outcome: 'passed: 15 of 15 Entities and every Field row match; Overview example ran as written'
+                locations: my_model/README.md (Overview, Interface)
+            P1-G9-T2:
+              id: P1-G9-T2
+              source_id: '002'
+              title: Document the Foundation capabilities
+              description: Document the Foundation capabilities and how a consumer uses them with an Entity.
+              reason: Consumers need to know how to convert Entity instances to and from JSON.
+              inputs:
+              - Completed Foundation layer
+              - Overview and Interface documentation
+              skills: []
+              expected_result: Documentation of every Foundation capability with working usage examples.
+              depends_on:
+              - P1-G1-T2
+              - P1-G9-T1
+              constraints: []
+              acceptance: Each Foundation capability has an example, and one complete example uses all of them with a single Entity.
+              verify: Every documented Foundation example works as written against the actual Foundation layer.
+              status: done
+              log:
+              - at: '2026-09-26T04:02:15+03:30'
+                log_entry: '003'
+                event: claimed
+                from_status: todo
+                to_status: claimed
+                note: Claimed before writing the Foundation documentation; the Foundation layer and Overview/Interface documentation were done.
+              - at: '2026-09-26T04:02:36+03:30'
+                log_entry: '003'
+                event: completed
+                from_status: claimed
+                to_status: done
+                check: Transient script re-read the Foundation documentation and asserted one example for each capability followed by one complete example using both, then executed every Python example in the documentation as written against the actual Foundation layer; the complete example printed True for an unchanged round trip.
+                outcome: 'passed: all documented Foundation examples ran as written'
+                locations: my_model/README.md (Foundation)
+            P1-G9-T3:
+              id: P1-G9-T3
+              source_id: '002'
+              title: Document setup, running, and troubleshooting
+              description: Document how a consumer makes the Model library available, uses it, and resolves common problems, as applicable to a library.
+              reason: A consumer must be able to adopt the Model library without outside help.
+              inputs:
+              - Completed reusable library
+              - Foundation documentation
+              skills: []
+              expected_result: Documentation covering setup, running, and troubleshooting for the Model library.
+              depends_on:
+              - P1-G7-T2
+              - P1-G9-T2
+              constraints: []
+              acceptance: A reader following the documented steps can make the library available and use it, and the documented remedies address the problems those steps can raise.
+              verify: Following the documented setup and usage steps in a clean consumer context succeeds, and each documented problem has a remedy that resolves it.
+              status: done
+              log:
+              - at: '2026-09-26T04:02:36+03:30'
+                log_entry: '003'
+                event: claimed
+                from_status: todo
+                to_status: claimed
+                note: Claimed before writing setup, running, and troubleshooting documentation; the reusable library and Foundation documentation were done.
+              - at: '2026-09-26T04:03:59+03:30'
+                log_entry: '003'
+                event: completed
+                from_status: claimed
+                to_status: done
+                check: 'Transient script ran the documented Setup and Run commands literally (with the real library path) in a clean consumer project on Python 3.14 and on the library itself: the add and sync commands succeeded, the smoke command printed User, and the library''s format, lint, and type checks passed. It then reproduced each of the four documented problems with its documented signature (import outside the environment, Python older than 3.14, tables created after a partial Entity import, JSON missing a required Field) and confirmed each documented remedy resolved it.'
+                outcome: 'passed: documented steps succeeded as written; 4 of 4 problems reproduced and resolved by their documented remedies'
+                locations: my_model/README.md (Setup, Run, Troubleshooting)
