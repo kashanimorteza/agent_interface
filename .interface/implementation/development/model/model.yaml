@@ -50,12 +50,12 @@ content:
     directories:
       entity: "entity"
     files:
-      interface: "interface.py"
-      declaration: "declaration.py"
-      foundation: "foundation.py"
+      interface: "model_interface.py"
+      declaration: "model_declaration.py"
+      foundation: "model_foundation.py"
     classes:
-      declaration: "Declaration"
-      foundation: "Foundation"
+      declaration: "ModelDeclaration"
+      foundation: "ModelFoundation"
     foundation:
       methods:
         to_json: "to_json"
