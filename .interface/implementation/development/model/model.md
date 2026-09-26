@@ -27,11 +27,11 @@ Model defines flat, technology-independent Domain Entities. Each Entity carries 
 
 ### Purpose
 
-Model gives Database and Logic one shared, technology-independent Entity representation of each domain concept.
+Model gives Logic and Database one shared Entity representation of each domain concept. Logic imports Entity classes for application programming; Database independently imports those same classes to derive its tables and migrations.
 
 ### How It Works
 
-Each Entity stands alone in its own unit under the Entity directory. Declaration records technology-independent meaning, while Foundation provides shared behaviour. Every Model layer is public; Interface provides a convenient entry point for Entity classes and capabilities. SQLModel realizes the Entity as a table model without changing its domain meaning.
+Each Entity stands alone in its own unit under the Entity directory. Declaration records technology-independent meaning, while Foundation provides shared behaviour. Every Model layer is public; Interface provides a convenient entry point for Entity classes and capabilities. SQLModel realizes each Entity as the one table model that both Logic and Database consume, without changing its domain meaning.
 
 <br>
 
@@ -75,8 +75,8 @@ Model
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Database** — imports public Entity classes and uses their declared meaning and SQLModel metadata to create Tables and their applicable keys, relationships, constraints, defaults, and indexes.
-- **Logic** — imports and uses Model capabilities published through Interface in application programming.
+- **Database** — independently imports public Entity classes and uses their SQLModel metadata to create Tables and their applicable keys, relationships, constraints, defaults, and indexes. It does not define a second persistence model.
+- **Logic** — imports public Entity classes through Interface and uses them directly in application programming.
 
 <br>
 
@@ -231,6 +231,16 @@ Every Principle below is mandatory.
 
 <br>
 
+### One Entity definition serves programming and persistence
+
+**Rule:** Each Entity is the single class used by Logic in application programming and by Database for table creation and migration comparison. Database independently imports the public Entity classes and derives persistence metadata from them; it does not create or require a second persistence model.
+
+**Why:** One Entity definition prevents application and persistence structures from drifting apart while allowing Database to build storage independently.
+
+**Boundary:** Model declares the Entity. Database remains responsible for its Engine-specific table creation, migration execution, and storage operations.
+
+<br>
+
 ### Model names express domain meaning
 
 **Rule:** Every Model name expresses Target meaning, never an implementation tool or consumer-specific representation.
@@ -330,6 +340,12 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — Keep each declared Field Type, rule, default, `sensitive` flag, immutability, and restriction usable by consumers and storage realization.
 - **Never** — Invent a constraint or force one constraint representation.
+
+**One Entity definition serves programming and persistence**
+
+- **Must** — Make each Entity available for Logic programming and Database table creation or migration comparison.
+- **Must** — Let Database independently import the public Entity classes and derive persistence metadata from them.
+- **Never** — Create or require a second persistence model.
 
 **Model names express domain meaning**
 

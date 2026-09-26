@@ -174,11 +174,21 @@ Every Principle below is mandatory.
 
 ### Database connects Model to Logic
 
-**Rule:** Database imports Entity classes only through Model Interface. After all Entity classes are imported, Database uses SQLModel metadata to create Tables and compare migrations. Database does not create a separate persistence model or duplicate Entity Fields, constraints, relationships, or indexes; it provides its Interface Operations to Logic.
+**Rule:** Database independently imports Entity classes only through Model Interface; it does not obtain them through Logic. After all Entity classes are imported, Database uses their SQLModel metadata to create Tables and compare migrations. Database does not create a separate persistence model or duplicate Entity Fields, constraints, relationships, or indexes; it provides its Interface Operations to Logic.
 
-**Why:** This keeps persistence aligned with one authoritative Entity model while giving Logic one consistent data boundary.
+**Why:** This keeps persistence aligned with one authoritative Entity model while allowing Database to build storage independently and giving Logic one consistent data boundary.
 
 **Boundary:** Model owns Entity declarations; Logic owns application behavior; Database owns table creation, migration comparison, and persistence implementation between them.
+
+<br>
+
+### Development provisions the default Database Instance
+
+**Rule:** A successful Develop execution for Database applies the generated migration to the configured default Instance. For file-backed storage, that execution creates the configured database file in the configured Database Directory. Develop verifies that the storage contains every imported Entity table before it reports Database development as complete.
+
+**Why:** A developed Database Component must leave a usable default storage instance, not only source code and a command that could create it later.
+
+**Boundary:** This provisions only the configured default Instance. Other Instances are created only when their own configuration and execution are requested.
 
 <br>
 
@@ -189,7 +199,8 @@ Every obligation in the file, under the Principle it comes from.
 
 **Database configuration declares its available resources**
 
-- **Must** — declare every Engine, its implementation status, parameters, named Instances, and component Settings in Database Configuration.
+- **Must** — declare every Engine, its parameters, named Instances, and component Settings in Database Configuration.
+- **Must** — identify implemented Engines in Database Preferences.
 - **Must** — make every Instance name a declared Engine and every configured Instance reference resolve to a declared Instance.
 
 **Database exposes explicit Interface Operations**
@@ -220,6 +231,13 @@ Every obligation in the file, under the Principle it comes from.
 
 **Database connects Model to Logic**
 
-- **Must** — import Entity classes through Model Interface and use SQLModel metadata for table creation and migration comparison.
+- **Must** — independently import Entity classes through Model Interface, never through Logic.
+- **Must** — use imported Entity SQLModel metadata for table creation and migration comparison.
 - **Never** — create a separate persistence model or duplicate Entity Fields, constraints, relationships, or indexes.
 - **Must** — provide Interface Operations to Logic through Interface.
+
+**Development provisions the default Database Instance**
+
+- **Must** — apply the generated migration to the configured default Instance during successful Database development.
+- **Must** — create file-backed default storage in the configured Database Directory.
+- **Must** — verify every imported Entity table before reporting Database development complete.

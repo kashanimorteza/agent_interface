@@ -48,14 +48,14 @@ content:
   # <!-------------------------------------------- layout -->
   layout:
     directories:
-      entity: "entity"
+      entity: "model_entity"
     files:
       interface: "model_interface.py"
       declaration: "model_declaration.py"
       foundation: "model_foundation.py"
     classes:
-      declaration: "ModelDeclaration"
-      foundation: "ModelFoundation"
+      declaration: "Model_Declaration"
+      foundation: "Model_Foundation"
     foundation:
       methods:
         to_json: "to_json"
@@ -84,7 +84,7 @@ content:
             project_rules:
               source_of_truth: "Generate each Model from its Domain Entity. Do not add Fields, constraints, defaults, or behavior that the Entity does not declare."
               declaration: "Every Model uses the configured public Declaration class to record its technology-independent Fields, Types, Field Rules, Primary Key, Uniqueness Constraints, Relationships, Index intentions, and Value Generation. Declaration provides no runtime behaviour."
-              entity: "Generate every Entity as a public SQLModel table model. SQLModel realizes the declared Fields and metadata without redefining their domain meaning."
+              entity: "Generate every Entity as a public SQLModel table model. Logic uses that Entity class directly in application programming; Database independently imports the same class to derive tables and migration metadata. Do not create a second persistence model. SQLModel realizes the declared Fields and metadata without redefining their domain meaning."
               foundation: "Every Entity uses the configured public Foundation class for the public to_json and from_json conversion contract. Foundation does not define Entity Fields, constraints, or domain meaning."
               entity_unit: "Create one public SQLModel Entity class per Domain Entity and place it in its own module beneath the configured Entity directory."
               interface: "Keep Interface, Entity, Declaration, and Foundation public. Interface presents consumer-facing Entity classes and capabilities as a convenient entry point."
