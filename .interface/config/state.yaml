@@ -1,0 +1,49 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/state.yaml"
+  path_note: "Operational State Config in the Config directory: active Workflow position, aggregate Phase progress, and recorded execution history."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current State Schema and preserve existing operational records; State Principles define record meaning and ownership."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read the active Workflow position, then the Phase progress keyed by stable Target phase identifier, then the execution log."
+  selection: "A requested phase resolves to the entry keyed by that phase identifier; a Log Entry resolves by its identifier."
+  absence: "No matching Phase entry means no aggregate progress has been recorded for that phase."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "active"
+  - "phases"
+  - "log"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  active: "The active Workflow position: mode, phase, reason, setter, and time."
+  phases: "Aggregate operation progress for each Target phase."
+  log: "The project's preserved history of recorded Skill executions and their outcomes."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  active:
+    mode: "not set"
+    phase: null
+    mode_reason: "No Workflow operation has been recorded."
+    set_by: "initialization"
+    set_at: null
+  phases: {}
+  log:
+    - id: "001"
+      skill: "my-interface-configure"
+      event: "configure"
+      outcome: "completed"
+      started_at: "2026-09-26T22:46:04Z"
+      completed_at: "2026-09-26T22:46:17Z"
+      duration_ms: 13000
+      duration: "13 seconds"
+      open_questions: []
+      blockers: []
+      report: "Generated application.yaml, plan.yaml, and state.yaml in .interface/config/ from their Schemas composed with the general YAML structure. All three parse and carry the six frame sections. No other files changed."
