@@ -26,7 +26,18 @@ content_map:
 content:
   components:
     development: {}
-    model: {}
+    model:
+      package_name: "my_model"
+      path: "my_model"
+      public_entrypoint: "my_model.model_interface"
+      public_interface:
+        entities: ["Account", "AccountGroup", "Action", "ActionGroup", "Asset", "Broker", "Currency", "Instance", "PartialGroup", "PartialRule", "Position", "TradingPlatform", "TrailingGroup", "TrailingRule", "User"]
+        capabilities: ["ModelFoundation", "ModelDeclaration", "FieldDeclaration", "ReferenceDeclaration", "LogicalType", "ValueGeneration", "NO_DEFAULT"]
+        layers:
+          interface: "my_model.model_interface"
+          entity: "my_model.entity"
+          declaration: "my_model.model_declaration"
+          foundation: "my_model.model_foundation"
     database: {}
     logic: {}
     api: {}
