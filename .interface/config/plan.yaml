@@ -26,5 +26,861 @@ content_map:
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
-  task_count: 0
-  plans: {}
+  task_count: 27
+  plans:
+    P1:
+      id: P1
+      title: Model
+      order: 1
+      target: Model
+      does: Deliver the independent, reusable Model library realizing every Target-defined Entity, its fields, relationships, and rules.
+      constraints: []
+      task_count: 27
+      groups:
+        P1-G1:
+          id: P1-G1
+          title: Library and shared capabilities
+          description: The reusable library itself and the shared Declaration and Foundation capabilities every Entity depends on.
+          area: Library structure and shared capabilities
+          does: A package that can be installed and imported, with Declaration and two-way JSON Foundation conversion available to every Entity.
+          constraints: []
+          task_count: 4
+          tasks:
+            P1-G1-T1:
+              id: P1-G1-T1
+              source_id: '002'
+              title: Establish the Model library as an importable reusable package
+              description: Create the Model Component as a reusable library that other Components can depend on and import, with its dependencies declared and installable in an isolated environment.
+              reason: Every later Task needs a library to live in, and Database and Logic consume Model as a library.
+              inputs: []
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A Model library that a consumer can install into an isolated environment and import.
+              depends_on: []
+              constraints: []
+              acceptance: A consumer environment can install the library and import it without error.
+              verify: In a clean isolated environment, installing the library and importing it succeeds and exposes no unrelated behaviour.
+              status: done
+              log:
+              - at: '2026-09-26T23:50:50+03:30'
+                status: claimed
+                note: Claimed by my-interface-develop (State Log Entry 003) before creating the library.
+              - at: '2026-09-26T23:51:12+03:30'
+                status: done
+                check: Built the library wheel, installed it into a fresh isolated environment, and imported it; listed its public names.
+                outcome: 'Passed: install and import succeeded; the package exposes no public names beyond its docstring.'
+                locations:
+                - my_model/pyproject.toml
+                - my_model/src/my_model/__init__.py
+            P1-G1-T2:
+              id: P1-G1-T2
+              source_id: '002'
+              title: Provide the Declaration capability for recording Entity meaning
+              description: 'Provide the shared public capability through which each Entity records its technology-independent meaning: Fields and Types, Field Rules, Primary Key, Relationships, Uniqueness Constraints, Index intentions, and Value Generation, with no runtime behaviour.'
+              reason: Entities cannot record their meaning until the shared recording capability exists.
+              inputs: []
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A public Declaration capability that Entities can use to record every kind of declared meaning.
+              depends_on:
+              - P1-G1-T1
+              constraints: []
+              acceptance: Declaration can record each kind of declared meaning, including a combined Uniqueness Constraint and a Reference that names its target Entity and identity, and adds no behaviour.
+              verify: Using the published Declaration capability, a sample Entity meaning of each kind can be recorded and read back unchanged, and no operation on Declaration alters data.
+              status: done
+              log:
+              - at: '2026-09-26T23:51:12+03:30'
+                status: claimed
+                note: Claimed by my-interface-develop (State Log Entry 003).
+              - at: '2026-09-26T23:52:00+03:30'
+                status: done
+                check: Recorded a sample Entity meaning using every Declaration kind (auto-increment identity, sized string, credential with at-rest requirement, declared None default, immutable flag, Reference, combined uniqueness, Index) and read it back; attempted mutation; listed callable members.
+                outcome: 'Passed: every kind reads back unchanged, records are immutable, and the Declaration class has no methods.'
+                locations:
+                - my_model/src/my_model/model_declaration.py
+            P1-G1-T3:
+              id: P1-G1-T3
+              source_id: '002'
+              title: Provide Foundation conversion of an instance to JSON
+              description: Provide the shared public Foundation capability that converts an Entity instance to JSON without adding Fields, constraints, or meaning.
+              reason: Consumers need one consistent way to serialize any Entity.
+              inputs: []
+              skills:
+              - python-skills:python-guidelines
+              expected_result: An instance of any Model class converts to JSON through Foundation.
+              depends_on:
+              - P1-G1-T1
+              constraints: []
+              acceptance: Conversion represents every Field value faithfully, including exact decimals, date-times, booleans, and absent values.
+              verify: Converting an instance carrying each of those value kinds yields JSON whose values match the instance, and no Field is added or dropped.
+              status: done
+              log:
+              - at: '2026-09-26T23:51:12+03:30'
+                status: claimed
+                note: Claimed by my-interface-develop (State Log Entry 003).
+              - at: '2026-09-26T23:52:00+03:30'
+                status: done
+                check: Converted a sample Foundation subclass holding string, exact decimal, timezone-aware date-time, boolean, and absent values to JSON and compared its keys and values to the instance.
+                outcome: 'Passed: JSON keys equal the model fields exactly, the decimal is the exact text 1.10, the date-time is ISO with UTC offset, and the absent value is null.'
+                locations:
+                - my_model/src/my_model/model_foundation.py
+            P1-G1-T4:
+              id: P1-G1-T4
+              source_id: '002'
+              title: Provide Foundation creation of an instance from JSON
+              description: Extend the shared Foundation capability so that an Entity instance can be created from JSON, without adding Fields, constraints, or meaning.
+              reason: Consumers need to rebuild an Entity from its JSON form.
+              inputs:
+              - Foundation conversion to JSON
+              skills:
+              - python-skills:python-guidelines
+              expected_result: An instance of any Model class can be created from JSON through Foundation.
+              depends_on:
+              - P1-G1-T3
+              constraints: []
+              acceptance: Creation restores every Field value faithfully, so conversion to JSON and back yields an equal instance.
+              verify: For an instance carrying exact decimals, date-times, booleans, and absent values, converting to JSON and creating from that JSON yields an instance equal to the original.
+              status: done
+              log:
+              - at: '2026-09-26T23:52:00+03:30'
+                status: claimed
+                note: Claimed by my-interface-develop (State Log Entry 003).
+              - at: '2026-09-26T23:54:06+03:30'
+                status: done
+                check: Converted a plain Foundation subclass and a table-model subclass (exact decimal, timezone-aware date-time, boolean, absent value) to JSON and created an instance from that JSON; compared to the original.
+                outcome: 'Passed: both round trips yield an equal instance with Decimal and timezone-aware datetime types restored. First attempt failed for the table model (validating JSON directly left values as text); creation now validates the parsed JSON instead.'
+                locations:
+                - my_model/src/my_model/model_foundation.py
+        P1-G2:
+          id: P1-G2
+          title: Domain Entities
+          description: One Task per Target-defined Entity; each Entity is realized as its own public unit.
+          area: Domain Entities
+          does: Every Target-defined Entity is available as its own public, directly constructible unit whose declared meaning matches the Target and which converts to and from JSON.
+          constraints: []
+          task_count: 15
+          tasks:
+            P1-G2-T1:
+              id: P1-G2-T1
+              source_id: '002'
+              title: Realize the User Entity
+              description: Realize User exactly as the Target defines it, including its unique name and username, its defaults, and the sensitivity classification of its credential Fields.
+              reason: The Target defines User as a domain concept that must have its own authoritative Entity.
+              inputs:
+              - Declaration capability
+              - Foundation capability
+              skills:
+              - sqlmodel
+              expected_result: The User Entity as a public, directly constructible unit.
+              depends_on:
+              - P1-G1-T2
+              - P1-G1-T4
+              constraints: []
+              acceptance: Its credential Fields carry the declared sensitivity classification and its name and username are declared unique.
+              verify: Its published meaning shows name and username as unique and password and api_key as classified credentials.
+              status: done
+              log:
+              - at: '2026-09-26T23:54:06+03:30'
+                status: claimed
+                note: Claimed by my-interface-develop (State Log Entry 003).
+              - at: '2026-09-26T23:54:25+03:30'
+                status: done
+                check: 'Compared the realized Entity to the Target definition: field names and order, types, nullability, defaults, sizes, credential classification, references, uniqueness (Declaration and table), primary key, direct construction, and JSON round trip; compiled the schema in memory.'
+                outcome: 'Passed: name and username unique, password and api_key classified as credentials with hash at rest, all fields match.'
+                locations:
+                - my_model/src/my_model/entity/user.py
+            P1-G2-T2:
+              id: P1-G2-T2
+              source_id: '002'
+              title: Realize the Trading Platform Entity
+              description: Realize Trading Platform exactly as the Target defines it, including its unique name and the code that identifies its implementation.
+              reason: The Target defines Trading Platform as a domain concept that must have its own authoritative Entity.
+              inputs:
+              - Declaration capability
+              - Foundation capability
+              skills:
+              - sqlmodel
+              expected_result: The Trading Platform Entity as a public, directly constructible unit.
+              depends_on:
+              - P1-G1-T2
+              - P1-G1-T4
+              constraints: []
+              acceptance: Its name is declared unique and its code Field is required.
+              verify: Its published meaning shows a unique name and a required code with no reference to any other Entity.
+              status: done
+              log:
+              - at: '2026-09-26T23:54:06+03:30'
+                status: claimed
+                note: Claimed by my-interface-develop (State Log Entry 003).
+              - at: '2026-09-26T23:54:25+03:30'
+                status: done
+                check: 'Compared the realized Entity to the Target definition: field names and order, types, nullability, defaults, sizes, credential classification, references, uniqueness (Declaration and table), primary key, direct construction, and JSON round trip; compiled the schema in memory.'
+                outcome: 'Passed: unique name, required code, no references, all fields match.'
+                locations:
+                - my_model/src/my_model/entity/trading_platform.py
+            P1-G2-T3:
+              id: P1-G2-T3
+              source_id: '002'
+              title: Realize the Instance Entity
+              description: Realize Instance exactly as the Target defines it, including its ownership by a User, its use of a Trading Platform, its optional connection Fields, and the sensitivity classification of its credential Fields.
+              reason: The Target defines Instance as a domain concept that must have its own authoritative Entity.
+              inputs:
+              - Declaration capability
+              - Foundation capability
+              - Entities this Entity references
+              skills:
+              - sqlmodel
+              expected_result: The Instance Entity as a public, directly constructible unit.
+              depends_on:
+              - P1-G1-T2
+              - P1-G1-T4
+              - P1-G2-T1
+              - P1-G2-T2
+              constraints: []
+              acceptance: Its two References resolve to User and Trading Platform, its user-and-name combination is declared unique, and its connection Fields are optional.
+              verify: Its published meaning shows both References naming their target Entities and identities, the combined uniqueness, and optional ip, username, password, and api_key with the credentials classified.
+              status: done
+              log:
+              - at: '2026-09-26T23:54:25+03:30'
+                status: claimed
+                note: Claimed by my-interface-develop (State Log Entry 003).
+              - at: '2026-09-26T23:54:37+03:30'
+                status: done
+                check: 'Compared the realized Entity to the Target definition: field names and order, types, nullability, defaults, sizes, credential classification, references, uniqueness (Declaration and table), primary key, direct construction, and JSON round trip; compiled the schema in memory.'
+                outcome: 'Passed: References to User and Trading Platform, unique user_id+name, connection fields optional, credentials classified with encrypted at rest.'
+                locations:
+                - my_model/src/my_model/entity/instance.py
+            P1-G2-T4:
+              id: P1-G2-T4
+              source_id: '002'
+              title: Realize the Currency Entity
+              description: Realize Currency exactly as the Target defines it, including its ownership by a User, its three-character code, and its default decimal precision.
+              reason: The Target defines Currency as a domain concept that must have its own authoritative Entity.
+              inputs:
+              - Declaration capability
+              - Foundation capability
+              - Entities this Entity references
+              skills:
+              - sqlmodel
+              expected_result: The Currency Entity as a public, directly constructible unit.
+              depends_on:
+              - P1-G1-T2
+              - P1-G1-T4
+              - P1-G2-T1
+              constraints: []
+              acceptance: Its user-and-code combination is declared unique, its code has the declared length, and its decimal precision defaults to the declared value.
+              verify: Its published meaning shows the combined uniqueness, the code length restriction, and the precision default.
+              status: done
+              log:
+              - at: '2026-09-26T23:54:25+03:30'
+                status: claimed
+                note: Claimed by my-interface-develop (State Log Entry 003).
+              - at: '2026-09-26T23:54:37+03:30'
+                status: done
+                check: 'Compared the realized Entity to the Target definition: field names and order, types, nullability, defaults, sizes, credential classification, references, uniqueness (Declaration and table), primary key, direct construction, and JSON round trip; compiled the schema in memory.'
+                outcome: 'Passed: unique user_id+code, code size 3, decimal_digits default 2, Reference to User.'
+                locations:
+                - my_model/src/my_model/entity/currency.py
+            P1-G2-T5:
+              id: P1-G2-T5
+              source_id: '002'
+              title: Realize the Broker Entity
+              description: Realize Broker exactly as the Target defines it, including its ownership by a User.
+              reason: The Target defines Broker as a domain concept that must have its own authoritative Entity.
+              inputs:
+              - Declaration capability
+              - Foundation capability
+              - Entities this Entity references
+              skills:
+              - sqlmodel
+              expected_result: The Broker Entity as a public, directly constructible unit.
+              depends_on:
+              - P1-G1-T2
+              - P1-G1-T4
+              - P1-G2-T1
+              constraints: []
+              acceptance: Its user-and-name combination is declared unique and its Reference resolves to User.
+              verify: Its published meaning shows the combined uniqueness and a Reference naming User.
+              status: done
+              log:
+              - at: '2026-09-26T23:54:25+03:30'
+                status: claimed
+                note: Claimed by my-interface-develop (State Log Entry 003).
+              - at: '2026-09-26T23:54:37+03:30'
+                status: done
+                check: 'Compared the realized Entity to the Target definition: field names and order, types, nullability, defaults, sizes, credential classification, references, uniqueness (Declaration and table), primary key, direct construction, and JSON round trip; compiled the schema in memory.'
+                outcome: 'Passed: unique user_id+name and Reference to User.'
+                locations:
+                - my_model/src/my_model/entity/broker.py
+            P1-G2-T6:
+              id: P1-G2-T6
+              source_id: '002'
+              title: Realize the Asset Entity
+              description: Realize Asset exactly as the Target defines it, including its provision by a Broker and its default point size and digits.
+              reason: The Target defines Asset as a domain concept that must have its own authoritative Entity.
+              inputs:
+              - Declaration capability
+              - Foundation capability
+              - Entities this Entity references
+              skills:
+              - sqlmodel
+              expected_result: The Asset Entity as a public, directly constructible unit.
+              depends_on:
+              - P1-G1-T2
+              - P1-G1-T4
+              - P1-G2-T5
+              constraints: []
+              acceptance: Its broker-and-symbol combination is declared unique, its Reference resolves to Broker, and its point size and digits carry their declared defaults.
+              verify: Its published meaning shows the combined uniqueness, a Reference naming Broker, and both defaults.
+              status: done
+              log:
+              - at: '2026-09-26T23:54:38+03:30'
+                status: claimed
+                note: Claimed by my-interface-develop (State Log Entry 003).
+              - at: '2026-09-26T23:54:58+03:30'
+                status: done
+                check: 'Compared the realized Entity to the Target definition: field names and order, types, nullability, defaults, sizes, credential classification, references, uniqueness (Declaration and table), primary key, direct construction, and JSON round trip; compiled the schema in memory.'
+                outcome: 'Passed: unique broker_id+symbol, Reference to Broker, point_size default 0.0 and digits default 0.'
+                locations:
+                - my_model/src/my_model/entity/asset.py
+            P1-G2-T7:
+              id: P1-G2-T7
+              source_id: '002'
+              title: Realize the Account Group Entity
+              description: Realize Account Group exactly as the Target defines it, including its ownership by a User.
+              reason: The Target defines Account Group as a domain concept that must have its own authoritative Entity.
+              inputs:
+              - Declaration capability
+              - Foundation capability
+              - Entities this Entity references
+              skills:
+              - sqlmodel
+              expected_result: The Account Group Entity as a public, directly constructible unit.
+              depends_on:
+              - P1-G1-T2
+              - P1-G1-T4
+              - P1-G2-T1
+              constraints: []
+              acceptance: Its user-and-name combination is declared unique and its Reference resolves to User.
+              verify: Its published meaning shows the combined uniqueness and a Reference naming User.
+              status: done
+              log:
+              - at: '2026-09-26T23:54:25+03:30'
+                status: claimed
+                note: Claimed by my-interface-develop (State Log Entry 003).
+              - at: '2026-09-26T23:54:37+03:30'
+                status: done
+                check: 'Compared the realized Entity to the Target definition: field names and order, types, nullability, defaults, sizes, credential classification, references, uniqueness (Declaration and table), primary key, direct construction, and JSON round trip; compiled the schema in memory.'
+                outcome: 'Passed: unique user_id+name and Reference to User.'
+                locations:
+                - my_model/src/my_model/entity/account_group.py
+            P1-G2-T8:
+              id: P1-G2-T8
+              source_id: '002'
+              title: Realize the Account Entity
+              description: Realize Account exactly as the Target defines it, including its account group, broker, instance, and base currency, its default balance, and the sensitivity classification of its password.
+              reason: The Target defines Account as a domain concept that must have its own authoritative Entity.
+              inputs:
+              - Declaration capability
+              - Foundation capability
+              - Entities this Entity references
+              skills:
+              - sqlmodel
+              expected_result: The Account Entity as a public, directly constructible unit.
+              depends_on:
+              - P1-G1-T2
+              - P1-G1-T4
+              - P1-G2-T3
+              - P1-G2-T4
+              - P1-G2-T5
+              - P1-G2-T7
+              constraints: []
+              acceptance: Its four References resolve to their target Entities, its name and its group-broker-instance combination are declared unique, and its password is classified as a credential.
+              verify: Its published meaning shows four References naming Account Group, Broker, Instance, and Currency, both uniqueness declarations, and the classified password.
+              status: done
+              log:
+              - at: '2026-09-26T23:54:38+03:30'
+                status: claimed
+                note: Claimed by my-interface-develop (State Log Entry 003).
+              - at: '2026-09-26T23:54:58+03:30'
+                status: done
+                check: 'Compared the realized Entity to the Target definition: field names and order, types, nullability, defaults, sizes, credential classification, references, uniqueness (Declaration and table), primary key, direct construction, and JSON round trip; compiled the schema in memory.'
+                outcome: 'Passed: four References (Account Group, Broker, Instance, Currency), unique name and unique group+broker+instance, balance default Decimal 0, password classified with encrypted at rest.'
+                locations:
+                - my_model/src/my_model/entity/account.py
+            P1-G2-T9:
+              id: P1-G2-T9
+              source_id: '002'
+              title: Realize the Trailing Group Entity
+              description: Realize Trailing Group exactly as the Target defines it, including its ownership by a User.
+              reason: The Target defines Trailing Group as a domain concept that must have its own authoritative Entity.
+              inputs:
+              - Declaration capability
+              - Foundation capability
+              - Entities this Entity references
+              skills:
+              - sqlmodel
+              expected_result: The Trailing Group Entity as a public, directly constructible unit.
+              depends_on:
+              - P1-G1-T2
+              - P1-G1-T4
+              - P1-G2-T1
+              constraints: []
+              acceptance: Its user-and-name combination is declared unique and its Reference resolves to User.
+              verify: Its published meaning shows the combined uniqueness and a Reference naming User.
+              status: done
+              log:
+              - at: '2026-09-26T23:54:25+03:30'
+                status: claimed
+                note: Claimed by my-interface-develop (State Log Entry 003).
+              - at: '2026-09-26T23:54:37+03:30'
+                status: done
+                check: 'Compared the realized Entity to the Target definition: field names and order, types, nullability, defaults, sizes, credential classification, references, uniqueness (Declaration and table), primary key, direct construction, and JSON round trip; compiled the schema in memory.'
+                outcome: 'Passed: unique user_id+name and Reference to User.'
+                locations:
+                - my_model/src/my_model/entity/trailing_group.py
+            P1-G2-T10:
+              id: P1-G2-T10
+              source_id: '002'
+              title: Realize the Trailing Rule Entity
+              description: Realize Trailing Rule exactly as the Target defines it, including its membership in a Trailing Group and its optional take-profit and stop-loss adjustments.
+              reason: The Target defines Trailing Rule as a domain concept that must have its own authoritative Entity.
+              inputs:
+              - Declaration capability
+              - Foundation capability
+              - Entities this Entity references
+              skills:
+              - sqlmodel
+              expected_result: The Trailing Rule Entity as a public, directly constructible unit.
+              depends_on:
+              - P1-G1-T2
+              - P1-G1-T4
+              - P1-G2-T9
+              constraints: []
+              acceptance: Its name is declared unique, its trailing-group-and-trigger combination is declared unique, and its Reference resolves to Trailing Group.
+              verify: Its published meaning shows both uniqueness declarations, optional adjustments, and a Reference naming Trailing Group.
+              status: done
+              log:
+              - at: '2026-09-26T23:54:38+03:30'
+                status: claimed
+                note: Claimed by my-interface-develop (State Log Entry 003).
+              - at: '2026-09-26T23:54:58+03:30'
+                status: done
+                check: 'Compared the realized Entity to the Target definition: field names and order, types, nullability, defaults, sizes, credential classification, references, uniqueness (Declaration and table), primary key, direct construction, and JSON round trip; compiled the schema in memory.'
+                outcome: 'Passed: unique name, unique trailing_group_id+trigger_percentage, optional adjustments, Reference to Trailing Group.'
+                locations:
+                - my_model/src/my_model/entity/trailing_rule.py
+            P1-G2-T11:
+              id: P1-G2-T11
+              source_id: '002'
+              title: Realize the Partial Group Entity
+              description: Realize Partial Group exactly as the Target defines it, including its ownership by a User.
+              reason: The Target defines Partial Group as a domain concept that must have its own authoritative Entity.
+              inputs:
+              - Declaration capability
+              - Foundation capability
+              - Entities this Entity references
+              skills:
+              - sqlmodel
+              expected_result: The Partial Group Entity as a public, directly constructible unit.
+              depends_on:
+              - P1-G1-T2
+              - P1-G1-T4
+              - P1-G2-T1
+              constraints: []
+              acceptance: Its user-and-name combination is declared unique and its Reference resolves to User.
+              verify: Its published meaning shows the combined uniqueness and a Reference naming User.
+              status: done
+              log:
+              - at: '2026-09-26T23:54:25+03:30'
+                status: claimed
+                note: Claimed by my-interface-develop (State Log Entry 003).
+              - at: '2026-09-26T23:54:37+03:30'
+                status: done
+                check: 'Compared the realized Entity to the Target definition: field names and order, types, nullability, defaults, sizes, credential classification, references, uniqueness (Declaration and table), primary key, direct construction, and JSON round trip; compiled the schema in memory.'
+                outcome: 'Passed: unique user_id+name and Reference to User.'
+                locations:
+                - my_model/src/my_model/entity/partial_group.py
+            P1-G2-T12:
+              id: P1-G2-T12
+              source_id: '002'
+              title: Realize the Partial Rule Entity
+              description: Realize Partial Rule exactly as the Target defines it, including its membership in a Partial Group and its profit and close percentages.
+              reason: The Target defines Partial Rule as a domain concept that must have its own authoritative Entity.
+              inputs:
+              - Declaration capability
+              - Foundation capability
+              - Entities this Entity references
+              skills:
+              - sqlmodel
+              expected_result: The Partial Rule Entity as a public, directly constructible unit.
+              depends_on:
+              - P1-G1-T2
+              - P1-G1-T4
+              - P1-G2-T11
+              constraints: []
+              acceptance: Its name is declared unique, its partial-group-and-profit combination is declared unique, and its Reference resolves to Partial Group.
+              verify: Its published meaning shows both uniqueness declarations and a Reference naming Partial Group.
+              status: done
+              log:
+              - at: '2026-09-26T23:54:38+03:30'
+                status: claimed
+                note: Claimed by my-interface-develop (State Log Entry 003).
+              - at: '2026-09-26T23:54:59+03:30'
+                status: done
+                check: 'Compared the realized Entity to the Target definition: field names and order, types, nullability, defaults, sizes, credential classification, references, uniqueness (Declaration and table), primary key, direct construction, and JSON round trip; compiled the schema in memory.'
+                outcome: 'Passed: unique name, unique partial_group_id+profit_percentage, Reference to Partial Group.'
+                locations:
+                - my_model/src/my_model/entity/partial_group.py
+            P1-G2-T13:
+              id: P1-G2-T13
+              source_id: '002'
+              title: Realize the Action Group Entity
+              description: Realize Action Group exactly as the Target defines it, including its ownership by a User.
+              reason: The Target defines Action Group as a domain concept that must have its own authoritative Entity.
+              inputs:
+              - Declaration capability
+              - Foundation capability
+              - Entities this Entity references
+              skills:
+              - sqlmodel
+              expected_result: The Action Group Entity as a public, directly constructible unit.
+              depends_on:
+              - P1-G1-T2
+              - P1-G1-T4
+              - P1-G2-T1
+              constraints: []
+              acceptance: Its user-and-name combination is declared unique and its Reference resolves to User.
+              verify: Its published meaning shows the combined uniqueness and a Reference naming User.
+              status: done
+              log:
+              - at: '2026-09-26T23:54:25+03:30'
+                status: claimed
+                note: Claimed by my-interface-develop (State Log Entry 003).
+              - at: '2026-09-26T23:54:37+03:30'
+                status: done
+                check: 'Compared the realized Entity to the Target definition: field names and order, types, nullability, defaults, sizes, credential classification, references, uniqueness (Declaration and table), primary key, direct construction, and JSON round trip; compiled the schema in memory.'
+                outcome: 'Passed: unique user_id+name and Reference to User.'
+                locations:
+                - my_model/src/my_model/entity/action_group.py
+            P1-G2-T14:
+              id: P1-G2-T14
+              source_id: '002'
+              title: Realize the Action Entity
+              description: Realize Action exactly as the Target defines it, including its action group, asset, account, partial group, and trailing group and its risk, take-profit, and stop-loss values.
+              reason: The Target defines Action as a domain concept that must have its own authoritative Entity.
+              inputs:
+              - Declaration capability
+              - Foundation capability
+              - Entities this Entity references
+              skills:
+              - sqlmodel
+              expected_result: The Action Entity as a public, directly constructible unit.
+              depends_on:
+              - P1-G1-T2
+              - P1-G1-T4
+              - P1-G2-T6
+              - P1-G2-T8
+              - P1-G2-T11
+              - P1-G2-T9
+              - P1-G2-T13
+              constraints: []
+              acceptance: Its five References resolve to their target Entities and its action-group-and-name combination is declared unique.
+              verify: Its published meaning shows five References naming Action Group, Asset, Account, Partial Group, and Trailing Group and the combined uniqueness.
+              status: done
+              log:
+              - at: '2026-09-26T23:54:59+03:30'
+                status: claimed
+                note: Claimed by my-interface-develop (State Log Entry 003).
+              - at: '2026-09-26T23:54:59+03:30'
+                status: done
+                check: 'Compared the realized Entity to the Target definition: field names and order, types, nullability, defaults, sizes, credential classification, references, uniqueness (Declaration and table), primary key, direct construction, and JSON round trip; compiled the schema in memory.'
+                outcome: 'Passed: five References (Action Group, Asset, Account, Partial Group, Trailing Group) and unique action_group_id+name.'
+                locations:
+                - my_model/src/my_model/entity/action.py
+            P1-G2-T15:
+              id: P1-G2-T15
+              source_id: '002'
+              title: Realize the Position Entity
+              description: Realize Position exactly as the Target defines it, including its owner, platform, broker, account, groups, and originating action, its date-time, volume, profit, execution flag, and its base and real take-profit and stop-loss values.
+              reason: The Target defines Position as a domain concept that must have its own authoritative Entity.
+              inputs:
+              - Declaration capability
+              - Foundation capability
+              - Entities this Entity references
+              skills:
+              - sqlmodel
+              expected_result: The Position Entity as a public, directly constructible unit.
+              depends_on:
+              - P1-G1-T2
+              - P1-G1-T4
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T5
+              - P1-G2-T8
+              - P1-G2-T9
+              - P1-G2-T11
+              - P1-G2-T13
+              - P1-G2-T14
+              constraints: []
+              acceptance: Its eight References resolve to their target Entities, its name is declared unique, and its execution flag and profit carry their declared defaults.
+              verify: Its published meaning shows eight References naming User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and Action, a unique name, and both defaults.
+              status: done
+              log:
+              - at: '2026-09-26T23:54:59+03:30'
+                status: claimed
+                note: Claimed by my-interface-develop (State Log Entry 003).
+              - at: '2026-09-26T23:55:10+03:30'
+                status: done
+                check: 'Compared the realized Entity to the Target definition: field names and order, types, nullability, defaults, sizes, credential classification, references, uniqueness (Declaration and table), primary key, direct construction, and JSON round trip; compiled the schema in memory. Also compiled all fifteen tables together in memory.'
+                outcome: 'Passed: eight References (User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, Action), unique name, is_executed default false, profit default Decimal 0, timezone-aware date.'
+                locations:
+                - my_model/src/my_model/entity/position.py
+        P1-G3:
+          id: P1-G3
+          title: Public entry point and documentation
+          description: How consumers reach the Entities and learn to use the library.
+          area: Public surface and documentation
+          does: Consumers can import every Entity from one entry point and follow complete Component documentation.
+          constraints: []
+          task_count: 7
+          tasks:
+            P1-G3-T1:
+              id: P1-G3-T1
+              source_id: '002'
+              title: Present every Entity through the Model's public entry point
+              description: Provide the public entry point through which consumers import every Entity class and capability.
+              reason: Consumers need one convenient place to obtain the Model's Entities.
+              inputs:
+              - All realized Entities
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A single public entry point exposing every Entity.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              - P1-G2-T4
+              - P1-G2-T5
+              - P1-G2-T6
+              - P1-G2-T7
+              - P1-G2-T8
+              - P1-G2-T9
+              - P1-G2-T10
+              - P1-G2-T11
+              - P1-G2-T12
+              - P1-G2-T13
+              - P1-G2-T14
+              - P1-G2-T15
+              constraints: []
+              acceptance: Every one of the fifteen Entities is importable through the entry point and the other public layers remain directly importable.
+              verify: From a consumer environment, importing each Entity through the entry point succeeds, and importing the Declaration and Foundation capabilities directly also succeeds.
+              status: done
+              log:
+              - at: '2026-09-26T23:55:10+03:30'
+                status: claimed
+                note: Claimed by my-interface-develop (State Log Entry 003).
+              - at: '2026-09-26T23:55:39+03:30'
+                status: done
+                check: Built the library wheel, installed it into a fresh isolated environment, imported all fifteen Entities through the public entry point, checked each Entity's declaration name and the exported names, and imported the Declaration, Foundation, and an Entity module directly.
+                outcome: 'Passed: all fifteen Entities and both capabilities are exposed by the entry point and every other public layer imports directly.'
+                locations:
+                - my_model/src/my_model/model_interface.py
+            P1-G3-T2:
+              id: P1-G3-T2
+              source_id: '002'
+              title: Document the Model overview with one Entity example
+              description: Write the overview section of the Component documentation with one concise example that uses one Entity.
+              reason: Readers need a quick orientation to the Model before its reference sections.
+              inputs:
+              - Public entry point
+              skills: []
+              expected_result: An overview section with one concise, correct example.
+              depends_on:
+              - P1-G3-T1
+              constraints: []
+              acceptance: The overview contains exactly one concise example using one Entity and the example is correct.
+              verify: Running the example as written against the published library produces the behaviour the overview describes.
+              status: done
+              log:
+              - at: '2026-09-26T23:55:39+03:30'
+                status: claimed
+                note: Claimed by my-interface-develop (State Log Entry 003).
+              - at: '2026-09-26T23:56:50+03:30'
+                status: done
+                check: Extracted the overview from the README, counted its examples, and ran the example as written against the installed library, comparing its output to the documented output.
+                outcome: 'Passed: exactly one example, using the Currency Entity, and it prints the documented output.'
+                locations:
+                - my_model/README.md
+            P1-G3-T3:
+              id: P1-G3-T3
+              source_id: '002'
+              title: Document every public Entity and its Fields
+              description: Write the interface section of the Component documentation listing every public Entity separately, each with a table of its Fields and no usage examples.
+              reason: Consumers need a complete reference of the domain surface.
+              inputs:
+              - Public entry point
+              skills: []
+              expected_result: An interface section covering all fifteen Entities.
+              depends_on:
+              - P1-G3-T1
+              constraints: []
+              acceptance: Each of the fifteen Entities has its own entry with a Fields table matching its declared meaning, and the section contains no usage example.
+              verify: Comparing the section to the published Entities shows one entry per Entity, each table matching that Entity's Fields, and no example in the section.
+              status: done
+              log:
+              - at: '2026-09-26T23:55:39+03:30'
+                status: claimed
+                note: Claimed by my-interface-develop (State Log Entry 003).
+              - at: '2026-09-26T23:56:51+03:30'
+                status: done
+                check: 'Parsed the interface section of the README and compared it to the published Entities: entry names, each table''s field names and nullability, the import line, and the absence of code examples.'
+                outcome: 'Passed: fifteen entries, one per Entity; every table matches its Entity''s declared Fields; the section contains no example.'
+                locations:
+                - my_model/README.md
+            P1-G3-T4:
+              id: P1-G3-T4
+              source_id: '002'
+              title: Document the Foundation capabilities with examples
+              description: Write the foundation section of the Component documentation giving one example for each Foundation capability and then one complete example using all Foundation capabilities with one Entity.
+              reason: Consumers need to see how to convert Entities to and from JSON.
+              inputs:
+              - Foundation capabilities
+              - Public entry point
+              skills: []
+              expected_result: A foundation section with per-capability examples and one complete example.
+              depends_on:
+              - P1-G1-T3
+              - P1-G1-T4
+              - P1-G3-T1
+              constraints: []
+              acceptance: The section has one example per Foundation capability and one complete example using both, and every example is correct.
+              verify: Running each example as written against the published library produces the described results.
+              status: done
+              log:
+              - at: '2026-09-26T23:55:39+03:30'
+                status: claimed
+                note: Claimed by my-interface-develop (State Log Entry 003).
+              - at: '2026-09-26T23:56:51+03:30'
+                status: done
+                check: Ran each foundation example as written against the library installed from a freshly built wheel and compared output to the documented output; confirmed the complete example uses both capabilities.
+                outcome: 'Passed: three examples (to_json, from_json, complete) reproduce their documented output and the complete example prints True for the restored instance.'
+                locations:
+                - my_model/README.md
+            P1-G3-T5:
+              id: P1-G3-T5
+              source_id: '002'
+              title: Document setup
+              description: Write the setup section of the Component documentation explaining how a consumer obtains and installs the library in an isolated environment.
+              reason: Consumers need to prepare an environment before using the library.
+              inputs:
+              - Library package
+              skills: []
+              expected_result: A setup section that a reader can follow to a working installation.
+              depends_on:
+              - P1-G1-T1
+              constraints: []
+              acceptance: Following the section from a clean state produces an environment in which the library imports.
+              verify: In a clean isolated environment, performing only the documented setup steps results in a successful import of the library.
+              status: done
+              log:
+              - at: '2026-09-26T23:55:39+03:30'
+                status: claimed
+                note: Claimed by my-interface-develop (State Log Entry 003).
+              - at: '2026-09-26T23:56:51+03:30'
+                status: done
+                check: In a clean directory, performed only the documented setup steps (create an isolated environment, install the library from its directory, import it).
+                outcome: 'Passed: the import succeeded. The documented environment step names the Python version explicitly.'
+                locations:
+                - my_model/README.md
+            P1-G3-T6:
+              id: P1-G3-T6
+              source_id: '002'
+              title: Document how to run and use the library
+              description: Write the run section of the Component documentation explaining how a consumer imports and uses the library after setup.
+              reason: Consumers need to know how to begin using the library.
+              inputs:
+              - Public entry point
+              skills: []
+              expected_result: A run section that a reader can follow to use an Entity.
+              depends_on:
+              - P1-G3-T5
+              - P1-G3-T1
+              constraints: []
+              acceptance: Following the section after setup lets a reader obtain and construct an Entity.
+              verify: After the documented setup, performing only the documented usage steps successfully constructs an Entity.
+              status: done
+              log:
+              - at: '2026-09-26T23:56:51+03:30'
+                status: claimed
+                note: Claimed by my-interface-develop (State Log Entry 003).
+              - at: '2026-09-26T23:57:15+03:30'
+                status: done
+                check: After performing the documented setup in a clean directory, saved the run example as documented and ran it with the documented command; compared output to the documented output.
+                outcome: 'Passed: the example constructs a Broker and prints the documented output.'
+                locations:
+                - my_model/README.md
+            P1-G3-T7:
+              id: P1-G3-T7
+              source_id: '002'
+              title: Document troubleshooting
+              description: Write the troubleshooting section of the Component documentation covering the failures a consumer can realistically meet when installing or importing the library.
+              reason: Readers need a way to resolve common failures without reading the implementation.
+              inputs:
+              - Setup and run documentation
+              skills: []
+              expected_result: A troubleshooting section listing realistic failures with their resolution.
+              depends_on:
+              - P1-G3-T6
+              constraints: []
+              acceptance: Each listed failure states its observable symptom and a resolution that works.
+              verify: Reproducing each listed failure and applying its documented resolution restores a working import.
+              status: done
+              log:
+              - at: '2026-09-26T23:57:15+03:30'
+                status: claimed
+                note: Claimed by my-interface-develop (State Log Entry 003).
+              - at: '2026-09-26T23:57:50+03:30'
+                status: done
+                check: Reproduced four failures (interpreter outside the environment, environment on an older Python, install path without a project file, from_json with a missing required Field) and applied only the documented resolution for each.
+                outcome: 'Passed: each symptom matches the documented text and each documented resolution restores a working import (or, for the JSON failure, a successful from_json).'
+                locations:
+                - my_model/README.md
+        P1-G4:
+          id: P1-G4
+          title: Quality confirmation
+          description: Confirmation that the finished library meets the project's declared quality standards.
+          area: Library quality
+          does: The library passes every declared quality standard.
+          constraints: []
+          task_count: 1
+          tasks:
+            P1-G4-T1:
+              id: P1-G4-T1
+              source_id: '002'
+              title: Confirm the library meets the project's quality standards
+              description: Check the completed library against the project's declared formatting, linting, and type-checking standards and correct any deviation within the library.
+              reason: The library is consumed by other Components and must be consistently clean before review.
+              inputs:
+              - Completed library
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A library that passes every declared quality standard.
+              depends_on:
+              - P1-G1-T2
+              - P1-G1-T4
+              - P1-G3-T1
+              constraints: []
+              acceptance: Formatting, linting, and type checking each report no issues for the library.
+              verify: Each declared quality check, run against the library, completes with no reported issue.
+              status: done
+              log:
+              - at: '2026-09-26T23:57:50+03:30'
+                status: claimed
+                note: Claimed by my-interface-develop (State Log Entry 003).
+              - at: '2026-09-26T23:58:10+03:30'
+                status: done
+                check: Ran the declared formatting check, lint check, and type check over the library source, and re-ran every Entity, Declaration, and Foundation check afterwards.
+                outcome: 'Passed: formatting reports 20 files already formatted, lint reports no issues, type check reports 0 errors, 0 warnings; all fifteen Entities still match the Target and all fifteen tables compile together.'
+                locations:
+                - my_model/src/my_model
