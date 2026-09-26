@@ -142,7 +142,7 @@ Every Principle below is mandatory.
 
 ### Model documentation explains its domain surface
 
-**Rule:** Documentation gives every Domain Entity and Field a description. It documents each Model's kind, import, direct construction, JSON conversion, and any necessary usage example.
+**Rule:** Documentation has an Overview with one concise example using one Entity. Its Interface section lists every public Entity separately and shows that Entity's Fields in a table without usage examples. Its Foundation section gives an example for each Foundation capability, then one complete example that uses all Foundation capabilities with one Entity. Documentation describes each Entity's kind, import, direct construction, and JSON conversion.
 
 **Why:** Consumers can understand and use a Model without depending on internal implementation details.
 
@@ -287,7 +287,7 @@ Every obligation in the file, under the Principle it comes from.
 
 **Model documentation explains its domain surface**
 
-- **Must** — Describe every Domain Entity and Field; document import, construction, and JSON conversion.
+- **Must** — Give one Overview example; list every public Entity and its Fields in Interface tables without examples; give Foundation capability examples and one complete Foundation example using one Entity.
 - **Never** — Describe Model as storage, workflow, or application behaviour.
 
 **Each domain concept has one authoritative Domain Entity**

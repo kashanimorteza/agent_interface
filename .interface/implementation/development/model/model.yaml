@@ -98,6 +98,11 @@ content:
     order:
       - overview
       - interface
+      - foundation
       - setup
       - run
       - troubleshooting
+    sections:
+      overview: "Give one concise example using one Entity."
+      interface: "List every public Entity separately and show its Fields in a table. Do not include usage examples in this section."
+      foundation: "Give an example for each Foundation capability, then one complete example that uses all Foundation capabilities with one Entity."

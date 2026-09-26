@@ -74,28 +74,28 @@ Database
 
 ### Interface
 
-The public layer that receives Operation requests from Logic and returns their results. Every Operation accepts optional filters and optional field ordering when those inputs apply to its result.
+The public layer that receives Operation requests from Logic and returns their results. Operations use an imported Entity class or Entity instance directly, as appropriate; they never select data by a Model name or identity.
 
 #### Operations
 
-- **Add** — accepts a Model identity and values for a new record; returns the created record or operation outcome.
-- **Edit** — accepts a Model identity and record identifier; returns that record in editable form or a not-found outcome.
-- **Update** — accepts a Model identity, record identifier, and changed values; returns the updated record or operation outcome.
-- **List** — accepts a Model identity and optional selection criteria; returns matching records.
-- **Delete** — accepts a Model identity and record identifier; returns the deletion outcome.
-- **Enable** — accepts a Model identity and record identifier; returns the enabled record or operation outcome.
-- **Disable** — accepts a Model identity and record identifier; returns the disabled record or operation outcome.
-- **Get by ID** — accepts a Model identity and record identifier; returns the matching record or a not-found outcome.
+- **Add** — accepts an Entity instance for a new record; returns the created record or operation outcome.
+- **Edit** — accepts an imported Entity class and record identifier; returns that record in editable form or a not-found outcome.
+- **Update** — accepts an Entity instance containing its record identifier and changed values; returns the updated record or operation outcome.
+- **List** — accepts an imported Entity class, optional filters, and optional field ordering; returns matching records.
+- **Delete** — accepts an imported Entity class and record identifier; returns the deletion outcome.
+- **Enable** — accepts an imported Entity class and record identifier; returns the enabled record or operation outcome.
+- **Disable** — accepts an imported Entity class and record identifier; returns the disabled record or operation outcome.
+- **Get by ID** — accepts an imported Entity class and record identifier; returns the matching record or a not-found outcome.
 - **Report** — accepts report-specific selection criteria; returns the requested report without requiring one Model as its subject.
 - **Execute Command** — accepts a declared command and its supplied parameters; returns that command's result or operation outcome. Its purpose need not concern one Model.
 
 ### Mapping
 
-The private layer that resolves and handles requests: it resolves the requested Instance and Engine, routes the Operation, and standardizes returned data when required.
+The public layer that resolves and handles requests: it resolves the requested Instance and Engine, routes the Operation, and standardizes returned data when required.
 
 ### Engine
 
-The private layer that performs storage behaviour for each Engine-specific implementation.
+The public layer that performs storage behaviour for each Engine-specific implementation.
 
 Database's technical selections, defaults, and layout belong to Database Preferences. The structure of its generated configuration belongs to its Schema. This Definition states only the conceptual layers and the rules that govern them.
 
@@ -125,11 +125,21 @@ Every Principle below is mandatory.
 
 ### Database exposes explicit Interface Operations
 
-**Rule:** Interface publishes the Operations described in this Component. Every Operation accepts optional filters and optional ordering by field when those inputs apply to its result. Execute Command may perform a declared database command that does not directly concern one Model.
+**Rule:** Interface publishes the Operations described in this Component. Each applicable Operation receives an imported Entity class or Entity instance directly, never a Model name or identity. List accepts optional filters and optional ordering by field. Execute Command may perform a declared database command that does not directly concern one Model. Database documentation gives each published Interface Operation one complete example.
 
 **Why:** An explicit operation catalogue keeps the public data surface stable and understandable.
 
 **Boundary:** Interface receives and returns requests; it does not select an Engine or implement database-specific behavior.
+
+<br>
+
+### Database publishes all of its classes
+
+**Rule:** Interface, Mapping, and Engine classes are public. Interface remains the consumer-facing entry point for Database Operations.
+
+**Why:** Every Database class remains available without obscuring the standard operation boundary.
+
+**Boundary:** Public access does not make a consumer responsible for routing or Engine-specific storage behavior.
 
 <br>
 
@@ -176,8 +186,15 @@ Every obligation in the file, under the Principle it comes from.
 **Database exposes explicit Interface Operations**
 
 - **Must** — publish the Operations described by Interface.
-- **Must** — accept optional filters and optional field ordering whenever they apply to an Operation result.
+- **Must** — receive an imported Entity class or Entity instance directly, never a Model name or identity.
+- **Must** — let List accept optional filters and optional field ordering.
 - **Must** — let Execute Command perform a declared database command that does not directly concern one Model.
+- **Must** — give every published Interface Operation one complete documentation example.
+
+**Database publishes all of its classes**
+
+- **Must** — keep Interface, Mapping, and Engine classes public.
+- **Must** — retain Interface as the consumer-facing entry point for Database Operations.
 
 **Mapping routes requests and handles results**
 
