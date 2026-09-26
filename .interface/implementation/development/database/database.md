@@ -23,7 +23,7 @@ Database is the Development Component that persists Model data and provides stan
 
 ### Overview
 
-Database is the Development Component that persists Model data and publishes data Operations to Logic. Its layers are Interface, Mapping, and Engine.
+Database is the Development Component that persists Model data and publishes data Operations to Logic. Its layers are Interface, Data, Engine, and Core.
 
 ### Purpose
 
@@ -31,7 +31,7 @@ Database keeps persistence knowledge in one Component. Without that separation, 
 
 ### How It Works
 
-Logic sends an Operation request through Interface. Mapping resolves the applicable Instance and Engine, passes the request to that Engine, standardizes the result when needed, and returns it through Interface.
+Logic uses Interface to access Database. Interface exposes the public Actions, then passes each request to Data. Data resolves the applicable Instance and Engine, calls that Engine's implementation, and returns the result through Interface. Core contains the shared internal files needed by those layers.
 
 <br>
 
@@ -42,10 +42,11 @@ Logic sends an Operation request through Interface. Mapping resolves the applica
 - **Instance** — a named database connection and storage identity using one Engine.
 - **Database Configuration** — the declared Engines, Instances, and Settings available to Database.
 - **Settings** — component-wide choices such as the default Instance, purpose-to-Instance assignments, and secret references.
-- **Interface** — the public boundary through which Logic requests Database Operations.
+- **Interface** — the only public Database layer, through which Logic imports Database classes and requests Database Operations.
 - **Operation** — one public Database action published through Interface.
 - **Execute Command** — an Operation that executes a declared database command whose purpose does not directly concern one Model.
-- **Mapping** — the public layer that routes a request to its Instance and Engine and standardizes its result when needed.
+- **Data** — the internal file that provides the Database Actions, resolves a request's Instance and Engine, and calls that Engine's implementation.
+- **Core** — the internal directory for shared files required by Database's layers.
 
 <br>
 
@@ -55,8 +56,9 @@ Logic sends an Operation request through Interface. Mapping resolves the applica
 ```text
 Database
 ├── Interface
-├── Mapping
-└── Engine
+├── Data
+├── Engine
+└── Core
 ```
 
 <br>
@@ -74,7 +76,7 @@ Database
 
 ### Interface
 
-The public layer that receives Operation requests from Logic and returns their results. Operations use an imported Entity class or Entity instance directly, as appropriate; they never select data by a Model name or identity.
+The only public Database layer. It makes Database classes and Operations available to Logic. Operations use an imported Entity class or Entity instance directly, as appropriate; they never select data by a Model name or identity.
 
 #### Operations
 
@@ -94,13 +96,17 @@ The public layer that receives Operation requests from Logic and returns their r
 - **Report** — accepts report-specific selection criteria; returns the requested report without requiring one Model as its subject.
 - **Execute Command** — accepts a declared command and its supplied parameters; returns that command's result or operation outcome. Its purpose need not concern one Model.
 
-### Mapping
+### Data
 
-The public layer that resolves and handles requests: it resolves the requested Instance and Engine, routes the Operation, and standardizes returned data when required.
+The internal file that provides every Database Action. It resolves the requested Instance and Engine, calls the matching Engine Action, and standardizes returned data when required.
 
 ### Engine
 
-The public layer that performs storage behaviour for each Engine-specific implementation.
+The internal directory containing one file for every Engine marked for implementation. Each file performs the Database Actions with that Engine's own packages, parameters, and mechanisms.
+
+### Core
+
+The internal directory for shared Database files that support Interface, Data, and Engine without becoming part of the public Database surface.
 
 Database's technical selections, defaults, and layout belong to Database Preferences. The structure of its generated configuration belongs to its Schema. This Definition states only the conceptual layers and the rules that govern them.
 
@@ -120,7 +126,7 @@ Every Principle below is mandatory.
 
 ### Database configuration declares its available resources
 
-**Rule:** Database Configuration declares every Engine, whether it is marked for implementation, its engine-specific parameters, every named Instance and its connection parameters, and component Settings such as the default Instance, purpose assignments, secret references, and other shared parameters. Every Instance names one declared Engine, and every configured Instance reference resolves to a declared Instance.
+**Rule:** Database Configuration declares every Engine and its engine-specific parameters, every named Instance and its connection parameters, and component Settings such as the default Instance, purpose assignments, secret references, and other shared parameters. Every Instance names one declared Engine, and every configured Instance reference resolves to a declared Instance. Database Preferences identify which Engines are implemented in generated source.
 
 **Why:** One configuration source makes the available storage resources and their selection explicit.
 
@@ -136,23 +142,23 @@ Every Principle below is mandatory.
 
 <br>
 
-### Database publishes all of its classes
+### Database publishes Interface only
 
-**Rule:** Interface, Mapping, and Engine classes are public. Interface is the standard entry point for Database Operations, while a consumer with a declared Connection may use any public Database class when needed.
+**Rule:** Interface is the only public Database layer. Data, Engine, and Core are internal implementation layers; consumers use Database only through Interface.
 
-**Why:** Every Database class remains available without obscuring the standard operation boundary.
+**Why:** One public boundary keeps Engine selection, routing, and shared implementation details out of consumers.
 
-**Boundary:** Public access does not make a consumer responsible for routing or Engine-specific storage behavior.
+**Boundary:** Interface publishes Database Actions; it does not make a consumer responsible for Data routing, Engine-specific storage behavior, or Core implementation.
 
 <br>
 
-### Mapping routes requests and handles results
+### Data routes requests and handles results
 
-**Rule:** Mapping receives each request from Interface, resolves the requested Instance and its Engine, forwards the Operation to that Engine implementation, and standardizes the returned data when required before returning it to Interface. Mapping provides one mapping action for each published Operation.
+**Rule:** Data receives each request from Interface, resolves the requested Instance and its Engine, forwards the Operation to that Engine implementation, and standardizes the returned data when required before returning it to Interface. Data provides one Action for each published Operation.
 
-**Why:** A single routing layer keeps selection, translation, and result handling consistent across Engines.
+**Why:** A single Data file keeps selection, translation, and result handling consistent across Engines.
 
-**Boundary:** Mapping coordinates an operation; each Engine implementation owns the Engine-specific execution of that operation.
+**Boundary:** Data coordinates an Operation; each Engine implementation owns the Engine-specific execution of that Operation.
 
 <br>
 
@@ -195,15 +201,15 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — let Execute Command perform a declared database command that does not directly concern one Model.
 - **Must** — give every published Interface Operation one complete documentation example.
 
-**Database publishes all of its classes**
+**Database publishes Interface only**
 
-- **Must** — keep Interface, Mapping, and Engine classes public.
-- **Must** — retain Interface as the standard entry point for Database Operations while allowing a declared consumer to use any public Database class when needed.
+- **Must** — publish Database classes and Operations through Interface only.
+- **Never** — expose Data, Engine, or Core as a consumer surface.
 
-**Mapping routes requests and handles results**
+**Data routes requests and handles results**
 
 - **Must** — route every Interface request to the resolved Instance and Engine.
-- **Must** — provide one Mapping function for each published Operation.
+- **Must** — provide one Data Action for each published Operation.
 - **Must** — standardize returned data whenever that Operation requires it.
 
 **Each Engine implements the published Operations**
