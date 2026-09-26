@@ -1,0 +1,53 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/state.yaml"
+  path_note: "Operational State: active Workflow position, aggregate Phase progress, and the project's recorded execution history."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current State Schema; reconciliation preserves existing operational records and never replaces them with defaults."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read active for the current Workflow position, phases for aggregate progress by stable Target phase identifier, and log for recorded Skill executions."
+  selection: "A requested phase resolves to the entry in phases keyed by that phase identifier; a Log Entry resolves by its id."
+  absence: "An empty phases mapping means no phase identity has been reconciled yet; an empty log means no execution has been recorded."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "active"
+  - "phases"
+  - "log"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  active: "Active Workflow position: mode, phase, reason, setter, and time."
+  phases: "Aggregate operation progress keyed by stable Target phase identifier."
+  log: "The project's preserved history of recorded Skill executions and their outcomes."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  active:
+    mode: "not set"
+    phase: null
+    mode_reason: "No Workflow operation has been recorded."
+    set_by: "initialization"
+    set_at: null
+  phases: {}
+  log:
+    - id: "001"
+      skill: "my-interface-configure"
+      parent_id: ""
+      phase: null
+      event: "Configure Config records"
+      outcome: "completed"
+      started_at: "2026-09-26T20:48:27Z"
+      completed_at: "2026-09-26T20:48:41Z"
+      duration: "14 seconds"
+      duration_ms: 14000
+      report: "Generated Application, Plan, and State Config records from their Schemas composed with the general YAML Schema. All three parse and contain the six general sections."
+      open_questions: []
+      blockers: []
+      data:
+        note: "The State Schema declares no generation block, so State's path, path_note, policy, resolution, read_order, and content_map were derived from its purpose and sections."
