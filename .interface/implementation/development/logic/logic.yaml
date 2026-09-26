@@ -7,7 +7,6 @@ meta:
   version: "13.1"
   updated: "2026-09-25"
 
-
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
@@ -15,186 +14,194 @@ policy:
   changed_by: "The human, directly. A missing critical Logic choice is raised through State."
   precedence: "An explicit Target value and every applicable Logic Principle take precedence over this file."
 
-
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read component for Logic's technical selection, then apply Logic-owned behavioural defaults and internal realization conventions. Read Connections from Development and resolve environment-specific Runtime Bindings from Platform. Use a Development Default only when this file leaves a shared choice unstated."
+  consumption: "Read settings for Logic's identity; then read layout, Services, policies, runtime behavior, verification, and development capabilities. Read Connections from Development and resolve environment-specific Runtime Bindings from Platform. Use a Development Default only when this file leaves a shared choice unstated."
   selection: "Use a compatible configured Logic default when the Target is silent. For an explicit incompatible need, preserve Target intent under Logic Principles and record the consequential realization choice; ask only when no safe compatible choice can be established."
   version_resolution: "This file resolves versions for Logic-owned packages and tools. Development resolves versions only for its shared Defaults."
-  matching: "Match standards and Logic settings by their exact keys. Match Model Logic files to public Model identities, and match each behavioural policy under settings.policies to the Models and Operations its own entry names."
-
-
-
+  matching: "Match standards and Logic settings by their exact keys. Match Model Logic files to public Entity classes, and match each behavioural policy under policies to the Entities and Operations its own entry names."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "component"
-  - "capabilities"
-  - "settings"
-
+  - "settings: identify Logic."
+  - "layout: locate the Services directory."
+  - "services: read each Service and its Operations."
+  - "policies: apply Logic-owned behavioural policies."
+  - "runtime: apply Logic runtime behavior."
+  - "verification: apply Logic verification settings."
+  - "development: apply the currently enabled or disabled component capabilities."
+  - "documentation: apply the required Logic documentation structure and examples."
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  component: "Logic type, language, and platform."
-  capabilities: "Component capabilities that are currently inactive."
-  settings: "Component directory and package name, plus the parts Logic Principles name in its Architecture — Public Interface with its Categories and Operations, and Services with their Actions — and the subjects that span the Component: behavioural policies, runtime behaviour, and verification."
-
+  - settings
+  - layout
+  - services
+  - policies
+  - runtime
+  - verification
+  - development
+  - documentation
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
 
-  # <!-------------------------------------------- component -->
-  component:
-    type: "library"
-    language: "Python"
-    platform: "VPS"
-
-  # <!-------------------------------------------- capabilities -->
-  capabilities:
-    testing: false
-    error_handling: false
-    logging: false
-    encryption: false
-
   # <!-------------------------------------------- settings -->
   settings:
-
     component:
+      type: "library"
+      language: "Python"
+      platform: "VPS"
       directory: "logic"
       package: "trading-assistant-logic"
 
-    public_interface:
-      purpose: "The Operations this Logic currently offers and the Categories they are grouped into. The Principle “One Public Interface exposes Logic's Operations” fixes what the Interface is; this group records what is on it today."
-      categories:
-        data_entry:
-          name: "Data Entry"
-          purpose: "Operations through which a consumer enters, changes, and reads data for the Models."
-          operations:
+  # <!-------------------------------------------- layout -->
+  layout:
+    directories:
+      interface: "interface"
+      services: "services"
+      
 
-            create:
-              does: "Create one record for the named Model from the supplied values."
-              accepts: {model: "the Model this record belongs to", values: "the field values for the new record"}
-              returns: "the created record"
-              outcomes: ["created", "invalid values", "conflicts with an existing record"]
-              uses: "database.create"
+  # <!-------------------------------------------- services -->
+  services:
+    database:
+      name: "Database Service"
+      directory: "database"
+      talks_to: "Database Component"
+      purpose: "The Service through which Logic enters, changes, and reads stored Entity data."
+      calls: "Database's Interface; each Operation below delegates to the Database Operation with the same name."
+      operations:
+        add:
+          does: "Add one record from the supplied Entity instance."
+          accepts: {entity: "the Entity instance to store"}
+          returns: "the created record"
+          outcomes: ["created", "invalid values", "conflicts with an existing record"]
+        edit:
+          does: "Return one record of the supplied Entity class in editable form."
+          accepts: {entity: "the imported Entity class", id: "which record"}
+          returns: "the editable record"
+          outcomes: ["found", "not found"]
+        update:
+          does: "Change one existing record through the supplied Entity instance."
+          accepts: {entity: "the Entity instance containing its record identifier and changed values"}
+          returns: "the updated record"
+          outcomes: ["updated", "not found", "invalid values", "conflicts with an existing record"]
+        delete:
+          does: "Remove one record of the supplied Entity class, where the Target authorizes deletion for that Entity."
+          accepts: {entity: "the imported Entity class", id: "which record"}
+          returns: "the removal outcome"
+          outcomes: ["deleted", "not found", "deletion not authorized for this Entity", "still referenced"]
+        enable:
+          does: "Set one record active, where the Model declares an activation Field, by setting that declared Field."
+          accepts: {entity: "the imported Entity class", id: "which record"}
+          returns: "the updated record"
+          outcomes: ["enabled", "not found", "Entity has no active state"]
+        disable:
+          does: "Set one record inactive, where the Model declares an activation Field, by setting that declared Field."
+          accepts: {entity: "the imported Entity class", id: "which record"}
+          returns: "the updated record"
+          outcomes: ["disabled", "not found", "Entity has no active state"]
+        get_by_id:
+          does: "Return one record of the supplied Entity class by its record identifier."
+          accepts: {entity: "the imported Entity class", id: "which record"}
+          returns: "the matching record"
+          outcomes: ["found", "not found"]
+        list:
+          does: "Return the records of the supplied Entity class that match the supplied criteria, in the requested order."
+          accepts:
+            entity: "the imported Entity class to read"
+            filters: "conditions a record must satisfy; id is one of them"
+            order_by: "the field to order by and its direction"
+            limit: "how many records to return; the pagination defaults apply when omitted"
+            cursor: "where to continue from, under the selected pagination strategy"
+          returns: "the matching records and the position to continue from"
+          outcomes: ["listed", "unsupported filter or order field"]
+        count:
+          does: "Return how many records of the supplied Entity class match the supplied criteria; the whole Entity when no filter is given."
+          accepts: {entity: "the imported Entity class to count", filters: "conditions a record must satisfy"}
+          returns: "the number of matching records"
+          outcomes: ["counted", "unsupported filter field"]
+        sum:
+          does: "Return the total of one numeric field across the records of the supplied Entity class that match the supplied criteria."
+          accepts: {entity: "the imported Entity class to read", field: "the field to total", filters: "conditions a record must satisfy"}
+          returns: "the total, and nothing to total when no record matches"
+          outcomes: ["summed", "unknown or non-numeric field", "unsupported filter field"]
+        min:
+          does: "Return the smallest value of one field across the records of the supplied Entity class that match the supplied criteria."
+          accepts: {entity: "the imported Entity class to read", field: "the field to take the minimum of", filters: "conditions a record must satisfy"}
+          returns: "the smallest value, and nothing when no record matches"
+          outcomes: ["found", "unknown or incomparable field", "unsupported filter field"]
+        max:
+          does: "Return the largest value of one field across the records of the supplied Entity class that match the supplied criteria."
+          accepts: {entity: "the imported Entity class to read", field: "the field to take the maximum of", filters: "conditions a record must satisfy"}
+          returns: "the largest value, and nothing when no record matches"
+          outcomes: ["found", "unknown or incomparable field", "unsupported filter field"]
+        truncate:
+          does: "Remove every record of the supplied Entity class, leaving its Table structure in place."
+          accepts: {entity: "the imported Entity class to empty"}
+          returns: "the removal outcome"
+          outcomes: ["emptied", "deletion not authorized for this Entity", "records still referenced"]
+        report:
+          does: "Return a report from the supplied report-specific selection criteria."
+          accepts: {criteria: "the report-specific selection criteria"}
+          returns: "the requested report"
+          outcomes: ["reported", "unsupported criteria"]
+        execute_command:
+          does: "Execute a declared database command with supplied parameters."
+          accepts: {command: "the declared database command", parameters: "the parameters supplied to that command"}
+          returns: "the command result"
+          outcomes: ["executed", "unsupported command", "invalid parameters"]
 
-            list:
-              does: "Return the records of the named Model that match the supplied criteria, in the requested order. Reading one record by identifier is this Operation with an id filter, not an Operation of its own."
-              accepts:
-                model: "the Model to read"
-                filters: "conditions a record must satisfy; id is one of them"
-                order_by: "the field to order by and its direction"
-                limit: "how many records to return; the pagination defaults apply when omitted"
-                cursor: "where to continue from, under the selected pagination strategy"
-              returns: "the matching records and the position to continue from"
-              outcomes: ["listed", "unknown Model", "unsupported filter or order field"]
-              uses: "database.list"
+  # <!-------------------------------------------- policies -->
+  policies:
+    deletion:
+      requires_explicit_target_authorization: true
+      inferred_from_activation_field: false
+    pagination:
+      enabled: true
+      strategy: "cursor"
+      default_limit: 50
+      maximum_limit: 100
+      filtering: "explicitly allowlisted Fields only"
+      sorting: "explicitly allowlisted Fields with stable ordering"
+    authorization:
+      enabled_when: "Development authentication applies to Logic or Target requires authorization."
+    business_rate_limits:
+      source: "Target-defined quotas and eligibility rules"
 
-            update:
-              does: "Change the supplied fields of one existing record of the named Model."
-              accepts: {model: "the Model this record belongs to", id: "which record", values: "the fields to change"}
-              returns: "the updated record"
-              outcomes: ["updated", "not found", "invalid values", "conflicts with an existing record"]
-              uses: "database.update"
+  # <!-------------------------------------------- runtime -->
+  runtime:
+    observability:
+      logging:
+        enabled: false
 
-            delete:
-              does: "Remove one record of the named Model, where the Target authorizes deletion for that Model."
-              accepts: {model: "the Model this record belongs to", id: "which record"}
-              returns: "the removal outcome"
-              outcomes: ["deleted", "not found", "deletion not authorized for this Model", "still referenced"]
-              uses: "database.delete"
+  # <!-------------------------------------------- verification -->
+  verification:
+    checks:
+      - "Authentication and authorization, when Development enables them for Logic"
+      - "Idempotency, for the Operations the Target selects as sensitive to repetition"
+      - "Credential and secret exclusion from outcomes and logs"
+    unit_tests_use_live_dependencies: false
 
-            enable:
-              does: "Set one record active, where the Model declares an activation Field, by setting that declared Field."
-              accepts: {model: "the Model this record belongs to", id: "which record"}
-              returns: "the updated record"
-              outcomes: ["enabled", "not found", "Model has no active state"]
-              uses: "database.update"
+  # <!-------------------------------------------- development -->
+  development:
+    capabilities:
+      testing: false
+      error_handling: false
+      logging: false
+      encryption: false
 
-            disable:
-              does: "Set one record inactive, where the Model declares an activation Field, by setting that declared Field."
-              accepts: {model: "the Model this record belongs to", id: "which record"}
-              returns: "the updated record"
-              outcomes: ["disabled", "not found", "Model has no active state"]
-              uses: "database.update"
-
-            count:
-              does: "Return how many records of the named Model match the supplied criteria; the whole Model when no filter is given."
-              accepts: {model: "the Model to count", filters: "conditions a record must satisfy"}
-              returns: "the number of matching records"
-              outcomes: ["counted", "unknown Model", "unsupported filter field"]
-              uses: "database.count"
-
-            sum:
-              does: "Return the total of one numeric field across the records of the named Model that match the supplied criteria."
-              accepts: {model: "the Model to read", field: "the field to total", filters: "conditions a record must satisfy"}
-              returns: "the total, and nothing to total when no record matches"
-              outcomes: ["summed", "unknown Model", "unknown or non-numeric field", "unsupported filter field"]
-              uses: "database.sum"
-
-            min:
-              does: "Return the smallest value of one field across the records of the named Model that match the supplied criteria."
-              accepts: {model: "the Model to read", field: "the field to take the minimum of", filters: "conditions a record must satisfy"}
-              returns: "the smallest value, and nothing when no record matches"
-              outcomes: ["found", "unknown Model", "unknown or incomparable field", "unsupported filter field"]
-              uses: "database.min"
-
-            max:
-              does: "Return the largest value of one field across the records of the named Model that match the supplied criteria."
-              accepts: {model: "the Model to read", field: "the field to take the maximum of", filters: "conditions a record must satisfy"}
-              returns: "the largest value, and nothing when no record matches"
-              outcomes: ["found", "unknown Model", "unknown or incomparable field", "unsupported filter field"]
-              uses: "database.max"
-
-            truncate:
-              does: "Remove every record of the named Model, leaving its structure in place."
-              accepts: {model: "the Model to empty"}
-              returns: "the removal outcome"
-              outcomes: ["emptied", "unknown Model", "deletion not authorized for this Model", "records still referenced"]
-              uses: "database.truncate"
-
-          naming: "Use familiar consumer-oriented operation names such as create, list, update, and delete."
-    services:
-      purpose: "The Services this Logic currently has, one per Component it talks to, with the Actions each performs. The Principle “Logic is composed of internal Services, one per Component it talks to” fixes what a Service is; this group records which ones exist."
-      database:
-        name: "Database Service"
-        talks_to: "Database Component"
-        purpose: "The part of the reasoning that speaks to Database: entering, changing, and reading stored data for the Models."
-        calls: "Database's Public Interface; each Action below is one of its Operations."
-        actions:
-          create: "Create one record for a Model from supplied values."
-          update: "Change supplied fields of one existing record. Setting a record active or inactive is this Action on the Field the Model declares for it, not an Action of its own."
-          delete: "Remove one record, where the Target authorizes deletion for that Model."
-          list: "Return records for a Model under the applicable filters, order, and limit, including a filter on the identifier."
-          count: "Return how many records of a Model match the applicable filters."
-          sum: "Return the total of one numeric field across the matching records."
-          min: "Return the smallest value of one field across the matching records."
-          max: "Return the largest value of one field across the matching records."
-          truncate: "Remove every record of a Model, leaving its structure in place."
-          execute_command: "Perform a data operation the other Actions cannot express, through Database's own capability-restricted command route; never structural, privilege, or migration work."
-
-    policies:
-      deletion:
-        requires_explicit_target_authorization: true
-        inferred_from_activation_field: false
-      pagination:
-        enabled: true
-        strategy: "cursor"
-        default_limit: 50
-        maximum_limit: 100
-        filtering: "explicitly allowlisted Fields only"
-        sorting: "explicitly allowlisted Fields with stable ordering"
-      authorization:
-        enabled_when: "Development authentication applies to Logic or Target requires authorization."
-      business_rate_limits:
-        source: "Target-defined quotas and eligibility rules"
-    runtime:
-      observability:
-        logging:
-          enabled: false
-    verification:
-      checks:
-        - "Authentication and authorization, when Development enables them for Logic"
-        - "Idempotency, for the Operations the Target selects as sensitive to repetition"
-        - "Credential and secret exclusion from outcomes and logs"
-      unit_tests_use_live_dependencies: false
+  # <!-------------------------------------------- documentation -->
+  documentation:
+    file: "README.md"
+    location: "the Component root"
+    format: "markdown"
+    order:
+      - overview
+      - interface
+      - setup
+      - run
+      - verify
+      - troubleshooting
+    sections:
+      interface: "Give every public Service Action published through Interface one complete example."

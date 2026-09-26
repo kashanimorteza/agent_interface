@@ -45,7 +45,7 @@ Logic sends an Operation request through Interface. Mapping resolves the applica
 - **Interface** — the public boundary through which Logic requests Database Operations.
 - **Operation** — one public Database action published through Interface.
 - **Execute Command** — an Operation that executes a declared database command whose purpose does not directly concern one Model.
-- **Mapping** — the internal layer that routes a request to its Instance and Engine and standardizes its result when needed.
+- **Mapping** — the public layer that routes a request to its Instance and Engine and standardizes its result when needed.
 
 <br>
 
@@ -86,6 +86,11 @@ The public layer that receives Operation requests from Logic and returns their r
 - **Enable** — accepts an imported Entity class and record identifier; returns the enabled record or operation outcome.
 - **Disable** — accepts an imported Entity class and record identifier; returns the disabled record or operation outcome.
 - **Get by ID** — accepts an imported Entity class and record identifier; returns the matching record or a not-found outcome.
+- **Count** — accepts an imported Entity class and optional filters; returns the number of matching records.
+- **Sum** — accepts an imported Entity class, one numeric field, and optional filters; returns that field's total across matching records.
+- **Min** — accepts an imported Entity class, one comparable field, and optional filters; returns the smallest matching value.
+- **Max** — accepts an imported Entity class, one comparable field, and optional filters; returns the largest matching value.
+- **Truncate** — accepts an imported Entity class; removes all of its records while keeping its Table structure.
 - **Report** — accepts report-specific selection criteria; returns the requested report without requiring one Model as its subject.
 - **Execute Command** — accepts a declared command and its supplied parameters; returns that command's result or operation outcome. Its purpose need not concern one Model.
 
@@ -123,7 +128,7 @@ Every Principle below is mandatory.
 
 ### Database exposes explicit Interface Operations
 
-**Rule:** Interface publishes the Operations described in this Component. Each applicable Operation receives an imported Entity class or Entity instance directly, never a Model name or identity. List accepts optional filters and optional ordering by field. Execute Command may perform a declared database command that does not directly concern one Model. Database documentation gives each published Interface Operation one complete example.
+**Rule:** Interface publishes the Operations described in this Component. Each applicable Operation receives an imported Entity class or Entity instance directly, never a Model name or identity. List accepts optional filters and optional ordering by field; Count, Sum, Min, and Max accept optional filters. Execute Command may perform a declared database command that does not directly concern one Model. Database documentation gives each published Interface Operation one complete example.
 
 **Why:** An explicit operation catalogue keeps the public data surface stable and understandable.
 
@@ -186,6 +191,7 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — publish the Operations described by Interface.
 - **Must** — receive an imported Entity class or Entity instance directly, never a Model name or identity.
 - **Must** — let List accept optional filters and optional field ordering.
+- **Must** — let Count, Sum, Min, and Max accept optional filters.
 - **Must** — let Execute Command perform a declared database command that does not directly concern one Model.
 - **Must** — give every published Interface Operation one complete documentation example.
 

@@ -30,10 +30,10 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  settings: "Database type, language, platform, component directory, package name, runtime database.yaml, its Foundation Structure, and the root directory for all Database files."
-  instances: "Configured Database Instances and their selected Engine and database file."
-  layout: "The default directories for Interface, Mapping, and Engine."
-  development: "Component capabilities, Database storage naming conventions, SQLModel choices, migration defaults, and Database Engine defaults."
+  - settings
+  - instances
+  - layout
+  - development
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
@@ -63,8 +63,7 @@ content:
   # <!-------------------------------------------- layout -->
   layout:
     directories:
-      interface:
-        directory: "interface"
+      interface: "interface"
       mapping: "mapping"
       engine: "engine"
 

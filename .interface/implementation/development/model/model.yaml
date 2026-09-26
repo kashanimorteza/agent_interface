@@ -29,9 +29,9 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  settings: "The Model Component's type, language, platform, root directory, and package name."
-  layout: "Entity directory, Interface, Declaration, and Foundation file names, class names, Foundation method names, and casing."
-  development: "Component capabilities, Model naming conventions, and selected SQLModel implementation defaults."
+  - settings
+  - layout
+  - development
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
