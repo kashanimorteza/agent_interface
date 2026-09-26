@@ -27,6 +27,7 @@ read_order:
   - "instances: identify the configured Database Instances."
   - "layout: locate the default directories for Interface, Mapping, and Engine."
   - "development: apply Database capabilities, naming conventions, language, package, and Engine defaults."
+  - "documentation: apply the required Database documentation structure and Interface examples."
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
@@ -34,6 +35,7 @@ content_map:
   - instances
   - layout
   - development
+  - documentation
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
