@@ -1,0 +1,27 @@
+engines:
+  sqlite:
+    name: "SQLite"
+    driver: "sqlite"
+    parameters:
+      foreign_keys: true
+      check_same_thread: false
+
+instances:
+  application:
+    name: "Application"
+    purpose: "Stores the application's Model Entity data."
+    engine: "sqlite"
+    database: "application.db"
+    host: ""
+    port: ""
+    path: "data/application.db"
+    username: ""
+    password: ""
+    parameters: {}
+
+settings:
+  default_instance: "application"
+  assignments: {}
+  secrets:
+    encryption_key: "file:.secrets/encryption.key"
+  parameters: {}

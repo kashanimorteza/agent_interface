@@ -75,12 +75,6 @@ content:
       error_handling: false
       logging: false
       encryption: false
-    naming:
-      storage:
-        tables: "plural_snake_case"
-        columns: "snake_case"
-        constraints: "snake_case"
-        indexes: "ix_<table>_<column>"
     languages:
       python:
         modeling:

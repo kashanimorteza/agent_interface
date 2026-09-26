@@ -48,7 +48,19 @@ content:
         - "TrailingGroup"
         - "TrailingRule"
         - "User"
-    database: {}
+    database:
+      package_name: "my_database"
+      path: "my_database"
+      public_entrypoint: "my_database.interface"
+      public_interface:
+        - "Configuration"
+        - "InitialData"
+        - "Interface"
+        - "Mapping"
+        - "Outcome"
+        - "Protection"
+        - "Result"
+        - "SqliteEngine"
     logic: {}
     api: {}
     presentation: {}
