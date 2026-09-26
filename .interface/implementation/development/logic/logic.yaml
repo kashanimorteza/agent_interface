@@ -63,52 +63,53 @@ content:
       
   # <!-------------------------------------------- services -->
   services:
-    database:
-      name: "Database Service"
-      directory: "database"
-      talks_to: "Database Component"
-      purpose: "The Service through which Logic enters, changes, and reads stored Entity data."
-      calls: "Database's Interface; each Operation below delegates to the Database Operation with the same name."
+    entity:
+      name: "Entity Service"
+      directory: "entity"
+      source: "Entity classes published by Model Interface"
+      files: "Create one file for every published Entity."
+      talks_to: ["Model Component", "Database Component"]
+      purpose: "The Service that provides each Entity's Logic Actions and calls Database for that Entity."
+      calls: "Each Entity file calls Database's Interface through the corresponding Operation below."
       operations:
         add:
           does: "Add one record from the supplied Entity instance."
-          accepts: {entity: "the Entity instance to store"}
+          accepts: {object: "the Entity instance to store"}
           returns: "the created record"
           outcomes: ["created", "invalid values", "conflicts with an existing record"]
         edit:
-          does: "Return one record of the supplied Entity class in editable form."
-          accepts: {entity: "the imported Entity class", id: "which record"}
+          does: "Return one record of this file's Entity in editable form."
+          accepts: {id: "which record"}
           returns: "the editable record"
           outcomes: ["found", "not found"]
         update:
           does: "Change one existing record through the supplied Entity instance."
-          accepts: {entity: "the Entity instance containing its record identifier and changed values"}
+          accepts: {object: "the Entity instance containing its record identifier and changed values"}
           returns: "the updated record"
           outcomes: ["updated", "not found", "invalid values", "conflicts with an existing record"]
         delete:
-          does: "Remove one record of the supplied Entity class, where the Target authorizes deletion for that Entity."
-          accepts: {entity: "the imported Entity class", id: "which record"}
+          does: "Remove one record of this file's Entity, where the Target authorizes deletion for that Entity."
+          accepts: {id: "which record"}
           returns: "the removal outcome"
           outcomes: ["deleted", "not found", "deletion not authorized for this Entity", "still referenced"]
         enable:
           does: "Set one record active, where the Model declares an activation Field, by setting that declared Field."
-          accepts: {entity: "the imported Entity class", id: "which record"}
+          accepts: {id: "which record"}
           returns: "the updated record"
           outcomes: ["enabled", "not found", "Entity has no active state"]
         disable:
           does: "Set one record inactive, where the Model declares an activation Field, by setting that declared Field."
-          accepts: {entity: "the imported Entity class", id: "which record"}
+          accepts: {id: "which record"}
           returns: "the updated record"
           outcomes: ["disabled", "not found", "Entity has no active state"]
         get_by_id:
-          does: "Return one record of the supplied Entity class by its record identifier."
-          accepts: {entity: "the imported Entity class", id: "which record"}
+          does: "Return one record of this file's Entity by its record identifier."
+          accepts: {id: "which record"}
           returns: "the matching record"
           outcomes: ["found", "not found"]
         list:
-          does: "Return the records of the supplied Entity class that match the supplied criteria, in the requested order."
+          does: "Return the records of this file's Entity that match the supplied criteria, in the requested order."
           accepts:
-            entity: "the imported Entity class to read"
             filters: "conditions a record must satisfy; id is one of them"
             order_by: "the field to order by and its direction"
             limit: "how many records to return; the pagination defaults apply when omitted"
@@ -116,28 +117,28 @@ content:
           returns: "the matching records and the position to continue from"
           outcomes: ["listed", "unsupported filter or order field"]
         count:
-          does: "Return how many records of the supplied Entity class match the supplied criteria; the whole Entity when no filter is given."
-          accepts: {entity: "the imported Entity class to count", filters: "conditions a record must satisfy"}
+          does: "Return how many records of this file's Entity match the supplied criteria; the whole Entity when no filter is given."
+          accepts: {filters: "conditions a record must satisfy"}
           returns: "the number of matching records"
           outcomes: ["counted", "unsupported filter field"]
         sum:
-          does: "Return the total of one numeric field across the records of the supplied Entity class that match the supplied criteria."
-          accepts: {entity: "the imported Entity class to read", field: "the field to total", filters: "conditions a record must satisfy"}
+          does: "Return the total of one numeric field across this file's Entity records that match the supplied criteria."
+          accepts: {field: "the field to total", filters: "conditions a record must satisfy"}
           returns: "the total, and nothing to total when no record matches"
           outcomes: ["summed", "unknown or non-numeric field", "unsupported filter field"]
         min:
-          does: "Return the smallest value of one field across the records of the supplied Entity class that match the supplied criteria."
-          accepts: {entity: "the imported Entity class to read", field: "the field to take the minimum of", filters: "conditions a record must satisfy"}
+          does: "Return the smallest value of one field across this file's Entity records that match the supplied criteria."
+          accepts: {field: "the field to take the minimum of", filters: "conditions a record must satisfy"}
           returns: "the smallest value, and nothing when no record matches"
           outcomes: ["found", "unknown or incomparable field", "unsupported filter field"]
         max:
-          does: "Return the largest value of one field across the records of the supplied Entity class that match the supplied criteria."
-          accepts: {entity: "the imported Entity class to read", field: "the field to take the maximum of", filters: "conditions a record must satisfy"}
+          does: "Return the largest value of one field across this file's Entity records that match the supplied criteria."
+          accepts: {field: "the field to take the maximum of", filters: "conditions a record must satisfy"}
           returns: "the largest value, and nothing when no record matches"
           outcomes: ["found", "unknown or incomparable field", "unsupported filter field"]
         truncate:
-          does: "Remove every record of the supplied Entity class, leaving its Table structure in place."
-          accepts: {entity: "the imported Entity class to empty"}
+          does: "Remove every record of this file's Entity, leaving its Table structure in place."
+          accepts: {}
           returns: "the removal outcome"
           outcomes: ["emptied", "deletion not authorized for this Entity", "records still referenced"]
         report:
@@ -203,4 +204,4 @@ content:
       - verify
       - troubleshooting
     sections:
-      interface: "Give every public Service Action published through Interface one complete example."
+      interface: "Give every public Operation published through Interface one complete example."

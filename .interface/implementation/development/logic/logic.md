@@ -40,7 +40,7 @@ The cost of the alternative is not untidiness, it is disagreement. Behaviour spr
 
 A consumer names an Operation on Logic's Interface and gives it what that Operation needs. Logic works out what the request means: which Domain Definitions it concerns, which Components hold the answer, and in what order they have to be asked.
 
-It then carries the work out through its Services. Each Service holds the calls into one Component's Interface, so a Service's Action is one call outwards — the Database Service's `add` is a call into Database's Interface, and a Service for another Component is the same thing pointed elsewhere. An Operation that needs one Component uses one Service; an Operation that needs several composes their Actions, deciding what to pass from one to the next and what belongs together in a single unit of work.
+It then carries the work out through its Services. The Entity Service takes the Entity classes published by Model and, for each Entity, provides the Actions that call the corresponding Database Operations. An Operation composes those Actions as needed, deciding what to pass from one to the next and what belongs together in a single unit of work.
 
 What comes back is an Application Outcome: the result the consumer asked for, or one of the expected failures that Operation declares. The consumer learns nothing else — not which Components were involved, not which Service performed which step, not how the answers were combined. That is the whole exchange, and it is the same exchange whether the consumer is an API process, a command-line entry point, or another Component.
 
@@ -53,8 +53,9 @@ What comes back is an Application Outcome: the result the consumer asked for, or
 - **Interface** — the only Logic boundary a consumer sees, exposing the Operations Logic performs.
 - **Category** — one named grouping of Operations in the Interface, gathering the Operations that serve the same kind of work.
 - **Operation** — one complete unit of work the Interface offers a consumer, named by what the consumer wants done rather than by how it is carried out.
-- **Service** — one internal part of Logic, owning the work that concerns one Component Logic talks to. A Service is internal: no consumer reaches it, names it, or depends on it.
-- **Action** — one step a Service performs, carried out by calling an Operation of that Component's own Interface. Operations are composed of Actions; an Action is never offered directly to a consumer.
+- **Service** — one internal part of Logic that owns one coherent application responsibility. A Service is internal: no consumer reaches it, names it, or depends on it.
+- **Entity Service** — the internal Service that creates one Entity file for every Entity published by Model and performs Database Operations for that Entity.
+- **Action** — one step a Service performs. An Entity Service Action calls the corresponding Database Operation for its Entity; Operations are composed of Actions, and an Action is never offered directly to a consumer.
 - **Application Outcome** — a logical success or expected failure independent of transport and persistence.
 
 <br>
@@ -108,7 +109,11 @@ Logic's outward surface. It organizes what Logic offers into Categories, each ga
 
 ### Services
 
-Logic's internal layer. Each Service owns the work concerning one Component Logic talks to and carries that Component's name. Each Action calls an Operation of that Component's Interface. An Operation composes Actions from one Service or several; Services are parallel and not reachable, nameable, or dependable from outside.
+Logic's internal layer. An Operation composes Actions from one Service or several; Services are parallel and not reachable, nameable, or dependable from outside.
+
+#### Entity
+
+The configured Entity Service. It reads the Entity classes published by Model, creates one file for each Entity, and provides that Entity's Actions. Each Action performs the Entity's work through the corresponding Database Operation; Interface publishes the Actions available to consumers as categorized Operations.
 
 <br>
 
@@ -123,8 +128,6 @@ Logic Definition Principles are mandatory. Logic Preferences provide configurabl
 ## Principles
 
 Every Principle below is mandatory.
-
-<br>
 
 ### Logic documentation exposes the Interface only
 
@@ -166,13 +169,13 @@ Every Principle below is mandatory.
 
 <br>
 
-### Logic is composed of internal Services, one per Component it talks to
+### Logic is composed of internal Services
 
-**Rule:** Inside Logic, work is divided into Services. Each Service owns the work that concerns one Component Logic talks to and is named after it, so the Component a piece of Behaviour depends on is visible from its Service. A Service performs Actions; an Operation is carried out by composing Actions, from one Service or several. Services are internal: no consumer names one, reaches one, or depends on one, and no Service is promoted to Interface.
+**Rule:** Inside Logic, work is divided into Services. Each Service owns one coherent application responsibility and performs Actions; an Operation is carried out by composing Actions from one Service or several. Services are internal: no consumer names one, reaches one, or depends on one, and no Service is promoted to Interface.
 
-**Why:** Dividing by the Component on the other side keeps each dependency in one place, so a Component can be added, replaced, or removed without that change spreading through unrelated Behaviour.
+**Why:** Giving each application responsibility one Service keeps its dependencies and behavior together, so a Service can change without that change spreading through unrelated Behaviour.
 
-**Boundary:** Services sit beside one another, not on top of one another: none is the foundation of another, and one Service never reaches another Component's Service to do its work — the Operation composes them. Logic Preferences declare which Services exist and which Operations each one provides.
+**Boundary:** Services sit beside one another, not on top of one another: none is the foundation of another, and one Service never reaches another Service to do its work — the Operation composes them. Logic Preferences declare which Services exist and which Operations each one provides.
 
 <br>
 
@@ -263,9 +266,9 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — State for every Operation what it accepts, what it returns, and which Application Outcomes it can produce.
 - **Never** — Expose a Service, an Action, a connection, a session, or a storage detail through Interface.
 
-**Logic is composed of internal Services, one per Component it talks to**
+**Logic is composed of internal Services**
 
-- **Must** — Divide Logic into internal Services, each owning the work that concerns one Component Logic talks to and named after it.
+- **Must** — Divide Logic into internal Services, each owning one coherent application responsibility.
 - **Must** — Carry out an Operation by composing Actions from one Service or several.
 - **Never** — Let a consumer name, reach, or depend on a Service, or let one Service do its work through another Component's Service.
 
