@@ -43,7 +43,8 @@ Each Entity stands alone in its own unit under the Entity directory. Declaration
 - **Entity** — a Domain Entity with an Identity that distinguishes one instance from another.
 - **Field** — one named value of a Domain Entity, with its domain meaning, logical type, and applicable constraints.
 - **Type** — the technology-independent category of values a Field may hold.
-- **Field Rule** — a declared rule for a Field's presence, default, sensitivity, immutability, length, or constraint.
+- **Field Rule** — a declared rule for a Field's presence, default, `sensitive` flag, immutability, length, or constraint.
+- **Sensitive** — a boolean Field metadata flag. It identifies data for which handling is decided outside Model; it defines no Model behavior.
 - **Relationship** — an explicit domain reference from one Domain Entity to another, without nesting either Entity inside the other.
 - **Identity** — the Field or Fields that distinguish one Entity from every other Entity of the same kind.
 - **Primary Key** — the storage-facing expression of an Entity's declared Identity.
@@ -100,7 +101,7 @@ Declaration
 ├── Field Rules
 │   ├── Required and Nullability
 │   ├── Default Values
-│   ├── Sensitivity
+│   ├── Sensitive
 │   ├── Immutability
 │   ├── Length
 │   └── Constraints
@@ -162,7 +163,7 @@ Every Principle below is mandatory.
 
 ### Model preserves explicit Target meaning
 
-**Rule:** Model preserves every Target-declared Domain Entity, Field, constraint, default, and sensitivity classification. Preferences may complete only missing choices of existing Fields; they never create, rename, remove, or override explicit Target meaning.
+**Rule:** Model preserves every Target-declared Domain Entity, Field, constraint, default, and `sensitive` flag. Preferences may complete only missing choices of existing Fields; they never create, rename, remove, or override explicit Target meaning.
 
 **Why:** The Target remains authoritative while unstated realization details can still be resolved consistently.
 
@@ -222,7 +223,7 @@ Every Principle below is mandatory.
 
 ### Declaration preserves structured Field meaning
 
-**Rule:** Declaration preserves each Field's logical Type, presence semantics, default, sensitivity, immutability, and every Target-declared restriction as usable structured meaning, including applicable value range, length, pattern, precision, scale, allowed values, or comparable constraint.
+**Rule:** Declaration preserves each Field's logical Type, presence semantics, default, `sensitive` flag, immutability, and every Target-declared restriction as usable structured meaning, including applicable value range, length, pattern, precision, scale, allowed values, or comparable constraint.
 
 **Why:** Consumers and storage realization need more than descriptive prose to use the same domain restriction consistently.
 
@@ -297,7 +298,7 @@ Every obligation in the file, under the Principle it comes from.
 
 **Model preserves explicit Target meaning**
 
-- **Must** — Preserve explicit Target Fields, constraints, defaults, and sensitivity classification.
+- **Must** — Preserve explicit Target Fields, constraints, defaults, and `sensitive` flags.
 - **Never** — Invent or override Target meaning.
 
 **Logical Model meaning is independent of implementation technology**
@@ -327,7 +328,7 @@ Every obligation in the file, under the Principle it comes from.
 
 **Declaration preserves structured Field meaning**
 
-- **Must** — Keep each declared Field Type, rule, default, sensitivity, immutability, and restriction usable by consumers and storage realization.
+- **Must** — Keep each declared Field Type, rule, default, `sensitive` flag, immutability, and restriction usable by consumers and storage realization.
 - **Never** — Invent a constraint or force one constraint representation.
 
 **Model names express domain meaning**
