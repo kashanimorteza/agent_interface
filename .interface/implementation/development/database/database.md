@@ -38,7 +38,7 @@ Logic sends an Operation request through Interface. Mapping resolves the applica
 <!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
-- **Engine** — a supported database technology and its implementation.
+- **Engine** — a declared database technology and, when marked for implementation, its implementation.
 - **Instance** — a named database connection and storage identity using one Engine.
 - **Database Configuration** — the declared Engines, Instances, and Settings available to Database.
 - **Settings** — component-wide choices such as the default Instance, purpose-to-Instance assignments, and secret references.
@@ -120,7 +120,7 @@ Every Principle below is mandatory.
 
 ### Database configuration declares its available resources
 
-**Rule:** Database Configuration declares every supported Engine, its engine-specific parameters, every named Instance and its connection parameters, and component Settings such as the default Instance, purpose assignments, secret references, and other shared parameters. Every Instance names one declared Engine, and every configured Instance reference resolves to a declared Instance.
+**Rule:** Database Configuration declares every Engine, whether it is marked for implementation, its engine-specific parameters, every named Instance and its connection parameters, and component Settings such as the default Instance, purpose assignments, secret references, and other shared parameters. Every Instance names one declared Engine, and every configured Instance reference resolves to a declared Instance.
 
 **Why:** One configuration source makes the available storage resources and their selection explicit.
 
@@ -158,7 +158,7 @@ Every Principle below is mandatory.
 
 ### Each Engine implements the published Operations
 
-**Rule:** Every declared Engine has an implementation isolated from the other Engines. It implements the published Operations with the Engine's own packages, parameters, and mechanisms while preserving the applicable operation request and result standard.
+**Rule:** Every Engine marked for implementation has an implementation isolated from the other Engines. It implements the published Operations with the Engine's own packages, parameters, and mechanisms while preserving the applicable operation request and result standard.
 
 **Why:** Separate Engine implementations make support for each database technology clear and independently maintainable.
 
@@ -183,7 +183,7 @@ Every obligation in the file, under the Principle it comes from.
 
 **Database configuration declares its available resources**
 
-- **Must** — declare every supported Engine, its parameters, named Instances, and component Settings in Database Configuration.
+- **Must** — declare every Engine, its implementation status, parameters, named Instances, and component Settings in Database Configuration.
 - **Must** — make every Instance name a declared Engine and every configured Instance reference resolve to a declared Instance.
 
 **Database exposes explicit Interface Operations**
@@ -208,7 +208,7 @@ Every obligation in the file, under the Principle it comes from.
 
 **Each Engine implements the published Operations**
 
-- **Must** — keep an isolated implementation for every declared Engine.
+- **Must** — keep an isolated implementation for every Engine marked for implementation.
 - **Must** — implement published Operations with the selected Engine's packages, parameters, and mechanisms.
 - **Must** — preserve each Operation's applicable request and result standard.
 

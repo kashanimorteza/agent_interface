@@ -19,7 +19,7 @@ resolution:
   consumption: "Read settings for Database identity, runtime configuration, and root directory; read layout to locate the Database layers; then read development for capabilities, naming, and technical defaults."
   selection: "When Database Configuration leaves a Database-owned technical choice unstated and this file supplies no default, use compatible professional judgment under Database Principles and record a consequential implementation choice with the implementation."
   version_resolution: "Database's development section resolves Database-owned versioned technical items. Development resolves only its shared Defaults."
-  matching: "Each declared Engine uses one implementation file beneath layout.directories.engine and applies the matching development.database_engines default when one exists."
+  matching: "Each Engine marked `implement: true` uses one implementation file beneath layout.directories.engine and applies the matching development.database_engines default when one exists."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
@@ -53,6 +53,7 @@ content:
       structure: ".interface/foundation/schema/database.yaml"
     database_directory:
       path: "data"
+    default_engine: "sqlite"
     default_instance: "application"
 
   # <!-------------------------------------------- instances -->
@@ -65,9 +66,9 @@ content:
   # <!-------------------------------------------- layout -->
   layout:
     directories:
-      interface: "interface"
-      mapping: "mapping"
       engine: "engine"
+    files:
+      interface: "model_interface.py"
 
   # <!-------------------------------------------- development -->
   development:
@@ -99,6 +100,7 @@ content:
             downgrade: "uv run alembic downgrade -1"
     database_engines:
       sqlite:
+        implement: true
         version: "runtime-provided"
         driver:
           name: "sqlite3"
@@ -115,6 +117,7 @@ content:
           foreign_keys: true
           check_same_thread: false
       postgresql:
+        implement: false
         version: "latest-compatible"
         driver:
           name: "psycopg"
@@ -127,6 +130,7 @@ content:
           default_port: 5432
           parameters: ["host", "port", "database", "username_secret", "password_secret"]
       mysql:
+        implement: false
         version: "latest-compatible"
         driver:
           name: "PyMySQL"
@@ -139,7 +143,20 @@ content:
           default_port: 3306
           parameters: ["host", "port", "database", "username_secret", "password_secret"]
           charset: "utf8mb4"
-          
+      sql_server:
+        implement: false
+        version: "latest-compatible"
+        driver:
+          name: "pyodbc"
+          version: "latest-compatible"
+          package: "pyodbc"
+        storage:
+          kind: "server"
+        connection:
+          url_scheme: "mssql+pyodbc"
+          default_port: 1433
+          parameters: ["host", "port", "database", "username_secret", "password_secret"]
+  
   # <!-------------------------------------------- documentation -->
   documentation:
     file: "README.md"
