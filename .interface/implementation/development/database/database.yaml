@@ -59,7 +59,6 @@ content:
       name: "Application"
       engine: "sqlite"
       database: "application.db"
-      path: "db/application.db"
 
   # <!-------------------------------------------- layout -->
   layout:
@@ -94,7 +93,7 @@ content:
               entity_source: "Use Entity classes published by Model Interface. Database Operations receive the imported Entity class or an Entity instance directly, never a Model name or identity. Do not create a separate persistence model or duplicate Entity Fields, constraints, relationships, or indexes in Database."
               engine_and_session: "Use create_engine and Session from SQLModel. Open sessions directly with the configured Engine; do not introduce a separate session factory for ordinary Database operations."
               metadata: "Import all Entity classes before using SQLModel.metadata. Use that metadata as the authoritative table metadata for table creation and migration comparison."
-              query_api: "Use SQLModel's select and Session.exec APIs for ordinary Database queries. Use a SQLAlchemy escape hatch only when SQLModel cannot express the required Engine-specific capability."
+              query_api: "Use SQLModel's select and Session.exec APIs for ordinary Database queries."
         migration:
           name: "Alembic"
           package: "Alembic"
@@ -112,8 +111,8 @@ content:
           package: null
         storage:
           kind: "file"
-          relative_to: "component_root"
-          location: "data/<database>.db"
+          relative_to: "database_directory"
+          location: "<database>"
           committed: false
         connection:
           url_scheme: "sqlite"

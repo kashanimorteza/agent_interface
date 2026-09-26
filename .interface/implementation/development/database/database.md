@@ -119,8 +119,6 @@ Every Principle below is mandatory.
 
 **Why:** One configuration source makes the available storage resources and their selection explicit.
 
-**Boundary:** Preferences define technical defaults and conventions; Database Configuration records the current resources and settings.
-
 <br>
 
 ### Database exposes explicit Interface Operations
@@ -135,7 +133,7 @@ Every Principle below is mandatory.
 
 ### Database publishes all of its classes
 
-**Rule:** Interface, Mapping, and Engine classes are public. Interface remains the consumer-facing entry point for Database Operations.
+**Rule:** Interface, Mapping, and Engine classes are public. Interface is the standard entry point for Database Operations, while a consumer with a declared Connection may use any public Database class when needed.
 
 **Why:** Every Database class remains available without obscuring the standard operation boundary.
 
@@ -194,7 +192,7 @@ Every obligation in the file, under the Principle it comes from.
 **Database publishes all of its classes**
 
 - **Must** — keep Interface, Mapping, and Engine classes public.
-- **Must** — retain Interface as the consumer-facing entry point for Database Operations.
+- **Must** — retain Interface as the standard entry point for Database Operations while allowing a declared consumer to use any public Database class when needed.
 
 **Mapping routes requests and handles results**
 

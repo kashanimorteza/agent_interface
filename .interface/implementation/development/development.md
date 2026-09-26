@@ -31,7 +31,7 @@ Components need one place for the defaults and relationships they genuinely shar
 
 ### How It Works
 
-Each Component resolves its own Preferences first, then uses a Development Default only when its own Preference leaves a shared choice unstated. Components interact only through their Public Interfaces according to the declared Connection graph. The Application Manifest in Config is generated from those public facts.
+Each Component resolves its own Preferences first, then uses a Development Default only when its own Preference leaves a shared choice unstated. A declared Connection permits its consumer to use the provider's public classes and layers. The Application Manifest in Config is generated from those public facts.
 
 <br>
 
@@ -64,7 +64,7 @@ Presentation → API → Logic → Database → Model
                      └──────→ Model
 ```
 
-Each direct connection uses the provider Component's Public Interface.
+Each direct Connection permits use of the provider Component's public classes and layers.
 
 ### Model
 
@@ -158,13 +158,13 @@ Every Principle below is mandatory.
 
 <br>
 
-### Cross-Component use stays behind provider-owned Public Interfaces
+### Cross-Component use follows declared Connections
 
-**Rule:** Every cross-Component interaction uses the provider's Public Interface. Each provider defines and documents the public concepts it offers; a Connection records only consumer and provider.
+**Rule:** Every cross-Component interaction uses public classes or layers from its provider and requires one declared direct Connection. Each provider defines and documents the public concepts it offers; a Connection records only consumer and provider.
 
-**Why:** Consumers depend on a supported boundary while providers remain free to change private implementation.
+**Why:** Consumers can use the provider's available public surface without creating hidden dependencies.
 
-**Boundary:** A consumer never reads, changes, or depends on another Component's private implementation, storage, or resources.
+**Boundary:** Public availability does not create an undeclared Connection, and a consumer never reads, changes, or depends on another Component's private resources.
 
 <br>
 
@@ -198,13 +198,13 @@ Every Principle below is mandatory.
 
 <br>
 
-### Public Interface changes propagate through direct consumers
+### Public surface changes propagate through direct consumers
 
-**Rule:** A provider may change private implementation without consumer changes while its Public Interface remains compatible. When a Public Interface changes, each direct consumer in the declared Connection graph is reviewed and updated or regenerated when affected.
+**Rule:** A provider may change non-public implementation without consumer changes while its public surface remains compatible. When a public class, layer, or Interface changes, each direct consumer in the declared Connection graph is reviewed and updated or regenerated when affected.
 
 **Why:** Change follows actual dependencies without rebuilding unrelated Components.
 
-**Boundary:** A private change with no Public Interface effect triggers no consumer work, and a public change authorizes no change outside the affected dependency path.
+**Boundary:** A non-public change with no public-surface effect triggers no consumer work, and a public change authorizes no change outside the affected dependency path.
 
 <br>
 
@@ -223,10 +223,10 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — Use an explicit Component Preference before a Development Default.
 - **Never** — Let a Default replace a Component-owned decision.
 
-**Cross-Component use stays behind provider-owned Public Interfaces**
+**Cross-Component use follows declared Connections**
 
-- **Must** — Use a provider only through its Public Interface.
-- **Never** — Depend on another Component's private resources.
+- **Must** — Use only public classes or layers from a provider with a declared direct Connection.
+- **Never** — Treat public availability as an undeclared Connection or depend on another Component's private resources.
 
 **The declared Connection graph is direct, explicit, and acyclic**
 

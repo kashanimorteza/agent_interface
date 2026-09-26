@@ -50,7 +50,6 @@ rules:
   engine_support: "Every declared Engine has one implementation file under the configured engine directory."
   instance_integrity: "Every Instance names an existing Engine."
   setting_integrity: "settings.default_instance and every settings.assignments value name an existing Instance."
-  configuration_ownership: "This file contains current resources. Database Preferences define layout and conventions."
 
 # <!--------------------------------------------------------------------------------- Example -->
 example: |
