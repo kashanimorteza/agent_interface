@@ -1,0 +1,64 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/state.yaml"
+  path_note: "Mutable operational State record in the Config boundary: active Workflow position, aggregate phase progress, and the execution Log."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current State Schema. Existing operational records are preserved and never replaced with defaults."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read active for the current Workflow position, phases by stable Target phase identifier for aggregate progress, and log for recorded execution history."
+  selection: "A requested phase resolves to the entry keyed by that phase identifier; a Log Entry resolves by its id."
+  absence: "No matching phase entry means phase reconciliation has not recorded that phase; an empty log means no execution has been recorded."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "active"
+  - "phases"
+  - "log"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  active: "Active Workflow position: Mode, phase, reason, who set it, and when."
+  phases: "Aggregate operation progress keyed by stable Target phase identifier."
+  log: "The project's preserved history of recorded Skill executions and their outcomes."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  active:
+    mode: "not set"
+    phase: null
+    mode_reason: "No Workflow operation has been recorded."
+    set_by: "initialization"
+    set_at: null
+  phases: {}
+  log:
+    - id: "001"
+      skill: "my-interface-configure"
+      parent_id: ""
+      phase: null
+      event: "configure"
+      outcome: "completed"
+      started_at: "2026-09-26T23:36:51+03:30"
+      completed_at: "2026-09-26T23:37:06+03:30"
+      duration: "15 seconds"
+      report: "Generated application.yaml, plan.yaml, and state.yaml in .interface/config/ from their Schemas composed with the general YAML frame. All three parse and follow the frame's section order. No prior records existed, so nothing was reconciled."
+      data:
+        duration_ms: 14617
+        records:
+          - "application.yaml: created"
+          - "plan.yaml: created"
+          - "state.yaml: created"
+    - id: "002"
+      skill: "my-interface-plan"
+      parent_id: ""
+      phase: "1"
+      event: "plan"
+      outcome: "in progress"
+      started_at: "2026-09-26T23:43:13+03:30"
+      completed_at: null
+      duration: null
+      report: ""
