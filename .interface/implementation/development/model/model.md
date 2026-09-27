@@ -23,37 +23,36 @@ Model defines and publishes the project's data-model Entities.
 
 ### Overview
 
-Model defines flat, technology-independent Domain Entities. Each Entity carries its own meaning, Fields, and explicit Relationships without nesting another Entity.
+Model defines flat, technology-independent Entities. Each Entity carries its own meaning, Fields, and explicit Relationships without nesting another Entity.
 
 ### Purpose
 
-Model gives Logic and Database one shared Entity representation of each domain concept. Logic imports Entity classes for application programming; Database independently imports those same classes to derive its storage structure.
+Model provides standard, shared Entity definitions for use through its published surface.
 
 ### How It Works
 
-Each Entity stands alone in its own unit under the Entity directory. Declaration records technology-independent meaning, while Foundation provides shared behaviour. Every Model layer is public; Interface provides a convenient entry point for Entity classes and capabilities.
+Each Entity stands alone in its own unit. Declaration records technology-independent meaning, while Foundation provides shared behaviour. Every Model layer is public; Interface is the standard entry point for published Entities.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
-- **Domain Entity** — the authoritative logical definition of one meaningful concept in the Target's domain.
-- **Entity** — a Domain Entity with an Identity that distinguishes one instance from another.
-- **Field** — one named value of a Domain Entity, with its domain meaning, logical type, and applicable constraints.
+- **Entity** — the authoritative logical definition of one meaningful concept in the Target's domain, with an Identity that distinguishes one instance from another.
+- **Field** — one named value of an Entity, with its domain meaning, logical type, and applicable constraints.
 - **Type** — the technology-independent category of values a Field may hold.
 - **Field Rule** — a declared rule for a Field's presence, default, sensitivity marker, immutability, length, or constraint.
-- **Sensitivity Marker** — optional Field metadata whose value is either `password` or `sensitive`. It identifies a value category requiring Logic attention; Model records the marker but does not inspect, transform, or otherwise handle the value.
-- **Relationship** — an explicit domain reference from one Domain Entity to another, without nesting either Entity inside the other.
+- **Sensitivity Marker** — optional Field metadata whose value is either `password` or `sensitive`. It identifies a value category; Model records and publishes the marker but does not inspect, transform, or otherwise handle the value.
+- **Relationship** — an explicit domain reference from one Entity to another, without nesting either Entity inside the other.
 - **Identity** — the Field or Fields that distinguish one Entity from every other Entity of the same kind.
-- **Primary Key** — the storage-facing expression of an Entity's declared Identity.
+- **Primary Key** — a declared key for identifying an Entity.
 - **Uniqueness Constraint** — a condition requiring one Field or a declared combination of Fields to have no duplicate value within its Entity.
 - **Reference** — the Field-level expression of a Relationship that identifies a value belonging to another Entity.
 - **Index** — a declared access intention for one Field or a declared combination of Fields.
 - **Value Generation** — a declared way to supply a Field value automatically, including Auto Increment, generated identifier, or generated timestamp.
-- **Declaration** — the public class that records an Entity's technology-independent data meaning and metadata without providing runtime behaviour.
-- **Foundation** — the public class that provides shared `to_json()` and `from_json()` behaviour without defining domain meaning.
-- **Interface** — a public Model file that presents the Entity classes and capabilities that consuming Components may import and use.
+- **Declaration** — a public Model layer that records an Entity's technology-independent data meaning and metadata without defining Entity behaviour.
+- **Foundation** — a public Model layer that defines shared capabilities, including conversion of an Entity to JSON and construction of an Entity from JSON, without defining domain meaning.
+- **Interface** — the public Model surface that publishes Entities for standard use.
 
 <br>
 
@@ -73,8 +72,8 @@ Model
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Database** — independently imports public Entity classes and uses their declared metadata to create its storage structure. It does not define a second persistence model.
-- **Logic** — imports public Entity classes through Interface and uses them directly in application programming.
+- **Logic** — uses Model Interface to obtain Entities for application programming.
+- **Database** — uses Entity classes to create its storage structure, and uses Model Interface for other Model use.
 
 <br>
 
@@ -83,15 +82,15 @@ Model
 
 ### Interface
 
-A public file that presents the Entity classes and capabilities available to other Components.
+The public Model surface that publishes Entities for standard use.
 
 ### Entity
 
-A public directory containing one separate unit for each Entity.
+A public layer containing one separate unit for each Entity.
 
 ### Declaration
 
-A public file that records Entity meaning and metadata without runtime behaviour:
+A public layer that records Entity meaning and metadata without Entity behaviour:
 
 ```text
 Declaration
@@ -115,12 +114,12 @@ Declaration
 
 ### Foundation
 
-A public file that provides shared conversion behaviour:
+A public layer that defines shared conversion capabilities:
 
 ```text
 Foundation
-├── to_json()
-└── from_json()
+├── Entity-to-JSON conversion
+└── JSON-to-Entity construction
 ```
 
 Technical choices, names, and layout for these layers belong to Model Preferences. Declaration meaning remains independent of language, package, database, and Engine.
@@ -141,7 +140,7 @@ Every Principle below is mandatory.
 
 ### Model documentation explains its domain surface
 
-**Rule:** Documentation has an Overview with one concise example using one Entity. Its Interface section lists every public Entity separately and shows that Entity's Fields in a table without usage examples. Its Foundation section gives an example for each Foundation capability, then one complete example that uses all Foundation capabilities with one Entity. Documentation describes each Entity's kind, import, direct construction, and JSON conversion.
+**Rule:** Documentation has an Overview with one concise example using one Entity. Its Interface section lists every public Entity separately and shows that Entity's Fields in a table without usage examples. Its Foundation section gives an example for each Foundation capability, then one complete example that uses all Foundation capabilities with one Entity.
 
 **Why:** Consumers can understand and use a Model without depending on internal implementation details.
 
@@ -149,19 +148,19 @@ Every Principle below is mandatory.
 
 <br>
 
-### Each domain concept has one authoritative Domain Entity
+### Each domain concept has one authoritative Entity
 
-**Rule:** Every meaningful Target concept has exactly one authoritative Domain Entity in Model, originating in domain meaning rather than a tool or consumer and never independently redefined elsewhere.
+**Rule:** Every meaningful Target concept has exactly one authoritative Entity in Model, originating in domain meaning rather than a tool or consumer and never independently redefined elsewhere.
 
 **Why:** One authority prevents competing Domain Entities from drifting apart.
 
-**Boundary:** Implementation-only structures without domain meaning do not require a Domain Entity.
+**Boundary:** Implementation-only structures without domain meaning do not require an Entity.
 
 <br>
 
 ### Model preserves explicit Target meaning
 
-**Rule:** Model preserves every Target-declared Domain Entity, Field, constraint, default, and sensitivity marker. Preferences may complete only missing choices of existing Fields; they never create, rename, remove, or override explicit Target meaning.
+**Rule:** Model preserves every Target-declared Entity, Field, constraint, default, and sensitivity marker. Preferences may complete only missing choices of existing Fields; they never create, rename, remove, or override explicit Target meaning.
 
 **Why:** The Target remains authoritative while unstated realization details can still be resolved consistently.
 
@@ -171,7 +170,7 @@ Every Principle below is mandatory.
 
 ### Logical Model meaning is independent of implementation technology
 
-**Rule:** Every Domain Entity, Field, and declared rule remains understandable independently of language, package, tool, version, runtime, and platform.
+**Rule:** Every Entity, Field, and declared rule remains understandable independently of language, package, tool, version, runtime, and platform.
 
 **Why:** Technology can change without redefining the Target's domain.
 
@@ -181,7 +180,7 @@ Every Principle below is mandatory.
 
 ### Foundation provides shared Model behaviour
 
-**Rule:** Foundation converts an Instance to JSON through `to_json()` or creates an Instance from JSON through `from_json()`, without injecting Fields, constraints, or domain meaning.
+**Rule:** Foundation provides conversion of an Entity to JSON and construction of an Entity from JSON, without injecting Fields, constraints, or domain meaning.
 
 **Why:** The library has one consistent implementation of its common behaviour without imposing a shared domain structure.
 
@@ -201,9 +200,9 @@ Every Principle below is mandatory.
 
 ### Model publishes all layers
 
-**Rule:** Interface, Entity, Declaration, and Foundation are public Model layers. Interface presents Entity classes and capabilities as a convenient entry point; consumers may use any public Model layer without treating another layer as private.
+**Rule:** Interface, Entity, Declaration, and Foundation are public Model layers. Interface publishes Entities as the standard Model entry point. A Component may use another public layer when its responsibility requires it.
 
-**Why:** Every Model concern remains directly available while Interface still provides one convenient entry point for common use.
+**Why:** Every Model concern remains available while Interface provides one consistent route for standard Entity use.
 
 **Boundary:** Public access does not transfer ownership of Entity meaning to a consumer or authorize a consumer to duplicate Foundation behaviour.
 
@@ -219,29 +218,29 @@ Every Principle below is mandatory.
 
 <br>
 
-### One Entity definition serves programming and persistence
+### Each Entity has one published definition
 
-**Rule:** Each Entity is the single class used by Logic in application programming and by Database for storage derivation. Database independently imports the public Entity classes and derives persistence metadata from them; it does not create or require a second persistence model.
+**Rule:** Each Entity has one authoritative, published definition. No second definition of the same Entity is created for another purpose.
 
-**Why:** One Entity definition prevents application and persistence structures from drifting apart while allowing Database to build storage independently.
+**Why:** One Entity definition prevents the same domain concept from drifting into competing forms.
 
-**Boundary:** Model declares the Entity. Database remains responsible for storage realization and operations.
+**Boundary:** Model declares the Entity. How another Component uses it remains that Component's responsibility.
 
 <br>
 
-### Model names express domain meaning
+### Entity names express domain meaning
 
-**Rule:** Every Model name expresses Target meaning, never an implementation tool or consumer-specific representation.
+**Rule:** Every Entity, Field, and Relationship name expresses Target meaning, never an implementation tool or consumer-specific representation.
 
-**Why:** Domain-oriented names keep the library understandable without technical context.
+**Why:** Domain-oriented names keep Entity meaning understandable without technical context.
 
-**Boundary:** Preferences define realization naming and layout; this Principle defines only domain meaning.
+**Boundary:** Preferences define names for realization and layout; this Principle defines only domain names.
 
 <br>
 
 ### Model remains separate from external concerns
 
-**Rule:** Model owns logical Entities only; project records, storage operations, transport, workflow orchestration, technical selection, and platform operation belong to their respective Components.
+**Rule:** Model owns logical Entities only; project records, storage operations, transport, workflow orchestration, and platform operation belong to their respective Components.
 
 **Why:** A narrow boundary keeps Model reusable and protects domain meaning.
 
@@ -279,10 +278,10 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — Give one Overview example; list every public Entity and its Fields in Interface tables without examples; give Foundation capability examples and one complete Foundation example using one Entity.
 - **Never** — Describe Model as storage, workflow, or application behaviour.
 
-**Each domain concept has one authoritative Domain Entity**
+**Each domain concept has one authoritative Entity**
 
 - **Must** — Define each meaningful Target concept once.
-- **Never** — Create competing or implementation-only Domain Entities.
+- **Never** — Create competing or implementation-only Entities.
 
 **Model preserves explicit Target meaning**
 
@@ -296,7 +295,7 @@ Every obligation in the file, under the Principle it comes from.
 
 **Foundation provides shared Model behaviour**
 
-- **Must** — Use Foundation for `to_json()` and `from_json()` conversion.
+- **Must** — Use Foundation for Entity-to-JSON conversion and JSON-to-Entity construction.
 - **Never** — Let Foundation define domain meaning or Fields.
 
 **Declaration records complete Entity meaning**
@@ -307,7 +306,7 @@ Every obligation in the file, under the Principle it comes from.
 
 **Model publishes all layers**
 
-- **Must** — Keep Interface, Entity, Declaration, and Foundation public; present Entity classes and capabilities through Interface as a convenient entry point.
+- **Must** — Keep Interface, Entity, Declaration, and Foundation public; publish Entities through Interface as the standard entry point.
 - **Never** — Let public access duplicate Foundation behaviour or transfer Entity ownership to a consumer.
 
 **Declaration preserves structured Field meaning**
@@ -315,21 +314,20 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — Keep each declared Field Type, rule, default, sensitivity marker (`password` or `sensitive`), immutability, and restriction usable by consumers and storage realization.
 - **Never** — Invent a constraint or force one constraint representation.
 
-**One Entity definition serves programming and persistence**
+**Each Entity has one published definition**
 
-- **Must** — Make each Entity available for Logic programming and Database storage derivation.
-- **Must** — Let Database independently import the public Entity classes and derive persistence metadata from them.
-- **Never** — Create or require a second persistence model.
+- **Must** — Keep one authoritative, published definition for each Entity.
+- **Never** — Create a second definition of the same Entity for another purpose.
 
-**Model names express domain meaning**
+**Entity names express domain meaning**
 
-- **Must** — Name every Model from Target domain meaning.
-- **Never** — Name a Model after an implementation tool or consumer representation.
+- **Must** — Name every Entity, Field, and Relationship from Target domain meaning.
+- **Never** — Name an Entity, Field, or Relationship after an implementation tool or consumer representation.
 
 **Model remains separate from external concerns**
 
 - **Must** — Keep Model focused on logical Entities.
-- **Never** — Own records, storage operations, transport, workflow orchestration, technical selection, or platform operation.
+- **Never** — Own records, storage operations, transport, workflow orchestration, or platform operation.
 
 **Entities are flat and explicitly related**
 
