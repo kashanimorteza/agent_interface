@@ -55,7 +55,7 @@ content:
   layout:
     directories:
       services: "logic_services"
-      entity: "entity"
+      entity: "logic_services/entity"
     files:
       interface: "logic_interface"
     conventions:

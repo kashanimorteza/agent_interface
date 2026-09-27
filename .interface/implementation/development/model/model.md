@@ -103,7 +103,7 @@ Declaration
 │   ├── Immutability
 │   ├── Length
 │   └── Constraints
-├── Primary Keys
+├── Primary Key
 ├── Relationships
 │   ├── References
 │   └── Cardinality
@@ -150,9 +150,9 @@ Every Principle below is mandatory.
 
 <br>
 
-### Each domain concept has one authoritative Entity
+### Each domain concept has one authoritative published Entity
 
-**Rule:** Every meaningful Target concept has exactly one authoritative Entity in Model, originating in domain meaning rather than a tool or consumer and never independently redefined elsewhere.
+**Rule:** Every meaningful Target concept has exactly one authoritative, published Entity in Model, originating in domain meaning rather than a tool or consumer and never independently redefined elsewhere.
 
 **Why:** One authority prevents competing Entities from drifting apart.
 
@@ -192,7 +192,7 @@ Every Principle below is mandatory.
 
 ### Declaration records complete Entity meaning
 
-**Rule:** Every Entity has a Declaration that records and exposes its `id` Identity, Fields and applicable Types, Field Rules, Primary Keys, Uniqueness Constraints, Relationships and their cardinality, Index intentions, and Value Generation. A Reference identifies its target Entity and `id`; every Relationship uses Model Preferences' configured `on_delete` behaviour. A many-to-many Relationship requires an intermediary Entity declared by Target. A Uniqueness Constraint or Index may cover one Field or a declared combination of Fields. Declaration provides no runtime behaviour.
+**Rule:** Every Entity has a Declaration that records and exposes its `id` Identity and Primary Key, Fields and applicable Types, Field Rules, Uniqueness Constraints, Relationships and their cardinality, Index intentions, and Value Generation. A Reference identifies its target Entity and `id`; every Relationship uses Model Preferences' configured `on_delete` behaviour. A many-to-many Relationship requires an intermediary Entity declared by Target. A Uniqueness Constraint or Index may cover one Field or a declared combination of Fields. Declaration provides no runtime behaviour.
 
 **Why:** One complete data meaning remains usable by consumers without coupling that meaning to a language, package, database, or Engine.
 
@@ -217,16 +217,6 @@ Every Principle below is mandatory.
 **Why:** Consumers and storage realization need more than descriptive prose to use the same domain restriction consistently.
 
 **Boundary:** Declaration does not impose a fixed vocabulary or representation for a constraint that the Target does not declare.
-
-<br>
-
-### Each Entity has one published definition
-
-**Rule:** Each Entity has one authoritative, published definition. No second definition of the same Entity is created for another purpose.
-
-**Why:** One Entity definition prevents the same domain concept from drifting into competing forms.
-
-**Boundary:** Model declares the Entity. How another Component uses it remains that Component's responsibility.
 
 <br>
 
@@ -280,9 +270,9 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — Give one Overview example; list every public Entity and its Fields in Interface tables without examples; give Foundation capability examples and one complete Foundation example using one Entity.
 - **Never** — Describe Model as storage, workflow, or application behaviour.
 
-**Each domain concept has one authoritative Entity**
+**Each domain concept has one authoritative published Entity**
 
-- **Must** — Define each meaningful Target concept once.
+- **Must** — Define and publish each meaningful Target concept once.
 - **Never** — Create competing or implementation-only Entities.
 
 **Model preserves explicit Target meaning**
@@ -316,11 +306,6 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — Keep each declared Field Type, rule, Default Value, Value Generation, sensitivity marker (`password` or `sensitive`), immutability, and restriction usable by consumers and storage realization.
 - **Must** — Keep Default Value and Value Generation mutually exclusive for one Field.
 - **Never** — Invent a constraint or force one constraint representation.
-
-**Each Entity has one published definition**
-
-- **Must** — Keep one authoritative, published definition for each Entity.
-- **Never** — Create a second definition of the same Entity for another purpose.
 
 **Entity names express domain meaning**
 
