@@ -16,17 +16,16 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings for Logic's identity; then read layout, Services, policies, runtime behavior, verification, and development capabilities. Read Connections from Development and resolve environment-specific Runtime Bindings from Platform. Use a Development Default only when this file leaves a shared choice unstated."
+  consumption: "Read settings for Logic's identity; then read layout, Services, runtime behavior, verification, and development capabilities. Read Connections from Development and resolve environment-specific Runtime Bindings from Platform. Use a Development Default only when this file leaves a shared choice unstated."
   selection: "Use a compatible configured Logic default when the Target is silent. For an explicit incompatible need, preserve Target intent under Logic Principles and record the consequential realization choice; ask only when no safe compatible choice can be established."
   version_resolution: "This file resolves versions for Logic-owned packages and tools. Development resolves versions only for its shared Defaults."
-  matching: "Match standards and Logic settings by their exact keys. Match Model Logic files to public Entity classes, and match each behavioural policy under policies to the Entities and Operations its own entry names."
+  matching: "Match standards and Logic settings by their exact keys. Match Model Logic files to public Entity classes."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - "settings: identify Logic."
   - "layout: locate the configured Interface file and Services directory."
-  - "services: read each Service and its Operations."
-  - "policies: apply Logic-owned behavioural policies."
+  - "services: read each Service, its internal Interface, and its responsibility."
   - "runtime: apply Logic runtime behavior."
   - "verification: apply Logic verification settings."
   - "development: apply the currently enabled or disabled component capabilities."
@@ -37,7 +36,6 @@ content_map:
   - settings
   - layout
   - services
-  - policies
   - runtime
   - verification
   - development
@@ -70,105 +68,9 @@ content:
       source: "Entity classes published by Model Interface"
       files: "Create one file for every published Entity."
       talks_to: ["Model Component", "Database Component"]
-      purpose: "The Service that provides each Entity's Logic Actions and calls Database for that Entity."
-      calls: "Each Entity file calls Database's Interface through the corresponding Operation below."
-      operations:
-        add:
-          does: "Add one record from the supplied Entity instance."
-          accepts: {object: "the Entity instance to store"}
-          returns: "the created record"
-          outcomes: ["created", "invalid values", "conflicts with an existing record"]
-        edit:
-          does: "Return one record of this file's Entity in editable form."
-          accepts: {id: "which record"}
-          returns: "the editable record"
-          outcomes: ["found", "not found"]
-        update:
-          does: "Change one existing record through the supplied Entity instance."
-          accepts: {object: "the Entity instance containing its record identifier and changed values"}
-          returns: "the updated record"
-          outcomes: ["updated", "not found", "invalid values", "conflicts with an existing record"]
-        delete:
-          does: "Remove one record of this file's Entity, where the Target authorizes deletion for that Entity."
-          accepts: {id: "which record"}
-          returns: "the removal outcome"
-          outcomes: ["deleted", "not found", "deletion not authorized for this Entity", "still referenced"]
-        enable:
-          does: "Set one record active, where the Model declares an activation Field, by setting that declared Field."
-          accepts: {id: "which record"}
-          returns: "the updated record"
-          outcomes: ["enabled", "not found", "Entity has no active state"]
-        disable:
-          does: "Set one record inactive, where the Model declares an activation Field, by setting that declared Field."
-          accepts: {id: "which record"}
-          returns: "the updated record"
-          outcomes: ["disabled", "not found", "Entity has no active state"]
-        get_by_id:
-          does: "Return one record of this file's Entity by its record identifier."
-          accepts: {id: "which record"}
-          returns: "the matching record"
-          outcomes: ["found", "not found"]
-        list:
-          does: "Return the records of this file's Entity that match the supplied criteria, in the requested order."
-          accepts:
-            filters: "conditions a record must satisfy; id is one of them"
-            order_by: "the field to order by and its direction"
-            limit: "how many records to return; the pagination defaults apply when omitted"
-            cursor: "where to continue from, under the selected pagination strategy"
-          returns: "the matching records and the position to continue from"
-          outcomes: ["listed", "unsupported filter or order field"]
-        count:
-          does: "Return how many records of this file's Entity match the supplied criteria; the whole Entity when no filter is given."
-          accepts: {filters: "conditions a record must satisfy"}
-          returns: "the number of matching records"
-          outcomes: ["counted", "unsupported filter field"]
-        sum:
-          does: "Return the total of one numeric field across this file's Entity records that match the supplied criteria."
-          accepts: {field: "the field to total", filters: "conditions a record must satisfy"}
-          returns: "the total, and nothing to total when no record matches"
-          outcomes: ["summed", "unknown or non-numeric field", "unsupported filter field"]
-        min:
-          does: "Return the smallest value of one field across this file's Entity records that match the supplied criteria."
-          accepts: {field: "the field to take the minimum of", filters: "conditions a record must satisfy"}
-          returns: "the smallest value, and nothing when no record matches"
-          outcomes: ["found", "unknown or incomparable field", "unsupported filter field"]
-        max:
-          does: "Return the largest value of one field across this file's Entity records that match the supplied criteria."
-          accepts: {field: "the field to take the maximum of", filters: "conditions a record must satisfy"}
-          returns: "the largest value, and nothing when no record matches"
-          outcomes: ["found", "unknown or incomparable field", "unsupported filter field"]
-        truncate:
-          does: "Remove every record of this file's Entity, leaving its Table structure in place."
-          accepts: {}
-          returns: "the removal outcome"
-          outcomes: ["emptied", "deletion not authorized for this Entity", "records still referenced"]
-        report:
-          does: "Return a report from the supplied report-specific selection criteria."
-          accepts: {criteria: "the report-specific selection criteria"}
-          returns: "the requested report"
-          outcomes: ["reported", "unsupported criteria"]
-        execute_command:
-          does: "Execute a declared database command with supplied parameters."
-          accepts: {command: "the declared database command", parameters: "the parameters supplied to that command"}
-          returns: "the command result"
-          outcomes: ["executed", "unsupported command", "invalid parameters"]
-
-  # <!-------------------------------------------- policies -->
-  policies:
-    deletion:
-      requires_explicit_target_authorization: true
-      inferred_from_activation_field: false
-    pagination:
-      enabled: true
-      strategy: "cursor"
-      default_limit: 50
-      maximum_limit: 100
-      filtering: "explicitly allowlisted Fields only"
-      sorting: "explicitly allowlisted Fields with stable ordering"
-    authorization:
-      enabled_when: "Development authentication applies to Logic or Target requires authorization."
-    business_rate_limits:
-      source: "Target-defined quotas and eligibility rules"
+      purpose: "The Service that handles Database Interface Operations for each Entity published by Model."
+      interface: "The internal Service Interface in each Entity Service file that presents the Operations handled for that Entity."
+      handling: "For each Entity file, handle every applicable Operation published by Database Interface. This Service Interface reflects Database's catalogue and contract without redefining either."
 
   # <!-------------------------------------------- runtime -->
   runtime:
@@ -199,9 +101,11 @@ content:
     order:
       - overview
       - interface
+      - services
       - setup
       - run
       - verify
       - troubleshooting
     sections:
-      interface: "Give every public Operation published through Interface one complete example."
+      interface: "Document Categories organized by Service and show how a consumer imports the outward Interface. Do not repeat Service Operation examples here."
+      services: "For every configured Service, document its internal Service Interface and give every Operation it handles one complete example. For Entity Service, list every handled Entity; choose one representative Entity, such as User, and give it one complete example for each applicable Database Interface Operation. Those examples are the pattern for the remaining Entities."

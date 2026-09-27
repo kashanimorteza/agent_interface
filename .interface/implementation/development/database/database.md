@@ -81,7 +81,7 @@ The only public Database layer. It makes Database classes and Operations availab
 - **Add** — accepts an Entity instance for a new record; returns the created record or operation outcome.
 - **Edit** — accepts an imported Entity class and record identifier; returns that record in editable form or a not-found outcome.
 - **Update** — accepts an Entity instance containing its record identifier and changed values; returns the updated record or operation outcome.
-- **List** — accepts an imported Entity class, optional filters, and optional field ordering; returns matching records.
+- **List** — accepts an imported Entity class, optional filters, optional field ordering, and an optional limit; returns matching records.
 - **Delete** — accepts an imported Entity class and record identifier; returns the deletion outcome.
 - **Enable** — accepts an imported Entity class and record identifier; returns the enabled record or operation outcome.
 - **Disable** — accepts an imported Entity class and record identifier; returns the disabled record or operation outcome.
@@ -127,7 +127,7 @@ Every Principle below is mandatory.
 
 ### Database exposes explicit Interface Operations
 
-**Rule:** Interface publishes the Operations described in this Component. Each applicable Operation receives an imported Entity class or Entity instance directly, never a Model name or identity. List accepts optional filters and optional ordering by field; Count, Sum, Min, and Max accept optional filters. Execute Command receives a SQL command and optional parameters, executes it through the selected Engine, and returns its result. Database documentation gives each published Interface Operation one complete example.
+**Rule:** Interface publishes the Operations described in this Component. Each applicable Operation receives an imported Entity class or Entity instance directly, never a Model name or identity. List accepts optional filters, optional ordering by field, and an optional limit; Count, Sum, Min, and Max accept optional filters. Execute Command receives a SQL command and optional parameters, executes it through the selected Engine, and returns its result. Database documentation gives each published Interface Operation one complete example.
 
 **Why:** An explicit operation catalogue keeps the public data surface stable and understandable.
 
@@ -210,7 +210,7 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — publish the Operations described by Interface.
 - **Must** — receive an imported Entity class or Entity instance directly, never a Model name or identity.
-- **Must** — let List accept optional filters and optional field ordering.
+- **Must** — let List accept optional filters, optional field ordering, and an optional limit.
 - **Must** — let Count, Sum, Min, and Max accept optional filters.
 - **Must** — let Execute Command receive a SQL command and optional parameters, execute it through the selected Engine, and return its result.
 - **Must** — give every published Interface Operation one complete documentation example.
