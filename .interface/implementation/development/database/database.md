@@ -81,17 +81,17 @@ The only public Database layer. It makes Database Operations available to consum
 
 #### Operations
 
-- **Add** — accepts an Entity instance for a new record; applies its declared `id` Value Generation when present, otherwise stores its supplied `id`; returns the created Entity instance.
-- **Update** — accepts an Entity instance containing its `id` and changed values; updates only supplied Fields, preserves omitted Fields, treats an explicitly supplied `null` as a value, and returns the updated Entity instance or `null` when no record has that `id`.
-- **List** — accepts an Entity class, optional Filters, an optional ordered list of Orders, and an optional limit; returns matching Entity instances.
+- **Add** — accepts an Entity instance for a new record; applies every declared Value Generation, otherwise applies Default Values for omitted Fields, then enforces required and nullability Rules; returns the created Entity instance.
+- **Update** — accepts an Entity instance containing its `id` and changed values; uses `id` only to locate the record, never changes it, updates only supplied mutable Fields, preserves omitted or immutable Fields, treats an explicitly supplied `null` as a value, and returns the updated Entity instance or `null` when no record has that `id`.
+- **List** — accepts an Entity class, optional Filters, an optional ordered list of Orders, and an optional limit; uses the configured default Order when Orders are omitted, returns every matching Entity when limit is omitted, and returns matching Entity instances.
 - **Delete** — accepts an Entity class and record `id`; returns `true` when it deletes a record and `false` when no record has that `id`.
 - **Enable** — accepts an Entity class and record `id`; sets its `is_active` Field to `true` and returns the Entity instance or `null` when no record has that `id`.
 - **Disable** — accepts an Entity class and record `id`; sets its `is_active` Field to `false` and returns the Entity instance or `null` when no record has that `id`.
 - **Get by ID** — accepts an Entity class and record `id`; returns the matching Entity instance or `null` when no record has that `id`.
 - **Count** — accepts an Entity class and optional filters; returns the number of matching records.
-- **Sum** — accepts an Entity class, one numeric field, and optional filters; returns that field's total across matching records.
-- **Min** — accepts an Entity class, one comparable field, and optional filters; returns the smallest matching value.
-- **Max** — accepts an Entity class, one comparable field, and optional filters; returns the largest matching value.
+- **Sum** — accepts an Entity class, one numeric field, and optional Filters; ignores `null` values and returns that field's total across matching records, or `0` when no usable value exists.
+- **Min** — accepts an Entity class, one comparable field, and optional Filters; ignores `null` values and returns the smallest matching value, or `null` when no usable value exists.
+- **Max** — accepts an Entity class, one comparable field, and optional Filters; ignores `null` values and returns the largest matching value, or `null` when no usable value exists.
 - **Truncate** — accepts an Entity class; removes all of its records while keeping its Table structure and returns the number of deleted records.
 - **Execute Command** — accepts a SQL command and optional parameters; executes it through the selected Engine and returns a Command Result. Its purpose need not concern one Model.
 
@@ -121,7 +121,7 @@ Every Principle below is mandatory.
 
 ### Database configuration declares its available resources
 
-**Rule:** Database Configuration declares every Engine and its engine-specific parameters, every named Instance and its connection parameters, and component Settings such as the default Instance, purpose assignments, and other shared parameters. Every Instance names one declared Engine, and every configured Instance reference resolves to a declared Instance. Database Preferences identify which Engines are implemented in generated source.
+**Rule:** Database Configuration declares every Engine and its engine-specific parameters, every named Instance and its connection parameters, and component Settings such as the default Instance, purpose assignments, and other shared parameters. Every Instance names one declared Engine, every configured Instance reference resolves to a declared Instance, and the default Instance names an Engine marked for implementation. Database Preferences identify which Engines are implemented in generated source.
 
 **Why:** One configuration source makes the available storage resources and their selection explicit.
 
@@ -129,7 +129,7 @@ Every Principle below is mandatory.
 
 ### Database exposes explicit Interface Operations
 
-**Rule:** Interface publishes the Operations described in this Component. Each applicable Operation receives an Entity class or Entity instance directly, never a Model name or identity, and accepts an optional Instance that otherwise resolves to the configured default Instance. A Filter has a field, operator, and value; supported operators are `equals`, `not_equals`, `greater_than`, `greater_or_equal`, `less_than`, `less_or_equal`, `in`, `contains`, `starts_with`, `ends_with`, `is_null`, and `is_not_null`. Filters combine with `AND` by default or explicit `OR`, without complex grouping. Each Order has a field and ascending or descending direction; List accepts an ordered list of Orders and an optional limit. Count, Sum, Min, and Max accept optional Filters. Execute Command receives a SQL command and optional parameters, executes it through the selected Engine, and returns a Command Result. Database documentation gives each published Interface Operation one complete example.
+**Rule:** Interface publishes the Operations described in this Component. Each applicable Operation receives an Entity class or Entity instance directly, never a Model name or identity, and accepts an optional Instance that otherwise resolves to the configured default Instance. A Filter has a field, operator, and value; supported operators are `equals`, `not_equals`, `greater_than`, `greater_or_equal`, `less_than`, `less_or_equal`, `in`, `contains`, `starts_with`, `ends_with`, `is_null`, and `is_not_null`. Filters combine with the configured default or explicit `OR`, without complex grouping. Each Order has a field and ascending or descending direction; List accepts an ordered list of Orders or uses the configured default Order, and returns every matching Entity when limit is omitted. Count returns `0` for no records; Sum ignores `null` values and returns `0` when no usable value exists; Min and Max ignore `null` values and return `null` when no usable value exists. Add applies every Entity Value Generation or Default Value according to Model Declaration. Update never changes `id` or an immutable Field. Count, Sum, Min, and Max accept optional Filters. Execute Command receives a SQL command and optional parameters, executes it through the selected Engine, and returns a Command Result. Database documentation gives each published Interface Operation one complete example.
 
 **Why:** An explicit operation catalogue keeps the public data surface stable and understandable.
 
@@ -139,7 +139,7 @@ Every Principle below is mandatory.
 
 ### Database treats every Entity value as storage data
 
-**Rule:** Database treats every Entity Field according to its declared logical Type, constraints, relationships, indexes, defaults, and other persistence metadata. Database realizes that logical Type through the selected Engine's storage mechanisms. A Field with a sensitivity marker, credential, secret, or any other value is ordinary storage data to Database: it stores and returns the Entity value it receives without applying special handling because of that value's meaning.
+**Rule:** Database treats every Entity Field according to its declared logical Type, constraints, relationships, indexes, Default Values, Value Generation, and other persistence metadata. Database realizes that logical Type through the selected Engine's storage mechanisms. It realizes every Reference against its target Entity `id`, declared cardinality, and Model Preferences' configured `on_delete` behaviour. A Field with a sensitivity marker, credential, secret, or any other value is ordinary storage data to Database: it stores and returns the Entity value it receives without applying special handling because of that value's meaning.
 
 **Why:** Persistence remains general-purpose and can apply one consistent storage structure to every Entity value.
 
@@ -177,6 +177,16 @@ Every Principle below is mandatory.
 
 <br>
 
+### Database persists changes atomically
+
+**Rule:** Every successful Operation that changes data persists its complete change atomically in the selected Instance. If such an Operation fails, it leaves no partial change in that Instance.
+
+**Why:** Each data change has one reliable result regardless of the selected Engine.
+
+**Boundary:** This applies to data-changing Operations, including a changing Execute Command; it does not restrict the commands Execute Command may receive.
+
+<br>
+
 ### Database provisions the default Instance
 
 **Rule:** Database provisions its configured default Instance from Entity metadata and verifies that the Instance contains the required structure for every Entity.
@@ -197,20 +207,22 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — declare every Engine, its parameters, named Instances, and component Settings in Database Configuration.
 - **Must** — identify implemented Engines in Database Preferences.
 - **Must** — make every Instance name a declared Engine and every configured Instance reference resolve to a declared Instance.
+- **Must** — make the default Instance use an Engine marked for implementation.
 
 **Database exposes explicit Interface Operations**
 
 - **Must** — publish the Operations described by Interface.
 - **Must** — receive an Entity class or Entity instance directly, never a Model name or identity.
 - **Must** — accept an optional Instance and use the configured default Instance when it is omitted.
-- **Must** — apply declared `id` Value Generation during Add; otherwise store the supplied `id`.
-- **Must** — update only supplied Fields and preserve omitted Fields; return `null` when an id-based update, Enable, Disable, or Get by ID finds no record.
+- **Must** — apply every declared Value Generation, then Default Value, then required and nullability Rule during Add.
+- **Must** — use `id` only to locate an update; never change it or an immutable Field; update only supplied mutable Fields and preserve omitted Fields.
+- **Must** — return `null` when an id-based update, Enable, Disable, or Get by ID finds no record.
 - **Must** — set `is_active` to `true` for Enable and `false` for Disable.
 - **Must** — let Delete return `true` when it deletes a record and `false` when it finds none; let Truncate return its deleted-record count.
-- **Must** — let List accept optional Filters, an ordered list of Orders, and an optional limit.
-- **Must** — use `field`, `operator`, and `value` Filters; combine Filters with `AND` by default or explicit `OR`; support the declared operator vocabulary without complex grouping.
+- **Must** — let List accept optional Filters, an ordered list of Orders, and an optional limit; use the configured default Order when Orders are omitted and return all matches when limit is omitted.
+- **Must** — use `field`, `operator`, and `value` Filters; combine Filters with the configured default or explicit `OR`; support the declared operator vocabulary without complex grouping.
 - **Must** — use Orders with a Field and ascending or descending direction, in supplied order.
-- **Must** — let Count, Sum, Min, and Max accept optional filters.
+- **Must** — let Count, Sum, Min, and Max accept optional Filters; return `0` for empty Count or Sum and `null` for empty Min or Max; ignore `null` aggregate values.
 - **Must** — let Execute Command receive a SQL command and optional parameters, execute it through the selected Engine, and return rows and affected count as a Command Result.
 - **Must** — give every published Interface Operation one complete documentation example.
 
@@ -236,6 +248,11 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — keep an isolated implementation for every Engine marked for implementation.
 - **Must** — implement published Operations with the selected Engine's parameters and mechanisms.
 - **Must** — preserve each Operation's applicable request and result standard.
+
+**Database persists changes atomically**
+
+- **Must** — persist every successful data-changing Operation atomically in its selected Instance.
+- **Never** — leave a partial change when a data-changing Operation fails.
 
 **Database provisions the default Instance**
 

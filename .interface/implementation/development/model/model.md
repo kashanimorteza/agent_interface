@@ -43,13 +43,14 @@ Each Entity stands alone in its own unit. Declaration records technology-indepen
 - **Type** — the technology-independent category of values a Field may hold.
 - **Field Rule** — a declared rule for a Field's presence, default, sensitivity marker, immutability, length, or constraint.
 - **Sensitivity Marker** — optional Field metadata whose value is either `password` or `sensitive`. It identifies a value category; Model records and publishes the marker but does not inspect, transform, or otherwise handle the value.
-- **Relationship** — an explicit domain reference from one Entity to another, without nesting either Entity inside the other.
+- **Relationship** — an explicit domain reference from one Entity to another, with declared cardinality and without nesting either Entity inside the other.
 - **Identity** — the `id` Field that distinguishes one Entity from every other Entity of the same kind.
 - **Primary Key** — the `id` Field used to identify an Entity.
 - **Uniqueness Constraint** — a condition requiring one Field or a declared combination of Fields to have no duplicate value within its Entity.
 - **Reference** — the Field-level expression of a Relationship that holds another Entity's `id`.
 - **Index** — a declared access intention for one Field or a declared combination of Fields.
-- **Value Generation** — a declared way to supply a Field value automatically, including Auto Increment, generated identifier, or generated timestamp.
+- **Default Value** — a fixed value applied when a Field is omitted.
+- **Value Generation** — a declared way to supply a Field value automatically when an Entity is created, including Auto Increment or a generated identifier.
 - **Declaration** — a public Model layer that records an Entity's technology-independent data meaning and metadata without defining Entity behaviour.
 - **Foundation** — a public Model layer that defines shared capabilities, including conversion of an Entity to JSON and construction of an Entity from JSON, without defining domain meaning.
 - **Interface** — the public Model surface that publishes Entities for standard use.
@@ -104,12 +105,13 @@ Declaration
 │   └── Constraints
 ├── Primary Keys
 ├── Relationships
+│   ├── References
+│   └── Cardinality
 ├── Unique Constraints
 ├── Indexes
 └── Value Generation
     ├── Auto Increment
-    ├── Generated Identifier
-    └── Generated Timestamp
+    └── Generated Identifier
 ```
 
 ### Foundation
@@ -190,7 +192,7 @@ Every Principle below is mandatory.
 
 ### Declaration records complete Entity meaning
 
-**Rule:** Every Entity has a Declaration that records and exposes its `id` Identity, Fields and applicable Types, Field Rules, Primary Keys, Uniqueness Constraints, Relationships, Index intentions, and Value Generation. A Reference identifies its target Entity and `id`; a Uniqueness Constraint or Index may cover one Field or a declared combination of Fields. Declaration provides no runtime behaviour.
+**Rule:** Every Entity has a Declaration that records and exposes its `id` Identity, Fields and applicable Types, Field Rules, Primary Keys, Uniqueness Constraints, Relationships and their cardinality, Index intentions, and Value Generation. A Reference identifies its target Entity and `id`; every Relationship uses Model Preferences' configured `on_delete` behaviour. A many-to-many Relationship requires an intermediary Entity declared by Target. A Uniqueness Constraint or Index may cover one Field or a declared combination of Fields. Declaration provides no runtime behaviour.
 
 **Why:** One complete data meaning remains usable by consumers without coupling that meaning to a language, package, database, or Engine.
 
@@ -210,7 +212,7 @@ Every Principle below is mandatory.
 
 ### Declaration preserves structured Field meaning
 
-**Rule:** Declaration preserves each Field's logical Type, presence semantics, default, optional sensitivity marker (`password` or `sensitive`), immutability, and every Target-declared restriction as usable structured meaning, including applicable value range, length, pattern, precision, scale, allowed values, or comparable constraint.
+**Rule:** Declaration preserves each Field's logical Type, presence semantics, Default Value, optional sensitivity marker (`password` or `sensitive`), immutability, and every Target-declared restriction as usable structured meaning, including applicable value range, length, pattern, precision, scale, allowed values, or comparable constraint. A Default Value is fixed; Value Generation creates a value when an Entity is created. One Field never declares both.
 
 **Why:** Consumers and storage realization need more than descriptive prose to use the same domain restriction consistently.
 
@@ -300,8 +302,8 @@ Every obligation in the file, under the Principle it comes from.
 
 **Declaration records complete Entity meaning**
 
-- **Must** — record and expose every Entity's `id` Identity and Primary Key, Fields, Types, Field Rules, Uniqueness Constraints, Relationships, Index intentions, and Value Generation in Declaration.
-- **Must** — identify every Reference target and its `id`, and allow declared composite Uniqueness Constraints and Indexes.
+- **Must** — record and expose every Entity's `id` Identity and Primary Key, Fields, Types, Field Rules, Uniqueness Constraints, Relationships and cardinality, Index intentions, and Value Generation in Declaration.
+- **Must** — identify every Reference target and its `id`; use the configured `on_delete` behaviour for every Relationship; require a Target-declared intermediary Entity for many-to-many Relationships; allow declared composite Uniqueness Constraints and Indexes.
 - **Never** — put runtime behaviour or technology-specific storage choices in Declaration.
 
 **Model publishes all layers**
@@ -311,7 +313,8 @@ Every obligation in the file, under the Principle it comes from.
 
 **Declaration preserves structured Field meaning**
 
-- **Must** — Keep each declared Field Type, rule, default, sensitivity marker (`password` or `sensitive`), immutability, and restriction usable by consumers and storage realization.
+- **Must** — Keep each declared Field Type, rule, Default Value, Value Generation, sensitivity marker (`password` or `sensitive`), immutability, and restriction usable by consumers and storage realization.
+- **Must** — Keep Default Value and Value Generation mutually exclusive for one Field.
 - **Never** — Invent a constraint or force one constraint representation.
 
 **Each Entity has one published definition**

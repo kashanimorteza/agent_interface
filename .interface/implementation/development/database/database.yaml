@@ -54,6 +54,13 @@ content:
     database_directory:
       path: "db"
     default_instance: "application"
+    query:
+      filter_combination: "AND"
+      # Alternative: OR.
+      default_order:
+        field: "id"
+        direction: "ascending"
+        # Alternative direction: descending.
 
   # <!-------------------------------------------- instances -->
   instances:
