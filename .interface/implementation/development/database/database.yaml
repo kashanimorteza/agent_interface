@@ -46,13 +46,13 @@ content:
       type: "library"
       language: "Python"
       platform: "VPS"
-      directory: "my_database"
-      package: "my_database"
+      directory: "database"
+      package: "database"
     configuration:
       file: "database.yaml"
       structure: ".interface/foundation/schema/database.yaml"
     database_directory:
-      path: "data"
+      path: "db"
     default_instance: "application"
 
   # <!-------------------------------------------- instances -->
@@ -65,10 +65,10 @@ content:
   # <!-------------------------------------------- layout -->
   layout:
     directories:
-      engine: "database_engine"
+      engine: "engine"
     files:
-      interface: "database_interface"
-      data: "database_data"
+      interface: "interface"
+      data: "data"
       engine: "<engine>"
 
   # <!-------------------------------------------- development -->

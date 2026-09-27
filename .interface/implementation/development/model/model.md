@@ -44,10 +44,10 @@ Each Entity stands alone in its own unit. Declaration records technology-indepen
 - **Field Rule** — a declared rule for a Field's presence, default, sensitivity marker, immutability, length, or constraint.
 - **Sensitivity Marker** — optional Field metadata whose value is either `password` or `sensitive`. It identifies a value category; Model records and publishes the marker but does not inspect, transform, or otherwise handle the value.
 - **Relationship** — an explicit domain reference from one Entity to another, without nesting either Entity inside the other.
-- **Identity** — the Field or Fields that distinguish one Entity from every other Entity of the same kind.
-- **Primary Key** — a declared key for identifying an Entity.
+- **Identity** — the `id` Field that distinguishes one Entity from every other Entity of the same kind.
+- **Primary Key** — the `id` Field used to identify an Entity.
 - **Uniqueness Constraint** — a condition requiring one Field or a declared combination of Fields to have no duplicate value within its Entity.
-- **Reference** — the Field-level expression of a Relationship that identifies a value belonging to another Entity.
+- **Reference** — the Field-level expression of a Relationship that holds another Entity's `id`.
 - **Index** — a declared access intention for one Field or a declared combination of Fields.
 - **Value Generation** — a declared way to supply a Field value automatically, including Auto Increment, generated identifier, or generated timestamp.
 - **Declaration** — a public Model layer that records an Entity's technology-independent data meaning and metadata without defining Entity behaviour.
@@ -73,7 +73,7 @@ Model
 ## Relationships
 
 - **Logic** — uses Model Interface to obtain Entities for application programming.
-- **Database** — uses Entity classes to create its storage structure, and uses Model Interface for other Model use.
+- **Database** — uses Entities to create its storage structure, and uses Model Interface for other Model use.
 
 <br>
 
@@ -152,7 +152,7 @@ Every Principle below is mandatory.
 
 **Rule:** Every meaningful Target concept has exactly one authoritative Entity in Model, originating in domain meaning rather than a tool or consumer and never independently redefined elsewhere.
 
-**Why:** One authority prevents competing Domain Entities from drifting apart.
+**Why:** One authority prevents competing Entities from drifting apart.
 
 **Boundary:** Implementation-only structures without domain meaning do not require an Entity.
 
@@ -190,9 +190,9 @@ Every Principle below is mandatory.
 
 ### Declaration records complete Entity meaning
 
-**Rule:** Every Entity has a Declaration that records and exposes its Fields and applicable Types, Field Rules, Primary Keys, Uniqueness Constraints, Relationships, Index intentions, and Value Generation. A Reference identifies its target Entity and the identity it refers to; a Uniqueness Constraint or Index may cover one Field or a declared combination of Fields. Declaration provides no runtime behaviour.
+**Rule:** Every Entity has a Declaration that records and exposes its `id` Identity, Fields and applicable Types, Field Rules, Primary Keys, Uniqueness Constraints, Relationships, Index intentions, and Value Generation. A Reference identifies its target Entity and `id`; a Uniqueness Constraint or Index may cover one Field or a declared combination of Fields. Declaration provides no runtime behaviour.
 
-**Why:** Logic and Database can consume one complete data meaning without coupling that meaning to a language, package, database, or Engine.
+**Why:** One complete data meaning remains usable by consumers without coupling that meaning to a language, package, database, or Engine.
 
 **Boundary:** Declaration does not choose a technical type, table name, query syntax, index implementation, or database-specific value-generation behaviour.
 
@@ -300,8 +300,8 @@ Every obligation in the file, under the Principle it comes from.
 
 **Declaration records complete Entity meaning**
 
-- **Must** — record and expose every Entity's Fields, Types, Field Rules, Primary Keys, Uniqueness Constraints, Relationships, Index intentions, and Value Generation in Declaration.
-- **Must** — identify every Reference target and allow declared composite Uniqueness Constraints and Indexes.
+- **Must** — record and expose every Entity's `id` Identity and Primary Key, Fields, Types, Field Rules, Uniqueness Constraints, Relationships, Index intentions, and Value Generation in Declaration.
+- **Must** — identify every Reference target and its `id`, and allow declared composite Uniqueness Constraints and Indexes.
 - **Never** — put runtime behaviour or technology-specific storage choices in Declaration.
 
 **Model publishes all layers**

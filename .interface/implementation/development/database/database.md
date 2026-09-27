@@ -1,6 +1,6 @@
 # Database Definition
 
-Database is the Development Component that persists Model data and provides standard data operations to Logic.
+Database is the Development Component that persists Entity data and provides standard data Operations.
 
 <br>
 
@@ -23,15 +23,15 @@ Database is the Development Component that persists Model data and provides stan
 
 ### Overview
 
-Database is the Development Component that persists Model data and publishes data Operations to Logic. Its layers are Interface, Data, and Engine.
+Database persists Entity data and publishes standard data Operations. Its layers are Interface, Data, and Engine.
 
 ### Purpose
 
-Database keeps persistence knowledge in one Component. Without that separation, Engine selection, storage behavior, and data-operation handling spread into Logic and become inconsistent.
+Database keeps persistence knowledge in one Component. Without that separation, Engine selection, storage behavior, and data-operation handling become inconsistent.
 
 ### How It Works
 
-Logic uses Interface to access Database. Interface exposes the public Operations, then passes each request to Data. Data resolves the applicable Instance and Engine, calls that Engine's implementation, and returns the result through Interface.
+A consumer uses Interface to access Database. Interface exposes the public Operations, then passes each request to Data. Data resolves the applicable Instance and Engine, calls that Engine's implementation, and returns the result through Interface.
 
 <br>
 
@@ -42,10 +42,13 @@ Logic uses Interface to access Database. Interface exposes the public Operations
 - **Instance** — a named database connection and storage identity using one Engine.
 - **Database Configuration** — the declared Engines, Instances, and Settings available to Database.
 - **Settings** — component-wide choices such as the default Instance, purpose-to-Instance assignments, and other shared parameters.
-- **Interface** — the only public Database layer, through which Logic imports Database classes and requests Database Operations.
+- **Interface** — the only public Database layer, through which consumers request Database Operations.
 - **Operation** — one public Database action published through Interface.
-- **Execute Command** — an Operation that receives a SQL command and optional parameters, executes it through the selected Engine, and returns its result.
-- **Data** — the internal file that routes Database Operations, resolves a request's Instance and Engine, and calls that Engine's implementation.
+- **Filter** — one condition with a `field`, an `operator`, and a `value`.
+- **Order** — one ordering instruction with a `field` and a `direction` of `ascending` or `descending`.
+- **Command Result** — the standard result of Execute Command, with `rows` and `affected_count`; either value is `null` when it does not apply. Each row is a mapping from column name to value.
+- **Execute Command** — an Operation that receives a SQL command and optional parameters, executes it through the selected Engine, and returns a Command Result.
+- **Data** — the internal layer that routes Database Operations, resolves a request's Instance and Engine, and calls that Engine's implementation.
 
 <br>
 
@@ -64,7 +67,7 @@ Database
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Consumes Model** — imports Entity classes published by Model Interface and uses their declared metadata to derive storage structure and recognize Entity-form data.
+- **Consumes Model** — uses Entity classes to derive storage structure and recognize Entity-form data; uses Model Interface for other Model use.
 - **Provides to Logic** — exposes Database Operations through Interface.
 
 <br>
@@ -74,32 +77,31 @@ Database
 
 ### Interface
 
-The only public Database layer. It makes Database classes and Operations available to Logic. Operations use an imported Entity class or Entity instance directly, as appropriate; they never select data by a Model name or identity.
+The only public Database layer. It makes Database Operations available to consumers. Operations use an Entity class or Entity instance directly, as appropriate; they never select data by a Model name or identity. Every Operation accepts an optional Instance; when omitted, Database uses its configured default Instance.
 
 #### Operations
 
-- **Add** — accepts an Entity instance for a new record; returns the created record or operation outcome.
-- **Edit** — accepts an imported Entity class and record identifier; returns that record in editable form or a not-found outcome.
-- **Update** — accepts an Entity instance containing its record identifier and changed values; returns the updated record or operation outcome.
-- **List** — accepts an imported Entity class, optional filters, optional field ordering, and an optional limit; returns matching records.
-- **Delete** — accepts an imported Entity class and record identifier; returns the deletion outcome.
-- **Enable** — accepts an imported Entity class and record identifier; returns the enabled record or operation outcome.
-- **Disable** — accepts an imported Entity class and record identifier; returns the disabled record or operation outcome.
-- **Get by ID** — accepts an imported Entity class and record identifier; returns the matching record or a not-found outcome.
-- **Count** — accepts an imported Entity class and optional filters; returns the number of matching records.
-- **Sum** — accepts an imported Entity class, one numeric field, and optional filters; returns that field's total across matching records.
-- **Min** — accepts an imported Entity class, one comparable field, and optional filters; returns the smallest matching value.
-- **Max** — accepts an imported Entity class, one comparable field, and optional filters; returns the largest matching value.
-- **Truncate** — accepts an imported Entity class; removes all of its records while keeping its Table structure.
-- **Execute Command** — accepts a SQL command and optional parameters; executes it through the selected Engine and returns its result or operation outcome. Its purpose need not concern one Model.
+- **Add** — accepts an Entity instance for a new record; applies its declared `id` Value Generation when present, otherwise stores its supplied `id`; returns the created Entity instance.
+- **Update** — accepts an Entity instance containing its `id` and changed values; updates only supplied Fields, preserves omitted Fields, treats an explicitly supplied `null` as a value, and returns the updated Entity instance or `null` when no record has that `id`.
+- **List** — accepts an Entity class, optional Filters, an optional ordered list of Orders, and an optional limit; returns matching Entity instances.
+- **Delete** — accepts an Entity class and record `id`; returns `true` when it deletes a record and `false` when no record has that `id`.
+- **Enable** — accepts an Entity class and record `id`; sets its `is_active` Field to `true` and returns the Entity instance or `null` when no record has that `id`.
+- **Disable** — accepts an Entity class and record `id`; sets its `is_active` Field to `false` and returns the Entity instance or `null` when no record has that `id`.
+- **Get by ID** — accepts an Entity class and record `id`; returns the matching Entity instance or `null` when no record has that `id`.
+- **Count** — accepts an Entity class and optional filters; returns the number of matching records.
+- **Sum** — accepts an Entity class, one numeric field, and optional filters; returns that field's total across matching records.
+- **Min** — accepts an Entity class, one comparable field, and optional filters; returns the smallest matching value.
+- **Max** — accepts an Entity class, one comparable field, and optional filters; returns the largest matching value.
+- **Truncate** — accepts an Entity class; removes all of its records while keeping its Table structure and returns the number of deleted records.
+- **Execute Command** — accepts a SQL command and optional parameters; executes it through the selected Engine and returns a Command Result. Its purpose need not concern one Model.
 
 ### Data
 
-The internal file that routes every Database Operation. It resolves the requested Instance and Engine, calls the matching Engine implementation, and returns that result according to the published Operation's contract.
+The internal layer that routes every Database Operation. It resolves the requested Instance and Engine, calls the matching Engine implementation, and returns that result according to the published Operation's contract.
 
 ### Engine
 
-The internal directory containing one file for every Engine marked for implementation. Each file implements Database Operations with that Engine's own packages, parameters, and mechanisms.
+The internal layer that keeps each implemented Engine isolated. Each Engine implementation carries out Database Operations with its own parameters and mechanisms.
 
 Database's technical selections, defaults, and layout belong to Database Preferences. The structure of its generated configuration belongs to its Schema. This Definition states only the conceptual layers and the rules that govern them.
 
@@ -127,7 +129,7 @@ Every Principle below is mandatory.
 
 ### Database exposes explicit Interface Operations
 
-**Rule:** Interface publishes the Operations described in this Component. Each applicable Operation receives an imported Entity class or Entity instance directly, never a Model name or identity. List accepts optional filters, optional ordering by field, and an optional limit; Count, Sum, Min, and Max accept optional filters. Execute Command receives a SQL command and optional parameters, executes it through the selected Engine, and returns its result. Database documentation gives each published Interface Operation one complete example.
+**Rule:** Interface publishes the Operations described in this Component. Each applicable Operation receives an Entity class or Entity instance directly, never a Model name or identity, and accepts an optional Instance that otherwise resolves to the configured default Instance. A Filter has a field, operator, and value; supported operators are `equals`, `not_equals`, `greater_than`, `greater_or_equal`, `less_than`, `less_or_equal`, `in`, `contains`, `starts_with`, `ends_with`, `is_null`, and `is_not_null`. Filters combine with `AND` by default or explicit `OR`, without complex grouping. Each Order has a field and ascending or descending direction; List accepts an ordered list of Orders and an optional limit. Count, Sum, Min, and Max accept optional Filters. Execute Command receives a SQL command and optional parameters, executes it through the selected Engine, and returns a Command Result. Database documentation gives each published Interface Operation one complete example.
 
 **Why:** An explicit operation catalogue keeps the public data surface stable and understandable.
 
@@ -159,7 +161,7 @@ Every Principle below is mandatory.
 
 **Rule:** Data receives each request from Interface, resolves the requested Instance and its Engine, forwards the Operation to that Engine implementation, and returns that Engine result according to the published Operation's contract.
 
-**Why:** A single Data file keeps selection, routing, and result handling consistent across Engines.
+**Why:** One Data layer keeps selection, routing, and result handling consistent across Engines.
 
 **Boundary:** Data coordinates an Operation; each Engine implementation owns the Engine-specific execution of that Operation.
 
@@ -167,7 +169,7 @@ Every Principle below is mandatory.
 
 ### Each Engine implements the published Operations
 
-**Rule:** Every Engine marked for implementation has an implementation isolated from the other Engines. It implements the published Operations with the Engine's own packages, parameters, and mechanisms while preserving the applicable operation request and result standard.
+**Rule:** Every Engine marked for implementation has an implementation isolated from the other Engines. It implements the published Operations with the Engine's own parameters and mechanisms while preserving the applicable operation request and result standard.
 
 **Why:** Separate Engine implementations make support for each database technology clear and independently maintainable.
 
@@ -175,23 +177,13 @@ Every Principle below is mandatory.
 
 <br>
 
-### Database connects Model to Logic
+### Database provisions the default Instance
 
-**Rule:** Database independently imports Entity classes only through Model Interface; it does not obtain them through Logic. Database uses their declared metadata to derive storage structure. It does not create a separate persistence model or duplicate Entity Fields, constraints, relationships, or indexes; it provides its Interface Operations to Logic.
+**Rule:** Database provisions its configured default Instance from Entity metadata and verifies that the Instance contains the required structure for every Entity.
 
-**Why:** This keeps persistence aligned with one authoritative Entity model while allowing Database to build storage independently and giving Logic one consistent data boundary.
+**Why:** A Database Component must leave a usable default Instance, not only source code and a command that could create it later.
 
-**Boundary:** Model owns Entity declarations; Logic owns application behavior; Database owns storage derivation and persistence implementation between them.
-
-<br>
-
-### Development provisions the default Database Instance
-
-**Rule:** A successful Develop execution for Database provisions the configured default Instance from the imported Entity metadata. For file-backed storage, that execution creates the configured database file in the configured Database Directory. Develop verifies that the storage contains the required structure for every imported Entity before it reports Database development as complete.
-
-**Why:** A developed Database Component must leave a usable default storage instance, not only source code and a command that could create it later.
-
-**Boundary:** This provisions only the configured default Instance. Other Instances are created only when their own configuration and execution are requested.
+**Boundary:** This provisions only the configured default Instance. Other Instances are provisioned when their own configuration is requested.
 
 <br>
 
@@ -209,10 +201,17 @@ Every obligation in the file, under the Principle it comes from.
 **Database exposes explicit Interface Operations**
 
 - **Must** — publish the Operations described by Interface.
-- **Must** — receive an imported Entity class or Entity instance directly, never a Model name or identity.
-- **Must** — let List accept optional filters, optional field ordering, and an optional limit.
+- **Must** — receive an Entity class or Entity instance directly, never a Model name or identity.
+- **Must** — accept an optional Instance and use the configured default Instance when it is omitted.
+- **Must** — apply declared `id` Value Generation during Add; otherwise store the supplied `id`.
+- **Must** — update only supplied Fields and preserve omitted Fields; return `null` when an id-based update, Enable, Disable, or Get by ID finds no record.
+- **Must** — set `is_active` to `true` for Enable and `false` for Disable.
+- **Must** — let Delete return `true` when it deletes a record and `false` when it finds none; let Truncate return its deleted-record count.
+- **Must** — let List accept optional Filters, an ordered list of Orders, and an optional limit.
+- **Must** — use `field`, `operator`, and `value` Filters; combine Filters with `AND` by default or explicit `OR`; support the declared operator vocabulary without complex grouping.
+- **Must** — use Orders with a Field and ascending or descending direction, in supplied order.
 - **Must** — let Count, Sum, Min, and Max accept optional filters.
-- **Must** — let Execute Command receive a SQL command and optional parameters, execute it through the selected Engine, and return its result.
+- **Must** — let Execute Command receive a SQL command and optional parameters, execute it through the selected Engine, and return rows and affected count as a Command Result.
 - **Must** — give every published Interface Operation one complete documentation example.
 
 **Database treats every Entity value as storage data**
@@ -223,7 +222,7 @@ Every obligation in the file, under the Principle it comes from.
 
 **Database publishes Interface only**
 
-- **Must** — publish Database classes and Operations through Interface only.
+- **Must** — publish Database Operations through Interface only.
 - **Never** — expose Data or Engine as a consumer surface.
 
 **Data routes requests and handles results**
@@ -235,18 +234,10 @@ Every obligation in the file, under the Principle it comes from.
 **Each Engine implements the published Operations**
 
 - **Must** — keep an isolated implementation for every Engine marked for implementation.
-- **Must** — implement published Operations with the selected Engine's packages, parameters, and mechanisms.
+- **Must** — implement published Operations with the selected Engine's parameters and mechanisms.
 - **Must** — preserve each Operation's applicable request and result standard.
 
-**Database connects Model to Logic**
+**Database provisions the default Instance**
 
-- **Must** — independently import Entity classes through Model Interface, never through Logic.
-- **Must** — use imported Entity metadata for storage derivation.
-- **Never** — create a separate persistence model or duplicate Entity Fields, constraints, relationships, or indexes.
-- **Must** — provide Interface Operations to Logic through Interface.
-
-**Development provisions the default Database Instance**
-
-- **Must** — provision the configured default Instance from imported Entity metadata during successful Database development.
-- **Must** — create file-backed default storage in the configured Database Directory.
-- **Must** — verify required storage structure for every imported Entity before reporting Database development complete.
+- **Must** — provision the configured default Instance from Entity metadata.
+- **Must** — verify required storage structure for every Entity.
