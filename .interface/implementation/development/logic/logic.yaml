@@ -24,7 +24,7 @@ resolution:
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - "settings: identify Logic."
-  - "layout: locate the Services directory."
+  - "layout: locate the configured Interface file and Services directory."
   - "services: read each Service and its Operations."
   - "policies: apply Logic-owned behavioural policies."
   - "runtime: apply Logic runtime behavior."
@@ -58,14 +58,15 @@ content:
   # <!-------------------------------------------- layout -->
   layout:
     directories:
-      interface: "interface"
-      services: "services"
+      services: "logic_services"
+      entity: "entity"
+    files:
+      interface: "logic_interface"
       
   # <!-------------------------------------------- services -->
   services:
     entity:
       name: "Entity Service"
-      directory: "entity"
       source: "Entity classes published by Model Interface"
       files: "Create one file for every published Entity."
       talks_to: ["Model Component", "Database Component"]

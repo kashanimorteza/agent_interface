@@ -50,9 +50,9 @@ content:
     directories:
       entity: "model_entity"
     files:
-      interface: "model_interface.py"
-      declaration: "model_declaration.py"
-      foundation: "model_foundation.py"
+      interface: "model_interface"
+      declaration: "model_declaration"
+      foundation: "model_foundation"
     classes:
       declaration: "Model_Declaration"
       foundation: "Model_Foundation"

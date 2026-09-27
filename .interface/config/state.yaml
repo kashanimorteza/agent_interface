@@ -34,7 +34,13 @@ content:
     mode_reason: "No Workflow operation has been recorded."
     set_by: "initialization"
     set_at: null
-  phases: {}
+  phases:
+    P2:
+      id: "P2"
+      planning: "completed"
+      development: "not started"
+      review: "not started"
+      completed_at: null
   log:
     - id: "001"
       skill: "my-interface-configure"

@@ -26,7 +26,7 @@ content_map:
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
-  "task_count": 21
+  "task_count": 56
   "plans":
     "P1":
       "id": "P1"
@@ -699,3 +699,757 @@ content:
                 "event": "done"
                 "check": "Transient script imported only the public entry point and compared each Entity's table metadata with its Declaration: primary key, foreign keys, uniqueness, nullability, defaults; confirmed the SQLModel metadata holds exactly the 15 Entity tables (no persistence-only class) and no extra indexes; created all tables in an in-memory SQLite database and compared the created foreign keys."
                 "outcome": "Passed: metadata equals the Declarations for all 15 Entities; all tables created; no second persistence model."
+    "P2":
+      "id": "P2"
+      "title": "Database"
+      "order": 2
+      "target": "Database"
+      "does": "Implement the database using the shared Model package and insert the defined initial data."
+      "constraints": []
+      "task_count": 35
+      "groups":
+        "P2-G1":
+          "id": "P2-G1"
+          "title": "Database resource configuration"
+          "description": "The Database Component's own configuration declaring the storage resources the rest of the Component reads to reach persistent storage."
+          "area": "Component configuration for supported storage Engines, Instances, and settings"
+          "does": "The Database Component has its own configuration declaring its supported Engine, named Instance, and default settings."
+          "constraints": []
+          "task_count": 1
+          "tasks":
+            "P2-G1-T1":
+              "id": "P2-G1-T1"
+              "source_id": "006"
+              "title": "Declare the Database Component's configuration of Engines, Instances, and Settings"
+              "description": "Provide the Database Component's own configuration record declaring every supported Engine and its parameters, the named Instance the Component uses to persist Target data, and the component Settings including the default Instance and any secret references required by credential storage protection."
+              "reason": "Database Operations, Engine implementations, and default-Instance provisioning all resolve the Engine, Instance, and Settings they need from this one configuration."
+              "inputs":
+              - "The Database Component's declared resource requirements"
+              "skills": []
+              "expected_result": "A Database configuration that declares at least one Engine, one named Instance using that Engine, and a default Instance selection with any required secret references."
+              "depends_on": []
+              "constraints": []
+              "acceptance": "The configuration declares an Engine, a named Instance that references a declared Engine, and Settings whose default Instance and any purpose assignment reference a declared Instance."
+              "verify": "Reading the Database configuration shows a resolvable Engine for every Instance and a default Instance that exists among the declared Instances."
+              "status": "todo"
+        "P2-G2":
+          "id": "P2-G2"
+          "title": "Individual record Operations"
+          "description": "The Interface Operations and their Engine execution for creating, retrieving, changing, and removing one persisted record at a time."
+          "area": "Interface publication and Engine execution of the record-level data Operations"
+          "does": "Logic can add, edit, update, retrieve, enable, disable, and delete an individual persisted record for any imported Entity."
+          "constraints": []
+          "task_count": 7
+          "tasks":
+            "P2-G2-T1":
+              "id": "P2-G2-T1"
+              "source_id": "006"
+              "title": "Publish and implement the Add Operation"
+              "description": "Publish an Add Operation through the Database's public Interface that accepts an Entity instance describing a new record and creates the corresponding persisted record, returning the created record or an operation outcome."
+              "reason": "Logic must be able to create a new persisted record for any imported Entity."
+              "inputs":
+              - "An Entity instance representing the new record"
+              - "The declared Database configuration"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "A callable Add Operation that persists a supplied Entity instance and returns the created record."
+              "depends_on":
+              - "P2-G1-T1"
+              "constraints": []
+              "acceptance": "Calling Add with a valid Entity instance creates exactly one new persisted record whose stored values match the supplied instance, including its generated identity."
+              "verify": "Adding a new instance of an imported Entity and then retrieving it by its generated identity returns a record whose stored values equal the ones supplied."
+              "status": "todo"
+            "P2-G2-T2":
+              "id": "P2-G2-T2"
+              "source_id": "006"
+              "title": "Publish and implement the Edit Operation"
+              "description": "Publish an Edit Operation through the Database's public Interface that accepts an imported Entity class and a record identifier and returns that record in editable form, or a not-found outcome when no matching record exists."
+              "reason": "Logic must be able to obtain an existing record ready to be changed before submitting an Update."
+              "inputs":
+              - "An imported Entity class"
+              - "A record identifier"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "A callable Edit Operation that returns an existing record in editable form or a not-found outcome."
+              "depends_on":
+              - "P2-G1-T1"
+              "constraints": []
+              "acceptance": "Calling Edit with an existing record's identifier returns that record's current values in editable form; calling it with an identifier that does not exist returns a not-found outcome."
+              "verify": "Editing a previously added record returns its current stored values, and editing a nonexistent identifier returns a not-found outcome instead of a record."
+              "status": "todo"
+            "P2-G2-T3":
+              "id": "P2-G2-T3"
+              "source_id": "006"
+              "title": "Publish and implement the Update Operation"
+              "description": "Publish an Update Operation through the Database's public Interface that accepts an Entity instance carrying its record identifier and changed values, applies those changes to the matching persisted record, and returns the updated record or an operation outcome."
+              "reason": "Logic must be able to persist changes made to an existing record."
+              "inputs":
+              - "An Entity instance carrying its record identifier and changed values"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "A callable Update Operation that applies supplied changes to the matching persisted record."
+              "depends_on":
+              - "P2-G1-T1"
+              "constraints": []
+              "acceptance": "Calling Update with a changed Entity instance persists every changed value against the matching record and leaves unrelated fields and other records unchanged."
+              "verify": "Updating a previously added record with changed values and then retrieving it by its identifier shows the changed values while unrelated fields remain equal to what was originally stored."
+              "status": "todo"
+            "P2-G2-T4":
+              "id": "P2-G2-T4"
+              "source_id": "006"
+              "title": "Publish and implement the Get by ID Operation"
+              "description": "Publish a Get by ID Operation through the Database's public Interface that accepts an imported Entity class and a record identifier and returns the matching persisted record, or a not-found outcome when no matching record exists."
+              "reason": "Logic must be able to retrieve one specific persisted record directly by its identifier."
+              "inputs":
+              - "An imported Entity class"
+              - "A record identifier"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "A callable Get by ID Operation that returns the matching persisted record or a not-found outcome."
+              "depends_on":
+              - "P2-G1-T1"
+              "constraints": []
+              "acceptance": "Calling Get by ID with an existing record's identifier returns that record's current stored values; calling it with a nonexistent identifier returns a not-found outcome."
+              "verify": "Requesting a previously added record by its generated identifier returns its stored values, and requesting a nonexistent identifier returns a not-found outcome."
+              "status": "todo"
+            "P2-G2-T5":
+              "id": "P2-G2-T5"
+              "source_id": "006"
+              "title": "Publish and implement the Delete Operation"
+              "description": "Publish a Delete Operation through the Database's public Interface that accepts an imported Entity class and a record identifier and removes the matching persisted record, returning the deletion outcome."
+              "reason": "Logic must be able to permanently remove one persisted record."
+              "inputs":
+              - "An imported Entity class"
+              - "A record identifier"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "A callable Delete Operation that removes the matching persisted record."
+              "depends_on":
+              - "P2-G1-T1"
+              "constraints": []
+              "acceptance": "Calling Delete with an existing record's identifier removes exactly that record and leaves other records unaffected; the outcome reflects whether a record was removed."
+              "verify": "Deleting a previously added record makes a subsequent Get by ID for that identifier return a not-found outcome, while an unrelated record remains retrievable."
+              "status": "todo"
+            "P2-G2-T6":
+              "id": "P2-G2-T6"
+              "source_id": "006"
+              "title": "Publish and implement the Enable Operation"
+              "description": "Publish an Enable Operation through the Database's public Interface that accepts an imported Entity class and a record identifier and marks the matching persisted record active, returning the enabled record or an operation outcome."
+              "reason": "Logic must be able to mark an existing persisted record active without submitting a full Update."
+              "inputs":
+              - "An imported Entity class"
+              - "A record identifier"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "A callable Enable Operation that marks the matching persisted record active."
+              "depends_on":
+              - "P2-G1-T1"
+              "constraints": []
+              "acceptance": "Calling Enable with an existing record's identifier leaves that record marked active and every other stored value unchanged."
+              "verify": "Enabling a previously disabled record and retrieving it by its identifier shows it marked active with its other stored values unchanged."
+              "status": "todo"
+            "P2-G2-T7":
+              "id": "P2-G2-T7"
+              "source_id": "006"
+              "title": "Publish and implement the Disable Operation"
+              "description": "Publish a Disable Operation through the Database's public Interface that accepts an imported Entity class and a record identifier and marks the matching persisted record inactive, returning the disabled record or an operation outcome."
+              "reason": "Logic must be able to mark an existing persisted record inactive without submitting a full Update."
+              "inputs":
+              - "An imported Entity class"
+              - "A record identifier"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "A callable Disable Operation that marks the matching persisted record inactive."
+              "depends_on":
+              - "P2-G1-T1"
+              "constraints": []
+              "acceptance": "Calling Disable with an existing record's identifier leaves that record marked inactive and every other stored value unchanged."
+              "verify": "Disabling a previously active record and retrieving it by its identifier shows it marked inactive with its other stored values unchanged."
+              "status": "todo"
+        "P2-G3":
+          "id": "P2-G3"
+          "title": "Collection and aggregate Operations"
+          "description": "The Interface Operations and their Engine execution for querying, aggregating, clearing, reporting on, and executing declared commands across persisted records."
+          "area": "Interface publication and Engine execution of the collection and aggregate data Operations"
+          "does": "Logic can list, count, sum, find extremes, truncate, report on, and run declared commands against persisted records for any imported Entity."
+          "constraints": []
+          "task_count": 8
+          "tasks":
+            "P2-G3-T1":
+              "id": "P2-G3-T1"
+              "source_id": "006"
+              "title": "Publish and implement the List Operation"
+              "description": "Publish a List Operation through the Database's public Interface that accepts an imported Entity class with optional filters and optional field ordering, and returns every matching persisted record."
+              "reason": "Logic must be able to retrieve a filtered, ordered collection of persisted records for any imported Entity."
+              "inputs":
+              - "An imported Entity class"
+              - "Optional filters"
+              - "Optional field ordering"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "A callable List Operation that returns matching persisted records honoring supplied filters and ordering."
+              "depends_on":
+              - "P2-G1-T1"
+              "constraints": []
+              "acceptance": "Calling List without filters returns every persisted record of the requested Entity; calling it with filters returns only the matching records, and a requested ordering is honored."
+              "verify": "Listing a set of previously added records with a filter returns only the records that satisfy it, and requesting an ordering returns them in that order."
+              "status": "todo"
+            "P2-G3-T2":
+              "id": "P2-G3-T2"
+              "source_id": "006"
+              "title": "Publish and implement the Count Operation"
+              "description": "Publish a Count Operation through the Database's public Interface that accepts an imported Entity class and optional filters and returns the number of matching persisted records."
+              "reason": "Logic must be able to determine how many persisted records satisfy a condition without retrieving them."
+              "inputs":
+              - "An imported Entity class"
+              - "Optional filters"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "A callable Count Operation that returns the number of matching persisted records."
+              "depends_on":
+              - "P2-G1-T1"
+              "constraints": []
+              "acceptance": "Calling Count without filters returns the total number of persisted records of the requested Entity; calling it with filters returns only the count of matching records."
+              "verify": "Counting a known set of previously added records, with and without a filter, returns the expected number in each case."
+              "status": "todo"
+            "P2-G3-T3":
+              "id": "P2-G3-T3"
+              "source_id": "006"
+              "title": "Publish and implement the Sum Operation"
+              "description": "Publish a Sum Operation through the Database's public Interface that accepts an imported Entity class, one numeric field, and optional filters, and returns that field's total across matching persisted records."
+              "reason": "Logic must be able to obtain an aggregate total over a numeric field without retrieving every matching record."
+              "inputs":
+              - "An imported Entity class"
+              - "One numeric field"
+              - "Optional filters"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "A callable Sum Operation that returns the total of the requested numeric field across matching records."
+              "depends_on":
+              - "P2-G1-T1"
+              "constraints": []
+              "acceptance": "Calling Sum on a numeric field returns the arithmetic total of that field across every matching persisted record, honoring any supplied filter."
+              "verify": "Summing a numeric field over a known set of previously added records, with and without a filter, returns the expected total in each case."
+              "status": "todo"
+            "P2-G3-T4":
+              "id": "P2-G3-T4"
+              "source_id": "006"
+              "title": "Publish and implement the Min Operation"
+              "description": "Publish a Min Operation through the Database's public Interface that accepts an imported Entity class, one comparable field, and optional filters, and returns the smallest matching value."
+              "reason": "Logic must be able to obtain the smallest value of a field across matching persisted records without retrieving them."
+              "inputs":
+              - "An imported Entity class"
+              - "One comparable field"
+              - "Optional filters"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "A callable Min Operation that returns the smallest value of the requested field across matching records."
+              "depends_on":
+              - "P2-G1-T1"
+              "constraints": []
+              "acceptance": "Calling Min on a field returns the smallest stored value of that field among matching persisted records, honoring any supplied filter."
+              "verify": "Requesting Min over a known set of previously added records, with and without a filter, returns the expected smallest value in each case."
+              "status": "todo"
+            "P2-G3-T5":
+              "id": "P2-G3-T5"
+              "source_id": "006"
+              "title": "Publish and implement the Max Operation"
+              "description": "Publish a Max Operation through the Database's public Interface that accepts an imported Entity class, one comparable field, and optional filters, and returns the largest matching value."
+              "reason": "Logic must be able to obtain the largest value of a field across matching persisted records without retrieving them."
+              "inputs":
+              - "An imported Entity class"
+              - "One comparable field"
+              - "Optional filters"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "A callable Max Operation that returns the largest value of the requested field across matching records."
+              "depends_on":
+              - "P2-G1-T1"
+              "constraints": []
+              "acceptance": "Calling Max on a field returns the largest stored value of that field among matching persisted records, honoring any supplied filter."
+              "verify": "Requesting Max over a known set of previously added records, with and without a filter, returns the expected largest value in each case."
+              "status": "todo"
+            "P2-G3-T6":
+              "id": "P2-G3-T6"
+              "source_id": "006"
+              "title": "Publish and implement the Truncate Operation"
+              "description": "Publish a Truncate Operation through the Database's public Interface that accepts an imported Entity class and removes every one of its persisted records while keeping its storage structure."
+              "reason": "Logic must be able to clear every persisted record of one Entity without removing its storage structure."
+              "inputs":
+              - "An imported Entity class"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "A callable Truncate Operation that removes every persisted record of the requested Entity while its storage structure remains usable."
+              "depends_on":
+              - "P2-G1-T1"
+              "constraints": []
+              "acceptance": "Calling Truncate on an Entity removes every one of its persisted records, leaves other Entities' records untouched, and the Entity's storage structure remains usable for further records."
+              "verify": "Truncating an Entity that holds previously added records leaves it empty, an unrelated Entity's records remain intact, and a new record can still be added to the truncated Entity afterward."
+              "status": "todo"
+            "P2-G3-T7":
+              "id": "P2-G3-T7"
+              "source_id": "006"
+              "title": "Publish and implement the Report Operation"
+              "description": "Publish a Report Operation through the Database's public Interface that accepts report-specific selection criteria and returns the requested report without requiring one Model as its subject."
+              "reason": "Logic must be able to obtain a report that is not scoped to one Entity."
+              "inputs":
+              - "Report-specific selection criteria"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "A callable Report Operation that returns a report matching the supplied selection criteria."
+              "depends_on":
+              - "P2-G1-T1"
+              "constraints": []
+              "acceptance": "Calling Report with selection criteria returns a report reflecting the currently persisted data that matches those criteria, without requiring the criteria to name one Entity."
+              "verify": "Requesting a report against a known set of previously added records across more than one Entity returns results consistent with the currently persisted data."
+              "status": "todo"
+            "P2-G3-T8":
+              "id": "P2-G3-T8"
+              "source_id": "006"
+              "title": "Publish and implement the Execute Command Operation"
+              "description": "Publish an Execute Command Operation through the Database's public Interface that accepts a declared database command and its supplied parameters and returns that command's result or operation outcome, without requiring the command's purpose to concern one Model."
+              "reason": "Logic must be able to run a declared database command whose purpose does not directly concern one Model."
+              "inputs":
+              - "A declared database command"
+              - "The command's supplied parameters"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "A callable Execute Command Operation that runs a declared command with its supplied parameters and returns its result."
+              "depends_on":
+              - "P2-G1-T1"
+              "constraints": []
+              "acceptance": "Calling Execute Command with a declared command and valid parameters produces that command's expected effect or result against the current storage."
+              "verify": "Running a declared command through Execute Command produces an observable effect or result consistent with what that command is defined to do."
+              "status": "todo"
+        "P2-G4":
+          "id": "P2-G4"
+          "title": "Credential storage protection"
+          "description": "Storage-level protection applied to the Target-declared sensitive credential Fields, as decided outside Model."
+          "area": "Storage-level protection of sensitive credential Fields"
+          "does": "Every Target-declared sensitive credential Field is protected in storage exactly as its Model's Rule requires."
+          "constraints": []
+          "task_count": 3
+          "tasks":
+            "P2-G4-T1":
+              "id": "P2-G4-T1"
+              "source_id": "006"
+              "title": "Apply hash storage to the User Model's credential Fields"
+              "description": "Ensure the User Model's password and api_key Fields are stored using hash storage at rest, so that no persisted User record exposes either value in a reversible form."
+              "reason": "The User Model's declared Rules require its password and api_key credentials to use hash storage at rest, and that handling is decided outside Model, inside Database."
+              "inputs":
+              - "The User Entity's declared sensitive Fields"
+              - "The User Model's declared storage Rules"
+              "skills": []
+              "expected_result": "Every persisted User record stores its password and api_key as a hash, never as the original submitted value."
+              "depends_on":
+              - "P2-G2-T1"
+              - "P2-G2-T3"
+              "constraints": []
+              "acceptance": "A User record added or updated with a password or api_key value never stores that original value; only a hash of it is present in storage."
+              "verify": "Adding a User with a known password and api_key and inspecting the persisted record shows a hash rather than the original value, and no stored representation allows recovering the original value."
+              "status": "todo"
+            "P2-G4-T2":
+              "id": "P2-G4-T2"
+              "source_id": "006"
+              "title": "Apply encrypted storage to the Instance Model's credential Fields"
+              "description": "Ensure the Instance Model's password and api_key Fields are stored using encrypted storage at rest, so a persisted Instance record can be decrypted back to its original connection credential when legitimately needed."
+              "reason": "The Instance Model's declared Rules require its password and api_key to use encrypted storage at rest."
+              "inputs":
+              - "The Instance Entity's declared sensitive Fields"
+              - "The Instance Model's declared storage Rules"
+              "skills": []
+              "expected_result": "Every persisted Instance record stores its password and api_key encrypted, recoverable only through the intended decryption process."
+              "depends_on":
+              - "P2-G2-T1"
+              - "P2-G2-T3"
+              "constraints": []
+              "acceptance": "An Instance record added or updated with a password or api_key value never stores that original value in plain form; storage holds an encrypted representation that the intended decryption process reproduces exactly."
+              "verify": "Adding an Instance with a known password and api_key and inspecting the persisted record shows an encrypted representation, and decrypting that stored representation reproduces the original value."
+              "status": "todo"
+            "P2-G4-T3":
+              "id": "P2-G4-T3"
+              "source_id": "006"
+              "title": "Apply encrypted storage to the Account Model's credential Field"
+              "description": "Ensure the Account Model's password Field is stored using encrypted storage at rest, so a persisted Account record can be decrypted back to its original credential when legitimately needed."
+              "reason": "The Account Model's declared Rules require its password to use encrypted storage at rest."
+              "inputs":
+              - "The Account Entity's declared sensitive Field"
+              - "The Account Model's declared storage Rules"
+              "skills": []
+              "expected_result": "Every persisted Account record stores its password encrypted, recoverable only through the intended decryption process."
+              "depends_on":
+              - "P2-G2-T1"
+              - "P2-G2-T3"
+              "constraints": []
+              "acceptance": "An Account record added or updated with a password value never stores that original value in plain form; storage holds an encrypted representation that the intended decryption process reproduces exactly."
+              "verify": "Adding an Account with a known password and inspecting the persisted record shows an encrypted representation, and decrypting that stored representation reproduces the original value."
+              "status": "todo"
+        "P2-G5":
+          "id": "P2-G5"
+          "title": "Persistent storage provisioning"
+          "description": "Table creation and migration so the default Instance is a real, reproducible storage location."
+          "area": "Table creation, migration, and default Instance provisioning"
+          "does": "The default Instance exists on disk with a table for every persisted Model, reproducible through its migration."
+          "constraints": []
+          "task_count": 2
+          "tasks":
+            "P2-G5-T1":
+              "id": "P2-G5-T1"
+              "source_id": "006"
+              "title": "Create storage tables for every persisted Model"
+              "description": "Derive and create, in the configured default Instance, one storage table for every Entity imported from the Model package, matching each Entity's declared identity, references, uniqueness constraints, defaults, and indexes, without creating a second persistence model."
+              "reason": "The default Instance must have a real table for every persisted Model before any record can be stored."
+              "inputs":
+              - "Every imported Entity class and its declared persistence metadata"
+              - "The Database configuration's default Instance"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "The default Instance contains one table for every imported Entity, matching its declared structural metadata."
+              "depends_on":
+              - "P2-G1-T1"
+              "constraints": []
+              "acceptance": "The default Instance contains exactly one table for every Entity imported from the Model package, and each table's identity, references, uniqueness constraints, defaults, and indexes match that Entity's declared metadata."
+              "verify": "Inspecting the default Instance's created storage shows a table for every imported Entity, and comparing each table's structure with its Entity's declared metadata shows no missing or extra item."
+              "status": "todo"
+            "P2-G5-T2":
+              "id": "P2-G5-T2"
+              "source_id": "006"
+              "title": "Generate and apply the storage migration for the default Instance"
+              "description": "Generate the schema migration that reflects the created storage tables and apply it to the configured default Instance, so a fresh environment can reach the same storage structure by running that migration alone."
+              "reason": "The Database Component must leave a usable default storage instance that a fresh environment can reproduce through its migration, not only source code."
+              "inputs":
+              - "The created storage tables"
+              - "The Database configuration's default Instance"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "A migration that recreates the default Instance's complete table structure when applied to a fresh, empty storage location."
+              "depends_on":
+              - "P2-G5-T1"
+              "constraints": []
+              "acceptance": "Applying the generated migration to a fresh, empty storage location produces a table for every imported Entity, matching the structure already created in the default Instance."
+              "verify": "Applying the migration to a separate, empty storage location and comparing its resulting tables with the default Instance's tables shows no difference."
+              "status": "todo"
+        "P2-G6":
+          "id": "P2-G6"
+          "title": "Initial data insertion"
+          "description": "Insertion of the Target-declared Initial Data for the default Instance, honoring cross-Model references and generating secure credential values."
+          "area": "Insertion of Target-declared Initial Data"
+          "does": "Every Target-declared Initial Data row exists in the default Instance, correctly cross-referenced, with credential values generated securely where required."
+          "constraints": []
+          "task_count": 12
+          "tasks":
+            "P2-G6-T1":
+              "id": "P2-G6-T1"
+              "source_id": "006"
+              "title": "Insert the Target-declared Initial Data for User"
+              "description": "Insert the Target-declared Initial Data record for User into the default Instance, generating its password and api_key securely rather than storing a literal placeholder value."
+              "reason": "The Target declares one Initial Data record for User that the default Instance must contain."
+              "inputs":
+              - "The Target-declared Initial Data for User"
+              - "The Add Operation"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "The default Instance contains the declared User Initial Data record with a securely generated password and api_key."
+              "depends_on":
+              - "P2-G5-T2"
+              - "P2-G2-T1"
+              - "P2-G4-T1"
+              "constraints": []
+              "acceptance": "The default Instance contains exactly the Target-declared User Initial Data record, with its password and api_key set to securely generated values rather than any literal placeholder."
+              "verify": "Retrieving the inserted User record shows every declared field matching the Target's Initial Data, and its password and api_key are securely generated values, not a literal placeholder."
+              "status": "todo"
+            "P2-G6-T2":
+              "id": "P2-G6-T2"
+              "source_id": "006"
+              "title": "Insert the Target-declared Initial Data for Trading Platform"
+              "description": "Insert the Target-declared Initial Data records for Trading Platform into the default Instance."
+              "reason": "The Target declares two Initial Data records for Trading Platform that the default Instance must contain."
+              "inputs":
+              - "The Target-declared Initial Data for Trading Platform"
+              - "The Add Operation"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "The default Instance contains both declared Trading Platform Initial Data records."
+              "depends_on":
+              - "P2-G5-T2"
+              - "P2-G2-T1"
+              "constraints": []
+              "acceptance": "The default Instance contains exactly the Target-declared Trading Platform Initial Data records, with every declared field matching."
+              "verify": "Retrieving the inserted Trading Platform records shows their declared fields matching the Target's Initial Data."
+              "status": "todo"
+            "P2-G6-T3":
+              "id": "P2-G6-T3"
+              "source_id": "006"
+              "title": "Insert the Target-declared Initial Data for Broker"
+              "description": "Insert the Target-declared Initial Data record for Broker into the default Instance, referencing the previously inserted User Initial Data as its owner."
+              "reason": "The Target declares one Initial Data record for Broker that the default Instance must contain, owned by the Initial Data User."
+              "inputs":
+              - "The Target-declared Initial Data for Broker"
+              - "The inserted User Initial Data record"
+              - "The Add Operation"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "The default Instance contains the declared Broker Initial Data record, correctly owned by the Initial Data User."
+              "depends_on":
+              - "P2-G6-T1"
+              - "P2-G2-T1"
+              "constraints": []
+              "acceptance": "The default Instance contains exactly the Target-declared Broker Initial Data record, with every declared field matching and its owner reference resolving to the Initial Data User."
+              "verify": "Retrieving the inserted Broker record shows its declared fields matching the Target's Initial Data and its owner reference resolving to the previously inserted User record."
+              "status": "todo"
+            "P2-G6-T4":
+              "id": "P2-G6-T4"
+              "source_id": "006"
+              "title": "Insert the Target-declared Initial Data for Currency"
+              "description": "Insert the Target-declared Initial Data records for Currency into the default Instance, referencing the previously inserted User Initial Data as their owner."
+              "reason": "The Target declares eight Initial Data records for Currency that the default Instance must contain, owned by the Initial Data User."
+              "inputs":
+              - "The Target-declared Initial Data for Currency"
+              - "The inserted User Initial Data record"
+              - "The Add Operation"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "The default Instance contains every declared Currency Initial Data record, correctly owned by the Initial Data User."
+              "depends_on":
+              - "P2-G6-T1"
+              - "P2-G2-T1"
+              "constraints": []
+              "acceptance": "The default Instance contains exactly the Target-declared Currency Initial Data records, with every declared field matching and each owner reference resolving to the Initial Data User."
+              "verify": "Retrieving the inserted Currency records shows their declared fields matching the Target's Initial Data and each owner reference resolving to the previously inserted User record."
+              "status": "todo"
+            "P2-G6-T5":
+              "id": "P2-G6-T5"
+              "source_id": "006"
+              "title": "Insert the Target-declared Initial Data for Account Group"
+              "description": "Insert the Target-declared Initial Data record for Account Group into the default Instance, referencing the previously inserted User Initial Data as its owner."
+              "reason": "The Target declares one Initial Data record for Account Group that the default Instance must contain, owned by the Initial Data User."
+              "inputs":
+              - "The Target-declared Initial Data for Account Group"
+              - "The inserted User Initial Data record"
+              - "The Add Operation"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "The default Instance contains the declared Account Group Initial Data record, correctly owned by the Initial Data User."
+              "depends_on":
+              - "P2-G6-T1"
+              - "P2-G2-T1"
+              "constraints": []
+              "acceptance": "The default Instance contains exactly the Target-declared Account Group Initial Data record, with every declared field matching and its owner reference resolving to the Initial Data User."
+              "verify": "Retrieving the inserted Account Group record shows its declared fields matching the Target's Initial Data and its owner reference resolving to the previously inserted User record."
+              "status": "todo"
+            "P2-G6-T6":
+              "id": "P2-G6-T6"
+              "source_id": "006"
+              "title": "Insert the Target-declared Initial Data for Trailing Group"
+              "description": "Insert the Target-declared Initial Data record for Trailing Group into the default Instance, referencing the previously inserted User Initial Data as its owner."
+              "reason": "The Target declares one Initial Data record for Trailing Group that the default Instance must contain, owned by the Initial Data User."
+              "inputs":
+              - "The Target-declared Initial Data for Trailing Group"
+              - "The inserted User Initial Data record"
+              - "The Add Operation"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "The default Instance contains the declared Trailing Group Initial Data record, correctly owned by the Initial Data User."
+              "depends_on":
+              - "P2-G6-T1"
+              - "P2-G2-T1"
+              "constraints": []
+              "acceptance": "The default Instance contains exactly the Target-declared Trailing Group Initial Data record, with every declared field matching and its owner reference resolving to the Initial Data User."
+              "verify": "Retrieving the inserted Trailing Group record shows its declared fields matching the Target's Initial Data and its owner reference resolving to the previously inserted User record."
+              "status": "todo"
+            "P2-G6-T7":
+              "id": "P2-G6-T7"
+              "source_id": "006"
+              "title": "Insert the Target-declared Initial Data for Partial Group"
+              "description": "Insert the Target-declared Initial Data record for Partial Group into the default Instance, referencing the previously inserted User Initial Data as its owner."
+              "reason": "The Target declares one Initial Data record for Partial Group that the default Instance must contain, owned by the Initial Data User."
+              "inputs":
+              - "The Target-declared Initial Data for Partial Group"
+              - "The inserted User Initial Data record"
+              - "The Add Operation"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "The default Instance contains the declared Partial Group Initial Data record, correctly owned by the Initial Data User."
+              "depends_on":
+              - "P2-G6-T1"
+              - "P2-G2-T1"
+              "constraints": []
+              "acceptance": "The default Instance contains exactly the Target-declared Partial Group Initial Data record, with every declared field matching and its owner reference resolving to the Initial Data User."
+              "verify": "Retrieving the inserted Partial Group record shows its declared fields matching the Target's Initial Data and its owner reference resolving to the previously inserted User record."
+              "status": "todo"
+            "P2-G6-T8":
+              "id": "P2-G6-T8"
+              "source_id": "006"
+              "title": "Insert the Target-declared Initial Data for Action Group"
+              "description": "Insert the Target-declared Initial Data record for Action Group into the default Instance, referencing the previously inserted User Initial Data as its owner."
+              "reason": "The Target declares one Initial Data record for Action Group that the default Instance must contain, owned by the Initial Data User."
+              "inputs":
+              - "The Target-declared Initial Data for Action Group"
+              - "The inserted User Initial Data record"
+              - "The Add Operation"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "The default Instance contains the declared Action Group Initial Data record, correctly owned by the Initial Data User."
+              "depends_on":
+              - "P2-G6-T1"
+              - "P2-G2-T1"
+              "constraints": []
+              "acceptance": "The default Instance contains exactly the Target-declared Action Group Initial Data record, with every declared field matching and its owner reference resolving to the Initial Data User."
+              "verify": "Retrieving the inserted Action Group record shows its declared fields matching the Target's Initial Data and its owner reference resolving to the previously inserted User record."
+              "status": "todo"
+            "P2-G6-T9":
+              "id": "P2-G6-T9"
+              "source_id": "006"
+              "title": "Insert the Target-declared Initial Data for Instance"
+              "description": "Insert the Target-declared Initial Data record for Instance into the default Instance, generating its password and api_key securely, and referencing the previously inserted User and Trading Platform Initial Data records."
+              "reason": "The Target declares one Initial Data record for Instance that the default storage location must contain, owned by the Initial Data User and using the Initial Data Trading Platform."
+              "inputs":
+              - "The Target-declared Initial Data for Instance"
+              - "The inserted User and Trading Platform Initial Data records"
+              - "The Add Operation"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "The default Instance contains the declared Instance Initial Data record, correctly cross-referenced, with a securely generated password and api_key."
+              "depends_on":
+              - "P2-G6-T1"
+              - "P2-G6-T2"
+              - "P2-G2-T1"
+              - "P2-G4-T2"
+              "constraints": []
+              "acceptance": "The default Instance contains exactly the Target-declared Instance Initial Data record, with every declared field matching, its owner and Trading Platform references resolving correctly, and its password and api_key set to securely generated values rather than any literal placeholder."
+              "verify": "Retrieving the inserted Instance record shows its declared fields matching the Target's Initial Data, its references resolving to the previously inserted User and Trading Platform records, and its password and api_key are securely generated values, not a literal placeholder."
+              "status": "todo"
+            "P2-G6-T10":
+              "id": "P2-G6-T10"
+              "source_id": "006"
+              "title": "Insert the Target-declared Initial Data for Asset"
+              "description": "Insert the Target-declared Initial Data records for Asset into the default Instance, referencing the previously inserted Broker Initial Data as their provider."
+              "reason": "The Target declares four Initial Data records for Asset that the default Instance must contain, provided by the Initial Data Broker."
+              "inputs":
+              - "The Target-declared Initial Data for Asset"
+              - "The inserted Broker Initial Data record"
+              - "The Add Operation"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "The default Instance contains every declared Asset Initial Data record, correctly linked to the Initial Data Broker."
+              "depends_on":
+              - "P2-G6-T3"
+              - "P2-G2-T1"
+              "constraints": []
+              "acceptance": "The default Instance contains exactly the Target-declared Asset Initial Data records, with every declared field matching and each Broker reference resolving to the Initial Data Broker."
+              "verify": "Retrieving the inserted Asset records shows their declared fields matching the Target's Initial Data and each Broker reference resolving to the previously inserted Broker record."
+              "status": "todo"
+            "P2-G6-T11":
+              "id": "P2-G6-T11"
+              "source_id": "006"
+              "title": "Insert the Target-declared Initial Data for Account"
+              "description": "Insert the Target-declared Initial Data record for Account into the default Instance, generating its password securely, and referencing the previously inserted Account Group, Broker, Instance, and Currency Initial Data records."
+              "reason": "The Target declares one Initial Data record for Account that the default Instance must contain, cross-referencing four other Initial Data records."
+              "inputs":
+              - "The Target-declared Initial Data for Account"
+              - "The inserted Account Group, Broker, Instance, and Currency Initial Data records"
+              - "The Add Operation"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "The default Instance contains the declared Account Initial Data record, correctly cross-referenced, with a securely generated password."
+              "depends_on":
+              - "P2-G6-T5"
+              - "P2-G6-T3"
+              - "P2-G6-T9"
+              - "P2-G6-T4"
+              - "P2-G2-T1"
+              - "P2-G4-T3"
+              "constraints": []
+              "acceptance": "The default Instance contains exactly the Target-declared Account Initial Data record, with every declared field matching, every reference resolving to its respective previously inserted record, and its password set to a securely generated value rather than any literal placeholder."
+              "verify": "Retrieving the inserted Account record shows its declared fields matching the Target's Initial Data, its references resolving to the previously inserted Account Group, Broker, Instance, and Currency records, and its password is a securely generated value, not a literal placeholder."
+              "status": "todo"
+            "P2-G6-T12":
+              "id": "P2-G6-T12"
+              "source_id": "006"
+              "title": "Insert the Target-declared Initial Data for Action"
+              "description": "Insert the Target-declared Initial Data record for Action into the default Instance, referencing the previously inserted Action Group, Asset, Account, Partial Group, and Trailing Group Initial Data records."
+              "reason": "The Target declares one Initial Data record for Action that the default Instance must contain, cross-referencing five other Initial Data records."
+              "inputs":
+              - "The Target-declared Initial Data for Action"
+              - "The inserted Action Group, Asset, Account, Partial Group, and Trailing Group Initial Data records"
+              - "The Add Operation"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "The default Instance contains the declared Action Initial Data record, correctly cross-referenced to every Model it uses."
+              "depends_on":
+              - "P2-G6-T8"
+              - "P2-G6-T10"
+              - "P2-G6-T11"
+              - "P2-G6-T7"
+              - "P2-G6-T6"
+              - "P2-G2-T1"
+              "constraints": []
+              "acceptance": "The default Instance contains exactly the Target-declared Action Initial Data record, with every declared field matching and every reference resolving to its respective previously inserted record."
+              "verify": "Retrieving the inserted Action record shows its declared fields matching the Target's Initial Data and its references resolving to the previously inserted Action Group, Asset, Account, Partial Group, and Trailing Group records."
+              "status": "todo"
+        "P2-G7":
+          "id": "P2-G7"
+          "title": "Public surface and documentation"
+          "description": "The documentation through which Logic discovers and uses every published Database Operation."
+          "area": "Interface documentation"
+          "does": "Consumers can find, understand, and correctly call every published Database Operation."
+          "constraints": []
+          "task_count": 1
+          "tasks":
+            "P2-G7-T1":
+              "id": "P2-G7-T1"
+              "source_id": "006"
+              "title": "Document the Database's public Interface"
+              "description": "Write the Database Component's usage documentation covering an overview, the complete Interface Operation catalogue with one complete example per published Operation using the imported Entity class or instance it requires, and the setup, run, and troubleshooting guidance."
+              "reason": "Consumers must be able to use the Database's public Operations without reading its internal routing or Engine implementation."
+              "inputs":
+              - "Every published Interface Operation"
+              "skills": []
+              "expected_result": "Component-level documentation giving every published Operation one complete, accurate example."
+              "depends_on":
+              - "P2-G2-T1"
+              - "P2-G2-T2"
+              - "P2-G2-T3"
+              - "P2-G2-T4"
+              - "P2-G2-T5"
+              - "P2-G2-T6"
+              - "P2-G2-T7"
+              - "P2-G3-T1"
+              - "P2-G3-T2"
+              - "P2-G3-T3"
+              - "P2-G3-T4"
+              - "P2-G3-T5"
+              - "P2-G3-T6"
+              - "P2-G3-T7"
+              - "P2-G3-T8"
+              "constraints": []
+              "acceptance": "Every published Interface Operation appears exactly once with a complete, accurate example, and following each example against the Database produces the described result."
+              "verify": "Following each documented example against the current Database Operations produces the described result."
+              "status": "todo"
+        "P2-G8":
+          "id": "P2-G8"
+          "title": "Reusable package"
+          "description": "Delivery of the Database as an independent package consumable by Logic."
+          "area": "Packaging"
+          "does": "The Database is usable in isolation, given its declared Model dependency."
+          "constraints": []
+          "task_count": 1
+          "tasks":
+            "P2-G8-T1":
+              "id": "P2-G8-T1"
+              "source_id": "006"
+              "title": "Make the Database Component consumable as a reusable package"
+              "description": "Make the Database Component obtainable and usable as an independent reusable package by another Component, without requiring any other Component's source to be present besides the Model package it depends on."
+              "reason": "The phase goal requires a Database Component that Logic can consume as an independent package."
+              "inputs":
+              - "The published Interface Operations"
+              - "The Database documentation"
+              "skills": []
+              "expected_result": "A package that another Component can install or import and use to reach the default Instance's data."
+              "depends_on":
+              - "P2-G7-T1"
+              - "P2-G6-T12"
+              "constraints": []
+              "acceptance": "A separate consumer can obtain the package and use every published Operation against the provisioned default Instance with no other project Component's source present besides the depended-on Model package."
+              "verify": "From a clean, separate environment containing only the package, its declared Model dependency, and their dependencies, every published Operation can be exercised against the default Instance."
+              "status": "todo"
