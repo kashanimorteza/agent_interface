@@ -31,7 +31,7 @@ Database keeps persistence knowledge in one Component. Without that separation, 
 
 ### How It Works
 
-Logic uses Interface to access Database. Interface exposes the public Actions, then passes each request to Data. Data resolves the applicable Instance and Engine, calls that Engine's implementation, and returns the result through Interface.
+Logic uses Interface to access Database. Interface exposes the public Operations, then passes each request to Data. Data resolves the applicable Instance and Engine, calls that Engine's implementation, and returns the result through Interface.
 
 <br>
 
@@ -45,7 +45,7 @@ Logic uses Interface to access Database. Interface exposes the public Actions, t
 - **Interface** — the only public Database layer, through which Logic imports Database classes and requests Database Operations.
 - **Operation** — one public Database action published through Interface.
 - **Execute Command** — an Operation that receives a SQL command and optional parameters, executes it through the selected Engine, and returns its result.
-- **Data** — the internal file that provides the Database Actions, resolves a request's Instance and Engine, and calls that Engine's implementation.
+- **Data** — the internal file that routes Database Operations, resolves a request's Instance and Engine, and calls that Engine's implementation.
 
 <br>
 
@@ -95,11 +95,11 @@ The only public Database layer. It makes Database classes and Operations availab
 
 ### Data
 
-The internal file that provides every Database Action. It resolves the requested Instance and Engine, calls the matching Engine Action, and returns that result according to the published Operation's contract.
+The internal file that routes every Database Operation. It resolves the requested Instance and Engine, calls the matching Engine implementation, and returns that result according to the published Operation's contract.
 
 ### Engine
 
-The internal directory containing one file for every Engine marked for implementation. Each file performs the Database Actions with that Engine's own packages, parameters, and mechanisms.
+The internal directory containing one file for every Engine marked for implementation. Each file implements Database Operations with that Engine's own packages, parameters, and mechanisms.
 
 Database's technical selections, defaults, and layout belong to Database Preferences. The structure of its generated configuration belongs to its Schema. This Definition states only the conceptual layers and the rules that govern them.
 
@@ -151,13 +151,13 @@ Every Principle below is mandatory.
 
 **Why:** One public boundary keeps Engine selection, routing, and shared implementation details out of consumers.
 
-**Boundary:** Interface publishes Database Actions; it does not make a consumer responsible for Data routing or Engine-specific storage behavior.
+**Boundary:** Interface publishes Database Operations; it does not make a consumer responsible for Data routing or Engine-specific storage behavior.
 
 <br>
 
 ### Data routes requests and handles results
 
-**Rule:** Data receives each request from Interface, resolves the requested Instance and its Engine, forwards the Operation to that Engine implementation, and returns that Engine result according to the published Operation's contract. Data provides one Action for each published Operation.
+**Rule:** Data receives each request from Interface, resolves the requested Instance and its Engine, forwards the Operation to that Engine implementation, and returns that Engine result according to the published Operation's contract.
 
 **Why:** A single Data file keeps selection, routing, and result handling consistent across Engines.
 
@@ -229,7 +229,7 @@ Every obligation in the file, under the Principle it comes from.
 **Data routes requests and handles results**
 
 - **Must** — route every Interface request to the resolved Instance and Engine.
-- **Must** — provide one Data Action for each published Operation.
+- **Must** — route every published Operation through the resolved Instance and Engine.
 - **Must** — return each Engine result according to the published Operation's contract.
 
 **Each Engine implements the published Operations**

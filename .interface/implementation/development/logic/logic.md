@@ -40,7 +40,7 @@ The cost of the alternative is not untidiness, it is disagreement. Behaviour spr
 
 A consumer names an Operation on Logic's Interface and gives it what that Operation needs. Logic works out what the request means: which Domain Definitions it concerns, which Components hold the answer, and in what order they have to be asked.
 
-It then carries the work out through its Services. Every Service has an internal Interface that presents the Operations its class handles. The Entity Service takes the Entity classes published by Model and, for each Entity, handles the applicable Operations published by Database's Interface. Logic's Interface gathers the Operations from every Service Interface into consumer-facing Categories organized by Service.
+It then carries the work out through its Services. Every Service has an internal Interface that presents the Actions its class handles. The Entity Service takes the Entity classes published by Model and, for each Entity, presents Actions corresponding to the applicable Operations published by Database's Interface. Logic's Interface gathers those Service Actions as consumer-facing Operations in Categories organized by Service.
 
 What comes back is an Application Outcome: the result the consumer asked for, or one of the expected failures that Operation declares. The consumer learns nothing else — not which Components were involved, not which Service performed which step, not how the answers were combined. That is the whole exchange, and it is the same exchange whether the consumer is an API process, a command-line entry point, or another Component.
 
@@ -54,9 +54,9 @@ What comes back is an Application Outcome: the result the consumer asked for, or
 - **Category** — one named grouping of Operations in the outward Interface, representing one Service's available behavior without making that Service directly reachable.
 - **Operation** — one complete unit of work the Interface offers a consumer, named by what the consumer wants done rather than by how it is carried out.
 - **Service** — one internal part of Logic that owns one coherent application responsibility. A Service is internal: no consumer reaches it, names it, or depends on it.
-- **Service Interface** — the internal Interface of one Service, presenting the Operations its class handles. It is not a public Logic boundary.
-- **Service Operation** — one function a Service class handles through its Service Interface.
-- **Entity Service** — the internal Service that creates one Entity file for every Entity published by Model and handles the applicable Operations published by Database's Interface for that Entity. Its Service Interface reflects those Operations without redefining their catalogue or contract.
+- **Service Interface** — the internal Interface of one Service, presenting the Actions its class handles. It is not a public Logic boundary.
+- **Service Action** — one function a Service class handles through its Service Interface.
+- **Entity Service** — the internal Service that creates one Entity file for every Entity published by Model and presents an Action for each applicable Database Interface Operation. Its Service Interface reflects those Operations without redefining their catalogue or contract.
 - **Application Outcome** — a logical success or expected failure independent of transport and persistence.
 
 <br>
@@ -72,7 +72,7 @@ Logic
 └── Services
     └── Service
         └── Service Interface
-            └── Operation
+            └── Action
 ```
 
 <br>
@@ -107,15 +107,15 @@ Logic owns application Behaviour, operation composition, and its internal Servic
 
 ### Interface
 
-Logic's outward surface. It gathers Operations from every Service Interface and organizes them into Categories by Service. Each Operation is stated in the consumer's terms. A Category makes one Service's available behavior discoverable without exposing that Service for direct use.
+Logic's outward surface. It gathers Actions from every Service Interface as Operations and organizes them into Categories by Service. Each Operation is stated in the consumer's terms. A Category makes one Service's available behavior discoverable without exposing that Service for direct use.
 
 ### Services
 
-Logic's internal layer. Every Service class has a Service Interface that presents the Operations it handles. Services are parallel and not reachable, nameable, or dependable from outside. Logic's outward Interface gathers their Operations; it does not expose the Services themselves.
+Logic's internal layer. Every Service class has a Service Interface that presents the Actions it handles. Services are parallel and not reachable, nameable, or dependable from outside. Logic's outward Interface gathers their Actions as Operations; it does not expose the Services themselves.
 
 #### Entity
 
-The configured Entity Service. It reads the Entity classes published by Model, creates one file for each Entity, and has a Service Interface that handles the Database Interface Operations applicable to that Entity. Database's Interface remains the source of those Operations and their contracts; Entity Service does not redefine them. Logic's Interface gathers them into its consumer-facing Categories.
+The configured Entity Service. It reads the Entity classes published by Model, creates one file for each Entity, and has a Service Interface that presents an Action for every Database Interface Operation applicable to that Entity. Database's Interface remains the source of those Operations and their contracts; Entity Service does not redefine them. Logic's Interface gathers the Actions as consumer-facing Operations in its Categories.
 
 <br>
 
@@ -133,9 +133,9 @@ Every Principle below is mandatory.
 
 ### Logic documentation explains its Interfaces
 
-**Rule:** Logic documentation first shows the outward Interface Categories organized by Service and how a consumer imports that Interface. It then documents every configured Service separately, including its internal Service Interface and every Operation it handles, with one complete example for each Operation. For Entity Service, documentation lists every handled Entity and uses one representative Entity, such as User, for those examples. Services remain internal and are not consumer dependencies.
+**Rule:** Logic documentation first shows the outward Interface Categories organized by Service and how a consumer imports that Interface. It then documents every configured Service separately, including its internal Service Interface and every Action it handles, with one complete example for each Action. For Entity Service, documentation lists every handled Entity and uses one representative Entity, such as User, for those examples. Services remain internal and are not consumer dependencies.
 
-**Why:** A reader can use Logic through one public entry point, then find one complete and non-duplicated explanation of each Service Operation without mistaking an internal Service Interface for a consumer boundary.
+**Why:** A reader can use Logic through one public entry point, then find one complete and non-duplicated explanation of each Service Action without mistaking an internal Service Interface for a consumer boundary.
 
 **Boundary:** Documenting a Service Interface does not make it public or authorize a consumer to reach a Service directly.
 
@@ -163,17 +163,17 @@ Every Principle below is mandatory.
 
 ### One Interface exposes Logic's Operations
 
-**Rule:** Logic publishes exactly one outward Interface, and every consumer reaches Logic only through it. That Interface gathers Operations from every Service Interface into Categories organized by Service, and offers Operations: each one a complete unit of work stated in the consumer's terms — what it wants done and with what — never a route into Logic's internal parts. An Operation states what it accepts, what it returns, and which Application Outcomes it can produce.
+**Rule:** Logic publishes exactly one outward Interface, and every consumer reaches Logic only through it. That Interface gathers Actions from every Service Interface as Operations into Categories organized by Service, and offers Operations: each one a complete unit of work stated in the consumer's terms — what it wants done and with what — never a route into Logic's internal parts. An Operation states what it accepts, what it returns, and which Application Outcomes it can produce.
 
 **Why:** One boundary lets Logic reorganize inside itself without any consumer noticing, and lets a second consumer arrive without a second way in.
 
-**Boundary:** An outward Interface Category may identify the Service whose behavior it groups, but does not expose that Service for direct import or use. It exposes no connection, session, or storage detail. A Category groups Operations and performs no work of its own. Logic Preferences declare which Services exist and their realization; the outward Interface presents their Operations to consumers.
+**Boundary:** An outward Interface Category may identify the Service whose behavior it groups, but does not expose that Service for direct import or use. It exposes no connection, session, or storage detail. A Category groups Operations and performs no work of its own. Logic Preferences declare which Services exist and their realization; the outward Interface presents their Actions as Operations to consumers.
 
 <br>
 
 ### Logic is composed of internal Services
 
-**Rule:** Inside Logic, work is divided into Services. Each Service owns one coherent application responsibility and presents the Operations its class handles through its Service Interface. The outward Interface gathers those Operations. Services are internal: no consumer names one, reaches one, or depends on one.
+**Rule:** Inside Logic, work is divided into Services. Each Service owns one coherent application responsibility and presents the Actions its class handles through its Service Interface. The outward Interface gathers those Actions as Operations. Services are internal: no consumer names one, reaches one, or depends on one.
 
 **Why:** Giving each application responsibility one Service keeps its dependencies and behavior together, so a Service can change without that change spreading through unrelated Behaviour.
 
@@ -259,7 +259,7 @@ Every obligation in the file, under the Principle it comes from.
 **Logic documentation explains its Interfaces**
 
 - **Must** — show outward Interface Categories organized by Service and explain how a consumer imports the outward Interface.
-- **Must** — document every configured Service, its internal Service Interface, and each Service Operation with one complete example, without presenting a Service as a consumer dependency.
+- **Must** — document every configured Service, its internal Service Interface, and each Service Action with one complete example, without presenting a Service as a consumer dependency.
 
 **Logic is a reusable library**
 
@@ -281,7 +281,7 @@ Every obligation in the file, under the Principle it comes from.
 **Logic is composed of internal Services**
 
 - **Must** — Divide Logic into internal Services, each owning one coherent application responsibility.
-- **Must** — give every Service an internal Service Interface that presents the Operations its class handles.
+- **Must** — give every Service an internal Service Interface that presents the Actions its class handles.
 - **Never** — Let a consumer name, reach, or depend on a Service, or let one Service do its work through another Component's Service.
 
 **Logic reaches another Component only through that Component's Interface**

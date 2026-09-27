@@ -60,6 +60,8 @@ content:
       entity: "entity"
     files:
       interface: "logic_interface"
+    conventions:
+      service_interface: "Keep every Service Interface in its own Service file."
       
   # <!-------------------------------------------- services -->
   services:
@@ -69,8 +71,8 @@ content:
       files: "Create one file for every published Entity."
       talks_to: ["Model Component", "Database Component"]
       purpose: "The Service that handles Database Interface Operations for each Entity published by Model."
-      interface: "The internal Service Interface in each Entity Service file that presents the Operations handled for that Entity."
-      handling: "For each Entity file, handle every applicable Operation published by Database Interface. This Service Interface reflects Database's catalogue and contract without redefining either."
+      interface: "The internal Service Interface in each Entity Service file that presents the Actions handled for that Entity."
+      handling: "For each Entity file, present an Action for every applicable Operation published by Database Interface. This Service Interface reflects Database's catalogue and contract without redefining either."
 
   # <!-------------------------------------------- runtime -->
   runtime:
@@ -107,5 +109,5 @@ content:
       - verify
       - troubleshooting
     sections:
-      interface: "Document Categories organized by Service and show how a consumer imports the outward Interface. Do not repeat Service Operation examples here."
-      services: "For every configured Service, document its internal Service Interface and give every Operation it handles one complete example. For Entity Service, list every handled Entity; choose one representative Entity, such as User, and give it one complete example for each applicable Database Interface Operation. Those examples are the pattern for the remaining Entities."
+      interface: "Document Categories organized by Service and show how a consumer imports the outward Interface. Do not repeat Service Action examples here."
+      services: "For every configured Service, document its internal Service Interface and give every Action it handles one complete example. For Entity Service, list every handled Entity; choose one representative Entity, such as User, and give it one complete example for each applicable Database Interface Operation. Those examples are the pattern for the remaining Entities."
