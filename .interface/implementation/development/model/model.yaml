@@ -100,7 +100,7 @@ content:
       - interface
       - foundation
       - setup
-      - run
+      - use
       - troubleshooting
     sections:
       overview: "Give one concise example using one Entity."

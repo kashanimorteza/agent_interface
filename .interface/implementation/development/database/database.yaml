@@ -175,7 +175,7 @@ content:
       - overview
       - interface
       - setup
-      - run
+      - use
       - verify
       - troubleshooting
     sections:

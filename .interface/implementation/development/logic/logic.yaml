@@ -16,17 +16,16 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings for Logic's identity; then read layout, Services, runtime behavior, verification, and development capabilities. Read Connections from Development and resolve environment-specific Runtime Bindings from Platform. Use a Development Default only when this file leaves a shared choice unstated."
+  consumption: "Read settings for Logic's identity; then read layout, Services, verification, and development capabilities. Read Connections from Development and resolve environment-specific Runtime Bindings from Platform. Use a Development Default only when this file leaves a shared choice unstated."
   selection: "Use a compatible configured Logic default when the Target is silent. For an explicit incompatible need, preserve Target intent under Logic Principles and record the consequential realization choice; ask only when no safe compatible choice can be established."
   version_resolution: "This file resolves versions for Logic-owned packages and tools. Development resolves versions only for its shared Defaults."
-  matching: "Match standards and Logic settings by their exact keys. Match Model Logic files to public Entity classes."
+  matching: "Match standards and Logic settings by their exact keys. Create exactly one Entity Service file for every Entity published by Model Interface."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - "settings: identify Logic."
   - "layout: locate the configured Interface file and Services directory."
   - "services: read each Service, its internal Interface, and its responsibility."
-  - "runtime: apply Logic runtime behavior."
   - "verification: apply Logic verification settings."
   - "development: apply the currently enabled or disabled component capabilities."
   - "documentation: apply the required Logic documentation structure and examples."
@@ -36,7 +35,6 @@ content_map:
   - settings
   - layout
   - services
-  - runtime
   - verification
   - development
   - documentation
@@ -69,23 +67,12 @@ content:
       name: "Entity Service"
       source: "Entity classes published by Model Interface"
       files: "Create one file for every published Entity."
-      talks_to: ["Model Component", "Database Component"]
       purpose: "The Service that handles Database Interface Operations for each Entity published by Model."
       interface: "The internal Service Interface in each Entity Service file that presents the Actions handled for that Entity."
       handling: "For each Entity file, present an Action for every applicable Operation published by Database Interface. This Service Interface reflects Database's catalogue and contract without redefining either."
 
-  # <!-------------------------------------------- runtime -->
-  runtime:
-    observability:
-      logging:
-        enabled: false
-
   # <!-------------------------------------------- verification -->
   verification:
-    checks:
-      - "Authentication and authorization, when Development enables them for Logic"
-      - "Idempotency, for the Operations the Target selects as sensitive to repetition"
-      - "Credential and secret exclusion from outcomes and logs"
     unit_tests_use_live_dependencies: false
 
   # <!-------------------------------------------- development -->
@@ -105,7 +92,7 @@ content:
       - interface
       - services
       - setup
-      - run
+      - use
       - verify
       - troubleshooting
     sections:

@@ -80,7 +80,7 @@ Logic
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Consumes Model** — imports authoritative Domain Definitions and their declaration vocabulary through Model's Interface.
+- **Consumes Model** — imports the authoritative Entities published through Model's Interface.
 - **Consumes Database** — reaches persisted data and its transaction boundary through Database's Interface.
 - **Consumes Development** — takes from it what Logic does not choose for itself: its identity, its technology, and the Connections it is permitted to make.
 - **Consumes Platform** — receives the runtime values its configuration contract requires.
@@ -91,10 +91,10 @@ Logic
 <!--------------------------------------------------------------------------------- Boundaries --->
 ## Boundaries
 
-- **A rule determinable from one Domain Definition's own data** — belongs to Model, because it holds wherever that definition is used, with no operation and no application context to qualify it.
+- **A constraint determinable from one Domain Definition's own data** — is declared by Model; Logic applies it when an Operation requires it.
 - **A guarantee that requires comparing stored records** — belongs to Database, because only the Component that holds every record can enforce it; Logic would have to read the whole set to imitate it, and would still race with the next writer.
 - **The shape of a request or a response on the wire, its status codes and its serialization** — belongs to the consumer that carries it, because it is a property of the transport rather than of the Behaviour underneath.
-- **Selecting, provisioning, or operating an external service** — belongs to Development and Platform, because choosing a dependency and running it are decisions about the project and its environment, not about what the application does.
+- **Selecting, provisioning, or operating an external service** — is selected for Logic by Target or Logic Preferences, with Development Defaults when needed; Platform operates it.
 - **Where a value comes from at runtime** — belongs to Platform, because Logic owns the contract that says which values it needs and never the delivery of them.
 - **The physical layout of stored data — tables, indexes, migrations, mappings** — belongs to Database, because it is how meaning is stored rather than what the meaning is.
 
@@ -103,7 +103,7 @@ Logic
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-Logic owns application Behaviour, operation composition, and its internal Services. Development supplies the Component's technical selections and Platform supplies runtime values; transport and persistence remain behind their own Component boundaries.
+Logic owns application Behaviour, operation composition, and its internal Services. Logic Preferences select Component-specific technical choices, Development supplies shared Defaults, and Platform supplies runtime values; transport and persistence remain behind their own Component boundaries.
 
 ### Interface
 
@@ -153,11 +153,11 @@ Every Principle below is mandatory.
 
 ### Logic owns Behaviour
 
-**Rule:** Logic validates domain state, applies operation and application-context rules, including applicable authorization and Target-defined quotas, and returns Application Outcomes. Behaviour remains independent of transport and storage.
+**Rule:** Logic applies Model-declared constraints when an Operation requires them, applies operation and application-context rules, including applicable authorization and Target-defined quotas, and returns Application Outcomes. Behaviour remains independent of transport and storage.
 
 **Why:** One owner for Behaviour keeps the same rule from being written differently in the API, the Database, and the Presentation.
 
-**Boundary:** A rule determinable from a single Domain Definition's own data is an Intrinsic Rule owned by Model; a storage guarantee is owned by Database. Logic does not restate either.
+**Boundary:** Model declares constraints determinable from a single Domain Definition's own data; Database owns storage guarantees. Logic applies neither by redefining either.
 
 <br>
 
@@ -177,7 +177,7 @@ Every Principle below is mandatory.
 
 **Why:** Giving each application responsibility one Service keeps its dependencies and behavior together, so a Service can change without that change spreading through unrelated Behaviour.
 
-**Boundary:** Services sit beside one another, not on top of one another: none is the foundation of another, and one Service never reaches another Service to do its work. Logic Preferences declare which Services exist and how they are realized.
+**Boundary:** Services sit beside one another, not on top of one another: none is the foundation of another. A Service may use another internal Service when its Behaviour requires that collaboration. Logic Preferences declare which Services exist and how they are realized.
 
 <br>
 
@@ -203,11 +203,11 @@ Every Principle below is mandatory.
 
 ### External dependencies remain explicit
 
-**Rule:** Logic consumes only the external services and cross-cutting capabilities selected by Development, through explicit interfaces and only where Behaviour requires them. An external service is reached through the Service that owns that dependency, never from scattered points inside Logic.
+**Rule:** Logic consumes only the external services and cross-cutting capabilities selected by Target or Logic Preferences, using Development Defaults only when needed, through explicit interfaces and only where Behaviour requires them. An external service is reached through the Service that owns that dependency, never from scattered points inside Logic.
 
 **Why:** An implicit dependency on something outside Logic is invisible until it fails or has to be replaced.
 
-**Boundary:** Logic does not select, provision, or operate an external service; Development selects it and Platform operates it. An external service consumed this way is not a Logic Service — Logic Services are internal parts of this Component.
+**Boundary:** Logic Preferences select a Logic-specific external service; Logic does not provision or operate it, and Platform operates it. An external service consumed this way is not a Logic Service — Logic Services are internal parts of this Component.
 
 <br>
 
@@ -243,11 +243,11 @@ Every Principle below is mandatory.
 
 ### Logic verification covers Logic boundaries
 
-**Rule:** Verification covers isolated Logic, each Service's calls into the Interface it depends on, transaction behaviour, and every Operation the Interface offers — its inputs, its result, and each Application Outcome it declares — without requiring a live consumer process.
+**Rule:** When Testing is enabled, Verification covers isolated Logic, each Service's calls into the Interface it depends on, Logic's hand-off of grouped persistence work to Database, and every Operation the Interface offers — its inputs, its result, and each Application Outcome it declares — without requiring a live consumer process.
 
 **Why:** Behaviour that can only be verified through a running API is verified at the wrong boundary and hides which layer actually failed.
 
-**Boundary:** Verification here does not extend to transport, presentation, or deployment; those are verified by the Components that own them. Whether a check persists as a test in this Component follows Development's Cross-cutting Capability applicability.
+**Boundary:** Database verifies its own transaction behaviour. Verification here does not extend to transport, presentation, or deployment; those are verified by the Components that own them. Whether a check persists as a test in this Component follows Logic's Testing capability.
 
 <br>
 
@@ -268,8 +268,8 @@ Every obligation in the file, under the Principle it comes from.
 
 **Logic owns Behaviour**
 
-- **Must** — Validate domain state, apply operation and application-context rules, and return Application Outcomes.
-- **Never** — Let Behaviour depend on transport or storage, or restate a Model Intrinsic Rule or a Database guarantee.
+- **Must** — Apply Model-declared constraints when an Operation requires them, apply operation and application-context rules, and return Application Outcomes.
+- **Never** — Let Behaviour depend on transport or storage, redefine a Model-declared constraint, or restate a Database guarantee.
 
 **One Interface exposes Logic's Operations**
 
@@ -282,7 +282,7 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — Divide Logic into internal Services, each owning one coherent application responsibility.
 - **Must** — give every Service an internal Service Interface that presents the Actions its class handles.
-- **Never** — Let a consumer name, reach, or depend on a Service, or let one Service do its work through another Component's Service.
+- **Never** — Let a consumer name, reach, or depend on a Service, or let a Service do its work through another Component's Service.
 
 **Logic reaches another Component only through that Component's Interface**
 
@@ -297,8 +297,8 @@ Every obligation in the file, under the Principle it comes from.
 
 **External dependencies remain explicit**
 
-- **Must** — Consume an external service or cross-cutting capability only when Development selected it and Behaviour requires it, through the Service that owns that dependency.
-- **Never** — Select, provision, or operate an external service from Logic.
+- **Must** — Consume an external service or cross-cutting capability only when Target or Logic Preferences selected it and Behaviour requires it, through the Service that owns that dependency.
+- **Never** — Provision or operate an external service from Logic.
 
 **Runtime configuration stays private**
 
@@ -317,5 +317,5 @@ Every obligation in the file, under the Principle it comes from.
 
 **Logic verification covers Logic boundaries**
 
-- **Must** — Verify isolated Logic, each Service's calls into its Component's Interface, transaction behaviour, and every Operation with its inputs, result, and declared Application Outcomes, without a live consumer process.
+- **Must** — When Testing is enabled, verify isolated Logic, each Service's calls into its Component's Interface, Logic's grouped persistence hand-off, and every Operation with its inputs, result, and declared Application Outcomes, without a live consumer process.
 - **Never** — Push Logic verification into transport, presentation, or deployment, or persist a check in a Component outside the testing applicability list.
