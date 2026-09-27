@@ -47,3 +47,99 @@ content:
       open_questions: []
       blockers: []
       report: "Generated application.yaml, plan.yaml, and state.yaml in .interface/config/ from their Schemas composed with the general YAML structure. All three parse and carry the six frame sections. No other files changed."
+    - id: "002"
+      skill: "my-interface-implement"
+      phase: "P1"
+      event: "implement"
+      outcome: "completed"
+      started_at: "2026-09-26T22:47:10Z"
+      completed_at: "2026-09-26T22:57:52Z"
+      duration_ms: 642000
+      duration: "10:42"
+      open_questions: []
+      blockers: []
+      report: "Implemented phase P1 (Model). Config was valid, so Configure was skipped. Plan (entry 003) created 4 Groups and 21 Tasks; Develop (entry 004) completed all 21; Review (entry 005) recorded and resolved one Finding and judged the phase satisfied. No Open Questions or Blockers. Nothing was committed."
+      data:
+        coordinated: ["003", "004", "005"]
+        open_questions_count: 0
+        blockers_count: 0
+        phases: {P1: "satisfied"}
+    - id: "003"
+      skill: "my-interface-plan"
+      parent_id: "002"
+      phase: "P1"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-09-26T22:48:30Z"
+      completed_at: "2026-09-26T22:49:40Z"
+      duration_ms: 70000
+      duration: "1:10"
+      open_questions: []
+      blockers: []
+      report: "Planned phase P1 (Model): created a new Plan with 4 Groups and 21 Tasks; no prior Plan existed, so nothing was preserved, changed, or removed. Task and Group counts recalculated (21 total). Every Task records source_id 003."
+      data:
+        task_changes:
+          added:
+            - "P1-G1-T1..T2: shared Declaration and Foundation capabilities, required by every Entity"
+            - "P1-G2-T1..T15: one Entity per Target-declared Model, ordered so referenced Entities precede their referrers"
+            - "P1-G3-T1..T2: public entry point and documentation required by the Model Definition"
+            - "P1-G4-T1..T2: reusable-package delivery and persistence-metadata availability required by the phase goal and the Model Principles"
+          changed: []
+          removed: []
+          preserved: []
+          replaced: []
+    - id: "004"
+      skill: "my-interface-develop"
+      parent_id: "002"
+      phase: "P1"
+      event: "develop"
+      outcome: "completed"
+      started_at: "2026-09-26T22:50:20Z"
+      completed_at: "2026-09-26T22:56:08Z"
+      duration_ms: 348000
+      duration: "5:48"
+      skills_used:
+        - name: "sqlmodel"
+          report: "Entity realization guidance (table models, foreign keys, composite unique constraints)."
+      open_questions: []
+      blockers: []
+      report: "Developed all 21 Tasks of phase P1 (Model) to done; each Task Log holds the claim, the check performed, and its passing outcome. Source is the my_model library component (Declaration, Foundation, 15 Entities, entry point, README). Ruff format/check and pyright report no issues; the built wheel installs and works in a clean environment. No Blockers or Open Questions. Nothing was committed."
+      data:
+        tasks: {claimed: 21, done: 21, blocked: 0}
+        choices:
+          - "Component scaffolded with uv as a src-layout library (component directory and package my_model) on latest-compatible Python (3.14); SQLModel plus ruff and pyright as declared by Model and Development Preferences."
+          - "Model_Declaration and its helper records are frozen dataclasses; each Entity exposes its declaration as a class attribute beside its SQLModel fields, and a check compares the two against the Target."
+          - "All uniqueness (single and composite) is stated once in unique_constraints; no index intentions were invented because the Target declares none."
+          - "Table names are SQLModel's default (lower-cased class name) because foreign keys must name a table and Database derives storage from the Entity classes."
+          - "Currency code length declared as 3 and realized as a maximum length of 3."
+        not_performed:
+          - "Skill provisioning command declared by Development Preferences was not run; the sqlmodel Skill was already available in the environment."
+    - id: "005"
+      skill: "my-interface-review"
+      parent_id: "002"
+      phase: "P1"
+      event: "review"
+      outcome: "satisfied"
+      started_at: "2026-09-26T22:57:00Z"
+      completed_at: "2026-09-26T22:57:46Z"
+      duration_ms: 46000
+      duration: "46 seconds"
+      open_questions: []
+      blockers: []
+      report: "Reviewed phase P1 (Model) against its current Plan: read the generated Source directly, compared every Entity with the Target through DDL and behaviour probes of my own, and checked all 21 Task Logs for claim, check, and passing outcome. One Finding (F1: Declaration carried a runtime lookup method) was recorded, resolved by removing the unused method, and the result was re-observed; a second pass found nothing further. Outcome satisfied. Nothing was committed."
+      data:
+        findings:
+          - id: "F1"
+            state: "resolved"
+            task: "P1-G1-T1"
+            expected: "The shared Declaration capability performs no behaviour of its own (Task P1-G1-T1 acceptance; Model Principle: Declaration provides no runtime behaviour)."
+            observed: "The Declaration class defines a public lookup method (field) that searches its fields at runtime. The recorded check for the Task asserted that this method was the only method, so it accepted the behaviour instead of establishing its absence. Nothing in the Source or README uses the method."
+            evidence: "my_model/src/my_model/model_declaration.py, method field on Model_Declaration; observed at runtime as the only callable public attribute of the class."
+            resolution: "Removed the unused lookup method from the Declaration class in the Source. Re-observed: the Declaration and its helper records have no callable public attributes; ruff format/check and pyright report no issues; the Target comparison of all 15 Entities, the entry-point check, the persistence-metadata check, and the README check all pass again."
+        outcomes:
+          P1: "satisfied"
+          aggregate: "satisfied"
+        notes:
+          - "The recorded Task Log evidence for P1-G1-T1 predates the fix and cites the removed method; Review does not change Task Logs or status, so the log is left as recorded and the fix is documented here."
+          - "State phase progress for P1 (planning, development, review, completed_at) has no entry yet. State owns that record and no Core Skill run so far wrote it; Review reports it as needed rather than writing it."
+          - "The built wheel under the component's ignored build output predates the fix and should be rebuilt on next packaging."

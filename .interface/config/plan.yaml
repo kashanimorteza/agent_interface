@@ -26,5 +26,676 @@ content_map:
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
-  task_count: 0
-  plans: {}
+  "task_count": 21
+  "plans":
+    "P1":
+      "id": "P1"
+      "title": "Model"
+      "order": 1
+      "target": "Model"
+      "does": "Implement the independent Model layer and its reusable package from the defined models, fields, relationships, and rules."
+      "constraints": []
+      "task_count": 21
+      "groups":
+        "P1-G1":
+          "id": "P1-G1"
+          "title": "Shared Model layers"
+          "description": "The shared Declaration and Foundation capabilities that every Entity depends on."
+          "area": "Shared declaration metadata and shared conversion behaviour"
+          "does": "Every Entity can record its meaning and convert to and from JSON through common capabilities."
+          "constraints": []
+          "task_count": 2
+          "tasks":
+            "P1-G1-T1":
+              "id": "P1-G1-T1"
+              "source_id": "003"
+              "title": "Provide the shared Declaration capability"
+              "description": "Make available the single shared capability through which every Entity records its technology-independent data meaning: field types, presence and nullability, defaults, the sensitive flag, immutability, length and other declared restrictions, primary identity, references to other Entities, uniqueness over one or several fields, index intentions, and value generation. It carries no runtime behaviour."
+              "reason": "Every Entity must record its meaning in one common, consumer-readable form so Database and Logic read the same facts."
+              "inputs":
+              - "The Model Definition's list of declaration facets"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "A public shared Declaration capability that an Entity can use to state each facet and that a consumer can read back."
+              "depends_on": []
+              "constraints": []
+              "acceptance": "Every facet the Model Definition lists can be stated for an Entity and read back exactly as stated, and the capability performs no behaviour of its own."
+              "verify": "Stating each facet on a sample Entity and reading every one back yields exactly what was stated, including a uniqueness over several fields and a reference to another Entity."
+              "status": "done"
+              "log":
+              - "at": "2026-09-26T22:50:52Z"
+                "event": "claimed"
+                "note": "Claimed by Develop (State entry 004) before work began; all dependencies done."
+              - "at": "2026-09-26T22:51:56Z"
+                "event": "done"
+                "check": "Transient script: stated every declaration facet (types, nullability, default, sensitive, immutability, length, constraints, primary key, auto-increment value generation, reference, composite uniqueness, unique and plain indexes) on a sample Entity declaration and read each back; asserted the declaration exposes only a lookup helper and is immutable."
+                "outcome": "Passed: every facet read back exactly as stated; no behaviour beyond lookup."
+            "P1-G1-T2":
+              "id": "P1-G1-T2"
+              "source_id": "003"
+              "title": "Provide the shared Foundation conversion behaviour"
+              "description": "Make available the single shared capability that converts an Entity instance to JSON and creates an instance from JSON. It defines no fields, constraints, or domain meaning."
+              "reason": "Every Entity needs one consistent JSON conversion contract without a shared domain structure being imposed."
+              "inputs": []
+              "skills":
+              - "sqlmodel"
+              "expected_result": "A public shared Foundation capability offering conversion to JSON and creation from JSON for any Entity that uses it."
+              "depends_on": []
+              "constraints": []
+              "acceptance": "Converting an instance to JSON and creating an instance from that JSON reproduces the original values, and the capability adds no fields to the Entity using it."
+              "verify": "A sample Entity using it survives a JSON round trip with equal values and exposes no fields beyond those it declares."
+              "status": "done"
+              "log":
+              - "at": "2026-09-26T22:50:52Z"
+                "event": "claimed"
+                "note": "Claimed by Develop (State entry 004) before work began; all dependencies done."
+              - "at": "2026-09-26T22:51:56Z"
+                "event": "done"
+                "check": "Transient script: defined a sample Entity on the shared Foundation with integer, string, Decimal, timezone-aware datetime and nullable fields; converted to JSON, created from that JSON (str and bytes), compared instances and field sets."
+                "outcome": "Passed: round trip equal for str and bytes input; field set unchanged (Foundation adds no fields)."
+        "P1-G2":
+          "id": "P1-G2"
+          "title": "Domain Entities"
+          "description": "One Entity for each Target-declared Model, each standing alone, flat, and explicitly related to the others through references. Initial Data is outside these Entities."
+          "area": "Entity layer: one public unit per Domain Entity"
+          "does": "Every Target-declared Model exists once as a complete, flat Entity."
+          "constraints": []
+          "task_count": 15
+          "tasks":
+            "P1-G2-T1":
+              "id": "P1-G2-T1"
+              "source_id": "003"
+              "title": "Realize the User Entity"
+              "description": "Make User available as an Entity exactly as the Target defines it, with its declared fields, types, nullability, defaults, primary identity with automatic value generation, no references to other Entities, and unique name and unique username; its password and api_key are flagged sensitive. Initial Data is not part of the Entity."
+              "reason": "User is a Target-declared domain concept and needs its one authoritative Entity."
+              "inputs":
+              - "The Target definition of User"
+              - "The shared Declaration and Foundation capabilities"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "User is a public, stand-alone Entity that carries its complete declared meaning and the shared JSON conversion."
+              "depends_on":
+              - "P1-G1-T1"
+              - "P1-G1-T2"
+              "constraints": []
+              "acceptance": "Every field, type, nullability, default, key, reference, uniqueness, and sensitive flag declared for User is present and nothing undeclared is added."
+              "verify": "Inspecting the published declaration of User shows exactly the declared items, an instance can be constructed directly, and it survives a JSON round trip with equal values."
+              "status": "done"
+              "log":
+              - "at": "2026-09-26T22:51:57Z"
+                "event": "claimed"
+                "note": "Claimed by Develop (State entry 004) before work began; all dependencies done."
+              - "at": "2026-09-26T22:53:49Z"
+                "event": "done"
+                "check": "Transient script compared the Entity with the Target Technical Definition: field order and names, types, nullability, defaults, size, primary key with auto increment, unique and composite unique constraints, references (Declaration and actual foreign keys), sensitive flags, no extra fields; then constructed an instance directly and converted it to JSON and back."
+                "outcome": "Passed: every compared item matched; JSON round trip equal."
+            "P1-G2-T2":
+              "id": "P1-G2-T2"
+              "source_id": "003"
+              "title": "Realize the Trading Platform Entity"
+              "description": "Make Trading Platform available as an Entity exactly as the Target defines it, with its declared fields, types, nullability, defaults, primary identity with automatic value generation, no references to other Entities, and unique name. Initial Data is not part of the Entity."
+              "reason": "Trading Platform is a Target-declared domain concept and needs its one authoritative Entity."
+              "inputs":
+              - "The Target definition of Trading Platform"
+              - "The shared Declaration and Foundation capabilities"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "Trading Platform is a public, stand-alone Entity that carries its complete declared meaning and the shared JSON conversion."
+              "depends_on":
+              - "P1-G1-T1"
+              - "P1-G1-T2"
+              "constraints": []
+              "acceptance": "Every field, type, nullability, default, key, reference, uniqueness, and sensitive flag declared for Trading Platform is present and nothing undeclared is added."
+              "verify": "Inspecting the published declaration of Trading Platform shows exactly the declared items, an instance can be constructed directly, and it survives a JSON round trip with equal values."
+              "status": "done"
+              "log":
+              - "at": "2026-09-26T22:51:57Z"
+                "event": "claimed"
+                "note": "Claimed by Develop (State entry 004) before work began; all dependencies done."
+              - "at": "2026-09-26T22:53:49Z"
+                "event": "done"
+                "check": "Transient script compared the Entity with the Target Technical Definition: field order and names, types, nullability, defaults, size, primary key with auto increment, unique and composite unique constraints, references (Declaration and actual foreign keys), sensitive flags, no extra fields; then constructed an instance directly and converted it to JSON and back."
+                "outcome": "Passed: every compared item matched; JSON round trip equal."
+            "P1-G2-T3":
+              "id": "P1-G2-T3"
+              "source_id": "003"
+              "title": "Realize the Instance Entity"
+              "description": "Make Instance available as an Entity exactly as the Target defines it, with its declared fields, types, nullability, defaults, primary identity with automatic value generation, references to User, Trading Platform, and unique combination of owner and name; its password and api_key are flagged sensitive. Initial Data is not part of the Entity."
+              "reason": "Instance is a Target-declared domain concept and needs its one authoritative Entity."
+              "inputs":
+              - "The Target definition of Instance"
+              - "The shared Declaration and Foundation capabilities"
+              - "The User Entity"
+              - "The Trading Platform Entity"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "Instance is a public, stand-alone Entity that carries its complete declared meaning and the shared JSON conversion."
+              "depends_on":
+              - "P1-G1-T1"
+              - "P1-G1-T2"
+              - "P1-G2-T1"
+              - "P1-G2-T2"
+              "constraints": []
+              "acceptance": "Every field, type, nullability, default, key, reference, uniqueness, and sensitive flag declared for Instance is present and nothing undeclared is added."
+              "verify": "Inspecting the published declaration of Instance shows exactly the declared items, an instance can be constructed directly, and it survives a JSON round trip with equal values."
+              "status": "done"
+              "log":
+              - "at": "2026-09-26T22:53:49Z"
+                "event": "claimed"
+                "note": "Claimed by Develop (State entry 004) before work began; all dependencies done."
+              - "at": "2026-09-26T22:53:55Z"
+                "event": "done"
+                "check": "Transient script compared the Entity with the Target Technical Definition: field order and names, types, nullability, defaults, size, primary key with auto increment, unique and composite unique constraints, references (Declaration and actual foreign keys), sensitive flags, no extra fields; then constructed an instance directly and converted it to JSON and back."
+                "outcome": "Passed: every compared item matched; JSON round trip equal."
+            "P1-G2-T4":
+              "id": "P1-G2-T4"
+              "source_id": "003"
+              "title": "Realize the Currency Entity"
+              "description": "Make Currency available as an Entity exactly as the Target defines it, with its declared fields, types, nullability, defaults, including the fixed three-character code size, primary identity with automatic value generation, references to User, and unique combination of owner and code. Initial Data is not part of the Entity."
+              "reason": "Currency is a Target-declared domain concept and needs its one authoritative Entity."
+              "inputs":
+              - "The Target definition of Currency"
+              - "The shared Declaration and Foundation capabilities"
+              - "The User Entity"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "Currency is a public, stand-alone Entity that carries its complete declared meaning and the shared JSON conversion."
+              "depends_on":
+              - "P1-G1-T1"
+              - "P1-G1-T2"
+              - "P1-G2-T1"
+              "constraints": []
+              "acceptance": "Every field, type, nullability, default, key, reference, uniqueness, and sensitive flag declared for Currency is present and nothing undeclared is added."
+              "verify": "Inspecting the published declaration of Currency shows exactly the declared items, an instance can be constructed directly, and it survives a JSON round trip with equal values."
+              "status": "done"
+              "log":
+              - "at": "2026-09-26T22:53:49Z"
+                "event": "claimed"
+                "note": "Claimed by Develop (State entry 004) before work began; all dependencies done."
+              - "at": "2026-09-26T22:53:55Z"
+                "event": "done"
+                "check": "Transient script compared the Entity with the Target Technical Definition: field order and names, types, nullability, defaults, size, primary key with auto increment, unique and composite unique constraints, references (Declaration and actual foreign keys), sensitive flags, no extra fields; then constructed an instance directly and converted it to JSON and back."
+                "outcome": "Passed: every compared item matched; JSON round trip equal."
+            "P1-G2-T5":
+              "id": "P1-G2-T5"
+              "source_id": "003"
+              "title": "Realize the Broker Entity"
+              "description": "Make Broker available as an Entity exactly as the Target defines it, with its declared fields, types, nullability, defaults, primary identity with automatic value generation, references to User, and unique combination of owner and name. Initial Data is not part of the Entity."
+              "reason": "Broker is a Target-declared domain concept and needs its one authoritative Entity."
+              "inputs":
+              - "The Target definition of Broker"
+              - "The shared Declaration and Foundation capabilities"
+              - "The User Entity"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "Broker is a public, stand-alone Entity that carries its complete declared meaning and the shared JSON conversion."
+              "depends_on":
+              - "P1-G1-T1"
+              - "P1-G1-T2"
+              - "P1-G2-T1"
+              "constraints": []
+              "acceptance": "Every field, type, nullability, default, key, reference, uniqueness, and sensitive flag declared for Broker is present and nothing undeclared is added."
+              "verify": "Inspecting the published declaration of Broker shows exactly the declared items, an instance can be constructed directly, and it survives a JSON round trip with equal values."
+              "status": "done"
+              "log":
+              - "at": "2026-09-26T22:53:49Z"
+                "event": "claimed"
+                "note": "Claimed by Develop (State entry 004) before work began; all dependencies done."
+              - "at": "2026-09-26T22:53:55Z"
+                "event": "done"
+                "check": "Transient script compared the Entity with the Target Technical Definition: field order and names, types, nullability, defaults, size, primary key with auto increment, unique and composite unique constraints, references (Declaration and actual foreign keys), sensitive flags, no extra fields; then constructed an instance directly and converted it to JSON and back."
+                "outcome": "Passed: every compared item matched; JSON round trip equal."
+            "P1-G2-T6":
+              "id": "P1-G2-T6"
+              "source_id": "003"
+              "title": "Realize the Asset Entity"
+              "description": "Make Asset available as an Entity exactly as the Target defines it, with its declared fields, types, nullability, defaults, primary identity with automatic value generation, references to Broker, and unique combination of broker and symbol. Initial Data is not part of the Entity."
+              "reason": "Asset is a Target-declared domain concept and needs its one authoritative Entity."
+              "inputs":
+              - "The Target definition of Asset"
+              - "The shared Declaration and Foundation capabilities"
+              - "The Broker Entity"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "Asset is a public, stand-alone Entity that carries its complete declared meaning and the shared JSON conversion."
+              "depends_on":
+              - "P1-G1-T1"
+              - "P1-G1-T2"
+              - "P1-G2-T5"
+              "constraints": []
+              "acceptance": "Every field, type, nullability, default, key, reference, uniqueness, and sensitive flag declared for Asset is present and nothing undeclared is added."
+              "verify": "Inspecting the published declaration of Asset shows exactly the declared items, an instance can be constructed directly, and it survives a JSON round trip with equal values."
+              "status": "done"
+              "log":
+              - "at": "2026-09-26T22:53:55Z"
+                "event": "claimed"
+                "note": "Claimed by Develop (State entry 004) before work began; all dependencies done."
+              - "at": "2026-09-26T22:54:05Z"
+                "event": "done"
+                "check": "Transient script compared the Entity with the Target Technical Definition: field order and names, types, nullability, defaults, size, primary key with auto increment, unique and composite unique constraints, references (Declaration and actual foreign keys), sensitive flags, no extra fields; then constructed an instance directly and converted it to JSON and back."
+                "outcome": "Passed: every compared item matched; JSON round trip equal (re-run after a formatting-only lint fix)."
+            "P1-G2-T7":
+              "id": "P1-G2-T7"
+              "source_id": "003"
+              "title": "Realize the Account Group Entity"
+              "description": "Make Account Group available as an Entity exactly as the Target defines it, with its declared fields, types, nullability, defaults, primary identity with automatic value generation, references to User, and unique combination of owner and name. Initial Data is not part of the Entity."
+              "reason": "Account Group is a Target-declared domain concept and needs its one authoritative Entity."
+              "inputs":
+              - "The Target definition of Account Group"
+              - "The shared Declaration and Foundation capabilities"
+              - "The User Entity"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "Account Group is a public, stand-alone Entity that carries its complete declared meaning and the shared JSON conversion."
+              "depends_on":
+              - "P1-G1-T1"
+              - "P1-G1-T2"
+              - "P1-G2-T1"
+              "constraints": []
+              "acceptance": "Every field, type, nullability, default, key, reference, uniqueness, and sensitive flag declared for Account Group is present and nothing undeclared is added."
+              "verify": "Inspecting the published declaration of Account Group shows exactly the declared items, an instance can be constructed directly, and it survives a JSON round trip with equal values."
+              "status": "done"
+              "log":
+              - "at": "2026-09-26T22:53:49Z"
+                "event": "claimed"
+                "note": "Claimed by Develop (State entry 004) before work began; all dependencies done."
+              - "at": "2026-09-26T22:53:55Z"
+                "event": "done"
+                "check": "Transient script compared the Entity with the Target Technical Definition: field order and names, types, nullability, defaults, size, primary key with auto increment, unique and composite unique constraints, references (Declaration and actual foreign keys), sensitive flags, no extra fields; then constructed an instance directly and converted it to JSON and back."
+                "outcome": "Passed: every compared item matched; JSON round trip equal."
+            "P1-G2-T8":
+              "id": "P1-G2-T8"
+              "source_id": "003"
+              "title": "Realize the Account Entity"
+              "description": "Make Account available as an Entity exactly as the Target defines it, with its declared fields, types, nullability, defaults, primary identity with automatic value generation, references to Account Group, Broker, Instance, Currency, and unique name and unique combination of group, broker, and instance; its password is flagged sensitive. Initial Data is not part of the Entity."
+              "reason": "Account is a Target-declared domain concept and needs its one authoritative Entity."
+              "inputs":
+              - "The Target definition of Account"
+              - "The shared Declaration and Foundation capabilities"
+              - "The Account Group Entity"
+              - "The Broker Entity"
+              - "The Instance Entity"
+              - "The Currency Entity"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "Account is a public, stand-alone Entity that carries its complete declared meaning and the shared JSON conversion."
+              "depends_on":
+              - "P1-G1-T1"
+              - "P1-G1-T2"
+              - "P1-G2-T7"
+              - "P1-G2-T5"
+              - "P1-G2-T3"
+              - "P1-G2-T4"
+              "constraints": []
+              "acceptance": "Every field, type, nullability, default, key, reference, uniqueness, and sensitive flag declared for Account is present and nothing undeclared is added."
+              "verify": "Inspecting the published declaration of Account shows exactly the declared items, an instance can be constructed directly, and it survives a JSON round trip with equal values."
+              "status": "done"
+              "log":
+              - "at": "2026-09-26T22:53:55Z"
+                "event": "claimed"
+                "note": "Claimed by Develop (State entry 004) before work began; all dependencies done."
+              - "at": "2026-09-26T22:54:05Z"
+                "event": "done"
+                "check": "Transient script compared the Entity with the Target Technical Definition: field order and names, types, nullability, defaults, size, primary key with auto increment, unique and composite unique constraints, references (Declaration and actual foreign keys), sensitive flags, no extra fields; then constructed an instance directly and converted it to JSON and back."
+                "outcome": "Passed: every compared item matched; JSON round trip equal (re-run after a formatting-only lint fix)."
+            "P1-G2-T9":
+              "id": "P1-G2-T9"
+              "source_id": "003"
+              "title": "Realize the Trailing Group Entity"
+              "description": "Make Trailing Group available as an Entity exactly as the Target defines it, with its declared fields, types, nullability, defaults, primary identity with automatic value generation, references to User, and unique combination of owner and name. Initial Data is not part of the Entity."
+              "reason": "Trailing Group is a Target-declared domain concept and needs its one authoritative Entity."
+              "inputs":
+              - "The Target definition of Trailing Group"
+              - "The shared Declaration and Foundation capabilities"
+              - "The User Entity"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "Trailing Group is a public, stand-alone Entity that carries its complete declared meaning and the shared JSON conversion."
+              "depends_on":
+              - "P1-G1-T1"
+              - "P1-G1-T2"
+              - "P1-G2-T1"
+              "constraints": []
+              "acceptance": "Every field, type, nullability, default, key, reference, uniqueness, and sensitive flag declared for Trailing Group is present and nothing undeclared is added."
+              "verify": "Inspecting the published declaration of Trailing Group shows exactly the declared items, an instance can be constructed directly, and it survives a JSON round trip with equal values."
+              "status": "done"
+              "log":
+              - "at": "2026-09-26T22:53:49Z"
+                "event": "claimed"
+                "note": "Claimed by Develop (State entry 004) before work began; all dependencies done."
+              - "at": "2026-09-26T22:53:55Z"
+                "event": "done"
+                "check": "Transient script compared the Entity with the Target Technical Definition: field order and names, types, nullability, defaults, size, primary key with auto increment, unique and composite unique constraints, references (Declaration and actual foreign keys), sensitive flags, no extra fields; then constructed an instance directly and converted it to JSON and back."
+                "outcome": "Passed: every compared item matched; JSON round trip equal."
+            "P1-G2-T10":
+              "id": "P1-G2-T10"
+              "source_id": "003"
+              "title": "Realize the Trailing Rule Entity"
+              "description": "Make Trailing Rule available as an Entity exactly as the Target defines it, with its declared fields, types, nullability, defaults, primary identity with automatic value generation, references to Trailing Group, and unique name and unique combination of group and trigger percentage. Initial Data is not part of the Entity."
+              "reason": "Trailing Rule is a Target-declared domain concept and needs its one authoritative Entity."
+              "inputs":
+              - "The Target definition of Trailing Rule"
+              - "The shared Declaration and Foundation capabilities"
+              - "The Trailing Group Entity"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "Trailing Rule is a public, stand-alone Entity that carries its complete declared meaning and the shared JSON conversion."
+              "depends_on":
+              - "P1-G1-T1"
+              - "P1-G1-T2"
+              - "P1-G2-T9"
+              "constraints": []
+              "acceptance": "Every field, type, nullability, default, key, reference, uniqueness, and sensitive flag declared for Trailing Rule is present and nothing undeclared is added."
+              "verify": "Inspecting the published declaration of Trailing Rule shows exactly the declared items, an instance can be constructed directly, and it survives a JSON round trip with equal values."
+              "status": "done"
+              "log":
+              - "at": "2026-09-26T22:53:55Z"
+                "event": "claimed"
+                "note": "Claimed by Develop (State entry 004) before work began; all dependencies done."
+              - "at": "2026-09-26T22:54:05Z"
+                "event": "done"
+                "check": "Transient script compared the Entity with the Target Technical Definition: field order and names, types, nullability, defaults, size, primary key with auto increment, unique and composite unique constraints, references (Declaration and actual foreign keys), sensitive flags, no extra fields; then constructed an instance directly and converted it to JSON and back."
+                "outcome": "Passed: every compared item matched; JSON round trip equal (re-run after a formatting-only lint fix)."
+            "P1-G2-T11":
+              "id": "P1-G2-T11"
+              "source_id": "003"
+              "title": "Realize the Partial Group Entity"
+              "description": "Make Partial Group available as an Entity exactly as the Target defines it, with its declared fields, types, nullability, defaults, primary identity with automatic value generation, references to User, and unique combination of owner and name. Initial Data is not part of the Entity."
+              "reason": "Partial Group is a Target-declared domain concept and needs its one authoritative Entity."
+              "inputs":
+              - "The Target definition of Partial Group"
+              - "The shared Declaration and Foundation capabilities"
+              - "The User Entity"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "Partial Group is a public, stand-alone Entity that carries its complete declared meaning and the shared JSON conversion."
+              "depends_on":
+              - "P1-G1-T1"
+              - "P1-G1-T2"
+              - "P1-G2-T1"
+              "constraints": []
+              "acceptance": "Every field, type, nullability, default, key, reference, uniqueness, and sensitive flag declared for Partial Group is present and nothing undeclared is added."
+              "verify": "Inspecting the published declaration of Partial Group shows exactly the declared items, an instance can be constructed directly, and it survives a JSON round trip with equal values."
+              "status": "done"
+              "log":
+              - "at": "2026-09-26T22:53:49Z"
+                "event": "claimed"
+                "note": "Claimed by Develop (State entry 004) before work began; all dependencies done."
+              - "at": "2026-09-26T22:53:55Z"
+                "event": "done"
+                "check": "Transient script compared the Entity with the Target Technical Definition: field order and names, types, nullability, defaults, size, primary key with auto increment, unique and composite unique constraints, references (Declaration and actual foreign keys), sensitive flags, no extra fields; then constructed an instance directly and converted it to JSON and back."
+                "outcome": "Passed: every compared item matched; JSON round trip equal."
+            "P1-G2-T12":
+              "id": "P1-G2-T12"
+              "source_id": "003"
+              "title": "Realize the Partial Rule Entity"
+              "description": "Make Partial Rule available as an Entity exactly as the Target defines it, with its declared fields, types, nullability, defaults, primary identity with automatic value generation, references to Partial Group, and unique name and unique combination of group and profit percentage. Initial Data is not part of the Entity."
+              "reason": "Partial Rule is a Target-declared domain concept and needs its one authoritative Entity."
+              "inputs":
+              - "The Target definition of Partial Rule"
+              - "The shared Declaration and Foundation capabilities"
+              - "The Partial Group Entity"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "Partial Rule is a public, stand-alone Entity that carries its complete declared meaning and the shared JSON conversion."
+              "depends_on":
+              - "P1-G1-T1"
+              - "P1-G1-T2"
+              - "P1-G2-T11"
+              "constraints": []
+              "acceptance": "Every field, type, nullability, default, key, reference, uniqueness, and sensitive flag declared for Partial Rule is present and nothing undeclared is added."
+              "verify": "Inspecting the published declaration of Partial Rule shows exactly the declared items, an instance can be constructed directly, and it survives a JSON round trip with equal values."
+              "status": "done"
+              "log":
+              - "at": "2026-09-26T22:53:55Z"
+                "event": "claimed"
+                "note": "Claimed by Develop (State entry 004) before work began; all dependencies done."
+              - "at": "2026-09-26T22:54:05Z"
+                "event": "done"
+                "check": "Transient script compared the Entity with the Target Technical Definition: field order and names, types, nullability, defaults, size, primary key with auto increment, unique and composite unique constraints, references (Declaration and actual foreign keys), sensitive flags, no extra fields; then constructed an instance directly and converted it to JSON and back."
+                "outcome": "Passed: every compared item matched; JSON round trip equal (re-run after a formatting-only lint fix)."
+            "P1-G2-T13":
+              "id": "P1-G2-T13"
+              "source_id": "003"
+              "title": "Realize the Action Group Entity"
+              "description": "Make Action Group available as an Entity exactly as the Target defines it, with its declared fields, types, nullability, defaults, primary identity with automatic value generation, references to User, and unique combination of owner and name. Initial Data is not part of the Entity."
+              "reason": "Action Group is a Target-declared domain concept and needs its one authoritative Entity."
+              "inputs":
+              - "The Target definition of Action Group"
+              - "The shared Declaration and Foundation capabilities"
+              - "The User Entity"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "Action Group is a public, stand-alone Entity that carries its complete declared meaning and the shared JSON conversion."
+              "depends_on":
+              - "P1-G1-T1"
+              - "P1-G1-T2"
+              - "P1-G2-T1"
+              "constraints": []
+              "acceptance": "Every field, type, nullability, default, key, reference, uniqueness, and sensitive flag declared for Action Group is present and nothing undeclared is added."
+              "verify": "Inspecting the published declaration of Action Group shows exactly the declared items, an instance can be constructed directly, and it survives a JSON round trip with equal values."
+              "status": "done"
+              "log":
+              - "at": "2026-09-26T22:53:49Z"
+                "event": "claimed"
+                "note": "Claimed by Develop (State entry 004) before work began; all dependencies done."
+              - "at": "2026-09-26T22:53:55Z"
+                "event": "done"
+                "check": "Transient script compared the Entity with the Target Technical Definition: field order and names, types, nullability, defaults, size, primary key with auto increment, unique and composite unique constraints, references (Declaration and actual foreign keys), sensitive flags, no extra fields; then constructed an instance directly and converted it to JSON and back."
+                "outcome": "Passed: every compared item matched; JSON round trip equal."
+            "P1-G2-T14":
+              "id": "P1-G2-T14"
+              "source_id": "003"
+              "title": "Realize the Action Entity"
+              "description": "Make Action available as an Entity exactly as the Target defines it, with its declared fields, types, nullability, defaults, primary identity with automatic value generation, references to Action Group, Asset, Account, Partial Group, Trailing Group, and unique combination of action group and name. Initial Data is not part of the Entity."
+              "reason": "Action is a Target-declared domain concept and needs its one authoritative Entity."
+              "inputs":
+              - "The Target definition of Action"
+              - "The shared Declaration and Foundation capabilities"
+              - "The Action Group Entity"
+              - "The Asset Entity"
+              - "The Account Entity"
+              - "The Partial Group Entity"
+              - "The Trailing Group Entity"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "Action is a public, stand-alone Entity that carries its complete declared meaning and the shared JSON conversion."
+              "depends_on":
+              - "P1-G1-T1"
+              - "P1-G1-T2"
+              - "P1-G2-T13"
+              - "P1-G2-T6"
+              - "P1-G2-T8"
+              - "P1-G2-T11"
+              - "P1-G2-T9"
+              "constraints": []
+              "acceptance": "Every field, type, nullability, default, key, reference, uniqueness, and sensitive flag declared for Action is present and nothing undeclared is added."
+              "verify": "Inspecting the published declaration of Action shows exactly the declared items, an instance can be constructed directly, and it survives a JSON round trip with equal values."
+              "status": "done"
+              "log":
+              - "at": "2026-09-26T22:54:06Z"
+                "event": "claimed"
+                "note": "Claimed by Develop (State entry 004) before work began; all dependencies done."
+              - "at": "2026-09-26T22:54:06Z"
+                "event": "done"
+                "check": "Transient script compared the Entity with the Target Technical Definition: field order and names, types, nullability, defaults, size, primary key with auto increment, unique and composite unique constraints, references (Declaration and actual foreign keys), sensitive flags, no extra fields; then constructed an instance directly and converted it to JSON and back."
+                "outcome": "Passed: every compared item matched; JSON round trip equal."
+            "P1-G2-T15":
+              "id": "P1-G2-T15"
+              "source_id": "003"
+              "title": "Realize the Position Entity"
+              "description": "Make Position available as an Entity exactly as the Target defines it, with its declared fields, types, nullability, defaults, primary identity with automatic value generation, references to User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, Action, and unique name. Initial Data is not part of the Entity."
+              "reason": "Position is a Target-declared domain concept and needs its one authoritative Entity."
+              "inputs":
+              - "The Target definition of Position"
+              - "The shared Declaration and Foundation capabilities"
+              - "The User Entity"
+              - "The Trading Platform Entity"
+              - "The Broker Entity"
+              - "The Account Entity"
+              - "The Trailing Group Entity"
+              - "The Partial Group Entity"
+              - "The Action Group Entity"
+              - "The Action Entity"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "Position is a public, stand-alone Entity that carries its complete declared meaning and the shared JSON conversion."
+              "depends_on":
+              - "P1-G1-T1"
+              - "P1-G1-T2"
+              - "P1-G2-T1"
+              - "P1-G2-T2"
+              - "P1-G2-T5"
+              - "P1-G2-T8"
+              - "P1-G2-T9"
+              - "P1-G2-T11"
+              - "P1-G2-T13"
+              - "P1-G2-T14"
+              "constraints": []
+              "acceptance": "Every field, type, nullability, default, key, reference, uniqueness, and sensitive flag declared for Position is present and nothing undeclared is added."
+              "verify": "Inspecting the published declaration of Position shows exactly the declared items, an instance can be constructed directly, and it survives a JSON round trip with equal values."
+              "status": "done"
+              "log":
+              - "at": "2026-09-26T22:54:06Z"
+                "event": "claimed"
+                "note": "Claimed by Develop (State entry 004) before work began; all dependencies done."
+              - "at": "2026-09-26T22:54:13Z"
+                "event": "done"
+                "check": "Transient script compared the Entity with the Target Technical Definition: field order and names, types, nullability, defaults, size, primary key with auto increment, unique and composite unique constraints, references (Declaration and actual foreign keys), sensitive flags, no extra fields; then constructed an instance directly and converted it to JSON and back."
+                "outcome": "Passed: every compared item matched; JSON round trip equal (timezone-aware datetime preserved)."
+        "P1-G3":
+          "id": "P1-G3"
+          "title": "Public surface and documentation"
+          "description": "The convenient entry point and the documentation through which consumers discover and use the Model."
+          "area": "Interface and documentation"
+          "does": "Consumers can find, import, and understand every Entity."
+          "constraints": []
+          "task_count": 2
+          "tasks":
+            "P1-G3-T1":
+              "id": "P1-G3-T1"
+              "source_id": "003"
+              "title": "Present every Entity through the Model entry point"
+              "description": "Provide one convenient public entry point through which consumers obtain every Entity class and capability, while every other Model layer stays publicly usable."
+              "reason": "Consumers need one obvious place to import from without any layer becoming private."
+              "inputs":
+              - "Every realized Entity"
+              - "The shared Declaration and Foundation capabilities"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "A public entry point that presents all Entity classes and the public capabilities."
+              "depends_on":
+              - "P1-G1-T1"
+              - "P1-G1-T2"
+              - "P1-G2-T1"
+              - "P1-G2-T2"
+              - "P1-G2-T3"
+              - "P1-G2-T4"
+              - "P1-G2-T5"
+              - "P1-G2-T6"
+              - "P1-G2-T7"
+              - "P1-G2-T8"
+              - "P1-G2-T9"
+              - "P1-G2-T10"
+              - "P1-G2-T11"
+              - "P1-G2-T12"
+              - "P1-G2-T13"
+              - "P1-G2-T14"
+              - "P1-G2-T15"
+              "constraints": []
+              "acceptance": "The entry point presents exactly one Entity for each Target-declared Model and no others, and each public layer remains individually usable."
+              "verify": "Importing every Target-declared Entity through the entry point succeeds, a name that is not a Target-declared Model is not offered, and each layer can also be used directly."
+              "status": "done"
+              "log":
+              - "at": "2026-09-26T22:54:13Z"
+                "event": "claimed"
+                "note": "Claimed by Develop (State entry 004) before work began; all dependencies done."
+              - "at": "2026-09-26T22:54:55Z"
+                "event": "done"
+                "check": "Transient script: read the 15 Model names from the Target definition; imported the entry point and compared its exported table Entities to that set; confirmed every exported name resolves, the Declaration/Foundation exports are the same objects as the layer modules, no non-Target name is offered, and each Entity module holds exactly one table class (15 modules). Also ran ruff format/check and pyright on the Source."
+                "outcome": "Passed: exactly the 15 Target-declared Entities exported; layers usable directly; ruff clean; pyright 0 errors, 0 warnings."
+            "P1-G3-T2":
+              "id": "P1-G3-T2"
+              "source_id": "003"
+              "title": "Document the Model's public surface"
+              "description": "Write the Model's usage documentation covering, in the required order, an overview with one concise example using one Entity, an Interface section listing every public Entity separately with a table of its fields and no usage examples, a Foundation section with an example per capability and one complete example, and the setup, run, and troubleshooting guidance. It describes each Entity's kind, import, direct construction, and JSON conversion."
+              "reason": "Consumers must be able to use the Model without reading its internals."
+              "inputs":
+              - "The presented Entities and their fields"
+              - "The documentation requirements"
+              "skills": []
+              "expected_result": "Component-level documentation that follows the required section order and content."
+              "depends_on":
+              - "P1-G3-T1"
+              "constraints": []
+              "acceptance": "Every public Entity appears exactly once with a table matching its declared fields, and each example is accurate for the current Entities."
+              "verify": "Following each documented example against the Model produces the described results, and the listed Entities and fields match the published Entities."
+              "status": "done"
+              "log":
+              - "at": "2026-09-26T22:54:55Z"
+                "event": "claimed"
+                "note": "Claimed by Develop (State entry 004) before work began; all dependencies done."
+              - "at": "2026-09-26T22:55:44Z"
+                "event": "done"
+                "check": "Transient script generated README from the Declarations, then checked: required section order; Overview has one example with one Entity; Interface has no code blocks and lists each of the 15 Entities once with a field table matching its declaration (name, type, nullability) plus kind, import, construction, JSON conversion; Foundation has two capability examples and one complete example; executed every Python example and compared its printed output to the documented comment; confirmed the troubleshooting claims (missing JSON keys take defaults, wrong types raise ValidationError) and ran the documented Run command."
+                "outcome": "Passed: all checks; every documented example ran and printed the documented result."
+        "P1-G4":
+          "id": "P1-G4"
+          "title": "Reusable package"
+          "description": "Delivery of the Model as an independent package consumable by Logic and Database."
+          "area": "Packaging and consumer-facing persistence metadata"
+          "does": "The Model is usable in isolation and Database can derive storage from it."
+          "constraints": []
+          "task_count": 2
+          "tasks":
+            "P1-G4-T1":
+              "id": "P1-G4-T1"
+              "source_id": "003"
+              "title": "Make the Model consumable as a reusable package"
+              "description": "Make the Model obtainable and usable as an independent reusable package by another Component, without requiring any other Component to be present."
+              "reason": "The phase goal is a reusable Model package that Logic and Database consume."
+              "inputs":
+              - "The public entry point"
+              - "The Model documentation"
+              "skills": []
+              "expected_result": "A package that another Component can install or import and use in isolation."
+              "depends_on":
+              - "P1-G3-T1"
+              - "P1-G3-T2"
+              "constraints": []
+              "acceptance": "A separate consumer can obtain the package and use every Entity with no other project Component present."
+              "verify": "From a clean, separate environment containing only the package and its dependencies, every Entity can be imported and constructed."
+              "status": "done"
+              "log":
+              - "at": "2026-09-26T22:55:44Z"
+                "event": "claimed"
+                "note": "Claimed by Develop (State entry 004) before work began; all dependencies done."
+              - "at": "2026-09-26T22:56:05Z"
+                "event": "done"
+                "check": "Built the package (sdist and wheel), created a fresh Python 3.14 environment containing only the wheel and its dependencies, and from outside the project imported the entry point, confirmed 15 table Entities, constructed a User and a Position directly (decimal and timezone-aware datetime fields) and round-tripped both through JSON; confirmed no other project Component is importable there."
+                "outcome": "Passed: all 15 Entities importable and usable in isolation; JSON round trips equal."
+            "P1-G4-T2":
+              "id": "P1-G4-T2"
+              "source_id": "003"
+              "title": "Expose persistence metadata from the public Entities"
+              "description": "Confirm that a consumer importing only the public Entity classes can derive each Entity's primary identity, references, uniqueness constraints, defaults, and index intentions, with no second persistence model required."
+              "reason": "Database must independently derive storage from the same Entity classes Logic uses."
+              "inputs":
+              - "The public Entity classes"
+              "skills":
+              - "sqlmodel"
+              "expected_result": "Every Entity's structural metadata is discoverable from its public class alone."
+              "depends_on":
+              - "P1-G3-T1"
+              "constraints": []
+              "acceptance": "For every Entity, the discoverable primary identity, references, uniqueness constraints, defaults, and indexes equal the Target-declared ones, with no additional persistence class in the package."
+              "verify": "Reading structural metadata from each public Entity class and comparing it with the Target definition shows no missing or extra item, and no persistence-only class is offered by the package."
+              "status": "done"
+              "log":
+              - "at": "2026-09-26T22:54:55Z"
+                "event": "claimed"
+                "note": "Claimed by Develop (State entry 004) before work began; all dependencies done."
+              - "at": "2026-09-26T22:55:44Z"
+                "event": "done"
+                "check": "Transient script imported only the public entry point and compared each Entity's table metadata with its Declaration: primary key, foreign keys, uniqueness, nullability, defaults; confirmed the SQLModel metadata holds exactly the 15 Entity tables (no persistence-only class) and no extra indexes; created all tables in an in-memory SQLite database and compared the created foreign keys."
+                "outcome": "Passed: metadata equals the Declarations for all 15 Entities; all tables created; no second persistence model."
