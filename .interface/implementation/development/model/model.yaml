@@ -44,20 +44,20 @@ content:
       type: "library"
       language: "Python"
       platform: "VPS"
-      directory: "my_model"
-      package: "my_model"
+      directory: "model"
+      package: "model"
 
   # <!-------------------------------------------- layout -->
   layout:
     directories:
-      entity: "model_entity"
+      entity: "entity"
     files:
-      interface: "model_interface"
-      declaration: "model_declaration"
-      foundation: "model_foundation"
+      interface: "interface"
+      declaration: "declaration"
+      foundation: "foundation"
     classes:
-      declaration: "Model_Declaration"
-      foundation: "Model_Foundation"
+      declaration: "Declaration"
+      foundation: "Foundation"
     foundation:
       methods:
         to_json: "to_json"
