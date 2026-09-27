@@ -221,7 +221,7 @@ Every Principle below is mandatory.
 
 ### Logic owns sensitive-value handling
 
-**Rule:** When application Behaviour requires encryption, decryption, hashing, credential handling, secret use, or another special treatment of a sensitive value, Logic performs that treatment before passing an Entity to Database. Logic never exposes the original sensitive value through its Interface, logs, errors, or Application Outcomes.
+**Rule:** Logic uses an Entity Field's declared sensitivity marker to choose any application-required encryption, decryption, hashing, credential handling, secret use, or other special treatment before passing that Entity to Database. Logic never exposes the original sensitive value through its Interface, logs, errors, or Application Outcomes.
 
 **Why:** The decision and behaviour for handling sensitive values belong to the application, not to general-purpose persistence.
 
@@ -305,7 +305,7 @@ Every obligation in the file, under the Principle it comes from.
 
 **Logic owns sensitive-value handling**
 
-- **Must** — perform any application-required sensitive-value treatment before calling Database.
+- **Must** — use an Entity Field's sensitivity marker for any application-required sensitive-value treatment before calling Database.
 - **Never** — expose an original sensitive value through Interface, logs, errors, or Application Outcomes.
 
 **Logic execution remains bounded**

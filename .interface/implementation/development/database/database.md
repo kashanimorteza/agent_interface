@@ -144,7 +144,7 @@ Every Principle below is mandatory.
 
 ### Database treats every Entity value as storage data
 
-**Rule:** Database treats every Entity Field solely according to its declared storage type, constraints, relationships, indexes, defaults, and other persistence metadata. A sensitive Field, credential, secret, or any other value is ordinary storage data to Database: it stores and returns the Entity value it receives without applying special handling because of that value's meaning.
+**Rule:** Database treats every Entity Field solely according to its declared storage type, constraints, relationships, indexes, defaults, and other persistence metadata. A Field with a sensitivity marker, credential, secret, or any other value is ordinary storage data to Database: it stores and returns the Entity value it receives without applying special handling because of that value's meaning.
 
 **Why:** Persistence remains general-purpose and can apply one consistent storage structure to every Entity value.
 
@@ -225,7 +225,7 @@ Every obligation in the file, under the Principle it comes from.
 **Database treats every Entity value as storage data**
 
 - **Must** — apply each Entity Field's declared storage type, constraints, relationships, indexes, defaults, and persistence metadata.
-- **Must** — treat sensitive Fields, credentials, secrets, and other values as ordinary storage data.
+- **Must** — treat Fields with sensitivity markers, credentials, secrets, and other values as ordinary storage data.
 - **Never** — apply special storage behaviour because of a value's meaning.
 
 **Database publishes Interface only**

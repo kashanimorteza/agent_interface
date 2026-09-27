@@ -27,11 +27,11 @@ Model defines flat, technology-independent Domain Entities. Each Entity carries 
 
 ### Purpose
 
-Model gives Logic and Database one shared Entity representation of each domain concept. Logic imports Entity classes for application programming; Database independently imports those same classes to derive its tables and migrations.
+Model gives Logic and Database one shared Entity representation of each domain concept. Logic imports Entity classes for application programming; Database independently imports those same classes to derive its storage structure.
 
 ### How It Works
 
-Each Entity stands alone in its own unit under the Entity directory. Declaration records technology-independent meaning, while Foundation provides shared behaviour. Every Model layer is public; Interface provides a convenient entry point for Entity classes and capabilities. SQLModel realizes each Entity as the one table model that both Logic and Database consume, without changing its domain meaning.
+Each Entity stands alone in its own unit under the Entity directory. Declaration records technology-independent meaning, while Foundation provides shared behaviour. Every Model layer is public; Interface provides a convenient entry point for Entity classes and capabilities.
 
 <br>
 
@@ -43,8 +43,8 @@ Each Entity stands alone in its own unit under the Entity directory. Declaration
 - **Entity** — a Domain Entity with an Identity that distinguishes one instance from another.
 - **Field** — one named value of a Domain Entity, with its domain meaning, logical type, and applicable constraints.
 - **Type** — the technology-independent category of values a Field may hold.
-- **Field Rule** — a declared rule for a Field's presence, default, `sensitive` flag, immutability, length, or constraint.
-- **Sensitive** — a boolean Field metadata flag. It identifies data for which handling is decided outside Model; it defines no Model behavior.
+- **Field Rule** — a declared rule for a Field's presence, default, sensitivity marker, immutability, length, or constraint.
+- **Sensitivity Marker** — optional Field metadata that identifies a value category requiring Logic attention, such as `password` or `sensitive`. Model records the marker but does not inspect, transform, or otherwise handle the value.
 - **Relationship** — an explicit domain reference from one Domain Entity to another, without nesting either Entity inside the other.
 - **Identity** — the Field or Fields that distinguish one Entity from every other Entity of the same kind.
 - **Primary Key** — the storage-facing expression of an Entity's declared Identity.
@@ -54,7 +54,6 @@ Each Entity stands alone in its own unit under the Entity directory. Declaration
 - **Value Generation** — a declared way to supply a Field value automatically, including Auto Increment, generated identifier, or generated timestamp.
 - **Declaration** — the public class that records an Entity's technology-independent data meaning and metadata without providing runtime behaviour.
 - **Foundation** — the public class that provides shared `to_json()` and `from_json()` behaviour without defining domain meaning.
-- **Intrinsic Rule** — a rule evaluated only from the data of the Domain Entity it governs.
 - **Interface** — a public Model file that presents the Entity classes and capabilities that consuming Components may import and use.
 
 <br>
@@ -75,7 +74,7 @@ Model
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Database** — independently imports public Entity classes and uses their SQLModel metadata to create Tables and their applicable keys, relationships, constraints, defaults, and indexes. It does not define a second persistence model.
+- **Database** — independently imports public Entity classes and uses their declared metadata to create its storage structure. It does not define a second persistence model.
 - **Logic** — imports public Entity classes through Interface and uses them directly in application programming.
 
 <br>
@@ -101,7 +100,7 @@ Declaration
 ├── Field Rules
 │   ├── Required and Nullability
 │   ├── Default Values
-│   ├── Sensitive
+│   ├── Sensitivity Marker
 │   ├── Immutability
 │   ├── Length
 │   └── Constraints
@@ -125,7 +124,7 @@ Foundation
 └── from_json()
 ```
 
-Technical choices, names, and layout for these layers belong to Model Preferences. Declaration meaning remains independent of language, package, database, and Engine. SQLModel is the selected realization of each Entity, not the owner of its domain meaning.
+Technical choices, names, and layout for these layers belong to Model Preferences. Declaration meaning remains independent of language, package, database, and Engine.
 
 <br>
 
@@ -163,7 +162,7 @@ Every Principle below is mandatory.
 
 ### Model preserves explicit Target meaning
 
-**Rule:** Model preserves every Target-declared Domain Entity, Field, constraint, default, and `sensitive` flag. Preferences may complete only missing choices of existing Fields; they never create, rename, remove, or override explicit Target meaning.
+**Rule:** Model preserves every Target-declared Domain Entity, Field, constraint, default, and sensitivity marker. Preferences may complete only missing choices of existing Fields; they never create, rename, remove, or override explicit Target meaning.
 
 **Why:** The Target remains authoritative while unstated realization details can still be resolved consistently.
 
@@ -173,7 +172,7 @@ Every Principle below is mandatory.
 
 ### Logical Model meaning is independent of implementation technology
 
-**Rule:** Every Domain Entity, Field, and Intrinsic Rule remains understandable independently of language, package, tool, version, runtime, and platform.
+**Rule:** Every Domain Entity, Field, and declared rule remains understandable independently of language, package, tool, version, runtime, and platform.
 
 **Why:** Technology can change without redefining the Target's domain.
 
@@ -191,13 +190,13 @@ Every Principle below is mandatory.
 
 <br>
 
-### Declaration records technology-independent data meaning
+### Declaration records complete Entity meaning
 
-**Rule:** Every Entity has a Declaration that records its Fields and applicable Types, Field Rules, Primary Keys, Uniqueness Constraints, Relationships, Index intentions, and Value Generation. Declaration provides no runtime behaviour.
+**Rule:** Every Entity has a Declaration that records and exposes its Fields and applicable Types, Field Rules, Primary Keys, Uniqueness Constraints, Relationships, Index intentions, and Value Generation. A Reference identifies its target Entity and the identity it refers to; a Uniqueness Constraint or Index may cover one Field or a declared combination of Fields. Declaration provides no runtime behaviour.
 
 **Why:** Logic and Database can consume one complete data meaning without coupling that meaning to a language, package, database, or Engine.
 
-**Boundary:** Declaration does not choose Python types, table names, SQL syntax, index implementation, or database-specific auto-increment behaviour.
+**Boundary:** Declaration does not choose a technical type, table name, query syntax, index implementation, or database-specific value-generation behaviour.
 
 <br>
 
@@ -211,19 +210,9 @@ Every Principle below is mandatory.
 
 <br>
 
-### Declaration makes data structure available
-
-**Rule:** Declaration preserves and exposes every Target-declared Identity, Uniqueness Constraint, Relationship, Index intention, and Value Generation. A Reference identifies its target Entity and the identity it refers to; a Uniqueness Constraint or Index may cover one Field or a declared combination of Fields.
-
-**Why:** Database can derive primary keys, unique constraints, and foreign keys from domain meaning without inventing relationships or persistence rules.
-
-**Boundary:** Declaration describes domain facts. Database decides the table, column, index implementation, foreign-key syntax, and physical enforcement used to realize them.
-
-<br>
-
 ### Declaration preserves structured Field meaning
 
-**Rule:** Declaration preserves each Field's logical Type, presence semantics, default, `sensitive` flag, immutability, and every Target-declared restriction as usable structured meaning, including applicable value range, length, pattern, precision, scale, allowed values, or comparable constraint.
+**Rule:** Declaration preserves each Field's logical Type, presence semantics, default, optional sensitivity marker, immutability, and every Target-declared restriction as usable structured meaning, including applicable value range, length, pattern, precision, scale, allowed values, or comparable constraint.
 
 **Why:** Consumers and storage realization need more than descriptive prose to use the same domain restriction consistently.
 
@@ -233,11 +222,11 @@ Every Principle below is mandatory.
 
 ### One Entity definition serves programming and persistence
 
-**Rule:** Each Entity is the single class used by Logic in application programming and by Database for table creation and migration comparison. Database independently imports the public Entity classes and derives persistence metadata from them; it does not create or require a second persistence model.
+**Rule:** Each Entity is the single class used by Logic in application programming and by Database for storage derivation. Database independently imports the public Entity classes and derives persistence metadata from them; it does not create or require a second persistence model.
 
 **Why:** One Entity definition prevents application and persistence structures from drifting apart while allowing Database to build storage independently.
 
-**Boundary:** Model declares the Entity. Database remains responsible for its Engine-specific table creation, migration execution, and storage operations.
+**Boundary:** Model declares the Entity. Database remains responsible for storage realization and operations.
 
 <br>
 
@@ -258,16 +247,6 @@ Every Principle below is mandatory.
 **Why:** A narrow boundary keeps Model reusable and protects domain meaning.
 
 **Boundary:** Other Components may use Model data without transferring ownership of their concerns to Model.
-
-<br>
-
-### Entities expose complete logical meaning
-
-**Rule:** Every Entity preserves its Target-derived meaning through Declaration, including its Fields, Types, Field Rules, Primary Key, Uniqueness Constraints, Relationships, Index intentions, and Value Generation when applicable, in a form that consumers can use.
-
-**Why:** Consumers receive complete domain information without prescribing one storage format or implementation structure.
-
-**Boundary:** Model does not prescribe how a consumer uses that information.
 
 <br>
 
@@ -308,7 +287,7 @@ Every obligation in the file, under the Principle it comes from.
 
 **Model preserves explicit Target meaning**
 
-- **Must** — Preserve explicit Target Fields, constraints, defaults, and `sensitive` flags.
+- **Must** — Preserve explicit Target Fields, constraints, defaults, and sensitivity markers.
 - **Never** — Invent or override Target meaning.
 
 **Logical Model meaning is independent of implementation technology**
@@ -321,29 +300,25 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — Use Foundation for `to_json()` and `from_json()` conversion.
 - **Never** — Let Foundation define domain meaning or Fields.
 
-**Declaration records technology-independent data meaning**
+**Declaration records complete Entity meaning**
 
-- **Must** — Keep Entity meaning and metadata in Declaration.
-- **Never** — Put runtime behaviour or technology-specific storage choices in Declaration.
+- **Must** — record and expose every Entity's Fields, Types, Field Rules, Primary Keys, Uniqueness Constraints, Relationships, Index intentions, and Value Generation in Declaration.
+- **Must** — identify every Reference target and allow declared composite Uniqueness Constraints and Indexes.
+- **Never** — put runtime behaviour or technology-specific storage choices in Declaration.
 
 **Model publishes all layers**
 
 - **Must** — Keep Interface, Entity, Declaration, and Foundation public; present Entity classes and capabilities through Interface as a convenient entry point.
 - **Never** — Let public access duplicate Foundation behaviour or transfer Entity ownership to a consumer.
 
-**Declaration makes data structure available**
-
-- **Must** — Expose every declared Identity, Uniqueness Constraint, Relationship, Index intention, and Value Generation for Database consumption.
-- **Never** — Choose physical storage details.
-
 **Declaration preserves structured Field meaning**
 
-- **Must** — Keep each declared Field Type, rule, default, `sensitive` flag, immutability, and restriction usable by consumers and storage realization.
+- **Must** — Keep each declared Field Type, rule, default, sensitivity marker, immutability, and restriction usable by consumers and storage realization.
 - **Never** — Invent a constraint or force one constraint representation.
 
 **One Entity definition serves programming and persistence**
 
-- **Must** — Make each Entity available for Logic programming and Database table creation or migration comparison.
+- **Must** — Make each Entity available for Logic programming and Database storage derivation.
 - **Must** — Let Database independently import the public Entity classes and derive persistence metadata from them.
 - **Never** — Create or require a second persistence model.
 
@@ -356,11 +331,6 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — Keep Model focused on logical Entities.
 - **Never** — Own records, storage operations, transport, workflow orchestration, technical selection, or platform operation.
-
-**Entities expose complete logical meaning**
-
-- **Must** — Expose each Entity's applicable Fields, Types, Field Rules, Primary Key, Uniqueness Constraints, Relationships, Index intentions, and Value Generation.
-- **Never** — Prescribe one declaration format or storage realization.
 
 **Entities are flat and explicitly related**
 
