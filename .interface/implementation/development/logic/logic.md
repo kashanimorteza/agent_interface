@@ -157,7 +157,7 @@ Every Principle below is mandatory.
 
 **Why:** One owner for Behaviour keeps the same rule from being written differently in the API, the Database, and the Presentation.
 
-**Boundary:** Model declares constraints determinable from a single Domain Definition's own data; Database owns storage guarantees. Logic applies neither by redefining either.
+**Boundary:** Model declares constraints determinable from a single Domain Definition's own data; Database owns storage guarantees. Logic applies Model-declared constraints when an Operation requires them without redefining them, and does not restate Database guarantees.
 
 <br>
 

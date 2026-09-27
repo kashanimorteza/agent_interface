@@ -55,7 +55,7 @@ content:
       path: "db"
     default_instance: "application"
     query:
-      filter_combination: "AND"
+      filter_combination: "AND" # List uses this when its filter_combination is omitted.
       # Alternative: OR.
       default_order:
         field: "id"
