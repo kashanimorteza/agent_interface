@@ -10,7 +10,7 @@ Model defines and publishes the project's data-model Entities.
 1. **[Introduction](#introduction)**
 2. **[Terms](#terms)**
 3. **[Architecture](#architecture)**
-4. **[Component Use](#component-use)**
+4. **[Relationships](#relationships)**
 5. **[Layering](#layering)**
 6. **[Authority](#authority)**
 7. **[Principles](#principles)**
@@ -69,8 +69,8 @@ Model
 
 <br>
 
-<!--------------------------------------------------------------------------------- Component Use --->
-## Component Use
+<!--------------------------------------------------------------------------------- Relationships --->
+## Relationships
 
 - **Logic** — uses Model Interface to obtain Entities for application programming.
 - **Database** — uses Entities to create its storage structure, and uses Model Interface for other Model use.
