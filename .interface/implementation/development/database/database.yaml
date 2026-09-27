@@ -87,9 +87,8 @@ content:
             skill: "sqlmodel"
           guidance:
             project_rules:
-              entity_source: "Independently import Entity classes published by Model Interface; never obtain them through Logic. Database Operations receive the imported Entity class or an Entity instance directly, never a Model name or identity. Use the imported Entity classes as the only source for table and migration metadata. Do not create a separate persistence model or duplicate Entity Fields, constraints, relationships, or indexes in Database."
               engine_and_session: "Use create_engine and Session from SQLModel. Open sessions directly with the configured Engine; do not introduce a separate session factory for ordinary Database operations."
-              metadata: "Import all Entity classes before using SQLModel.metadata. Use that metadata as the authoritative table metadata for table creation and migration comparison."
+              metadata: "Import the configured Entity classes before using SQLModel.metadata. Use SQLModel.metadata for table creation and migration comparison."
               query_api: "Use SQLModel's select and Session.exec APIs for ordinary Database queries."
         migration:
           name: "Alembic"

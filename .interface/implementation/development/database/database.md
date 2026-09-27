@@ -66,7 +66,7 @@ Database
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Consumes Model** — imports Entity classes published by Model Interface and uses their SQLModel metadata to create Tables and recognize Entity-form data.
+- **Consumes Model** — imports Entity classes published by Model Interface and uses their declared metadata to derive storage structure and recognize Entity-form data.
 - **Provides to Logic** — exposes Database Operations through Interface.
 
 <br>
@@ -93,12 +93,11 @@ The only public Database layer. It makes Database classes and Operations availab
 - **Min** — accepts an imported Entity class, one comparable field, and optional filters; returns the smallest matching value.
 - **Max** — accepts an imported Entity class, one comparable field, and optional filters; returns the largest matching value.
 - **Truncate** — accepts an imported Entity class; removes all of its records while keeping its Table structure.
-- **Report** — accepts report-specific selection criteria; returns the requested report without requiring one Model as its subject.
 - **Execute Command** — accepts a SQL command and optional parameters; executes it through the selected Engine and returns its result or operation outcome. Its purpose need not concern one Model.
 
 ### Data
 
-The internal file that provides every Database Action. It resolves the requested Instance and Engine, calls the matching Engine Action, and standardizes returned data when required.
+The internal file that provides every Database Action. It resolves the requested Instance and Engine, calls the matching Engine Action, and returns that result according to the published Operation's contract.
 
 ### Engine
 
@@ -164,9 +163,9 @@ Every Principle below is mandatory.
 
 ### Data routes requests and handles results
 
-**Rule:** Data receives each request from Interface, resolves the requested Instance and its Engine, forwards the Operation to that Engine implementation, and standardizes the returned data when required before returning it to Interface. Data provides one Action for each published Operation.
+**Rule:** Data receives each request from Interface, resolves the requested Instance and its Engine, forwards the Operation to that Engine implementation, and returns that Engine result according to the published Operation's contract. Data provides one Action for each published Operation.
 
-**Why:** A single Data file keeps selection, translation, and result handling consistent across Engines.
+**Why:** A single Data file keeps selection, routing, and result handling consistent across Engines.
 
 **Boundary:** Data coordinates an Operation; each Engine implementation owns the Engine-specific execution of that Operation.
 
@@ -184,17 +183,17 @@ Every Principle below is mandatory.
 
 ### Database connects Model to Logic
 
-**Rule:** Database independently imports Entity classes only through Model Interface; it does not obtain them through Logic. After all Entity classes are imported, Database uses their SQLModel metadata to create Tables and compare migrations. Database does not create a separate persistence model or duplicate Entity Fields, constraints, relationships, or indexes; it provides its Interface Operations to Logic.
+**Rule:** Database independently imports Entity classes only through Model Interface; it does not obtain them through Logic. Database uses their declared metadata to derive storage structure. It does not create a separate persistence model or duplicate Entity Fields, constraints, relationships, or indexes; it provides its Interface Operations to Logic.
 
 **Why:** This keeps persistence aligned with one authoritative Entity model while allowing Database to build storage independently and giving Logic one consistent data boundary.
 
-**Boundary:** Model owns Entity declarations; Logic owns application behavior; Database owns table creation, migration comparison, and persistence implementation between them.
+**Boundary:** Model owns Entity declarations; Logic owns application behavior; Database owns storage derivation and persistence implementation between them.
 
 <br>
 
 ### Development provisions the default Database Instance
 
-**Rule:** A successful Develop execution for Database applies the generated migration to the configured default Instance. For file-backed storage, that execution creates the configured database file in the configured Database Directory. Develop verifies that the storage contains every imported Entity table before it reports Database development as complete.
+**Rule:** A successful Develop execution for Database provisions the configured default Instance from the imported Entity metadata. For file-backed storage, that execution creates the configured database file in the configured Database Directory. Develop verifies that the storage contains the required structure for every imported Entity before it reports Database development as complete.
 
 **Why:** A developed Database Component must leave a usable default storage instance, not only source code and a command that could create it later.
 
@@ -237,7 +236,7 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — route every Interface request to the resolved Instance and Engine.
 - **Must** — provide one Data Action for each published Operation.
-- **Must** — standardize returned data whenever that Operation requires it.
+- **Must** — return each Engine result according to the published Operation's contract.
 
 **Each Engine implements the published Operations**
 
@@ -248,12 +247,12 @@ Every obligation in the file, under the Principle it comes from.
 **Database connects Model to Logic**
 
 - **Must** — independently import Entity classes through Model Interface, never through Logic.
-- **Must** — use imported Entity SQLModel metadata for table creation and migration comparison.
+- **Must** — use imported Entity metadata for storage derivation.
 - **Never** — create a separate persistence model or duplicate Entity Fields, constraints, relationships, or indexes.
 - **Must** — provide Interface Operations to Logic through Interface.
 
 **Development provisions the default Database Instance**
 
-- **Must** — apply the generated migration to the configured default Instance during successful Database development.
+- **Must** — provision the configured default Instance from imported Entity metadata during successful Database development.
 - **Must** — create file-backed default storage in the configured Database Directory.
-- **Must** — verify every imported Entity table before reporting Database development complete.
+- **Must** — verify required storage structure for every imported Entity before reporting Database development complete.

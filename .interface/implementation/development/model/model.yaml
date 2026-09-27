@@ -26,12 +26,14 @@ read_order:
   - "settings: identify the Model Component and its technical selection."
   - "layout: locate Model's Interface, Entity, Declaration, and Foundation layers and their configured names."
   - "development: apply Model capabilities, naming conventions, language, package, and implementation defaults."
+  - "documentation: apply the required Model documentation structure and examples."
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
   - settings
   - layout
   - development
+  - documentation
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:

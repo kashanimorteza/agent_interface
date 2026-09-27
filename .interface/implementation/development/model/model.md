@@ -1,6 +1,6 @@
 # Model Definition
 
-Model defines and handles the project's data-model Entities.
+Model defines and publishes the project's data-model Entities.
 
 <br>
 
@@ -39,12 +39,11 @@ Each Entity stands alone in its own unit under the Entity directory. Declaration
 ## Terms
 
 - **Domain Entity** — the authoritative logical definition of one meaningful concept in the Target's domain.
-- **Entity Layer** — the public Model layer that contains each Entity in a separate unit.
 - **Entity** — a Domain Entity with an Identity that distinguishes one instance from another.
 - **Field** — one named value of a Domain Entity, with its domain meaning, logical type, and applicable constraints.
 - **Type** — the technology-independent category of values a Field may hold.
 - **Field Rule** — a declared rule for a Field's presence, default, sensitivity marker, immutability, length, or constraint.
-- **Sensitivity Marker** — optional Field metadata that identifies a value category requiring Logic attention, such as `password` or `sensitive`. Model records the marker but does not inspect, transform, or otherwise handle the value.
+- **Sensitivity Marker** — optional Field metadata whose value is either `password` or `sensitive`. It identifies a value category requiring Logic attention; Model records the marker but does not inspect, transform, or otherwise handle the value.
 - **Relationship** — an explicit domain reference from one Domain Entity to another, without nesting either Entity inside the other.
 - **Identity** — the Field or Fields that distinguish one Entity from every other Entity of the same kind.
 - **Primary Key** — the storage-facing expression of an Entity's declared Identity.
@@ -212,7 +211,7 @@ Every Principle below is mandatory.
 
 ### Declaration preserves structured Field meaning
 
-**Rule:** Declaration preserves each Field's logical Type, presence semantics, default, optional sensitivity marker, immutability, and every Target-declared restriction as usable structured meaning, including applicable value range, length, pattern, precision, scale, allowed values, or comparable constraint.
+**Rule:** Declaration preserves each Field's logical Type, presence semantics, default, optional sensitivity marker (`password` or `sensitive`), immutability, and every Target-declared restriction as usable structured meaning, including applicable value range, length, pattern, precision, scale, allowed values, or comparable constraint.
 
 **Why:** Consumers and storage realization need more than descriptive prose to use the same domain restriction consistently.
 
@@ -313,7 +312,7 @@ Every obligation in the file, under the Principle it comes from.
 
 **Declaration preserves structured Field meaning**
 
-- **Must** — Keep each declared Field Type, rule, default, sensitivity marker, immutability, and restriction usable by consumers and storage realization.
+- **Must** — Keep each declared Field Type, rule, default, sensitivity marker (`password` or `sensitive`), immutability, and restriction usable by consumers and storage realization.
 - **Never** — Invent a constraint or force one constraint representation.
 
 **One Entity definition serves programming and persistence**
