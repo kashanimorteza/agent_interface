@@ -16,7 +16,7 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings for Database identity, runtime configuration, and root directory; read layout to locate the Interface, Data, Engine, and Core layers; then read development for capabilities, naming, and technical defaults."
+  consumption: "Read settings for Database identity, runtime configuration, and root directory; read layout to locate the Interface, Data, and Engine layers; then read development for capabilities, naming, and technical defaults."
   selection: "When Database Configuration leaves a Database-owned technical choice unstated and this file supplies no default, use compatible professional judgment under Database Principles and record a consequential implementation choice with the implementation."
   version_resolution: "Database's development section resolves Database-owned versioned technical items. Development resolves only its shared Defaults."
   matching: "Each Engine marked `implement: true` uses one implementation file beneath layout.directories.engine and applies the matching development.database_engines default when one exists."
@@ -25,7 +25,7 @@ resolution:
 read_order:
   - "settings: identify the Database Component and locate its runtime configuration and root directory."
   - "instances: identify the configured Database Instances."
-  - "layout: locate the configured names and paths for Interface, Data, Engine, and Core."
+  - "layout: locate the configured names and paths for Interface, Data, and Engine."
   - "development: apply Database capabilities, naming conventions, language, package, and Engine defaults."
   - "documentation: apply the required Database documentation structure and Interface examples."
 
@@ -66,7 +66,6 @@ content:
   layout:
     directories:
       engine: "database_engine"
-      core: "database_core"
     files:
       interface: "database_interface"
       data: "database_data"

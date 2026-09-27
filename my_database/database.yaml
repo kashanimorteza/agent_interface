@@ -1,0 +1,24 @@
+engines:
+  sqlite:
+    name: "SQLite"
+    driver: "sqlite3"
+    parameters: {}
+
+instances:
+  application:
+    name: "Application"
+    purpose: "Default application storage for every Model Entity."
+    engine: "sqlite"
+    database: "application.db"
+    host: ""
+    port: ""
+    path: "data/application.db"
+    username: ""
+    password: ""
+    parameters: {}
+
+settings:
+  default_instance: "application"
+  assignments: {}
+  secrets: {}
+  parameters: {}

@@ -23,7 +23,7 @@ Database is the Development Component that persists Model data and provides stan
 
 ### Overview
 
-Database is the Development Component that persists Model data and publishes data Operations to Logic. Its layers are Interface, Data, Engine, and Core.
+Database is the Development Component that persists Model data and publishes data Operations to Logic. Its layers are Interface, Data, and Engine.
 
 ### Purpose
 
@@ -31,7 +31,7 @@ Database keeps persistence knowledge in one Component. Without that separation, 
 
 ### How It Works
 
-Logic uses Interface to access Database. Interface exposes the public Actions, then passes each request to Data. Data resolves the applicable Instance and Engine, calls that Engine's implementation, and returns the result through Interface. Core contains the shared internal files needed by those layers.
+Logic uses Interface to access Database. Interface exposes the public Actions, then passes each request to Data. Data resolves the applicable Instance and Engine, calls that Engine's implementation, and returns the result through Interface.
 
 <br>
 
@@ -46,7 +46,6 @@ Logic uses Interface to access Database. Interface exposes the public Actions, t
 - **Operation** — one public Database action published through Interface.
 - **Execute Command** — an Operation that receives a SQL command and optional parameters, executes it through the selected Engine, and returns its result.
 - **Data** — the internal file that provides the Database Actions, resolves a request's Instance and Engine, and calls that Engine's implementation.
-- **Core** — the internal directory for shared files required by Database's layers.
 
 <br>
 
@@ -57,8 +56,7 @@ Logic uses Interface to access Database. Interface exposes the public Actions, t
 Database
 ├── Interface
 ├── Data
-├── Engine
-└── Core
+└── Engine
 ```
 
 <br>
@@ -103,10 +101,6 @@ The internal file that provides every Database Action. It resolves the requested
 
 The internal directory containing one file for every Engine marked for implementation. Each file performs the Database Actions with that Engine's own packages, parameters, and mechanisms.
 
-### Core
-
-The internal directory for shared Database files that support Interface, Data, and Engine without becoming part of the public Database surface.
-
 Database's technical selections, defaults, and layout belong to Database Preferences. The structure of its generated configuration belongs to its Schema. This Definition states only the conceptual layers and the rules that govern them.
 
 <br>
@@ -143,7 +137,7 @@ Every Principle below is mandatory.
 
 ### Database treats every Entity value as storage data
 
-**Rule:** Database treats every Entity Field solely according to its declared storage type, constraints, relationships, indexes, defaults, and other persistence metadata. A Field with a sensitivity marker, credential, secret, or any other value is ordinary storage data to Database: it stores and returns the Entity value it receives without applying special handling because of that value's meaning.
+**Rule:** Database treats every Entity Field according to its declared logical Type, constraints, relationships, indexes, defaults, and other persistence metadata. Database realizes that logical Type through the selected Engine's storage mechanisms. A Field with a sensitivity marker, credential, secret, or any other value is ordinary storage data to Database: it stores and returns the Entity value it receives without applying special handling because of that value's meaning.
 
 **Why:** Persistence remains general-purpose and can apply one consistent storage structure to every Entity value.
 
@@ -153,11 +147,11 @@ Every Principle below is mandatory.
 
 ### Database publishes Interface only
 
-**Rule:** Interface is the only public Database layer. Data, Engine, and Core are internal implementation layers; consumers use Database only through Interface.
+**Rule:** Interface is the only public Database layer. Data and Engine are internal implementation layers; consumers use Database only through Interface.
 
 **Why:** One public boundary keeps Engine selection, routing, and shared implementation details out of consumers.
 
-**Boundary:** Interface publishes Database Actions; it does not make a consumer responsible for Data routing, Engine-specific storage behavior, or Core implementation.
+**Boundary:** Interface publishes Database Actions; it does not make a consumer responsible for Data routing or Engine-specific storage behavior.
 
 <br>
 
@@ -223,14 +217,14 @@ Every obligation in the file, under the Principle it comes from.
 
 **Database treats every Entity value as storage data**
 
-- **Must** — apply each Entity Field's declared storage type, constraints, relationships, indexes, defaults, and persistence metadata.
+- **Must** — apply each Entity Field's declared logical Type, constraints, relationships, indexes, defaults, and persistence metadata through the selected Engine's storage mechanisms.
 - **Must** — treat Fields with sensitivity markers, credentials, secrets, and other values as ordinary storage data.
 - **Never** — apply special storage behaviour because of a value's meaning.
 
 **Database publishes Interface only**
 
 - **Must** — publish Database classes and Operations through Interface only.
-- **Never** — expose Data, Engine, or Core as a consumer surface.
+- **Never** — expose Data or Engine as a consumer surface.
 
 **Data routes requests and handles results**
 
