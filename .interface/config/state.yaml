@@ -1,0 +1,43 @@
+meta:
+  path: ".interface/config/state.yaml"
+  path_note: "Active Workflow position, aggregate Phase progress, and the project's recorded execution history."
+
+policy:
+  agent_may_edit: true
+  rule: "Apply the current State Schema."
+  changed_by: "Agent and Skills operating within the Operation that owns the State content being written, per Authority and Ownership."
+  precedence: "The State Schema and every applicable Principle take precedence over this file's content."
+
+resolution:
+  consumption: "Read active Workflow position, then aggregate phase progress keyed by stable Target phase identifier, then the append-only execution log in written order."
+  selection: "A requested phase resolves to the phases entry keyed by that phase identifier; a Log Entry resolves by its sequential id."
+  absence: "No matching phases entry means no aggregate progress has been recorded for that phase yet; an empty log means no execution has been recorded yet."
+
+read_order:
+  - "active"
+  - "phases"
+  - "log"
+
+content_map:
+  active: "Current Workflow mode, phase, and who set it."
+  phases: "Aggregate operation progress keyed by stable Target phase identifier."
+  log: "The project's preserved history of recorded Skill executions and their outcomes."
+
+content:
+  active:
+    mode: "not set"
+    phase: null
+    mode_reason: "No Workflow operation has been recorded."
+    set_by: "initialization"
+    set_at: null
+  phases: {}
+  log:
+    - id: "001"
+      skill: "my-interface-configure"
+      phase: null
+      event: "Configure execution"
+      outcome: "completed"
+      started_at: "2026-09-27T15:27:54Z"
+      completed_at: "2026-09-27T15:28:16Z"
+      duration: "22 seconds"
+      report: "Generated the three declared Config Records (Application, Plan, State) from their current Schemas; the Config directory was empty, so all three were created rather than reconciled."
