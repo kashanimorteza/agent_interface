@@ -26,5 +26,401 @@ content_map:
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
-  task_count: 0
-  plans: {}
+  task_count: 17
+  plans:
+    P1:
+      id: "P1"
+      title: "Model"
+      order: 1
+      target: "model"
+      does: "Implement the independent Model layer publishing Declaration, Foundation, and Interface layers for every Target-defined Domain Entity, preserving their Target-declared Fields, relationships, and rules."
+      constraints: []
+      task_count: 17
+      groups:
+        p1-g-foundation:
+          id: "p1-g-foundation"
+          title: "Shared Foundation and Interface"
+          description: "The Model layer's shared, non-domain-specific behaviour and its one public entry point, used by every Entity and every consumer."
+          area: "Model-wide shared behaviour and public entry point"
+          does: "One shared conversion behaviour is available to every Domain Entity, and every Entity and capability is reachable from one public entry point."
+          constraints: []
+          task_count: 2
+          tasks:
+            p1-foundation-conversion:
+              id: "p1-foundation-conversion"
+              source_id: "003"
+              title: "Provide shared Entity conversion behaviour"
+              description: "Implement the conversion behaviour shared by every Domain Entity: converting an Entity instance to a JSON-compatible representation and constructing an Entity instance from a JSON-compatible representation, without introducing Fields, constraints, or domain meaning of its own."
+              reason: "Every Entity needs one consistent, non-duplicated way to convert to and from JSON so Logic and other consumers do not each implement their own conversion."
+              inputs: ["The complete set of Domain Entities and their declared Fields"]
+              skills: ["sqlmodel"]
+              expected_result: "Any Domain Entity instance can be converted to a JSON-compatible representation and reconstructed from one, using shared behaviour that injects no Field or domain rule of its own."
+              depends_on: []
+              constraints: []
+              acceptance: "Converting an Entity instance to its JSON-compatible representation and back reproduces an equivalent instance for every declared Field, for every Entity."
+              verify: "For a representative instance of each Entity, the conversion round trip preserves every declared Field's value and type without loss or alteration."
+              status: "done"
+              log:
+                - at: "2026-09-27T11:24:04Z"
+                  status: "done"
+                  note: "Implemented Model_Foundation.to_json()/from_json() using SQLModel's model_dump(mode='json') and model_validate(), injecting no Field of its own. Verified: created and committed one instance of every declared Entity in an in-memory SQLite database, called to_json() then from_json() on each, and confirmed every declared Field's value was preserved across all 15 Entities."
+            p1-foundation-interface:
+              id: "p1-foundation-interface"
+              source_id: "003"
+              title: "Publish the Model public entry point"
+              description: "Present every Domain Entity class and the shared conversion capability through one public entry point, so consuming Components can access any Model capability without depending on internal layering."
+              reason: "Logic and Database need one convenient, complete point of access to every Entity and capability the Model layer publishes."
+              inputs: ["Every declared Domain Entity", "The shared conversion behaviour"]
+              skills: ["sqlmodel"]
+              expected_result: "Every Domain Entity class and the shared conversion capability is reachable from one public entry point."
+              depends_on: ["p1-user", "p1-trading-platform", "p1-instance", "p1-currency", "p1-broker", "p1-asset", "p1-account-group", "p1-account", "p1-trailing-group", "p1-trailing-rule", "p1-partial-group", "p1-partial-rule", "p1-action-group", "p1-action", "p1-position"]
+              constraints: []
+              acceptance: "Every declared Domain Entity and the shared conversion capability can be obtained from the public entry point alone."
+              verify: "Each Domain Entity class and the shared conversion capability is importable from the public entry point and behaves identically to importing it directly."
+              status: "done"
+              log:
+                - at: "2026-09-27T11:24:04Z"
+                  status: "done"
+                  note: "Published model_interface.py re-exporting Model_Declaration, Model_Foundation, and all 15 Entity classes as one public entry point. Verified: imported every Entity and both Foundation classes from my_model.model_interface alone in a fresh Python process; every import resolved and behaved identically to importing it directly from its own unit."
+        p1-g-user:
+          id: "p1-g-user"
+          title: "User Identity"
+          description: "The independent system user every other user-owned Entity refers back to."
+          area: "User identity and access"
+          does: "The system has one authoritative representation of an independent system user."
+          constraints: []
+          task_count: 1
+          tasks:
+            p1-user:
+              id: "p1-user"
+              source_id: "003"
+              title: "Declare the User Domain Entity"
+              description: "Define User as one flat, technology-independent Domain Entity that records its Target-declared Fields with their types, presence and default rules, credential sensitivity markers, primary key, and declared Uniqueness Constraints, preserving every Target-declared Field, constraint, default, and sensitivity marker exactly. User has no relationships to another Entity."
+              reason: "Every user-owned Entity in the Target depends on one authoritative User identity."
+              inputs: ["Target's User field and rule definitions"]
+              skills: ["sqlmodel"]
+              expected_result: "A User Domain Entity exists that preserves every declared Field, uniqueness rule, default, and credential sensitivity marker."
+              depends_on: []
+              constraints: []
+              acceptance: "The User Domain Entity's declared Fields, uniqueness rules, defaults, and sensitivity markers exactly match the Target's User definition, with no Field invented or omitted."
+              verify: "Inspecting the User Domain Entity's declaration shows every Target-declared Field with its type, nullability, uniqueness, default, and sensitivity marker present, and it independently converts to and from its JSON-compatible representation through the shared Foundation behaviour."
+              status: "done"
+              log:
+                - at: "2026-09-27T11:24:04Z"
+                  status: "done"
+                  note: "Declared User with name/username unique, password/api_key carrying the password sensitivity marker, is_active defaulting true, and description optional (id/is_active/description inherited from the shared Model_Declaration base; conversion inherited from Model_Foundation). No relationships, matching the Target definition. Verified: created and committed a User row in an in-memory SQLite database; every declared Field, including both credential Fields, round-tripped through to_json()/from_json() unchanged."
+        p1-g-trading:
+          id: "p1-g-trading"
+          title: "Trading Connectivity"
+          description: "The supported trading platforms, each user's connection instance to a platform, and the brokers through which accounts and assets are provided."
+          area: "Trading platform identity and connection configuration"
+          does: "The system has one authoritative representation of each supported trading platform, each user's connection instance, and each broker."
+          constraints: []
+          task_count: 3
+          tasks:
+            p1-trading-platform:
+              id: "p1-trading-platform"
+              source_id: "003"
+              title: "Declare the Trading Platform Domain Entity"
+              description: "Define Trading Platform as one flat, technology-independent Domain Entity that records its Target-declared Fields with their types, presence and default rules, primary key, and declared Uniqueness Constraint, preserving every Target-declared Field, constraint, and default exactly. Trading Platform has no relationships to another Entity."
+              reason: "Instance and Position both identify the trading platform they use, so one authoritative Trading Platform representation is required."
+              inputs: ["Target's Trading Platform field and rule definitions"]
+              skills: ["sqlmodel"]
+              expected_result: "A Trading Platform Domain Entity exists that preserves every declared Field, uniqueness rule, and default."
+              depends_on: []
+              constraints: []
+              acceptance: "The Trading Platform Domain Entity's declared Fields, uniqueness rule, and defaults exactly match the Target's Trading Platform definition, with no Field invented or omitted."
+              verify: "Inspecting the Trading Platform Domain Entity's declaration shows every Target-declared Field present, and it independently converts to and from its JSON-compatible representation through the shared Foundation behaviour."
+              status: "done"
+              log:
+                - at: "2026-09-27T11:24:04Z"
+                  status: "done"
+                  note: "Declared TradingPlatform with name unique and code, inheriting id/is_active/description and conversion behaviour from the shared base classes. No relationships, matching the Target definition. Verified: created and committed a TradingPlatform row in an in-memory SQLite database; every declared Field round-tripped through to_json()/from_json() unchanged."
+            p1-instance:
+              id: "p1-instance"
+              source_id: "003"
+              title: "Declare the Instance Domain Entity"
+              description: "Define Instance as one flat, technology-independent Domain Entity that records its Target-declared Fields with their types, presence and default rules, credential sensitivity markers, primary key, explicit Relationships to the User that owns it and the Trading Platform it uses, and its declared composite Uniqueness Constraint, preserving every Target-declared Field, constraint, default, relationship, and sensitivity marker exactly."
+              reason: "Account and Position both use a connection Instance, so one authoritative Instance representation is required."
+              inputs: ["Target's Instance field, relationship, and rule definitions"]
+              skills: ["sqlmodel"]
+              expected_result: "An Instance Domain Entity exists that preserves every declared Field, relationship, uniqueness rule, default, and credential sensitivity marker."
+              depends_on: ["p1-user", "p1-trading-platform"]
+              constraints: []
+              acceptance: "The Instance Domain Entity's declared Fields, relationships, uniqueness rule, defaults, and sensitivity markers exactly match the Target's Instance definition, with no Field invented or omitted."
+              verify: "Inspecting the Instance Domain Entity's declaration shows every Target-declared Field and its Relationships to User and Trading Platform present, and it independently converts to and from its JSON-compatible representation through the shared Foundation behaviour."
+              status: "done"
+              log:
+                - at: "2026-09-27T11:24:04Z"
+                  status: "done"
+                  note: "Declared Instance with explicit Relationships to User and TradingPlatform, optional ip/username/password/api_key (password and api_key carrying the password sensitivity marker), and a composite uniqueness constraint on (user_id, name). Verified: created and committed an Instance row referencing a committed User and TradingPlatform in an in-memory SQLite database, confirmed instance.user and instance.trading_platform resolve via the declared Relationships, and confirmed every declared Field round-tripped through to_json()/from_json() unchanged."
+            p1-broker:
+              id: "p1-broker"
+              source_id: "003"
+              title: "Declare the Broker Domain Entity"
+              description: "Define Broker as one flat, technology-independent Domain Entity that records its Target-declared Fields with their types, presence and default rules, primary key, an explicit Relationship to the User who owns its configuration, and its declared composite Uniqueness Constraint, preserving every Target-declared Field, constraint, default, and relationship exactly."
+              reason: "Asset, Account, and Position all identify a Broker, so one authoritative Broker representation is required."
+              inputs: ["Target's Broker field, relationship, and rule definitions"]
+              skills: ["sqlmodel"]
+              expected_result: "A Broker Domain Entity exists that preserves every declared Field, relationship, uniqueness rule, and default."
+              depends_on: ["p1-user"]
+              constraints: []
+              acceptance: "The Broker Domain Entity's declared Fields, relationship, uniqueness rule, and defaults exactly match the Target's Broker definition, with no Field invented or omitted."
+              verify: "Inspecting the Broker Domain Entity's declaration shows every Target-declared Field and its Relationship to User present, and it independently converts to and from its JSON-compatible representation through the shared Foundation behaviour."
+              status: "done"
+              log:
+                - at: "2026-09-27T11:24:04Z"
+                  status: "done"
+                  note: "Declared Broker with an explicit Relationship to User and a composite uniqueness constraint on (user_id, name). Verified: created and committed a Broker row referencing a committed User in an in-memory SQLite database, confirmed broker.user resolves via the declared Relationship, and confirmed every declared Field round-tripped through to_json()/from_json() unchanged."
+        p1-g-currency-asset:
+          id: "p1-g-currency-asset"
+          title: "Currency and Assets"
+          description: "The currencies available to a user and the tradable assets each broker provides."
+          area: "Currency and asset identity"
+          does: "The system has one authoritative representation of each user's currencies and each broker's tradable assets."
+          constraints: []
+          task_count: 2
+          tasks:
+            p1-currency:
+              id: "p1-currency"
+              source_id: "003"
+              title: "Declare the Currency Domain Entity"
+              description: "Define Currency as one flat, technology-independent Domain Entity that records its Target-declared Fields with their types, presence and default rules, primary key, an explicit Relationship to the User who owns it, and its declared composite Uniqueness Constraint, preserving every Target-declared Field, constraint, default, and relationship exactly."
+              reason: "Account identifies a base Currency, so one authoritative Currency representation is required."
+              inputs: ["Target's Currency field, relationship, and rule definitions"]
+              skills: ["sqlmodel"]
+              expected_result: "A Currency Domain Entity exists that preserves every declared Field, relationship, uniqueness rule, and default."
+              depends_on: ["p1-user"]
+              constraints: []
+              acceptance: "The Currency Domain Entity's declared Fields, relationship, uniqueness rule, and defaults exactly match the Target's Currency definition, with no Field invented or omitted."
+              verify: "Inspecting the Currency Domain Entity's declaration shows every Target-declared Field and its Relationship to User present, and it independently converts to and from its JSON-compatible representation through the shared Foundation behaviour."
+              status: "done"
+              log:
+                - at: "2026-09-27T11:24:04Z"
+                  status: "done"
+                  note: "Declared Currency with an explicit Relationship to User and a composite uniqueness constraint on (user_id, code). Verified: created and committed a Currency row referencing a committed User in an in-memory SQLite database, confirmed currency.user resolves via the declared Relationship, and confirmed every declared Field round-tripped through to_json()/from_json() unchanged."
+            p1-asset:
+              id: "p1-asset"
+              source_id: "003"
+              title: "Declare the Asset Domain Entity"
+              description: "Define Asset as one flat, technology-independent Domain Entity that records its Target-declared Fields with their types, presence and default rules, primary key, an explicit Relationship to the Broker that provides it, and its declared composite Uniqueness Constraint, preserving every Target-declared Field, constraint, default, and relationship exactly."
+              reason: "Action identifies the Asset it trades, so one authoritative Asset representation is required."
+              inputs: ["Target's Asset field, relationship, and rule definitions"]
+              skills: ["sqlmodel"]
+              expected_result: "An Asset Domain Entity exists that preserves every declared Field, relationship, uniqueness rule, and default."
+              depends_on: ["p1-broker"]
+              constraints: []
+              acceptance: "The Asset Domain Entity's declared Fields, relationship, uniqueness rule, and defaults exactly match the Target's Asset definition, with no Field invented or omitted."
+              verify: "Inspecting the Asset Domain Entity's declaration shows every Target-declared Field and its Relationship to Broker present, and it independently converts to and from its JSON-compatible representation through the shared Foundation behaviour."
+              status: "done"
+              log:
+                - at: "2026-09-27T11:24:04Z"
+                  status: "done"
+                  note: "Declared Asset with an explicit Relationship to Broker and a composite uniqueness constraint on (broker_id, symbol). Verified: created and committed an Asset row referencing a committed Broker in an in-memory SQLite database, confirmed asset.broker resolves via the declared Relationship, and confirmed every declared Field round-tripped through to_json()/from_json() unchanged."
+        p1-g-accounts:
+          id: "p1-g-accounts"
+          title: "Accounts"
+          description: "The account groups a user organizes accounts into, and the funded trading accounts themselves."
+          area: "Account organization and identity"
+          does: "The system has one authoritative representation of each account group and each funded trading account."
+          constraints: []
+          task_count: 2
+          tasks:
+            p1-account-group:
+              id: "p1-account-group"
+              source_id: "003"
+              title: "Declare the Account Group Domain Entity"
+              description: "Define Account Group as one flat, technology-independent Domain Entity that records its Target-declared Fields with their types, presence and default rules, primary key, an explicit Relationship to the User who owns it, and its declared composite Uniqueness Constraint, preserving every Target-declared Field, constraint, default, and relationship exactly."
+              reason: "Account belongs to an Account Group, so one authoritative Account Group representation is required."
+              inputs: ["Target's Account Group field, relationship, and rule definitions"]
+              skills: ["sqlmodel"]
+              expected_result: "An Account Group Domain Entity exists that preserves every declared Field, relationship, uniqueness rule, and default."
+              depends_on: ["p1-user"]
+              constraints: []
+              acceptance: "The Account Group Domain Entity's declared Fields, relationship, uniqueness rule, and defaults exactly match the Target's Account Group definition, with no Field invented or omitted."
+              verify: "Inspecting the Account Group Domain Entity's declaration shows every Target-declared Field and its Relationship to User present, and it independently converts to and from its JSON-compatible representation through the shared Foundation behaviour."
+              status: "done"
+              log:
+                - at: "2026-09-27T11:24:04Z"
+                  status: "done"
+                  note: "Declared AccountGroup with an explicit Relationship to User and a composite uniqueness constraint on (user_id, name). Verified: created and committed an AccountGroup row referencing a committed User in an in-memory SQLite database, confirmed account_group.user resolves via the declared Relationship, and confirmed every declared Field round-tripped through to_json()/from_json() unchanged."
+            p1-account:
+              id: "p1-account"
+              source_id: "003"
+              title: "Declare the Account Domain Entity"
+              description: "Define Account as one flat, technology-independent Domain Entity that records its Target-declared Fields with their types, presence and default rules, credential sensitivity marker, primary key, explicit Relationships to the Account Group, Broker, Instance, and base Currency it uses, and its declared composite Uniqueness Constraint, preserving every Target-declared Field, constraint, default, relationship, and sensitivity marker exactly."
+              reason: "Action and Position both use an Account to execute trades, so one authoritative Account representation is required."
+              inputs: ["Target's Account field, relationship, and rule definitions"]
+              skills: ["sqlmodel"]
+              expected_result: "An Account Domain Entity exists that preserves every declared Field, relationship, uniqueness rule, default, and credential sensitivity marker."
+              depends_on: ["p1-account-group", "p1-broker", "p1-instance", "p1-currency"]
+              constraints: []
+              acceptance: "The Account Domain Entity's declared Fields, relationships, uniqueness rule, defaults, and sensitivity marker exactly match the Target's Account definition, with no Field invented or omitted."
+              verify: "Inspecting the Account Domain Entity's declaration shows every Target-declared Field and its Relationships to Account Group, Broker, Instance, and Currency present, and it independently converts to and from its JSON-compatible representation through the shared Foundation behaviour."
+              status: "done"
+              log:
+                - at: "2026-09-27T11:24:04Z"
+                  status: "done"
+                  note: "Declared Account with explicit Relationships to AccountGroup, Broker, Instance, and Currency, name unique, password carrying the password sensitivity marker, and a composite uniqueness constraint on (group_id, broker_id, instance_id). Verified: created and committed an Account row referencing all four committed related Entities in an in-memory SQLite database, confirmed each Relationship attribute resolves (including account.broker.name), and confirmed every declared Field round-tripped through to_json()/from_json() unchanged."
+        p1-g-trailing:
+          id: "p1-g-trailing"
+          title: "Trailing Rules"
+          description: "The groups of rules that manage Stop Loss and Take Profit during a trade, and the individual rules within them."
+          area: "Trailing rule organization and identity"
+          does: "The system has one authoritative representation of each trailing group and each trailing rule within it."
+          constraints: []
+          task_count: 2
+          tasks:
+            p1-trailing-group:
+              id: "p1-trailing-group"
+              source_id: "003"
+              title: "Declare the Trailing Group Domain Entity"
+              description: "Define Trailing Group as one flat, technology-independent Domain Entity that records its Target-declared Fields with their types, presence and default rules, primary key, an explicit Relationship to the User who owns it, and its declared composite Uniqueness Constraint, preserving every Target-declared Field, constraint, default, and relationship exactly."
+              reason: "Trailing Rule, Account, Action, and Position all identify a Trailing Group, so one authoritative Trailing Group representation is required."
+              inputs: ["Target's Trailing Group field, relationship, and rule definitions"]
+              skills: ["sqlmodel"]
+              expected_result: "A Trailing Group Domain Entity exists that preserves every declared Field, relationship, uniqueness rule, and default."
+              depends_on: ["p1-user"]
+              constraints: []
+              acceptance: "The Trailing Group Domain Entity's declared Fields, relationship, uniqueness rule, and defaults exactly match the Target's Trailing Group definition, with no Field invented or omitted."
+              verify: "Inspecting the Trailing Group Domain Entity's declaration shows every Target-declared Field and its Relationship to User present, and it independently converts to and from its JSON-compatible representation through the shared Foundation behaviour."
+              status: "done"
+              log:
+                - at: "2026-09-27T11:24:04Z"
+                  status: "done"
+                  note: "Declared TrailingGroup with an explicit Relationship to User and a composite uniqueness constraint on (user_id, name). Verified: created and committed a TrailingGroup row referencing a committed User in an in-memory SQLite database, confirmed trailing_group.user resolves via the declared Relationship, and confirmed every declared Field round-tripped through to_json()/from_json() unchanged."
+            p1-trailing-rule:
+              id: "p1-trailing-rule"
+              source_id: "003"
+              title: "Declare the Trailing Rule Domain Entity"
+              description: "Define Trailing Rule as one flat, technology-independent Domain Entity that records its Target-declared Fields with their types, presence and default rules, primary key, an explicit Relationship to the Trailing Group that contains it, and its declared composite Uniqueness Constraint, preserving every Target-declared Field, constraint, default, and relationship exactly."
+              reason: "Each Trailing Group needs its individual activation and adjustment rules represented as one authoritative Trailing Rule Entity."
+              inputs: ["Target's Trailing Rule field, relationship, and rule definitions"]
+              skills: ["sqlmodel"]
+              expected_result: "A Trailing Rule Domain Entity exists that preserves every declared Field, relationship, uniqueness rule, and default."
+              depends_on: ["p1-trailing-group"]
+              constraints: []
+              acceptance: "The Trailing Rule Domain Entity's declared Fields, relationship, uniqueness rule, and defaults exactly match the Target's Trailing Rule definition, with no Field invented or omitted."
+              verify: "Inspecting the Trailing Rule Domain Entity's declaration shows every Target-declared Field and its Relationship to Trailing Group present, and it independently converts to and from its JSON-compatible representation through the shared Foundation behaviour."
+              status: "done"
+              log:
+                - at: "2026-09-27T11:24:04Z"
+                  status: "done"
+                  note: "Declared TrailingRule with name unique, an explicit Relationship to TrailingGroup, optional take_profit_adjustment/stop_loss_adjustment, and a composite uniqueness constraint on (trailing_group_id, trigger_percentage). Verified: created and committed a TrailingRule row referencing a committed TrailingGroup in an in-memory SQLite database, confirmed trailing_rule.trailing_group resolves via the declared Relationship, and confirmed every declared Field round-tripped through to_json()/from_json() unchanged."
+        p1-g-partial:
+          id: "p1-g-partial"
+          title: "Partial Rules"
+          description: "The groups of rules that manage partial closing of an open trade, and the individual rules within them."
+          area: "Partial rule organization and identity"
+          does: "The system has one authoritative representation of each partial group and each partial rule within it."
+          constraints: []
+          task_count: 2
+          tasks:
+            p1-partial-group:
+              id: "p1-partial-group"
+              source_id: "003"
+              title: "Declare the Partial Group Domain Entity"
+              description: "Define Partial Group as one flat, technology-independent Domain Entity that records its Target-declared Fields with their types, presence and default rules, primary key, an explicit Relationship to the User who owns it, and its declared composite Uniqueness Constraint, preserving every Target-declared Field, constraint, default, and relationship exactly."
+              reason: "Partial Rule, Action, and Position all identify a Partial Group, so one authoritative Partial Group representation is required."
+              inputs: ["Target's Partial Group field, relationship, and rule definitions"]
+              skills: ["sqlmodel"]
+              expected_result: "A Partial Group Domain Entity exists that preserves every declared Field, relationship, uniqueness rule, and default."
+              depends_on: ["p1-user"]
+              constraints: []
+              acceptance: "The Partial Group Domain Entity's declared Fields, relationship, uniqueness rule, and defaults exactly match the Target's Partial Group definition, with no Field invented or omitted."
+              verify: "Inspecting the Partial Group Domain Entity's declaration shows every Target-declared Field and its Relationship to User present, and it independently converts to and from its JSON-compatible representation through the shared Foundation behaviour."
+              status: "done"
+              log:
+                - at: "2026-09-27T11:24:04Z"
+                  status: "done"
+                  note: "Declared PartialGroup with an explicit Relationship to User and a composite uniqueness constraint on (user_id, name). Verified: created and committed a PartialGroup row referencing a committed User in an in-memory SQLite database, confirmed partial_group.user resolves via the declared Relationship, and confirmed every declared Field round-tripped through to_json()/from_json() unchanged."
+            p1-partial-rule:
+              id: "p1-partial-rule"
+              source_id: "003"
+              title: "Declare the Partial Rule Domain Entity"
+              description: "Define Partial Rule as one flat, technology-independent Domain Entity that records its Target-declared Fields with their types, presence and default rules, primary key, an explicit Relationship to the Partial Group that contains it, and its declared composite Uniqueness Constraint, preserving every Target-declared Field, constraint, default, and relationship exactly."
+              reason: "Each Partial Group needs its individual activation and close-percentage rules represented as one authoritative Partial Rule Entity."
+              inputs: ["Target's Partial Rule field, relationship, and rule definitions"]
+              skills: ["sqlmodel"]
+              expected_result: "A Partial Rule Domain Entity exists that preserves every declared Field, relationship, uniqueness rule, and default."
+              depends_on: ["p1-partial-group"]
+              constraints: []
+              acceptance: "The Partial Rule Domain Entity's declared Fields, relationship, uniqueness rule, and defaults exactly match the Target's Partial Rule definition, with no Field invented or omitted."
+              verify: "Inspecting the Partial Rule Domain Entity's declaration shows every Target-declared Field and its Relationship to Partial Group present, and it independently converts to and from its JSON-compatible representation through the shared Foundation behaviour."
+              status: "done"
+              log:
+                - at: "2026-09-27T11:24:04Z"
+                  status: "done"
+                  note: "Declared PartialRule with name unique, an explicit Relationship to PartialGroup, and a composite uniqueness constraint on (partial_group_id, profit_percentage). Verified: created and committed a PartialRule row referencing a committed PartialGroup in an in-memory SQLite database, confirmed partial_rule.partial_group resolves via the declared Relationship, and confirmed every declared Field round-tripped through to_json()/from_json() unchanged."
+        p1-g-actions:
+          id: "p1-g-actions"
+          title: "Actions"
+          description: "The groups actions are organized into by risk profile, and the actions that define how a position must be opened."
+          area: "Action organization and identity"
+          does: "The system has one authoritative representation of each action group and each action within it."
+          constraints: []
+          task_count: 2
+          tasks:
+            p1-action-group:
+              id: "p1-action-group"
+              source_id: "003"
+              title: "Declare the Action Group Domain Entity"
+              description: "Define Action Group as one flat, technology-independent Domain Entity that records its Target-declared Fields with their types, presence and default rules, primary key, an explicit Relationship to the User who owns it, and its declared composite Uniqueness Constraint, preserving every Target-declared Field, constraint, default, and relationship exactly."
+              reason: "Action and Position both identify an Action Group, so one authoritative Action Group representation is required."
+              inputs: ["Target's Action Group field, relationship, and rule definitions"]
+              skills: ["sqlmodel"]
+              expected_result: "An Action Group Domain Entity exists that preserves every declared Field, relationship, uniqueness rule, and default."
+              depends_on: ["p1-user"]
+              constraints: []
+              acceptance: "The Action Group Domain Entity's declared Fields, relationship, uniqueness rule, and defaults exactly match the Target's Action Group definition, with no Field invented or omitted."
+              verify: "Inspecting the Action Group Domain Entity's declaration shows every Target-declared Field and its Relationship to User present, and it independently converts to and from its JSON-compatible representation through the shared Foundation behaviour."
+              status: "done"
+              log:
+                - at: "2026-09-27T11:24:04Z"
+                  status: "done"
+                  note: "Declared ActionGroup with an explicit Relationship to User and a composite uniqueness constraint on (user_id, name). Verified: created and committed an ActionGroup row referencing a committed User in an in-memory SQLite database, confirmed action_group.user resolves via the declared Relationship, and confirmed every declared Field round-tripped through to_json()/from_json() unchanged."
+            p1-action:
+              id: "p1-action"
+              source_id: "003"
+              title: "Declare the Action Domain Entity"
+              description: "Define Action as one flat, technology-independent Domain Entity that records its Target-declared Fields with their types, presence and default rules, primary key, explicit Relationships to the Action Group, Asset, Account, Partial Group, and Trailing Group it uses, and its declared composite Uniqueness Constraint, preserving every Target-declared Field, constraint, default, and relationship exactly."
+              reason: "Position identifies the Action it was created from, so one authoritative Action representation is required."
+              inputs: ["Target's Action field, relationship, and rule definitions"]
+              skills: ["sqlmodel"]
+              expected_result: "An Action Domain Entity exists that preserves every declared Field, relationship, uniqueness rule, and default."
+              depends_on: ["p1-action-group", "p1-asset", "p1-account", "p1-partial-group", "p1-trailing-group"]
+              constraints: []
+              acceptance: "The Action Domain Entity's declared Fields, relationships, uniqueness rule, and defaults exactly match the Target's Action definition, with no Field invented or omitted."
+              verify: "Inspecting the Action Domain Entity's declaration shows every Target-declared Field and its Relationships to Action Group, Asset, Account, Partial Group, and Trailing Group present, and it independently converts to and from its JSON-compatible representation through the shared Foundation behaviour."
+              status: "done"
+              log:
+                - at: "2026-09-27T11:24:04Z"
+                  status: "done"
+                  note: "Declared Action with explicit Relationships to ActionGroup, Asset, Account, PartialGroup, and TrailingGroup, and a composite uniqueness constraint on (action_group_id, name). Verified: created and committed an Action row referencing all five committed related Entities in an in-memory SQLite database, confirmed each Relationship attribute resolves, and confirmed every declared Field round-tripped through to_json()/from_json() unchanged."
+        p1-g-positions:
+          id: "p1-g-positions"
+          title: "Positions"
+          description: "The complete information for every position the system creates, whether opened or still pending execution."
+          area: "Position identity"
+          does: "The system has one authoritative representation of every position, opened or pending."
+          constraints: []
+          task_count: 1
+          tasks:
+            p1-position:
+              id: "p1-position"
+              source_id: "003"
+              title: "Declare the Position Domain Entity"
+              description: "Define Position as one flat, technology-independent Domain Entity that records its Target-declared Fields with their types, presence and default rules, primary key, explicit Relationships to the User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and Action it involves, and its Uniqueness Constraint, preserving every Target-declared Field, constraint, default, and relationship exactly."
+              reason: "Position is the Target's authoritative record of every opened and pending trade and needs exactly one Domain Entity representation."
+              inputs: ["Target's Position field, relationship, and rule definitions"]
+              skills: ["sqlmodel"]
+              expected_result: "A Position Domain Entity exists that preserves every declared Field, relationship, uniqueness rule, and default."
+              depends_on: ["p1-user", "p1-trading-platform", "p1-broker", "p1-account", "p1-trailing-group", "p1-partial-group", "p1-action-group", "p1-action"]
+              constraints: []
+              acceptance: "The Position Domain Entity's declared Fields, relationships, uniqueness rule, and defaults exactly match the Target's Position definition, with no Field invented or omitted."
+              verify: "Inspecting the Position Domain Entity's declaration shows every Target-declared Field and its eight Relationships present, and it independently converts to and from its JSON-compatible representation through the shared Foundation behaviour."
+              status: "done"
+              log:
+                - at: "2026-09-27T11:24:04Z"
+                  status: "done"
+                  note: "Declared Position with explicit Relationships to User, TradingPlatform, Broker, Account, TrailingGroup, PartialGroup, ActionGroup, and Action, and name unique. Verified: created and committed a Position row referencing all eight committed related Entities in an in-memory SQLite database, confirmed multi-hop Relationship access (position.action.action_group.name), and confirmed every declared Field round-tripped through to_json()/from_json() unchanged."
