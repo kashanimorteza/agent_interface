@@ -47,9 +47,6 @@ content:
       directory: "model"
       package: "model"
     defaults:
-      relationship:
-        on_delete: "cascade"
-        # Alternatives: restrict, set_null.
       value_generation:
         generated_id: "uuid4"
         # Alternatives: uuid1, ulid.

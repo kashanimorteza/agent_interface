@@ -10,7 +10,7 @@ Model defines and publishes the project's data-model Entities.
 1. **[Introduction](#introduction)**
 2. **[Terms](#terms)**
 3. **[Architecture](#architecture)**
-4. **[Relationships](#relationships)**
+4. **[Component Use](#component-use)**
 5. **[Layering](#layering)**
 6. **[Authority](#authority)**
 7. **[Principles](#principles)**
@@ -23,7 +23,7 @@ Model defines and publishes the project's data-model Entities.
 
 ### Overview
 
-Model defines flat, technology-independent Entities. Each Entity carries its own meaning, Fields, and explicit Relationships without nesting another Entity.
+Model defines flat, technology-independent Entities. Each Entity carries its own meaning, Fields, and explicit References without nesting another Entity.
 
 ### Purpose
 
@@ -43,11 +43,10 @@ Each Entity stands alone in its own unit. Declaration records technology-indepen
 - **Type** — the technology-independent category of values a Field may hold.
 - **Field Rule** — a declared rule for a Field's presence, default, sensitivity marker, immutability, length, or constraint.
 - **Sensitivity Marker** — optional Field metadata whose value is either `password` or `sensitive`. It identifies a value category; Model records and publishes the marker but does not inspect, transform, or otherwise handle the value.
-- **Relationship** — an explicit domain reference from one Entity to another, with declared cardinality and without nesting either Entity inside the other.
 - **Identity** — the `id` Field that distinguishes one Entity from every other Entity of the same kind.
 - **Primary Key** — the `id` Field used to identify an Entity.
 - **Uniqueness Constraint** — a condition requiring one Field or a declared combination of Fields to have no duplicate value within its Entity.
-- **Reference** — the Field-level expression of a Relationship that holds another Entity's `id`.
+- **Reference** — a Field-level reference that holds another Entity's `id`.
 - **Index** — a declared access intention for one Field or a declared combination of Fields.
 - **Default Value** — a fixed value applied when a Field is omitted.
 - **Value Generation** — a declared way to supply a Field value automatically when an Entity is created, including Auto Increment or a generated identifier.
@@ -70,8 +69,8 @@ Model
 
 <br>
 
-<!--------------------------------------------------------------------------------- Relationships --->
-## Relationships
+<!--------------------------------------------------------------------------------- Component Use --->
+## Component Use
 
 - **Logic** — uses Model Interface to obtain Entities for application programming.
 - **Database** — uses Entities to create its storage structure, and uses Model Interface for other Model use.
@@ -104,9 +103,7 @@ Declaration
 │   ├── Length
 │   └── Constraints
 ├── Primary Key
-├── Relationships
-│   ├── References
-│   └── Cardinality
+├── References
 ├── Unique Constraints
 ├── Indexes
 └── Value Generation
@@ -192,7 +189,7 @@ Every Principle below is mandatory.
 
 ### Declaration records complete Entity meaning
 
-**Rule:** Every Entity has a Declaration that records and exposes its `id` Identity and Primary Key, Fields and applicable Types, Field Rules, Uniqueness Constraints, Relationships and their cardinality, Index intentions, and Value Generation. A Reference identifies its target Entity and `id`; every Relationship uses Model Preferences' configured `on_delete` behaviour. A many-to-many Relationship requires an intermediary Entity declared by Target. A Uniqueness Constraint or Index may cover one Field or a declared combination of Fields. Declaration provides no runtime behaviour.
+**Rule:** Every Entity has a Declaration that records and exposes its `id` Identity and Primary Key, Fields and applicable Types, Field Rules, Uniqueness Constraints, References, Index intentions, and Value Generation. A Reference identifies its target Entity and `id`. A Uniqueness Constraint or Index may cover one Field or a declared combination of Fields. Declaration provides no runtime behaviour.
 
 **Why:** One complete data meaning remains usable by consumers without coupling that meaning to a language, package, database, or Engine.
 
@@ -220,9 +217,9 @@ Every Principle below is mandatory.
 
 <br>
 
-### Entity names express domain meaning
+### Entity and Reference names express domain meaning
 
-**Rule:** Every Entity, Field, and Relationship name expresses Target meaning, never an implementation tool or consumer-specific representation.
+**Rule:** Every Entity, Field, and Reference name expresses Target meaning, never an implementation tool or consumer-specific representation.
 
 **Why:** Domain-oriented names keep Entity meaning understandable without technical context.
 
@@ -240,13 +237,13 @@ Every Principle below is mandatory.
 
 <br>
 
-### Entities are flat and explicitly related
+### Entities are flat and use explicit References
 
-**Rule:** Every Entity remains flat and independently understandable. When Target meaning connects two Entities, Model records that connection as an explicit Relationship or Reference rather than nesting one Entity inside another.
+**Rule:** Every Entity remains flat and independently understandable. When a Field refers to another Entity, Model records that connection as an explicit Reference rather than nesting either Entity inside the other.
 
-**Why:** Flat Entities prevent hidden structural coupling while explicit Relationships preserve the Target's domain connections.
+**Why:** Flat Entities prevent hidden structural coupling while explicit References preserve the Target's domain connections.
 
-**Boundary:** A Relationship does not create nesting, inheritance, copied Fields, or shared ownership between Entities.
+**Boundary:** A Reference does not create nesting, inheritance, copied Fields, or shared ownership between Entities.
 
 <br>
 
@@ -292,8 +289,8 @@ Every obligation in the file, under the Principle it comes from.
 
 **Declaration records complete Entity meaning**
 
-- **Must** — record and expose every Entity's `id` Identity and Primary Key, Fields, Types, Field Rules, Uniqueness Constraints, Relationships and cardinality, Index intentions, and Value Generation in Declaration.
-- **Must** — identify every Reference target and its `id`; use the configured `on_delete` behaviour for every Relationship; require a Target-declared intermediary Entity for many-to-many Relationships; allow declared composite Uniqueness Constraints and Indexes.
+- **Must** — record and expose every Entity's `id` Identity and Primary Key, Fields, Types, Field Rules, Uniqueness Constraints, References, Index intentions, and Value Generation in Declaration.
+- **Must** — identify every Reference target and its `id`; allow declared composite Uniqueness Constraints and Indexes.
 - **Never** — put runtime behaviour or technology-specific storage choices in Declaration.
 
 **Model publishes all layers**
@@ -309,8 +306,8 @@ Every obligation in the file, under the Principle it comes from.
 
 **Entity names express domain meaning**
 
-- **Must** — Name every Entity, Field, and Relationship from Target domain meaning.
-- **Never** — Name an Entity, Field, or Relationship after an implementation tool or consumer representation.
+- **Must** — Name every Entity, Field, and Reference from Target domain meaning.
+- **Never** — Name an Entity, Field, or Reference after an implementation tool or consumer representation.
 
 **Model remains separate from external concerns**
 
