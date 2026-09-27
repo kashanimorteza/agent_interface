@@ -68,7 +68,6 @@ content:
       testing: false
       error_handling: false
       logging: false
-      encryption: false
     naming:
       entity: "PascalCase"
       fields: "snake_case"
@@ -80,15 +79,7 @@ content:
             name: "SQLModel"
             version: "latest-compatible"
             skill: "sqlmodel"
-          guidance:
-            project_rules:
-              source_of_truth: "Generate each Model from its Domain Entity. Do not add Fields, constraints, defaults, or behavior that the Entity does not declare."
-              declaration: "Every Model uses the configured public Declaration class to record its technology-independent Fields, Types, Field Rules, Primary Key, Uniqueness Constraints, Relationships, Index intentions, and Value Generation. Declaration provides no runtime behaviour."
-              entity: "Generate every Entity as a public SQLModel table model. Logic uses that Entity class directly in application programming; Database independently imports the same class to derive tables and migration metadata. Do not create a second persistence model. SQLModel realizes the declared Fields and metadata without redefining their domain meaning."
-              foundation: "Every Entity uses the configured public Foundation class for the public to_json and from_json conversion contract. Foundation does not define Entity Fields, constraints, or domain meaning."
-              entity_unit: "Create one public SQLModel Entity class per Domain Entity and place it in its own module beneath the configured Entity directory."
-              interface: "Keep Interface, Entity, Declaration, and Foundation public. Interface presents consumer-facing Entity classes and capabilities as a convenient entry point."
-              flat_structure: "Do not nest, inherit, or copy Entities. Record every Target-declared cross-Entity connection as an explicit Relationship or Reference."
+          realization: "Implement each Entity as a SQLModel table model and realize its declared Fields and metadata through SQLModel."
   
   # <!-------------------------------------------- documentation -->
   documentation:

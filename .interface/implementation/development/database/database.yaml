@@ -53,7 +53,6 @@ content:
       structure: ".interface/foundation/schema/database.yaml"
     database_directory:
       path: "data"
-    default_engine: "sqlite"
     default_instance: "application"
 
   # <!-------------------------------------------- instances -->
@@ -79,7 +78,6 @@ content:
       testing: false
       error_handling: false
       logging: false
-      encryption: false
     languages:
       python:
         modeling:
@@ -134,7 +132,7 @@ content:
         connection:
           url_scheme: "postgresql+psycopg"
           default_port: 5432
-          parameters: ["host", "port", "database", "username_secret", "password_secret"]
+          parameters: ["host", "port", "database", "username", "password"]
       mysql:
         implement: false
         version: "latest-compatible"
@@ -147,7 +145,7 @@ content:
         connection:
           url_scheme: "mysql+pymysql"
           default_port: 3306
-          parameters: ["host", "port", "database", "username_secret", "password_secret"]
+          parameters: ["host", "port", "database", "username", "password"]
           charset: "utf8mb4"
       sql_server:
         implement: false
@@ -161,7 +159,7 @@ content:
         connection:
           url_scheme: "mssql+pyodbc"
           default_port: 1433
-          parameters: ["host", "port", "database", "username_secret", "password_secret"]
+          parameters: ["host", "port", "database", "username", "password"]
   
   # <!-------------------------------------------- documentation -->
   documentation:

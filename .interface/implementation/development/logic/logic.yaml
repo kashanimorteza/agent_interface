@@ -190,7 +190,6 @@ content:
       testing: false
       error_handling: false
       logging: false
-      encryption: false
 
   # <!-------------------------------------------- documentation -->
   documentation:

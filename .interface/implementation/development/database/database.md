@@ -41,10 +41,10 @@ Logic uses Interface to access Database. Interface exposes the public Actions, t
 - **Engine** — a declared database technology and, when marked for implementation, its implementation.
 - **Instance** — a named database connection and storage identity using one Engine.
 - **Database Configuration** — the declared Engines, Instances, and Settings available to Database.
-- **Settings** — component-wide choices such as the default Instance, purpose-to-Instance assignments, and secret references.
+- **Settings** — component-wide choices such as the default Instance, purpose-to-Instance assignments, and other shared parameters.
 - **Interface** — the only public Database layer, through which Logic imports Database classes and requests Database Operations.
 - **Operation** — one public Database action published through Interface.
-- **Execute Command** — an Operation that executes a declared database command whose purpose does not directly concern one Model.
+- **Execute Command** — an Operation that receives a SQL command and optional parameters, executes it through the selected Engine, and returns its result.
 - **Data** — the internal file that provides the Database Actions, resolves a request's Instance and Engine, and calls that Engine's implementation.
 - **Core** — the internal directory for shared files required by Database's layers.
 
@@ -94,7 +94,7 @@ The only public Database layer. It makes Database classes and Operations availab
 - **Max** — accepts an imported Entity class, one comparable field, and optional filters; returns the largest matching value.
 - **Truncate** — accepts an imported Entity class; removes all of its records while keeping its Table structure.
 - **Report** — accepts report-specific selection criteria; returns the requested report without requiring one Model as its subject.
-- **Execute Command** — accepts a declared command and its supplied parameters; returns that command's result or operation outcome. Its purpose need not concern one Model.
+- **Execute Command** — accepts a SQL command and optional parameters; executes it through the selected Engine and returns its result or operation outcome. Its purpose need not concern one Model.
 
 ### Data
 
@@ -126,7 +126,7 @@ Every Principle below is mandatory.
 
 ### Database configuration declares its available resources
 
-**Rule:** Database Configuration declares every Engine and its engine-specific parameters, every named Instance and its connection parameters, and component Settings such as the default Instance, purpose assignments, secret references, and other shared parameters. Every Instance names one declared Engine, and every configured Instance reference resolves to a declared Instance. Database Preferences identify which Engines are implemented in generated source.
+**Rule:** Database Configuration declares every Engine and its engine-specific parameters, every named Instance and its connection parameters, and component Settings such as the default Instance, purpose assignments, and other shared parameters. Every Instance names one declared Engine, and every configured Instance reference resolves to a declared Instance. Database Preferences identify which Engines are implemented in generated source.
 
 **Why:** One configuration source makes the available storage resources and their selection explicit.
 
@@ -134,11 +134,21 @@ Every Principle below is mandatory.
 
 ### Database exposes explicit Interface Operations
 
-**Rule:** Interface publishes the Operations described in this Component. Each applicable Operation receives an imported Entity class or Entity instance directly, never a Model name or identity. List accepts optional filters and optional ordering by field; Count, Sum, Min, and Max accept optional filters. Execute Command may perform a declared database command that does not directly concern one Model. Database documentation gives each published Interface Operation one complete example.
+**Rule:** Interface publishes the Operations described in this Component. Each applicable Operation receives an imported Entity class or Entity instance directly, never a Model name or identity. List accepts optional filters and optional ordering by field; Count, Sum, Min, and Max accept optional filters. Execute Command receives a SQL command and optional parameters, executes it through the selected Engine, and returns its result. Database documentation gives each published Interface Operation one complete example.
 
 **Why:** An explicit operation catalogue keeps the public data surface stable and understandable.
 
 **Boundary:** Interface receives and returns requests; it does not select an Engine or implement database-specific behavior.
+
+<br>
+
+### Database treats every Entity value as storage data
+
+**Rule:** Database treats every Entity Field solely according to its declared storage type, constraints, relationships, indexes, defaults, and other persistence metadata. A sensitive Field, credential, secret, or any other value is ordinary storage data to Database: it stores and returns the Entity value it receives without applying special handling because of that value's meaning.
+
+**Why:** Persistence remains general-purpose and can apply one consistent storage structure to every Entity value.
+
+**Boundary:** Logic owns any application Behaviour that needs special value handling. Database owns only the declared storage structure and constraints of the received Entity values.
 
 <br>
 
@@ -209,8 +219,14 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — receive an imported Entity class or Entity instance directly, never a Model name or identity.
 - **Must** — let List accept optional filters and optional field ordering.
 - **Must** — let Count, Sum, Min, and Max accept optional filters.
-- **Must** — let Execute Command perform a declared database command that does not directly concern one Model.
+- **Must** — let Execute Command receive a SQL command and optional parameters, execute it through the selected Engine, and return its result.
 - **Must** — give every published Interface Operation one complete documentation example.
+
+**Database treats every Entity value as storage data**
+
+- **Must** — apply each Entity Field's declared storage type, constraints, relationships, indexes, defaults, and persistence metadata.
+- **Must** — treat sensitive Fields, credentials, secrets, and other values as ordinary storage data.
+- **Never** — apply special storage behaviour because of a value's meaning.
 
 **Database publishes Interface only**
 

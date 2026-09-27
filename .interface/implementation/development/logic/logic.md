@@ -219,6 +219,16 @@ Every Principle below is mandatory.
 
 <br>
 
+### Logic owns sensitive-value handling
+
+**Rule:** When application Behaviour requires encryption, decryption, hashing, credential handling, secret use, or another special treatment of a sensitive value, Logic performs that treatment before passing an Entity to Database. Logic never exposes the original sensitive value through its Interface, logs, errors, or Application Outcomes.
+
+**Why:** The decision and behaviour for handling sensitive values belong to the application, not to general-purpose persistence.
+
+**Boundary:** Database stores and returns the Entity values it receives without interpreting sensitive data. Platform supplies runtime values; Logic does not own their delivery.
+
+<br>
+
 ### Logic execution remains bounded
 
 **Rule:** Logic uses finite timeouts. It retries only boundedly and only an operation that is safe or idempotent to repeat; it never retries without a limit.
@@ -292,6 +302,11 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — Define Logic's configuration contract and validate every required value before use.
 - **Never** — Put a secret in source, an error, a public interface, a log, or an Application Outcome, or take ownership of runtime values.
+
+**Logic owns sensitive-value handling**
+
+- **Must** — perform any application-required sensitive-value treatment before calling Database.
+- **Never** — expose an original sensitive value through Interface, logs, errors, or Application Outcomes.
 
 **Logic execution remains bounded**
 
