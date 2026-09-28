@@ -48,16 +48,16 @@ content:
       type: "library"
       language: "Python"
       platform: "VPS"
-      directory: "my_logic"
-      package: "my_logic"
+      directory: "logic"
+      package: "logic"
 
   # <!-------------------------------------------- layout -->
   layout:
     directories:
-      services: "logic_services"
-      entity: "logic_services/entity"
+      services: "services"
+      entity: "services/entity"
     files:
-      interface: "logic_interface"
+      interface: "interface"
     conventions:
       service_interface: "Keep every Service Interface in its own Service file."
       
