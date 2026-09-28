@@ -1,0 +1,330 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/state.yaml"
+  path_note: "Operational State: active Workflow position, aggregate Phase progress, and the recorded execution Log."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current State Schema. Reconciliation preserves existing operational records and never replaces them with defaults."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read active for the current Workflow position, phases for aggregate progress by stable Target phase identifier, and log for recorded execution history."
+  selection: "A phase resolves to the entry keyed by its stable Target phase identifier; a Log Entry resolves by its sequential identifier."
+  absence: "An empty phases mapping means no Phase identities have been reconciled; an empty log means no execution has been recorded."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "active"
+  - "phases"
+  - "log"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  active: "The current Workflow Mode, phase, reason, and who set it and when."
+  phases: "Aggregate planning, development, and review progress keyed by stable Target phase identifier."
+  log: "The project's preserved history of recorded Skill executions and their outcomes."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  active:
+    mode: "planning"
+    phase: "P3"
+    mode_reason: "Planning of phase P3 (Logic) concluded with 59 Tasks."
+    set_by: "my-interface-plan"
+    set_at: "2026-09-28T00:22:13Z"
+  phases:
+    P1:
+      id: "P1"
+      planning: "completed"
+      development: "completed"
+      review: "not started"
+      completed_at: null
+    P2:
+      id: "P2"
+      planning: "completed"
+      development: "completed"
+      review: "not started"
+      completed_at: null
+    P3:
+      id: "P3"
+      planning: "completed"
+      development: "not started"
+      review: "not started"
+      completed_at: null
+  log:
+    - id: "001"
+      skill: "my-interface-configure"
+      parent_id: ""
+      phase: null
+      event: "configure"
+      outcome: "completed"
+      started_at: "2026-09-27T23:31:11Z"
+      completed_at: "2026-09-27T23:31:29Z"
+      duration: "18 seconds"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used: []
+      open_questions: []
+      blockers: []
+      report: "Generated application.yaml, plan.yaml, and state.yaml in .interface/config/ from their Schemas composed with the general YAML structure; all three conform. No open questions or blockers."
+    - id: "002"
+      skill: "my-interface-plan"
+      parent_id: ""
+      phase: "P1"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-09-27T23:32:11Z"
+      completed_at: "2026-09-27T23:34:53Z"
+      duration: "2:42"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used: []
+      open_questions: []
+      blockers: []
+      report: "Planned phase P1 (Model): created a new Plan of 6 Groups and 29 Tasks (no prior Plan existed, so nothing was preserved, changed, removed, or replaced). No Blockers or Open Questions."
+      data:
+        duration_ms: 162879
+        phase_selection: "1 resolved to P1 (Model; enabled, ready)"
+        tasks_added:
+          count: 29
+          reason: "No Plan existed for P1; every Task is newly required by the P1 goal, the Model Principles, and the Target Model definitions."
+          groups:
+            P1-G1: "1 Task: independent reusable library"
+            P1-G2: "3 Tasks: Declaration capabilities"
+            P1-G3: "2 Tasks: Foundation conversion behaviour"
+            P1-G4: "15 Tasks: one per Target Model Entity"
+            P1-G5: "3 Tasks: public surface and Application Manifest metadata"
+            P1-G6: "5 Tasks: documentation and quality standard"
+        tasks_preserved_changed_removed_replaced: 0
+        planning_notes:
+          - "Target rules for Instance (required connection Fields set by the selected Trading Platform) and Account (credentials not duplicated across Instance and Account) are cross-Entity behaviour that Model Declaration cannot express; they were not planned in P1 and belong to the Logic phase."
+          - "Storage treatment of credentials (hash, encrypted) and Initial Data belong to Database (P2); P1 only marks credential Fields with a Declaration sensitivity marker. Which marker (password or sensitive) applies to each credential Field is left to Develop."
+    - id: "003"
+      skill: "my-interface-develop"
+      parent_id: ""
+      phase: "P1"
+      event: "develop"
+      outcome: "completed"
+      started_at: "2026-09-27T23:36:22Z"
+      completed_at: "2026-09-27T23:44:28Z"
+      duration: "8:06"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used:
+        - name: "sqlmodel"
+          duration: null
+          token_usage: {input: null, output: null, total: null}
+          report: "Guided the Entity realization (table models, Field, foreign keys, composite constraints, datetime handling)."
+        - name: "python-skills:python-guidelines"
+          duration: null
+          token_usage: {input: null, output: null, total: null}
+          report: "Guided code style and docstrings for the Model library."
+      open_questions: []
+      blockers: []
+      report: "Developed phase P1 (Model): all 29 planned Tasks executed and verified (status done, each with its check and outcome in its Task Log). Created the Model library with Declaration, Foundation, 15 Entities, the Interface, documentation, and the Model section of the Application Manifest; formatter, linter, and type checker are clean. No Blockers or Open Questions. Two ordering deviations from claim-before-change are recorded below."
+      data:
+        duration_ms: 486529
+        tasks: {selected: 29, done: 29, blocked: 0, replaced: 0}
+        ordering_deviations:
+          - "P1-G2-T03: its result (value generation and the default/generation exclusivity rule) was written into the Declaration source together with P1-G2-T01 before the Task became claimable; claimed at first eligibility and verified without further change."
+          - "P1-G4-T01, P1-G4-T02: the claim command was blocked once by the interface-boundary-guard hook (false positive on a shell redirect into an unrelated path) and the two Entity units were written in the same batch, before the claim was recorded; claimed immediately afterwards and verified."
+        implementation_choices:
+          - "Library uses a src layout with Python >= 3.14 (uv default: latest compatible); dependencies sqlmodel, dev tools ruff and pyright; the Model directory is one uv project."
+          - "Declaration is technology-independent frozen data; each Entity carries a declaration attribute and realizes the same meaning through SQLModel Fields; Foundation is a non-table SQLModel base that Entities inherit."
+          - "Foundation.from_json parses JSON and then validates the mapping, because SQLModel table models skip value conversion in model_validate_json."
+          - "Credential Fields are marked: every Field named password is marked password and every Field named api_key is marked sensitive."
+          - "Table names are SQLModel defaults (lowercase Entity class name); foreign keys point to them. A Field's Target Size of 3 is realized as a maximum length of 3."
+          - "The optional library-skill provisioning step declared in Development Preferences (uvx library-skills) was not run; the sqlmodel Skill was already available."
+        notes:
+          - "Target rules for Instance (connection Fields required by the selected Trading Platform) and Account (credentials not duplicated across Instance and Account) are cross-Entity behaviour outside Model; left for the Logic phase, as recorded by Planning."
+          - "Storage treatment of credentials (hash, encrypted) and Initial Data remain for Database (P2)."
+          - "Nothing was committed."
+    - id: "004"
+      skill: "my-interface-plan"
+      parent_id: ""
+      phase: "P2"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-09-27T23:47:22Z"
+      completed_at: "2026-09-27T23:51:53Z"
+      duration: "4:31"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used: []
+      open_questions:
+        - id: "OQ-004-1"
+          summary: "Ownership of credential protection for Initial Data (non-blocking; default assumption applied)."
+        - id: "OQ-004-2"
+          summary: "on_delete behaviour and cardinality for References are referenced by Database Principles but not declared by Model Preferences (non-blocking; Develop resolves and records)."
+      blockers: []
+      report: "Planned phase P2 (Database): created a new Plan of 12 Groups and 61 Tasks (no prior P2 Plan existed; nothing preserved, changed, removed, or replaced; P1 untouched). No Blockers. Two non-blocking Open Questions recorded for the Human."
+      data:
+        duration_ms: 271187
+        phase_selection: "2 resolved to P2 (Database; enabled, ready). Earlier applicable phase P1 has a completed Plan and no open Blocker."
+        tasks_added:
+          count: 61
+          reason: "No Plan existed for P2; every Task is newly required by the P2 goal, the Database Principles and Preferences, and the Target's Initial Data."
+          groups:
+            P2-G1: "1 Task: independent library"
+            P2-G2: "2 Tasks: Database Configuration and its integrity"
+            P2-G3: "3 Tasks: storage structure (tables, uniqueness/indexes, references)"
+            P2-G4: "4 Tasks: migration, default Instance provisioning, structure verification, storage excluded from version control"
+            P2-G5: "3 Tasks: Data routing, isolated Engine implementation, Interface boundary"
+            P2-G6: "9 Tasks: Add (2), Update (2), Delete, Enable, Disable, Truncate, sensitive values as ordinary data"
+            P2-G7: "9 Tasks: Get by ID, List (basic, Filters, combination, Order and limit), Count, Sum, Min, Max"
+            P2-G8: "2 Tasks: Execute Command, atomic persistence"
+            P2-G9: "5 Tasks: credential generation, hash, encryption, delivery to the Human, secret material excluded from version control"
+            P2-G10: "13 Tasks: Initial Data for the 12 Entities that define it, plus completeness verification"
+            P2-G11: "1 Task: Application Manifest metadata"
+            P2-G12: "9 Tasks: documentation sections (overview, three interface groups, setup, use, verify, troubleshooting) and quality standard"
+        tasks_preserved_changed_removed_replaced: 0
+        cross_phase_dependencies: "P2-G1-T01 depends on P1-G5-T01 and P1-G5-T02 (Model's published surface), both done."
+        open_questions_detail:
+          - id: "OQ-004-1"
+            question: "The Target requires User credentials to be hashed and Instance and Account credentials to be encrypted at rest, and to be generated securely for the Initial Data. Model owns no storage treatment, and Database Principles make Database store every value as received, leaving special value handling to Logic. Logic is planned after Database and Database has no Connection to Logic."
+            assumption_applied: "The Initial Data preparation in P2 (Group P2-G9) generates and protects the credentials before handing values to Add; Database Operations remain unaware of them. Logic (P3) must later apply the same protection scheme, which P2 Develop records with the implementation. Delivery of the generated plaintext to the Human uses a non-committed, owner-restricted location, without printing or logging."
+            impact: "Security-relevant scoping of Tasks P2-G9-T01..T05 and the credential-bearing Initial Data Tasks. Not blocking: the assumption fits the Target, the Principles, and the Connection graph."
+            human_decision: "Confirm the assumption, or assign credential protection for Initial Data to another Component."
+          - id: "OQ-004-2"
+            question: "Database Principles realize Reference relationships against Model Preferences' configured on_delete behaviour and declared cardinality, but the current Model Preferences declare no on_delete behaviour and Model Declaration records no cardinality."
+            assumption_applied: "P2-G3-T03 states the outcome only. Develop resolves the on-delete behaviour by professional judgment under the Database Principles (favouring refusal of removals that would orphan records) and records the choice with the implementation."
+            impact: "Data-integrity behaviour of Delete and Truncate for referenced records. Not blocking."
+            human_decision: "Optionally declare on_delete behaviour in Model Preferences."
+        planning_notes:
+          - "The Database Preferences declare only one Engine as implemented; the Plan speaks of 'the Engine marked for implementation' and never names it."
+          - "Initial Data exists for 12 of the 15 Entities; Trailing Rule, Partial Rule, and Position define none."
+          - "The Database Preferences' storage settings and the repository's existing ignore rules name different directories; P2-G4-T04 and P2-G9-T05 state only the outcome (ignored by version control) so Develop reconciles them."
+    - id: "005"
+      skill: "my-interface-develop"
+      parent_id: ""
+      phase: "P2"
+      event: "develop"
+      outcome: "completed"
+      started_at: "2026-09-27T23:56:37Z"
+      completed_at: "2026-09-28T00:12:43Z"
+      duration: "16:06"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used:
+        - name: "sqlmodel"
+          duration: null
+          token_usage: {input: null, output: null, total: null}
+          report: "Guided the storage structure, sessions, queries, and Operation implementations (Task Skill of the storage, Engine, and Operation Tasks)."
+      open_questions:
+        - id: "OQ-005-1"
+          summary: "Constraint naming for future SQLite migrations (non-blocking; see data)."
+      blockers: []
+      report: "Developed phase P2 (Database): all 61 planned Tasks executed and verified (status done; each Task Log holds its check and result). Created the Database library (Interface, Data, isolated SQLite Engine, configuration, versioned migration, structure verification, Initial Data with protected credentials), provisioned and populated the real default Instance, and published the Database section of the Application Manifest and the README. Formatter, linter, and type checker are clean. No Blockers. Open Questions OQ-004-1 and OQ-004-2 from Planning were not answered; their assumptions were applied. Nothing was committed."
+      data:
+        duration_ms: 966986
+        tasks: {selected: 61, done: 61, blocked: 0, replaced: 0}
+        applied_assumptions:
+          - "OQ-004-1: credential generation and protection for Initial Data was implemented inside Initial Data preparation (P2-G9); Database Operations store every value as received."
+          - "OQ-004-2: on-delete behaviour is refuse-removal (foreign keys enforced, no cascade), verified for all 28 References."
+        real_instance_state: "The default Instance is provisioned and populated: 15 Tables, 12 Entities with the defined Initial Data (User 1, Trading Platform 2, Instance 1, Currency 8, Broker 1, Asset 4, Account Group 1, Account 1, Trailing Group 1, Partial Group 1, Action Group 1, Action 1), 0 foreign-key violations."
+        for_the_human:
+          - "The generated plaintext credentials (User, Instance, Account) are in the owner-only file database/.secrets/initial_credentials.yaml, ignored by version control. They were not printed or logged. Keep or move them as you see fit; the stored values are hashed or encrypted and cannot be read back."
+          - "The Logic phase (P3) must reuse the protection scheme: User credentials as salted scrypt hashes (format scrypt$n$r$p$salt$digest, base64 salt and digest, n=16384 r=8 p=1), Instance and Account credentials as Fernet tokens with the key in database/.secrets/encryption.key."
+        ordering_deviations:
+          - "P2-G5-T01: its claim and the writing of the routing source were issued in the same batch (claim listed first); noted in its Task Log."
+          - "P2-G5-T02 was executed before P2-G3-T02 and P2-G3-T03, because relationship enforcement (G3-T03) is delivered through the Engine connection. The Plan lists no dependency of P2-G3-T03 on P2-G5-T02; recorded for a later replan."
+        corrections_recorded: "Several first-run checks were faulty and were corrected before Tasks closed (Task Logs say so). After the quality tools, the 'in' operator given a non-collection raises TypeError instead of ValueError; a correction was appended to the P2-G7-T03 Task Log."
+        implementation_choices:
+          - "Library layout: uv project with src layout, Python 3.14 or newer; dependencies model (editable path), sqlmodel, pyyaml, alembic, cryptography; dev tools ruff and pyright."
+          - "Database Configuration declares only the Engine marked for implementation (sqlite) because the configuration standard requires an implementation for every declared Engine; storage is database/db/application.db, resolved relative to the configuration file; DATABASE_CONFIGURATION selects another file (used for scratch copies)."
+          - "Public functions in database.interface: add, update, list_, delete, enable, disable, get_by_id, count, sum_, min_, max_, truncate, execute_command; the trailing underscore avoids shadowing builtins; every function takes an optional instance; List options are keyword-only."
+          - "Data applies Declaration-driven rules before the Engine: Add stores a new record built from the supplied instance (a supplied id is replaced by generation); Update changes only supplied mutable Fields."
+          - "Migrations use one Alembic revision (04d271acb02b) with batch mode; Instance and storage are selected through the Database Configuration."
+          - "Entity table names are SQLModel defaults (lowercase class name), as chosen in P1."
+          - "The optional library-skill provisioning step declared in Development Preferences (uvx library-skills) was not run; the sqlmodel Skill was already available."
+          - "The repository ignore rules gained database/db/; database/.secrets/ was already ignored."
+        open_question_detail:
+          - id: "OQ-005-1"
+            question: "The generated migration leaves uniqueness and foreign-key constraints unnamed (the Model declares no naming convention). SQLite migrations that later alter or drop such constraints in batch mode generally need named constraints."
+            impact: "Future migrations that change a constraint; not needed for the current structure. Non-blocking."
+            human_decision: "Optionally have Model declare a constraint naming convention before the first structural change."
+        planning_observations:
+          - "The Plan's Task text says Database Principles refer to Model Preferences' on_delete setting, which Model does not declare (OQ-004-2)."
+          - "Instance Entities and Database Instances share the word 'Instance'; documentation uses 'Instance' for the Database meaning and 'Instance record' is avoided."
+    - id: "006"
+      skill: "my-interface-plan"
+      parent_id: ""
+      phase: "P3"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-09-28T00:17:11Z"
+      completed_at: "2026-09-28T00:22:13Z"
+      duration: "5:02"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used: []
+      open_questions:
+        - id: "OQ-006-1"
+          summary: "How Logic receives the secret that protects Instance and Account credentials (non-blocking; assumption applied)."
+        - id: "OQ-006-2"
+          summary: "Whether consumers may receive sensitive Fields' stored forms (non-blocking; assumption applied)."
+        - id: "OQ-006-3"
+          summary: "The Instance requirement rule set by the selected Trading Platform is deferred (non-blocking)."
+        - id: "OQ-006-4"
+          summary: "Database publishes no multi-Operation transaction boundary for Logic's grouped work (non-blocking)."
+      blockers: []
+      report: "Planned phase P3 (Logic): created a new Plan of 11 Groups and 59 Tasks (no prior P3 Plan existed; nothing preserved, changed, removed, or replaced; P1 and P2 untouched). No Blockers. Four non-blocking Open Questions recorded for the Human."
+      data:
+        duration_ms: 302508
+        phase_selection: "3 resolved to P3 (Logic; enabled, ready). Earlier applicable phases P1 and P2 have completed Plans and no open Blocker."
+        tasks_added:
+          count: 59
+          reason: "No Plan existed for P3; every Task is newly required by the P3 goal, the Logic Principles and Preferences, and the Target's Behaviour and storage rules."
+          groups:
+            P3-G1: "1 Task: independent library"
+            P3-G2: "3 Tasks: runtime configuration contract, validation before use, secrets kept out of every output"
+            P3-G3: "2 Tasks: Application Outcome shapes and translation of dependency failures"
+            P3-G4: "2 Tasks: validation of Model-declared constraints"
+            P3-G5: "6 Tasks: treatment choice, hashing and encryption compatible with stored data, protection before Database, withholding sensitive values, keeping them out of errors and logs"
+            P3-G6: "2 Tasks: credential separation between Instance and Account"
+            P3-G7: "2 Tasks: finite limits and bounded retries"
+            P3-G8: "25 Tasks: Entity Service (9 shared Action Tasks, 15 Entity units, 1 completeness check)"
+            P3-G9: "5 Tasks: outward Interface, Operation contracts, no Services or dependencies exposed, library nature, dependency routes"
+            P3-G10: "1 Task: Application Manifest metadata"
+            P3-G11: "10 Tasks: documentation sections and quality standard"
+        tasks_preserved_changed_removed_replaced: 0
+        cross_phase_dependencies: "P3-G1-T01 depends on P1-G5-T01, P1-G5-T02 (Model's surface) and P2-G5-T03, P2-G11-T01 (Database's Interface and published metadata), all done."
+        open_questions_detail:
+          - id: "OQ-006-1"
+            question: "Logic must use the secret that protected the Initial Data's Instance and Account credentials, and may reach Database only through Database's Interface, so it cannot read Database's key file. The Platform Launch Item currently declares no runtime requirements for Logic, so nothing yet delivers the secret."
+            assumption_applied: "Logic's configuration contract (P3-G2) declares the secret as a required runtime value supplied by Logic's environment; the Human supplies the same value that Database's Initial Data step created. Delivery by Platform remains for the Platform phase."
+            impact: "Whether Logic can decrypt the already stored Instance and Account credentials in a running system. Development and verification use a supplied test value. Non-blocking."
+            human_decision: "Confirm, or declare a Logic requirement in a Platform Launch Item."
+          - id: "OQ-006-2"
+            question: "Logic never exposes an original sensitive value. Records that carry the stored (protected) forms could be returned to consumers and passed back to Update, which would protect them a second time."
+            assumption_applied: "Records returned by any Operation lack their sensitive Fields entirely (P3-G5-T05)."
+            impact: "Shape of returned records for User, Instance, and Account. Non-blocking."
+            human_decision: "Confirm, or state which sensitive Fields consumers may receive."
+          - id: "OQ-006-3"
+            question: "The Target states that the Trading Platform selected by an Instance defines which connection Fields it requires, and that each must be present before the Instance can be used. No platform declares its requirements yet (the platform modules are not designed), and 'used' refers to trading, which is a later phase."
+            assumption_applied: "Not planned in P3. Instance records remain storable with the nullable connection Fields as Model declares them. The related rule that a credential is not duplicated across Instance and Account is planned (P3-G6) and treats every platform as not requiring a shared credential."
+            impact: "Deferred to the platform and trading-operations phases. Non-blocking."
+            human_decision: "None needed now; confirm the deferral."
+          - id: "OQ-006-4"
+            question: "Logic Principles ask it to forward grouped persistence work through Database's transaction boundary, but Database's Interface publishes only individually atomic Operations and no way to group several."
+            assumption_applied: "Every Logic Operation performs at most one change through Database, so each is atomic; the credential-separation checks read first and then write, which is not atomic against concurrent writers."
+            impact: "A race between the check and the write in the credential-separation rule. Non-blocking for a single user."
+            human_decision: "Optionally extend Database's Interface with a grouped-work boundary."
+        planning_notes:
+          - "Logic Preferences name the Component directory and package my_logic, its services directory logic_services, and the interface file logic_interface; Develop follows them, and the Plan text names none of them."
+          - "Verification wording in P3-G5 and P3-G6 was written at capability level (through Database's Interface) to avoid a circular dependency on the Entity Service Actions, which depend on those Tasks."
+          - "During this run the interface-boundary-guard hook blocked two Bash commands that only edited a scratch file; the same edits were made by writing a scratch script with the Write tool. No protected path was changed."

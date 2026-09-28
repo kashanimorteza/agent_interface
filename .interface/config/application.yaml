@@ -1,0 +1,103 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/application.yaml"
+  path_note: "Shared Application Manifest public Component metadata."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current Application Schema and preserve valid public metadata."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read public metadata by canonical Component identifier."
+  selection: "Select the section whose key is the Component being described."
+  absence: "An empty section means that its owner has published no public metadata."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "components"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  components: "Public metadata for each declared Implementation Component."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  components:
+    development: {}
+    model:
+      package_name: model
+      path: model
+      public_entrypoint: model.interface
+      public_interface:
+        interface:
+          module: model.interface
+          publishes:
+          - Account
+          - AccountGroup
+          - Action
+          - ActionGroup
+          - Asset
+          - Broker
+          - Currency
+          - Instance
+          - PartialGroup
+          - PartialRule
+          - Position
+          - TradingPlatform
+          - TrailingGroup
+          - TrailingRule
+          - User
+        entity:
+          package: model.entity
+          note: One module per Entity; Entities are also published through the interface module.
+        declaration:
+          module: model.declaration
+          class: Declaration
+        foundation:
+          module: model.foundation
+          class: Foundation
+          methods:
+          - to_json
+          - from_json
+    database:
+      package_name: database
+      path: database
+      public_entrypoint: database.interface
+      public_interface:
+        module: database.interface
+        operations:
+          Add: add
+          Update: update
+          List: list_
+          Delete: delete
+          Enable: enable
+          Disable: disable
+          Get by ID: get_by_id
+          Count: count
+          Sum: sum_
+          Min: min_
+          Max: max_
+          Truncate: truncate
+          Execute Command: execute_command
+        types:
+        - Filter
+        - Order
+        - Operator
+        - Direction
+        - Combination
+        - CommandResult
+        note: Every Operation accepts an optional Instance; the configured default Instance is used when it is omitted.
+    logic: {}
+    api: {}
+    presentation: {}
+    platform: {}
+    configure: {}
+    plan: {}
+    develop: {}
+    review: {}
+    implement: {}
+    launch: {}
+    reset: {}
+    state: {}

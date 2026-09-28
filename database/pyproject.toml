@@ -1,0 +1,25 @@
+[project]
+name = "database"
+version = "0.1.0"
+description = "Reusable Database library that persists Entity data and publishes standard data Operations."
+requires-python = ">=3.14"
+dependencies = [
+    "alembic>=1.20.0",
+    "cryptography>=50.0.1",
+    "model",
+    "pyyaml>=6.0.3",
+    "sqlmodel>=0.0.47",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.10,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.uv.sources]
+model = { path = "../model", editable = true }
+
+[dependency-groups]
+dev = [
+    "pyright>=1.1.414",
+    "ruff>=0.16.9",
+]

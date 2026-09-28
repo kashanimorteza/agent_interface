@@ -1,0 +1,35 @@
+# Database Configuration: the Engines, named Instances, and Settings available to Database.
+# Structure: .interface/foundation/schema/database.yaml
+
+engines:
+  sqlite:
+    name: "SQLite"
+    driver: "sqlite"
+    parameters:
+      foreign_keys: true
+      check_same_thread: false
+
+instances:
+  application:
+    name: "Application"
+    purpose: "Application data."
+    engine: "sqlite"
+    database: "application.db"
+    host: ""
+    port: ""
+    path: ""
+    username: ""
+    password: ""
+    parameters: {}
+
+settings:
+  default_instance: "application"
+  assignments: {}
+  secrets: {}
+  parameters:
+    database_directory: "db"
+    query:
+      filter_combination: "AND"
+      default_order:
+        field: "id"
+        direction: "ascending"

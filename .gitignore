@@ -9,6 +9,7 @@
 
 # Database
 database/data/
+database/db/
 database/.secrets/
 my_database/data/
 my_database/.secrets/
