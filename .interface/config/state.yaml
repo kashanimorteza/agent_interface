@@ -1,0 +1,61 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/state.yaml"
+  path_note: "The State Config record: the active Workflow position, aggregate Phase progress, and the project's recorded Skill execution history."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current State Schema and preserve existing operational records; reconciliation never replaces them with defaults. State never holds Target meaning, technical decisions, individual Task status or history, product code, secrets, or command transcripts."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read active for the current Workflow position, then phases for aggregate progress, then log for recorded execution history."
+  selection: "A phase resolves to the record keyed by its stable Target phase identifier; a Log Entry resolves by its project-wide sequential id."
+  absence: "An absent phase record means no progress has been recorded for that phase; an empty log means no Skill execution has been recorded."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "active"
+  - "phases"
+  - "log"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  active: "The current or most recently recorded Workflow Mode, its Phase when applicable, and its provenance."
+  phases: "Aggregate planning, development, and review progress keyed by stable Target phase identifier."
+  log: "The project's preserved history of recorded Skill executions and their outcomes."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  active:
+    mode: "not set"
+    phase: null
+    mode_reason: "No Workflow operation has been recorded."
+    set_by: "initialization"
+    set_at: null
+  phases: {}
+  log:
+    - id: "001"
+      skill: "my-interface-configure"
+      parent_id: ""
+      phase: null
+      event: "configure"
+      outcome: "completed"
+      started_at: "2026-09-28T11:01:45Z"
+      completed_at: "2026-09-28T11:02:54Z"
+      duration: "1:09"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used: []
+      open_questions: []
+      blockers: []
+      report: "Generated application.yaml, plan.yaml, and state.yaml from their Schemas composed with the general YAML frame; all three parse and conform. No Config record existed beforehand, so nothing was reconciled."
+      data:
+        duration_ms: 69000
+        generated: ["application.yaml", "plan.yaml", "state.yaml"]
+        decisions:
+          - "The State Schema declares no generation block (path, path note, policy, resolution, content map). Those frame values were derived from the State Schema's own sections and the path mapped by the Configure Preferences."
+          - "State phases were left empty as the State Schema's initial content declares; populating phase identities belongs to Phase reconciliation."
