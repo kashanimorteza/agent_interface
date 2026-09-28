@@ -29,18 +29,18 @@ content_map:
 # <!--------------------------------------------------------------------------------- Content -->
 content:
   active:
-    mode: "not set"
-    phase: null
-    mode_reason: "No Workflow operation has been recorded."
-    set_by: "initialization"
-    set_at: null
+    mode: "reviewing"
+    phase: "P1"
+    mode_reason: "Review is examining phase P1 against its Plan."
+    set_by: "my-interface-review"
+    set_at: "2026-09-28T21:57:49Z"
   phases:
     P1:
       id: "P1"
-      planning: "not started"
-      development: "not started"
-      review: "not started"
-      completed_at: null
+      planning: "completed"
+      development: "completed"
+      review: "satisfied"
+      completed_at: "2026-09-28T22:00:03Z"
     P2:
       id: "P2"
       planning: "not started"
@@ -94,3 +94,119 @@ content:
           - "state.yaml"
         notes:
           - "The State Schema declares no generation block; the frame values were composed from its operational_scope and structure."
+    - id: "002"
+      skill: "my-interface-implement"
+      phase: "P1"
+      event: "implement"
+      outcome: "completed"
+      started_at: "2026-09-28T21:42:04Z"
+      completed_at: "2026-09-28T22:00:16Z"
+      duration: "18:12"
+      open_questions: []
+      blockers: []
+      report: "Implemented phase P1 (Model; argument '1' resolved to Phase 1). Config was valid, so Configure was not coordinated. Plan (003) created 38 Tasks, Develop (004) completed all 38, and Review (005) recorded three Findings, resolved all three, and found the result satisfied. Open Questions: 0. Blockers: 0."
+      data:
+        duration_ms: 1092000
+        coordinated: {plan: "003", develop: "004", review: "005"}
+        phase_outcomes: {P1: {planning: "completed", development: "completed", review: "satisfied"}}
+        counts: {open_questions: 0, blockers: 0}
+    - id: "003"
+      skill: "my-interface-plan"
+      parent_id: "002"
+      phase: "P1"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-09-28T21:42:15Z"
+      completed_at: "2026-09-28T21:46:11Z"
+      duration: "3:56"
+      open_questions: []
+      blockers: []
+      report: "Planned phase P1 (Model) from scratch: one Plan, 6 Groups, 38 atomic Tasks (2 package/Declaration, 6 shared Entity behaviour and Foundation, 15 Entities, 1 Interface publication, 7 documentation, 7 whole-Model verification). No prior Plan existed, so nothing was preserved, changed, removed, or replaced. Every Task has source_id 003 and status todo; the dependency graph is acyclic."
+      data:
+        duration_ms: 236000
+        task_changes:
+          added: 38
+          changed: 0
+          removed: 0
+          preserved: 0
+          replaced: 0
+          reason: "No Plan existed for P1; all Tasks are newly required by the Target phase goal and the Model Definition."
+        notes:
+          - "Sensitivity markers: the Target designates credential Fields (User, Instance, Account) and their storage treatment but declares no Model sensitivity marker. Entity Tasks leave the marker decision to Develop under Model Principles; if it would change public Model meaning, Develop should raise it through State."
+          - "Documentation placement: the Model Definition requires a Declaration example, but the Model Preferences documentation order lists no Declaration section. Planning created a separate Declaration documentation Task and left the placement to Develop, to be recorded with the implementation."
+          - "Initial Data is excluded from this phase because Model does not own it; the Target's Initial Data belongs to the Database phase."
+          - "Persistent testing is disabled in the Model Preferences, so Task verification is transient and adds no test artifacts."
+    - id: "004"
+      skill: "my-interface-develop"
+      parent_id: "002"
+      phase: "P1"
+      event: "develop"
+      outcome: "completed"
+      started_at: "2026-09-28T21:46:25Z"
+      completed_at: "2026-09-28T21:57:34Z"
+      duration: "11:09"
+      skills_used:
+        - name: "sqlmodel"
+          report: "Guided the SQLModel table-model realization (datetime handling, no foreign keys or Relationship attributes, unique constraints)."
+        - name: "python-skills:python-guidelines"
+          report: "Guided code style: uv, modern typing, Google-style docstrings, no speculative abstraction."
+      open_questions: []
+      blockers: []
+      report: "Executed all 38 Tasks of the P1 Plan (Model): package, Declaration, shared Entity behaviour and Foundation, 15 Entities, Interface, documentation, and seven whole-Model verifications. Every Task was claimed first, verified by a transient check, and recorded done in its Task Log. The Model package lives in the Model component directory; no persistent tests were added because Model Preferences disable testing."
+      data:
+        duration_ms: 669000
+        tasks: {done: 38, blocked: 0, todo: 0}
+        resolved_choices:
+          - "Python 3.14 with uv; dependencies sqlmodel 0.0.47 (pydantic 2.13.5, sqlalchemy 2.0.54), stabilized in the lock file; ruff and pyright as development-only tools."
+          - "Entities are SQLModel table models. SQLModel skips validation for table models, so a private base (core) validates construction and assignment from the Declaration."
+          - "Uniqueness Constraints are realized on the table; Relations and Indexes stay Declaration metadata only, because Database realizes foreign keys from Relations."
+          - "Sensitivity markers: credential Fields the Target names were marked password (password) and sensitive (api_key). The Target names no marker itself, so this is an inference for the Human to confirm or remove."
+          - "Currency.code Size 3 is enforced as a maximum length of 3 characters."
+          - "JSON form: to_json returns a dict; decimals and datetimes are text; from_json takes a mapping."
+          - "Documentation has a Declaration section between Interface and Foundation, because the Preferences documentation order lists none."
+        necessary_but_not_performed:
+          - "The Application Manifest section for Model (package_name, path, public_entrypoint, public_interface) is still empty. Publishing it is not covered by any planned Task; it needs a Task in the Plan."
+    - id: "005"
+      skill: "my-interface-review"
+      parent_id: "002"
+      phase: "P1"
+      event: "review"
+      outcome: "satisfied"
+      started_at: "2026-09-28T21:57:49Z"
+      completed_at: "2026-09-28T22:00:03Z"
+      duration: "2:14"
+      open_questions: []
+      blockers: []
+      report: "Reviewed phase P1 (Model) against its Plan with independently written checks. Three Findings were recorded and all three resolved; after the resolutions the result was reviewed again and satisfies the Plan. Aggregate outcome: satisfied (P1 satisfied)."
+      data:
+        duration_ms: 134000
+        outcome_by_phase: {P1: "satisfied"}
+        passes: 2
+        findings:
+          - id: "R1"
+            kind: "missing evidence"
+            state: "resolved"
+            expected: "Task P1-G2-T03 accepts only if any change to an immutable Field is refused; evidence for that criterion."
+            observed: "The Task Log of P1-G2-T03 records the refusal only for id; no recorded check assigns to a Field declared immutable, and no Target Entity declares one."
+            evidence: "plan.yaml, Task P1-G2-T03, log entry 'claimed -> done'."
+            resolution: "Observed directly with a fresh check: a transient Entity declaring two immutable Fields (one nullable and never set) refused every change to either Field and kept the original values. The evidence lives in this Finding; the Task Log is owned by Develop and was not changed."
+          - id: "R2"
+            kind: "added meaning"
+            state: "resolved"
+            expected: "Tasks P1-G3-T01, T03, T08 and P1-G6-T01 accept an Entity Declaration that matches its Target definition with no added item."
+            observed: "Five Fields carry a sensitivity marker (User.password, User.api_key, Instance.password, Instance.api_key, Account.password). The word sensitivity appears nowhere in the Target technical definition; it only calls those Fields credentials and states their storage treatment."
+            evidence: "model entity units user, instance, account: 'sensitivity=Sensitivity.'; grep of target/technical.md for 'sensitiv' returns nothing."
+            resolution: "Removed the five markers from the Entity units and regenerated the documentation, so every Declaration again carries exactly what the Target states. The marker vocabulary stays available in Declaration for a Target that names a marker explicitly. This supersedes the marker choice recorded in Log Entry 004, which Review does not edit. Rechecked: all 15 Declarations match the Target, no Entity carries a marker, documentation shows none."
+          - id: "R3"
+            kind: "documentation disagrees with the Model"
+            state: "resolved"
+            expected: "Tasks P1-G5-T03 and P1-G6-T05 accept documentation that agrees with the public Model."
+            observed: "The Declaration section says Declaration contains data only, but creating a Declaration validates it and rejects a malformed one (unknown marker, unresolved metadata)."
+            evidence: "model README, section Declaration, last sentence of first paragraph; model core declaration unit, Declaration.__post_init__."
+            resolution: "Reworded the sentence to say Declaration defines no Entity behaviour and only checks on creation that it is well formed. Rechecked: all six documentation examples and nine troubleshooting messages still reproduce, and the Interface section still matches the Target."
+        observations_about_the_review:
+          - "Task Logs record each transient check as a prose description with its outcome, not as a repeatable script, because Model Preferences disable persistent testing. Review judged the checks by re-observing the conditions instead."
+          - "Storage returns Decimal values padded to a scale of ten digits (0.10 comes back as 0.1000000000, equal in value). Model declares no precision, so this belongs to Database in phase P2."
+          - "Not exercised by any Task or the Target: the generated-identifier Value Generation path and non-length Field constraints. They exist as Declaration vocabulary and are neither required nor contradicted by the Plan."
+          - "Develop Log Entry 004 and the entity Task Logs still mention the removed sensitivity markers; they are Develop-owned and were left unchanged."
+          - "The Application Manifest section for Model is still empty. No Task in the Plan covers publishing it, so it is a Planning matter."

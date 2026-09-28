@@ -1,0 +1,1 @@
+"""Trading Assistant Model package."""

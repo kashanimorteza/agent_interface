@@ -26,5 +26,1102 @@ content_map:
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
-  task_count: 0
-  plans: {}
+  task_count: 38
+  plans:
+    P1:
+      id: P1
+      title: Model
+      order: 1
+      target: Model
+      does: Implement the independent Model layer and its reusable package from the defined models, fields, relationships, and rules.
+      constraints: []
+      task_count: 38
+      groups:
+        P1-G1:
+          id: P1-G1
+          title: Package and Declaration
+          description: The installable Model package and the Declaration layer that records Entity meaning; every other Model layer builds on them.
+          area: Model package establishment and the Declaration layer
+          does: An installable Model package exists whose Declaration layer can record the complete logical meaning of any Entity.
+          constraints: []
+          task_count: 2
+          tasks:
+            P1-G1-T01:
+              id: P1-G1-T01
+              source_id: '003'
+              title: Establish the installable Model package
+              description: Establish the Model as a reusable, installable package in the technology the Model Preferences select, with every necessary dependency resolved to a concrete compatible version and stabilized in the technology's dependency metadata.
+              reason: Every other Model layer needs a package that installs and imports before anything can be realized in it.
+              inputs:
+              - Resolved Model technology selection
+              - Model dependency version policy
+              skills:
+              - sqlmodel
+              - python-skills:python-guidelines
+              expected_result: A Model package that installs and imports cleanly, declares only necessary dependencies, and records their concrete versions.
+              depends_on: []
+              constraints: []
+              acceptance: The package installs by the technology's standard mechanism, imports without error or side effect, and its dependency versions are concrete and identical on repeated resolution.
+              verify: Installing the package in a clean environment and importing it succeeds, and resolving its dependencies again without any change yields the same concrete versions.
+              status: done
+              log:
+              - at: '2026-09-28T21:48:53Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before creating the Model package.
+              - at: '2026-09-28T21:49:15Z'
+                transition: claimed -> done
+                check: Installed the package into a clean virtual environment with uv and imported it; ran uv lock --check twice with no manifest change.
+                outcome: Install succeeded (sqlmodel 0.0.47, pydantic 2.13.5, sqlalchemy 2.0.54 resolved), import succeeded with no side effect, lock check reported Resolved 12 packages unchanged both times. Python 3.14 selected as latest installed compatible; ruff and pyright added to the dev group as the Development-default quality tools.
+            P1-G1-T02:
+              id: P1-G1-T02
+              source_id: '003'
+              title: Provide the Declaration layer
+              description: Provide the public Declaration layer that records an Entity's logical meaning and Entity Metadata without runtime behaviour.
+              reason: Declaration is the single readable source of Entity meaning that Entities, Foundation, and consumers depend on.
+              inputs:
+              - Installable Model package
+              skills:
+              - sqlmodel
+              - python-skills:python-guidelines
+              expected_result: A public Declaration layer able to hold every canonical member of an Entity Declaration and Field Declaration.
+              depends_on:
+              - P1-G1-T01
+              constraints: []
+              acceptance: A declared sample Entity exposes every canonical member exactly as declared, distinguishes an absent Default Value from an explicit null, keeps structural metadata outside its Field Declarations, and refuses an unrecognized sensitivity marker.
+              verify: Reading a declared sample Entity through the Declaration layer returns each member as declared, and declaring an unrecognized sensitivity marker is rejected with a diagnostic that names the Entity and Field.
+              status: done
+              log:
+              - at: '2026-09-28T21:49:15Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before writing the Declaration layer.
+              - at: '2026-09-28T21:50:42Z'
+                transition: claimed -> done
+                check: Ran a transient script that declares a sample Entity through the Declaration layer, reads every member back, and declares invalid variants; ruff format/check and pyright clean.
+                outcome: Every canonical member read back as declared; absent Default Value (has_default false) is distinct from an explicit null Default Value; structural metadata is outside FieldDeclaration; unrecognized sensitivity markers were refused with diagnostic naming Sample.secret; unresolved Primary Key, unknown Uniqueness Constraint Field, and repeated Index Field were refused.
+        P1-G2:
+          id: P1-G2
+          title: Entity behaviour and Foundation
+          description: 'The shared behaviour every Entity inherits: Field-contract enforcement on construction and mutation, and Foundation''s JSON conversion.'
+          area: Shared Entity behaviour and the Foundation layer
+          does: Any Entity built on the shared behaviour enforces its Field contracts and converts to and from JSON without loss.
+          constraints: []
+          task_count: 6
+          tasks:
+            P1-G2-T01:
+              id: P1-G2-T01
+              source_id: '003'
+              title: Validate declared Fields on direct Entity construction
+              description: Make direct Entity construction validate its input against the declared Fields, Types, nullability, and value constraints.
+              reason: One construction contract stops packages from changing Entity values through silent coercion or acceptance of undeclared input.
+              inputs:
+              - Declaration layer
+              skills:
+              - sqlmodel
+              - pydantic:pydantic
+              expected_result: Direct construction that accepts valid input and refuses every input the Field contract prohibits.
+              depends_on:
+              - P1-G1-T02
+              constraints: []
+              acceptance: Unknown Fields, missing Required Fields, null for a non-nullable Field, incompatible Types, and violated value constraints are each refused without creating an Entity, while valid input yields an Entity holding exactly the supplied values.
+              verify: Constructing a representative Entity, using a transient stand-in when no Target Entity exists yet, with one input per prohibited case is refused each time, and constructing it with valid input, including explicit false, zero, empty string, and null where permitted, preserves every supplied value.
+              status: done
+              log:
+              - at: '2026-09-28T21:50:42Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before writing construction validation.
+              - at: '2026-09-28T21:51:33Z'
+                transition: claimed -> done
+                check: Transient stand-in Entity (verification only, kept outside the Model) built on the shared base; constructed it with one input per prohibited class and with valid input; ruff format/check clean.
+                outcome: 'Refused, without creating an Entity: unknown Field, missing Required Field, null for non-nullable, wrong-typed str for int, bool for int, int for float, float for decimal, naive datetime, length above limit, int for bool. Valid construction kept explicit empty string, false, zero, 0.0 and null exactly, and a timezone-aware datetime and Decimal(1.50) unchanged.'
+            P1-G2-T02:
+              id: P1-G2-T02
+              source_id: '003'
+              title: Apply omission, default, and generation semantics on construction
+              description: Define what an omitted Field becomes when an Entity is constructed, including the not-yet-generated state of an Auto Increment Field.
+              reason: Direct and JSON construction must resolve omitted values identically or Entities diverge by construction route.
+              inputs:
+              - Direct construction validation
+              skills:
+              - sqlmodel
+              expected_result: Construction that resolves every omitted Field according to its declared presence, Default Value, and Value Generation.
+              depends_on:
+              - P1-G2-T01
+              constraints: []
+              acceptance: An omitted nullable Field without a Default Value becomes null, an omitted Field with a Default Value receives exactly that value, an omitted Auto Increment Field stays pending without becoming nullable, and no explicitly supplied value is ever replaced.
+              verify: Constructing a representative Entity with each kind of omission yields the described value for each Field, and supplying false, zero, empty string, or null explicitly keeps that exact value.
+              status: done
+              log:
+              - at: '2026-09-28T21:51:33Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before extending construction and adding assignment enforcement.
+              - at: '2026-09-28T21:52:10Z'
+                transition: claimed -> done
+                check: Transient script constructing the stand-in Entity with each kind of omission and with explicit false/zero/empty string/null; ruff and pyright clean.
+                outcome: Omitted nullable Field without default -> null; omitted Fields with Default Value received the exact default (0, Decimal 0, false, true); omitted Auto Increment id stayed pending (None) while its Declaration remained non-nullable; explicit values 0, false, empty string, null and Decimal 0.10 were never replaced.
+            P1-G2-T03:
+              id: P1-G2-T03
+              source_id: '003'
+              title: Enforce immutability and atomic revalidation on assignment
+              description: Make assignment to a Field revalidate Type, nullability, and value constraints, and make immutable Fields, including `id` once assigned or generated, unchangeable.
+              reason: Entity state must obey the declared Field rules after construction as well as during it.
+              inputs:
+              - Direct construction validation
+              skills:
+              - sqlmodel
+              - pydantic:pydantic
+              expected_result: Entity assignment that enforces Field contracts and leaves the previous value in place on failure.
+              depends_on:
+              - P1-G2-T01
+              constraints: []
+              acceptance: A valid assignment to a mutable Field takes effect, an invalid assignment is refused and leaves the previous value unchanged, and any change to an immutable Field is refused.
+              verify: Assigning valid and invalid values to a mutable Field of a representative Entity changes only the valid case, and attempting to change `id` after it holds a value is refused with the value intact.
+              status: done
+              log:
+              - at: '2026-09-28T21:51:33Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before extending construction and adding assignment enforcement.
+              - at: '2026-09-28T21:52:10Z'
+                transition: claimed -> done
+                check: Transient script assigning valid and invalid values to a mutable Field, then reassigning id after it held a value (via assignment and via construction).
+                outcome: 'Valid assignments took effect; invalid ones (too long, null on non-nullable, wrong types) were refused with previous value intact; first assignment of pending id succeeded; changing or clearing id afterwards was refused (Stub.id: is immutable) with value 10 intact, and a constructed id could not be changed.'
+            P1-G2-T04:
+              id: P1-G2-T04
+              source_id: '003'
+              title: Keep validation diagnostics free of sensitive values
+              description: Ensure that every rejection raised by construction or assignment identifies the Entity and Field involved and never includes the value of a Field that carries a sensitivity marker.
+              reason: Diagnostics are the most likely place for a credential to leak into logs or output.
+              inputs:
+              - Direct construction validation
+              - Assignment revalidation
+              skills:
+              - pydantic:pydantic
+              expected_result: Rejection diagnostics that name the Entity and Field but contain no sensitive value.
+              depends_on:
+              - P1-G2-T01
+              - P1-G2-T03
+              constraints: []
+              acceptance: Every rejection for a sensitivity-marked Field names the Entity and Field and contains neither the rejected value nor the previous value.
+              verify: Triggering a construction rejection and an assignment rejection on a sensitivity-marked Field of a representative Entity with a recognizable placeholder value produces diagnostics that name the Entity and Field and do not contain that placeholder.
+              status: done
+              log:
+              - at: '2026-09-28T21:52:10Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before working on diagnostics and Foundation JSON conversion.
+              - at: '2026-09-28T21:52:59Z'
+                transition: claimed -> done
+                check: Transient script triggering a construction rejection and an assignment rejection on the sensitivity-marked Field of the stand-in Entity with a recognizable placeholder object, after first holding a distinct previous value.
+                outcome: 'Both diagnostics read Stub.secret: must be of type string; neither contains the rejected placeholder nor the previous value; previous value stayed intact after the rejected assignment.'
+            P1-G2-T05:
+              id: P1-G2-T05
+              source_id: '003'
+              title: Provide Entity-to-JSON conversion
+              description: Provide the Foundation capability that converts an Entity to its JSON representation for every Target-declared Type.
+              reason: JSON is the only portable value representation Model publishes, so consumers need a single conversion route.
+              inputs:
+              - Declaration layer
+              - Construction semantics
+              skills:
+              - sqlmodel
+              expected_result: A Foundation capability that turns any Entity into its JSON object.
+              depends_on:
+              - P1-G2-T02
+              constraints: []
+              acceptance: The output has exactly the Entity's Field names in Declaration order with their current values preserved per Type semantics, keeps null, false, zero, and empty string distinct, represents a pending Auto Increment value as null, and contains no metadata, nested Entity, or undeclared key.
+              verify: Converting a representative Entity holding each value kind and a pending Auto Increment value yields a JSON object whose keys and order match its Declaration and whose values equal the Entity's values.
+              status: done
+              log:
+              - at: '2026-09-28T21:52:10Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before working on diagnostics and Foundation JSON conversion.
+              - at: '2026-09-28T21:53:00Z'
+                transition: claimed -> done
+                check: Transient script converting the stand-in Entity holding each value kind, and one with omitted values, to JSON; checked key set and order, values, JSON-compatibility.
+                outcome: Keys equal the Declaration Field names in order with nothing extra; pending Auto Increment id -> null; empty string, zero, false, 0.0 stayed distinct from null; Decimal 1234567890.1200 -> exact text; aware datetime -> ISO text with +03:30 offset; sensitivity-marked value unchanged; json.dumps accepted the result.
+            P1-G2-T06:
+              id: P1-G2-T06
+              source_id: '003'
+              title: Provide JSON-to-Entity construction
+              description: Provide the Foundation capability that constructs an Entity from a JSON object under the same contract as direct construction.
+              reason: Consumers must be able to rebuild an Entity from its portable representation without a second set of rules.
+              inputs:
+              - Entity-to-JSON conversion
+              - Construction semantics
+              skills:
+              - sqlmodel
+              - pydantic:pydantic
+              expected_result: A Foundation capability that turns a JSON object into an Entity.
+              depends_on:
+              - P1-G2-T02
+              - P1-G2-T05
+              constraints: []
+              acceptance: Valid JSON yields an Entity equal in every value to its source, while malformed input, unknown Fields, incompatible Types, and missing Required Fields are refused, and omissions resolve exactly as in direct construction.
+              verify: Converting a representative Entity to JSON and back yields identical values for every Field, and JSON with a malformed shape, an unknown key, a wrong-typed value, or a missing Required Field is refused.
+              status: done
+              log:
+              - at: '2026-09-28T21:53:00Z'
+                transition: todo -> claimed
+                note: 'Claimed by my-interface-develop (log 004). Note: the from_json capability was written in the same unit as to_json before this claim was recorded; nothing was verified or marked done before the claim.'
+              - at: '2026-09-28T21:53:16Z'
+                transition: claimed -> done
+                check: 'Transient script: round trip through JSON text for a fully populated and a mostly omitted stand-in Entity, then twelve malformed or non-conforming payloads; ruff and pyright clean.'
+                outcome: 'Round trips preserved every value and its exact type (empty string, zero, false, 0.0, Decimal 0.0100 text, aware datetime with -05:00 offset, null, pending id). Refused: non-object, list, non-text key, unknown key, missing Required Field, wrong-typed value, bool for int, number for decimal, malformed decimal, malformed datetime, naive datetime, null for non-nullable. A found defect (TypeError escaping for a non-text decimal) was fixed and rechecked. Omission resolved as in direct construction. Earlier G1/G2 checks rerun green after the fix.'
+        P1-G3:
+          id: P1-G3
+          title: Entities
+          description: One Entity for every Target-declared domain concept, each defined independently from its Target definition.
+          area: Entity definitions
+          does: Every Target-declared model exists as exactly one Entity with its Fields and Entity Metadata declared.
+          constraints: []
+          task_count: 15
+          tasks:
+            P1-G3-T01:
+              id: P1-G3-T01
+              source_id: '003'
+              title: Define the User Entity
+              description: Define the User Entity from its Target definition, including its uniqueness rules and credential Fields.
+              reason: Multi-user operation needs an independent user concept whose settings stay distinct per user.
+              inputs: []
+              skills:
+              - sqlmodel
+              expected_result: The User Entity exists as its own unit with its Fields, rules, and Entity Metadata declared as the Target defines them.
+              depends_on:
+              - P1-G1-T02
+              - P1-G2-T01
+              - P1-G2-T02
+              - P1-G2-T03
+              constraints: []
+              acceptance: The User Declaration matches its Target definition without a missing, added, reordered, or altered item, and the Entity accepts values that conform to it.
+              verify: Reading User through the Declaration layer and comparing it item by item with the Target shows no difference, constructing User from conforming values succeeds, and constructing it with a missing Required Field is refused.
+              status: done
+              log:
+              - at: '2026-09-28T21:53:47Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before defining the Entities.
+              - at: '2026-09-28T21:54:47Z'
+                transition: claimed -> done
+                check: Transient conformance script parsing the Target model definition and comparing it item by item with the Entity's public Declaration and class; then constructing the Entity from conforming values, from omitted defaults, and with a violated rule. ruff and pyright clean.
+                outcome: 'User: 7 Fields (order, Type, nullability, description, Default Value, length, Value Generation, sensitivity), Primary Key id, 0 Relation(s), 2 Uniqueness Constraint(s), no Indexes all matched the Target with nothing missing, added, reordered, or altered; table columns matched; construction from conforming values succeeded and omitted defaults resolved; a missing Required Field was refused.'
+            P1-G3-T02:
+              id: P1-G3-T02
+              source_id: '003'
+              title: Define the Trading Platform Entity
+              description: Define the Trading Platform Entity from its Target definition, including its uniqueness rule and Default Values.
+              reason: The system must stay independent of any one exchange by identifying supported trading API standards.
+              inputs: []
+              skills:
+              - sqlmodel
+              expected_result: The Trading Platform Entity exists as its own unit with its Fields, rules, and Entity Metadata declared as the Target defines them.
+              depends_on:
+              - P1-G1-T02
+              - P1-G2-T01
+              - P1-G2-T02
+              - P1-G2-T03
+              constraints: []
+              acceptance: The Trading Platform Declaration matches its Target definition without a missing, added, reordered, or altered item, and the Entity accepts values that conform to it.
+              verify: Reading Trading Platform through the Declaration layer and comparing it item by item with the Target shows no difference, constructing Trading Platform from conforming values succeeds, and constructing it with a missing Required Field is refused.
+              status: done
+              log:
+              - at: '2026-09-28T21:53:47Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before defining the Entities.
+              - at: '2026-09-28T21:54:47Z'
+                transition: claimed -> done
+                check: Transient conformance script parsing the Target model definition and comparing it item by item with the Entity's public Declaration and class; then constructing the Entity from conforming values, from omitted defaults, and with a violated rule. ruff and pyright clean.
+                outcome: 'Trading Platform: 5 Fields (order, Type, nullability, description, Default Value, length, Value Generation, sensitivity), Primary Key id, 0 Relation(s), 1 Uniqueness Constraint(s), no Indexes all matched the Target with nothing missing, added, reordered, or altered; table columns matched; construction from conforming values succeeded and omitted defaults resolved; a missing Required Field was refused.'
+            P1-G3-T03:
+              id: P1-G3-T03
+              source_id: '003'
+              title: Define the Instance Entity
+              description: Define the Instance Entity from its Target definition, including its Relations to User and Trading Platform, its composite uniqueness rule, and its credential Fields.
+              reason: Users need owned connection instances through which a Trading Platform is reached.
+              inputs: []
+              skills:
+              - sqlmodel
+              expected_result: The Instance Entity exists as its own unit with its Fields, rules, and Entity Metadata declared as the Target defines them.
+              depends_on:
+              - P1-G1-T02
+              - P1-G2-T01
+              - P1-G2-T02
+              - P1-G2-T03
+              constraints: []
+              acceptance: The Instance Declaration matches its Target definition without a missing, added, reordered, or altered item, and the Entity accepts values that conform to it.
+              verify: Reading Instance through the Declaration layer and comparing it item by item with the Target shows no difference, constructing Instance from conforming values succeeds, and constructing it with a missing Required Field is refused.
+              status: done
+              log:
+              - at: '2026-09-28T21:53:47Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before defining the Entities.
+              - at: '2026-09-28T21:54:47Z'
+                transition: claimed -> done
+                check: Transient conformance script parsing the Target model definition and comparing it item by item with the Entity's public Declaration and class; then constructing the Entity from conforming values, from omitted defaults, and with a violated rule. ruff and pyright clean.
+                outcome: 'Instance: 10 Fields (order, Type, nullability, description, Default Value, length, Value Generation, sensitivity), Primary Key id, 2 Relation(s), 1 Uniqueness Constraint(s), no Indexes all matched the Target with nothing missing, added, reordered, or altered; table columns matched; construction from conforming values succeeded and omitted defaults resolved; a missing Required Field was refused.'
+            P1-G3-T04:
+              id: P1-G3-T04
+              source_id: '003'
+              title: Define the Currency Entity
+              description: Define the Currency Entity from its Target definition, including its Relation to User, its composite uniqueness rule, its length restriction, and its Default Values.
+              reason: Trading needs currencies with standard codes, symbols, and monetary precision.
+              inputs: []
+              skills:
+              - sqlmodel
+              expected_result: The Currency Entity exists as its own unit with its Fields, rules, and Entity Metadata declared as the Target defines them.
+              depends_on:
+              - P1-G1-T02
+              - P1-G2-T01
+              - P1-G2-T02
+              - P1-G2-T03
+              constraints: []
+              acceptance: The Currency Declaration matches its Target definition without a missing, added, reordered, or altered item, and the Entity accepts values that conform to it.
+              verify: Reading Currency through the Declaration layer and comparing it item by item with the Target shows no difference, constructing Currency from conforming values succeeds, and constructing it with a code that breaks the declared length restriction is refused.
+              status: done
+              log:
+              - at: '2026-09-28T21:53:47Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before defining the Entities.
+              - at: '2026-09-28T21:54:47Z'
+                transition: claimed -> done
+                check: Transient conformance script parsing the Target model definition and comparing it item by item with the Entity's public Declaration and class; then constructing the Entity from conforming values, from omitted defaults, and with a violated rule. ruff and pyright clean.
+                outcome: 'Currency: 8 Fields (order, Type, nullability, description, Default Value, length, Value Generation, sensitivity), Primary Key id, 1 Relation(s), 1 Uniqueness Constraint(s), no Indexes all matched the Target with nothing missing, added, reordered, or altered; table columns matched; construction from conforming values succeeded and omitted defaults resolved; a missing Required Field and an over-long code were refused.'
+            P1-G3-T05:
+              id: P1-G3-T05
+              source_id: '003'
+              title: Define the Broker Entity
+              description: Define the Broker Entity from its Target definition, including its Relation to User and its composite uniqueness rule.
+              reason: Brokers must be supported without coupling them to one Trading Platform.
+              inputs: []
+              skills:
+              - sqlmodel
+              expected_result: The Broker Entity exists as its own unit with its Fields, rules, and Entity Metadata declared as the Target defines them.
+              depends_on:
+              - P1-G1-T02
+              - P1-G2-T01
+              - P1-G2-T02
+              - P1-G2-T03
+              constraints: []
+              acceptance: The Broker Declaration matches its Target definition without a missing, added, reordered, or altered item, and the Entity accepts values that conform to it.
+              verify: Reading Broker through the Declaration layer and comparing it item by item with the Target shows no difference, constructing Broker from conforming values succeeds, and constructing it with a missing Required Field is refused.
+              status: done
+              log:
+              - at: '2026-09-28T21:53:47Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before defining the Entities.
+              - at: '2026-09-28T21:54:47Z'
+                transition: claimed -> done
+                check: Transient conformance script parsing the Target model definition and comparing it item by item with the Entity's public Declaration and class; then constructing the Entity from conforming values, from omitted defaults, and with a violated rule. ruff and pyright clean.
+                outcome: 'Broker: 5 Fields (order, Type, nullability, description, Default Value, length, Value Generation, sensitivity), Primary Key id, 1 Relation(s), 1 Uniqueness Constraint(s), no Indexes all matched the Target with nothing missing, added, reordered, or altered; table columns matched; construction from conforming values succeeded and omitted defaults resolved; a missing Required Field was refused.'
+            P1-G3-T06:
+              id: P1-G3-T06
+              source_id: '003'
+              title: Define the Asset Entity
+              description: Define the Asset Entity from its Target definition, including its Relation to Broker, its composite uniqueness rule, and its Default Values.
+              reason: The system needs the complete set of tradable assets and their categories.
+              inputs: []
+              skills:
+              - sqlmodel
+              expected_result: The Asset Entity exists as its own unit with its Fields, rules, and Entity Metadata declared as the Target defines them.
+              depends_on:
+              - P1-G1-T02
+              - P1-G2-T01
+              - P1-G2-T02
+              - P1-G2-T03
+              constraints: []
+              acceptance: The Asset Declaration matches its Target definition without a missing, added, reordered, or altered item, and the Entity accepts values that conform to it.
+              verify: Reading Asset through the Declaration layer and comparing it item by item with the Target shows no difference, constructing Asset from conforming values succeeds, and constructing it with a missing Required Field is refused.
+              status: done
+              log:
+              - at: '2026-09-28T21:53:47Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before defining the Entities.
+              - at: '2026-09-28T21:54:47Z'
+                transition: claimed -> done
+                check: Transient conformance script parsing the Target model definition and comparing it item by item with the Entity's public Declaration and class; then constructing the Entity from conforming values, from omitted defaults, and with a violated rule. ruff and pyright clean.
+                outcome: 'Asset: 8 Fields (order, Type, nullability, description, Default Value, length, Value Generation, sensitivity), Primary Key id, 1 Relation(s), 1 Uniqueness Constraint(s), no Indexes all matched the Target with nothing missing, added, reordered, or altered; table columns matched; construction from conforming values succeeded and omitted defaults resolved; a missing Required Field was refused.'
+            P1-G3-T07:
+              id: P1-G3-T07
+              source_id: '003'
+              title: Define the Account Group Entity
+              description: Define the Account Group Entity from its Target definition, including its Relation to User and its composite uniqueness rule.
+              reason: Users need to organize trading accounts into independent groups.
+              inputs: []
+              skills:
+              - sqlmodel
+              expected_result: The Account Group Entity exists as its own unit with its Fields, rules, and Entity Metadata declared as the Target defines them.
+              depends_on:
+              - P1-G1-T02
+              - P1-G2-T01
+              - P1-G2-T02
+              - P1-G2-T03
+              constraints: []
+              acceptance: The Account Group Declaration matches its Target definition without a missing, added, reordered, or altered item, and the Entity accepts values that conform to it.
+              verify: Reading Account Group through the Declaration layer and comparing it item by item with the Target shows no difference, constructing Account Group from conforming values succeeds, and constructing it with a missing Required Field is refused.
+              status: done
+              log:
+              - at: '2026-09-28T21:53:47Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before defining the Entities.
+              - at: '2026-09-28T21:54:47Z'
+                transition: claimed -> done
+                check: Transient conformance script parsing the Target model definition and comparing it item by item with the Entity's public Declaration and class; then constructing the Entity from conforming values, from omitted defaults, and with a violated rule. ruff and pyright clean.
+                outcome: 'Account Group: 5 Fields (order, Type, nullability, description, Default Value, length, Value Generation, sensitivity), Primary Key id, 1 Relation(s), 1 Uniqueness Constraint(s), no Indexes all matched the Target with nothing missing, added, reordered, or altered; table columns matched; construction from conforming values succeeded and omitted defaults resolved; a missing Required Field was refused.'
+            P1-G3-T08:
+              id: P1-G3-T08
+              source_id: '003'
+              title: Define the Account Entity
+              description: Define the Account Entity from its Target definition, including its Relations to Account Group, Broker, Instance, and Currency, its uniqueness rules, its Default Value, and its credential Field.
+              reason: Trades and positions execute through funded trading accounts.
+              inputs: []
+              skills:
+              - sqlmodel
+              expected_result: The Account Entity exists as its own unit with its Fields, rules, and Entity Metadata declared as the Target defines them.
+              depends_on:
+              - P1-G1-T02
+              - P1-G2-T01
+              - P1-G2-T02
+              - P1-G2-T03
+              constraints: []
+              acceptance: The Account Declaration matches its Target definition without a missing, added, reordered, or altered item, and the Entity accepts values that conform to it.
+              verify: Reading Account through the Declaration layer and comparing it item by item with the Target shows no difference, constructing Account from conforming values succeeds, and constructing it with a missing Required Field is refused.
+              status: done
+              log:
+              - at: '2026-09-28T21:53:47Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before defining the Entities.
+              - at: '2026-09-28T21:54:47Z'
+                transition: claimed -> done
+                check: Transient conformance script parsing the Target model definition and comparing it item by item with the Entity's public Declaration and class; then constructing the Entity from conforming values, from omitted defaults, and with a violated rule. ruff and pyright clean.
+                outcome: 'Account: 13 Fields (order, Type, nullability, description, Default Value, length, Value Generation, sensitivity), Primary Key id, 4 Relation(s), 2 Uniqueness Constraint(s), no Indexes all matched the Target with nothing missing, added, reordered, or altered; table columns matched; construction from conforming values succeeded and omitted defaults resolved; a missing Required Field was refused.'
+            P1-G3-T09:
+              id: P1-G3-T09
+              source_id: '003'
+              title: Define the Trailing Group Entity
+              description: Define the Trailing Group Entity from its Target definition, including its Relation to User and its composite uniqueness rule.
+              reason: Stop Loss and Take Profit management rules need an owning group.
+              inputs: []
+              skills:
+              - sqlmodel
+              expected_result: The Trailing Group Entity exists as its own unit with its Fields, rules, and Entity Metadata declared as the Target defines them.
+              depends_on:
+              - P1-G1-T02
+              - P1-G2-T01
+              - P1-G2-T02
+              - P1-G2-T03
+              constraints: []
+              acceptance: The Trailing Group Declaration matches its Target definition without a missing, added, reordered, or altered item, and the Entity accepts values that conform to it.
+              verify: Reading Trailing Group through the Declaration layer and comparing it item by item with the Target shows no difference, constructing Trailing Group from conforming values succeeds, and constructing it with a missing Required Field is refused.
+              status: done
+              log:
+              - at: '2026-09-28T21:53:47Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before defining the Entities.
+              - at: '2026-09-28T21:54:48Z'
+                transition: claimed -> done
+                check: Transient conformance script parsing the Target model definition and comparing it item by item with the Entity's public Declaration and class; then constructing the Entity from conforming values, from omitted defaults, and with a violated rule. ruff and pyright clean.
+                outcome: 'Trailing Group: 5 Fields (order, Type, nullability, description, Default Value, length, Value Generation, sensitivity), Primary Key id, 1 Relation(s), 1 Uniqueness Constraint(s), no Indexes all matched the Target with nothing missing, added, reordered, or altered; table columns matched; construction from conforming values succeeded and omitted defaults resolved; a missing Required Field was refused.'
+            P1-G3-T10:
+              id: P1-G3-T10
+              source_id: '003'
+              title: Define the Trailing Rule Entity
+              description: Define the Trailing Rule Entity from its Target definition, including its Relation to Trailing Group, its uniqueness rules, and its nullable adjustment Fields.
+              reason: Each trailing rule tells the system when and how to adjust Take Profit and Stop Loss.
+              inputs: []
+              skills:
+              - sqlmodel
+              expected_result: The Trailing Rule Entity exists as its own unit with its Fields, rules, and Entity Metadata declared as the Target defines them.
+              depends_on:
+              - P1-G1-T02
+              - P1-G2-T01
+              - P1-G2-T02
+              - P1-G2-T03
+              constraints: []
+              acceptance: The Trailing Rule Declaration matches its Target definition without a missing, added, reordered, or altered item, and the Entity accepts values that conform to it.
+              verify: Reading Trailing Rule through the Declaration layer and comparing it item by item with the Target shows no difference, constructing Trailing Rule from conforming values succeeds, and constructing it with a missing Required Field is refused.
+              status: done
+              log:
+              - at: '2026-09-28T21:53:47Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before defining the Entities.
+              - at: '2026-09-28T21:54:48Z'
+                transition: claimed -> done
+                check: Transient conformance script parsing the Target model definition and comparing it item by item with the Entity's public Declaration and class; then constructing the Entity from conforming values, from omitted defaults, and with a violated rule. ruff and pyright clean.
+                outcome: 'Trailing Rule: 8 Fields (order, Type, nullability, description, Default Value, length, Value Generation, sensitivity), Primary Key id, 1 Relation(s), 2 Uniqueness Constraint(s), no Indexes all matched the Target with nothing missing, added, reordered, or altered; table columns matched; construction from conforming values succeeded and omitted defaults resolved; a missing Required Field was refused.'
+            P1-G3-T11:
+              id: P1-G3-T11
+              source_id: '003'
+              title: Define the Partial Group Entity
+              description: Define the Partial Group Entity from its Target definition, including its Relation to User and its composite uniqueness rule.
+              reason: Partial-close rules need an owning group.
+              inputs: []
+              skills:
+              - sqlmodel
+              expected_result: The Partial Group Entity exists as its own unit with its Fields, rules, and Entity Metadata declared as the Target defines them.
+              depends_on:
+              - P1-G1-T02
+              - P1-G2-T01
+              - P1-G2-T02
+              - P1-G2-T03
+              constraints: []
+              acceptance: The Partial Group Declaration matches its Target definition without a missing, added, reordered, or altered item, and the Entity accepts values that conform to it.
+              verify: Reading Partial Group through the Declaration layer and comparing it item by item with the Target shows no difference, constructing Partial Group from conforming values succeeds, and constructing it with a missing Required Field is refused.
+              status: done
+              log:
+              - at: '2026-09-28T21:53:47Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before defining the Entities.
+              - at: '2026-09-28T21:54:48Z'
+                transition: claimed -> done
+                check: Transient conformance script parsing the Target model definition and comparing it item by item with the Entity's public Declaration and class; then constructing the Entity from conforming values, from omitted defaults, and with a violated rule. ruff and pyright clean.
+                outcome: 'Partial Group: 5 Fields (order, Type, nullability, description, Default Value, length, Value Generation, sensitivity), Primary Key id, 1 Relation(s), 1 Uniqueness Constraint(s), no Indexes all matched the Target with nothing missing, added, reordered, or altered; table columns matched; construction from conforming values succeeded and omitted defaults resolved; a missing Required Field was refused.'
+            P1-G3-T12:
+              id: P1-G3-T12
+              source_id: '003'
+              title: Define the Partial Rule Entity
+              description: Define the Partial Rule Entity from its Target definition, including its Relation to Partial Group and its uniqueness rules.
+              reason: Partial-close rules define which share of a position closes at which profit level.
+              inputs: []
+              skills:
+              - sqlmodel
+              expected_result: The Partial Rule Entity exists as its own unit with its Fields, rules, and Entity Metadata declared as the Target defines them.
+              depends_on:
+              - P1-G1-T02
+              - P1-G2-T01
+              - P1-G2-T02
+              - P1-G2-T03
+              constraints: []
+              acceptance: The Partial Rule Declaration matches its Target definition without a missing, added, reordered, or altered item, and the Entity accepts values that conform to it.
+              verify: Reading Partial Rule through the Declaration layer and comparing it item by item with the Target shows no difference, constructing Partial Rule from conforming values succeeds, and constructing it with a missing Required Field is refused.
+              status: done
+              log:
+              - at: '2026-09-28T21:53:47Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before defining the Entities.
+              - at: '2026-09-28T21:54:48Z'
+                transition: claimed -> done
+                check: Transient conformance script parsing the Target model definition and comparing it item by item with the Entity's public Declaration and class; then constructing the Entity from conforming values, from omitted defaults, and with a violated rule. ruff and pyright clean.
+                outcome: 'Partial Rule: 7 Fields (order, Type, nullability, description, Default Value, length, Value Generation, sensitivity), Primary Key id, 1 Relation(s), 2 Uniqueness Constraint(s), no Indexes all matched the Target with nothing missing, added, reordered, or altered; table columns matched; construction from conforming values succeeded and omitted defaults resolved; a missing Required Field was refused.'
+            P1-G3-T13:
+              id: P1-G3-T13
+              source_id: '003'
+              title: Define the Action Group Entity
+              description: Define the Action Group Entity from its Target definition, including its Relation to User and its composite uniqueness rule.
+              reason: Actions need risk-profile groupings so trades can be organized and selected by risk level.
+              inputs: []
+              skills:
+              - sqlmodel
+              expected_result: The Action Group Entity exists as its own unit with its Fields, rules, and Entity Metadata declared as the Target defines them.
+              depends_on:
+              - P1-G1-T02
+              - P1-G2-T01
+              - P1-G2-T02
+              - P1-G2-T03
+              constraints: []
+              acceptance: The Action Group Declaration matches its Target definition without a missing, added, reordered, or altered item, and the Entity accepts values that conform to it.
+              verify: Reading Action Group through the Declaration layer and comparing it item by item with the Target shows no difference, constructing Action Group from conforming values succeeds, and constructing it with a missing Required Field is refused.
+              status: done
+              log:
+              - at: '2026-09-28T21:53:47Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before defining the Entities.
+              - at: '2026-09-28T21:54:48Z'
+                transition: claimed -> done
+                check: Transient conformance script parsing the Target model definition and comparing it item by item with the Entity's public Declaration and class; then constructing the Entity from conforming values, from omitted defaults, and with a violated rule. ruff and pyright clean.
+                outcome: 'Action Group: 5 Fields (order, Type, nullability, description, Default Value, length, Value Generation, sensitivity), Primary Key id, 1 Relation(s), 1 Uniqueness Constraint(s), no Indexes all matched the Target with nothing missing, added, reordered, or altered; table columns matched; construction from conforming values succeeded and omitted defaults resolved; a missing Required Field was refused.'
+            P1-G3-T14:
+              id: P1-G3-T14
+              source_id: '003'
+              title: Define the Action Entity
+              description: Define the Action Entity from its Target definition, including its Relations to Action Group, Asset, Account, Partial Group, and Trailing Group and its composite uniqueness rule.
+              reason: Positions need a definition of how they are opened.
+              inputs: []
+              skills:
+              - sqlmodel
+              expected_result: The Action Entity exists as its own unit with its Fields, rules, and Entity Metadata declared as the Target defines them.
+              depends_on:
+              - P1-G1-T02
+              - P1-G2-T01
+              - P1-G2-T02
+              - P1-G2-T03
+              constraints: []
+              acceptance: The Action Declaration matches its Target definition without a missing, added, reordered, or altered item, and the Entity accepts values that conform to it.
+              verify: Reading Action through the Declaration layer and comparing it item by item with the Target shows no difference, constructing Action from conforming values succeeds, and constructing it with a missing Required Field is refused.
+              status: done
+              log:
+              - at: '2026-09-28T21:53:47Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before defining the Entities.
+              - at: '2026-09-28T21:54:48Z'
+                transition: claimed -> done
+                check: Transient conformance script parsing the Target model definition and comparing it item by item with the Entity's public Declaration and class; then constructing the Entity from conforming values, from omitted defaults, and with a violated rule. ruff and pyright clean.
+                outcome: 'Action: 12 Fields (order, Type, nullability, description, Default Value, length, Value Generation, sensitivity), Primary Key id, 5 Relation(s), 1 Uniqueness Constraint(s), no Indexes all matched the Target with nothing missing, added, reordered, or altered; table columns matched; construction from conforming values succeeded and omitted defaults resolved; a missing Required Field was refused.'
+            P1-G3-T15:
+              id: P1-G3-T15
+              source_id: '003'
+              title: Define the Position Entity
+              description: Define the Position Entity from its Target definition, including its Relations to User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and Action, its uniqueness rule, and its Default Values.
+              reason: Every created position, executed or pending, must be identifiable and trackable.
+              inputs: []
+              skills:
+              - sqlmodel
+              expected_result: The Position Entity exists as its own unit with its Fields, rules, and Entity Metadata declared as the Target defines them.
+              depends_on:
+              - P1-G1-T02
+              - P1-G2-T01
+              - P1-G2-T02
+              - P1-G2-T03
+              constraints: []
+              acceptance: The Position Declaration matches its Target definition without a missing, added, reordered, or altered item, and the Entity accepts values that conform to it.
+              verify: Reading Position through the Declaration layer and comparing it item by item with the Target shows no difference, constructing Position from conforming values succeeds, and constructing it with a missing Required Field is refused.
+              status: done
+              log:
+              - at: '2026-09-28T21:53:47Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before defining the Entities.
+              - at: '2026-09-28T21:54:48Z'
+                transition: claimed -> done
+                check: Transient conformance script parsing the Target model definition and comparing it item by item with the Entity's public Declaration and class; then constructing the Entity from conforming values, from omitted defaults, and with a violated rule. ruff and pyright clean.
+                outcome: 'Position: 21 Fields (order, Type, nullability, description, Default Value, length, Value Generation, sensitivity), Primary Key id, 8 Relation(s), 1 Uniqueness Constraint(s), no Indexes all matched the Target with nothing missing, added, reordered, or altered; table columns matched; construction from conforming values succeeded and omitted defaults resolved; a missing Required Field was refused.'
+        P1-G4:
+          id: P1-G4
+          title: Interface publication
+          description: The standard Entity entry point of the Model.
+          area: Interface layer
+          does: Interface publishes exactly the Target Entities in Target order.
+          constraints: []
+          task_count: 1
+          tasks:
+            P1-G4-T01:
+              id: P1-G4-T01
+              source_id: '003'
+              title: Publish every Entity through the Interface
+              description: Provide the Interface as the standard entry point through which every Target-declared Entity is published.
+              reason: Consumers need one consistent route to the Entities, and the published set must equal the Target's.
+              inputs:
+              - Every defined Entity
+              skills:
+              - python-skills:python-guidelines
+              expected_result: An Interface that publishes the actual definition of each Target Entity.
+              depends_on:
+              - P1-G3-T01
+              - P1-G3-T02
+              - P1-G3-T03
+              - P1-G3-T04
+              - P1-G3-T05
+              - P1-G3-T06
+              - P1-G3-T07
+              - P1-G3-T08
+              - P1-G3-T09
+              - P1-G3-T10
+              - P1-G3-T11
+              - P1-G3-T12
+              - P1-G3-T13
+              - P1-G3-T14
+              - P1-G3-T15
+              constraints: []
+              acceptance: The Interface exposes exactly the Target Entities in Target order and no alias, copy, string name, helper, or additional symbol, and loading it creates no Entity and causes no external side effect.
+              verify: Enumerating the Interface's public surface yields the Target Entity names in Target order with nothing extra, each resolving to the actual Entity definition, and importing it performs no storage, network, or data-creation activity.
+              status: done
+              log:
+              - at: '2026-09-28T21:54:48Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before writing the Interface.
+              - at: '2026-09-28T21:55:33Z'
+                transition: claimed -> done
+                check: Transient script importing the Interface with network, storage, and Entity instantiation guarded, enumerating its public surface, comparing each symbol with its Entity unit, and star-importing it; ruff and pyright clean.
+                outcome: Public surface was exactly the 15 Target Entity names in Target order (no alias, helper, or extra symbol), each the actual class object from its own unit; star-import gave the same list; import instantiated no Entity, opened no connection, and created no files. Ruff sorting rules are disabled for this one file so Target order is kept.
+        P1-G5:
+          id: P1-G5
+          title: Documentation
+          description: Explanatory documentation of the Model's public surface, written from the completed Model.
+          area: Model documentation
+          does: Model documentation explains the public Model surface to a consumer without exposing internals or secrets.
+          constraints: []
+          task_count: 7
+          tasks:
+            P1-G5-T01:
+              id: P1-G5-T01
+              source_id: '003'
+              title: Write the documentation Overview
+              description: 'Write the Overview section: a concise introduction with one simple example that uses a single Entity.'
+              reason: A consumer needs a fast orientation before the detailed sections.
+              inputs:
+              - Published Interface
+              skills: []
+              expected_result: An Overview section with one working single-Entity example.
+              depends_on:
+              - P1-G4-T01
+              constraints: []
+              acceptance: The Overview introduces the Model concisely and its single example uses the standard Interface route.
+              verify: Following the Overview example against the published Model produces the outcome the text describes.
+              status: done
+              log:
+              - at: '2026-09-28T21:55:33Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before writing the documentation.
+              - at: '2026-09-28T21:56:23Z'
+                transition: claimed -> done
+                check: 'Transient scripts: extracted every python example from the documentation and ran it, comparing stdout with the text block that follows; compared sections with the Target and Declarations.'
+                outcome: Overview example ran against the published Model and printed USD as documented; the Overview is concise.
+            P1-G5-T02:
+              id: P1-G5-T02
+              source_id: '003'
+              title: Document the Interface section
+              description: Document every public Entity once, in Target order, with its name, description, complete Field table, and Entity Metadata kept outside that table, and without usage examples.
+              reason: Consumers must be able to understand every Entity without reading its source.
+              inputs:
+              - Declaration layer
+              - Published Interface
+              skills: []
+              expected_result: An Interface section covering each public Entity.
+              depends_on:
+              - P1-G1-T02
+              - P1-G4-T01
+              constraints: []
+              acceptance: Each Target Entity appears exactly once in Target order, each Field table shows every Field attribute the Model publishes, and each Entity's Primary Key, Relations, Uniqueness Constraints, and Indexes appear separately from the table.
+              verify: Comparing the section entry by entry with what the Declaration layer reports for every Entity shows no missing, extra, reordered, or differing item.
+              status: done
+              log:
+              - at: '2026-09-28T21:55:33Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before writing the documentation.
+              - at: '2026-09-28T21:56:23Z'
+                transition: claimed -> done
+                check: 'Transient scripts: extracted every python example from the documentation and ran it, comparing stdout with the text block that follows; compared sections with the Target and Declarations.'
+                outcome: Interface section lists all 15 Entities once in Target order; each Field table row matches the Target Field list and descriptions exactly, and every Entity's Primary Key, Relations, Uniqueness Constraints, and Indexes appear outside the table, with no usage examples.
+            P1-G5-T03:
+              id: P1-G5-T03
+              source_id: '003'
+              title: Document Declaration
+              description: Document Declaration with one example that reads an Entity's metadata.
+              reason: Consumers need to know how to read Entity meaning and structure programmatically.
+              inputs:
+              - Declaration layer
+              - Published Interface
+              skills: []
+              expected_result: A Declaration section with one metadata-reading example.
+              depends_on:
+              - P1-G1-T02
+              - P1-G4-T01
+              constraints: []
+              acceptance: The example reads Primary Key, Relations, Uniqueness Constraints, and Indexes of a real Entity and the text matches the actual output.
+              verify: Following the example against the published Model prints the metadata the text claims.
+              status: done
+              log:
+              - at: '2026-09-28T21:55:33Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before writing the documentation.
+              - at: '2026-09-28T21:56:24Z'
+                transition: claimed -> done
+                check: 'Transient scripts: extracted every python example from the documentation and ran it, comparing stdout with the text block that follows; compared sections with the Target and Declarations.'
+                outcome: 'The Declaration example ran and printed the primary key, the Currency Relation, its composite Uniqueness Constraint, and empty Indexes exactly as documented. Placement decision: the Preferences documentation order lists no Declaration section, so a Declaration section was placed between Interface and Foundation, following the order of the Model Definition.'
+            P1-G5-T04:
+              id: P1-G5-T04
+              source_id: '003'
+              title: Document Foundation
+              description: Document Foundation with one example for each capability and one complete example that uses every capability with a single Entity.
+              reason: Consumers need a working demonstration of conversion in both directions.
+              inputs:
+              - Entity-to-JSON conversion
+              - JSON-to-Entity construction
+              - Published Interface
+              skills: []
+              expected_result: A Foundation section with one example per capability and one complete round trip.
+              depends_on:
+              - P1-G2-T05
+              - P1-G2-T06
+              - P1-G4-T01
+              constraints: []
+              acceptance: Every example produces the documented result, and the complete example ends with an Entity equal to the one it started from.
+              verify: Following each Foundation example against the published Model reproduces the documented output, including the equal Entity at the end of the round trip.
+              status: done
+              log:
+              - at: '2026-09-28T21:55:33Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before writing the documentation.
+              - at: '2026-09-28T21:56:24Z'
+                transition: claimed -> done
+                check: 'Transient scripts: extracted every python example from the documentation and ran it, comparing stdout with the text block that follows; compared sections with the Target and Declarations.'
+                outcome: The two capability examples and the complete round-trip example ran and reproduced the documented output, the round trip ending with an equal Entity.
+            P1-G5-T05:
+              id: P1-G5-T05
+              source_id: '003'
+              title: Document Setup
+              description: Document Setup with only the steps specific to the selected technology.
+              reason: A consumer cannot use the Model until it is installed correctly.
+              inputs:
+              - Installable Model package
+              skills: []
+              expected_result: A Setup section containing the selected-technology installation steps.
+              depends_on:
+              - P1-G1-T01
+              constraints: []
+              acceptance: Setup contains only steps needed by the selected technology and no content about other Components.
+              verify: Following the Setup steps in a clean environment yields a Model that imports successfully.
+              status: done
+              log:
+              - at: '2026-09-28T21:55:33Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before writing the documentation.
+              - at: '2026-09-28T21:56:24Z'
+                transition: claimed -> done
+                check: 'Transient scripts: extracted every python example from the documentation and ran it, comparing stdout with the text block that follows; compared sections with the Target and Declarations.'
+                outcome: 'Followed the Setup steps in a clean copy of the component: uv sync installed the locked dependencies and the check command printed User.'
+            P1-G5-T06:
+              id: P1-G5-T06
+              source_id: '003'
+              title: Document Use
+              description: Document Use following the standard Model public surface.
+              reason: Consumers need guidance on the intended way to reach Entities, Declaration, and Foundation.
+              inputs:
+              - Published Interface
+              - Declaration layer
+              - Foundation capabilities
+              skills: []
+              expected_result: A Use section that follows the standard public surface.
+              depends_on:
+              - P1-G1-T02
+              - P1-G2-T05
+              - P1-G2-T06
+              - P1-G4-T01
+              constraints: []
+              acceptance: Use reaches Entities through the Interface and Declaration and Foundation through their own public routes, and no example reaches an internal.
+              verify: Following each Use example against the published Model works using only public routes.
+              status: done
+              log:
+              - at: '2026-09-28T21:55:33Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before writing the documentation.
+              - at: '2026-09-28T21:56:24Z'
+                transition: claimed -> done
+                check: 'Transient scripts: extracted every python example from the documentation and ran it, comparing stdout with the text block that follows; compared sections with the Target and Declarations.'
+                outcome: Use example ran and printed the documented output; every example reaches Entities only through the Interface and Declaration and Foundation through their public units.
+            P1-G5-T07:
+              id: P1-G5-T07
+              source_id: '003'
+              title: Document Troubleshooting
+              description: Document Troubleshooting for Model concerns only.
+              reason: Consumers need help interpreting the rejections and failures the Model itself reports.
+              inputs:
+              - Construction validation
+              - Assignment revalidation
+              - JSON construction
+              skills: []
+              expected_result: A Troubleshooting section covering Model-reported failures.
+              depends_on:
+              - P1-G2-T01
+              - P1-G2-T03
+              - P1-G2-T04
+              - P1-G2-T06
+              constraints: []
+              acceptance: Each documented problem is one the Model actually reports and is paired with a resolution that works, and no guidance concerns another Component.
+              verify: Reproducing each documented problem against the published Model produces the described diagnostic, and applying the described resolution clears it.
+              status: done
+              log:
+              - at: '2026-09-28T21:55:33Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before writing the documentation.
+              - at: '2026-09-28T21:56:24Z'
+                transition: claimed -> done
+                check: 'Transient scripts: extracted every python example from the documentation and ran it, comparing stdout with the text block that follows; compared sections with the Target and Declarations.'
+                outcome: All 9 documented messages were reproduced verbatim by triggering each problem against the published Model; each resolution corresponds to the rule that produced the message; no message contains a Field value.
+        P1-G6:
+          id: P1-G6
+          title: Verification
+          description: Whole-Model checks that prove the completed Model meets its authorities, beyond the check each individual Task carries.
+          area: Model conformance and repeatability
+          does: The completed Model is proven conformant, usable, and repeatable.
+          constraints: []
+          task_count: 7
+          tasks:
+            P1-G6-T01:
+              id: P1-G6-T01
+              source_id: '003'
+              title: Verify Entity and Field conformance with the Target
+              description: Compare the completed Model with the Target's Entities and Fields.
+              reason: Individual Entity checks cannot prove membership, order, and naming across the whole Model.
+              inputs:
+              - Completed Model
+              - Target model definitions
+              skills: []
+              expected_result: A conformance result for Entity membership, order, names, and Field contracts.
+              depends_on:
+              - P1-G4-T01
+              constraints: []
+              acceptance: Entity membership, order, names, descriptions, Field order, Types, nullability, Default Values, constraints, sensitivity markers, Value Generation, and physical naming match the Target and Preferences with nothing missing, added, or reordered.
+              verify: Comparing the public Declarations of all Entities with the Target and the resolved naming standards reports no difference.
+              status: done
+              log:
+              - at: '2026-09-28T21:56:24Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before running the whole-Model verification.
+              - at: '2026-09-28T21:57:13Z'
+                transition: claimed -> done
+                check: 'Transient scripts: full item-by-item comparison of all 15 public Declarations and classes with the parsed Target (names, descriptions, order, Types, nullability, Default Values, constraints, sensitivity, Value Generation, Primary Keys, Relations, Uniqueness Constraints, Indexes, table columns) plus a naming check of logical, class, file, and Field names.'
+                outcome: 'No difference found: 15 Entities in Target order, 124 Fields, all attributes matched; logical names exact; class names PascalCase, files and Fields snake_case; one file per Entity.'
+            P1-G6-T02:
+              id: P1-G6-T02
+              source_id: '003'
+              title: Verify Entity Metadata resolves completely
+              description: Check the Entity Metadata of every Entity for complete resolution.
+              reason: A single unresolved Relation makes the structural contract unreliable for every consumer.
+              inputs:
+              - Completed Model
+              skills: []
+              expected_result: A resolution result for all Primary Keys, Relations, Uniqueness Constraints, and Indexes.
+              depends_on:
+              - P1-G4-T01
+              constraints: []
+              acceptance: Every local Field named by metadata exists in its Entity, every Relation target Entity and Field exists in the Model with a compatible Type, and no metadata declaration or participating Field is duplicated.
+              verify: Resolving every metadata item through the Declaration layer succeeds for all Entities and a deliberately broken sample is reported as unresolved.
+              status: done
+              log:
+              - at: '2026-09-28T21:56:24Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before running the whole-Model verification.
+              - at: '2026-09-28T21:57:13Z'
+                transition: claimed -> done
+                check: Transient script resolving every Relation, Uniqueness Constraint, and Index of all Declarations across the Model, with a deliberately broken sample.
+                outcome: All 28 Relations resolve to an existing target Entity and Field with equal Types; all local Fields, Uniqueness Constraints, and Indexes resolve; no duplicate or repeated participating Field. The broken sample was reported as unresolved (unknown Entity) and incompatible Types.
+            P1-G6-T03:
+              id: P1-G6-T03
+              source_id: '003'
+              title: Verify Architecture and dependency direction
+              description: Check the Model's layering and the direction of its dependencies.
+              reason: Ownership and one-way dependency are what keep Entities independently understandable.
+              inputs:
+              - Completed Model
+              skills: []
+              expected_result: An architecture result for layer ownership and dependency direction.
+              depends_on:
+              - P1-G2-T04
+              - P1-G2-T05
+              - P1-G2-T06
+              - P1-G4-T01
+              constraints: []
+              acceptance: The Interface, Entity area, Declaration, Foundation, and shared infrastructure have canonical ownership, each Entity stands in exactly one unit, no Entity depends on another, and no shared unit depends on the Interface or a specific Entity.
+              verify: Inspecting the Model's dependency relationships shows only Interface to Entity and Entity to shared-unit edges and no cycle.
+              status: done
+              log:
+              - at: '2026-09-28T21:56:24Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before running the whole-Model verification.
+              - at: '2026-09-28T21:57:13Z'
+                transition: claimed -> done
+                check: Transient script statically analysing the imports of every module and the directory contents.
+                outcome: Interface, core (Declaration, Foundation, base, validation), and entity areas exist with the expected files; exactly one file per Entity and no shared infrastructure in the Entity area; Interface imports only Entity units, Entity units import only core units, core imports only core; no Entity imports another; no cycle among the 23 modules.
+            P1-G6-T04:
+              id: P1-G6-T04
+              source_id: '003'
+              title: Verify lossless JSON round trip for every Entity
+              description: Check that every Entity survives conversion to JSON and back with all values intact.
+              reason: Round-trip loss would silently corrupt portable data for any consumer.
+              inputs:
+              - Completed Model
+              - Foundation capabilities
+              skills:
+              - sqlmodel
+              expected_result: A round-trip result for every Entity and every declared value kind.
+              depends_on:
+              - P1-G4-T01
+              - P1-G2-T05
+              - P1-G2-T06
+              constraints: []
+              acceptance: For every Entity and every Target-declared value kind, including null, false, zero, empty string, and pending Auto Increment, the reconstructed Entity equals the source in every value.
+              verify: Converting each Entity holding representative values to JSON and reconstructing it yields identical values for every Field.
+              status: done
+              log:
+              - at: '2026-09-28T21:56:24Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before running the whole-Model verification.
+              - at: '2026-09-28T21:57:13Z'
+                transition: claimed -> done
+                check: Transient script converting each of the 15 Entities to JSON and reconstructing it in four variants (supplied values, omitted optional values, nulls, extreme values such as empty string, zero, negative zero, exponent-form decimal, UTC-normalized datetime).
+                outcome: 60 round trips reproduced every Field with equal value and identical Python type, exact decimal text and float repr preserved, pending id preserved as null, keys in Declaration order.
+            P1-G6-T05:
+              id: P1-G6-T05
+              source_id: '003'
+              title: Verify documentation agrees with the public Model
+              description: Check the completed documentation against the public Model.
+              reason: Documentation that drifts from the Model misleads every consumer.
+              inputs:
+              - Completed documentation
+              - Completed Model
+              skills: []
+              expected_result: A documentation-agreement result covering content, order, and secrets.
+              depends_on:
+              - P1-G5-T01
+              - P1-G5-T02
+              - P1-G5-T03
+              - P1-G5-T04
+              - P1-G5-T05
+              - P1-G5-T06
+              - P1-G5-T07
+              constraints: []
+              acceptance: Sections appear in the order the Preferences select, every documented Entity and Field agrees with the Declaration, no stale or additional meaning appears, and no real credential or secret appears.
+              verify: Comparing the documentation with the public Interface and Declarations shows no difference, and scanning it finds no credential or secret value.
+              status: done
+              log:
+              - at: '2026-09-28T21:57:13Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before checking the documentation against the public Model.
+              - at: '2026-09-28T21:57:14Z'
+                transition: claimed -> done
+                check: 'Rebuilt evidence with the documentation as finally written: reran every documented example and troubleshooting message, compared the Interface section with Declarations and Target, checked section order and scanned for secret-like tokens.'
+                outcome: 6 examples reproduced; 9 troubleshooting messages reproduced; Interface section matched all 15 Entities; sections in order Interface, Declaration, Foundation, Setup, Use, Troubleshooting after the Overview; no credential or secret-like token present.
+            P1-G6-T06:
+              id: P1-G6-T06
+              source_id: '003'
+              title: Verify source quality and technology conformance
+              description: Check the completed Model source and package against the selected technology's standards.
+              reason: A semantically correct Model must also be a clean, usable package.
+              inputs:
+              - Completed Model
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A source-quality result for formatting, static checks, installation, and runtime.
+              depends_on:
+              - P1-G1-T01
+              - P1-G2-T04
+              - P1-G2-T05
+              - P1-G2-T06
+              - P1-G4-T01
+              constraints: []
+              acceptance: The source is formatted and passes every applicable import, build, lint, and static type check without a fixable warning in Model-owned code, contains no unused import, dead or duplicate code, cache, build output, machine path, timestamp, or generation narrative, and installs and runs on the selected runtime version.
+              verify: Running the technology's applicable format, import, build, lint, static type, and installation checks on the Model reports no fixable Model-owned warning, and a scan of the source finds none of the excluded content.
+              status: done
+              log:
+              - at: '2026-09-28T21:56:24Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before running the whole-Model verification.
+              - at: '2026-09-28T21:57:14Z'
+                transition: claimed -> done
+                check: ruff format --check, ruff check, pyright, compile of all sources, uv build of sdist and wheel, clean-environment install (see P1-G1-T01), and content scans of the source for absolute paths, agent identity, timestamps, generation narrative, suppressions, comments, and prints.
+                outcome: All 23 source files formatted; ruff and pyright report zero findings; every module compiles; both artifacts built and the wheel contains exactly the package modules and py.typed; scans found none of the excluded content. Cache directories exist locally but are ignored by the Model ignore file and outside the artifacts.
+            P1-G6-T07:
+              id: P1-G6-T07
+              source_id: '003'
+              title: Verify repeatability of unchanged regeneration
+              description: Regenerate the Model from unchanged authorities and compare the result with the existing Model.
+              reason: Deterministic output is what makes later reviews and regenerations trustworthy.
+              inputs:
+              - Completed Model
+              - Completed documentation
+              skills: []
+              expected_result: A repeatability result showing the effect of unchanged regeneration.
+              depends_on:
+              - P1-G6-T01
+              - P1-G6-T02
+              - P1-G6-T03
+              - P1-G6-T04
+              - P1-G6-T05
+              - P1-G6-T06
+              constraints: []
+              acceptance: Regeneration from unchanged authorities and selections produces zero source and documentation difference and leaves no duplicate or stale artifact.
+              verify: Comparing the Model before and after an unchanged regeneration reports no difference in source or documentation and no additional artifact.
+              status: done
+              log:
+              - at: '2026-09-28T21:57:23Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 004) before regenerating the Model.
+              - at: '2026-09-28T21:57:34Z'
+                transition: claimed -> done
+                check: Snapshotted source, documentation, lock, and manifest; regenerated every generated unit (all 15 Entities, Interface, documentation) from the unchanged Target and Declarations, ran the same lint fix and format, refreshed the lock, and diffed the file set and contents against the snapshot.
+                outcome: Identical file set and zero difference in source, documentation, lock file, and manifest; no duplicate or stale artifact. Cache directories were removed afterwards.
