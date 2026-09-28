@@ -1,0 +1,93 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/application.yaml"
+  path_note: "Shared Application Manifest public Component metadata."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current Application Schema and preserve valid public metadata."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read public metadata by canonical Component identifier."
+  selection: "Select the section whose key is the Component being described."
+  absence: "An empty section means that its owner has published no public metadata."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "components"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  components: "Public metadata for each declared Implementation Component."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  components:
+    development: {}
+    model:
+      package_name: "model"
+      path: "model"
+      public_entrypoint: "model.interface"
+      public_interface:
+        layers:
+          - "model.interface"
+          - "model.entity"
+          - "model.declaration"
+          - "model.foundation"
+        entities:
+          - "User"
+          - "TradingPlatform"
+          - "Instance"
+          - "Currency"
+          - "Broker"
+          - "Asset"
+          - "AccountGroup"
+          - "Account"
+          - "TrailingGroup"
+          - "TrailingRule"
+          - "PartialGroup"
+          - "PartialRule"
+          - "ActionGroup"
+          - "Action"
+          - "Position"
+    database:
+      package_name: "database"
+      path: "database"
+      public_entrypoint: "database.interface"
+      public_interface:
+        layer: "database.interface"
+        operations:
+          - "add"
+          - "update"
+          - "list_"
+          - "delete"
+          - "enable"
+          - "disable"
+          - "get_by_id"
+          - "count"
+          - "sum_"
+          - "min_"
+          - "max_"
+          - "truncate"
+          - "execute_command"
+        vocabulary:
+          - "Filter"
+          - "FilterOperator"
+          - "FilterCombination"
+          - "Order"
+          - "OrderDirection"
+          - "CommandResult"
+    logic: {}
+    api: {}
+    presentation: {}
+    platform: {}
+    configure: {}
+    plan: {}
+    develop: {}
+    review: {}
+    implement: {}
+    launch: {}
+    reset: {}
+    state: {}

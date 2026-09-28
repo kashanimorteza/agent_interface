@@ -1,0 +1,358 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/state.yaml"
+  path_note: "Mutable active Workflow position, aggregate phase progress, and the recorded execution Log."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current State Schema; preserve existing operational records and never replace them with defaults."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read active, then the phase entries by stable Target phase identifier, then the log in recorded order."
+  selection: "A requested phase resolves to the entry keyed by that phase identifier; a Log Entry resolves by its id."
+  absence: "An empty phases mapping means no phase has been reconciled; an empty log means no execution has been recorded."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "active"
+  - "phases"
+  - "log"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  active: "The active Workflow position: mode, phase, reason, and who set it and when."
+  phases: "Aggregate operation progress keyed by stable Target phase identifier."
+  log: "The project's preserved history of recorded Skill executions and their outcomes."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  active:
+    mode: "reviewing"
+    phase: "P2"
+    mode_reason: "Reviewing phase P2 (Database) under implement execution 002."
+    set_by: "my-interface-review"
+    set_at: "2026-09-28T05:11:01+03:30"
+  phases:
+    P1:
+      id: "P1"
+      planning: "completed"
+      development: "completed"
+      review: "satisfied"
+      completed_at: "2026-09-28T04:47:31+03:30"
+    P2:
+      id: "P2"
+      planning: "completed"
+      development: "completed"
+      review: "satisfied"
+      completed_at: "2026-09-28T05:13:51+03:30"
+  log:
+    - id: "001"
+      skill: "my-interface-configure"
+      parent_id: ""
+      phase: null
+      event: "configure"
+      outcome: "completed"
+      started_at: "2026-09-28T04:31:46+03:30"
+      completed_at: "2026-09-28T04:32:02+03:30"
+      duration: "16 seconds"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used: []
+      open_questions: []
+      blockers: []
+      report: "Generated application.yaml, plan.yaml, and state.yaml from their Schemas composed with the general YAML Schema; all three validated against the frame, and nothing outside .interface/config/ changed."
+      data:
+        duration_ms: 15899
+        records:
+          - "application.yaml"
+          - "plan.yaml"
+          - "state.yaml"
+        notes:
+          - "started_at is the moment the State record first existed; the State record was absent before this execution."
+          - "The State Schema declares no file-specific generation values (path_note, policy, resolution, read_order, content_map), unlike Application and Plan. They were derived from the State Schema's own purpose, scope, and preservation text."
+    - id: "002"
+      skill: "my-interface-implement"
+      parent_id: ""
+      phase: null
+      event: "implement"
+      outcome: "completed"
+      started_at: "2026-09-28T04:32:30+03:30"
+      completed_at: "2026-09-28T05:14:05+03:30"
+      duration: "41:34"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used: []
+      open_questions:
+        - "OQ-005-1"
+        - "OQ-006-1"
+        - "OQ-006-2"
+      blockers: []
+      report: 'Implemented phases P1 (Model) and P2 (Database): Configure was not needed (Config was valid); each phase was planned, developed, and reviewed in order and both reviewed as satisfied. P1: 31 Tasks, P2: 48 Tasks, all done. Open Questions outstanding for the Human: 3 (OQ-005-1, OQ-006-1, OQ-006-2); Blockers: 0.'
+      data:
+        phases: ["1", "2"]
+        duration_ms: 2494400
+        coordinated: ["003", "004", "005", "006", "007", "008"]
+        outcomes:
+          P1: {planning: "completed", development: "completed", review: "satisfied"}
+          P2: {planning: "completed", development: "completed", review: "satisfied"}
+        counts:
+          open_questions: 3
+          blockers: 0
+        open_question_ids: ['OQ-005-1', 'OQ-006-1', 'OQ-006-2']
+        notes:
+          - "Phase identifiers 1 and 2 were resolved to Target phases P1 and P2."
+          - "Later phases P3-P5 are enabled and ready in the Target but were not selected. Phases P6 and P7 are disabled."
+          - "Nothing was committed or pushed; new files (model/, database/, .interface/config/) are untracked."
+    - id: "003"
+      skill: "my-interface-plan"
+      parent_id: "002"
+      phase: "P1"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-09-28T04:32:40+03:30"
+      completed_at: "2026-09-28T04:35:47+03:30"
+      duration: "3:08"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used: []
+      open_questions: []
+      blockers: []
+      report: "Planned phase P1 (Model): 1 Plan, 8 Groups, 31 Tasks, all status todo. All Tasks are new; no existing Plan, Task, or work was changed, removed, or replaced."
+      data:
+        duration_ms: 187541
+        phase: "P1"
+        task_count: 31
+        group_count: 8
+        task_changes:
+          - "Added 31 Tasks (P1-G1-T1 through P1-G8-T9) with source_id 003; the phase had no prior Plan."
+        notes:
+          - "The invocation selected phase 1; it resolves to Target phase P1 (title Model)."
+          - "Non-Technical Definition is empty; Planning used the Technical Definition alone."
+          - "Task Skills list sqlmodel for Model Entity, Declaration, and Foundation Tasks, as associated by the Model Preferences."
+          - "P1 constraints are empty; every candidate constraint is derivable from the Model Principles or the Target."
+    - id: "004"
+      skill: "my-interface-develop"
+      parent_id: "002"
+      phase: "P1"
+      event: "develop"
+      outcome: "completed"
+      started_at: "2026-09-28T04:35:54+03:30"
+      completed_at: "2026-09-28T04:44:24+03:30"
+      duration: "8:31"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used: []
+      open_questions: []
+      blockers: []
+      report: "Developed phase P1 (Model): all 31 Tasks done, each with a passing executed check recorded in its Task Log. Delivered the Model library (Foundation, Declaration, 15 Entity units, standard entry point), its documentation, and its Application Manifest section. Final re-run of every check plus ruff and pyright passed."
+      data:
+        duration_ms: 510530
+        phase: "P1"
+        tasks_done: 31
+        tasks_total: 31
+        deliverables:
+          - "model/ (Python library; uv-managed; source under model/src/model)"
+          - ".interface/config/application.yaml (Model section only)"
+        choices:
+          - "Library uses uv's src layout with package name model, Python 3.14 (uv default resolution), SQLModel 0.0.47; pydantic and sqlalchemy declared as direct dependencies because Entity units import from them; ruff and pyright are dev dependencies."
+          - "Entity id follows the Target (integer, auto increment); the Model Preferences' generated_id default applies only to generated identifiers, which the Target does not declare."
+          - "Table names are SQLModel's default (lowercased class name) and foreign keys use them; Declaration itself records no table names."
+          - "Sensitivity markers: password Fields use password, api_key Fields use sensitive. Storage treatment (hash or encrypted) is left to Database."
+          - "Decimal Fields carry no declared precision because the Target declares none; Database may need to decide one."
+          - "The Target's user table name is a reserved word in some SQL engines; Database should account for it."
+          - "The skill-provisioning step in the Development Preferences was not run; the sqlmodel Task Skill is already present at project scope."
+        notes:
+          - "Task P1-G8-T3 was recorded done before its check had run correctly; the check was rerun immediately and passed, and the Task Log carries a note stating this."
+          - "Checks were transient scripts kept outside the repository, per Model's testing setting (false); no test files were added."
+          - "The Model environment was deleted and rebuilt once by the setup check; it is untracked and gitignored."
+    - id: "005"
+      skill: "my-interface-review"
+      parent_id: "002"
+      phase: "P1"
+      event: "review"
+      outcome: "satisfied"
+      started_at: "2026-09-28T04:45:09+03:30"
+      completed_at: "2026-09-28T04:47:31+03:30"
+      duration: "2:23"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used: []
+      open_questions:
+        - "OQ-005-1: Finding F1 remains open for the Human (process evidence only; see data.findings)."
+      blockers: []
+      report: "Reviewed phase P1 (Model) against its current Plan: satisfied. Every Task acceptance criterion was observed to hold in the generated Source, its public surface, and its documentation. Two Findings were recorded: F1 (process, open, result unaffected) and F2 (evidence ordering, resolved). Independence caveat: this Review ran in the same session and model instance that developed the phase; independence was pursued through new observations rather than reuse of the developer checks."
+      data:
+        duration_ms: 142507
+        phase: "P1"
+        outcome: "satisfied"
+        findings:
+          - id: "F1"
+            state: "open"
+            kind: "process evidence"
+            expected: "A Task is claimed only once every Task it depends on is done, so claims follow the Plan's dependency order."
+            observed: "15 Tasks were claimed before at least one of their dependencies was marked done: P1-G1-T2, P1-G2-T3, P1-G3-T3, P1-G4-T1, P1-G4-T2, P1-G4-T3, P1-G5-T1, P1-G5-T2, P1-G6-T1, P1-G6-T2, P1-G6-T3, P1-G6-T4, P1-G7-T1, P1-G7-T2, P1-G7-T3. Claims were made in batches between 04:37:31 and 04:39:09 (+03:30) during Develop execution 004."
+            evidence: "The claim and done timestamps in each listed Task's Task Log in the Plan Config. The same audit found no Task marked done before a dependency was done (0 violations), and every listed Task's result was independently observed to hold."
+            effect: "None on the result. Only the recorded claim order deviates."
+            resolution: "None performed. Task Logs are append-only and owned by Develop, and Review may not change Task status or progress. Left open as an Open Question for the Human."
+          - id: "F2"
+            state: "resolved"
+            kind: "evidence ordering"
+            expected: "A Task is recorded verified only after its check has passed."
+            observed: "P1-G8-T3 was recorded done and verified before its first check attempt completed (that attempt failed on a missing module in the check environment)."
+            evidence: "P1-G8-T3 Task Log: the 'verified' entry precedes the 'note' entry that discloses this."
+            resolution: "Develop had already appended a disclosing note. Review independently re-observed all conditions of the Task (manifest entities equal the entry point's entities, every listed layer imports, only the Model section is populated, the listed path exists, package name matches) and all held. No change to the implementation was needed."
+        examined:
+          - "Foundation and Declaration source, the Position and User Entity units, the standard entry point, project metadata, and the documentation."
+          - "All 31 Task Logs: statuses, transition order, chronology, presence of check and outcome, dependency ordering of claims and completions."
+        observations:
+          - "55 behavioural observations on an in-memory database with foreign keys enforced: two rows of each of the 15 Entities persisted with generated ids; a foreign key to a missing parent was rejected; each of the 19 declared uniqueness rules rejected a duplicate while a control row that differed on every rule was accepted; a persisted Position kept an aware datetime and exact decimals and survived JSON conversion; a 4-character currency code and a naive datetime were rejected by JSON construction. All held."
+          - "The observation was shown to be able to fail: removing one uniqueness constraint made it report exactly that failure."
+          - "A second, fresh consuming project installed the Model and imported all 15 Entities and the three shared layers."
+          - "Manifest Model section re-observed against the package (see F2)."
+          - "ruff, ruff format, pyright passed at Develop completion and no Source changed afterwards. A scan of the Model tree found no credential values."
+        notes:
+          - "At the start of this Review a State edit of mine matched the wrong line and overwrote the active entry in the content_map section. I noticed it immediately, restored the original text, applied the intended change to the content block, and validated the State record. No other content was affected."
+          - "The Model documentation and README were reviewed as part of the phase result. The README at the repository root and the Interface-level documents were not changed."
+          - "Choices recorded by Develop that the Human may want to revisit: Python 3.14 as the minimum version; sensitivity marker mapping (password to password, api_key to sensitive); default lowercase table names; no declared decimal precision; the Target's user table name is reserved in some SQL engines."
+    - id: "006"
+      skill: "my-interface-plan"
+      parent_id: "002"
+      phase: "P2"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-09-28T04:47:49+03:30"
+      completed_at: "2026-09-28T04:51:16+03:30"
+      duration: "3:26"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used: []
+      open_questions:
+        - 'OQ-006-1: The Target requires credential Fields to be stored hashed or encrypted
+  at rest, Logic (not Database) owns that protection and applies it before values
+  reach Database, and Model owns no Initial Data. Phase P2 nevertheless inserts starting
+  records whose credential Fields must be securely generated. Tasks P2-G5-T4, P2-G5-T12
+  and P2-G5-T14 therefore store generated values as received and never print or record
+  them; nothing in the Interface says whether those seeded values must instead be
+  inserted in their protected form, which Logic will define in a later phase. Human
+  decision needed on how seeded credentials should be protected or rotated.'
+        - 'OQ-006-2: The Database Definition says References are realized with ''Model Preferences''
+  configured on_delete behaviour'', but the Model Preferences declare no on_delete
+  setting. Task P2-G3-T2 is planned against ''the configured reference behaviour'';
+  Develop will have to apply a default and record it. Human may wish to declare the
+  intended behaviour.'
+      blockers: []
+      report: 'Planned phase P2 (Database): 1 Plan, 7 Groups, 48 Tasks, all status todo. All Tasks are new; no existing Plan, Task, or work was changed, removed, or replaced. Two Open Questions recorded (seeded credential protection; undeclared reference on-delete behaviour).'
+      data:
+        duration_ms: 206248
+        phase: "P2"
+        task_count: 48
+        group_count: 7
+        task_changes:
+          - "Added 48 Tasks (P2-G1-T1 through P2-G7-T8) with source_id 006; the phase had no prior Plan. Phase P1's Plan was preserved unchanged."
+        notes:
+          - "The invocation selected phase 2; it resolves to Target phase P2 (title Database). Its prerequisite, phase P1, was reviewed as satisfied before planning began."
+          - "Non-Technical Definition is empty; Planning used the Technical Definition alone."
+          - "The Database Configuration Schema requires every declared Engine to have an implementation while Database Preferences also list Engines marked not to be implemented; the Plan declares only implemented Engines as supported (Task P2-G1-T1). The Human may wish to confirm."
+          - "Task Skills list sqlmodel where Database's Preferences associate it with the work; no other applicable Skill was identified."
+          - "P2 constraints are empty; each candidate constraint (for example never recording secret values) is derivable from the Interface Skill policy or the Database Principles."
+          - "Planning content names no technology, file, or path; concrete choices (Engine, migration mechanism, configuration file) remain in Database's Preferences and Schema."
+    - id: "007"
+      skill: "my-interface-develop"
+      parent_id: "002"
+      phase: "P2"
+      event: "develop"
+      outcome: "completed"
+      started_at: "2026-09-28T04:52:54+03:30"
+      completed_at: "2026-09-28T05:10:36+03:30"
+      duration: "17:43"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used: []
+      open_questions: []
+      blockers: []
+      report: 'Developed phase P2 (Database): all 48 Tasks done, each with a passing executed check recorded in its Task Log. Delivered the Database library (Configuration, Interface with 13 Operations and vocabulary, Data routing, SQLite Engine, atomic persistence), structure and initial-data migrations applied to the default Instance, documentation, and its Application Manifest section. Final re-run of every check plus ruff, ruff format and pyright passed.'
+      data:
+        duration_ms: 1062689
+        phase: "P2"
+        tasks_done: 48
+        tasks_total: 48
+        deliverables:
+          - "database/ (Python library; uv-managed; source under database/src/database; migrations under database/migrations)"
+          - "database/database.yaml (Database Configuration)"
+          - "database/db/application.db (provisioned default Instance; ignored by version control, not committed)"
+          - ".interface/config/application.yaml (Database section added; Model section unchanged)"
+        choices:
+          - "Database uses uv's src layout with package name database, Python 3.14, SQLModel, Alembic for migrations, and PyYAML to read its configuration; Model is a local editable dependency that uv installs with it."
+          - "Only the Engine the Preferences mark for implementation (SQLite) is declared in the configuration, because the configuration Schema requires every declared Engine to have an implementation. The database directory is 'db' beside the configuration; Instance path fields are empty."
+          - "Database finds its configuration and database directory relative to its own source, so it must be installed editable (documented; a non-editable install fails with a file-not-found error)."
+          - "Python names of Operations that would shadow built-ins end in an underscore: list_, sum_, min_, max_."
+          - "Add refuses a supplied value for a generated Field and refuses an omitted or null required Field; Update requires the id and refuses invalid values through validation. No custom error types were added (error handling capability is off), so ValueError, validation, and database integrity errors propagate."
+          - "Model declares no on_delete behaviour, so References use the Engine default (no action) with referential integrity enforced: deleting a referenced record is refused."
+          - "Initial data is applied as twelve data migrations (0002-0013), one per Entity, with the structure migration as 0001. Downgrade removes the inserted rows by natural key; the data migrations are not idempotent."
+          - "Generated credentials use a 32-byte URL-safe random generator at apply time, are stored as generated (unhashed, unencrypted, as Database stores values as received), and appear in no file or output. Whether seeded credentials should be protected differently is Open Question OQ-006-1 from planning."
+          - "The verification of the default Instance's structure is a documented snippet using the published Execute Command; no extra public Operation was added."
+          - "Sensible technical choices such as the migration environment selecting an Instance with '-x instance=<key>' and the configuration path resolution are internal and recorded here for later Operations."
+        notes:
+          - "Every Task was claimed only after its dependencies were done, and completed after them; an audit of the 48 Task Logs found no ordering violation (the phase-P1 batch-claim finding does not recur)."
+          - "Corrections made during development, each recorded in the affected Task Log: an edit to the Interface's list of public names silently did not apply and was caught by verification (P2-G2-T4); a documentation file was truncated by a scripting mistake and rebuilt before its Task was verified (P2-G7-T3); two documentation claims that observation showed to be wrong were corrected (P2-G7-T7 remedy wording; P2-G7-T5 and P2-G6-T1 wrongly said Model must be added separately, which uv does not require)."
+          - "One shell command was refused by the project's Interface boundary guard although it wrote nothing under .interface/; the same work was done in smaller steps, with no attempt to bypass the guard. The State and Config edits made to .interface/config/ were the only writes under .interface/."
+          - "A type-check run initially failed because the venv's checker was called directly and analysed against the system Python; the project's own interpreter was used for the recorded run. Autogenerated migration typing errors were fixed at their source (template and the one generated file)."
+          - "Checks were transient scripts kept outside the repository, per Database's testing setting (false): 11 + 5 + 6 + 4 + 12 + 17 + 84 observations, 55 (twice: engine and migration), 39 documentation checks, and two deliberate mutations showing the Operations check can fail. Final re-run of every check, ruff, ruff format and pyright over source and migrations passed."
+          - "The real default Instance was never used by a check that writes: scratch Instances were used for every writing check, and its file checksum was compared before and after the setup checks."
+    - id: "008"
+      skill: "my-interface-review"
+      parent_id: "002"
+      phase: "P2"
+      event: "review"
+      outcome: "satisfied"
+      started_at: "2026-09-28T05:11:01+03:30"
+      completed_at: "2026-09-28T05:13:51+03:30"
+      duration: "2:50"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used: []
+      open_questions: []
+      blockers: []
+      report: 'Reviewed phase P2 (Database) against its current Plan: satisfied. Every Task acceptance criterion was observed to hold in the generated Source, its public surface, the provisioned default Instance and its seeded data, and the documentation. One Finding (F1, documentation accuracy) was recorded and resolved. Independence caveat: this Review ran in the same session and model instance that developed the phase; independence was pursued through new observations, including deliberate mutations showing they can fail, rather than reuse of the developer checks.'
+      data:
+        phase: "P2"
+        findings:
+          - id: "F1"
+            state: "resolved"
+            kind: "documentation accuracy"
+            expected: "Every statement in the documentation is true of what the documentation and the component actually contain."
+            observed: "The troubleshooting entry for a required-Field ValueError tells the reader to supply every required Field 'listed for the Entity in the Interface section'. Database's Interface section documents the thirteen Operations and lists no Entity Fields; the per-Entity Field tables are in Model's documentation."
+            evidence: "database/README.md, Troubleshooting, entry 'ValueError: 'name' is required', last sentence; the Interface section of the same file (headings Add through Execute Command, no Entity tables)."
+            resolution: "Corrected the sentence to say the Entity's required Fields are listed in the Model documentation, which does contain the per-Entity Fields tables (15). Rechecked: all 39 documentation checks pass, the old wording is gone, and the new pointer is true."
+        duration_ms: 170068
+        outcome: "satisfied"
+        examined:
+          - "Database source (Data layer, SQLite Engine, Interface), configuration, migration environment, one structure revision and the twelve data revisions, documentation, project metadata, the Application Manifest section, and all 48 Task Logs of the phase."
+        observations:
+          - "46 fresh observations on scratch Instances and the real database (read-only): the configured query defaults, foreign-key parameter, database directory and Instance database name each demonstrably drive behaviour; edge cases for List (empty in, limit 0, null operators, unknown Fields), Truncate of a referenced Entity (refused, nothing removed), re-adding an Entity that has an id (refused), a changing command with a returned row, two statements (refused), aggregates over text and numeric Fields, Disable then Enable, 30 further records with increasing ids; migrations (downgrade one revision removes only the last data revision, full downgrade removes every structure, upgrading again restores structure and data with freshly generated credentials); and the twelve seeded Entities compared with the Target's Initial Data by raw SQL, including that Entities with no Initial Data hold nothing, that the five credentials are distinct 32+ character values, that the Account credential differs from both Instance credentials, that no credential appears in any project file, and that the database file is untracked and ignored. All held."
+          - "The observation set was shown able to fail: hard-coding the List defaults made exactly the two default-related observations fail, and ignoring the foreign-key parameter made exactly the parameter observation fail."
+          - "19 further observations on documented claims (values stored exactly as supplied, wildcard characters literal, default id order, failed command changes nothing, documented error texts match), the documentation's cross-references, the public surface (13 Operations and 6 vocabulary names, one example per Operation), the manifest section, Task Log integrity (48 done, claimed then done, no ordering violation, no blockers) and absence of credential values in Config records and source. All held after F1 was resolved."
+          - "A fresh consuming project added Database alone (editable); Model came with it and Operations ran against the provisioned default Instance."
+          - "ruff, ruff format and pyright (with the project's own interpreter) passed over Database source and migrations and over Model source. The real database file's checksum was identical before and after this Review."
+        notes:
+          - "Open Questions carried unchanged from earlier executions and still open for the Human: OQ-005-1 (Finding F1 of the phase-P1 Review, claim ordering evidence) and, from planning of this phase, OQ-006-1 (how seeded credentials should be protected or rotated, since Database stores values as received and Logic owns protection) and OQ-006-2 (Model declares no on_delete behaviour although Database refers to one)."
+          - "Choices recorded by Develop that the Human may want to revisit: Python 3.14 minimum, editable installation required, only the implemented Engine declared in the configuration, list_/sum_/min_/max_ naming, unhashed seeded credentials."
+          - "Review rechecked its own edit scope: the only file changed by this Review outside the State record is the one sentence in the Database documentation."

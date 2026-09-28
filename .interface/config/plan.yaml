@@ -1,0 +1,2904 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/plan.yaml"
+  path_note: "Mutable Plans, Groups, Tasks, counts and progress."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current Plan Component and the active operation's ownership rules."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read task_count, then the Plan selected by stable Target phase identifier, with its Groups and Tasks in nesting order."
+  selection: "A requested phase resolves to the Plan keyed by that phase identifier; a Task resolves within its containing Group and Plan."
+  absence: "No matching Plan means no current planning record exists for that phase."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "task_count"
+  - "plans"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  task_count: "Total number of stored Tasks."
+  plans: "Current phase Plans and their Groups and Tasks."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  task_count: 79
+  plans:
+    P1:
+      id: P1
+      title: Model
+      order: 1
+      target: Model
+      does: The independent Model layer and its reusable package exist, defining every Target model with every Field, Type, default, rule, Reference, and constraint the Target declares for it, each convertible to and constructible from JSON.
+      constraints: []
+      task_count: 31
+      groups:
+        P1-G1:
+          id: P1-G1
+          title: Shared Model behaviour
+          description: The shared capabilities every Entity uses for JSON exchange, independent of any Entity's domain meaning.
+          area: Foundation layer
+          does: Entity-to-JSON conversion and JSON-to-Entity construction are available to every Entity through one shared implementation.
+          constraints: []
+          task_count: 2
+          tasks:
+            P1-G1-T1:
+              id: P1-G1-T1
+              source_id: '003'
+              title: Provide Entity-to-JSON conversion
+              description: Provide the shared capability that converts any Entity into JSON, without adding Fields, constraints, or domain meaning.
+              reason: Consumers exchange Entities as JSON, and one shared implementation keeps that behaviour consistent for every Entity.
+              inputs:
+              - Model Foundation responsibility
+              skills:
+              - sqlmodel
+              expected_result: Any Entity can be converted to a JSON representation of exactly its own Fields.
+              depends_on: []
+              constraints: []
+              acceptance: The JSON produced for an Entity contains every one of that Entity's Field values and nothing else.
+              verify: Converting an Entity holding known values yields JSON whose content matches those values Field for Field, and the capability introduces no Field of its own.
+              status: done
+              log:
+              - at: '2026-09-28T04:37:31+03:30'
+                by: '004'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began; dependencies within scope satisfied or claimed together
+              - at: '2026-09-28T04:38:49+03:30'
+                by: '004'
+                from: claimed
+                to: done
+                event: verified
+                check: Transient check script exercising the published Declaration and Foundation with throwaway samples, plus ruff check, ruff format and pyright over the Model source.
+                outcome: Converted a throwaway sample Entity holding known values (integer, string, exact decimal, boolean false, null, aware datetime) with the Foundation JSON conversion; the JSON held exactly those Fields with matching values and no extra Field. Foundation itself declares no Fields. ruff, ruff format and pyright reported no problems.
+                location: Foundation base in model/src/model/foundation.py
+            P1-G1-T2:
+              id: P1-G1-T2
+              source_id: '003'
+              title: Provide JSON-to-Entity construction
+              description: Provide the shared capability that constructs any Entity from JSON, without adding Fields, constraints, or domain meaning.
+              reason: Consumers receive Entities as JSON, and one shared implementation keeps construction consistent for every Entity.
+              inputs:
+              - Model Foundation responsibility
+              skills:
+              - sqlmodel
+              expected_result: Any Entity can be constructed from a JSON representation of its Fields.
+              depends_on:
+              - P1-G1-T1
+              constraints: []
+              acceptance: An Entity constructed from JSON carries the Field values that JSON supplied and is equivalent to the Entity it was produced from.
+              verify: Constructing an Entity from JSON produced by Entity-to-JSON conversion yields an Entity equal to the original, and the capability introduces no Field of its own.
+              status: done
+              log:
+              - at: '2026-09-28T04:37:31+03:30'
+                by: '004'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began; dependencies within scope satisfied or claimed together
+              - at: '2026-09-28T04:38:49+03:30'
+                by: '004'
+                from: claimed
+                to: done
+                event: verified
+                check: Transient check script exercising the published Declaration and Foundation with throwaway samples, plus ruff check, ruff format and pyright over the Model source.
+                outcome: Constructed the sample Entity from the JSON string and from its bytes; the result equalled the original Field for Field. ruff, ruff format and pyright reported no problems.
+                location: Foundation base in model/src/model/foundation.py
+        P1-G2:
+          id: P1-G2
+          title: Shared Declaration capability
+          description: The technology-independent vocabulary through which every Entity records its data meaning and metadata.
+          area: Declaration layer
+          does: Every kind of Entity meaning the Target declares can be recorded and exposed through Declaration without runtime behaviour.
+          constraints: []
+          task_count: 5
+          tasks:
+            P1-G2-T1:
+              id: P1-G2-T1
+              source_id: '003'
+              title: Declare Field Type, nullability, and Default Value
+              description: Provide the Declaration capability to record and expose each Field's logical Type, whether the Field is required or nullable, and its fixed Default Value.
+              reason: Consumers and storage realization need structured Field meaning rather than descriptive prose.
+              inputs:
+              - Model Declaration responsibility
+              skills:
+              - sqlmodel
+              expected_result: A Field's Type, presence semantics, and Default Value are recorded and readable by consumers, independent of language, database, or Engine.
+              depends_on: []
+              constraints: []
+              acceptance: For any declared Field, its Type, nullability, and Default Value can be read back exactly as declared, including a false or null default.
+              verify: Declaring Fields with differing Types, nullability, and defaults (including false and null) and reading them back returns each exactly as declared.
+              status: done
+              log:
+              - at: '2026-09-28T04:37:31+03:30'
+                by: '004'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began; dependencies within scope satisfied or claimed together
+              - at: '2026-09-28T04:38:49+03:30'
+                by: '004'
+                from: claimed
+                to: done
+                event: verified
+                check: Transient check script exercising the published Declaration and Foundation with throwaway samples, plus ruff check, ruff format and pyright over the Model source.
+                outcome: Declared Fields of boolean, string, integer and decimal Type with false, null, no default and a decimal default and read each back exactly; a null default is distinguished from no default. ruff, ruff format and pyright reported no problems.
+                location: Declaration in model/src/model/declaration.py
+            P1-G2-T2:
+              id: P1-G2-T2
+              source_id: '003'
+              title: Declare sensitivity marker, immutability, length, and constraints
+              description: Provide the Declaration capability to record and expose a Field's optional sensitivity marker (`password` or `sensitive`), its immutability, its length, and any other Target-declared restriction as usable structured meaning.
+              reason: Consumers and storage realization must be able to apply the same domain restriction consistently.
+              inputs:
+              - Model Declaration responsibility
+              skills:
+              - sqlmodel
+              expected_result: A Field's sensitivity marker, immutability, length, and other declared restrictions are recorded and readable by consumers.
+              depends_on: []
+              constraints: []
+              acceptance: A declared marker, immutability, length, or restriction on a Field can be read back exactly as declared, and a Field without them reports none.
+              verify: Declaring a Field with each of these rules and one without any, then reading them back, returns each exactly as declared and nothing invented.
+              status: done
+              log:
+              - at: '2026-09-28T04:37:31+03:30'
+                by: '004'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began; dependencies within scope satisfied or claimed together
+              - at: '2026-09-28T04:38:49+03:30'
+                by: '004'
+                from: claimed
+                to: done
+                event: verified
+                check: Transient check script exercising the published Declaration and Foundation with throwaway samples, plus ruff check, ruff format and pyright over the Model source.
+                outcome: Declared a Field with password marker, immutability, length and a pattern restriction and one with none; each read back exactly and the bare Field reported none. The sensitive marker also read back. ruff, ruff format and pyright reported no problems.
+                location: Declaration in model/src/model/declaration.py
+            P1-G2-T3:
+              id: P1-G2-T3
+              source_id: '003'
+              title: Declare Identity, Primary Key, and Value Generation
+              description: Provide the Declaration capability to record and expose an Entity's `id` Identity and Primary Key and any Value Generation, such as Auto Increment or a generated identifier, keeping Value Generation and Default Value mutually exclusive for one Field.
+              reason: Every Entity needs a distinguishing Identity, and a Field must never claim both a fixed default and generated values.
+              inputs:
+              - Model Declaration responsibility
+              - Field Default Value declaration
+              skills:
+              - sqlmodel
+              expected_result: Identity, Primary Key, and Value Generation are recorded and readable, and a Field cannot declare both Value Generation and a Default Value.
+              depends_on:
+              - P1-G2-T1
+              constraints: []
+              acceptance: An Entity's Identity, Primary Key, and Value Generation are readable as declared, and declaring both Value Generation and a Default Value on one Field is rejected or otherwise prevented.
+              verify: Reading back a declared Identity, Primary Key, and Value Generation returns them as declared, and a Field declared with both Value Generation and a Default Value is refused.
+              status: done
+              log:
+              - at: '2026-09-28T04:37:31+03:30'
+                by: '004'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began; dependencies within scope satisfied or claimed together
+              - at: '2026-09-28T04:38:49+03:30'
+                by: '004'
+                from: claimed
+                to: done
+                event: verified
+                check: Transient check script exercising the published Declaration and Foundation with throwaway samples, plus ruff check, ruff format and pyright over the Model source.
+                outcome: Declared an integer auto-increment id and a generated-identifier id; identity, primary key and value generation read back as declared. Declaring a default together with value generation raised ValueError, and an Entity without an id Field was refused. ruff, ruff format and pyright reported no problems.
+                location: Declaration in model/src/model/declaration.py
+            P1-G2-T4:
+              id: P1-G2-T4
+              source_id: '003'
+              title: Declare References
+              description: Provide the Declaration capability to record and expose a Field-level Reference that identifies its target Entity and that Entity's `id`, without nesting or copying either Entity.
+              reason: Cross-Entity connections must be explicit and flat so no hidden structural coupling exists.
+              inputs:
+              - Model Declaration responsibility
+              skills:
+              - sqlmodel
+              expected_result: A Reference is recorded and readable, naming its target Entity and `id`.
+              depends_on: []
+              constraints: []
+              acceptance: A declared Reference reports its target Entity and `id`, and neither Entity contains the other.
+              verify: Declaring a Reference between two Entities and reading it back returns the target Entity and `id`, with neither Entity nested inside the other.
+              status: done
+              log:
+              - at: '2026-09-28T04:37:31+03:30'
+                by: '004'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began; dependencies within scope satisfied or claimed together
+              - at: '2026-09-28T04:38:49+03:30'
+                by: '004'
+                from: claimed
+                to: done
+                event: verified
+                check: Transient check script exercising the published Declaration and Foundation with throwaway samples, plus ruff check, ruff format and pyright over the Model source.
+                outcome: Declared a Reference; it reported target Entity 'User', target Field 'id' and source Field. A Reference from an undeclared Field was refused. References hold only names, so no Entity is nested in another. ruff, ruff format and pyright reported no problems.
+                location: Declaration in model/src/model/declaration.py
+            P1-G2-T5:
+              id: P1-G2-T5
+              source_id: '003'
+              title: Declare Uniqueness Constraints and Index intentions
+              description: Provide the Declaration capability to record and expose Uniqueness Constraints and Index intentions, each covering one Field or a declared combination of Fields.
+              reason: Target rules require single-Field and composite uniqueness, and Index intentions must remain independent of any database.
+              inputs:
+              - Model Declaration responsibility
+              skills:
+              - sqlmodel
+              expected_result: Single-Field and composite Uniqueness Constraints and Index intentions are recorded and readable.
+              depends_on: []
+              constraints: []
+              acceptance: A declared single-Field or composite Uniqueness Constraint or Index intention can be read back naming exactly the Fields it covers.
+              verify: Declaring one single-Field and one composite constraint and index, then reading them back, returns exactly the Fields each covers.
+              status: done
+              log:
+              - at: '2026-09-28T04:37:31+03:30'
+                by: '004'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began; dependencies within scope satisfied or claimed together
+              - at: '2026-09-28T04:38:49+03:30'
+                by: '004'
+                from: claimed
+                to: done
+                event: verified
+                check: Transient check script exercising the published Declaration and Foundation with throwaway samples, plus ruff check, ruff format and pyright over the Model source.
+                outcome: Declared single-Field and composite Uniqueness Constraints and Index intentions; each read back exactly its Fields. A constraint over an undeclared Field was refused. ruff, ruff format and pyright reported no problems.
+                location: Declaration in model/src/model/declaration.py
+        P1-G3:
+          id: P1-G3
+          title: Identity and connectivity Entities
+          description: The Entities that identify system users, the supported trading platforms, and each user's connection to a platform.
+          area: 'Entity layer: users and platform connectivity'
+          does: User, Trading Platform, and Instance are each defined and published as separate Entities.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G3-T1:
+              id: P1-G3-T1
+              source_id: '003'
+              title: Define the User Entity
+              description: Define the User Entity, the independent system user that enables multi-user operation.
+              reason: Every other owned Entity belongs to a user, so User must exist before they can refer to it.
+              inputs:
+              - The Target's definition of User
+              skills:
+              - sqlmodel
+              expected_result: A published User Entity exists.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              - P1-G2-T5
+              - P1-G1-T1
+              - P1-G1-T2
+              constraints: []
+              acceptance: For User, name and username are recorded as unique, and the password and api_key credentials carry a sensitivity marker.
+              verify: Read through the Model's standard entry point, the User Entity shows that name and username are recorded as unique, and the password and api_key credentials carry a sensitivity marker.
+              status: done
+              log:
+              - at: '2026-09-28T04:39:09+03:30'
+                by: '004'
+                from: todo
+                to: claimed
+                event: claimed by develop before Entity work began; Foundation and Declaration dependencies are done
+              - at: '2026-09-28T04:40:53+03:30'
+                by: '004'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient independent check: parsed the Target''s Model definitions and compared every Entity with them (Field names, Types, nullability, defaults, length, id primary key and auto-increment, field-level and composite uniqueness, References and foreign keys created in an in-memory SQLite schema, credential sensitivity markers), and round-tripped a sample instance through JSON conversion and construction; plus ruff check, ruff format and pyright.'
+                outcome: 'No differences from the Target: 7 Fields, 0 References, 2 Uniqueness Constraints, sensitivity markers on password, api_key. JSON round trip preserved every Field. ruff, ruff format and pyright reported no problems.'
+                location: model/src/model/entity/user.py
+            P1-G3-T2:
+              id: P1-G3-T2
+              source_id: '003'
+              title: Define the Trading Platform Entity
+              description: Define the Trading Platform Entity, the supported trading API standard that keeps the system independent of any exchange or broker.
+              reason: Instances and Positions refer to a supported platform, which must be defined independently of any exchange.
+              inputs:
+              - The Target's definition of Trading Platform
+              skills:
+              - sqlmodel
+              expected_result: A published Trading Platform Entity exists.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              - P1-G2-T5
+              - P1-G1-T1
+              - P1-G1-T2
+              constraints: []
+              acceptance: For Trading Platform, the name is recorded as unique.
+              verify: Read through the Model's standard entry point, the Trading Platform Entity shows that the name is recorded as unique.
+              status: done
+              log:
+              - at: '2026-09-28T04:39:09+03:30'
+                by: '004'
+                from: todo
+                to: claimed
+                event: claimed by develop before Entity work began; Foundation and Declaration dependencies are done
+              - at: '2026-09-28T04:40:54+03:30'
+                by: '004'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient independent check: parsed the Target''s Model definitions and compared every Entity with them (Field names, Types, nullability, defaults, length, id primary key and auto-increment, field-level and composite uniqueness, References and foreign keys created in an in-memory SQLite schema, credential sensitivity markers), and round-tripped a sample instance through JSON conversion and construction; plus ruff check, ruff format and pyright.'
+                outcome: 'No differences from the Target: 5 Fields, 0 References, 1 Uniqueness Constraints. JSON round trip preserved every Field. ruff, ruff format and pyright reported no problems.'
+                location: model/src/model/entity/trading_platform.py
+            P1-G3-T3:
+              id: P1-G3-T3
+              source_id: '003'
+              title: Define the Instance Entity
+              description: Define the Instance Entity, the user-owned connection through which the system reaches a Trading Platform.
+              reason: Accounts connect through an Instance, so it must exist before an Account can refer to it.
+              inputs:
+              - The Target's definition of Instance
+              - The completed User Entity
+              - The completed Trading Platform Entity
+              skills:
+              - sqlmodel
+              expected_result: A published Instance Entity exists.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              - P1-G2-T5
+              - P1-G2-T4
+              - P1-G1-T1
+              - P1-G1-T2
+              - P1-G3-T1
+              - P1-G3-T2
+              constraints: []
+              acceptance: For Instance, the user and name combination is recorded as unique, the Reference to its User and Trading Platform is recorded, and the password and api_key credentials carry a sensitivity marker.
+              verify: Read through the Model's standard entry point, the Instance Entity shows that the user and name combination is recorded as unique, the Reference to its User and Trading Platform is recorded, and the password and api_key credentials carry a sensitivity marker.
+              status: done
+              log:
+              - at: '2026-09-28T04:39:09+03:30'
+                by: '004'
+                from: todo
+                to: claimed
+                event: claimed by develop before Entity work began; Foundation and Declaration dependencies are done
+              - at: '2026-09-28T04:40:54+03:30'
+                by: '004'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient independent check: parsed the Target''s Model definitions and compared every Entity with them (Field names, Types, nullability, defaults, length, id primary key and auto-increment, field-level and composite uniqueness, References and foreign keys created in an in-memory SQLite schema, credential sensitivity markers), and round-tripped a sample instance through JSON conversion and construction; plus ruff check, ruff format and pyright.'
+                outcome: 'No differences from the Target: 10 Fields, 2 References, 1 Uniqueness Constraints, sensitivity markers on password, api_key. JSON round trip preserved every Field. ruff, ruff format and pyright reported no problems.'
+                location: model/src/model/entity/instance.py
+        P1-G4:
+          id: P1-G4
+          title: Market reference Entities
+          description: The Entities that describe currencies, brokers, and the assets brokers provide.
+          area: 'Entity layer: market reference data'
+          does: Currency, Broker, and Asset are each defined and published as separate Entities.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G4-T1:
+              id: P1-G4-T1
+              source_id: '003'
+              title: Define the Currency Entity
+              description: Define the Currency Entity, a currency the trading system can use, owned by a user.
+              reason: Accounts need a base currency to refer to.
+              inputs:
+              - The Target's definition of Currency
+              - The completed User Entity
+              skills:
+              - sqlmodel
+              expected_result: A published Currency Entity exists.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              - P1-G2-T5
+              - P1-G2-T4
+              - P1-G1-T1
+              - P1-G1-T2
+              - P1-G3-T1
+              constraints: []
+              acceptance: For Currency, the user and code combination is recorded as unique and the code length is recorded.
+              verify: Read through the Model's standard entry point, the Currency Entity shows that the user and code combination is recorded as unique and the code length is recorded.
+              status: done
+              log:
+              - at: '2026-09-28T04:39:09+03:30'
+                by: '004'
+                from: todo
+                to: claimed
+                event: claimed by develop before Entity work began; Foundation and Declaration dependencies are done
+              - at: '2026-09-28T04:40:54+03:30'
+                by: '004'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient independent check: parsed the Target''s Model definitions and compared every Entity with them (Field names, Types, nullability, defaults, length, id primary key and auto-increment, field-level and composite uniqueness, References and foreign keys created in an in-memory SQLite schema, credential sensitivity markers), and round-tripped a sample instance through JSON conversion and construction; plus ruff check, ruff format and pyright.'
+                outcome: 'No differences from the Target: 8 Fields, 1 References, 1 Uniqueness Constraints. JSON round trip preserved every Field. ruff, ruff format and pyright reported no problems.'
+                location: model/src/model/entity/currency.py
+            P1-G4-T2:
+              id: P1-G4-T2
+              source_id: '003'
+              title: Define the Broker Entity
+              description: Define the Broker Entity, a broker supported by the system, owned by a user and independent of any Trading Platform.
+              reason: Assets, Accounts, and Positions refer to a broker.
+              inputs:
+              - The Target's definition of Broker
+              - The completed User Entity
+              skills:
+              - sqlmodel
+              expected_result: A published Broker Entity exists.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              - P1-G2-T5
+              - P1-G2-T4
+              - P1-G1-T1
+              - P1-G1-T2
+              - P1-G3-T1
+              constraints: []
+              acceptance: For Broker, the user and name combination is recorded as unique.
+              verify: Read through the Model's standard entry point, the Broker Entity shows that the user and name combination is recorded as unique.
+              status: done
+              log:
+              - at: '2026-09-28T04:39:09+03:30'
+                by: '004'
+                from: todo
+                to: claimed
+                event: claimed by develop before Entity work began; Foundation and Declaration dependencies are done
+              - at: '2026-09-28T04:40:54+03:30'
+                by: '004'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient independent check: parsed the Target''s Model definitions and compared every Entity with them (Field names, Types, nullability, defaults, length, id primary key and auto-increment, field-level and composite uniqueness, References and foreign keys created in an in-memory SQLite schema, credential sensitivity markers), and round-tripped a sample instance through JSON conversion and construction; plus ruff check, ruff format and pyright.'
+                outcome: 'No differences from the Target: 5 Fields, 1 References, 1 Uniqueness Constraints. JSON round trip preserved every Field. ruff, ruff format and pyright reported no problems.'
+                location: model/src/model/entity/broker.py
+            P1-G4-T3:
+              id: P1-G4-T3
+              source_id: '003'
+              title: Define the Asset Entity
+              description: Define the Asset Entity, a tradable asset provided by a broker, with its category and price precision.
+              reason: Actions select the asset to trade.
+              inputs:
+              - The Target's definition of Asset
+              - The completed Broker Entity
+              skills:
+              - sqlmodel
+              expected_result: A published Asset Entity exists.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              - P1-G2-T5
+              - P1-G2-T4
+              - P1-G1-T1
+              - P1-G1-T2
+              - P1-G4-T2
+              constraints: []
+              acceptance: For Asset, the broker and symbol combination is recorded as unique.
+              verify: Read through the Model's standard entry point, the Asset Entity shows that the broker and symbol combination is recorded as unique.
+              status: done
+              log:
+              - at: '2026-09-28T04:39:09+03:30'
+                by: '004'
+                from: todo
+                to: claimed
+                event: claimed by develop before Entity work began; Foundation and Declaration dependencies are done
+              - at: '2026-09-28T04:40:54+03:30'
+                by: '004'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient independent check: parsed the Target''s Model definitions and compared every Entity with them (Field names, Types, nullability, defaults, length, id primary key and auto-increment, field-level and composite uniqueness, References and foreign keys created in an in-memory SQLite schema, credential sensitivity markers), and round-tripped a sample instance through JSON conversion and construction; plus ruff check, ruff format and pyright.'
+                outcome: 'No differences from the Target: 8 Fields, 1 References, 1 Uniqueness Constraints. JSON round trip preserved every Field. ruff, ruff format and pyright reported no problems.'
+                location: model/src/model/entity/asset.py
+        P1-G5:
+          id: P1-G5
+          title: Account Entities
+          description: The Entities that organize and describe trading accounts.
+          area: 'Entity layer: trading accounts'
+          does: Account Group and Account are each defined and published as separate Entities.
+          constraints: []
+          task_count: 2
+          tasks:
+            P1-G5-T1:
+              id: P1-G5-T1
+              source_id: '003'
+              title: Define the Account Group Entity
+              description: Define the Account Group Entity, an independent grouping of trading accounts owned by one user.
+              reason: Accounts are organized into groups.
+              inputs:
+              - The Target's definition of Account Group
+              - The completed User Entity
+              skills:
+              - sqlmodel
+              expected_result: A published Account Group Entity exists.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              - P1-G2-T5
+              - P1-G2-T4
+              - P1-G1-T1
+              - P1-G1-T2
+              - P1-G3-T1
+              constraints: []
+              acceptance: For Account Group, the user and name combination is recorded as unique.
+              verify: Read through the Model's standard entry point, the Account Group Entity shows that the user and name combination is recorded as unique.
+              status: done
+              log:
+              - at: '2026-09-28T04:39:09+03:30'
+                by: '004'
+                from: todo
+                to: claimed
+                event: claimed by develop before Entity work began; Foundation and Declaration dependencies are done
+              - at: '2026-09-28T04:40:54+03:30'
+                by: '004'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient independent check: parsed the Target''s Model definitions and compared every Entity with them (Field names, Types, nullability, defaults, length, id primary key and auto-increment, field-level and composite uniqueness, References and foreign keys created in an in-memory SQLite schema, credential sensitivity markers), and round-tripped a sample instance through JSON conversion and construction; plus ruff check, ruff format and pyright.'
+                outcome: 'No differences from the Target: 5 Fields, 1 References, 1 Uniqueness Constraints. JSON round trip preserved every Field. ruff, ruff format and pyright reported no problems.'
+                location: model/src/model/entity/account_group.py
+            P1-G5-T2:
+              id: P1-G5-T2
+              source_id: '003'
+              title: Define the Account Entity
+              description: Define the Account Entity, a funded trading account through which trades are executed, connected through an Instance.
+              reason: Actions and Positions execute through an account.
+              inputs:
+              - The Target's definition of Account
+              - The completed Account Group Entity
+              - The completed Broker Entity
+              - The completed Instance Entity
+              - The completed Currency Entity
+              skills:
+              - sqlmodel
+              expected_result: A published Account Entity exists.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              - P1-G2-T5
+              - P1-G2-T4
+              - P1-G1-T1
+              - P1-G1-T2
+              - P1-G5-T1
+              - P1-G4-T2
+              - P1-G3-T3
+              - P1-G4-T1
+              constraints: []
+              acceptance: For Account, the group, broker, and instance combination is recorded as unique, its References to Account Group, Broker, Instance, and base Currency are recorded, and the password credential carries a sensitivity marker.
+              verify: Read through the Model's standard entry point, the Account Entity shows that the group, broker, and instance combination is recorded as unique, its References to Account Group, Broker, Instance, and base Currency are recorded, and the password credential carries a sensitivity marker.
+              status: done
+              log:
+              - at: '2026-09-28T04:39:09+03:30'
+                by: '004'
+                from: todo
+                to: claimed
+                event: claimed by develop before Entity work began; Foundation and Declaration dependencies are done
+              - at: '2026-09-28T04:40:54+03:30'
+                by: '004'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient independent check: parsed the Target''s Model definitions and compared every Entity with them (Field names, Types, nullability, defaults, length, id primary key and auto-increment, field-level and composite uniqueness, References and foreign keys created in an in-memory SQLite schema, credential sensitivity markers), and round-tripped a sample instance through JSON conversion and construction; plus ruff check, ruff format and pyright.'
+                outcome: 'No differences from the Target: 13 Fields, 4 References, 2 Uniqueness Constraints, sensitivity markers on password. JSON round trip preserved every Field. ruff, ruff format and pyright reported no problems.'
+                location: model/src/model/entity/account.py
+        P1-G6:
+          id: P1-G6
+          title: Risk-management rule Entities
+          description: The Entities that group and define trailing and partial-close rules.
+          area: 'Entity layer: trade risk management rules'
+          does: Trailing Group, Trailing Rule, Partial Group, and Partial Rule are each defined and published as separate Entities.
+          constraints: []
+          task_count: 4
+          tasks:
+            P1-G6-T1:
+              id: P1-G6-T1
+              source_id: '003'
+              title: Define the Trailing Group Entity
+              description: Define the Trailing Group Entity, a group of rules managing Stop Loss and Take Profit during a trade, owned by a user.
+              reason: Actions and Positions apply a trailing rule set.
+              inputs:
+              - The Target's definition of Trailing Group
+              - The completed User Entity
+              skills:
+              - sqlmodel
+              expected_result: A published Trailing Group Entity exists.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              - P1-G2-T5
+              - P1-G2-T4
+              - P1-G1-T1
+              - P1-G1-T2
+              - P1-G3-T1
+              constraints: []
+              acceptance: For Trailing Group, the user and name combination is recorded as unique.
+              verify: Read through the Model's standard entry point, the Trailing Group Entity shows that the user and name combination is recorded as unique.
+              status: done
+              log:
+              - at: '2026-09-28T04:39:09+03:30'
+                by: '004'
+                from: todo
+                to: claimed
+                event: claimed by develop before Entity work began; Foundation and Declaration dependencies are done
+              - at: '2026-09-28T04:40:55+03:30'
+                by: '004'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient independent check: parsed the Target''s Model definitions and compared every Entity with them (Field names, Types, nullability, defaults, length, id primary key and auto-increment, field-level and composite uniqueness, References and foreign keys created in an in-memory SQLite schema, credential sensitivity markers), and round-tripped a sample instance through JSON conversion and construction; plus ruff check, ruff format and pyright.'
+                outcome: 'No differences from the Target: 5 Fields, 1 References, 1 Uniqueness Constraints. JSON round trip preserved every Field. ruff, ruff format and pyright reported no problems.'
+                location: model/src/model/entity/trailing_group.py
+            P1-G6-T2:
+              id: P1-G6-T2
+              source_id: '003'
+              title: Define the Trailing Rule Entity
+              description: Define the Trailing Rule Entity, one rule in a Trailing Group with its activation condition and adjustments.
+              reason: A trailing rule set has meaning only through its rules.
+              inputs:
+              - The Target's definition of Trailing Rule
+              - The completed Trailing Group Entity
+              skills:
+              - sqlmodel
+              expected_result: A published Trailing Rule Entity exists.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              - P1-G2-T5
+              - P1-G2-T4
+              - P1-G1-T1
+              - P1-G1-T2
+              - P1-G6-T1
+              constraints: []
+              acceptance: For Trailing Rule, the trailing group and trigger percentage combination is recorded as unique and the name is recorded as unique.
+              verify: Read through the Model's standard entry point, the Trailing Rule Entity shows that the trailing group and trigger percentage combination is recorded as unique and the name is recorded as unique.
+              status: done
+              log:
+              - at: '2026-09-28T04:39:09+03:30'
+                by: '004'
+                from: todo
+                to: claimed
+                event: claimed by develop before Entity work began; Foundation and Declaration dependencies are done
+              - at: '2026-09-28T04:40:55+03:30'
+                by: '004'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient independent check: parsed the Target''s Model definitions and compared every Entity with them (Field names, Types, nullability, defaults, length, id primary key and auto-increment, field-level and composite uniqueness, References and foreign keys created in an in-memory SQLite schema, credential sensitivity markers), and round-tripped a sample instance through JSON conversion and construction; plus ruff check, ruff format and pyright.'
+                outcome: 'No differences from the Target: 8 Fields, 1 References, 2 Uniqueness Constraints. JSON round trip preserved every Field. ruff, ruff format and pyright reported no problems.'
+                location: model/src/model/entity/trailing_rule.py
+            P1-G6-T3:
+              id: P1-G6-T3
+              source_id: '003'
+              title: Define the Partial Group Entity
+              description: Define the Partial Group Entity, a group of rules for closing portions of an open trade, owned by a user.
+              reason: Actions and Positions apply a partial-close rule set.
+              inputs:
+              - The Target's definition of Partial Group
+              - The completed User Entity
+              skills:
+              - sqlmodel
+              expected_result: A published Partial Group Entity exists.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              - P1-G2-T5
+              - P1-G2-T4
+              - P1-G1-T1
+              - P1-G1-T2
+              - P1-G3-T1
+              constraints: []
+              acceptance: For Partial Group, the user and name combination is recorded as unique.
+              verify: Read through the Model's standard entry point, the Partial Group Entity shows that the user and name combination is recorded as unique.
+              status: done
+              log:
+              - at: '2026-09-28T04:39:09+03:30'
+                by: '004'
+                from: todo
+                to: claimed
+                event: claimed by develop before Entity work began; Foundation and Declaration dependencies are done
+              - at: '2026-09-28T04:40:55+03:30'
+                by: '004'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient independent check: parsed the Target''s Model definitions and compared every Entity with them (Field names, Types, nullability, defaults, length, id primary key and auto-increment, field-level and composite uniqueness, References and foreign keys created in an in-memory SQLite schema, credential sensitivity markers), and round-tripped a sample instance through JSON conversion and construction; plus ruff check, ruff format and pyright.'
+                outcome: 'No differences from the Target: 5 Fields, 1 References, 1 Uniqueness Constraints. JSON round trip preserved every Field. ruff, ruff format and pyright reported no problems.'
+                location: model/src/model/entity/partial_group.py
+            P1-G6-T4:
+              id: P1-G6-T4
+              source_id: '003'
+              title: Define the Partial Rule Entity
+              description: Define the Partial Rule Entity, one rule in a Partial Group with the profit condition and the share of volume to close.
+              reason: A partial-close rule set has meaning only through its rules.
+              inputs:
+              - The Target's definition of Partial Rule
+              - The completed Partial Group Entity
+              skills:
+              - sqlmodel
+              expected_result: A published Partial Rule Entity exists.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              - P1-G2-T5
+              - P1-G2-T4
+              - P1-G1-T1
+              - P1-G1-T2
+              - P1-G6-T3
+              constraints: []
+              acceptance: For Partial Rule, the partial group and profit percentage combination is recorded as unique and the name is recorded as unique.
+              verify: Read through the Model's standard entry point, the Partial Rule Entity shows that the partial group and profit percentage combination is recorded as unique and the name is recorded as unique.
+              status: done
+              log:
+              - at: '2026-09-28T04:39:09+03:30'
+                by: '004'
+                from: todo
+                to: claimed
+                event: claimed by develop before Entity work began; Foundation and Declaration dependencies are done
+              - at: '2026-09-28T04:40:55+03:30'
+                by: '004'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient independent check: parsed the Target''s Model definitions and compared every Entity with them (Field names, Types, nullability, defaults, length, id primary key and auto-increment, field-level and composite uniqueness, References and foreign keys created in an in-memory SQLite schema, credential sensitivity markers), and round-tripped a sample instance through JSON conversion and construction; plus ruff check, ruff format and pyright.'
+                outcome: 'No differences from the Target: 7 Fields, 1 References, 2 Uniqueness Constraints. JSON round trip preserved every Field. ruff, ruff format and pyright reported no problems.'
+                location: model/src/model/entity/partial_rule.py
+        P1-G7:
+          id: P1-G7
+          title: Trading activity Entities
+          description: The Entities that define how trades are opened and record the resulting positions.
+          area: 'Entity layer: actions and positions'
+          does: Action Group, Action, and Position are each defined and published as separate Entities.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G7-T1:
+              id: P1-G7-T1
+              source_id: '003'
+              title: Define the Action Group Entity
+              description: Define the Action Group Entity, an independent grouping of trading actions by risk profile, owned by a user.
+              reason: Actions are organized by risk profile.
+              inputs:
+              - The Target's definition of Action Group
+              - The completed User Entity
+              skills:
+              - sqlmodel
+              expected_result: A published Action Group Entity exists.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              - P1-G2-T5
+              - P1-G2-T4
+              - P1-G1-T1
+              - P1-G1-T2
+              - P1-G3-T1
+              constraints: []
+              acceptance: For Action Group, the user and name combination is recorded as unique.
+              verify: Read through the Model's standard entry point, the Action Group Entity shows that the user and name combination is recorded as unique.
+              status: done
+              log:
+              - at: '2026-09-28T04:39:09+03:30'
+                by: '004'
+                from: todo
+                to: claimed
+                event: claimed by develop before Entity work began; Foundation and Declaration dependencies are done
+              - at: '2026-09-28T04:40:55+03:30'
+                by: '004'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient independent check: parsed the Target''s Model definitions and compared every Entity with them (Field names, Types, nullability, defaults, length, id primary key and auto-increment, field-level and composite uniqueness, References and foreign keys created in an in-memory SQLite schema, credential sensitivity markers), and round-tripped a sample instance through JSON conversion and construction; plus ruff check, ruff format and pyright.'
+                outcome: 'No differences from the Target: 5 Fields, 1 References, 1 Uniqueness Constraints. JSON round trip preserved every Field. ruff, ruff format and pyright reported no problems.'
+                location: model/src/model/entity/action_group.py
+            P1-G7-T2:
+              id: P1-G7-T2
+              source_id: '003'
+              title: Define the Action Entity
+              description: Define the Action Entity, the definition of how a position must be opened, selecting an asset and account and the risk, Take Profit, Stop Loss, Partial Group, and Trailing Group settings.
+              reason: Positions are created from an action.
+              inputs:
+              - The Target's definition of Action
+              - The completed Action Group Entity
+              - The completed Asset Entity
+              - The completed Account Entity
+              - The completed Partial Group Entity
+              - The completed Trailing Group Entity
+              skills:
+              - sqlmodel
+              expected_result: A published Action Entity exists.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              - P1-G2-T5
+              - P1-G2-T4
+              - P1-G1-T1
+              - P1-G1-T2
+              - P1-G7-T1
+              - P1-G4-T3
+              - P1-G5-T2
+              - P1-G6-T3
+              - P1-G6-T1
+              constraints: []
+              acceptance: For Action, the action group and name combination is recorded as unique and its References to Action Group, Asset, Account, Partial Group, and Trailing Group are recorded.
+              verify: Read through the Model's standard entry point, the Action Entity shows that the action group and name combination is recorded as unique and its References to Action Group, Asset, Account, Partial Group, and Trailing Group are recorded.
+              status: done
+              log:
+              - at: '2026-09-28T04:39:09+03:30'
+                by: '004'
+                from: todo
+                to: claimed
+                event: claimed by develop before Entity work began; Foundation and Declaration dependencies are done
+              - at: '2026-09-28T04:40:55+03:30'
+                by: '004'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient independent check: parsed the Target''s Model definitions and compared every Entity with them (Field names, Types, nullability, defaults, length, id primary key and auto-increment, field-level and composite uniqueness, References and foreign keys created in an in-memory SQLite schema, credential sensitivity markers), and round-tripped a sample instance through JSON conversion and construction; plus ruff check, ruff format and pyright.'
+                outcome: 'No differences from the Target: 12 Fields, 5 References, 1 Uniqueness Constraints. JSON round trip preserved every Field. ruff, ruff format and pyright reported no problems.'
+                location: model/src/model/entity/action.py
+            P1-G7-T3:
+              id: P1-G7-T3
+              source_id: '003'
+              title: Define the Position Entity
+              description: Define the Position Entity, the complete record of every position the system creates, whether opened or still pending.
+              reason: The system must record every position it creates, opened or pending.
+              inputs:
+              - The Target's definition of Position
+              - The completed User Entity
+              - The completed Trading Platform Entity
+              - The completed Broker Entity
+              - The completed Account Entity
+              - The completed Trailing Group Entity
+              - The completed Partial Group Entity
+              - The completed Action Group Entity
+              - The completed Action Entity
+              skills:
+              - sqlmodel
+              expected_result: A published Position Entity exists.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              - P1-G2-T5
+              - P1-G2-T4
+              - P1-G1-T1
+              - P1-G1-T2
+              - P1-G3-T1
+              - P1-G3-T2
+              - P1-G4-T2
+              - P1-G5-T2
+              - P1-G6-T1
+              - P1-G6-T3
+              - P1-G7-T1
+              - P1-G7-T2
+              constraints: []
+              acceptance: For Position, the name is recorded as unique, its References to User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and Action are recorded, and the executed-state default is recorded.
+              verify: Read through the Model's standard entry point, the Position Entity shows that the name is recorded as unique, its References to User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and Action are recorded, and the executed-state default is recorded.
+              status: done
+              log:
+              - at: '2026-09-28T04:39:09+03:30'
+                by: '004'
+                from: todo
+                to: claimed
+                event: claimed by develop before Entity work began; Foundation and Declaration dependencies are done
+              - at: '2026-09-28T04:40:55+03:30'
+                by: '004'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient independent check: parsed the Target''s Model definitions and compared every Entity with them (Field names, Types, nullability, defaults, length, id primary key and auto-increment, field-level and composite uniqueness, References and foreign keys created in an in-memory SQLite schema, credential sensitivity markers), and round-tripped a sample instance through JSON conversion and construction; plus ruff check, ruff format and pyright.'
+                outcome: 'No differences from the Target: 21 Fields, 8 References, 1 Uniqueness Constraints. JSON round trip preserved every Field. ruff, ruff format and pyright reported no problems.'
+                location: model/src/model/entity/position.py
+        P1-G8:
+          id: P1-G8
+          title: Published surface, documentation, and manifest
+          description: The published Entity entry point, the reusable library, the documentation, and the Application Manifest entry that together make Model usable by other Components.
+          area: Interface layer and Component documentation
+          does: Model is consumable as a documented, discoverable library that publishes every Entity.
+          constraints: []
+          task_count: 9
+          tasks:
+            P1-G8-T1:
+              id: P1-G8-T1
+              source_id: '003'
+              title: Publish every Entity through the standard Model entry point
+              description: Make each of the fifteen defined Entities available to consumers through the Model's standard entry point for published Entities, while Entity, Declaration, and Foundation layers stay public.
+              reason: Interface is the one consistent route through which other Components obtain Entities.
+              inputs:
+              - The completed Entities
+              skills: []
+              expected_result: Every defined Entity can be obtained through the standard entry point.
+              depends_on:
+              - P1-G3-T1
+              - P1-G3-T2
+              - P1-G3-T3
+              - P1-G4-T1
+              - P1-G4-T2
+              - P1-G4-T3
+              - P1-G5-T1
+              - P1-G5-T2
+              - P1-G6-T1
+              - P1-G6-T2
+              - P1-G6-T3
+              - P1-G6-T4
+              - P1-G7-T1
+              - P1-G7-T2
+              - P1-G7-T3
+              constraints: []
+              acceptance: Each defined Entity is obtainable through the standard entry point, and no Entity is missing or duplicated.
+              verify: Listing the Entities available through the standard entry point yields exactly the defined set, each obtainable and usable.
+              status: done
+              log:
+              - at: '2026-09-28T04:41:07+03:30'
+                by: '004'
+                from: todo
+                to: claimed
+                event: claimed by develop; all 15 Entity dependencies are done
+              - at: '2026-09-28T04:41:24+03:30'
+                by: '004'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: compared the names in the standard entry point with the Target''s Model list, confirmed each is a table Entity in its own unit, and confirmed 15 tables register; plus ruff check, ruff format and pyright.'
+                outcome: The entry point publishes exactly the 15 defined Entities, none missing or duplicated, and importing it registers all 15 tables. ruff, ruff format and pyright reported no problems.
+                location: model/src/model/interface.py
+            P1-G8-T2:
+              id: P1-G8-T2
+              source_id: '003'
+              title: Make Model consumable as an independent reusable library
+              description: Make the Model usable by other Components as a self-contained reusable library that exposes only its published surface.
+              reason: Database and Logic connect to Model as a provider and must be able to use it without touching its private resources.
+              inputs:
+              - The published Entities
+              skills: []
+              expected_result: Another Component can use the Model's published Entities from outside the Model.
+              depends_on:
+              - P1-G8-T1
+              constraints: []
+              acceptance: A consumer outside the Model can obtain and use published Entities and needs nothing beyond the published surface.
+              verify: A separate consuming context can obtain a published Entity and use its Fields and JSON capabilities without reaching into private resources.
+              status: done
+              log:
+              - at: '2026-09-28T04:41:24+03:30'
+                by: '004'
+                from: todo
+                to: claimed
+                event: claimed by develop; dependency P1-G8-T1 is done
+              - at: '2026-09-28T04:41:36+03:30'
+                by: '004'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: created an unrelated consuming project outside the Model, installed the Model into it as a dependency, imported the standard entry point and the shared layers, constructed an Entity and round-tripped it through JSON; also built the source and wheel distributions to a scratch location.'
+                outcome: The consumer obtained and used published Entities from the installed package with nothing beyond the published surface; the package builds. The build output was written outside the repository.
+                location: model/pyproject.toml, model/src/model/__init__.py
+            P1-G8-T3:
+              id: P1-G8-T3
+              source_id: '003'
+              title: Publish Model's public metadata in the Application Manifest
+              description: Record the Model Component's non-secret public metadata in its section of the shared Application Manifest so other Components can discover it.
+              reason: The Application Manifest is the current public view of the application composition.
+              inputs:
+              - The consumable Model library
+              skills: []
+              expected_result: The Model section of the Application Manifest describes Model's public identity and surface.
+              depends_on:
+              - P1-G8-T2
+              constraints: []
+              acceptance: The Model section is populated with non-secret public metadata and contains no credentials or private detail.
+              verify: Reading the Model section of the Application Manifest shows its public metadata, and no other Component's section and no secret value is changed or present.
+              status: done
+              log:
+              - at: '2026-09-28T04:41:36+03:30'
+                by: '004'
+                from: todo
+                to: claimed
+                event: claimed by develop; dependency P1-G8-T2 is done
+              - at: '2026-09-28T04:41:43+03:30'
+                by: '004'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: read the Application Manifest and imported every listed layer and the entry point, compared the listed Entities with the Entities the entry point publishes, confirmed the listed component path exists, and confirmed no other Component section was populated and no credential or secret word appears.'
+                outcome: The Model section carries its package name, path, entry point and public interface, all matching the real package; the 14 other sections are unchanged and empty.
+                location: .interface/config/application.yaml
+              - at: '2026-09-28T04:41:59+03:30'
+                by: '004'
+                event: note
+                note: 'The ''verified'' entry above was written before its check had completed: the first attempt failed on a missing YAML module in the check environment and was not gated. The check was rerun correctly afterwards (entities match the entry point, package importable, only the Model section populated, component path exists, no secret words) and all five conditions passed; the Task''s status stands.'
+            P1-G8-T4:
+              id: P1-G8-T4
+              source_id: '003'
+              title: Document the Model overview
+              description: Write the Model documentation's overview section with one concise example that uses one Entity.
+              reason: Consumers must understand and use Model without reading its implementation.
+              inputs:
+              - The published Entities
+              skills: []
+              expected_result: The documentation opens with an overview containing one concise single-Entity example.
+              depends_on:
+              - P1-G8-T1
+              constraints: []
+              acceptance: The overview exists first in the documentation and contains exactly one concise example using one Entity.
+              verify: Reading the documentation shows the overview first, with one single-Entity example that matches how the Model actually behaves.
+              status: done
+              log:
+              - at: '2026-09-28T04:41:44+03:30'
+                by: '004'
+                from: todo
+                to: claimed
+                event: claimed by develop; dependency P1-G8-T1 is done
+              - at: '2026-09-28T04:42:32+03:30'
+                by: '004'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: parsed the documentation, confirmed the overview is the first section, contains exactly one Python example that uses one Entity, executed that example and compared its printed output with the output the documentation shows.'
+                outcome: The overview is first, holds one concise single-Entity example, and the example runs and prints exactly what is shown.
+                location: model/README.md
+            P1-G8-T5:
+              id: P1-G8-T5
+              source_id: '003'
+              title: Document the public Entities and their Fields
+              description: Write the documentation's Interface section listing every public Entity separately, each with its Fields in a table and no usage examples.
+              reason: Consumers need a complete reference of what the Model publishes.
+              inputs:
+              - The published Entities
+              skills: []
+              expected_result: The documentation contains an Interface section covering every public Entity.
+              depends_on:
+              - P1-G8-T1
+              - P1-G8-T4
+              constraints: []
+              acceptance: Every published Entity appears separately with a Fields table matching its declaration, and the section contains no usage examples.
+              verify: Comparing the section with the published Entities shows one entry per Entity, each table matching its Fields, and no example.
+              status: done
+              log:
+              - at: '2026-09-28T04:42:32+03:30'
+                by: '004'
+                from: todo
+                to: claimed
+                event: claimed by develop; dependencies P1-G8-T1 and P1-G8-T4 are done
+              - at: '2026-09-28T04:42:47+03:30'
+                by: '004'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: parsed the documentation, confirmed one subsection per published Entity (15) with no extras, compared each Fields table row by row, in order, with that Entity''s declared Fields, and confirmed the section contains no code examples.'
+                outcome: Every published Entity has its own subsection whose Fields table matches its declaration exactly; the section has no usage examples.
+                location: model/README.md
+            P1-G8-T6:
+              id: P1-G8-T6
+              source_id: '003'
+              title: Document the Foundation capabilities
+              description: Write the documentation's Foundation section with an example for each Foundation capability and then one complete example using all of them with one Entity.
+              reason: Consumers need to see how the shared JSON behaviour is used.
+              inputs:
+              - The completed Foundation capabilities
+              - The published Entities
+              skills: []
+              expected_result: The documentation contains a Foundation section with per-capability examples and one complete example.
+              depends_on:
+              - P1-G1-T1
+              - P1-G1-T2
+              - P1-G8-T1
+              - P1-G8-T5
+              constraints: []
+              acceptance: There is one example per Foundation capability followed by one complete example using all capabilities with one Entity, each matching real behaviour.
+              verify: Reading the section shows the per-capability examples first, then the complete example, and each example's stated result matches the Model's actual behaviour.
+              status: done
+              log:
+              - at: '2026-09-28T04:42:47+03:30'
+                by: '004'
+                from: todo
+                to: claimed
+                event: claimed by develop; dependencies P1-G1-T1, P1-G1-T2, P1-G8-T1 and P1-G8-T5 are done
+              - at: '2026-09-28T04:43:04+03:30'
+                by: '004'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: parsed the documentation, confirmed the Foundation section has one example per capability followed by one complete example using both capabilities with one Entity, and executed all three examples comparing their printed output with the output shown.'
+                outcome: All three examples run and print exactly what is shown; the per-capability examples precede the complete one, which uses both capabilities with one Entity.
+                location: model/README.md
+            P1-G8-T7:
+              id: P1-G8-T7
+              source_id: '003'
+              title: Document setup
+              description: Write the documentation's setup section explaining how a consumer makes the Model available for use.
+              reason: A consumer must be able to start using the Model without guessing.
+              inputs:
+              - The consumable Model library
+              skills: []
+              expected_result: The documentation contains a setup section after the Foundation section.
+              depends_on:
+              - P1-G8-T2
+              - P1-G8-T6
+              constraints: []
+              acceptance: The setup section appears in the required order and its steps let a consumer make the Model available.
+              verify: Following the setup section from a clean consuming context makes the published Entities available.
+              status: done
+              log:
+              - at: '2026-09-28T04:43:04+03:30'
+                by: '004'
+                from: todo
+                to: claimed
+                event: claimed by develop; dependencies P1-G8-T2 and P1-G8-T6 are done
+              - at: '2026-09-28T04:43:22+03:30'
+                by: '004'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Executed the setup steps from clean contexts: (1) an unrelated consuming project beside the Model directory ran the documented add step and the documented confirmation command; (2) the Model''s environment was removed and rebuilt with the documented install step, then the same confirmation command was run.'
+                outcome: Both paths made the published Entities available and the confirmation command printed the expected output. The Model's own environment was recreated by the test and is unchanged in effect.
+                location: model/README.md
+            P1-G8-T8:
+              id: P1-G8-T8
+              source_id: '003'
+              title: Document use
+              description: Write the documentation's use section explaining how a consumer uses the published Entities in normal work.
+              reason: Consumers need guidance on routine use beyond the reference tables.
+              inputs:
+              - The consumable Model library
+              skills: []
+              expected_result: The documentation contains a use section after the setup section.
+              depends_on:
+              - P1-G8-T7
+              constraints: []
+              acceptance: The use section appears in the required order and its guidance matches the Model's actual behaviour.
+              verify: Following the use section's guidance produces the behaviour it describes.
+              status: done
+              log:
+              - at: '2026-09-28T04:43:22+03:30'
+                by: '004'
+                from: todo
+                to: claimed
+                event: claimed by develop; dependency P1-G8-T7 is done
+              - at: '2026-09-28T04:43:43+03:30'
+                by: '004'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: parsed the documentation, confirmed the use section follows the setup section, executed both of its examples comparing printed output with the output shown, and probed the behaviours its notes claim (defaults apply, direct construction does not validate input, from_json rejects missing or mistyped Fields).'
+                outcome: Both examples run and print exactly what is shown, and each claim in the guidance matched observed behaviour.
+                location: model/README.md
+            P1-G8-T9:
+              id: P1-G8-T9
+              source_id: '003'
+              title: Document troubleshooting
+              description: Write the documentation's troubleshooting section covering the problems a consumer can meet when setting up or using the Model.
+              reason: Consumers need a route to resolve common problems without reading the implementation.
+              inputs:
+              - The completed documentation sections
+              skills: []
+              expected_result: The documentation ends with a troubleshooting section.
+              depends_on:
+              - P1-G8-T8
+              constraints: []
+              acceptance: The troubleshooting section appears last in the required order and describes real, resolvable problems.
+              verify: Each described problem can be reproduced or recognised, and its stated resolution resolves it.
+              status: done
+              log:
+              - at: '2026-09-28T04:43:43+03:30'
+                by: '004'
+                from: todo
+                to: claimed
+                event: claimed by develop; dependency P1-G8-T8 is done
+              - at: '2026-09-28T04:44:24+03:30'
+                by: '004'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: parsed the documentation, confirmed troubleshooting is the last section, executed its runnable example against its shown output, and reproduced each documented problem (module not found outside the environment, missing-table error from a partial import, validation errors for a missing and a mistyped Field) and its stated resolution.'
+                outcome: Each documented problem reproduced as described and its resolution worked; the runnable example prints exactly what is shown.
+                location: model/README.md
+    P2:
+      id: P2
+      title: Database
+      order: 2
+      target: Database
+      does: The Database Component exists as a documented, reusable library over the shared Model that persists Entity data through its published Operations, and its configured default Instance is provisioned and holds the Target's defined initial data.
+      constraints: []
+      task_count: 48
+      groups:
+        P2-G1:
+          id: P2-G1
+          title: Database Configuration
+          description: 'The declared resources Database can use: supported Engines, named Instances, and component Settings.'
+          area: Database Configuration
+          does: The Engines, Instances, and Settings that Database's Preferences define are declared in one consistent configuration.
+          constraints: []
+          task_count: 2
+          tasks:
+            P2-G1-T1:
+              id: P2-G1-T1
+              source_id: '006'
+              title: Declare the supported Engines
+              description: Declare every Engine the Component supports and implements, each with its engine-specific parameters.
+              reason: Every later storage decision resolves against a declared Engine.
+              inputs:
+              - The Engine selections and parameters in Database's Preferences
+              skills: []
+              expected_result: The configuration lists each implemented Engine with its parameters.
+              depends_on: []
+              constraints: []
+              acceptance: Each Engine the Preferences mark for implementation is declared with its parameters, and no Engine that is not implemented is declared as supported.
+              verify: Reading the configuration shows the implemented Engine or Engines with their parameters and nothing declared beyond what is implemented.
+              status: done
+              log:
+              - at: '2026-09-28T04:53:02+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T04:53:20+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: parsed the configuration and Database''s Preferences and compared the declared Engines with the Engines the Preferences mark for implementation, checked no unimplemented Engine is declared, that each Engine has a name, driver and parameters, and that the parameters and driver equal the Preferences'' connection choices.'
+                outcome: The configuration declares exactly the one implemented Engine with its parameters and driver as the Preferences state, and no unimplemented Engine.
+                location: database/database.yaml
+            P2-G1-T2:
+              id: P2-G1-T2
+              source_id: '006'
+              title: Declare the Instances and Settings
+              description: 'Declare each named Instance with the Engine it uses and its connection identity, and declare the component Settings: the default Instance and the default filter combination and ordering used by List.'
+              reason: Operations resolve their target storage and query defaults from these declarations.
+              inputs:
+              - The Instance and Settings selections in Database's Preferences
+              - The declared Engines
+              skills: []
+              expected_result: Every Instance and Setting the Preferences define is declared and resolves.
+              depends_on:
+              - P2-G1-T1
+              constraints: []
+              acceptance: Every Instance names a declared Engine, the default Instance is declared and names an implemented Engine, and the configured query defaults are present.
+              verify: Following each Instance to its Engine and the default Instance to its declaration resolves without a missing reference, and the query defaults read as configured.
+              status: done
+              log:
+              - at: '2026-09-28T04:53:20+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T04:53:29+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: parsed the configuration and Database''s Preferences; confirmed the sections, that each Instance carries every schema field and names a declared Engine, that the default Instance is declared and uses an implemented Engine, that purpose assignments resolve, and that the Instance identity, query defaults and database directory equal the Preferences.'
+                outcome: Every Instance and Setting the Preferences define is declared and every reference resolves.
+                location: database/database.yaml
+        P2-G2:
+          id: P2-G2
+          title: Public surface and routing
+          description: The single public boundary of Database and the layer that resolves and routes each request.
+          area: Interface layer and Data layer
+          does: Every request enters through Interface, is resolved to an Instance and Engine by Data, and returns its result under the Operation's contract.
+          constraints: []
+          task_count: 4
+          tasks:
+            P2-G2-T1:
+              id: P2-G2-T1
+              source_id: '006'
+              title: Publish the query and command vocabulary
+              description: 'Publish the shared vocabulary Operations use: Filter with an Entity Field, a Filter Operator and a value; the twelve Filter Operators; the two Filter Combinations; Order with an Entity Field and an Order Direction; the two Order Directions; and the Command Result carrying rows and an affected count, either of which is null when it does not apply.'
+              reason: Consumers express queries and read command results through one explicit, stable vocabulary.
+              inputs:
+              - The Database Definition's vocabulary
+              skills: []
+              expected_result: The vocabulary can be used by consumers to build Filters, Orders, and read Command Results.
+              depends_on: []
+              constraints: []
+              acceptance: Every named Filter Operator, Filter Combination, and Order Direction exists as an enumerated member, and a Filter, an Order, and a Command Result can be built and read as described.
+              verify: Building a Filter with each operator, an Order with each direction, and a Command Result with and without rows shows every member available and each value readable as declared.
+              status: done
+              log:
+              - at: '2026-09-28T04:53:30+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T04:54:16+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: built a Filter with each of the twelve operators, an Order with each direction, and Command Results with rows only, affected count only and neither; confirmed the member sets equal the Definition''s vocabulary and members round-trip from their declared string values; plus ruff check, ruff format and pyright.'
+                outcome: All twelve Filter Operators, both Filter Combinations, both Order Directions, Filter, Order and Command Result exist and read as declared; a Command Result reports null for the value that does not apply. ruff, ruff format and pyright reported no problems.
+                location: database/src/database/interface.py
+            P2-G2-T2:
+              id: P2-G2-T2
+              source_id: '006'
+              title: Resolve the Instance and Engine for each request
+              description: Resolve the Instance a request names, or the configured default Instance when none is named, together with the Engine that Instance uses.
+              reason: Every Operation must run against a definite Instance and Engine.
+              inputs:
+              - The declared Instances and Settings
+              - The Engine implementation
+              skills: []
+              expected_result: Each request is tied to one Instance and its Engine.
+              depends_on:
+              - P2-G1-T2
+              - P2-G3-T1
+              constraints: []
+              acceptance: A request naming an Instance resolves to it and its Engine, and a request naming none resolves to the configured default Instance.
+              verify: Issuing a request with and without an Instance shows the named Instance used in the first case and the default Instance in the second.
+              status: done
+              log:
+              - at: '2026-09-28T04:54:17+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T04:55:18+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: pointed the Data layer at a scratch configuration with two Instances and resolved with no Instance, with a named Instance, again with the default''s name, and with an undeclared name; plus ruff check, ruff format and pyright.'
+                outcome: No Instance named resolved to the configured default; a named Instance resolved to itself with its own storage location; the Engine came from the Instance's declared Engine, was reused for the same Instance and distinct across Instances; an undeclared Instance was refused. ruff, ruff format and pyright reported no problems.
+                location: database/src/database/data.py
+            P2-G2-T3:
+              id: P2-G2-T3
+              source_id: '006'
+              title: Route each request and return its result
+              description: Forward each Operation to the resolved Engine's implementation and return that Engine's result according to the published Operation's contract.
+              reason: One routing layer keeps selection and result handling consistent across Engines.
+              inputs:
+              - The resolved Instance and Engine
+              skills: []
+              expected_result: A request reaches its Engine and the contract-shaped result returns to the caller.
+              depends_on:
+              - P2-G2-T2
+              constraints: []
+              acceptance: Each request is executed by the Engine of the resolved Instance and the caller receives the result in the Operation's published form.
+              verify: A request against a configured Instance executes in that Instance's Engine and its returned value matches the published result form.
+              status: done
+              log:
+              - at: '2026-09-28T04:55:19+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T04:56:23+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: registered a stand-in Engine as a second declared Instance''s Engine, routed requests with a named and a default Instance, and routed List requests with nothing supplied and with supplied combination and Orders; plus ruff check, ruff format and pyright.'
+                outcome: Each request ran in the resolved Instance's Engine and its result came back unchanged; List received the configured default combination and Order only when it supplied none; an Operation missing from an Engine was not silently accepted. ruff, ruff format and pyright reported no problems.
+                location: database/src/database/data.py
+            P2-G2-T4:
+              id: P2-G2-T4
+              source_id: '006'
+              title: Publish Interface as the only public layer
+              description: Publish Database Operations only through Interface, keeping Data and Engine internal.
+              reason: A single public boundary keeps Engine selection and routing out of consumers.
+              inputs:
+              - The published Operations
+              skills: []
+              expected_result: Consumers reach Database only through Interface.
+              depends_on:
+              - P2-G2-T3
+              constraints: []
+              acceptance: Interface exposes the published Operations, and neither Data nor Engine is documented or offered as a consumer surface.
+              verify: From a consuming context, the published Operations are reachable through Interface, and the internal layers are not presented as part of the public surface.
+              status: done
+              log:
+              - at: '2026-09-28T04:58:58+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T04:59:59+03:30'
+                by: '007'
+                event: note
+                note: Before verification the Interface's list of public names held only Add and the vocabulary because an earlier edit to it silently did not apply (the formatter had re-sorted the list); the verification check caught this and the list was corrected. Earlier Operation Tasks were verified by calling the Operations, which does not depend on that list, so their results stand.
+              - at: '2026-09-28T04:59:59+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: read the Interface''s public names, star-imported it, compared with the thirteen published Operations plus the six vocabulary names, confirmed every Operation is callable, documented and accepts an optional Instance defaulting to none, confirmed no Data or Engine name is public and that the package and the Data and Engine layers document themselves as internal; plus ruff check, ruff format and pyright.'
+                outcome: Interface exposes exactly the 13 Operations and 6 vocabulary names; Data and Engine are not public and are documented as internal. ruff, ruff format and pyright reported no problems.
+                location: database/src/database/interface.py, database/src/database/__init__.py, database/src/database/data.py, database/src/database/engine/
+        P2-G3:
+          id: P2-G3
+          title: Engine implementation and storage
+          description: The isolated implementation for the Engine marked for implementation and the storage behaviour it provides for Entity data.
+          area: Engine layer
+          does: Entity data can be stored, structured, and changed atomically through the implemented Engine.
+          constraints: []
+          task_count: 4
+          tasks:
+            P2-G3-T1:
+              id: P2-G3-T1
+              source_id: '006'
+              title: Provide the isolated Engine implementation
+              description: Provide the implementation for the Engine marked for implementation, isolated from every other Engine and using that Engine's own connection parameters and mechanisms, with its storage kept in the location the configuration declares and referential integrity enforced.
+              reason: Each implemented Engine must be independently maintainable and carry out Operations in its own way.
+              inputs:
+              - The declared Engine and Instances
+              - The Engine defaults in Database's Preferences
+              skills:
+              - sqlmodel
+              expected_result: The implemented Engine can open a connection to a configured Instance and run storage work.
+              depends_on:
+              - P2-G1-T2
+              constraints: []
+              acceptance: A connection to a configured Instance opens using that Engine's parameters, its storage is created in the declared location, and a reference to a missing parent record is refused.
+              verify: Opening the configured Instance creates its storage in the declared location, and attempting to store a record that references a non-existent parent is rejected.
+              status: done
+              log:
+              - at: '2026-09-28T04:53:30+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T04:54:16+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: opened the Engine implementation with the configuration''s Engine parameters and default Instance in a scratch directory, created the Entity structure, and stored an Account referencing non-existent parents; repeated with foreign keys switched off as a control; plus ruff check, ruff format and pyright.'
+                outcome: The Engine opened the Instance, created its storage file at the declared location, and refused the record with missing parents; with foreign keys off the same record was accepted, so the parameter is what enforces it. ruff, ruff format and pyright reported no problems.
+                location: database/src/database/engine/sqlite.py
+            P2-G3-T2:
+              id: P2-G3-T2
+              source_id: '006'
+              title: Realize the storage structure for every Entity
+              description: Realize each Entity's declared Types, constraints, References with the configured on-delete behaviour, Uniqueness Constraints, Index intentions, Default Values, and Value Generation as the selected Engine's storage structure, derived from the Entity metadata.
+              reason: Storage must reflect exactly what the Model declares, for every Entity.
+              inputs:
+              - Every published Entity and its declaration
+              - The configured reference behaviour
+              skills:
+              - sqlmodel
+              expected_result: A storage structure exists for every Entity that faithfully carries its declared meaning.
+              depends_on:
+              - P2-G3-T1
+              constraints: []
+              acceptance: For every Entity, each declared Field, nullability, default, uniqueness rule, and Reference is present in the storage structure, and generated identifiers are produced automatically.
+              verify: Inspecting the created structure for every Entity shows the declared Fields, uniqueness rules, and references, and storing two records that break a uniqueness rule or a reference is rejected.
+              status: done
+              log:
+              - at: '2026-09-28T04:54:17+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T04:55:18+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: created the Entity structure through the Database Engine on a scratch Instance and ran the same 55 behavioural observations used to review Model against it (two rows of each of the 15 Entities persisted with generated ids, a missing parent refused, each of the 19 declared uniqueness rules rejecting a duplicate while a control row was accepted, aware datetimes and exact decimals kept, JSON round trip); plus ruff check, ruff format and pyright.'
+                outcome: 'All 55 observations held: every Entity''s structure exists with generated identifiers, references and uniqueness enforced. ruff, ruff format and pyright reported no problems.'
+                location: database/src/database/engine/sqlite.py
+            P2-G3-T3:
+              id: P2-G3-T3
+              source_id: '006'
+              title: Persist data-changing Operations atomically
+              description: Ensure every successful data-changing Operation persists its whole change in the selected Instance and that a failed one leaves no partial change.
+              reason: Each data change must have one reliable result whichever Engine is used.
+              inputs:
+              - The Engine implementation
+              skills:
+              - sqlmodel
+              expected_result: A data change is all-or-nothing.
+              depends_on:
+              - P2-G3-T1
+              constraints: []
+              acceptance: A change that fails part-way leaves the Instance exactly as it was before the change, and a change that succeeds is fully present.
+              verify: Causing a multi-record change to fail midway leaves no record of it in the Instance, while the same change without the failure is entirely present.
+              status: done
+              log:
+              - at: '2026-09-28T04:54:18+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T04:55:19+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: through the Engine''s atomic scope, wrote three records whose third repeated a unique value and confirmed none persisted; wrote the same three without the repeat and confirmed all persisted; raised an error after successful writes and confirmed those writes were undone; plus ruff check, ruff format and pyright.'
+                outcome: A change failing part-way left the Instance as it was, a successful change was fully present, and an error after writes rolled them back. ruff, ruff format and pyright reported no problems.
+                location: database/src/database/engine/sqlite.py
+            P2-G3-T4:
+              id: P2-G3-T4
+              source_id: '006'
+              title: Store and return Entity values as received
+              description: Store and return every Entity value exactly as received, including values of Fields that carry a sensitivity marker or hold credentials, applying no special handling because of what a value means.
+              reason: Persistence stays general-purpose, and any protection of values is an application concern outside Database.
+              inputs:
+              - The Engine implementation
+              - The Entities' sensitivity markers
+              skills:
+              - sqlmodel
+              expected_result: Every value, including credential values, round-trips through storage unchanged.
+              depends_on:
+              - P2-G3-T2
+              constraints: []
+              acceptance: A value stored in a marked or credential Field is returned unchanged, and no Field is transformed, masked, or omitted because of its marker.
+              verify: Storing distinctive values in marked Fields and reading them back returns each value identical to the one stored.
+              status: done
+              log:
+              - at: '2026-09-28T04:55:20+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T04:56:23+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: stored distinctive values (quotes, backslashes, percent and underscore, non-ASCII, leading spaces) in every Field that carries a sensitivity marker (User password and api_key, Instance password and api_key, Account password) through the Engine''s atomic scope, then read each back through the Entity and read the raw stored column with a direct query; also confirmed no other Entity has a marked Field.'
+                outcome: 'All five marked Fields returned their values unchanged and the raw stored columns equalled what was supplied, so nothing is transformed, masked or omitted because of a marker. No source change was needed: the behaviour holds by the absence of any special handling.'
+                location: database/src/database/engine/sqlite.py
+        P2-G4:
+          id: P2-G4
+          title: Data Operations
+          description: The thirteen published Operations, each observable through Interface for any Entity.
+          area: Interface layer and Engine layer
+          does: Each published Operation behaves as its contract states, for any Entity, against any resolved Instance.
+          constraints: []
+          task_count: 13
+          tasks:
+            P2-G4-T1:
+              id: P2-G4-T1
+              source_id: '006'
+              title: Add
+              description: Accept an Entity instance for a new record, apply every declared Value Generation, otherwise apply Default Values for omitted Fields, enforce required and nullability rules, and return the created Entity instance.
+              reason: New data enters storage only through a single rule-abiding path.
+              inputs:
+              - The published Operation contract
+              - The storage structure of the Entity
+              skills:
+              - sqlmodel
+              expected_result: A new record exists and is returned.
+              depends_on:
+              - P2-G2-T3
+              - P2-G3-T2
+              - P2-G3-T3
+              constraints: []
+              acceptance: The record is stored with generated values and defaults applied, an omitted required Field without a default is refused, and the returned Entity carries its generated `id`.
+              verify: Adding an Entity with omitted defaulted Fields stores the defaults and returns a generated `id`, while adding one missing a required Field is refused and stores nothing.
+              status: done
+              log:
+              - at: '2026-09-28T04:56:23+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T04:57:08+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check on a scratch Instance through the published Add: returned Entity with a generated id; omitted defaulted and nullable Fields; explicit null and explicit overrides; omitted required Field, explicit null for a non-nullable Field and a supplied generated id each refused with nothing stored; a duplicate unique value, a missing parent and an over-long value refused with no partial change; a named Instance received the record while the default did not; plus ruff check, ruff format and pyright.'
+                outcome: 'All 17 observations held: generated ids and defaults applied, required and nullability rules enforced, and no refused Add left anything behind. ruff, ruff format and pyright reported no problems.'
+                location: database/src/database/interface.py, database/src/database/engine/sqlite.py
+            P2-G4-T2:
+              id: P2-G4-T2
+              source_id: '006'
+              title: Get by ID
+              description: Accept an Entity class and an `id` and return the matching Entity instance, or `null` when no record has that `id`.
+              reason: Consumers need to retrieve one record by identity.
+              inputs:
+              - The published Operation contract
+              - The storage structure of the Entity
+              skills:
+              - sqlmodel
+              expected_result: A record is retrievable by `id`.
+              depends_on:
+              - P2-G2-T3
+              - P2-G3-T2
+              - P2-G4-T1
+              constraints: []
+              acceptance: A present `id` returns that record's Entity and an absent `id` returns `null`.
+              verify: Requesting a stored `id` returns the matching Entity and requesting an unused `id` returns `null`.
+              status: done
+              log:
+              - at: '2026-09-28T04:57:09+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T04:58:54+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check on scratch Instances through the published Operation: present id, unused id, another Entity with the same id, and a separate named Instance; run as part of an 84-observation script, whose ability to fail was shown by two deliberate mutations (OR combined as AND, and wildcard escaping removed), each reported as exactly the expected failure; plus ruff check, ruff format and pyright.'
+                outcome: A present id returned the matching Entity equal to the stored record and an unused id returned null; the named Instance stayed separate. ruff, ruff format and pyright reported no problems.
+                location: database/src/database/interface.py, database/src/database/engine/sqlite.py
+            P2-G4-T3:
+              id: P2-G4-T3
+              source_id: '006'
+              title: List
+              description: Accept an Entity class with optional Filters, an optional Filter Combination, an optional ordered list of Orders, and an optional limit, using the configured default combination and Order when either is omitted and returning every match when no limit is given.
+              reason: Consumers need selective, ordered retrieval of many records.
+              inputs:
+              - The published Operation contract
+              - The storage structure of the Entity
+              skills:
+              - sqlmodel
+              expected_result: Matching Entities are returned in the requested order and quantity.
+              depends_on:
+              - P2-G2-T3
+              - P2-G3-T2
+              - P2-G2-T1
+              - P2-G4-T1
+              constraints: []
+              acceptance: Each Filter Operator selects the right records, the two combinations join Filters as stated, Orders apply in the supplied order, defaults apply when omitted, and a limit caps the count.
+              verify: Listing with each operator, both combinations, each direction, no Orders, and with and without a limit returns exactly the expected records in the expected order.
+              status: done
+              log:
+              - at: '2026-09-28T04:57:09+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T04:58:54+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check on scratch Instances through the published Operation: each of the twelve operators, wildcard characters in values, both combinations and the omitted default, single and multiple Orders, the default Order, the supplied Order replacing it, limit and no limit, filter with order and limit together, no match, and an unknown Field; run as part of an 84-observation script, whose ability to fail was shown by two deliberate mutations (OR combined as AND, and wildcard escaping removed), each reported as exactly the expected failure; plus ruff check, ruff format and pyright.'
+                outcome: 'All 25 List observations held: every operator selected the right records, AND and OR joined Filters as stated, defaults applied only when omitted, Orders applied in sequence, limit capped and omission returned all, an unknown Field was refused. ruff, ruff format and pyright reported no problems.'
+                location: database/src/database/interface.py, database/src/database/engine/sqlite.py
+            P2-G4-T4:
+              id: P2-G4-T4
+              source_id: '006'
+              title: Update
+              description: Accept an Entity instance holding its `id` and changed values, locate the record by `id` alone, update only supplied mutable Fields, preserve omitted and immutable Fields, treat an explicitly supplied `null` as a value, never change `id`, and return the updated Entity or `null` when no record has that `id`.
+              reason: Consumers need to change existing records without disturbing untouched data.
+              inputs:
+              - The published Operation contract
+              - The storage structure of the Entity
+              skills:
+              - sqlmodel
+              expected_result: A record is changed exactly where values were supplied.
+              depends_on:
+              - P2-G2-T3
+              - P2-G3-T2
+              - P2-G3-T3
+              - P2-G4-T1
+              constraints: []
+              acceptance: Supplied Fields change, omitted and immutable Fields and `id` stay as they were, a supplied `null` is stored as `null`, and an unknown `id` returns `null`.
+              verify: Updating a stored record with a subset of Fields changes only those Fields, a supplied `null` reads back as `null`, and updating an unused `id` returns `null`.
+              status: done
+              log:
+              - at: '2026-09-28T04:57:10+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T04:58:54+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check on scratch Instances through the published Operation: a subset of Fields changed, omitted Fields preserved, explicit null stored, unused id, other records untouched, an immutable Field (a Field temporarily declared immutable) left unchanged while a mutable one changed, an invalid value, a null for a non-nullable Field and a unique violation each refused with the record unchanged, and a missing id; run as part of an 84-observation script, whose ability to fail was shown by two deliberate mutations (OR combined as AND, and wildcard escaping removed), each reported as exactly the expected failure; plus ruff check, ruff format and pyright.'
+                outcome: Only supplied mutable Fields changed, a supplied null was stored as null, immutable Fields and id never changed, an unused id returned null, and every refused update left the record exactly as it was. ruff, ruff format and pyright reported no problems.
+                location: database/src/database/interface.py, database/src/database/engine/sqlite.py
+            P2-G4-T5:
+              id: P2-G4-T5
+              source_id: '006'
+              title: Delete
+              description: Accept an Entity class and an `id`, remove the record, and return `true` when a record was deleted or `false` when none has that `id`.
+              reason: Consumers need to remove records.
+              inputs:
+              - The published Operation contract
+              - The storage structure of the Entity
+              skills:
+              - sqlmodel
+              expected_result: A record is removed and the outcome reported.
+              depends_on:
+              - P2-G2-T3
+              - P2-G3-T2
+              - P2-G3-T3
+              - P2-G4-T1
+              constraints: []
+              acceptance: A present `id` is removed and reported as `true`, and an absent `id` reports `false` and changes nothing.
+              verify: Deleting a stored `id` returns `true` and the record is gone, while deleting an unused `id` returns `false` and the record count is unchanged.
+              status: done
+              log:
+              - at: '2026-09-28T04:57:10+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T04:58:55+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check on scratch Instances through the published Operation: deleting a present id, an unused id, count before and after, and deleting a record that other records reference; run as part of an 84-observation script, whose ability to fail was shown by two deliberate mutations (OR combined as AND, and wildcard escaping removed), each reported as exactly the expected failure; plus ruff check, ruff format and pyright.'
+                outcome: A present id was removed and reported true, an unused id reported false with no change, and deleting a referenced record was refused and left the record in place. ruff, ruff format and pyright reported no problems.
+                location: database/src/database/interface.py, database/src/database/engine/sqlite.py
+            P2-G4-T6:
+              id: P2-G4-T6
+              source_id: '006'
+              title: Enable
+              description: Accept an Entity class and an `id`, set the record's `is_active` Field to `true`, and return the Entity or `null` when no record has that `id`.
+              reason: Consumers need to switch a record on without editing it.
+              inputs:
+              - The published Operation contract
+              - The storage structure of the Entity
+              skills:
+              - sqlmodel
+              expected_result: A record is marked active.
+              depends_on:
+              - P2-G2-T3
+              - P2-G3-T2
+              - P2-G3-T3
+              - P2-G4-T1
+              constraints: []
+              acceptance: A present `id` ends with `is_active` equal to `true` and is returned, and an absent `id` returns `null`.
+              verify: Enabling a disabled stored record returns it with `is_active` true and stores that value, and enabling an unused `id` returns `null`.
+              status: done
+              log:
+              - at: '2026-09-28T04:57:11+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T04:58:55+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check on scratch Instances through the published Operation: enabling a disabled record, an already active record, an unused id, and that other Fields are unaffected; run as part of an 84-observation script, whose ability to fail was shown by two deliberate mutations (OR combined as AND, and wildcard escaping removed), each reported as exactly the expected failure; plus ruff check, ruff format and pyright.'
+                outcome: Enable stored and returned is_active true, an unused id returned null, and other Fields were untouched. ruff, ruff format and pyright reported no problems.
+                location: database/src/database/interface.py, database/src/database/engine/sqlite.py
+            P2-G4-T7:
+              id: P2-G4-T7
+              source_id: '006'
+              title: Disable
+              description: Accept an Entity class and an `id`, set the record's `is_active` Field to `false`, and return the Entity or `null` when no record has that `id`.
+              reason: Consumers need to switch a record off without deleting it.
+              inputs:
+              - The published Operation contract
+              - The storage structure of the Entity
+              skills:
+              - sqlmodel
+              expected_result: A record is marked inactive.
+              depends_on:
+              - P2-G2-T3
+              - P2-G3-T2
+              - P2-G3-T3
+              - P2-G4-T1
+              constraints: []
+              acceptance: A present `id` ends with `is_active` equal to `false` and is returned, and an absent `id` returns `null`.
+              verify: Disabling an active stored record returns it with `is_active` false and stores that value, and disabling an unused `id` returns `null`.
+              status: done
+              log:
+              - at: '2026-09-28T04:57:12+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T04:58:55+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check on scratch Instances through the published Operation: disabling an active record, an unused id, and that other Fields are unaffected; run as part of an 84-observation script, whose ability to fail was shown by two deliberate mutations (OR combined as AND, and wildcard escaping removed), each reported as exactly the expected failure; plus ruff check, ruff format and pyright.'
+                outcome: Disable stored and returned is_active false, an unused id returned null, and other Fields were untouched. ruff, ruff format and pyright reported no problems.
+                location: database/src/database/interface.py, database/src/database/engine/sqlite.py
+            P2-G4-T8:
+              id: P2-G4-T8
+              source_id: '006'
+              title: Count
+              description: Accept an Entity class and return the number of its records, `0` when there are none.
+              reason: Consumers need to know how many records exist.
+              inputs:
+              - The published Operation contract
+              - The storage structure of the Entity
+              skills:
+              - sqlmodel
+              expected_result: The record count is available.
+              depends_on:
+              - P2-G2-T3
+              - P2-G3-T2
+              - P2-G4-T1
+              constraints: []
+              acceptance: The count equals the number of stored records and is `0` for an Entity with none.
+              verify: Counting an Entity before and after storing known numbers of records returns `0` and then the known number.
+              status: done
+              log:
+              - at: '2026-09-28T04:57:12+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T04:58:56+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check on scratch Instances through the published Operation: an Entity with no records, after adding known numbers of records, after a delete, and in another Instance; run as part of an 84-observation script, whose ability to fail was shown by two deliberate mutations (OR combined as AND, and wildcard escaping removed), each reported as exactly the expected failure; plus ruff check, ruff format and pyright.'
+                outcome: Count returned 0 for none and then exactly the number stored, including after a delete and per Instance. ruff, ruff format and pyright reported no problems.
+                location: database/src/database/interface.py, database/src/database/engine/sqlite.py
+            P2-G4-T9:
+              id: P2-G4-T9
+              source_id: '006'
+              title: Sum
+              description: Accept an Entity class and one numeric Field and return that Field's total, ignoring `null` values and returning `0` when no usable value exists.
+              reason: Consumers need totals over stored values.
+              inputs:
+              - The published Operation contract
+              - The storage structure of the Entity
+              skills:
+              - sqlmodel
+              expected_result: A numeric total is available.
+              depends_on:
+              - P2-G2-T3
+              - P2-G3-T2
+              - P2-G4-T1
+              constraints: []
+              acceptance: The total equals the sum of the non-`null` values and is `0` when none exist.
+              verify: Summing a Field over records that include a `null` returns the total of the others, and summing over no usable values returns `0`.
+              status: done
+              log:
+              - at: '2026-09-28T04:57:13+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T04:58:56+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check on scratch Instances through the published Operation: no records, records including a null, only null values, an integer Field, and an unknown Field; run as part of an 84-observation script, whose ability to fail was shown by two deliberate mutations (OR combined as AND, and wildcard escaping removed), each reported as exactly the expected failure; plus ruff check, ruff format and pyright.'
+                outcome: Sum ignored null and totalled the rest exactly, returned 0 when nothing was usable, and refused an unknown Field. ruff, ruff format and pyright reported no problems.
+                location: database/src/database/interface.py, database/src/database/engine/sqlite.py
+            P2-G4-T10:
+              id: P2-G4-T10
+              source_id: '006'
+              title: Min
+              description: Accept an Entity class and one comparable Field and return the smallest value, ignoring `null` values and returning `null` when no usable value exists.
+              reason: Consumers need the lowest stored value.
+              inputs:
+              - The published Operation contract
+              - The storage structure of the Entity
+              skills:
+              - sqlmodel
+              expected_result: The smallest value is available.
+              depends_on:
+              - P2-G2-T3
+              - P2-G3-T2
+              - P2-G4-T1
+              constraints: []
+              acceptance: The result is the smallest non-`null` value and is `null` when none exist.
+              verify: Taking the minimum of a Field over records that include a `null` returns the smallest of the others, and over no usable values returns `null`.
+              status: done
+              log:
+              - at: '2026-09-28T04:57:13+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T04:58:56+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check on scratch Instances through the published Operation: no records, records including a null, only null values, text and numeric Fields, and an unknown Field; run as part of an 84-observation script, whose ability to fail was shown by two deliberate mutations (OR combined as AND, and wildcard escaping removed), each reported as exactly the expected failure; plus ruff check, ruff format and pyright.'
+                outcome: Min ignored null and returned the smallest, returned null when nothing was usable, and refused an unknown Field. ruff, ruff format and pyright reported no problems.
+                location: database/src/database/interface.py, database/src/database/engine/sqlite.py
+            P2-G4-T11:
+              id: P2-G4-T11
+              source_id: '006'
+              title: Max
+              description: Accept an Entity class and one comparable Field and return the largest value, ignoring `null` values and returning `null` when no usable value exists.
+              reason: Consumers need the highest stored value.
+              inputs:
+              - The published Operation contract
+              - The storage structure of the Entity
+              skills:
+              - sqlmodel
+              expected_result: The largest value is available.
+              depends_on:
+              - P2-G2-T3
+              - P2-G3-T2
+              - P2-G4-T1
+              constraints: []
+              acceptance: The result is the largest non-`null` value and is `null` when none exist.
+              verify: Taking the maximum of a Field over records that include a `null` returns the largest of the others, and over no usable values returns `null`.
+              status: done
+              log:
+              - at: '2026-09-28T04:57:14+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T04:58:57+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check on scratch Instances through the published Operation: no records, records including a null, only null values, text and numeric Fields, and an unknown Field; run as part of an 84-observation script, whose ability to fail was shown by two deliberate mutations (OR combined as AND, and wildcard escaping removed), each reported as exactly the expected failure; plus ruff check, ruff format and pyright.'
+                outcome: Max ignored null and returned the largest, returned null when nothing was usable, and refused an unknown Field. ruff, ruff format and pyright reported no problems.
+                location: database/src/database/interface.py, database/src/database/engine/sqlite.py
+            P2-G4-T12:
+              id: P2-G4-T12
+              source_id: '006'
+              title: Truncate
+              description: Accept an Entity class, remove all of its records while keeping its storage structure, and return the number of records removed.
+              reason: Consumers need to empty an Entity without dropping its structure.
+              inputs:
+              - The published Operation contract
+              - The storage structure of the Entity
+              skills:
+              - sqlmodel
+              expected_result: An Entity's records are cleared and counted.
+              depends_on:
+              - P2-G2-T3
+              - P2-G3-T2
+              - P2-G3-T3
+              - P2-G4-T1
+              constraints: []
+              acceptance: All records are removed, the structure remains usable, and the returned number equals the records removed.
+              verify: Truncating an Entity holding a known number of records returns that number, leaves zero records, and still accepts a new record afterwards.
+              status: done
+              log:
+              - at: '2026-09-28T04:57:15+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T04:58:57+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check on scratch Instances through the published Operation: an empty Entity, an Entity with known records, adding a record afterwards, and other Entities; run as part of an 84-observation script, whose ability to fail was shown by two deliberate mutations (OR combined as AND, and wildcard escaping removed), each reported as exactly the expected failure; plus ruff check, ruff format and pyright.'
+                outcome: Truncate returned the number removed, left none, kept the structure usable for a new record, and left other Entities untouched. ruff, ruff format and pyright reported no problems.
+                location: database/src/database/interface.py, database/src/database/engine/sqlite.py
+            P2-G4-T13:
+              id: P2-G4-T13
+              source_id: '006'
+              title: Execute Command
+              description: Accept a SQL command and optional parameters, execute it through the selected Engine, and return a Command Result carrying rows and an affected count, either `null` when it does not apply.
+              reason: Some needs do not concern one Entity and must be met with a direct command.
+              inputs:
+              - The published Operation contract
+              - The storage structure of the Entity
+              skills:
+              - sqlmodel
+              expected_result: A command runs and its outcome is reported in the standard form.
+              depends_on:
+              - P2-G2-T3
+              - P2-G3-T2
+              - P2-G3-T3
+              - P2-G2-T1
+              constraints: []
+              acceptance: A reading command returns rows as mappings from column name to value, a changing command returns an affected count, and a failing changing command leaves no partial change.
+              verify: Running a reading command and a changing command with parameters returns rows and an affected count respectively, and a changing command that fails midway leaves the data unchanged.
+              status: done
+              log:
+              - at: '2026-09-28T04:57:15+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T04:58:58+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check on scratch Instances through the published Operation: a reading command with parameters, a changing command with parameters, a command without parameters, a changing command that fails midway (a statement repeating a unique value), an invalid command, a delete command, and a named Instance; run as part of an 84-observation script, whose ability to fail was shown by two deliberate mutations (OR combined as AND, and wildcard escaping removed), each reported as exactly the expected failure; plus ruff check, ruff format and pyright.'
+                outcome: A reading command returned rows as column-name mappings with no affected count, a changing command returned the affected count with no rows, a failing changing command left no partial change, and the command ran in the named Instance. ruff, ruff format and pyright reported no problems.
+                location: database/src/database/interface.py, database/src/database/engine/sqlite.py
+        P2-G5:
+          id: P2-G5
+          title: Provisioning and initial data
+          description: Creating the default Instance's structure and inserting the starting records the Target defines.
+          area: Default Instance provisioning and initial data
+          does: The configured default Instance exists with every Entity's structure and holds every defined starting record.
+          constraints: []
+          task_count: 15
+          tasks:
+            P2-G5-T1:
+              id: P2-G5-T1
+              source_id: '006'
+              title: Prepare the storage-structure migration
+              description: Prepare the migration that creates the storage structure for every Entity from the Entity metadata, compatible with the Entities' modeling package.
+              reason: Structure changes must be reproducible and comparable against the Entities.
+              inputs:
+              - The realized storage structure
+              - The migration selection in Database's Preferences
+              skills:
+              - sqlmodel
+              expected_result: A migration exists that, applied to an empty Instance, produces every Entity's structure.
+              depends_on:
+              - P2-G3-T2
+              constraints: []
+              acceptance: Applying the migration to an empty Instance creates a structure for every Entity, and comparing the Entities' metadata with the migrated Instance shows no difference.
+              verify: Applying the migration to a fresh Instance and comparing it with the Entity metadata reports no differences and a structure for each Entity.
+              status: done
+              log:
+              - at: '2026-09-28T04:58:59+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T05:00:38+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: generated the revision against a scratch Instance, applied it to an empty fresh scratch Instance through the migration mechanism, compared the migrated Instance with the Entity metadata (type comparison on) and listed its tables, ran the same 55 behavioural observations used earlier against the migrated structure, then rolled the migration back to base and listed the tables again; plus ruff check and ruff format.'
+                outcome: Applying the migration to an empty Instance created 15 tables, one per Entity, with zero differences from the Entity metadata; all 55 observations held on the migrated structure; rolling back left no Entity table. The real default Instance was not touched.
+                location: database/migrations/versions/0001_create_entity_structure.py, database/migrations/env.py, database/alembic.ini
+            P2-G5-T2:
+              id: P2-G5-T2
+              source_id: '006'
+              title: Provision the default Instance
+              description: Apply the migration to the configured default Instance, leaving its storage in the location the configuration declares.
+              reason: Database must leave a usable default Instance, not only code that could create it.
+              inputs:
+              - The prepared migration
+              - The declared default Instance
+              skills:
+              - sqlmodel
+              expected_result: The default Instance exists and is structured.
+              depends_on:
+              - P2-G5-T1
+              - P2-G1-T2
+              - P2-G3-T1
+              constraints: []
+              acceptance: The default Instance's storage exists in the declared location and holds the migrated structure, and no other Instance is provisioned.
+              verify: After provisioning, the default Instance's storage is present in the declared location with the migrated structure, and other Instances are untouched.
+              status: done
+              log:
+              - at: '2026-09-28T05:00:39+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T05:00:51+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: after applying the migration to the configured default Instance, opened its storage read-only outside Database and listed its tables and recorded migration version, counted rows in each table, listed the database directory, and asked version control whether the storage file is ignored.'
+                outcome: The default Instance's storage exists in the declared location and holds a table for each of the 15 Entities, recorded at the migration head; all Entity tables are empty; no other Instance storage exists; the file is ignored by version control.
+                location: database/db/application.db (uncommitted), applied with the configured upgrade command
+            P2-G5-T3:
+              id: P2-G5-T3
+              source_id: '006'
+              title: Verify the default Instance's structure
+              description: Confirm the default Instance contains the required storage structure for every Entity and report the result before development of Database is reported complete.
+              reason: Provisioning is trusted only once the structure is observed to be complete.
+              inputs:
+              - The provisioned default Instance
+              - The published Entities
+              skills:
+              - sqlmodel
+              expected_result: The presence of every Entity's structure in the default Instance is confirmed.
+              depends_on:
+              - P2-G5-T2
+              constraints: []
+              acceptance: Every published Entity has its structure in the default Instance, and a missing structure is reported rather than ignored.
+              verify: Comparing the published Entities with the default Instance shows a structure for each, and a deliberately missing structure is reported as missing.
+              status: done
+              log:
+              - at: '2026-09-28T05:00:51+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T05:01:26+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check through the published Execute Command: listed the tables of the real default Instance and compared them with the tables of every published Entity; repeated on a scratch Instance with one structure dropped and on an empty scratch Instance to prove a missing structure is reported by name.'
+                outcome: The default Instance holds the structure of every one of the 15 Entities (none missing); a dropped structure was reported by name and an empty Instance reported all 15 missing.
+                location: Verification uses the published Execute Command against the default Instance (read-only)
+            P2-G5-T4:
+              id: P2-G5-T4
+              source_id: '006'
+              title: Insert the initial User data
+              description: Insert the starting User the Target defines, generating each secret value securely and keeping it out of every source, document, record, and output.
+              reason: The Target defines starting User records that the application expects to exist.
+              inputs:
+              - The Target's initial data for User
+              skills:
+              - sqlmodel
+              expected_result: The defined starting User records exist in the default Instance.
+              depends_on:
+              - P2-G5-T3
+              constraints: []
+              acceptance: The defined User exists, its secret Fields hold securely generated values, and no generated secret value appears in any source, documentation, or Config record.
+              verify: Reading the User shows the defined non-secret values and non-empty generated secret values, and searching the project's sources and records finds no generated secret value.
+              status: done
+              log:
+              - at: '2026-09-28T05:02:07+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T05:02:44+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: applied the revision to the real default Instance with the configured upgrade step, then read the User records back through the published List and compared each Field with the Target''s own Initial Data text (parsed independently from the revision), including numeric equality and that every reference resolves to the expected record; where secrets exist, checked they are generated 32+ character strings, distinct from all earlier generated secrets, and searched every project file (excluding the ignored database file) for each value; plus ruff format and check on the revision.'
+                outcome: 1 User record(s) exist exactly as the Target defines them and all references resolve. 2 secret value(s) were generated at apply time, are 32+ characters, distinct from every other generated secret so far, and appear in no source, documentation or Config file. No secret value was printed or recorded.
+                location: database/migrations/versions/0002_insert_initial_user_data.py
+            P2-G5-T5:
+              id: P2-G5-T5
+              source_id: '006'
+              title: Insert the initial Trading Platform data
+              description: Insert the supported trading platforms the Target defines.
+              reason: The Target defines starting Trading Platform records that the application expects to exist.
+              inputs:
+              - The Target's initial data for Trading Platform
+              skills:
+              - sqlmodel
+              expected_result: The defined starting Trading Platform records exist in the default Instance.
+              depends_on:
+              - P2-G5-T3
+              constraints: []
+              acceptance: Exactly the defined platforms exist with their defined names and codes.
+              verify: Listing Trading Platforms returns exactly the defined platforms in their defined order with their defined values.
+              status: done
+              log:
+              - at: '2026-09-28T05:02:45+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T05:02:47+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: applied the revision to the real default Instance with the configured upgrade step, then read the TradingPlatform records back through the published List and compared each Field with the Target''s own Initial Data text (parsed independently from the revision), including numeric equality and that every reference resolves to the expected record; where secrets exist, checked they are generated 32+ character strings, distinct from all earlier generated secrets, and searched every project file (excluding the ignored database file) for each value; plus ruff format and check on the revision.'
+                outcome: 2 TradingPlatform record(s) exist exactly as the Target defines them and all references resolve. No secret value was printed or recorded.
+                location: database/migrations/versions/0003_insert_initial_tradingplatform_data.py
+            P2-G5-T6:
+              id: P2-G5-T6
+              source_id: '006'
+              title: Insert the initial Broker data
+              description: Insert the starting Broker the Target defines, owned by the starting User.
+              reason: The Target defines starting Broker records that the application expects to exist.
+              inputs:
+              - The Target's initial data for Broker
+              - The inserted initial User data
+              skills:
+              - sqlmodel
+              expected_result: The defined starting Broker records exist in the default Instance.
+              depends_on:
+              - P2-G5-T3
+              - P2-G5-T4
+              constraints: []
+              acceptance: The defined Broker exists, owned by the starting User.
+              verify: Listing Brokers returns the defined Broker with its defined values and owner.
+              status: done
+              log:
+              - at: '2026-09-28T05:02:48+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T05:02:49+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: applied the revision to the real default Instance with the configured upgrade step, then read the Broker records back through the published List and compared each Field with the Target''s own Initial Data text (parsed independently from the revision), including numeric equality and that every reference resolves to the expected record; where secrets exist, checked they are generated 32+ character strings, distinct from all earlier generated secrets, and searched every project file (excluding the ignored database file) for each value; plus ruff format and check on the revision.'
+                outcome: 1 Broker record(s) exist exactly as the Target defines them and all references resolve. No secret value was printed or recorded.
+                location: database/migrations/versions/0004_insert_initial_broker_data.py
+            P2-G5-T7:
+              id: P2-G5-T7
+              source_id: '006'
+              title: Insert the initial Currency data
+              description: Insert the starting Currencies the Target defines, owned by the starting User.
+              reason: The Target defines starting Currency records that the application expects to exist.
+              inputs:
+              - The Target's initial data for Currency
+              - The inserted initial User data
+              skills:
+              - sqlmodel
+              expected_result: The defined starting Currency records exist in the default Instance.
+              depends_on:
+              - P2-G5-T3
+              - P2-G5-T4
+              constraints: []
+              acceptance: Exactly the defined Currencies exist with their defined codes, symbols, countries, and decimal digits.
+              verify: Listing Currencies returns exactly the defined set with the defined values.
+              status: done
+              log:
+              - at: '2026-09-28T05:02:50+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T05:02:51+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: applied the revision to the real default Instance with the configured upgrade step, then read the Currency records back through the published List and compared each Field with the Target''s own Initial Data text (parsed independently from the revision), including numeric equality and that every reference resolves to the expected record; where secrets exist, checked they are generated 32+ character strings, distinct from all earlier generated secrets, and searched every project file (excluding the ignored database file) for each value; plus ruff format and check on the revision.'
+                outcome: 8 Currency record(s) exist exactly as the Target defines them and all references resolve. No secret value was printed or recorded.
+                location: database/migrations/versions/0005_insert_initial_currency_data.py
+            P2-G5-T8:
+              id: P2-G5-T8
+              source_id: '006'
+              title: Insert the initial Account Group data
+              description: Insert the starting Account Group the Target defines, owned by the starting User.
+              reason: The Target defines starting Account Group records that the application expects to exist.
+              inputs:
+              - The Target's initial data for Account Group
+              - The inserted initial User data
+              skills:
+              - sqlmodel
+              expected_result: The defined starting Account Group records exist in the default Instance.
+              depends_on:
+              - P2-G5-T3
+              - P2-G5-T4
+              constraints: []
+              acceptance: The defined Account Group exists, owned by the starting User.
+              verify: Listing Account Groups returns the defined group with its defined values and owner.
+              status: done
+              log:
+              - at: '2026-09-28T05:02:52+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T05:02:54+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: applied the revision to the real default Instance with the configured upgrade step, then read the AccountGroup records back through the published List and compared each Field with the Target''s own Initial Data text (parsed independently from the revision), including numeric equality and that every reference resolves to the expected record; where secrets exist, checked they are generated 32+ character strings, distinct from all earlier generated secrets, and searched every project file (excluding the ignored database file) for each value; plus ruff format and check on the revision.'
+                outcome: 1 AccountGroup record(s) exist exactly as the Target defines them and all references resolve. No secret value was printed or recorded.
+                location: database/migrations/versions/0006_insert_initial_accountgroup_data.py
+            P2-G5-T9:
+              id: P2-G5-T9
+              source_id: '006'
+              title: Insert the initial Trailing Group data
+              description: Insert the starting Trailing Group the Target defines, owned by the starting User.
+              reason: The Target defines starting Trailing Group records that the application expects to exist.
+              inputs:
+              - The Target's initial data for Trailing Group
+              - The inserted initial User data
+              skills:
+              - sqlmodel
+              expected_result: The defined starting Trailing Group records exist in the default Instance.
+              depends_on:
+              - P2-G5-T3
+              - P2-G5-T4
+              constraints: []
+              acceptance: The defined Trailing Group exists, owned by the starting User.
+              verify: Listing Trailing Groups returns the defined group with its defined values and owner.
+              status: done
+              log:
+              - at: '2026-09-28T05:02:54+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T05:02:56+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: applied the revision to the real default Instance with the configured upgrade step, then read the TrailingGroup records back through the published List and compared each Field with the Target''s own Initial Data text (parsed independently from the revision), including numeric equality and that every reference resolves to the expected record; where secrets exist, checked they are generated 32+ character strings, distinct from all earlier generated secrets, and searched every project file (excluding the ignored database file) for each value; plus ruff format and check on the revision.'
+                outcome: 1 TrailingGroup record(s) exist exactly as the Target defines them and all references resolve. No secret value was printed or recorded.
+                location: database/migrations/versions/0007_insert_initial_trailinggroup_data.py
+            P2-G5-T10:
+              id: P2-G5-T10
+              source_id: '006'
+              title: Insert the initial Partial Group data
+              description: Insert the starting Partial Group the Target defines, owned by the starting User.
+              reason: The Target defines starting Partial Group records that the application expects to exist.
+              inputs:
+              - The Target's initial data for Partial Group
+              - The inserted initial User data
+              skills:
+              - sqlmodel
+              expected_result: The defined starting Partial Group records exist in the default Instance.
+              depends_on:
+              - P2-G5-T3
+              - P2-G5-T4
+              constraints: []
+              acceptance: The defined Partial Group exists, owned by the starting User.
+              verify: Listing Partial Groups returns the defined group with its defined values and owner.
+              status: done
+              log:
+              - at: '2026-09-28T05:02:57+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T05:02:58+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: applied the revision to the real default Instance with the configured upgrade step, then read the PartialGroup records back through the published List and compared each Field with the Target''s own Initial Data text (parsed independently from the revision), including numeric equality and that every reference resolves to the expected record; where secrets exist, checked they are generated 32+ character strings, distinct from all earlier generated secrets, and searched every project file (excluding the ignored database file) for each value; plus ruff format and check on the revision.'
+                outcome: 1 PartialGroup record(s) exist exactly as the Target defines them and all references resolve. No secret value was printed or recorded.
+                location: database/migrations/versions/0008_insert_initial_partialgroup_data.py
+            P2-G5-T11:
+              id: P2-G5-T11
+              source_id: '006'
+              title: Insert the initial Action Group data
+              description: Insert the starting Action Group the Target defines, owned by the starting User.
+              reason: The Target defines starting Action Group records that the application expects to exist.
+              inputs:
+              - The Target's initial data for Action Group
+              - The inserted initial User data
+              skills:
+              - sqlmodel
+              expected_result: The defined starting Action Group records exist in the default Instance.
+              depends_on:
+              - P2-G5-T3
+              - P2-G5-T4
+              constraints: []
+              acceptance: The defined Action Group exists, owned by the starting User.
+              verify: Listing Action Groups returns the defined group with its defined values and owner.
+              status: done
+              log:
+              - at: '2026-09-28T05:02:59+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T05:03:01+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: applied the revision to the real default Instance with the configured upgrade step, then read the ActionGroup records back through the published List and compared each Field with the Target''s own Initial Data text (parsed independently from the revision), including numeric equality and that every reference resolves to the expected record; where secrets exist, checked they are generated 32+ character strings, distinct from all earlier generated secrets, and searched every project file (excluding the ignored database file) for each value; plus ruff format and check on the revision.'
+                outcome: 1 ActionGroup record(s) exist exactly as the Target defines them and all references resolve. No secret value was printed or recorded.
+                location: database/migrations/versions/0009_insert_initial_actiongroup_data.py
+            P2-G5-T12:
+              id: P2-G5-T12
+              source_id: '006'
+              title: Insert the initial Instance data
+              description: Insert the starting Instance the Target defines for the starting User and the first Trading Platform, generating each secret value securely and keeping it out of every source, document, record, and output.
+              reason: The Target defines starting Instance records that the application expects to exist.
+              inputs:
+              - The Target's initial data for Instance
+              - The inserted initial User data
+              - The inserted initial Trading Platform data
+              skills:
+              - sqlmodel
+              expected_result: The defined starting Instance records exist in the default Instance.
+              depends_on:
+              - P2-G5-T3
+              - P2-G5-T4
+              - P2-G5-T5
+              constraints: []
+              acceptance: The defined Instance exists and references its User and Trading Platform, its secret Fields hold securely generated values, and none of them appears in any source, documentation, or Config record.
+              verify: Reading the Instance shows the defined non-secret values, correct references, and non-empty generated secret values, and searching the project's sources and records finds none of them.
+              status: done
+              log:
+              - at: '2026-09-28T05:03:02+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T05:03:03+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: applied the revision to the real default Instance with the configured upgrade step, then read the Instance records back through the published List and compared each Field with the Target''s own Initial Data text (parsed independently from the revision), including numeric equality and that every reference resolves to the expected record; where secrets exist, checked they are generated 32+ character strings, distinct from all earlier generated secrets, and searched every project file (excluding the ignored database file) for each value; plus ruff format and check on the revision.'
+                outcome: 1 Instance record(s) exist exactly as the Target defines them and all references resolve. 2 secret value(s) were generated at apply time, are 32+ characters, distinct from every other generated secret so far, and appear in no source, documentation or Config file. No secret value was printed or recorded.
+                location: database/migrations/versions/0010_insert_initial_instance_data.py
+            P2-G5-T13:
+              id: P2-G5-T13
+              source_id: '006'
+              title: Insert the initial Asset data
+              description: Insert the starting Assets the Target defines, provided by the starting Broker.
+              reason: The Target defines starting Asset records that the application expects to exist.
+              inputs:
+              - The Target's initial data for Asset
+              - The inserted initial Broker data
+              skills:
+              - sqlmodel
+              expected_result: The defined starting Asset records exist in the default Instance.
+              depends_on:
+              - P2-G5-T3
+              - P2-G5-T6
+              constraints: []
+              acceptance: Exactly the defined Assets exist with their defined symbols, categories, point sizes, and digits, each referencing the starting Broker.
+              verify: Listing Assets returns exactly the defined set with the defined values and Broker reference.
+              status: done
+              log:
+              - at: '2026-09-28T05:03:04+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T05:03:05+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: applied the revision to the real default Instance with the configured upgrade step, then read the Asset records back through the published List and compared each Field with the Target''s own Initial Data text (parsed independently from the revision), including numeric equality and that every reference resolves to the expected record; where secrets exist, checked they are generated 32+ character strings, distinct from all earlier generated secrets, and searched every project file (excluding the ignored database file) for each value; plus ruff format and check on the revision.'
+                outcome: 4 Asset record(s) exist exactly as the Target defines them and all references resolve. No secret value was printed or recorded.
+                location: database/migrations/versions/0011_insert_initial_asset_data.py
+            P2-G5-T14:
+              id: P2-G5-T14
+              source_id: '006'
+              title: Insert the initial Account data
+              description: Insert the starting Account the Target defines, referencing its Account Group, Broker, Instance, and base Currency, generating its secret value securely and independently of the Instance's secrets.
+              reason: The Target defines starting Account records that the application expects to exist.
+              inputs:
+              - The Target's initial data for Account
+              - The inserted initial Account Group data
+              - The inserted initial Broker data
+              - The inserted initial Instance data
+              - The inserted initial Currency data
+              skills:
+              - sqlmodel
+              expected_result: The defined starting Account records exist in the default Instance.
+              depends_on:
+              - P2-G5-T3
+              - P2-G5-T8
+              - P2-G5-T6
+              - P2-G5-T12
+              - P2-G5-T7
+              constraints: []
+              acceptance: The defined Account exists with correct references, its secret Field holds a securely generated value that differs from every Instance credential, and the value appears in no source, documentation, or Config record.
+              verify: Reading the Account shows the defined non-secret values, correct references, and a generated secret that differs from the Instance's, and searching the project's sources and records finds none of these values.
+              status: done
+              log:
+              - at: '2026-09-28T05:03:06+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T05:03:08+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: applied the revision to the real default Instance with the configured upgrade step, then read the Account records back through the published List and compared each Field with the Target''s own Initial Data text (parsed independently from the revision), including numeric equality and that every reference resolves to the expected record; where secrets exist, checked they are generated 32+ character strings, distinct from all earlier generated secrets, and searched every project file (excluding the ignored database file) for each value; plus ruff format and check on the revision.'
+                outcome: 1 Account record(s) exist exactly as the Target defines them and all references resolve. 1 secret value(s) were generated at apply time, are 32+ characters, distinct from every other generated secret so far, and appear in no source, documentation or Config file. No secret value was printed or recorded.
+                location: database/migrations/versions/0012_insert_initial_account_data.py
+            P2-G5-T15:
+              id: P2-G5-T15
+              source_id: '006'
+              title: Insert the initial Action data
+              description: Insert the starting Action the Target defines, referencing its Action Group, Asset, Account, Partial Group, and Trailing Group.
+              reason: The Target defines starting Action records that the application expects to exist.
+              inputs:
+              - The Target's initial data for Action
+              - The inserted initial Action Group data
+              - The inserted initial Asset data
+              - The inserted initial Account data
+              - The inserted initial Partial Group data
+              - The inserted initial Trailing Group data
+              skills:
+              - sqlmodel
+              expected_result: The defined starting Action records exist in the default Instance.
+              depends_on:
+              - P2-G5-T3
+              - P2-G5-T11
+              - P2-G5-T13
+              - P2-G5-T14
+              - P2-G5-T10
+              - P2-G5-T9
+              constraints: []
+              acceptance: The defined Action exists with its defined values and every reference resolving to an inserted record.
+              verify: Reading the Action shows the defined values and each reference resolving to the corresponding inserted record.
+              status: done
+              log:
+              - at: '2026-09-28T05:03:09+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T05:03:10+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: applied the revision to the real default Instance with the configured upgrade step, then read the Action records back through the published List and compared each Field with the Target''s own Initial Data text (parsed independently from the revision), including numeric equality and that every reference resolves to the expected record; where secrets exist, checked they are generated 32+ character strings, distinct from all earlier generated secrets, and searched every project file (excluding the ignored database file) for each value; plus ruff format and check on the revision.'
+                outcome: 1 Action record(s) exist exactly as the Target defines them and all references resolve. No secret value was printed or recorded.
+                location: database/migrations/versions/0013_insert_initial_action_data.py
+        P2-G6:
+          id: P2-G6
+          title: Reusable library and manifest
+          description: Making Database usable by other Components and discoverable in the shared Application Manifest.
+          area: Component packaging
+          does: Database is a self-contained library that consumes Model through its published surface and is discoverable by other Components.
+          constraints: []
+          task_count: 2
+          tasks:
+            P2-G6-T1:
+              id: P2-G6-T1
+              source_id: '006'
+              title: Make Database consumable as an independent reusable library
+              description: Make Database usable by other Components as a self-contained reusable library that uses the shared Model only through Model's published surface and exposes only its own published surface.
+              reason: Logic connects to Database as a provider and Database connects to Model as a provider.
+              inputs:
+              - The published Operations
+              - The Model's published Entities
+              skills: []
+              expected_result: Another Component can use Database's published Operations from outside Database.
+              depends_on:
+              - P2-G2-T4
+              constraints: []
+              acceptance: A consumer outside Database can use the published Operations with Model Entities and needs nothing beyond the published surfaces, and Database reaches Model only through Model's published surface.
+              verify: A separate consuming context can install Database, import a published Model Entity, and perform an Operation, with no access to Database's private resources.
+              status: done
+              log:
+              - at: '2026-09-28T05:00:40+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T05:03:50+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: created an unrelated consuming project outside both libraries, installed Model and Database into it, imported Model Entities and Database''s public names, and ran Count, List with a Filter, an Order and a limit, Get by ID and Execute Command against the provisioned default Instance (read-only); statically scanned every import of Model in Database''s source and migrations.'
+                outcome: 'The consumer used the Operations with Model Entities using only the published surfaces; Database imports only Model''s public Interface and Declaration layers. Note for setup: the consumer must add Model itself as well, because uv does not apply a dependency''s local source paths.'
+                location: database/pyproject.toml, database/src/database/
+              - at: '2026-09-28T05:08:56+03:30'
+                by: '007'
+                event: note
+                note: 'Correction to this Task''s ''done'' evidence: it said the consumer must add Model itself because uv does not apply a dependency''s local source paths. That was wrong. Later observation showed that adding only Database (editable) also installs the local Model through Database''s declared source, and that Database must be installed editable because it finds its configuration relative to its own source (a non-editable install fails with a file-not-found error). The Task''s acceptance still holds.'
+            P2-G6-T2:
+              id: P2-G6-T2
+              source_id: '006'
+              title: Publish Database's public metadata in the Application Manifest
+              description: Record the Database Component's non-secret public metadata in its section of the shared Application Manifest.
+              reason: The Application Manifest is the current public view of the application composition.
+              inputs:
+              - The consumable Database library
+              skills: []
+              expected_result: The Database section of the Application Manifest describes its public identity and surface.
+              depends_on:
+              - P2-G6-T1
+              constraints: []
+              acceptance: The Database section holds non-secret public metadata matching the real library, other Components' sections are unchanged, and no credential or private detail appears.
+              verify: Reading the Database section shows metadata that matches the library, and other sections and secrets are absent or unchanged.
+              status: done
+              log:
+              - at: '2026-09-28T05:03:51+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T05:04:27+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: read the Application Manifest and imported the listed entry point, compared the listed Operations and vocabulary with the entry point''s public names, confirmed the listed path exists, that exactly the Model and Database sections are populated with the Model section unchanged, and that no credential or secret word appears.'
+                outcome: The Database section carries its package name, path, entry point and public interface, all matching the real library; the Model section is unchanged and every other section remains empty.
+                location: .interface/config/application.yaml
+        P2-G7:
+          id: P2-G7
+          title: Database documentation
+          description: The consumer documentation of Database, given in the required section order.
+          area: Component documentation
+          does: Consumers can understand, set up, use, verify, and troubleshoot Database from its documentation alone.
+          constraints: []
+          task_count: 8
+          tasks:
+            P2-G7-T1:
+              id: P2-G7-T1
+              source_id: '006'
+              title: Document the Database overview
+              description: Write the documentation's overview section explaining what Database is and its public boundary.
+              reason: Consumers must understand Database before using it.
+              inputs:
+              - The consumable Database library
+              skills: []
+              expected_result: The documentation opens with an overview of Database.
+              depends_on:
+              - P2-G6-T1
+              constraints: []
+              acceptance: The overview is the first section and states Database's purpose and that Interface is its only public layer.
+              verify: Reading the documentation shows the overview first and matching the real component.
+              status: done
+              log:
+              - at: '2026-09-28T05:03:51+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T05:05:07+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: parsed the documentation, confirmed the overview is the first section, that it states Interface is the consumer''s only route and that it contains no examples.'
+                outcome: The overview is the first section and states Database's purpose and that Interface is its only public layer, with the Data and Engine layers described as internal.
+                location: database/README.md
+            P2-G7-T2:
+              id: P2-G7-T2
+              source_id: '006'
+              title: Document the data-changing Operations
+              description: Write the documentation's Interface section entries for Add, Update, Delete, Enable, Disable, and Truncate, each with one complete example using the imported Entity class or Entity instance it requires.
+              reason: Consumers must see each data-changing Operation used correctly.
+              inputs:
+              - The data-changing Operations
+              - The published Entities
+              skills: []
+              expected_result: The Interface section contains a complete example for each data-changing Operation.
+              depends_on:
+              - P2-G7-T1
+              - P2-G4-T1
+              - P2-G4-T4
+              - P2-G4-T5
+              - P2-G4-T6
+              - P2-G4-T7
+              - P2-G4-T12
+              constraints: []
+              acceptance: Each of the six Operations has exactly one complete example that runs as shown and prints or returns what the documentation states.
+              verify: Executing each of the six data-changing examples produces the outcome stated beside it.
+              status: done
+              log:
+              - at: '2026-09-28T05:05:07+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T05:05:42+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: parsed the documentation, confirmed the Interface section has one subsection each for Add, Update, Delete, Enable, Disable and Truncate with exactly one complete example (imports included) using that Operation, and executed each example against a fresh, fully migrated and seeded scratch copy of the database, comparing its printed output with the output shown.'
+                outcome: All six data-changing Operations have exactly one complete example that runs as shown and prints exactly the stated outcome.
+                location: database/README.md
+            P2-G7-T3:
+              id: P2-G7-T3
+              source_id: '006'
+              title: Document the retrieving Operations
+              description: Write the documentation's Interface section entries for Get by ID, List, Count, Sum, Min, and Max, each with one complete example using the imported Entity class it requires.
+              reason: Consumers must see each retrieving Operation used correctly.
+              inputs:
+              - The retrieving Operations
+              - The query vocabulary
+              skills: []
+              expected_result: The Interface section contains a complete example for each retrieving Operation.
+              depends_on:
+              - P2-G7-T2
+              - P2-G2-T1
+              - P2-G4-T2
+              - P2-G4-T3
+              - P2-G4-T8
+              - P2-G4-T9
+              - P2-G4-T10
+              - P2-G4-T11
+              constraints: []
+              acceptance: Each of the six Operations has exactly one complete example that runs as shown and returns what the documentation states, and the List example shows a Filter and an Order.
+              verify: Executing each of the six retrieving examples produces the outcome stated beside it.
+              status: done
+              log:
+              - at: '2026-09-28T05:05:42+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T05:06:14+03:30'
+                by: '007'
+                event: note
+                note: While appending this section a scripting mistake of mine truncated the documentation file. The overview, the intro of the Interface section and the six data-changing entries were regenerated from their saved sources and the file was rebuilt in full before verification; the checks below ran on the rebuilt file, and the earlier documentation Tasks' checks (overview and data-changing entries) were re-run as part of it.
+              - at: '2026-09-28T05:06:14+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: parsed the documentation, confirmed the Interface section has one subsection each for Get by ID, List, Count, Sum, Min and Max with exactly one complete example (imports included) using that Operation, that the List example uses a Filter and an Order, and executed each example against a fresh, fully migrated and seeded scratch copy of the database, comparing printed output with the output shown; also re-ran the overview and data-changing checks on the rebuilt file (29 checks in total).'
+                outcome: All six retrieving Operations have exactly one complete example that runs as shown and prints exactly the stated outcome; the List example shows a Filter and an Order.
+                location: database/README.md
+            P2-G7-T4:
+              id: P2-G7-T4
+              source_id: '006'
+              title: Document Execute Command
+              description: Write the documentation's Interface section entry for Execute Command with one complete example that shows the Command Result.
+              reason: Consumers must see how a direct command and its result are used.
+              inputs:
+              - The Execute Command Operation
+              - The Command Result
+              skills: []
+              expected_result: The Interface section contains a complete Execute Command example.
+              depends_on:
+              - P2-G7-T3
+              - P2-G4-T13
+              constraints: []
+              acceptance: The Execute Command entry has exactly one complete example that runs as shown and returns the stated Command Result.
+              verify: Executing the example produces the rows or affected count stated beside it.
+              status: done
+              log:
+              - at: '2026-09-28T05:06:15+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T05:06:31+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: parsed the documentation, confirmed the Execute Command subsection has exactly one complete example (imports included) that shows the Command Result, and executed it against a fresh, fully migrated and seeded scratch copy of the database, comparing its printed rows and affected count with the output shown (31 checks over the whole Interface section).'
+                outcome: The Execute Command entry has exactly one complete example that runs as shown and prints the stated rows and null affected count.
+                location: database/README.md
+            P2-G7-T5:
+              id: P2-G7-T5
+              source_id: '006'
+              title: Document setup
+              description: Write the documentation's setup section explaining how a consumer or contributor makes Database available and provisions the default Instance.
+              reason: A consumer must be able to start using Database without guessing.
+              inputs:
+              - The consumable Database library
+              - The provisioned default Instance
+              skills: []
+              expected_result: The documentation contains a setup section after the Interface section.
+              depends_on:
+              - P2-G7-T4
+              - P2-G5-T2
+              - P2-G6-T1
+              constraints: []
+              acceptance: The setup section appears in the required order and following it from a clean context makes Database available with a provisioned default Instance.
+              verify: Following the setup section from a clean context leaves Database usable with a provisioned default Instance.
+              status: done
+              log:
+              - at: '2026-09-28T05:06:32+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T05:07:04+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Executed the documented setup from a clean copy of the project (no environment, no database) in a sibling layout: installed the environment, applied the migrations, ran the documented confirmation, then created an unrelated consuming project, added Model and Database with the documented command and read counts, a listing and a seeded record through the published Operations; confirmed the default Instance''s storage was created inside the copy and that the real database file''s checksum was unchanged; also checked the section follows the Interface section.'
+                outcome: Following the setup section from a clean context produced a provisioned default Instance (confirmation printed the migration head) usable from a consuming project, with the seeded records present and the real database untouched.
+                location: database/README.md
+              - at: '2026-09-28T05:08:56+03:30'
+                by: '007'
+                event: note
+                note: 'Correction: the setup section as first verified told consumers to add Model themselves ''because uv does not apply the local paths Database declares'', which is false. The section now says to add Database as an editable dependency and that Model comes with it, and it was re-verified from a clean context with only Database added (provisioned, seeded, real database untouched).'
+            P2-G7-T6:
+              id: P2-G7-T6
+              source_id: '006'
+              title: Document use
+              description: Write the documentation's use section explaining how a consumer selects an Instance, combines Filters, and reads results in normal work.
+              reason: Consumers need guidance on routine use beyond the per-Operation examples.
+              inputs:
+              - The published Operations
+              skills: []
+              expected_result: The documentation contains a use section after setup.
+              depends_on:
+              - P2-G7-T5
+              constraints: []
+              acceptance: The use section appears in the required order and its guidance matches Database's actual behaviour.
+              verify: Following the use section's guidance produces the behaviour it describes.
+              status: done
+              log:
+              - at: '2026-09-28T05:07:05+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T05:07:20+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: parsed the documentation, confirmed the use section follows Setup, executed both of its examples against a fresh, fully migrated and seeded scratch copy comparing printed output with the output shown; the section''s claims (default order, AND default, OR, value ignored by null operators, literal wildcard characters, values returned as supplied) were each observed in the Operation checks.'
+                outcome: Both examples run and print exactly what is shown, and the section's guidance matches Database's observed behaviour.
+                location: database/README.md
+            P2-G7-T7:
+              id: P2-G7-T7
+              source_id: '006'
+              title: Document verification
+              description: Write the documentation's verification section explaining how to confirm that the default Instance holds the required structure for every Entity.
+              reason: Consumers must be able to check a provisioned Instance for themselves.
+              inputs:
+              - The structure verification result
+              skills: []
+              expected_result: The documentation contains a verification section after use.
+              depends_on:
+              - P2-G7-T6
+              - P2-G5-T3
+              constraints: []
+              acceptance: The verification section appears in the required order and following it reports a complete structure and reports a deliberately missing one.
+              verify: Following the verification section reports every Entity present on a provisioned Instance and flags a missing one.
+              status: done
+              log:
+              - at: '2026-09-28T05:07:21+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T05:07:40+03:30'
+                by: '007'
+                event: note
+                note: Before verification the section wrongly said that re-applying the migrations would recreate a missing structure. Observation showed that it does not (the Instance is already recorded at the migration head). The sentence was corrected to say the Instance was changed outside the migrations and must be provisioned again from an empty database, which was then observed to leave nothing missing.
+              - at: '2026-09-28T05:07:40+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: parsed the documentation, confirmed the verification section follows the use section, executed its example against a fresh, fully migrated scratch copy (prints an empty list), ran the same documented snippet on scratch Instances with one and two structures dropped (it listed exactly those Entities by name), and observed both what re-applying the migrations does to such an Instance (nothing) and that provisioning from an empty database leaves nothing missing.'
+                outcome: The verification section's example prints an empty list for a complete Instance and names missing structures on an incomplete one; its remedy statement matches observed behaviour.
+                location: database/README.md
+            P2-G7-T8:
+              id: P2-G7-T8
+              source_id: '006'
+              title: Document troubleshooting
+              description: Write the documentation's troubleshooting section covering the problems a consumer can meet when setting up or using Database.
+              reason: Consumers need a route to resolve common problems without reading the implementation.
+              inputs:
+              - The completed documentation sections
+              skills: []
+              expected_result: The documentation ends with a troubleshooting section.
+              depends_on:
+              - P2-G7-T7
+              constraints: []
+              acceptance: The troubleshooting section appears last in the required order and describes real, resolvable problems.
+              verify: Each described problem can be reproduced or recognised and its stated resolution resolves it.
+              status: done
+              log:
+              - at: '2026-09-28T05:07:41+03:30'
+                by: '007'
+                from: todo
+                to: claimed
+                event: claimed by develop before work began
+              - at: '2026-09-28T05:09:26+03:30'
+                by: '007'
+                from: claimed
+                to: done
+                event: verified
+                check: 'Transient check: parsed the documentation and confirmed troubleshooting is the last section; reproduced each documented problem and its stated resolution: a non-editable install failing with a file-not-found error naming the configuration and fixed by reinstalling editable; a request on an unprovisioned default Instance failing with a no-such-table error and fixed by applying the migrations to the empty storage file it had created; an omitted required Field refused; a unique violation and a foreign key violation refused; and an undeclared Instance refused. Also re-ran all 39 checks over the whole documentation.'
+                outcome: Every documented problem reproduced with the quoted message and every stated resolution resolved it; troubleshooting is the last section and the whole documentation passes its checks.
+                location: database/README.md
