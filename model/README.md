@@ -440,7 +440,7 @@ id
 
 ## Foundation
 
-Foundation, published by `model.core.foundation`, gives every Entity two capabilities: `to_json` converts an Entity to a JSON object, and `from_json` constructs an Entity from one. The object has exactly the Entity's Field names as keys, in Declaration order. Decimal values are exact base-10 strings, datetime values are ISO 8601 text that keeps precision and timezone offset, and an identity that has not been generated yet is `null`.
+Foundation, published by `model.core.foundation`, gives every Entity two capabilities: `to_json` converts an Entity to a JSON object, and `from_json` constructs an Entity from one. The object has exactly the Entity's Field names as keys, in Declaration order. Decimal values are exact base-10 strings, datetime values are ISO 8601 text that keeps precision and timezone offset, and an identity that has not been generated yet is `null`. When reading JSON, a decimal must be written as digits with an optional sign, fraction and exponent, and a datetime as an ISO 8601 date-time such as `2026-01-02T03:04:05+00:00` (date and time, with an optional `Z` or offset). A JSON integer is read as a float for a float Field when it is exactly representable. Anything else is rejected.
 
 Convert an Entity to JSON:
 
@@ -535,11 +535,9 @@ uv add --editable <path-to-model>
 
 ## Use
 
-Obtain Entities from `model.interface`. Create an Entity with keyword arguments; every value is validated against the Field's Type and rules, and no value is converted to another Type. Assignment is validated the same way and leaves the previous value in place when it is rejected.
+Obtain Entities from `model.interface`. Create an Entity with keyword arguments; every value is validated against the Field's Type and rules, and no value is converted to another Type. Assignment is validated the same way and leaves the previous value in place when it is rejected. A rejection raises a `ValueError` whose message names the Entity and the Field and does not repeat the rejected value. A Field cannot be deleted.
 
 ```python
-from pydantic import ValidationError
-
 from model.interface import Broker
 
 broker = Broker(name="FxPro", user_id=1)
@@ -547,14 +545,14 @@ broker.name = "FxPro EU"
 print(broker.name)
 try:
     broker.name = None
-except ValidationError as error:
-    print("rejected:", error.errors(include_input=False)[0]["msg"])
+except ValueError as error:
+    print("rejected:", str(error).splitlines()[:2])
 print(broker.name)
 ```
 
 ```text
 FxPro EU
-rejected: Input should be a valid string
+rejected: ['1 validation error for Broker', 'name']
 FxPro EU
 ```
 
@@ -564,23 +562,20 @@ Read an Entity's meaning and structure through its `declaration`, and exchange i
 
 ### A value is rejected because of its Type
 
-Values are never converted between Types, so a string is not accepted for an integer, an integer is not accepted for a boolean or a float, and a float is not accepted for a decimal. Supply a value of the Field's Type.
+When you create an Entity or assign a Field, values are never converted between Types, so a string is not accepted for an integer, an integer is not accepted for a boolean or a float, and a float is not accepted for a decimal. Supply a value of the Field's Type. Reading JSON has one exception, described in the Foundation section.
 
 ```python
-from pydantic import ValidationError
-
 from model.interface import Broker
 
 try:
     Broker(name="FxPro", user_id="1")
-except ValidationError as error:
-    problem = error.errors(include_input=False)[0]
-    print(problem["loc"], problem["msg"])
+except ValueError as error:
+    print(str(error).splitlines()[:2])
 print(Broker(name="FxPro", user_id=1).user_id)
 ```
 
 ```text
-('user_id',) Input should be a valid integer
+['1 validation error for Broker', 'user_id']
 1
 ```
 
@@ -589,20 +584,17 @@ print(Broker(name="FxPro", user_id=1).user_id)
 Every Field that is not nullable and has neither a Default Value nor Value Generation must be supplied. The Field tables in the Interface section list them under **Required**.
 
 ```python
-from pydantic import ValidationError
-
 from model.interface import Broker
 
 try:
     Broker(name="FxPro")
-except ValidationError as error:
-    problem = error.errors(include_input=False)[0]
-    print(problem["loc"], problem["msg"])
+except ValueError as error:
+    print(str(error).splitlines()[:2])
 print(Broker(name="FxPro", user_id=1).name)
 ```
 
 ```text
-('user_id',) Field required
+['1 validation error for Broker', 'user_id']
 FxPro
 ```
 
@@ -611,20 +603,17 @@ FxPro
 Only the Fields an Entity declares are accepted, and a misspelled or extra name is rejected instead of being ignored.
 
 ```python
-from pydantic import ValidationError
-
 from model.interface import Broker
 
 try:
     Broker(name="FxPro", user_id=1, colour="red")
-except ValidationError as error:
-    problem = error.errors(include_input=False)[0]
-    print(problem["loc"], problem["msg"])
+except ValueError as error:
+    print(str(error).splitlines()[:2])
 print(Broker(name="FxPro", user_id=1).name)
 ```
 
 ```text
-('colour',) Extra inputs are not permitted
+['1 validation error for Broker', 'colour']
 FxPro
 ```
 
@@ -652,7 +641,7 @@ Broker.id is immutable
 
 ### JSON is rejected when it is built
 
-Decimal and datetime values must be encoded as strings in JSON, and a decimal string must be an exact base-10 number. A JSON number is not accepted for a decimal.
+Decimal and datetime values must be encoded as strings in JSON. A decimal string must be a base-10 number and a datetime string an ISO 8601 date-time; a JSON number is not accepted for a decimal.
 
 ```python
 from model.interface import TrailingRule

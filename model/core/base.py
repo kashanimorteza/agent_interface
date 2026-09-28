@@ -36,6 +36,11 @@ class Entity(Foundation, SQLModel):
                 vars(self)[name] = previous
         SQLModel.__setattr__(self, name, value)
 
+    def __delattr__(self, name: str) -> None:
+        if name in type(self).model_fields:
+            raise ValueError(f"{type(self).__name__}.{name} cannot be deleted")
+        super().__delattr__(name)
+
     @classmethod
     def model_validate(
         cls,

@@ -1,4 +1,6 @@
+import re
 from collections.abc import Mapping
+from contextlib import suppress
 from datetime import datetime
 from decimal import Decimal
 from typing import TYPE_CHECKING, Any, ClassVar, Self, TypeGuard, cast
@@ -7,6 +9,13 @@ from pydantic import JsonValue
 
 from .declaration import Declaration, FieldDeclaration
 from .logical_type import LogicalType
+
+_DECIMAL = re.compile(r"[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?", re.ASCII)
+_DATETIME = re.compile(
+    r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?"
+    r"(?:Z|[+-]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?)?",
+    re.ASCII,
+)
 
 
 def _encode(field: FieldDeclaration, value: Any) -> JsonValue:
@@ -26,19 +35,24 @@ def _decode(entity: str, field: FieldDeclaration, value: Any) -> Any:
         return None
     match field.type:
         case LogicalType.DECIMAL | LogicalType.DATETIME:
-            parse = Decimal if field.type is LogicalType.DECIMAL else datetime.fromisoformat
             if not isinstance(value, str):
                 raise TypeError(f"{entity}.{field.name}: {field.type} must be encoded as a string")
-            try:
-                return parse(value)
-            except ArithmeticError, ValueError:
-                raise ValueError(f"{entity}.{field.name}: invalid {field.type} encoding") from None
+            pattern, parse = (
+                (_DECIMAL, Decimal)
+                if field.type is LogicalType.DECIMAL
+                else (_DATETIME, datetime.fromisoformat)
+            )
+            if pattern.fullmatch(value):
+                with suppress(ArithmeticError, ValueError):
+                    return parse(value)
+            raise ValueError(f"{entity}.{field.name}: invalid {field.type} encoding")
         case LogicalType.FLOAT if isinstance(value, int) and not isinstance(value, bool):
-            if float(value) != value:
-                raise ValueError(
-                    f"{entity}.{field.name}: integer is not exactly representable as float"
-                )
-            return float(value)
+            with suppress(OverflowError):
+                if float(value) == value:
+                    return float(value)
+            raise ValueError(
+                f"{entity}.{field.name}: integer is not exactly representable as float"
+            )
         case _:
             return value
 
@@ -79,7 +93,10 @@ class Foundation:
         """Construct an Entity from a JSON object under the same contract as direct creation.
 
         Args:
-            data (Any): JSON object keyed by Field name; decimal and datetime are encoded as strings.
+            data (Any): JSON object keyed by Field name. A decimal is a base-10 string, a datetime
+                is an ISO 8601 date-time string (YYYY-MM-DDTHH:MM[:SS[.ffffff]] with an optional
+                Z or offset), and an exactly representable JSON integer is read as a float for a
+                float Field.
 
         Returns:
             (Self): The constructed Entity.

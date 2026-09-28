@@ -55,6 +55,7 @@ name = "model"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "pydantic" },
     { name = "sqlmodel" },
 ]
 
@@ -65,7 +66,10 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "sqlmodel" }]
+requires-dist = [
+    { name = "pydantic" },
+    { name = "sqlmodel" },
+]
 
 [package.metadata.requires-dev]
 dev = [
