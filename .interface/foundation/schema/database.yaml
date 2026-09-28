@@ -1,10 +1,10 @@
 schema:
   id: "agent-interface-database-configuration"
   version: "2.1"
-  purpose: "The independent structure of database.yaml: supported Engines and their parameters, named Instances, and component Settings."
+  purpose: "The independent structure of Database config.yaml: supported Engines and their parameters, named Instances, and component Settings."
   kind: "Structure standard"
   applies_when: "The Implementation declares a Database Component."
-  generates: "<database component path>/database.yaml"
+  generates: "<database component path>/config.yaml"
 
 # <!--------------------------------------------------------------------------------- Structure -->
 structure:
@@ -24,6 +24,7 @@ structure:
     shape:
       "<instance-key>":
         name: "<human-readable instance name>"
+        active: "<whether the Instance is available through Database Interface>"
         purpose: "<what this instance stores>"
         engine: "<engine-key declared under engines>"
         database: "<database identity>"
@@ -39,17 +40,15 @@ structure:
     purpose: "Component-wide Database settings."
     shape:
       default_instance: "<instance-key declared under instances>"
-      assignments:
-        "<purpose-key>": "<instance-key declared under instances>"
       secrets:
         "<secret-key>": "<secret value or secret reference>"
       parameters: "<component-specific configuration mapping>"
 
 # <!--------------------------------------------------------------------------------- Rules -->
 rules:
-  engine_support: "Every declared Engine has one implementation file under the configured engine directory."
+  engine_support: "Every declared Engine selected for implementation has one implementation file under the configured engine directory."
   instance_integrity: "Every Instance names an existing Engine."
-  setting_integrity: "settings.default_instance and every settings.assignments value name an existing Instance."
+  setting_integrity: "settings.default_instance names an active existing Instance."
 
 # <!--------------------------------------------------------------------------------- Example -->
 example: |
@@ -75,6 +74,7 @@ example: |
   instances:
     logs:
       name: "Logs"
+      active: true
       purpose: "Application logs."
       engine: "sqlite"
       database: "logs"
@@ -86,6 +86,7 @@ example: |
       parameters: {}
     reports:
       name: "Reports"
+      active: true
       purpose: "Reporting data."
       engine: "postgresql"
       database: "reports"
@@ -97,6 +98,7 @@ example: |
       parameters: {}
     management:
       name: "Management"
+      active: true
       purpose: "Application management data."
       engine: "mysql"
       database: "management"
@@ -109,10 +111,6 @@ example: |
 
   settings:
     default_instance: "management"
-    assignments:
-      logs: "logs"
-      reports: "reports"
-      management: "management"
     secrets:
       encryption_key: "<secret reference>"
     parameters: {}

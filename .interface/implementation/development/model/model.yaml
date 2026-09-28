@@ -25,7 +25,6 @@ resolution:
 read_order:
   - "settings: identify the Model Component and its technical selection."
   - "layout: locate Model's Interface, Entity, Declaration, and Foundation layers and their configured names."
-  - "logical_types: resolve the portable meaning of each permitted Field Type."
   - "development: apply Model capabilities, naming conventions, language, package, and implementation defaults."
   - "documentation: apply the required Model documentation structure and examples."
 
@@ -33,7 +32,6 @@ read_order:
 content_map:
   - settings
   - layout
-  - logical_types
   - development
   - documentation
 
@@ -69,15 +67,6 @@ content:
         to_json: "to_json"
         from_json: "from_json"
     casing: "Spell every name in the selected language's own casing standard, and name files and folders by the same standard, as development.languages states it."
-
-  # <!-------------------------------------------- logical_types -->
-  logical_types:
-    integer: "A whole numeric value, distinct from boolean."
-    string: "Unicode text."
-    boolean: "Exactly true or false."
-    float: "An approximate floating-point numeric value."
-    decimal: "An exact base-10 numeric value whose declared precision and scale are preserved."
-    datetime: "A date-and-time value whose precision and timezone meaning are preserved when present."
 
   # <!-------------------------------------------- development -->
   development:

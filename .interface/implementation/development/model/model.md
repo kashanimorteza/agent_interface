@@ -40,12 +40,13 @@ Each Entity stands alone in its own unit. Declaration records technology-indepen
 ## Terms
 
 - **Entity** — the authoritative logical definition of one meaningful concept in the Target's domain, with an Identity that distinguishes one instance from another.
-- **Field** — one named value of an Entity, with only its domain meaning, logical type, value rules, and value-generation meaning.
-- **Type** — the technology-independent category of values a Field may hold.
+- **Field** — one named value of an Entity, with only its domain meaning, Target-declared Type, value rules, and value-generation meaning.
+- **Type** — a Target-defined category of values a Field may hold.
 - **Field Rule** — a declared rule for a Field value's presence, default, sensitivity marker, immutability, length, or value constraint.
 - **Required Field** — a non-nullable Field with neither a Default Value nor Value Generation, whose value must therefore be supplied when an Entity is created.
 - **Sensitivity Marker** — optional Field metadata whose value is either `password` or `sensitive`. It identifies a value category; generated Model runtime behaviour records and publishes the marker but does not transform or protect the value because of it.
 - **Identity** — the `id` Field that distinguishes one Entity from every other Entity of the same kind.
+- **Activity Field** — the required `is_active` Field on every Entity, which represents whether that Entity is active.
 - **Primary Key** — Entity metadata that names the `id` Field used to identify an Entity.
 - **Uniqueness Constraint** — a condition requiring one Field or a declared combination of Fields to have no duplicate value within its Entity.
 - **Relation** — Entity metadata that connects one local Field to a target Field by recording the target Entity name and target Field name.
@@ -93,11 +94,11 @@ Interface and Entity are public Model layers at the package root and Entity dire
 
 ### Interface
 
-The public Model surface that publishes Entities for standard use. The Architecture section defines the Model's canonical topology; file extensions and language-required package files follow the selected technology.
+The public Model surface that publishes Entities for standard use. The Architecture section defines the Model's canonical structure; file extensions and language-required package files follow the selected technology.
 
 `interface` is the single standard Entity entrypoint at the Model package root. `entity/` owns only Entity-specific source, with every Entity in its own file. `core/` owns shared Model infrastructure: Declaration, Foundation, optional base Entity definitions, and any later source shared across Entities. A technical package entrypoint or manifest may also exist at the root when required by the selected language, but it does not replace `interface` or create Model meaning.
 
-Technical choices, names, and layout for these layers belong to Model Preferences. Declaration meaning remains independent of language, package, database, and Engine.
+The Architecture and ownership of these layers are fixed. Model Preferences select their language-specific physical realization, such as casing, file extensions, and package entrypoints, without changing that Architecture. Declaration meaning remains independent of language, package, database, and Engine.
 
 ### Entity
 
@@ -190,7 +191,7 @@ Every Principle below is mandatory.
 
 ### Entities follow one complete structural contract
 
-**Rule:** Every Target-declared domain concept produces exactly one Entity, every Entity name is unique within Model, and Entity order follows Target declaration order. Each Entity preserves its name and description, contains its Field Declarations in Target order, and carries its complete Entity Metadata. Every Entity has exactly one Identity Field named `id`, and its Primary Key metadata names that Field. An Entity contains only its own data meaning and metadata; shared Model behaviour remains in Foundation.
+**Rule:** Every Target-declared domain concept produces exactly one Entity, every Entity name is unique within Model, and Entity order follows Target declaration order. Each Entity preserves its name and description, contains its Field Declarations in Target order, and carries its complete Entity Metadata. Every Entity has exactly one Identity Field named `id`, and its Primary Key metadata names that Field. Every Entity also has exactly one non-nullable `is_active` Field that represents its active state through `true` and `false` values. An Entity contains only its own data meaning and metadata; shared Model behaviour remains in Foundation.
 
 **Why:** A fixed Entity contract prevents generators from merging, splitting, reordering, or reshaping domain concepts according to a language, package, or Agent preference.
 
@@ -200,7 +201,7 @@ Every Principle below is mandatory.
 
 ### Entity metadata must resolve completely
 
-**Rule:** Every local Field name used by Primary Key, Relation, Uniqueness Constraint, or Index metadata resolves to a Field declared by the same Entity. Every Relation target Entity name resolves to an Entity declared by Model, and its target Field name resolves within that Entity. Relation source and target Fields have compatible logical Types. Each participating Field appears at most once within one Primary Key, Relation endpoint, Uniqueness Constraint, or Index, and duplicate metadata declarations are invalid. A generator rejects unresolved, incompatible, or duplicate Entity Metadata rather than silently changing or omitting it.
+**Rule:** Every local Field name used by Primary Key, Relation, Uniqueness Constraint, or Index metadata resolves to a Field declared by the same Entity. Every Relation target Entity name resolves to an Entity declared by Model, and its target Field name resolves within that Entity. Relation source and target Fields are compatible under the Target's Type definition. Each participating Field appears at most once within one Primary Key, Relation endpoint, Uniqueness Constraint, or Index, and duplicate metadata declarations are invalid. A generator rejects unresolved, incompatible, or duplicate Entity Metadata rather than silently changing or omitting it.
 
 **Why:** Consumers can safely realize Entity structure only when every metadata link is complete, unambiguous, and internally consistent.
 
@@ -230,11 +231,11 @@ Every Principle below is mandatory.
 
 ### Foundation provides shared Model behaviour
 
-**Rule:** Foundation provides conversion of an Entity to JSON and construction of an Entity from JSON, without injecting Fields, metadata, constraints, or domain meaning. JSON is an object whose keys are exactly the Entity's Field names in Declaration order and whose values are current Entity values. It contains no Declaration metadata, nested Entity, or undeclared key. `null`, `false`, zero, and an empty string remain distinct. Integer and float use JSON numbers, boolean uses a JSON boolean, string uses a JSON string, decimal uses a string that preserves exact base-10 value, and datetime uses ISO 8601 while preserving available precision and timezone meaning. An unresolved Auto Increment Field uses JSON `null` solely as its generation-pending representation and reconstructs to the same pending state; this does not redefine the Field as nullable. Sensitivity markers do not alter JSON values.
+**Rule:** Foundation provides conversion of an Entity to JSON and construction of an Entity from JSON, without injecting Fields, metadata, constraints, or domain meaning. JSON is an object whose keys are exactly the Entity's Field names in Declaration order and whose values are current Entity values. It contains no Declaration metadata, nested Entity, or undeclared key. `null`, `false`, zero, and an empty string remain distinct. Serialization preserves each value according to the Target's declared Type semantics. An unresolved Auto Increment Field uses JSON `null` solely as its generation-pending representation and reconstructs to the same pending state; this does not redefine the Field as nullable. Sensitivity markers do not alter JSON values.
 
 **Why:** The library has one consistent implementation of its common behaviour without imposing a shared domain structure.
 
-**Boundary:** Foundation supplies conversion only. Declaration remains the owner of every Entity's meaning and metadata. JSON construction rejects malformed input, unknown Fields, incompatible Types, and missing Required Fields; it applies the same omission, Default Value, Value Generation, nullability, and validation contract as direct Entity construction without implicit coercion. Method names and syntax come from Preferences, but round trips preserve every logical value and Type.
+**Boundary:** Foundation supplies conversion only. Declaration remains the owner of every Entity's meaning and metadata. JSON construction rejects malformed input, unknown Fields, values incompatible with Target-declared Types, and missing Required Fields; it applies the same omission, Default Value, Value Generation, nullability, and validation contract as direct Entity construction without implicit coercion. Method names and syntax come from Preferences, but round trips preserve every declared value and Type.
 
 <br>
 
@@ -290,7 +291,7 @@ Every Principle below is mandatory.
 
 ### Declaration preserves structured Field meaning
 
-**Rule:** Declaration preserves each Field's logical Type, presence semantics, Default Value, optional sensitivity marker (`password` or `sensitive`), immutability, and every Target-declared restriction as usable structured meaning, including applicable value range, length, pattern, precision, scale, allowed values, or comparable constraint. A Default Value is fixed; Value Generation creates a value when an Entity is created. One Field never declares both.
+**Rule:** Declaration preserves each Field's Target-declared Type, presence semantics, Default Value, optional sensitivity marker (`password` or `sensitive`), immutability, and every Target-declared restriction as usable structured meaning, including applicable value range, length, pattern, precision, scale, allowed values, or comparable constraint. A Default Value is fixed; Value Generation creates a value when an Entity is created. One Field never declares both.
 
 **Why:** Structured meaning preserves the same domain restriction more reliably than descriptive prose alone.
 
@@ -300,7 +301,7 @@ Every Principle below is mandatory.
 
 ### Fields follow one complete value contract
 
-**Rule:** Every Field has a name unique within its Entity and preserves its description, logical Type, nullability, explicit Default Value presence and value, optional sensitivity marker, immutability, applicable value constraints, and optional Value Generation. Nullability states only whether the Field may hold `null`. Absence of a Default Value is distinct from a Default Value explicitly equal to `null`. A Field is required when it is non-nullable and has neither a Default Value nor Value Generation. One Field never has both a Default Value and Value Generation. Field order follows Target declaration order.
+**Rule:** Every Field has a name unique within its Entity and preserves its description, Target-declared Type, nullability, explicit Default Value presence and value, optional sensitivity marker, immutability, applicable value constraints, and optional Value Generation. Nullability states only whether the Field may hold `null`. Absence of a Default Value is distinct from a Default Value explicitly equal to `null`. A Field is required when it is non-nullable and has neither a Default Value nor Value Generation. One Field never has both a Default Value and Value Generation. Field order follows Target declaration order.
 
 **Why:** Explicit and separate value semantics prevent languages and packages from interpreting omission, `null`, defaults, or generated values differently.
 
@@ -308,9 +309,9 @@ Every Principle below is mandatory.
 
 <br>
 
-### Field constraints must match Field Types
+### Field constraints preserve Target meaning
 
-**Rule:** Every Default Value and value constraint applies only to a compatible logical Type and preserves the Target-declared value unchanged. An explicit `null` Default Value requires a nullable Field, and every non-null Default Value satisfies the Field's Type and value constraints. Length and pattern apply to textual values; minimum and maximum apply to ordered values; precision and scale apply to decimal values; allowed values use values compatible with the Field Type. Scale never exceeds precision. A generator rejects an incompatible or internally invalid default or constraint rather than silently ignoring, coercing, or replacing it.
+**Rule:** Every Default Value and value constraint preserves the Target-declared value and conforms to the Target's Field definition. An explicit `null` Default Value requires a nullable Field, and every non-null Default Value satisfies the Field's declared Type and value constraints. A generator rejects an incompatible or internally invalid default or constraint rather than silently ignoring, coercing, or replacing it.
 
 **Why:** A constraint has portable meaning only when its accepted value domain is clear and consistent.
 
@@ -358,11 +359,11 @@ Every Principle below is mandatory.
 
 <br>
 
-### Model has one canonical logical topology
+### Model has one canonical Architecture
 
-**Rule:** Every implementation contains a root `interface` file, a `core` directory, an `entity` directory, and Model documentation at the Component root. `core` contains the Declaration file, Foundation file, every optional base Entity definition, and every additional unit shared across Entities. `entity` contains exactly one file per Entity and no shared infrastructure. This minimum topology and ownership remain constant across languages and packages. Model Preferences select language casing, extensions, concrete class names, and language-required package entrypoints without moving these responsibilities.
+**Rule:** Every implementation contains a root `interface` file, a `core` directory, an `entity` directory, and Model documentation at the Component root. `core` contains the Declaration file, Foundation file, every optional base Entity definition, and every additional unit shared across Entities. `entity` contains exactly one file per Entity and no shared infrastructure. This Architecture and ownership remain constant across languages and packages. Model Preferences select language casing, extensions, concrete class names, and language-required package entrypoints without moving these responsibilities.
 
-**Why:** A stable logical topology makes generated Model Components recognizable and comparable without forcing one language's filesystem conventions onto another.
+**Why:** A stable Architecture makes generated Model Components recognizable and comparable without forcing one language's filesystem conventions onto another.
 
 **Boundary:** Language-required package, build, manifest, or entrypoint files are allowed at their conventional locations but do not replace root `interface`, create a conceptual Model layer, or relocate owned meaning. Private helpers used by one Entity remain in its Entity file. Shared metadata helpers, shared behaviour helpers, base classes, and other cross-Entity infrastructure remain under `core` with the most specific owner available.
 
@@ -390,7 +391,7 @@ Every Principle below is mandatory.
 
 ### Regeneration reconciles without losing meaning
 
-**Rule:** Regeneration compares the current generated Model with current authorities, updates only affected realization, and preserves every still-declared parameter and meaning. It neither accumulates obsolete duplicates nor rewrites unaffected logical structure. A generated artifact may be removed only when current authority explicitly removes its owned meaning or relocates that meaning under the canonical topology, and the resulting Model must still expose every currently declared item. Changing a language, package, or physical layout changes realization only, never Declaration meaning.
+**Rule:** Regeneration compares the current generated Model with current authorities, updates only affected realization, and preserves every still-declared parameter and meaning. It neither accumulates obsolete duplicates nor rewrites unaffected logical structure. A generated artifact may be removed only when current authority explicitly removes its owned meaning or relocates that meaning within the canonical Architecture, and the resulting Model must still expose every currently declared item. Changing a language, package, or physical layout changes realization only, never Declaration meaning.
 
 **Why:** Reconciliation keeps generated output current while protecting existing Model information from accidental loss.
 
@@ -400,7 +401,7 @@ Every Principle below is mandatory.
 
 ### Model generation validates input and output conformance
 
-**Rule:** Before generation, Model validates that every input Entity, Field, Type, value rule, and Entity Metadata item is complete, compatible, uniquely identifiable, and resolvable. After generation, Model compares the output with Target and verifies exact Entity membership and order; every Entity and Field name, description, order, parameter, explicit value, and rule; Identity and Primary Key integrity; Relation, Uniqueness Constraint, and Index resolution; Field Type and constraint compatibility; canonical topology and dependency direction; exact Interface publication; readable public Declarations; and documentation agreement with the public Model. Missing, additional, reordered, unresolved, incompatible, or changed meaning fails conformance.
+**Rule:** Before generation, Model validates that every input Entity, Field, Target-declared Type, value rule, and Entity Metadata item is complete, compatible, uniquely identifiable, and resolvable. After generation, Model compares the output with Target and verifies exact Entity membership and order; every Entity and Field name, description, order, parameter, explicit value, and rule; Identity and Primary Key integrity; Relation, Uniqueness Constraint, and Index resolution; Target Type and constraint compatibility; canonical Architecture and dependency direction; exact Interface publication; readable public Declarations; and documentation agreement with the public Model. Missing, additional, reordered, unresolved, incompatible, or changed meaning fails conformance.
 
 **Why:** Generation is complete only when the result proves that it preserves its authorities and public contracts.
 
@@ -418,19 +419,9 @@ Every Principle below is mandatory.
 
 <br>
 
-### Logical Types preserve portable value meaning
-
-**Rule:** `integer`, `string`, `boolean`, `float`, `decimal`, and `datetime` retain the meanings declared in Model Preferences. Boolean is never treated as integer; decimal is never replaced by approximate float; Unicode string content is preserved; datetime precision and timezone meaning are preserved when present. Supplied values, Default Values, allowed values, minimum, and maximum match the Field's logical Type without implicit conversion between string, numeric, and boolean Types. Auto Increment applies only to integer. Generated Identifier produces a value compatible with its declared Field Type. A new logical Type requires explicit Target meaning and an updated Model contract.
-
-**Why:** Stable value semantics let different language and package realizations represent the same Model rather than merely use similarly named native Types.
-
-**Boundary:** A native Type is a realization of a logical Type, not a replacement for its Declaration. If selected technology cannot preserve the logical meaning, generation reports incompatibility rather than narrowing, approximating, or coercing the value.
-
-<br>
-
 ### Entity construction and mutation enforce Field contracts
 
-**Rule:** Direct Entity construction accepts only declared Fields and applies the same validation as JSON construction. It rejects unknown Fields, missing Required Fields, `null` for a non-nullable Field, incompatible Types, and violated value constraints. Omitted nullable Fields without a Default Value become `null`; an omitted Field with a Default Value receives that exact value; an omitted Field with Value Generation follows its declared generation. Explicit `false`, zero, empty string, and `null` are supplied values and are never replaced by a default. Generated Identifier is produced at Entity creation. Auto Increment is not required as construction input and may remain in an explicit not-yet-generated state until its selected realization assigns it, without redefining the Field as nullable. A supplied value for a generated Field is accepted unless Target explicitly forbids it, and every supplied or generated value still satisfies Type and constraints.
+**Rule:** Direct Entity construction accepts only declared Fields and applies the same validation as JSON construction. It rejects unknown Fields, missing Required Fields, `null` for a non-nullable Field, values incompatible with Target-declared Types, and violated value constraints. Omitted nullable Fields without a Default Value become `null`; an omitted Field with a Default Value receives that exact value; an omitted Field with Value Generation follows its declared generation. Explicit `false`, zero, empty string, and `null` are supplied values and are never replaced by a default. Generated Identifier is produced at Entity creation. Auto Increment is not required as construction input and may remain in an explicit not-yet-generated state until its selected realization assigns it, without redefining the Field as nullable. A supplied value for a generated Field is accepted unless Target explicitly forbids it, and every supplied or generated value still satisfies the Target-declared Field definition and constraints.
 
 **Why:** One construction contract prevents package-specific omission, coercion, and default behaviour from changing Entity values.
 
@@ -505,13 +496,13 @@ Model generation is complete only when every applicable gate passes:
 
 1. **Authority** — current Target, Model Definition, and Model Preferences were used; memory, old output, and Agent preference did not replace them.
 2. **Preservation** — no declared Entity, Field, parameter, explicit value, constraint, or Entity Metadata was lost, and no undeclared meaning was added.
-3. **Entities** — Entity membership, order, names, descriptions, `id` identities, Field ownership, and exactly one file per Entity under `entity/` match Target.
+3. **Entities** — Entity membership, order, names, descriptions, `id` identities, required `is_active` Fields, Field ownership, and exactly one file per Entity under `entity/` match Target.
 4. **Fields** — Field membership, order, Type, nullability, required meaning, Default Value presence and value, sensitivity, immutability, constraints, Value Generation, and description match Target.
 5. **Entity Metadata** — Primary Keys, Relations, Uniqueness Constraints, and Indexes are outside Fields, complete, unique, compatible, and fully resolved.
 6. **Declaration** — every canonical member is publicly readable and no language or package limitation removed or changed meaning.
 7. **Interface** — exactly the Target Entities are published in Target order with no helper, alias, copy, internal symbol, or load side effect.
-8. **Foundation** — direct construction and JSON round trips preserve all Entity and logical Type values, including `null`, `false`, zero, empty string, decimal, and datetime.
-9. **Topology** — root `interface`, `core/`, `entity/`, Declaration, Foundation, optional base definitions, helpers, Entity files, and documentation have canonical ownership with no Entity-to-Entity import or dependency cycle.
+8. **Foundation** — direct construction and JSON round trips preserve all Entity values and their Target-declared Type semantics, including `null`, `false`, zero, and empty string.
+9. **Architecture** — root `interface`, `core/`, `entity/`, Declaration, Foundation, optional base definitions, helpers, Entity files, and documentation have canonical ownership with no Entity-to-Entity import or dependency cycle.
 10. **Naming** — logical names match Target, physical names match Preferences, and no reserved-word or casing collision remains.
 11. **Technology** — language, package, concrete version resolution, runtime, dependencies, and realization match Preferences without semantic loss.
 12. **Documentation** — generated documentation matches Interface and Declaration, contains no stale or additional meaning, and contains no real secret.
@@ -541,7 +532,7 @@ Every obligation in the file, under the Principle it comes from.
 **Entities follow one complete structural contract**
 
 - **Must** — create exactly one uniquely named Entity for each Target domain concept and preserve Entity and Field order from Target.
-- **Must** — preserve each Entity's name, description, Fields, complete Entity Metadata, and exactly one `id` Identity named by its Primary Key metadata.
+- **Must** — preserve each Entity's name, description, Fields, complete Entity Metadata, exactly one `id` Identity named by its Primary Key metadata, and exactly one non-nullable `is_active` Field representing its active state.
 - **Must** — keep shared Model behaviour in Foundation.
 - **Never** — add, omit, merge, split, rename, or reorder Entities because of a language, package, or Agent preference.
 
@@ -563,9 +554,9 @@ Every obligation in the file, under the Principle it comes from.
 
 **Foundation provides shared Model behaviour**
 
-- **Must** — use Foundation for Entity-to-JSON conversion and JSON-to-Entity construction with exact Field keys in Declaration order and the declared Type encodings.
-- **Must** — preserve `null`, `false`, zero, empty string, exact decimal, datetime precision and timezone meaning, and every logical value across round trips.
-- **Must** — reject malformed input, unknown Fields, incompatible Types, and missing Required Fields while applying the direct-construction omission contract.
+- **Must** — use Foundation for Entity-to-JSON conversion and JSON-to-Entity construction with exact Field keys in Declaration order and the Target-declared Type semantics.
+- **Must** — preserve `null`, `false`, zero, empty string, and every Target-declared value across round trips.
+- **Must** — reject malformed input, unknown Fields, values incompatible with Target-declared Types, and missing Required Fields while applying the direct-construction omission contract.
 - **Never** — let Foundation define domain meaning, Fields, Entity Metadata, nested Entities, undeclared keys, or implicit coercion.
 
 **Declaration records complete Entity meaning**
@@ -600,7 +591,7 @@ Every obligation in the file, under the Principle it comes from.
 
 **Declaration preserves structured Field meaning**
 
-- **Must** — Keep each declared Field Type, rule, Default Value, Value Generation, sensitivity marker (`password` or `sensitive`), immutability, and restriction available as structured public meaning.
+- **Must** — Keep each Target-declared Field Type, rule, Default Value, Value Generation, sensitivity marker (`password` or `sensitive`), immutability, and restriction available as structured public meaning.
 - **Must** — Keep Default Value and Value Generation mutually exclusive for one Field.
 - **Never** — Invent a constraint or force one constraint representation.
 
@@ -611,10 +602,10 @@ Every obligation in the file, under the Principle it comes from.
 - **Never** — give one Field both a Default Value and Value Generation, or put Primary Key, Relation, Uniqueness Constraint, or Index metadata in its declaration.
 - **Never** — add, remove, rename, reorder, or change a Field because of language or package conventions.
 
-**Field constraints must match Field Types**
+**Field constraints preserve Target meaning**
 
-- **Must** — require every Default Value to satisfy nullability, Type, and value constraints; apply length and pattern to textual Types, ranges to ordered Types, precision and scale to decimal Types, and typed allowed values.
-- **Must** — reject incompatible defaults or constraints and a scale greater than precision.
+- **Must** — require every Default Value to satisfy nullability, the Target-declared Type, and value constraints.
+- **Must** — reject incompatible or internally invalid defaults and constraints.
 - **Never** — silently ignore, coerce, replace, or invent a Default Value or Field constraint.
 
 **Entity and Relation identifiers express domain meaning**
@@ -639,7 +630,7 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — keep each Entity in exactly one public file under `entity` and keep its private content in that file.
 - **Never** — put an Entity definition in `core`, `interface`, or another Entity file.
 
-**Model has one canonical logical topology**
+**Model has one canonical Architecture**
 
 - **Must** — provide root `interface`, `core/`, `entity/`, and root documentation; keep Declaration, Foundation, optional base Entity definitions, and cross-Entity infrastructure in `core`.
 - **Must** — keep exactly one Entity file per Entity in `entity`, Entity-private helpers in that file, and shared helpers under their most specific owner in `core`.
@@ -666,7 +657,7 @@ Every obligation in the file, under the Principle it comes from.
 **Model generation validates input and output conformance**
 
 - **Must** — validate input completeness, uniqueness, compatibility, and resolution before generation.
-- **Must** — compare generated Entities, Fields, parameters, metadata, topology, dependencies, Interface, public Declarations, and documentation with current authorities after generation.
+- **Must** — compare generated Entities, Fields, parameters, metadata, Architecture, dependencies, Interface, public Declarations, and documentation with current authorities after generation.
 - **Never** — accept missing, additional, reordered, unresolved, incompatible, or changed Model meaning.
 
 **Model verifies realization and repeatability**
@@ -675,12 +666,6 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — verify lossless JSON reconstruction for every Entity and declared value kind and verify zero diff after unchanged regeneration.
 - **Must** — use transient verification without generating a persistent test suite when testing capability is disabled.
 - **Never** — treat disabled persistent testing as permission to skip conformance verification.
-
-**Logical Types preserve portable value meaning**
-
-- **Must** — preserve the declared integer, Unicode string, boolean, approximate float, exact decimal, and datetime meanings without implicit string, numeric, or boolean conversion.
-- **Must** — require typed defaults, allowed values, ranges, Auto Increment on integer only, and Generated Identifier output compatible with its Field Type.
-- **Never** — narrow, approximate, coerce, or silently introduce a logical Type because of native technology limits.
 
 **Entity construction and mutation enforce Field contracts**
 

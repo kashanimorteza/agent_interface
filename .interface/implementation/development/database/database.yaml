@@ -49,7 +49,7 @@ content:
       directory: "database"
       package: "database"
     configuration:
-      file: "database.yaml"
+      file: "config.yaml"
       structure: ".interface/foundation/schema/database.yaml"
     database_directory:
       path: "db"
@@ -57,9 +57,11 @@ content:
     query:
       filter_combination: "AND" # Resolved to the Filter Combination enum when List omits it.
       # Alternative: OR.
+      default_limit: -1
+      # Zero or a negative limit means no limit.
       default_order:
         field: "id"
-        # Resolved to the selected Entity Field when List omits Orders.
+        # Validated against the selected Entity when List omits Orders.
         direction: "ascending"
         # Alternative direction: descending.
 
@@ -67,6 +69,7 @@ content:
   instances:
     application:
       name: "Application"
+      active: true
       engine: "sqlite"
       database: "application.db"
 
@@ -92,22 +95,11 @@ content:
             name: "SQLModel"
             version: "latest-compatible"
             skill: "sqlmodel"
-          guidance:
-            project_rules:
-              engine_and_session: "Use create_engine and Session from SQLModel. Open sessions directly with the configured Engine; do not introduce a separate session factory for ordinary Database operations."
-              metadata: "Import the configured Entity classes before using SQLModel.metadata. Use SQLModel.metadata for table creation and migration comparison."
-              query_api: "Use SQLModel's select and Session.exec APIs for ordinary Database queries."
         migration:
           name: "Alembic"
           package: "Alembic"
           version: "latest-compatible"
           compatible_modeling: "SQLModel"
-          commands:
-            upgrade: "uv run alembic upgrade head"
-            downgrade: "uv run alembic downgrade -1"
-        provisioning:
-          on_develop: "Apply the generated migration to the configured default Instance after source verification. For file-backed storage, leave the configured database file in the configured Database Directory."
-          verify: "Confirm the default Instance contains a Table for every Entity imported from Model before reporting Database development complete."
     database_engines:
       sqlite:
         implement: true
@@ -120,7 +112,6 @@ content:
           kind: "file"
           relative_to: "database_directory"
           location: "<database>"
-          committed: false
         connection:
           url_scheme: "sqlite"
           parameters: ["database"]
