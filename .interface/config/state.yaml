@@ -1,0 +1,96 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/state.yaml"
+  path_note: "Mutable State Config: active Workflow position, aggregate phase progress, and the project's recorded execution history."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current State Schema and preserve existing operational records; reconciliation never replaces them with defaults."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read active for the current Workflow position, then phases for aggregate progress of a stable Target phase identifier, then log for recorded execution history."
+  selection: "A requested phase resolves to the phases entry keyed by that phase identifier; a recorded execution resolves to the log entry with the matching id."
+  absence: "A phase with no entry has no recorded progress; an empty log means no Skill execution has been recorded."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "active"
+  - "phases"
+  - "log"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  active: "The current or most recently recorded Workflow Mode, its phase when applicable, and its provenance."
+  phases: "Aggregate planning, development, and review progress keyed by stable Target phase identifier."
+  log: "The project's preserved history of recorded Skill executions and their outcomes."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  active:
+    mode: "not set"
+    phase: null
+    mode_reason: "No Workflow operation has been recorded."
+    set_by: "initialization"
+    set_at: null
+  phases:
+    P1:
+      id: "P1"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      completed_at: null
+    P2:
+      id: "P2"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      completed_at: null
+    P3:
+      id: "P3"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      completed_at: null
+    P4:
+      id: "P4"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      completed_at: null
+    P5:
+      id: "P5"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      completed_at: null
+    P6:
+      id: "P6"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      completed_at: null
+    P7:
+      id: "P7"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      completed_at: null
+  log:
+    - id: "001"
+      skill: "my-interface-configure"
+      event: "configure"
+      outcome: "completed"
+      started_at: "2026-09-28T21:40:25Z"
+      completed_at: "2026-09-28T21:41:09Z"
+      duration: "44 seconds"
+      report: "Generated application.yaml, plan.yaml, and state.yaml in .interface/config/ from their Schemas composed with the general YAML Schema. State phases P1-P7 were populated with initial progress values. Every record parsed and matched its Schema."
+      data:
+        duration_ms: 44000
+        records:
+          - "application.yaml"
+          - "plan.yaml"
+          - "state.yaml"
+        notes:
+          - "The State Schema declares no generation block; the frame values were composed from its operational_scope and structure."
