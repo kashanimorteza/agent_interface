@@ -40,13 +40,11 @@ structure:
     purpose: "Component-wide Database settings."
     shape:
       default_instance: "<instance-key declared under instances>"
-      secrets:
-        "<secret-key>": "<secret value or secret reference>"
       parameters: "<component-specific configuration mapping>"
 
 # <!--------------------------------------------------------------------------------- Rules -->
 rules:
-  engine_support: "Every declared Engine selected for implementation has one implementation file under the configured engine directory."
+  instance_support: "Every active Instance has one implementation file under the fixed engine directory. Two active Instances using the same Engine still have separate files."
   instance_integrity: "Every Instance names an existing Engine."
   setting_integrity: "settings.default_instance names an active existing Instance."
 
@@ -62,55 +60,32 @@ example: |
       name: "PostgreSQL"
       driver: "postgresql"
       parameters: {}
-    mysql:
-      name: "MySQL"
-      driver: "mysql"
-      parameters: {}
-    mssql:
-      name: "Microsoft SQL Server"
-      driver: "mssql"
-      parameters: {}
-
   instances:
-    logs:
-      name: "Logs"
+    sqlite:
+      name: "SQLite"
       active: true
-      purpose: "Application logs."
+      purpose: "Default application data."
       engine: "sqlite"
-      database: "logs"
+      database: "application.db"
       host: ""
       port: ""
-      path: "data/logs.db"
+      path: "db/application.db"
       username: ""
       password: ""
       parameters: {}
-    reports:
-      name: "Reports"
+    postgresql:
+      name: "PostgreSQL"
       active: true
-      purpose: "Reporting data."
+      purpose: "Application data on PostgreSQL."
       engine: "postgresql"
-      database: "reports"
-      host: "localhost"
+      database: "application"
+      host: "127.0.0.1"
       port: "5432"
       path: ""
-      username: "report_user"
-      password: "<password>"
-      parameters: {}
-    management:
-      name: "Management"
-      active: true
-      purpose: "Application management data."
-      engine: "mysql"
-      database: "management"
-      host: "localhost"
-      port: "3306"
-      path: ""
-      username: "management_user"
-      password: "<password>"
+      username: "postgres"
+      password: "<secret reference or empty when local authentication does not require one>"
       parameters: {}
 
   settings:
-    default_instance: "management"
-    secrets:
-      encryption_key: "<secret reference>"
+    default_instance: "sqlite"
     parameters: {}

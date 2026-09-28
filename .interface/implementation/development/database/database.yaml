@@ -5,7 +5,7 @@ meta:
   purpose: "Implementation layout and technical defaults for the Database Component."
   standard: "Agent Project Interface"
   version: "11.9"
-  updated: "2026-09-25"
+  updated: "2026-09-29"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -19,7 +19,7 @@ resolution:
   consumption: "Read settings for Database identity, its read-only Model dependency, and runtime configuration; read the fixed Architecture names for the Interface, Core, Engine, storage, and documentation; then read development for capabilities, naming, and technical defaults."
   selection: "When Database Configuration leaves a Database-owned technical choice unstated and this file supplies no default, use compatible professional judgment under Database Principles and record a consequential implementation choice with the implementation."
   version_resolution: "Database's development section resolves Database-owned versioned technical items. Development resolves only its shared Defaults."
-  matching: "Each Engine marked `implement: true` uses one implementation file beneath layout.directories.engine and applies the matching development.database_engines default when one exists."
+  matching: "Each active Instance uses one implementation file beneath layout.directories.engine and applies its selected development.database_engines default. Two active Instances using the same Engine still use separate files."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
@@ -55,7 +55,7 @@ content:
     configuration:
       file: "config.yaml"
       structure: ".interface/foundation/schema/database.yaml"
-    default_instance: "application"
+    default_instance: "sqlite"
     query:
       filter_combination: "AND" # Resolved to the Filter Combination enum when List omits it.
       # Alternative: OR.
@@ -69,16 +69,25 @@ content:
 
   # <!-------------------------------------------- instances -->
   instances:
-    application:
-      name: "Application"
+    sqlite:
+      name: "SQLite"
       active: true
       engine: "sqlite"
       database: "application.db"
+    postgresql:
+      name: "PostgreSQL"
+      active: true
+      engine: "postgresql"
+      host: "127.0.0.1"
+      port: 5432
+      database: "application"
+      username: "postgres"
+      password: ""
 
   # <!-------------------------------------------- layout -->
   layout:
     fixed: true
-    rule: "These are fixed Database Architecture names, not configurable preferences."
+    rule: "These are fixed Database Architecture names, not configurable preferences. Every additional internal source file belongs under core."
     directories:
       core: "core"
       engine: "engine"
@@ -86,7 +95,9 @@ content:
     files:
       interface: "interface"
       data: "data"
-      engine: "<engine>"
+      tables: "tables"
+      initial_data: "initial_data"
+      engine: "<instance>"
       configuration: "config.yaml"
       documentation: "README.md"
 
@@ -108,9 +119,13 @@ content:
           package: "Alembic"
           version: "latest-compatible"
           compatible_modeling: "SQLModel"
+    after_generation:
+      instance: "<default_instance>"
+      commands:
+        - "create_tables"
+        - "insert_initial_data"
     database_engines:
       sqlite:
-        implement: true
         version: "runtime-provided"
         driver:
           name: "sqlite3"
@@ -126,7 +141,6 @@ content:
           foreign_keys: true
           check_same_thread: false
       postgresql:
-        implement: false
         version: "latest-compatible"
         driver:
           name: "psycopg"
@@ -137,33 +151,6 @@ content:
         connection:
           url_scheme: "postgresql+psycopg"
           default_port: 5432
-          parameters: ["host", "port", "database", "username", "password"]
-      mysql:
-        implement: false
-        version: "latest-compatible"
-        driver:
-          name: "PyMySQL"
-          version: "latest-compatible"
-          package: "PyMySQL"
-        storage:
-          kind: "server"
-        connection:
-          url_scheme: "mysql+pymysql"
-          default_port: 3306
-          parameters: ["host", "port", "database", "username", "password"]
-          charset: "utf8mb4"
-      sql_server:
-        implement: false
-        version: "latest-compatible"
-        driver:
-          name: "pyodbc"
-          version: "latest-compatible"
-          package: "pyodbc"
-        storage:
-          kind: "server"
-        connection:
-          url_scheme: "mssql+pyodbc"
-          default_port: 1433
           parameters: ["host", "port", "database", "username", "password"]
   
   # <!-------------------------------------------- documentation -->
@@ -179,4 +166,4 @@ content:
       - verify
       - troubleshooting
     sections:
-      interface: "Give every published Interface Operation one complete example using the imported Entity class or Entity instance it requires."
+      interface: "Explain importing Database and active Instances, and give every published Operation, Create Tables command, and Insert Initial Data command one complete example."
