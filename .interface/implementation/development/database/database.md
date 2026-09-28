@@ -132,7 +132,7 @@ Every Principle below is mandatory.
 
 ### Database exposes explicit Interface Operations
 
-**Rule:** Interface publishes the Operations described in this Component. Each applicable Operation receives an Entity class or Entity instance directly, never a Model name or identity, and accepts an optional Instance that otherwise resolves to the configured default Instance. A Filter receives an Entity Field, a Filter Operator enum member, and a value; supported operators are `equals`, `not_equals`, `greater_than`, `greater_or_equal`, `less_than`, `less_or_equal`, `in`, `contains`, `starts_with`, `ends_with`, `is_null`, and `is_not_null`. List accepts an optional Filter Combination enum member of `AND` or `OR`; when it is omitted, Filters combine with the configured default, without complex grouping. Each Order receives an Entity Field and an Order Direction enum member of `ascending` or `descending`; List alone accepts Filters, an ordered list of Orders or the configured default Order, and an optional limit; it returns every matching Entity when limit is omitted. Count returns `0` for no records; Sum ignores `null` values and returns `0` when no usable value exists; Min and Max ignore `null` values and return `null` when no usable value exists. Add applies every Entity Value Generation or Default Value according to Model Declaration. Update never changes `id` or an immutable Field. Execute Command receives a SQL command and optional parameters, executes it through the selected Engine, and returns a Command Result. Database documentation gives each published Interface Operation one complete example.
+**Rule:** Interface publishes the Operations described in this Component. Each applicable Operation receives an Entity class or Entity instance directly, never a Model name or identity, and accepts an optional Instance that otherwise resolves to the configured default Instance. A Filter receives an Entity Field, a Filter Operator enum member, and a value; supported operators are `equals`, `not_equals`, `greater_than`, `greater_or_equal`, `less_than`, `less_or_equal`, `in`, `contains`, `starts_with`, `ends_with`, `is_null`, and `is_not_null`. List accepts an optional Filter Combination enum member of `AND` or `OR`; when it is omitted, Filters combine with the configured default, without complex grouping. Each Order receives an Entity Field and an Order Direction enum member of `ascending` or `descending`; List alone accepts Filters, an ordered list of Orders or the configured default Order, and an optional limit; it returns every matching Entity when limit is omitted. Interface rejects a Field name, an enum value, or a Filter Combination supplied as a string: public Database Actions accept only the selected Entity Field and applicable enum member. Serialized Configuration values are resolved to those runtime values before an Action is called. Count returns `0` for no records; Sum ignores `null` values and returns `0` when no usable value exists; Min and Max ignore `null` values and return `null` when no usable value exists. Add applies every Entity Value Generation or Default Value according to Model Declaration. Update never changes `id` or an immutable Field. Execute Command receives a SQL command and optional parameters, executes it through the selected Engine, and returns a Command Result. Database documentation gives each published Interface Operation one complete example.
 
 **Why:** An explicit operation catalogue keeps the public data surface stable and understandable.
 
@@ -142,7 +142,7 @@ Every Principle below is mandatory.
 
 ### Database treats every Entity value as storage data
 
-**Rule:** Database treats every Entity Field according to its declared logical Type, constraints, relationships, indexes, Default Values, Value Generation, and other persistence metadata. Database realizes that logical Type through the selected Engine's storage mechanisms. It realizes every Reference against its target Entity `id`, declared cardinality, and Model Preferences' configured `on_delete` behaviour. A Field with a sensitivity marker, credential, secret, or any other value is ordinary storage data to Database: it stores and returns the Entity value it receives without applying special handling because of that value's meaning.
+**Rule:** Database treats every Entity Field according to its declared logical Type, constraints, indexes, Default Values, Value Generation, and other persistence metadata. Database realizes that logical Type through the selected Engine's storage mechanisms. It realizes every Reference as a foreign key to the target Entity `id`; Model declares neither relationship cardinality nor deletion behaviour. A Field with a sensitivity marker, credential, secret, or any other value is ordinary storage data to Database: it stores and returns the Entity value it receives without applying special handling because of that value's meaning.
 
 **Why:** Persistence remains general-purpose and can apply one consistent storage structure to every Entity value.
 
@@ -225,13 +225,14 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — let List accept optional Filters, an optional Filter Combination enum member, an ordered list of Orders, and an optional limit; use the configured defaults when either combination or Orders are omitted and return all matches when limit is omitted.
 - **Must** — use an Entity Field, Filter Operator enum member, and value for every Filter; support the declared operator vocabulary without complex grouping.
 - **Must** — use an Entity Field and Order Direction enum member for every Order, in supplied order.
+- **Never** — accept a Field name or enum value, including a Filter Combination, as a string through a public Database Action.
 - **Must** — return `0` for empty Count or Sum and `null` for empty Min or Max; ignore `null` aggregate values.
 - **Must** — let Execute Command receive a SQL command and optional parameters, execute it through the selected Engine, and return rows and affected count as a Command Result.
 - **Must** — give every published Interface Operation one complete documentation example.
 
 **Database treats every Entity value as storage data**
 
-- **Must** — apply each Entity Field's declared logical Type, constraints, relationships, indexes, defaults, and persistence metadata through the selected Engine's storage mechanisms.
+- **Must** — apply each Entity Field's declared logical Type, constraints, indexes, defaults, and persistence metadata through the selected Engine's storage mechanisms.
 - **Must** — treat Fields with sensitivity markers, credentials, secrets, and other values as ordinary storage data.
 - **Never** — apply special storage behaviour because of a value's meaning.
 

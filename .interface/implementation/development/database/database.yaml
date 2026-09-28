@@ -55,10 +55,11 @@ content:
       path: "db"
     default_instance: "application"
     query:
-      filter_combination: "AND" # List uses this when its filter_combination is omitted.
+      filter_combination: "AND" # Resolved to the Filter Combination enum when List omits it.
       # Alternative: OR.
       default_order:
         field: "id"
+        # Resolved to the selected Entity Field when List omits Orders.
         direction: "ascending"
         # Alternative direction: descending.
 

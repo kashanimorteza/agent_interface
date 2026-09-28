@@ -19,7 +19,7 @@ resolution:
   consumption: "Read settings for Logic's identity; then read layout, Services, verification, and development capabilities. Read Connections from Development and resolve environment-specific Runtime Bindings from Platform. Use a Development Default only when this file leaves a shared choice unstated."
   selection: "Use a compatible configured Logic default when the Target is silent. For an explicit incompatible need, preserve Target intent under Logic Principles and record the consequential realization choice; ask only when no safe compatible choice can be established."
   version_resolution: "This file resolves versions for Logic-owned packages and tools. Development resolves versions only for its shared Defaults."
-  matching: "Match standards and Logic settings by their exact keys. Create exactly one Entity Service file for every Entity published by Model Interface."
+  matching: "Match standards and Logic settings by their exact keys. Create exactly one configured Entity child Service class and file for every Entity published by Model Interface."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
@@ -55,21 +55,37 @@ content:
   layout:
     directories:
       services: "services"
-      entity: "services/entity"
     files:
       interface: "interface"
-    conventions:
-      service_interface: "Keep every Service Interface in its own Service file."
       
   # <!-------------------------------------------- services -->
   services:
     entity:
       name: "Entity Service"
       source: "Entity classes published by Model Interface"
-      files: "Create one file for every published Entity."
-      purpose: "The Service that handles Database Interface Operations for each Entity published by Model."
-      interface: "The internal Service Interface in each Entity Service file that presents the Actions handled for that Entity."
-      handling: "For each Entity file, present an Action for every applicable Operation published by Database Interface. This Service Interface reflects Database's catalogue and contract without redefining either."
+      directory: "entity"
+      files:
+        interface: "interface"
+        base: "base"
+      directories:
+        entities: "entity"
+      classes:
+        base: "EntityServiceBase"
+        child_suffix: "Service"
+      purpose: "The Service that handles Entity-bound Database Interface Operations for every Entity published by Model."
+      interface: "The internal Service Interface that publishes Entity child Service classes and their Actions, never the base class."
+      handling: "EntityServiceBase implements every Database Interface Operation that applies to an Entity. Each Entity child Service inherits those Actions, and only overrides an Action or adds a new Action when its Entity requires special Behaviour."
+    database:
+      name: "Database Service"
+      directory: "database"
+      files:
+        interface: "interface"
+        service: "database"
+      classes:
+        service: "DatabaseService"
+      purpose: "The Service that handles Database Interface Operations that do not concern one Entity."
+      interface: "The internal Service Interface that publishes DatabaseService Actions."
+      handling: "DatabaseService handles Execute Command."
 
   # <!-------------------------------------------- verification -->
   verification:
@@ -96,5 +112,5 @@ content:
       - verify
       - troubleshooting
     sections:
-      interface: "Document Categories organized by Service and show how a consumer imports the outward Interface. Do not repeat Service Action examples here."
-      services: "For every configured Service, document its internal Service Interface and give every Action it handles one complete example. For Entity Service, list every handled Entity; choose one representative Entity, such as User, and give it one complete example for each applicable Database Interface Operation. Those examples are the pattern for the remaining Entities."
+      interface: "Document Categories organized by Service and, where applicable, by the Service's classes. Show how a consumer imports the outward Interface. Do not repeat Service Action examples here."
+      services: "For every configured Service, document its internal Service Interface and give every Action it handles one complete example. For Entity Service, list every handled Entity; choose one representative Entity, such as User, and give it one complete example for each applicable Database Interface Operation. Those examples are the pattern for the remaining Entities. Document Database Service's Execute Command separately."

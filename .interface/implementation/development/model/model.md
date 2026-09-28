@@ -179,11 +179,11 @@ Every Principle below is mandatory.
 
 ### Foundation provides shared Model behaviour
 
-**Rule:** Foundation provides conversion of an Entity to JSON and construction of an Entity from JSON, without injecting Fields, constraints, or domain meaning.
+**Rule:** Foundation provides conversion of an Entity to JSON and construction of an Entity from JSON, without injecting Fields, constraints, domain meaning, or validation behaviour.
 
 **Why:** The library has one consistent implementation of its common behaviour without imposing a shared domain structure.
 
-**Boundary:** Foundation supplies behaviour only. Declaration remains the owner of every Entity's meaning and metadata.
+**Boundary:** Foundation supplies conversion only. Declaration remains the owner of every Entity's meaning and metadata.
 
 <br>
 
@@ -314,9 +314,9 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — Keep Model focused on logical Entities.
 - **Never** — Own records, storage operations, transport, workflow orchestration, or platform operation.
 
-**Entities are flat and explicitly related**
+**Entities are flat and use explicit References**
 
-- **Must** — Keep every Entity flat and record every Target-declared cross-Entity connection explicitly.
+- **Must** — Keep every Entity flat and record every Target-declared cross-Entity connection as a Reference.
 - **Never** — Nest, inherit, or copy one Entity into another.
 
 **Each Entity stands in its own unit**
