@@ -16,16 +16,16 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings for Database identity, runtime configuration, and root directory; read layout to locate the Interface, Data, and Engine layers; then read development for capabilities, naming, and technical defaults."
+  consumption: "Read settings for Database identity, its read-only Model dependency, and runtime configuration; read the fixed Architecture names for the Interface, Core, Engine, storage, and documentation; then read development for capabilities, naming, and technical defaults."
   selection: "When Database Configuration leaves a Database-owned technical choice unstated and this file supplies no default, use compatible professional judgment under Database Principles and record a consequential implementation choice with the implementation."
   version_resolution: "Database's development section resolves Database-owned versioned technical items. Development resolves only its shared Defaults."
   matching: "Each Engine marked `implement: true` uses one implementation file beneath layout.directories.engine and applies the matching development.database_engines default when one exists."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "settings: identify the Database Component and locate its runtime configuration and root directory."
+  - "settings: identify the Database Component, its read-only Model dependency, and its runtime configuration."
   - "instances: identify the configured Database Instances."
-  - "layout: locate the configured names and paths for Interface, Data, and Engine."
+  - "layout: locate the fixed Architecture names for Interface, Core, Data, Engine, storage, configuration, and documentation."
   - "development: apply Database capabilities, naming conventions, language, package, and Engine defaults."
   - "documentation: apply the required Database documentation structure and Interface examples."
 
@@ -48,11 +48,13 @@ content:
       platform: "VPS"
       directory: "database"
       package: "database"
+    model_dependency:
+      interface: "model.interface"
+      consumption: "Model is a ready, read-only dependency. Import published Entity classes and their public declarations through Model Interface only."
+      ownership: "Database creates, generates, builds, tests, and documents only its own Component output; it never writes, generates, builds, tests, or creates an artifact under Model's Component directory."
     configuration:
       file: "config.yaml"
       structure: ".interface/foundation/schema/database.yaml"
-    database_directory:
-      path: "db"
     default_instance: "application"
     query:
       filter_combination: "AND" # Resolved to the Filter Combination enum when List omits it.
@@ -75,12 +77,18 @@ content:
 
   # <!-------------------------------------------- layout -->
   layout:
+    fixed: true
+    rule: "These are fixed Database Architecture names, not configurable preferences."
     directories:
+      core: "core"
       engine: "engine"
+      database: "db"
     files:
       interface: "interface"
       data: "data"
       engine: "<engine>"
+      configuration: "config.yaml"
+      documentation: "README.md"
 
   # <!-------------------------------------------- development -->
   development:
@@ -110,7 +118,7 @@ content:
           package: null
         storage:
           kind: "file"
-          relative_to: "database_directory"
+          relative_to: "db"
           location: "<database>"
         connection:
           url_scheme: "sqlite"

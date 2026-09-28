@@ -61,9 +61,14 @@ A consumer uses Interface to access Database. Interface exposes the public Opera
 
 ```text
 Database
-├── Interface
-├── Data
-└── Engine
+├── interface
+├── core/
+│   └── data
+├── engine/
+│   └── <engine>
+├── db/
+├── config.yaml
+└── README.md
 ```
 
 <br>
@@ -71,7 +76,7 @@ Database
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Consumes Model** — uses Entity classes to derive storage structure and recognize Entity-form data; uses Model Interface for other Model use.
+- **Consumes Model** — uses the Entity classes and their public declarations from Model Interface to derive storage structure and recognize Entity-form data. Model is a read-only dependency; Database does not import Model internals or write, generate, build, test, or otherwise create output in Model's Component directory.
 - **Provides to Logic** — exposes Database Operations through Interface.
 
 <br>
@@ -99,9 +104,9 @@ The only public Database layer. It publishes the Instance Enum for every active 
 - **Truncate** — accepts an Entity class; removes all of its records while keeping its Table structure and returns the number of deleted records.
 - **Execute Command** — accepts a SQL command and bound parameters; executes it through the selected Engine and returns a Command Result. Schema changes remain the responsibility of migrations.
 
-### Data
+### Core
 
-The internal layer that routes every Database Operation. It resolves the requested Instance and Engine, calls the matching Engine implementation, materializes returned rows as Model Entity instances where an Operation publishes Entities, and returns the result according to the published Operation's contract.
+The internal directory for Database files that are independent of any Engine. Its `data` file defines every Database Operation, resolves the requested Instance and Engine, calls the matching Engine implementation, materializes returned rows as Model Entity instances where an Operation publishes Entities, and returns the result according to the published Operation's contract.
 
 ### Engine
 
@@ -122,6 +127,26 @@ Every Database Principle is mandatory. Database Preferences may provide defaults
 ## Principles
 
 Every Principle below is mandatory.
+
+### Database consumes Model without owning it
+
+**Rule:** Database imports Model only through Model Interface and treats the published Entity classes and their public declarations as its complete Model input. Database may derive Tables, foreign keys, and runtime Entity values from that input, but it never changes Model meaning or implementation. Database creates, generates, builds, tests, and documents only its own Component output; it never writes, generates, builds, tests, or creates an artifact under Model's Component directory.
+
+**Why:** Model owns Entity meaning and its own realization. Database needs that meaning as input, while remaining independently owned and realizable.
+
+**Boundary:** A missing Model capability, incompatible Entity definition, or required change to Model is reported to Model's owner. Database does not work around it by importing Model internals or modifying Model.
+
+<br>
+
+### Database has one canonical Architecture
+
+**Rule:** The Database Component root contains one Interface file, one `core` directory, one `engine` directory, one `db` directory, its generated `config.yaml`, and its `README.md`. `core` contains `data` as one of its files and every other Database unit shared across Engines. `data` defines and routes every Database Operation but implements no Engine-specific storage behavior. `engine` contains exactly one implementation file for each Engine marked for implementation. `db` contains the database storage files. The Interface file and README remain at the Component root; only Interface is public. These names and ownership locations are fixed Database Architecture, not configurable preferences.
+
+**Why:** A fixed ownership structure makes Database independently realizable while keeping public access, shared routing, and Engine-specific work separate.
+
+**Boundary:** An Engine implementation does not define public Operations or shared routing. Core does not contain Engine-specific implementation. `db` does not contain source files. Language-specific extensions and package entrypoint files may follow their normal conventions without changing these ownership boundaries.
+
+<br>
 
 ### Database configuration declares its available resources
 
@@ -153,7 +178,7 @@ Every Principle below is mandatory.
 
 ### Database publishes Interface only
 
-**Rule:** Interface is the only public Database layer. Data and Engine are internal implementation layers; consumers use Database only through Interface.
+**Rule:** Interface is the only public Database layer. Core and Engine are internal implementation layers; consumers use Database only through Interface.
 
 **Why:** One public boundary keeps Engine selection, routing, and shared implementation details out of consumers.
 
@@ -161,13 +186,13 @@ Every Principle below is mandatory.
 
 <br>
 
-### Data routes requests and handles results
+### Core routes requests and handles results
 
-**Rule:** Data receives each request from Interface, resolves the requested Instance and its Engine, forwards the Operation to that Engine implementation, materializes Engine rows as Model Entity instances whenever an Operation publishes Entities, and returns the result according to the published Operation's contract.
+**Rule:** Core's Data file receives each request from Interface, resolves the requested Instance and its Engine, forwards the Operation to that Engine implementation, materializes Engine rows as Model Entity instances whenever an Operation publishes Entities, and returns the result according to the published Operation's contract.
 
-**Why:** One Data layer keeps selection, routing, and result handling consistent across Engines.
+**Why:** One Core Data file keeps selection, routing, and result handling consistent across Engines.
 
-**Boundary:** Data coordinates an Operation; each Engine implementation owns the Engine-specific execution of that Operation.
+**Boundary:** Data coordinates an Operation; each Engine implementation owns the Engine-specific execution of that Operation. Core contains no Engine-specific storage behavior.
 
 <br>
 
@@ -213,6 +238,19 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — make every active Instance name a declared Engine, every configured Instance reference resolve to a declared Instance, and the default Instance active.
 - **Must** — publish exactly the active Instances through the Instance Enum.
 
+**Database consumes Model without owning it**
+
+- **Must** — consume published Entity classes and public declarations through Model Interface only.
+- **Must** — create, generate, build, test, and document only Database's own Component output.
+- **Never** — import Model internals or write, generate, build, test, or create an artifact under Model's Component directory.
+
+**Database has one canonical Architecture**
+
+- **Must** — provide one root Interface file, `core/`, `engine/`, `db/`, generated `config.yaml`, and root `README.md`.
+- **Must** — keep `data` and every Engine-independent Database unit in `core/`; keep exactly one implementation file for each implemented Engine in `engine/`.
+- **Must** — keep database storage files in `db/`.
+- **Never** — rename or relocate a canonical Architecture member; put Engine-specific storage behavior in Core, shared routing or public Operations in an Engine file, source files in `db/`, or a public Database surface outside Interface.
+
 **Database exposes explicit Interface Operations**
 
 - **Must** — publish the Operations described by Interface.
@@ -242,11 +280,11 @@ Every obligation in the file, under the Principle it comes from.
 **Database publishes Interface only**
 
 - **Must** — publish Database Operations through Interface only.
-- **Never** — expose Data or Engine as a consumer surface.
+- **Never** — expose Core or Engine as a consumer surface.
 
-**Data routes requests and handles results**
+**Core routes requests and handles results**
 
-- **Must** — route every Interface request to the resolved Instance and Engine.
+- **Must** — use Core's Data file to route every Interface request to the resolved Instance and Engine.
 - **Must** — materialize Engine rows as Model Entity instances when an Operation publishes Entities, and return each Engine result according to the published Operation's contract.
 
 **Each Engine implements the published Operations**
