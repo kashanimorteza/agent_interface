@@ -93,7 +93,11 @@ Interface and Entity are public Model layers at the package root and Entity dire
 
 ### Interface
 
-The public Model surface that publishes Entities for standard use.
+The public Model surface that publishes Entities for standard use. The Architecture section defines the Model's canonical topology; file extensions and language-required package files follow the selected technology.
+
+`interface` is the single standard Entity entrypoint at the Model package root. `entity/` owns only Entity-specific source, with every Entity in its own file. `core/` owns shared Model infrastructure: Declaration, Foundation, optional base Entity definitions, and any later source shared across Entities. A technical package entrypoint or manifest may also exist at the root when required by the selected language, but it does not replace `interface` or create Model meaning.
+
+Technical choices, names, and layout for these layers belong to Model Preferences. Declaration meaning remains independent of language, package, database, and Engine.
 
 ### Entity
 
@@ -140,27 +144,6 @@ Declaration
             └── Ordered Field Names
 ```
 
-### Logical Type vocabulary
-
-Model currently recognizes these technology-independent logical Types:
-
-```text
-Type
-├── integer
-├── string
-├── boolean
-├── float
-├── decimal
-└── datetime
-```
-
-- `integer` is a whole numeric value and is distinct from `boolean`.
-- `string` is Unicode text.
-- `boolean` is exactly `true` or `false`.
-- `float` is an approximate floating-point numeric value.
-- `decimal` is an exact base-10 numeric value whose declared precision and scale are preserved.
-- `datetime` is a date-and-time value whose precision and timezone meaning are preserved when present.
-
 ### Foundation
 
 A public layer that defines shared conversion capabilities:
@@ -170,27 +153,6 @@ Foundation
 ├── Entity-to-JSON conversion
 └── JSON-to-Entity construction
 ```
-
-### Canonical output topology
-
-Every realization preserves this minimum source layout. File extensions and language-required package files follow the selected technology:
-
-```text
-Model Component
-├── interface
-├── core/
-│   ├── declaration
-│   ├── foundation
-│   ├── optional base Entity definitions
-│   └── additional shared Model-core units when required
-├── entity/
-│   └── one Entity file per Entity
-└── Documentation at the Component root
-```
-
-`interface` is the single standard Entity entrypoint at the Model package root. `entity/` owns only Entity-specific source, with every Entity in its own file. `core/` owns shared Model infrastructure: Declaration, Foundation, optional base Entity definitions, and any later source shared across Entities. A technical package entrypoint or manifest may also exist at the root when required by the selected language, but it does not replace `interface` or create Model meaning.
-
-Technical choices, names, and layout for these layers belong to Model Preferences. Declaration meaning remains independent of language, package, database, and Engine.
 
 <br>
 
@@ -458,7 +420,7 @@ Every Principle below is mandatory.
 
 ### Logical Types preserve portable value meaning
 
-**Rule:** `integer`, `string`, `boolean`, `float`, `decimal`, and `datetime` retain the meanings declared in the logical Type vocabulary. Boolean is never treated as integer; decimal is never replaced by approximate float; Unicode string content is preserved; datetime precision and timezone meaning are preserved when present. Supplied values, Default Values, allowed values, minimum, and maximum match the Field's logical Type without implicit conversion between string, numeric, and boolean Types. Auto Increment applies only to integer. Generated Identifier produces a value compatible with its declared Field Type. A new logical Type requires explicit Target meaning and an updated Model contract.
+**Rule:** `integer`, `string`, `boolean`, `float`, `decimal`, and `datetime` retain the meanings declared in Model Preferences. Boolean is never treated as integer; decimal is never replaced by approximate float; Unicode string content is preserved; datetime precision and timezone meaning are preserved when present. Supplied values, Default Values, allowed values, minimum, and maximum match the Field's logical Type without implicit conversion between string, numeric, and boolean Types. Auto Increment applies only to integer. Generated Identifier produces a value compatible with its declared Field Type. A new logical Type requires explicit Target meaning and an updated Model contract.
 
 **Why:** Stable value semantics let different language and package realizations represent the same Model rather than merely use similarly named native Types.
 
