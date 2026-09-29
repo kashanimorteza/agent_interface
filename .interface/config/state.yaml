@@ -29,11 +29,11 @@ content_map:
 # <!--------------------------------------------------------------------------------- Content -->
 content:
   active:
-    mode: "development"
-    phase: "P4"
-    mode_reason: "Develop executed the Plan for phase P4; all 80 Tasks are done and none is blocked (012-B1 was resolved by the Human's change of the API Definition)."
-    set_by: "my-interface-develop"
-    set_at: "2026-09-29T18:39:05Z"
+    mode: "planning"
+    phase: "P3"
+    mode_reason: "Plan produced the Plan for phase P3 (Logic): 12 Groups and 100 Tasks, all todo, with no Open Question or Blocker."
+    set_by: "my-interface-plan"
+    set_at: "2026-09-29T20:00:50Z"
   phases:
     P1:
       id: "P1"

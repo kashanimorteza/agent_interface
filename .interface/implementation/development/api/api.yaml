@@ -1,10 +1,10 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/implementation/development/api/api.yaml"
-  path_note: "The Preferences layer of the API Component — configurable defaults for its public boundary and realization."
-  purpose: "Configurable defaults for API identity, layout, Group realization, transport contract, collections, lifecycle, and documentation."
+  path_note: "The Preferences layer of the API Component — configurable defaults shared by its complete external boundary."
+  purpose: "Configurable defaults for API identity, root layout, Group references, shared realization, lifecycle, and root documentation."
   standard: "Agent Project Interface"
-  version: "6.1"
+  version: "7.0"
   updated: "2026-09-29"
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -16,23 +16,22 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings and layout first. Read Logic Interface and every referenced Logic Service Preference to resolve Group eligibility from publish_in_logic_interface and generate_api. Resolve callable Action membership from each Service Interface and its Action generate_api setting. Then apply API-owned Group overrides, transport, contract, request, query, lifecycle, and documentation defaults. Use Development Defaults only when this file leaves a shared realization choice unstated."
-  selection: "Preserve explicit compatible Target choices. Use these Preferences only for unstated API-owned choices. Leave methods, schema realization, pagination representation, versioning mechanics, and other package concerns to the selected package or implementation skill when Target is silent. Record the resulting external contract without turning the realization choice into Domain meaning or application Behaviour."
+  consumption: "Read settings and layout first. Read every Group Definition and Preferences reference under groups, let each pair resolve its own source, structure, capabilities, and external contract, then compose all resolved Groups through the shared API boundary. Apply shared transport, contract, request, lifecycle, and documentation defaults only after Group resolution. Use Development Defaults only when this file leaves a shared realization choice unstated."
+  selection: "Preserve explicit compatible Target choices. Use these Preferences only for unstated API-wide choices. Leave package mechanics to the selected package or implementation skill when Target is silent. Never use a root API choice to redefine a Group-owned contract."
   version_resolution: "API Preferences resolve API-owned packages. Development resolves only shared Defaults."
-  matching: "Match Groups to stable Logic Service identities and Endpoints to stable callable Action identities. Reject stale overrides, ineligible Services, invalid names, and collisions without silent repair."
+  matching: "Match Groups by their exact configured identity and referenced files. Reject missing, stale, invalid, or colliding references without silent repair."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - "settings: identify API and its generated Component root."
-  - "layout: resolve Bootstrap, Core, Groups, Group layers, configuration, and documentation names."
+  - "layout: resolve Bootstrap, Core, Groups, configuration, and documentation names."
   - "development: resolve the default language and API-owned package choices."
-  - "groups: derive eligible Groups and Endpoints from Logic, then apply API-owned overrides."
-  - "transport: resolve the shared external transport and CORS policy."
-  - "contract: resolve external identity and versioning."
-  - "requests: resolve observable request tracking."
-  - "queries: resolve default bounded collection behaviour."
-  - "lifecycle: resolve the mandatory health and readiness paths."
-  - "documentation: resolve external-consumer documentation."
+  - "groups: follow every Group Definition and Preferences reference."
+  - "transport: resolve API-wide external transport and CORS policy."
+  - "contract: resolve shared external identity and versioning."
+  - "requests: resolve shared observable request tracking."
+  - "lifecycle: resolve mandatory health and readiness paths."
+  - "documentation: resolve root external-consumer documentation."
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
@@ -43,7 +42,6 @@ content_map:
   - transport
   - contract
   - requests
-  - queries
   - lifecycle
   - documentation
 
@@ -68,12 +66,8 @@ content:
       bootstrap: "bootstrap"
       configuration: "config.yaml"
       documentation: "README.md"
-    group_directories:
-      router: "router"
-      adapter: "adapter"
     patterns:
-      group: "<service>"
-      resource: "<child_service>"
+      group: "<group>"
 
   # <!-------------------------------------------- development -->
   development:
@@ -81,35 +75,21 @@ content:
       testing: false
       error_handling: false
       logging: false
-    languages:
+    language:
       default: "Python"
+    packages:
       python:
-        modeling:
-          package:
-            name: "SQLModel"
-            version: "latest-compatible"
-            skill: "sqlmodel"
         api:
-          package:
-            name: "FastAPI"
-            package: "fastapi[standard]"
-            version: "latest-compatible"
-            skill: "fastapi"
+          name: "FastAPI"
+          package: "fastapi[standard]"
+          version: "latest-compatible"
+          skill: "fastapi"
 
   # <!-------------------------------------------- groups -->
   groups:
-    source: "Logic Interface and referenced Logic Service Preferences"
-    eligibility:
-      publish_in_logic_interface: true
-      generate_api: true
-    endpoints:
-      callable_actions_default_generate_api: true
-      realization_defaults_source: "selected package or implementation skill"
-    routing:
-      default_group_prefix: "/<group>"
-      default_action_path: "/<action>"
-      entity_action_path: "/<entity>/<action>"
-    overrides: {}
+    entity:
+      definition: "groups/entity/entity.md"
+      preferences: "groups/entity/entity.yaml"
 
   # <!-------------------------------------------- transport -->
   transport:
@@ -135,14 +115,6 @@ content:
     error_tracking:
       enabled: true
 
-  # <!-------------------------------------------- queries -->
-  queries:
-    pagination:
-      default_limit: 50
-      maximum_limit: 100
-      representation_source: "matching Logic Action and selected package or implementation skill"
-    group_overrides: {}
-
   # <!-------------------------------------------- lifecycle -->
   lifecycle:
     runtime_bindings_source: "Platform"
@@ -159,14 +131,9 @@ content:
     order:
       - overview
       - groups
-      - endpoints
-      - requests
-      - responses
-      - failures
-      - collections
       - lifecycle
-      - examples
+      - setup
+      - use
+      - troubleshooting
     sections:
-      groups: "Introduce every generated API Group and its corresponding published Logic Service without exposing Logic implementation."
-      endpoints: "Document every generated Endpoint under its Group, including its purpose, accepted request, returned response, and declared failures."
-      examples: "Provide runnable consumer examples without exposing private API, Logic, Model, Database, framework, or package implementation details."
+      groups: "Introduce every enabled Group from its referenced Definition and Preferences and link to its detailed generated contract without copying that contract into root documentation."
