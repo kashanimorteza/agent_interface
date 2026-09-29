@@ -64,12 +64,11 @@ The Group name forms the Group URL segment. The Resource name forms the Resource
 
 ```text
 Entity Group
-└── adapters/
-    └── <resource>
-        └── <endpoint handlers>
+├── <resource>  (Adapter)
+└── <resource>  (Adapter)
 ```
 
-The Adapters directory and Adapter filename pattern are defaults selected by Entity Group Preferences. Every generated Adapter is bound to one Entity Resource and contains the complete fixed Entity Endpoint set.
+Adapter files are placed directly inside the Entity Group directory. Their filename pattern is selected by Entity Group Preferences. Every generated Adapter is bound to one Entity Resource and contains the complete fixed Entity Endpoint set and its Handlers.
 
 <br>
 
@@ -98,19 +97,13 @@ Entity Group has one executable layer: Adapters. Each Adapter owns the API surfa
 
 ### Adapters
 
-The configured Adapters directory contains exactly one Adapter file for every Entity Resource presented by Entity Service. Selecting an Adapter selects its bound Resource once; callers do not supply an Entity class or Entity name again.
+The Entity Group directory contains exactly one Adapter file for every Entity Resource presented by Entity Service. There is no intermediate Adapter directory. Selecting an Adapter selects its bound Resource once; callers do not supply an Entity class or Entity name again.
 
 Every Adapter contains the same twelve Endpoints and their Handlers. Each Handler receives only its Endpoint's declared Parameters, adds the bound Resource where required by the Logic Action, calls that Action, and returns its result unchanged.
 
 ### Endpoints
 
 Add receives a Resource representation in the Body. Update receives a record ID in the Path and a complete Resource representation in the Body. List receives its optional collection Parameters through Query. Delete, Enable, Disable, and Get by ID receive a record ID through Path. Count receives optional filtering Parameters through Query. Sum, Min, and Max additionally receive a Field through Query. Truncate receives no Resource representation or record ID.
-
-Every Endpoint may receive the optional Instance Parameter published by Entity Service and passes it unchanged. When Instance is omitted, Entity Group makes no selection of its own.
-
-### Documentation
-
-Entity Group owns documentation for its Group address, generated Resource Adapters, fixed Endpoints, Methods, Paths, Parameters, and examples. The documentation is derived from the generated Adapter set and Endpoint catalogue in Entity Group Preferences. Whether Group documentation is presented within one combined API document or separately is a composition choice outside this Group's capability contract.
 
 <br>
 
@@ -180,16 +173,6 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 <br>
 
-### Documentation
-
-#### Entity Group documents its generated API surface
-
-**Rule:** Entity Group documentation presents the Group address, every generated Resource Adapter, every fixed Endpoint, its Method, Path, Parameters, Logic Action, and usable examples from the same definitions used to create the running Group.
-**Why:** Callers need documentation that matches the Entity Endpoints they can actually invoke.
-**Boundary:** Documentation does not copy private implementation or define a Resource, Logic Action, or result absent from Entity Service.
-
-<br>
-
 <!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance
 
@@ -235,10 +218,3 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — Validate Adapter identities, Resource segments, and final Method-and-Path combinations.
 - **Never** — Silently rename an invalid or colliding value.
-
-### Documentation
-
-**Entity Group documents its generated API surface**
-
-- **Must** — Document generated Adapters and Endpoints from their actual definitions.
-- **Never** — Document a Resource, Logic Action, result, or private implementation absent from Entity Service.

@@ -141,4 +141,4 @@ content:
       - use
       - troubleshooting
     sections:
-      groups: "Introduce every registered Group from its referenced Definition and Preferences and refer to its detailed documentation without copying its content."
+      groups: "Introduce every registered Group without creating separate Group documentation; runtime API documentation is produced by the selected API package from registered Endpoints."

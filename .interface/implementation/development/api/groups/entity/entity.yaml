@@ -2,9 +2,9 @@
 meta:
   path: ".interface/implementation/development/api/groups/entity/entity.yaml"
   path_note: "The Preferences layer of Entity Group inside the API Component."
-  purpose: "Configurable Entity Group names, Resource Adapter layout, fixed Endpoints, and documentation defaults."
+  purpose: "Configurable Entity Group names, Resource Adapter layout, and fixed Endpoints."
   standard: "Agent Project Interface"
-  version: "2.1"
+  version: "2.5"
   updated: "2026-09-30"
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -16,58 +16,42 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings to identify Entity Group and its Entity Service source; read layout to resolve the Group and Adapter names; create one Resource Adapter per Entity presented by Entity Service; place every fixed Endpoint and Handler in every Adapter; then generate Group documentation from the resolved Adapters and Endpoints."
+  consumption: "Read settings to identify Entity Group; read layout to resolve the Group directory and Adapter filenames; follow Entity Group Definition to create one Resource Adapter file directly inside the Group directory for every Entity presented by Entity Service; then place every fixed Endpoint and Handler in every Adapter."
   selection: "Preserve explicit compatible project choices. Use these Preferences for unstated Entity Group names and Endpoint mappings. Do not add, remove, or reinterpret an Entity Operation outside the fixed catalogue."
   version_resolution: "Entity Group introduces no independently versioned technology."
   matching: "Match every Resource Adapter to exactly one Entity presented by Entity Service and every Endpoint to the corresponding Logic Action. Reject missing Logic Actions, invalid identities, and final Method-and-Path collisions without silent repair."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "settings: identify Entity Group, validate Entity Service publication, and resolve its Group name."
-  - "layout: resolve the Group directory, Adapters directory, and Resource Adapter filename pattern."
+  - "settings: identify Entity Group and resolve its Group name."
+  - "layout: resolve the Group directory and Resource Adapter filename pattern."
   - "endpoints: create the fixed Endpoint and Handler catalogue used by every Adapter."
-  - "documentation: resolve Entity Group documentation from the generated Resource Adapter and Endpoint set."
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
   - settings
   - layout
   - endpoints
-  - documentation
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
 
   # <!-------------------------------------------- settings -->
   settings:
-    component:
-      role: "api"
     group:
+      component: "api"
       role: "entity"
       name: "Entity"
-    source:
-      interface: "Logic Interface"
-      service_role: "entity"
-      required_publish_in_logic_interface: true
-      required_generate_api: true
 
   # <!-------------------------------------------- layout -->
   layout:
     names_configurable: true
     directory: "entity"
-    directories:
-      adapters: "adapters"
     patterns:
       adapter: "<resource>"
 
   # <!-------------------------------------------- endpoints -->
   endpoints:
-    shared_parameters:
-      instance:
-        placement: "query"
-        required: false
-        source: "Logic Action contract"
-        forwarding: "unchanged"
     catalogue:
       add:
         entity_operation: "add"
@@ -78,7 +62,7 @@ content:
           body:
             resource:
               required: true
-              value: "an instance of the Adapter's bound Entity Resource"
+              value: "a value of the Adapter's bound Entity Resource"
       update:
         entity_operation: "update"
         logic_action: "update"
@@ -91,7 +75,7 @@ content:
           body:
             resource:
               required: true
-              value: "an instance of the Adapter's bound Entity Resource"
+              value: "a value of the Adapter's bound Entity Resource"
       list:
         entity_operation: "list"
         logic_action: "list"
@@ -199,23 +183,3 @@ content:
         method: "DELETE"
         path: "/truncate"
         parameters: {}
-
-  # <!-------------------------------------------- documentation -->
-  documentation:
-    title: "Entity"
-    source: "generated Resource Adapters and the fixed Endpoint catalogue"
-    presentation: "selected by API composition"
-    order:
-      - overview
-      - address
-      - resources
-      - adapters
-      - endpoints
-      - parameters
-      - examples
-    sections:
-      resources: "List every Entity Resource presented by Entity Service."
-      adapters: "Identify the one generated Adapter bound to every Resource."
-      endpoints: "For every Adapter, document each Entity Operation, HTTP Method, Path, and Logic Action."
-      parameters: "Document Path, Query, Body, and optional Instance Parameters exactly as the Endpoint catalogue declares them."
-      examples: "Provide usable requests for every fixed Endpoint without exposing Adapter implementation."

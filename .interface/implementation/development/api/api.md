@@ -180,12 +180,6 @@ Every Principle below is mandatory and belongs to the category that owns it.
 **Why:** Component setup and usage documentation has a different purpose from the live description of the running routes.
 **Boundary:** Runtime documentation presents registered Groups without becoming the Definition or Preferences of any Group.
 
-#### Root documentation references Group documentation
-
-**Rule:** Root documentation introduces every registered Group and refers to its documentation without copying its detailed capabilities.
-**Why:** Consumers need one API overview while every Group retains one owner for its details.
-**Boundary:** Root documentation never publishes an unregistered Group or private Group content.
-
 <br>
 
 <!--------------------------------------------------------------------------------- At a Glance --->
@@ -230,8 +224,3 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — Keep `README.md` distinct from OpenAPI, interactive docs, and ReDoc runtime paths.
 - **Never** — Treat a runtime documentation path as the Component README.
-
-**Root documentation references Group documentation**
-
-- **Must** — Introduce registered Groups and refer to their detailed documentation.
-- **Never** — Duplicate Group details or expose an unregistered Group.
