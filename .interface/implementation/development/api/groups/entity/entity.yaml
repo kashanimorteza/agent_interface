@@ -2,9 +2,9 @@
 meta:
   path: ".interface/implementation/development/api/groups/entity/entity.yaml"
   path_note: "The Preferences layer of Entity Group inside the API Component."
-  purpose: "Configurable Entity Group names, Resource Adapter layout, and fixed Endpoints."
+  purpose: "Configurable Entity Group names, Adapter layout, and default Action Mappings."
   standard: "Agent Project Interface"
-  version: "2.5"
+  version: "3.0"
   updated: "2026-09-30"
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -16,22 +16,22 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings to identify Entity Group; read layout to resolve the Group directory and Adapter filenames; follow Entity Group Definition to create one Resource Adapter file directly inside the Group directory for every Entity presented by Entity Service; then place every fixed Endpoint and Handler in every Adapter."
-  selection: "Preserve explicit compatible project choices. Use these Preferences for unstated Entity Group names and Endpoint mappings. Do not add, remove, or reinterpret an Entity Operation outside the fixed catalogue."
+  consumption: "Read settings to identify Entity Group; read layout to resolve its directory and Adapter filename pattern; when Entity Service publication and Service-level API generation are enabled, create one Adapter directly inside the Group directory for every Entity Child Service presented through Logic Interface; create one Endpoint for every Action of that Child Service; then apply action_mappings or the POST /<action> fallback."
+  selection: "Preserve explicit compatible project choices. Use these Preferences for unstated Entity Group names, layout names, and known Action Mappings. A compatible Target may override a default Method or Path without changing its destination Action or Behaviour."
   version_resolution: "Entity Group introduces no independently versioned technology."
-  matching: "Match every Resource Adapter to exactly one Entity presented by Entity Service and every Endpoint to the corresponding Logic Action. Reject missing Logic Actions, invalid identities, and final Method-and-Path collisions without silent repair."
+  matching: "Match every Adapter to exactly one Entity Child Service and every Endpoint to exactly one Action presented by that Child Service. Derive Adapter and Entity URL identities from the bound Entity rather than a language-specific Child Service structure name. Reject invalid identities and final Method-and-Path collisions without silent repair."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - "settings: identify Entity Group and resolve its Group name."
-  - "layout: resolve the Group directory and Resource Adapter filename pattern."
-  - "endpoints: create the fixed Endpoint and Handler catalogue used by every Adapter."
+  - "layout: resolve the Group directory and Entity Adapter filename pattern."
+  - "action_mappings: apply known Method and Path mappings; use POST /<action> for every unmapped Action."
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
   - settings
   - layout
-  - endpoints
+  - action_mappings
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
@@ -39,147 +39,50 @@ content:
   # <!-------------------------------------------- settings -->
   settings:
     group:
-      component: "api"
       role: "entity"
       name: "Entity"
 
   # <!-------------------------------------------- layout -->
   layout:
-    names_configurable: true
     directory: "entity"
     patterns:
-      adapter: "<resource>"
+      adapter: "<entity>"
 
-  # <!-------------------------------------------- endpoints -->
-  endpoints:
-    catalogue:
-      add:
-        entity_operation: "add"
-        logic_action: "add"
-        method: "POST"
-        path: "/add"
-        parameters:
-          body:
-            resource:
-              required: true
-              value: "a value of the Adapter's bound Entity Resource"
-      update:
-        entity_operation: "update"
-        logic_action: "update"
-        method: "PUT"
-        path: "/update/{id}"
-        parameters:
-          path:
-            id:
-              required: true
-          body:
-            resource:
-              required: true
-              value: "a value of the Adapter's bound Entity Resource"
-      list:
-        entity_operation: "list"
-        logic_action: "list"
-        method: "GET"
-        path: "/list"
-        parameters:
-          query:
-            filters:
-              required: false
-            filter_combination:
-              required: false
-            orders:
-              required: false
-            limit:
-              required: false
-      delete:
-        entity_operation: "delete"
-        logic_action: "delete"
-        method: "DELETE"
-        path: "/delete/{id}"
-        parameters:
-          path:
-            id:
-              required: true
-      enable:
-        entity_operation: "enable"
-        logic_action: "enable"
-        method: "PATCH"
-        path: "/enable/{id}"
-        parameters:
-          path:
-            id:
-              required: true
-      disable:
-        entity_operation: "disable"
-        logic_action: "disable"
-        method: "PATCH"
-        path: "/disable/{id}"
-        parameters:
-          path:
-            id:
-              required: true
-      get_by_id:
-        entity_operation: "get_by_id"
-        logic_action: "get_by_id"
-        method: "GET"
-        path: "/get_by_id/{id}"
-        parameters:
-          path:
-            id:
-              required: true
-      count:
-        entity_operation: "count"
-        logic_action: "count"
-        method: "GET"
-        path: "/count"
-        parameters:
-          query:
-            filters:
-              required: false
-            filter_combination:
-              required: false
-      sum:
-        entity_operation: "sum"
-        logic_action: "sum"
-        method: "GET"
-        path: "/sum"
-        parameters:
-          query:
-            field:
-              required: true
-            filters:
-              required: false
-            filter_combination:
-              required: false
-      min:
-        entity_operation: "min"
-        logic_action: "min"
-        method: "GET"
-        path: "/min"
-        parameters:
-          query:
-            field:
-              required: true
-            filters:
-              required: false
-            filter_combination:
-              required: false
-      max:
-        entity_operation: "max"
-        logic_action: "max"
-        method: "GET"
-        path: "/max"
-        parameters:
-          query:
-            field:
-              required: true
-            filters:
-              required: false
-            filter_combination:
-              required: false
-      truncate:
-        entity_operation: "truncate"
-        logic_action: "truncate"
-        method: "DELETE"
-        path: "/truncate"
-        parameters: {}
+  # <!-------------------------------------------- action_mappings -->
+  action_mappings:
+    add:
+      method: "POST"
+      path: "/add"
+    update:
+      method: "PUT"
+      path: "/update/{id}"
+    list:
+      method: "GET"
+      path: "/list"
+    delete:
+      method: "DELETE"
+      path: "/delete/{id}"
+    enable:
+      method: "PATCH"
+      path: "/enable/{id}"
+    disable:
+      method: "PATCH"
+      path: "/disable/{id}"
+    get_by_id:
+      method: "GET"
+      path: "/get_by_id/{id}"
+    count:
+      method: "GET"
+      path: "/count"
+    sum:
+      method: "GET"
+      path: "/sum"
+    min:
+      method: "GET"
+      path: "/min"
+    max:
+      method: "GET"
+      path: "/max"
+    truncate:
+      method: "DELETE"
+      path: "/truncate"

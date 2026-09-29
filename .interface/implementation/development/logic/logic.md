@@ -214,9 +214,9 @@ Every Principle below is mandatory and belongs to the Architecture or Layering c
 
 #### API generation is independent and publication-dependent
 
-**Rule:** Every Service declares `generate_api` independently from `publish_in_logic_interface`. API may generate a Group only when both values are `true`; `generate_api: true` with publication disabled is invalid. Within an eligible Service, every callable Action is API-enabled by default and may explicitly set `generate_api: false` in that Service to remain outside API.
-**Why:** A Service may be useful through Logic Interface without needing HTTP exposure, while API membership still needs one authoritative source.
-**Boundary:** These settings declare eligibility only. Logic never generates routes, methods, schemas, or another API contract, and API never changes a Service or its Interface.
+**Rule:** Every Service declares `generate_api` independently from `publish_in_logic_interface`. API may generate a Group only when both values are `true`; `generate_api: true` with publication disabled is invalid. The eligible membership of each generated Group follows that Service's own Definition and Preferences.
+**Why:** A Service may be useful through Logic Interface without needing HTTP exposure, while API membership still has one authoritative Service-owned source.
+**Boundary:** These settings declare Group eligibility only. Each Service owns which published capabilities participate; Logic never generates routes, methods, schemas, or another API contract, and API never changes a Service or its Interface.
 
 #### Logic reaches another Component only through that Component's Interface
 
@@ -307,8 +307,8 @@ Every obligation in the file, under the Principle it comes from.
 
 **API generation is independent and publication-dependent**
 
-- **Must** — Generate an API Group only for a Service whose publication and API-generation settings are both enabled, and include its callable Actions by default.
-- **Never** — Allow API generation for an unpublished Service or treat a non-callable export as an Endpoint.
+- **Must** — Generate an API Group only for a Service whose publication and API-generation settings are both enabled, using the membership contract owned by that Service.
+- **Never** — Allow API generation for an unpublished Service, override a Service's membership contract, or treat a non-callable export as an Endpoint.
 
 **Logic reaches another Component only through that Component's Interface**
 

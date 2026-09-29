@@ -1,0 +1,6 @@
+# Logic configuration: values Logic requires from its environment are declared here.
+required_values:
+  credential_protection_key:
+    environment: LOGIC_CREDENTIAL_PROTECTION_KEY
+    purpose: Encrypts Instance and Account credentials at rest.
+    check: fernet_key

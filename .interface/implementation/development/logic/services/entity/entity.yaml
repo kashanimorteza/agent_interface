@@ -4,8 +4,8 @@ meta:
   path_note: "The Preferences layer of Entity Service inside the Logic Component."
   purpose: "Configurable names and realization defaults for the fixed Entity Role."
   standard: "Agent Project Interface"
-  version: "4.2"
-  updated: "2026-09-29"
+  version: "4.3"
+  updated: "2026-09-30"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -16,14 +16,14 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings first to preserve the fixed Logic owner and Entity Role while resolving the configurable Service name, root Interface publication, API Group generation, and Action API-generation settings; then read layout. Read Entity Service Definition for Entity binding, shared Base Entity capabilities, Storage Service routing, naming validation, and mandatory Behaviour. Resolve the language and shared development conventions from Logic Preferences."
+  consumption: "Read settings first to preserve the fixed Logic owner and Entity Role while resolving the configurable Service name, root Interface publication, and Service-level API Group generation; then read layout. Read Entity Service Definition for Entity binding, shared Base Entity capabilities, Storage Service routing, naming validation, and mandatory Behaviour. Resolve the language and shared development conventions from Logic Preferences."
   selection: "Use these defaults when the Target is silent. Preserve an explicit compatible Target choice; raise an unresolved incompatible choice rather than inventing one."
   version_resolution: "Entity Service introduces no independently versioned technology; versions resolve through Logic and Development Preferences."
-  matching: "Match every Child Service to one authoritative Entity identity from Model Interface and every Action API-generation override to one callable Action identity published by Entity Service Interface. Reject unknown overrides, apply the configured file and public-structure patterns with the selected language's normalization, reject invalid or colliding results, and preserve the responsibilities declared by Entity Service Definition."
+  matching: "Match every Child Service to one authoritative Entity identity from Model Interface. When Service-level API Group generation is enabled, preserve every published Child Service and all of its Actions as the complete eligible Entity API contract. Apply the configured file and public-structure patterns with the selected language's normalization, reject invalid or colliding results, and preserve the responsibilities declared by Entity Service Definition."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "settings: identify the fixed Logic owner and Entity Role, then resolve the configurable Service name, publish_in_logic_interface, generate_api, and Action API-generation settings."
+  - "settings: identify the fixed Logic owner and Entity Role, then resolve the configurable Service name, publish_in_logic_interface, and Service-level generate_api setting."
   - "layout: resolve its configurable directory, Interface, Base Entity, Child naming patterns, and language-specific realization names."
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
@@ -43,10 +43,6 @@ content:
       name: "Entity"
       publish_in_logic_interface: true
       generate_api: true
-    actions:
-      default_generate_api: true
-      overrides: {}
-
   # <!-------------------------------------------- layout -->
   layout:
     names_configurable: true

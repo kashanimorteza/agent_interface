@@ -29,11 +29,11 @@ content_map:
 # <!--------------------------------------------------------------------------------- Content -->
 content:
   active:
-    mode: "planning"
+    mode: "development"
     phase: "P3"
-    mode_reason: "Plan produced the Plan for phase P3 (Logic): 12 Groups and 100 Tasks, all todo, with no Open Question or Blocker."
-    set_by: "my-interface-plan"
-    set_at: "2026-09-29T20:00:50Z"
+    mode_reason: "Develop started executing the Tasks of the P3 (Logic) Plan."
+    set_by: "my-interface-develop"
+    set_at: "2026-09-29T22:13:08Z"
   phases:
     P1:
       id: "P1"
@@ -49,8 +49,8 @@ content:
       completed_at: null
     P3:
       id: "P3"
-      planning: "not started"
-      development: "not started"
+      planning: "completed"
+      development: "in progress"
       review: "not started"
       completed_at: null
     P4:
@@ -285,3 +285,85 @@ content:
           - "Verification scripts and transient copies were kept outside the project; local caches were removed."
         necessary_but_not_performed:
           - "The Application Manifest section for Model is still empty (raised by Develop log 004, Review 005, and Planning 006); it needs a Task in the P1 Plan."
+    - id: "008"
+      skill: "my-interface-implement"
+      phase: "P3"
+      event: "implement"
+      outcome: "in progress"
+      started_at: "2026-09-29T22:05:42Z"
+      completed_at: null
+      duration: null
+      open_questions: []
+      blockers: []
+      report: "Started Implement for phase P3 (Logic; argument '3' resolved to Phase 3)."
+    - id: "009"
+      skill: "my-interface-configure"
+      parent_id: "008"
+      phase: "P3"
+      event: "configure"
+      outcome: "completed"
+      started_at: "2026-09-29T22:06:01Z"
+      completed_at: "2026-09-29T22:06:20Z"
+      duration: "19 seconds"
+      open_questions: []
+      blockers: []
+      report: "Reconciled the existing Config records (all three existed and parsed) to restore Schema conformance. Two Schema violations were fixed: plan.yaml task_count was 207 while the stored Plans hold 107 Tasks (P1 38, P2 69), now 107; application.yaml lacked the required state Component section, now added empty. Operational content in all three records was preserved. Every record now matches the general YAML frame and its Schema."
+      data:
+        duration_ms: 19000
+        records:
+          - "application.yaml"
+          - "plan.yaml"
+          - "state.yaml"
+        changes:
+          - "plan.yaml content.task_count 207 -> 107"
+          - "application.yaml content.components.state added as {}"
+        notes:
+          - "state.yaml active still names phase P3 with a mode_reason that says a P3 Plan of 12 Groups and 100 Tasks was produced, but plan.yaml holds no P3 Plan and no Log Entry records that planning. The values conform to the State Schema, so Configure preserved them; Plan owns them and should reconcile them when it plans P3."
+    - id: "010"
+      skill: "my-interface-plan"
+      parent_id: "008"
+      phase: "P3"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-09-29T22:06:24Z"
+      completed_at: "2026-09-29T22:12:41Z"
+      duration: "6:17"
+      skills_used:
+        - name: "python-skills:python-guidelines"
+          report: "Identified as the useful Task Skill for every Logic source Task."
+      open_questions: []
+      blockers: []
+      report: "Planned phase P3 (Logic) from scratch: one Plan, 11 Groups, 100 atomic Tasks (2 package and dependencies, 2 configuration, 3 Core, 21 Storage Service, 15 Entity Service shared behaviour, 19 Entity Child Services, 6 credential protection, 6 Logic Interface, 10 documentation, 1 Application Manifest, 15 whole-Logic verification). No P3 Plan existed in plan.yaml (State active named a P3 Plan that was not stored), so nothing was preserved, changed, removed, or replaced. Every Task has source_id 010 and status todo; the dependency graph is acyclic; the P1 and P2 Plans are unchanged. Open Questions: 0. Blockers: 0."
+      data:
+        duration_ms: 377000
+        task_changes:
+          added: 100
+          changed: 0
+          removed: 0
+          preserved: 0
+          replaced: 0
+          reason: "No Plan existed for P3; all Tasks are newly required by the Target phase goal, the Target Behaviour and credential rules, the Logic Definition and Preferences, and the Entity and Storage Service Definitions and Preferences."
+        decisions_to_confirm:
+          - "Credential at-rest treatment (raised by Planning 006 and Develop 007 before P3): the Target requires hash storage for User credentials and encrypted storage for Instance and Account credentials. Database stores values as received and Model handles no values, so this Plan places the treatment in Logic, inside the User, Instance, and Account Entity Child Services, and requires an environment-supplied protection value in Logic's configuration contract for encryption. The scheme and key handling are left to Develop under the Logic Principles. Confirm this ownership or direct another."
+          - "Initial Data credentials seeded in P2 were stored as generated, without hashing or encryption, because Logic did not exist then. Logic's treatment applies to writes made through Entity Service and does not retroactively treat those seeded values. Decide whether they are regenerated or treated later."
+        notes:
+          - "Target rule not planned: Account credentials must not duplicate Instance credentials unless the Trading Platform explicitly requires it. The Target does not say which platforms require duplication, and stored credentials are treated differently per Entity so equality cannot be judged, so this rule needs a Human decision before it can be planned."
+          - "Target rule deferred: an Instance must have every connection field its Trading Platform requires before it can be used. Using an Instance belongs to trading operations (phase P7), so no P3 Task enforces it."
+          - "Persistent testing is disabled in the Logic Preferences and unit tests may not use live dependencies, so Task verification is transient; behaviour Tasks use a substituted Database or Storage Service, and end-to-end Tasks use a throwaway prepared Database Instance rather than the shipped one."
+          - "Application Manifest: plan Task P3-G10-T01 replaces the existing Logic section, which currently lists Storage and Entity as published; Storage Service is not published by default, so the entry no longer matches the Definition."
+          - "P2 Review has not run (State phase P2 review is not started). Planning P3 was not blocked by it: P2 planning and development are completed with no open Blocker."
+          - "State active previously named phase P3 planning with 12 Groups and 100 Tasks although plan.yaml held none and no Log Entry recorded it; this execution replaced that stale position with the actual result."
+        necessary_but_not_performed:
+          - "The Application Manifest section for Model is still empty (raised by Develop log 004, Review 005, Planning 006, and Develop 007); it needs a Task in the P1 Plan and lies outside this invocation's phase selection."
+    - id: "011"
+      skill: "my-interface-develop"
+      parent_id: "008"
+      phase: "P3"
+      event: "develop"
+      outcome: "in progress"
+      started_at: "2026-09-29T22:13:08Z"
+      completed_at: null
+      duration: null
+      open_questions: []
+      blockers: []
+      report: "Started Development for phase P3 (Logic)."

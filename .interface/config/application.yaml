@@ -48,7 +48,6 @@ content:
       path: "logic"
       public_entrypoint: "logic.interface"
       public_interface:
-        - "Storage"
         - "Entity"
     api:
       package_name: "trading-assistant-api"
@@ -68,4 +67,5 @@ content:
     implement: {}
     launch: {}
     reset: {}
+    state: {}
     state: {}
