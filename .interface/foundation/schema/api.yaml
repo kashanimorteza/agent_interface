@@ -1,0 +1,96 @@
+schema:
+  id: "agent-interface-api-configuration"
+  version: "2.0"
+  purpose: "The independent structure of API config.yaml: identity, live documentation paths, network address, URL Key, and runtime workers."
+  kind: "Structure standard"
+  applies_when: "The Implementation declares an API Component."
+  generates: "<api component path>/config.yaml"
+
+# <!--------------------------------------------------------------------------------- Structure -->
+structure:
+
+  title:
+    required: true
+    purpose: "The human-readable title presented by the running API."
+    value: "<API title>"
+
+  description:
+    required: true
+    purpose: "The description presented by the running API."
+    value: "<API description or empty>"
+
+  version:
+    required: true
+    purpose: "The displayed API version; it never creates a URL version segment."
+    value: "<API version>"
+
+  openapi_url:
+    required: true
+    purpose: "The runtime path at which the API publishes its machine-readable OpenAPI schema."
+    value: "<OpenAPI schema path or empty>"
+
+  docs_url:
+    required: true
+    purpose: "The runtime path at which the API publishes its interactive documentation; it is not README.md."
+    value: "<interactive documentation path or empty>"
+
+  redoc_url:
+    required: true
+    purpose: "The runtime path at which the API publishes its ReDoc documentation; it is not README.md."
+    value: "<ReDoc documentation path or empty>"
+
+  key:
+    required: true
+    purpose: "An optional opaque URL path segment placed immediately before the Group name; empty omits the segment."
+    value: "<URL Key or empty>"
+
+  host:
+    required: true
+    purpose: "The network host or IP address to which the API binds."
+    value: "<host or IP address>"
+
+  port:
+    required: true
+    purpose: "The network port to which the API binds."
+    value: "<port>"
+
+  workers:
+    required: true
+    purpose: "The number of API worker processes."
+    value: "<positive worker count>"
+
+  transport_protocol:
+    required: true
+    purpose: "The transport protocol used to form and expose the API URL."
+    value: "<transport protocol>"
+
+  url:
+    required: true
+    purpose: "The Base URL derived from transport_protocol, host, port, and the optional key."
+    value: "<derived Base URL>"
+
+# <!--------------------------------------------------------------------------------- Rules -->
+rules:
+  url_integrity: "url is derived from transport_protocol, host, port, and key and is never resolved independently."
+  key_position: "A non-empty key is the first path segment of url and every Group name follows it; an empty key adds no segment."
+  key_scope: "key changes the Base URL path and is not request authentication or capability authorization."
+  path_separation: "openapi_url, docs_url, and redoc_url are runtime API paths and never name or replace README.md."
+  path_integrity: "Every enabled runtime documentation path is non-empty and unique."
+  version_scope: "version is display metadata and never creates a URL segment."
+  port_integrity: "port is a valid network port."
+  worker_integrity: "workers is a positive integer."
+
+# <!--------------------------------------------------------------------------------- Example -->
+example: |
+  title: "raspberrypi_iot_core_python"
+  description: "This is my custom API schema description"
+  version: "1.0.0"
+  openapi_url: "/schema"
+  docs_url: "/docs"
+  redoc_url: "/redoc"
+  key: "example-path-key"
+  host: "127.0.0.1"
+  port: 8000
+  workers: 2
+  transport_protocol: "HTTP"
+  url: "http://127.0.0.1:8000/example-path-key"

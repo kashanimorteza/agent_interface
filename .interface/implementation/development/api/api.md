@@ -1,6 +1,6 @@
 # API Definition
 
-API is the Development Component that publishes selected Logic capabilities through one external HTTP boundary composed of modular Groups.
+API is the executable Development Component that serves modular Groups through one network boundary.
 
 <br>
 
@@ -24,34 +24,32 @@ API is the Development Component that publishes selected Logic capabilities thro
 
 ### Overview
 
-API is the application's single external HTTP gateway. It owns the shared running boundary, composition, runtime-facing configuration contract, and common public contract. Its usable capability areas are modular Groups. Every Group owns its own external surface and explains how that surface is derived and realized.
+API provides one running network boundary for a collection of modular Groups. It owns the shared API process, its configuration, the registration of Groups, the base URL, and the runtime documentation paths. Each Group owns the capabilities served beneath its own URL segment.
 
-API Definition and Preferences contain only concepts and defaults shared by the whole API. They do not define the contract of a particular Group. Each Group has its own Definition and Preferences under the configured Groups directory, and API references those files rather than copying their content.
-
-API remains independent of programming language, framework, package, and implementation technique. API Preferences may choose a default realization; the selected package or implementation skill decides compatible technical mechanics without changing this contract.
+API Definition and Preferences describe only the shared API. A Group has its own Definition and Preferences under the Groups directory, and API references that pair without copying the Group's internal structure or capabilities.
 
 ### Purpose
 
-External consumers need one stable boundary while different capability areas need independent ownership. API provides the shared boundary without turning its root into a catalogue of routes, Actions, schemas, or rules that belong to individual Groups.
+Different capability areas need independent structures while clients need one address from which to reach them. API supplies that common address and lifecycle. A Group may change its Items and Actions without turning the root API into another definition of those capabilities.
 
-This separation lets a Group evolve from its own contract while all Groups continue to share one API identity and lifecycle. Adding, changing, or removing a Group changes that Group and its reference, not the meaning of the root API Component.
+Without this boundary, every Group would need to create and operate its own API process, repeat the same network configuration, and choose a separate public address. API keeps those concerns together while leaving every capability with its owning Group.
 
 ### How It Works
 
-API reads the Group references declared in API Preferences. Each referenced Group resolves its own source, eligibility, structure, external contract, and configurable defaults from its Definition and Preferences. API composes the resolved Groups into one running boundary.
+Bootstrap reads `config.yaml`, creates the running API, resolves the referenced Groups, and registers each Group beneath the URL segment formed from that Group's configured name. It then serves all registered Groups through the configured network address.
 
-Bootstrap starts and composes the API. Core contains only private capabilities shared across Groups. Configuration receives runtime values declared by API. Root documentation introduces the API and points consumers to the documentation of its enabled Groups.
+The base URL is derived from the configured transport protocol, host, port, and optional key. The optional key appears immediately before the Group name. No version segment is inserted into the URL. After the Group segment, the owning Group determines the paths for its Items, Actions, and parameters.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
-- **API Group** — one modular external capability area with its own Definition and Preferences under the Groups directory.
-- **Group Reference** — the pair of paths through which API discovers one Group's Definition and Preferences without copying them.
-- **Bootstrap** — the single composition and startup point that assembles the API and registers its resolved Groups.
-- **Core** — the private home of capabilities shared by multiple Groups and owned by none of them.
-- **External Contract** — the observable human- and machine-readable description of the running API boundary.
+- **API Group** — one modular capability area registered beneath its configured name in the shared API URL.
+- **Group Reference** — the Definition and Preferences paths through which API discovers one Group without copying it.
+- **Bootstrap** — the single entry point that reads API configuration, creates the API, registers its Groups, and starts serving them.
+- **Base URL** — the address derived from transport protocol, host, port, and the optional key before any Group segment is appended.
+- **URL Key** — an optional opaque path segment placed between the host and port portion of the Base URL and the Group name; it is not request authentication.
 
 <br>
 
@@ -61,7 +59,6 @@ Bootstrap starts and composes the API. Core contains only private capabilities s
 ```text
 API
 ├── bootstrap
-├── core/
 ├── groups/
 │   └── <group>/
 ├── config.yaml
@@ -75,67 +72,56 @@ The names shown are defaults selected by API Preferences. Every `<group>` direct
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Consumes Logic** — Groups reach the Logic capabilities their own contracts declare.
-- **Consumes Development** — receives shared implementation defaults and declared Component connections.
-- **Consumes Platform** — receives runtime bindings required by the running boundary.
-- **Consumed by Presentation and external clients** — publishes one external HTTP boundary containing its enabled Groups.
+API has no direct dependency on another Component. Any connection beyond the API boundary belongs to the Group that owns it and is declared within that Group.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Boundaries --->
 ## Boundaries
 
-- **Application Behaviour and decisions** — belong to Logic; API carries external requests without reimplementing them.
-- **Domain meaning** — belongs to Model and is never read directly by API.
-- **Persistence** — belongs behind Logic and Database; API never reaches it directly.
-- **A particular Group's source, structure, routes, requests, responses, and failures** — belong to that Group's Definition and Preferences.
-- **Capabilities shared by the complete external boundary** — belong to API.
-- **Technical framework mechanics** — belong to the selected package and implementation skill when not explicitly selected by Target or compatible Preferences.
-- **Runtime values and process operation** — are supplied by Platform; API declares only what the running boundary needs.
-- **Authentication** — is absent from the current shared API contract and is never generated implicitly.
+- **The internal source or destination of a capability** — belongs to its Group; root API neither knows nor selects it.
+- **Items, Actions, routes, parameters, requests, responses, and failures beneath a Group path** — belong to that Group.
+- **The shared process, Base URL, Group registration, configuration, and runtime documentation paths** — belong to root API.
+- **An optional URL Key** — changes the Base URL path but does not authenticate a request or authorize a capability.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-API owns one shared composition. Bootstrap registers the referenced Groups, Core supports them privately, Configuration receives runtime values, and Documentation presents one coherent external boundary. A Group's own files define its internal layers and public capability contract.
+API consists of one Bootstrap, a directory of independently defined Groups, one runtime configuration file, and one file-based documentation entry.
 
 ### Bootstrap
 
-The single composition and startup point. It resolves and registers every referenced Group, applies concerns shared by the whole API, and exposes one running boundary. It contains no Group capability or application Behaviour.
-
-### Core
-
-The private directory for API capabilities shared by multiple Groups and owned by none of them. A capability owned by one Group remains inside that Group.
+Bootstrap is the API's single composition and execution point. It reads `config.yaml`, creates the API, registers every referenced Group, and starts serving the resulting boundary. It contains no Group Item, Action, route implementation, or downstream capability.
 
 ### Groups
 
-The configured directory containing modular API Groups. API references each Group's Definition and Preferences here and does not repeat the Group contract in root files.
+The Groups directory contains the modular capability areas served by API. Root API registers each Group beneath its configured name and does not define what follows that path.
 
 ### Entity Group
 
-Entity Group is the initial API Group.
+Entity Group is a referenced API Group.
 
 → [Definition of Entity Group](groups/entity/entity.md)<br>
 → [Preferences of Entity Group](groups/entity/entity.yaml)
 
-An additional Group follows the same modular rule: it receives its own directory, Definition, and Preferences, and API references it instead of copying its contract into root API files.
+An additional Group follows the same modular rule: it receives its own directory, Definition, and Preferences, and API references it instead of copying its content into root files.
 
 ### Configuration
 
-`config.yaml` contains only runtime values declared by the API boundary. Component structure and configurable defaults remain in API Preferences or the owning Group Preferences, while Platform supplies environment-specific bindings.
+`config.yaml` contains the values used to identify and run the API and follows [API Configuration Structure](../../../foundation/schema/api.yaml). API Preferences supply defaults from which that file may be generated.
 
 ### Documentation
 
-Root documentation introduces the API, its shared lifecycle, and its enabled Groups. The detailed capabilities of a Group are documented from that Group's own contract.
+`README.md` is the file-based documentation for the API Component. The machine-readable schema and live documentation served by the running API use the separately configured `openapi_url`, `docs_url`, and `redoc_url` paths. None of those runtime paths names or replaces `README.md`.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
-API Definition Principles are mandatory for the shared boundary. API Preferences provide configurable defaults for unstated shared choices. Each Group Definition and Preferences govern that Group without weakening API Principles. Explicit compatible Target meaning takes precedence over defaults.
+API Definition Principles are mandatory for the shared API boundary. API Preferences provide configurable defaults for unstated API choices. Each Group Definition and Preferences govern that Group without weakening the shared API Principles. Explicit compatible project meaning takes precedence over defaults.
 
 <br>
 
@@ -146,17 +132,11 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 ### General
 
-#### API remains independent of its realization
+#### API is one shared boundary
 
-**Rule:** API Definition fixes shared responsibilities, boundaries, composition, and observable contracts without requiring a programming language, framework, package, decorator, or implementation pattern.
-**Why:** The same API Component must remain understandable and implementable across compatible technology choices.
-**Boundary:** Preferences and the selected implementation skill may choose compatible mechanics but may not change the conceptual contract.
-
-#### API is one external boundary
-
-**Rule:** API has one Bootstrap, one running boundary, and one shared lifecycle for all referenced Groups.
-**Why:** Groups are modular capability areas of one API, not separate applications merely because their contracts are independent.
-**Boundary:** An explicit Target may define another API Component, but a Group never starts its own server or process.
+**Rule:** API creates one running boundary and serves every referenced Group through that boundary.
+**Why:** Groups need one common address and process without becoming separate API applications.
+**Boundary:** Another explicitly declared API is another Component; a Group never creates its own server or process.
 
 <br>
 
@@ -164,63 +144,47 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 #### Groups are independently defined and referenced
 
-**Rule:** Every API Group has its own Definition and Preferences inside its own directory. API root files contain only a reference to that pair and never copy the Group's source, layers, capabilities, routes, schemas, or configurable defaults.
-**Why:** Each Group needs one authoritative contract that can evolve without enlarging or contradicting the root API contract.
-**Boundary:** API may introduce and compose a referenced Group, but all details specific to that Group remain in its files.
+**Rule:** Every API Group has its own Definition and Preferences inside its own directory. Root API files contain only a reference to that pair and never copy the Group's Items, Actions, routes, parameters, or defaults.
+**Why:** Each Group needs one authoritative contract that can change without duplicating its meaning in root API.
+**Boundary:** Root API registers and serves the Group but does not define what the Group provides.
 
 #### Group references are complete and unique
 
-**Rule:** Every configured Group identity is unique and resolves to exactly one existing Definition and one existing Preferences file under the configured Groups directory. Invalid, missing, stale, or colliding references stop generation with a clear error.
-**Why:** API cannot compose a Group whose authority is ambiguous or incomplete.
-**Boundary:** Generation never repairs a reference through an invented path, suffix, number, or silent rename.
+**Rule:** Every Group identity is unique and resolves to exactly one existing Definition and one existing Preferences file under the configured Groups directory. A missing, invalid, stale, or colliding reference stops creation with a clear error.
+**Why:** API cannot register a Group whose identity or authority is incomplete or ambiguous.
+**Boundary:** API never repairs a reference through an invented path, suffix, number, or silent rename.
+
+#### Group names determine their URL segments
+
+**Rule:** API registers each Group beneath one unique URL segment derived from that Group's configured name. The segment follows the optional URL Key directly, and no version segment is inserted before it.
+**Why:** A client can locate a Group from its declared identity without a second routing catalogue.
+**Boundary:** The owning Group defines every Item, Action, route, and parameter after its Group segment.
 
 <br>
 
-### Bootstrap and Core
+### Bootstrap
 
-#### Bootstrap composes without owning Group capabilities
+#### Bootstrap only composes and runs API
 
-**Rule:** Bootstrap resolves and registers referenced Groups and applies only shared API concerns. It defines no Group capability, route, schema, application Behaviour, or persistence work.
-**Why:** Composition stays stable while Groups retain authority over their own external surfaces.
-**Boundary:** Registration mechanics belong to the selected realization; capability meaning remains in the owning Group.
-
-#### Core remains shared and private
-
-**Rule:** A private API capability shared by multiple Groups and owned by none belongs in Core. Core publishes no external capability and contains no application Behaviour.
-**Why:** Shared concerns need one internal home without becoming another public layer.
-**Boundary:** A Group-specific concern stays in that Group even when another Group has a similar concern.
+**Rule:** Bootstrap reads API configuration, creates the API, registers referenced Groups, and starts serving them. It defines no Group capability.
+**Why:** One narrow entry point keeps shared execution separate from the capabilities being served.
+**Boundary:** Every Item, Action, route, parameter, and connection beyond the API boundary remains inside its owning Group.
 
 <br>
 
-### Contract and Documentation
+### Documentation
 
-#### API owns one consistent combined contract
+#### File and runtime documentation remain distinct
 
-**Rule:** Running behaviour, machine-readable contract, and human documentation describe the same enabled Groups and shared lifecycle.
-**Why:** Consumers must not build against a description that differs from the running boundary.
-**Boundary:** Each Group remains authoritative for its detailed portion of that combined contract.
+**Rule:** `README.md` documents the API Component, while `openapi_url`, `docs_url`, and `redoc_url` identify documentation served by the running API.
+**Why:** Component setup and usage documentation has a different purpose from the live description of the running routes.
+**Boundary:** Runtime documentation presents registered Groups without becoming the Definition or Preferences of any Group.
 
 #### Root documentation references Group documentation
 
-**Rule:** Root documentation introduces every enabled Group and directs consumers to its generated contract without copying its detailed capabilities.
-**Why:** Consumers need one overview while Group details retain one owner.
-**Boundary:** Root documentation exposes no disabled Group or private implementation detail.
-
-<br>
-
-### Lifecycle and Verification
-
-#### Health and readiness always exist
-
-**Rule:** API always exposes distinct health and readiness signals. Health reports that the API is alive; readiness is positive only after required configuration and dependencies are ready. Their paths are configurable, but the signals cannot be disabled.
-**Why:** Operators need to distinguish a running process from one able to serve requests.
-**Boundary:** The selected package implements the signals, while Platform decides how to use them.
-
-#### Verification covers shared composition
-
-**Rule:** API verification confirms reference validity and uniqueness, successful Group composition, one shared lifecycle, contract consistency, and health and readiness signals. Each Group defines verification of its own detailed contract.
-**Why:** Root verification should prove the combined boundary without duplicating Group verification.
-**Boundary:** API verification never replaces Logic Behaviour, Group contract, or Database persistence verification.
+**Rule:** Root documentation introduces every registered Group and refers to its documentation without copying its detailed capabilities.
+**Why:** Consumers need one API overview while every Group retains one owner for its details.
+**Boundary:** Root documentation never publishes an unregistered Group or private Group content.
 
 <br>
 
@@ -231,60 +195,43 @@ Every obligation in the file, under the Principle it comes from.
 
 ### General
 
-**API remains independent of its realization**
+**API is one shared boundary**
 
-- **Must** — Preserve shared responsibilities, boundaries, composition, and observable contracts across compatible realizations.
-- **Never** — Make a language, framework, package, or implementation pattern part of API Definition.
-
-**API is one external boundary**
-
-- **Must** — Compose every referenced Group through one Bootstrap and lifecycle.
-- **Never** — Let a Group create another server or process.
+- **Must** — Serve all referenced Groups through one running API boundary.
+- **Never** — Let a Group create a separate server or process.
 
 ### Groups
 
 **Groups are independently defined and referenced**
 
-- **Must** — Give each Group its own Definition and Preferences and reference them from API.
-- **Never** — Copy Group-specific structure, capabilities, routes, schemas, or defaults into root API files.
+- **Must** — Give each Group its own Definition and Preferences and reference them from root API.
+- **Never** — Copy Group-specific content into root API files.
 
 **Group references are complete and unique**
 
 - **Must** — Resolve every unique Group identity to one valid Definition and Preferences pair.
 - **Never** — Silently repair a missing, invalid, stale, or colliding reference.
 
-### Bootstrap and Core
+**Group names determine their URL segments**
 
-**Bootstrap composes without owning Group capabilities**
+- **Must** — Register each Group beneath its unique configured name after the optional URL Key.
+- **Never** — Insert a version segment or let root API define paths owned by the Group.
 
-- **Must** — Register Groups and apply shared API concerns only.
-- **Never** — Define a Group capability or application Behaviour in Bootstrap.
+### Bootstrap
 
-**Core remains shared and private**
+**Bootstrap only composes and runs API**
 
-- **Must** — Keep only shared private API capabilities in Core.
-- **Never** — Publish Core or move a Group-owned concern into it.
+- **Must** — Read configuration, create API, register Groups, and start serving them.
+- **Never** — Define a Group capability in Bootstrap.
 
-### Contract and Documentation
+### Documentation
 
-**API owns one consistent combined contract**
+**File and runtime documentation remain distinct**
 
-- **Must** — Keep the running boundary and both contract forms consistent.
-- **Never** — Let composition contradict an owning Group's contract.
+- **Must** — Keep `README.md` distinct from OpenAPI, interactive docs, and ReDoc runtime paths.
+- **Never** — Treat a runtime documentation path as the Component README.
 
 **Root documentation references Group documentation**
 
-- **Must** — Introduce enabled Groups and direct consumers to their contracts.
-- **Never** — Duplicate Group details or expose disabled Groups.
-
-### Lifecycle and Verification
-
-**Health and readiness always exist**
-
-- **Must** — Expose distinct configurable health and readiness signals.
-- **Never** — Disable either signal or report readiness prematurely.
-
-**Verification covers shared composition**
-
-- **Must** — Verify references, composition, lifecycle, combined contract, health, and readiness.
-- **Never** — Duplicate or replace verification owned by a Group, Logic, or Database.
+- **Must** — Introduce registered Groups and refer to their detailed documentation.
+- **Never** — Duplicate Group details or expose an unregistered Group.

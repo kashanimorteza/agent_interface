@@ -1,37 +1,37 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/implementation/development/api/api.yaml"
-  path_note: "The Preferences layer of the API Component — configurable defaults shared by its complete external boundary."
-  purpose: "Configurable defaults for API identity, root layout, Group references, shared realization, lifecycle, and root documentation."
+  path_note: "The Preferences layer of the API Component."
+  purpose: "Configurable defaults for API identity, layout, Groups, realization, network, runtime, lifecycle, and documentation."
   standard: "Agent Project Interface"
-  version: "7.0"
-  updated: "2026-09-29"
+  version: "8.0"
+  updated: "2026-09-30"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
   rule: "This file is human-owned. Operations read it without writing resolved API choices back into it."
   changed_by: "The human, directly. A missing critical API choice is raised through State."
-  precedence: "Explicit compatible Target meaning and every applicable API Principle take precedence over this file."
+  precedence: "Explicit compatible project meaning and every applicable API Principle take precedence over this file."
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings and layout first. Read every Group Definition and Preferences reference under groups, let each pair resolve its own source, structure, capabilities, and external contract, then compose all resolved Groups through the shared API boundary. Apply shared transport, contract, request, lifecycle, and documentation defaults only after Group resolution. Use Development Defaults only when this file leaves a shared realization choice unstated."
-  selection: "Preserve explicit compatible Target choices. Use these Preferences only for unstated API-wide choices. Leave package mechanics to the selected package or implementation skill when Target is silent. Never use a root API choice to redefine a Group-owned contract."
-  version_resolution: "API Preferences resolve API-owned packages. Development resolves only shared Defaults."
-  matching: "Match Groups by their exact configured identity and referenced files. Reject missing, stale, invalid, or colliding references without silent repair."
+  consumption: "Read settings and layout; resolve the selected language and its packages; follow every Group Definition and Preferences reference; derive the Base URL from network values; then apply identity, runtime, lifecycle, and documentation defaults. Generate config.yaml according to the referenced API Configuration Structure."
+  selection: "Preserve explicit compatible project choices. Use these Preferences for unstated API choices. A package may choose mechanics left unstated here but may not change the responsibilities or URL structure declared by API Definition."
+  version_resolution: "Resolve latest-compatible to a concrete mutually compatible package version at implementation time and preserve every explicit compatible version."
+  matching: "Match Groups by their exact configured identities and referenced files. Reject missing, stale, invalid, or colliding references without silent repair. Derive url from transport_protocol, host, port, and the optional key instead of resolving it independently."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "settings: identify API and its generated Component root."
-  - "layout: resolve Bootstrap, Core, Groups, configuration, and documentation names."
-  - "development: resolve the default language and API-owned package choices."
+  - "settings: identify API and its configuration structure."
+  - "layout: resolve Bootstrap, Groups, configuration, and documentation names."
+  - "development: resolve the default language and its API-owned packages."
   - "groups: follow every Group Definition and Preferences reference."
-  - "transport: resolve API-wide external transport and CORS policy."
-  - "contract: resolve shared external identity and versioning."
-  - "requests: resolve shared observable request tracking."
-  - "lifecycle: resolve mandatory health and readiness paths."
-  - "documentation: resolve root external-consumer documentation."
+  - "network: resolve transport_protocol, host, port, optional key, and derived url."
+  - "identity: resolve title, description, and the non-routing API version."
+  - "runtime: resolve the worker count."
+  - "lifecycle: resolve OpenAPI, interactive docs, and ReDoc runtime paths."
+  - "documentation: resolve file-based API documentation."
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
@@ -39,9 +39,9 @@ content_map:
   - layout
   - development
   - groups
-  - transport
-  - contract
-  - requests
+  - network
+  - identity
+  - runtime
   - lifecycle
   - documentation
 
@@ -55,12 +55,14 @@ content:
       platform: "VPS"
       directory: "api"
       package: "api"
+    configuration:
+      file: "config.yaml"
+      structure: ".interface/foundation/schema/api.yaml"
 
   # <!-------------------------------------------- layout -->
   layout:
     names_configurable: true
     directories:
-      core: "core"
       groups: "groups"
     files:
       bootstrap: "bootstrap"
@@ -71,19 +73,27 @@ content:
 
   # <!-------------------------------------------- development -->
   development:
-    capabilities:
-      testing: false
-      error_handling: false
-      logging: false
-    language:
+    languages:
       default: "Python"
-    packages:
       python:
+        modeling:
+          package:
+            name: "SQLModel"
+            version: "latest-compatible"
+            skill: "sqlmodel"
         api:
-          name: "FastAPI"
-          package: "fastapi[standard]"
-          version: "latest-compatible"
-          skill: "fastapi"
+          package:
+            name: "FastAPI"
+            package: "fastapi[standard]"
+            version: "latest-compatible"
+            skill: "fastapi"
+            middleware:
+              cors:
+                name: "CORSMiddleware"
+                allow_origins: ["*"]
+                allow_credentials: false
+                allow_methods: ["*"]
+                allow_headers: ["*"]
 
   # <!-------------------------------------------- groups -->
   groups:
@@ -91,49 +101,44 @@ content:
       definition: "groups/entity/entity.md"
       preferences: "groups/entity/entity.yaml"
 
-  # <!-------------------------------------------- transport -->
-  transport:
-    selected: "HTTP"
-    cors:
-      enabled: false
-      allowed_origins: []
+  # <!-------------------------------------------- network -->
+  network:
+    transport_protocol: "HTTP"
+    host: "127.0.0.1"
+    port: 8000
+    key: ""
+    url: "http://127.0.0.1:8000"
 
-  # <!-------------------------------------------- contract -->
-  contract:
-    application:
-      title: "Target API"
-      description: ""
-    versioning:
-      enabled: true
-      initial_version: "v1"
-      strategy_source: "selected package or implementation skill unless Target overrides"
-    authentication:
-      enabled: false
+  # <!-------------------------------------------- identity -->
+  identity:
+    title: "Target API"
+    description: ""
+    version: "1.0.0"
 
-  # <!-------------------------------------------- requests -->
-  requests:
-    error_tracking:
-      enabled: true
+  # <!-------------------------------------------- runtime -->
+  runtime:
+    workers: 2
 
   # <!-------------------------------------------- lifecycle -->
   lifecycle:
-    runtime_bindings_source: "Platform"
-    health:
-      path: "/health"
-    readiness:
-      path: "/ready"
+    openapi:
+      path: "/schema"
+    docs:
+      path: "/docs"
+    redoc:
+      path: "/redoc"
 
   # <!-------------------------------------------- documentation -->
   documentation:
+    file: "README.md"
     location: "the Component root"
     format: "markdown"
-    audience: "external consumers"
+    audience: "API consumers"
     order:
       - overview
       - groups
-      - lifecycle
       - setup
       - use
       - troubleshooting
     sections:
-      groups: "Introduce every enabled Group from its referenced Definition and Preferences and link to its detailed generated contract without copying that contract into root documentation."
+      groups: "Introduce every registered Group from its referenced Definition and Preferences and refer to its detailed documentation without copying its content."
