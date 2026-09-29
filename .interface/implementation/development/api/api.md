@@ -1,6 +1,6 @@
 # API Definition
 
-API is the executable Development Component that serves modular Groups through one network boundary.
+API is the executable Development Component that serves generated Groups through one network boundary.
 
 <br>
 
@@ -24,31 +24,32 @@ API is the executable Development Component that serves modular Groups through o
 
 ### Overview
 
-API provides one running network boundary for a collection of modular Groups. It owns the shared API process, its configuration, the registration of Groups, the base URL, and the runtime documentation paths. Each Group owns the capabilities served beneath its own URL segment.
+API provides one running network boundary for modular Groups. It owns the shared API process, runtime configuration, Group registration, and Base URL. Each Group owns the Adapters, Endpoints, Handlers, Parameters, requests, responses, and connections served beneath its URL segment.
 
-API Definition and Preferences describe only the shared API. A Group has its own Definition and Preferences under the Groups directory, and API references that pair without copying the Group's internal structure or capabilities.
+Root API has no Adapter, Endpoint, or Handler of its own. It references the independent Definition and Preferences of every known Group for generation, then serves only the Group realizations that were generated and enabled. Root API never copies or redefines a Group's API surface.
 
 ### Purpose
 
-Different capability areas need independent structures while clients need one address from which to reach them. API supplies that common address and lifecycle. A Group may change its Items and Actions without turning the root API into another definition of those capabilities.
-
-Without this boundary, every Group would need to create and operate its own API process, repeat the same network configuration, and choose a separate public address. API keeps those concerns together while leaving every capability with its owning Group.
+Different capability areas need independent API structures while clients need one network address from which to reach them. API supplies that common address and running process while leaving every exposed capability with its owning Group.
 
 ### How It Works
 
-Bootstrap reads `config.yaml`, creates the running API, resolves the referenced Groups, and registers each Group beneath the URL segment formed from that Group's configured name. It then serves all registered Groups through the configured network address.
+During generation, each Group Reference resolves one Group Definition and Preferences pair. The Group's own eligibility rules determine whether its executable realization is generated. Root API uses those references only as generation sources; conceptual MD and YAML files are never copied into the executable API.
 
-The base URL is derived from the configured transport protocol, host, port, and optional key. The optional key appears immediately before the Group name. No version segment is inserted into the URL. After the Group segment, the owning Group determines the paths for its Items, Actions, and parameters.
+At runtime, Bootstrap reads `config.yaml`, creates the API, imports and registers every generated and enabled Group, and starts serving them through the configured network address. Bootstrap does not read Group Definition or Preferences files at runtime.
+
+The Base URL is derived from the configured transport protocol, host, port, and optional URL Key. The optional URL Key appears immediately before the Group segment. The Group name determines that segment, and the Group owns everything that follows it.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
-- **API Group** — one modular capability area registered beneath its configured name in the shared API URL.
-- **Group Reference** — the Definition and Preferences paths through which API discovers one Group without copying it.
-- **Bootstrap** — the single entry point that reads API configuration, creates the API, registers its Groups, and starts serving them.
-- **Base URL** — the address derived from transport protocol, host, port, and the optional key before any Group segment is appended.
+- **API Group** — one modular capability area that may be generated and registered beneath its configured name in the shared API URL.
+- **Group Reference** — one stable Group role and the Definition and Preferences paths used to resolve that Group during generation.
+- **Generated Group** — the executable realization created when a referenced Group's eligibility rules are satisfied.
+- **Bootstrap** — the single runtime entry point that reads API configuration, creates the API, registers generated Groups, and starts serving them.
+- **Base URL** — the address derived from transport protocol, host, port, and the optional URL Key before any Group segment is appended.
 - **URL Key** — an optional opaque path segment placed between the host and port portion of the Base URL and the Group name; it is not request authentication.
 
 <br>
@@ -61,11 +62,10 @@ API
 ├── bootstrap
 ├── groups/
 │   └── <group>/
-├── config.yaml
-└── README.md
+└── config.yaml
 ```
 
-The names shown are defaults selected by API Preferences. Every `<group>` directory contains that Group's independent Definition and Preferences; its internal realization is owned by those files.
+The names shown are defaults selected by API Preferences. Root API owns only Bootstrap, the Groups container, and Configuration. Each generated `<group>` directory is an executable Group realization whose internal structure is governed by that Group's Definition and Preferences. Conceptual Definition and Preferences files remain in `.interface` and are not copied into this structure.
 
 <br>
 
@@ -79,9 +79,9 @@ API has no direct dependency on another Component. Any connection beyond the API
 <!--------------------------------------------------------------------------------- Boundaries --->
 ## Boundaries
 
-- **The internal source or destination of a capability** — belongs to its Group; root API neither knows nor selects it.
-- **Items, Actions, routes, parameters, requests, responses, and failures beneath a Group path** — belong to that Group.
-- **The shared process, Base URL, Group registration, configuration, and runtime documentation paths** — belong to root API.
+- **The shared process, Base URL, Group registration, and runtime configuration** — belong to Root API.
+- **Adapters, Endpoints, Handlers, Parameters, requests, responses, failures, and connections beneath a Group segment** — belong to that Group; Root API only registers and serves them.
+- **Group eligibility and internal realization** — belong to each Group's Definition and Preferences; a Reference alone never forces generation or registration.
 - **An optional URL Key** — changes the Base URL path but does not authenticate a request or authorize a capability.
 
 <br>
@@ -89,32 +89,28 @@ API has no direct dependency on another Component. Any connection beyond the API
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-API consists of one Bootstrap, a directory of independently defined Groups, one runtime configuration file, and one file-based documentation entry.
+API consists of one Bootstrap, one directory containing generated Groups, and one runtime Configuration file.
 
 ### Bootstrap
 
-Bootstrap is the API's single composition and execution point. It reads `config.yaml`, creates the API, registers every referenced Group, and starts serving the resulting boundary. It contains no Group Item, Action, route implementation, or downstream capability.
+Bootstrap is the API's single composition and execution point. It reads `config.yaml`, creates the API, imports and registers every generated and enabled Group, and starts serving the resulting boundary. It contains no Adapter, Endpoint, Handler, Group capability, or downstream connection.
 
 ### Groups
 
-The Groups directory contains the modular capability areas served by API. Root API registers each Group beneath its configured name and does not define what follows that path.
+The Groups directory contains executable realizations produced from independently defined API Groups. Root API provides the container and registers each generated Group beneath the URL segment derived from its configured name. The owning Group determines the contents of its directory and everything exposed after its Group segment.
 
 ### Entity Group
 
-Entity Group is a referenced API Group.
+Entity Group is a known API Group Reference.
 
 → [Definition of Entity Group](groups/entity/entity.md)<br>
 → [Preferences of Entity Group](groups/entity/entity.yaml)
 
-An additional Group follows the same modular rule: it receives its own directory, Definition, and Preferences, and API references it instead of copying its content into root files.
+An additional Group follows the same modular rule: it receives its own Definition and Preferences, is referenced from API Preferences by its stable role, and is generated and registered only when its own eligibility rules are satisfied.
 
 ### Configuration
 
-`config.yaml` contains the values used to identify and run the API and follows [API Configuration Structure](../../../foundation/schema/api.yaml). API Preferences supply defaults from which that file may be generated.
-
-### Documentation
-
-`README.md` is the file-based documentation for the API Component. The machine-readable schema and live documentation served by the running API use the separately configured `openapi_url`, `docs_url`, and `redoc_url` paths. None of those runtime paths names or replaces `README.md`.
+`config.yaml` contains the values used to identify and run the API and follows [API Configuration Structure](../../../foundation/schema/api.yaml). API Preferences supply defaults from which that file may be generated. Bootstrap reads this runtime file but never reads conceptual Group files.
 
 <br>
 
@@ -134,9 +130,15 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 #### API is one shared boundary
 
-**Rule:** API creates one running boundary and serves every referenced Group through that boundary.
+**Rule:** API creates one running boundary and serves every generated and enabled Group through that boundary.
 **Why:** Groups need one common address and process without becoming separate API applications.
 **Boundary:** Another explicitly declared API is another Component; a Group never creates its own server or process.
+
+#### Root API owns no Group capability
+
+**Rule:** Root API defines no Adapter, Endpoint, Handler, Parameter contract, request, response, or downstream connection. It registers and serves only the executable API surface owned by generated Groups.
+**Why:** Group capabilities need one authoritative owner and must not be duplicated in the shared boundary.
+**Boundary:** Shared process and network concerns remain Root API responsibilities even though all served capabilities belong to Groups.
 
 <br>
 
@@ -144,21 +146,27 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 #### Groups are independently defined and referenced
 
-**Rule:** Every API Group has its own Definition and Preferences inside its own directory. Root API files contain only a reference to that pair and never copy the Group's Items, Actions, routes, parameters, or defaults.
-**Why:** Each Group needs one authoritative contract that can change without duplicating its meaning in root API.
-**Boundary:** Root API registers and serves the Group but does not define what the Group provides.
+**Rule:** Every known API Group has its own Definition and Preferences. Root API Preferences contain only a Group Reference to that pair and never copy the Group's Adapters, Endpoints, Handlers, Parameters, defaults, or internal structure.
+**Why:** Each Group needs one authoritative contract that can change without duplicating its meaning in Root API.
+**Boundary:** Group Definition and Preferences are generation sources and are never copied into the executable API or read by Bootstrap at runtime.
 
-#### Group references are complete and unique
+#### Group roles bind references to Group identities
 
-**Rule:** Every Group identity is unique and resolves to exactly one existing Definition and one existing Preferences file under the configured Groups directory. A missing, invalid, stale, or colliding reference stops creation with a clear error.
-**Why:** API cannot register a Group whose identity or authority is incomplete or ambiguous.
-**Boundary:** API never repairs a reference through an invented path, suffix, number, or silent rename.
+**Rule:** Every Group Reference key matches the fixed `role` declared by that Group's Preferences. The configurable Group `name` determines its public identity and URL segment without changing the stable Reference role.
+**Why:** A stable role can resolve the correct Group while its public name remains configurable.
+**Boundary:** Renaming a Group never changes its Reference key, Definition path, Preferences path, or responsibility.
 
-#### Group names determine their URL segments
+#### Group references are complete and generation is conditional
 
-**Rule:** API registers each Group beneath one unique URL segment derived from that Group's configured name. The segment follows the optional URL Key directly, and no version segment is inserted before it.
-**Why:** A client can locate a Group from its declared identity without a second routing catalogue.
-**Boundary:** The owning Group defines every Item, Action, route, and parameter after its Group segment.
+**Rule:** Every Group Reference resolves to exactly one existing Definition and one existing Preferences file. Generation follows the eligibility rules owned by that Group, and Bootstrap registers only Group realizations that were actually generated and enabled.
+**Why:** A known Group must have complete authority while an ineligible Group must not appear in the running API.
+**Boundary:** A missing, stale, invalid, or ambiguous Reference stops generation with a clear error; a valid Reference alone never forces Group generation.
+
+#### Group names determine valid and unique URL segments
+
+**Rule:** Every generated Group is registered beneath one valid URL segment derived from its configured name. After declared normalization, every generated Group segment is unique.
+**Why:** A client can locate a Group from its public identity without a second routing catalogue or an ambiguous address.
+**Boundary:** An invalid or colliding segment stops generation with a clear error; API never adds a suffix, number, or silent rename.
 
 <br>
 
@@ -166,19 +174,9 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 #### Bootstrap only composes and runs API
 
-**Rule:** Bootstrap reads API configuration, creates the API, registers referenced Groups, and starts serving them. It defines no Group capability.
-**Why:** One narrow entry point keeps shared execution separate from the capabilities being served.
-**Boundary:** Every Item, Action, route, parameter, and connection beyond the API boundary remains inside its owning Group.
-
-<br>
-
-### Documentation
-
-#### File and runtime documentation remain distinct
-
-**Rule:** `README.md` documents the API Component, while `openapi_url`, `docs_url`, and `redoc_url` identify documentation served by the running API.
-**Why:** Component setup and usage documentation has a different purpose from the live description of the running routes.
-**Boundary:** Runtime documentation presents registered Groups without becoming the Definition or Preferences of any Group.
+**Rule:** Bootstrap reads runtime Configuration, creates the API, imports and registers generated and enabled Groups, and starts serving them. It defines no Group capability and reads no conceptual Definition or Preferences file at runtime.
+**Why:** One narrow entry point keeps shared execution separate from generation sources and the capabilities being served.
+**Boundary:** Every Adapter, Endpoint, Handler, Parameter, and connection beyond the API boundary remains inside its owning Group.
 
 <br>
 
@@ -191,36 +189,39 @@ Every obligation in the file, under the Principle it comes from.
 
 **API is one shared boundary**
 
-- **Must** — Serve all referenced Groups through one running API boundary.
+- **Must** — Serve all generated and enabled Groups through one running API boundary.
 - **Never** — Let a Group create a separate server or process.
+
+**Root API owns no Group capability**
+
+- **Must** — Register and serve the API surface owned by generated Groups.
+- **Never** — Define an Adapter, Endpoint, Handler, Parameter contract, request, response, or downstream connection in Root API.
 
 ### Groups
 
 **Groups are independently defined and referenced**
 
-- **Must** — Give each Group its own Definition and Preferences and reference them from root API.
-- **Never** — Copy Group-specific content into root API files.
+- **Must** — Give each Group its own Definition and Preferences and reference them from Root API.
+- **Never** — Copy Group-specific content into Root API or the executable API structure.
 
-**Group references are complete and unique**
+**Group roles bind references to Group identities**
 
-- **Must** — Resolve every unique Group identity to one valid Definition and Preferences pair.
-- **Never** — Silently repair a missing, invalid, stale, or colliding reference.
+- **Must** — Match every Reference key to the Group's fixed role and use its configurable name for public identity.
+- **Never** — Change a stable Reference because the public Group name changes.
 
-**Group names determine their URL segments**
+**Group references are complete and generation is conditional**
 
-- **Must** — Register each Group beneath its unique configured name after the optional URL Key.
-- **Never** — Insert a version segment or let root API define paths owned by the Group.
+- **Must** — Resolve every Reference and register only Group realizations that are generated and enabled.
+- **Never** — Force generation merely because a valid Reference exists.
+
+**Group names determine valid and unique URL segments**
+
+- **Must** — Validate every generated Group segment after normalization.
+- **Never** — Silently repair an invalid or colliding segment.
 
 ### Bootstrap
 
 **Bootstrap only composes and runs API**
 
-- **Must** — Read configuration, create API, register Groups, and start serving them.
-- **Never** — Define a Group capability in Bootstrap.
-
-### Documentation
-
-**File and runtime documentation remain distinct**
-
-- **Must** — Keep `README.md` distinct from OpenAPI, interactive docs, and ReDoc runtime paths.
-- **Never** — Treat a runtime documentation path as the Component README.
+- **Must** — Read runtime Configuration, create API, register generated Groups, and start serving them.
+- **Never** — Define a Group capability or read conceptual Definition and Preferences files at runtime.

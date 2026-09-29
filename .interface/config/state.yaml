@@ -29,11 +29,11 @@ content_map:
 # <!--------------------------------------------------------------------------------- Content -->
 content:
   active:
-    mode: "development"
+    mode: "reviewing"
     phase: "P3"
-    mode_reason: "Develop started executing the Tasks of the P3 (Logic) Plan."
-    set_by: "my-interface-develop"
-    set_at: "2026-09-29T22:13:08Z"
+    mode_reason: "Review found phase P3 (Logic) satisfied with no Finding."
+    set_by: "my-interface-review"
+    set_at: "2026-09-29T22:30:22Z"
   phases:
     P1:
       id: "P1"
@@ -50,9 +50,9 @@ content:
     P3:
       id: "P3"
       planning: "completed"
-      development: "in progress"
-      review: "not started"
-      completed_at: null
+      development: "completed"
+      review: "satisfied"
+      completed_at: "2026-09-29T22:30:22Z"
     P4:
       id: "P4"
       planning: "not started"
@@ -289,13 +289,23 @@ content:
       skill: "my-interface-implement"
       phase: "P3"
       event: "implement"
-      outcome: "in progress"
+      outcome: "completed"
       started_at: "2026-09-29T22:05:42Z"
-      completed_at: null
-      duration: null
+      completed_at: "2026-09-29T22:30:43Z"
+      duration: "25:01"
       open_questions: []
       blockers: []
-      report: "Started Implement for phase P3 (Logic; argument '3' resolved to Phase 3)."
+      report: "Implemented phase P3 (Logic; argument '3' resolved to Phase 3). Config was invalid (plan.yaml task_count did not equal the stored Tasks, and application.yaml lacked the required state section), so Configure (009) was coordinated once and restored conformance. Plan (010) created 100 Tasks in 11 Groups, Develop (011) completed all 100, and Review (012) recorded no Finding and found the result satisfied. Open Questions: 0. Blockers: 0. Items for the Human are listed in data."
+      data:
+        duration_ms: 1501000
+        coordinated: {configure: "009", plan: "010", develop: "011", review: "012"}
+        phase_outcomes: {P3: {planning: "completed", development: "completed", review: "satisfied"}}
+        counts: {open_questions: 0, blockers: 0}
+        for_the_human:
+          - "Confirm credential at-rest ownership (built in Logic with an environment-supplied protection value) and decide whether P2's seeded plaintext credentials are treated (Planning 010, Develop 011)."
+          - "Decide how consumers obtain Database's Filter, Order, and Filter Combination values and Model's Entity classes, which no Definition publishes through Logic and API has no declared Connection to Model (Develop 011)."
+          - "Task P3-G8-T03 is stale against the Entity Service Definition you changed during the run (per-Action API filtering removed); run planning for phase 3 to replace it (Develop 011, Review 012)."
+          - "P2 Review has not run, and the Application Manifest section for Model is still empty; both are outside this invocation."
     - id: "009"
       skill: "my-interface-configure"
       parent_id: "008"
@@ -360,10 +370,70 @@ content:
       parent_id: "008"
       phase: "P3"
       event: "develop"
-      outcome: "in progress"
+      outcome: "completed"
       started_at: "2026-09-29T22:13:08Z"
-      completed_at: null
-      duration: null
+      completed_at: "2026-09-29T22:27:40Z"
+      duration: "14:32"
+      skills_used:
+        - name: "python-skills:python-guidelines"
+          report: "Guided code style: uv, modern typing, Google-style docstrings, no speculative abstraction, no suppression comments."
       open_questions: []
       blockers: []
-      report: "Started Development for phase P3 (Logic)."
+      report: "Executed all 100 Tasks of the P3 Plan (Logic): package and dependencies, configuration, Core, Storage Service (fifteen Actions), Entity Service (Base Entity and fifteen Child Services), credential protection, root Interface, documentation, Application Manifest entry, and fifteen whole-Logic verifications. Every Task was claimed, verified by a transient check (end to end on throwaway SQLite and PostgreSQL Instances where behaviour is data-facing), and recorded done in its Task Log. ruff, ruff format, and pyright report no findings. Model and Database are unchanged. One completed Task, P3-G8-T03, disagrees with a Definition the Human changed during this run (see necessary_but_not_performed). Open Questions: 0. Blockers: 0."
+      data:
+        duration_ms: 872000
+        tasks: {done: 100, blocked: 0, todo: 0}
+        resolved_choices:
+          - "Python 3.14 with uv; Logic depends on cryptography 50.0.1, pyyaml 6.0.3, and the Model and Database path dependencies (with their transitive packages), stabilized in the lock file; ruff 0.16.9 and pyright 1.1.414 as development-only tools. cryptography was chosen for reversible encryption because the Preferences are silent."
+          - "Layout follows the Model and Database precedent: package root holds the Interface and the reserved configuration; Core holds configuration reading, credential primitives, errors, identifier checks, and Service settings; each Service keeps every file in its own directory; README and packaging files sit at the Component directory."
+          - "A Child Service is a class named <Entity>Service that inherits the shared Base Entity class and is bound to its Model Entity through a class attribute; a consumer creates it without arguments and calls Actions on it. Logic Interface publishes the Entity Service Interface module under the name Entity."
+          - "Storage Service creates its Database access surface lazily on first use in one private gateway, so loading any Interface has no external effect. Its Interface imports the fifteen typed Action files and, at import, follows Database's published Operation catalogue: an Operation without a written Action file receives a forwarding Action and an Action whose Operation disappeared is removed."
+          - "Service settings (publication, API generation, name and directory) are declared as constants in Core and validated at import; identifier checks use snake_case and reject invalid, reserved, and colliding names."
+          - "Credentials: User credentials use salted scrypt hashes; Instance and Account credentials use Fernet encryption with a protection value read only from the environment variable declared in Logic's configuration contract (with a key-format check). Add and Update protect credentials before Storage is called; Update reads the stored record through Storage and leaves a credential equal to the stored value untouched. Returned Entities carry the stored value and the caller's own object is not mutated."
+          - "Entity Actions that take Filters, Filter Combination, and Orders type them loosely because Entity Service may not import Database vocabulary."
+          - "Retry and timeout: Logic makes every dependency call exactly once and owns no wait, which satisfies bounded use."
+        decisions_to_confirm:
+          - "Credential at-rest treatment (raised by Planning 006, Develop 007, and Planning 010): realized in Logic as described above. Confirm this ownership and the environment-supplied protection value, or direct another. Credentials seeded by P2 Initial Data remain stored as generated and are not retroactively treated."
+          - "Reaching List, Count, Sum, Min, and Max vocabulary: Entity Actions accept Database's Filter, Filter Combination, and Order values, but no Definition publishes them through Logic, so a consumer must import them from Database. Likewise the Entity classes a consumer adds or updates come from Model, and Development declares no Connection from API to Model. Decide how consumers obtain this vocabulary."
+        notes:
+          - "Process deviation: Tasks were claimed in Group batches, so 160 dependency edges show a Task claimed before its prerequisite was recorded done. The work itself was performed and verified in dependency order and no Task was marked done before its own check passed; the append-only Task Logs are left as recorded."
+          - "Definition change during the run: the Human's commit 60f1179 landed while this execution was running and changed the Logic and Entity Service Definitions and Preferences (per-Action API-generation filtering removed) and committed Logic's source and Config. This execution made no commit."
+          - "Value fidelity observed: a decimal supplied as 0 is returned as 0.0 by Database (equal in value); verification compared decimals by value. This belongs to Database."
+          - "PostgreSQL: the local server was reachable through the existing role; behaviour that involves the second Instance was verified on a throwaway database (created and dropped). The first attempt left the throwaway database because its session was still open; it was dropped by ending only its own sessions. No other database was touched and the shipped Configuration was never connected."
+          - "Setup was followed in a clean copy of the three Components and worked as documented; the shipped Database storage area is untouched."
+          - "Model Component and Database Component untouched: no tracked or untracked file under either differs from the commit that preceded this work."
+        necessary_but_not_performed:
+          - "Task P3-G8-T03 (Honour Action-level API-generation overrides) is completed but no longer matches the current Entity Service Definition, which forbids filtering an Action from the Entity API Group. Logic currently filters nothing for Entity Service (the shipped settings declare no override), but the general override capability should be removed for Entity Service. Planning should replan that Task (a replacing Task), after which Develop can change the source."
+          - "The Application Manifest section for Model is still empty (raised by Develop log 004, Review 005, Planning 006, and Develop 007); it needs a Task in the P1 Plan and lies outside this invocation's phase selection."
+    - id: "012"
+      skill: "my-interface-review"
+      parent_id: "008"
+      phase: "P3"
+      event: "review"
+      outcome: "satisfied"
+      started_at: "2026-09-29T22:28:07Z"
+      completed_at: "2026-09-29T22:30:22Z"
+      duration: "2:15"
+      open_questions: []
+      blockers: []
+      report: "Reviewed phase P3 (Logic) against its Plan with independently written examinations of the generated Source, public surfaces, and behaviour. No Finding was recorded; the result satisfies the Plan in a single pass. Aggregate outcome: satisfied (P3 satisfied). One completed Task is stale against a Definition the Human changed during the run and is reported as an observation for Planning, not recorded as a Finding."
+      data:
+        duration_ms: 135000
+        outcome_by_phase: {P3: "satisfied"}
+        passes: 1
+        findings: []
+        independent_examinations:
+          - "Read the current Logic Source (50 modules) and the Plan's acceptance and verification conditions, then judged the recorded checks for whether they establish each condition."
+          - "Built the wheel and source distribution in a temporary copy and installed the wheel non-editably: the configuration contract, py.typed, all fifteen Action files, and all fifteen Child Service files are packaged and the installed package loads its contract and root Interface."
+          - "Compared every Storage Action's parameter names, order, and defaults with the corresponding Database Operation, and every Entity Action's with Database's after the Entity: no difference."
+          - "Called Execute Command, Insert Initial Data, and Create Tables through Storage Service on a prepared Database: results are Database's own, repeated Insert Initial Data inserts nothing."
+          - "Forced a Database failure (duplicate User with a distinctive plaintext credential): the plaintext appears in neither the message nor the representation of the error, and the caller's own Entity keeps its plaintext."
+          - "Updated an Instance that exists only on PostgreSQL with the PostgreSQL member: the encrypted credential stayed byte-identical, so the stored read inside Update uses the selected Instance; a cleared nullable credential stored null."
+          - "Searched Logic's dependency lock for API and transport frameworks (none) and Logic's source and README for secrets (none)."
+          - "Confirmed that the Logic tree, Model, and Database contain no artifact from the review and that every throwaway PostgreSQL database was dropped."
+        observations_about_the_review:
+          - "Task P3-G8-T03 (Honour Action-level API-generation overrides) conflicts with the current Entity Service Definition, changed by the Human in commit 60f1179 during Development, which forbids per-Action filtering. Review judges against the current Plan, which still asks for the override, so it is not a Finding; Planning should replan the Task and Develop can then remove the capability. Nothing is currently filtered for Entity Service."
+          - "After an ordinary update through Logic, the seeded administrator's credentials from P2 Initial Data remain the seeded plaintext values, because an unchanged stored credential is deliberately kept as it is. The Plan requires that behaviour; whether seeded credentials should be treated is the decision already recorded by Planning 010 and Develop 011."
+          - "Behaviour involving the second Instance was exercised for selection and for Update; the Entity behaviours were exercised on the default Instance only."
+          - "The Task Logs were written by Develop with checks described in prose because persistent testing is disabled; Review judged them by re-observing the conditions and by new probes, not by trusting the recorded outcomes."
+          - "Process deviation recorded by Develop 011 (Tasks claimed in Group batches) does not affect the result and Review did not change any Task record."

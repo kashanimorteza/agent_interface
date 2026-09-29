@@ -5178,6 +5178,9 @@ content:
                 transition: claimed -> done
                 check: 'Transient script: listed the callable Actions of every Entity Child Service (one hundred eighty), computed the API-enabled set for the shipped settings, then excluded one Action, then declared an override for an Action that does not exist; also asked for Storage Service''s enabled Actions.'
                 outcome: All one hundred eighty Entity Actions are API-enabled by default; the exclusion removed exactly that Action; the unknown override stopped with a ConfigurationError naming it; Storage Service, being ineligible, offers no API Actions.
+              - at: '2026-09-29T22:27:12Z'
+                transition: note (status stays done)
+                note: 'Drift found before completion of log 011: the Human''s commit 60f1179 (made while this run was in progress) removed per-Action API-generation filtering from the Entity Service Definition and Preferences (''without a per-Entity or per-Action API-generation filter''). This Task still asks Logic to honour Action-level exclusions. The realization keeps every Entity Action eligible by default (shipped Entity Service declares no override, all 180 Actions enabled), so no Action is currently filtered, but the general override capability now disagrees with the current Entity Service Definition. Develop does not change Tasks: Planning should replan this Task, after which Develop can remove the override capability for Entity Service.'
             P3-G8-T04:
               id: P3-G8-T04
               source_id: '010'
@@ -5284,11 +5287,15 @@ content:
               constraints: []
               acceptance: The section introduces Logic in a few sentences and contains one complete example that reproduces when run.
               verify: Reading the section shows the introduction and one example, and running the example against a prepared Database Instance reproduces the shown outcome.
-              status: claimed
+              status: done
               log:
               - at: '2026-09-29T22:23:01Z'
                 transition: todo -> claimed
                 note: Claimed by my-interface-develop (log 011) before writing the documentation and Manifest entry.
+              - at: '2026-09-29T22:24:13Z'
+                transition: claimed -> done
+                check: Transient script (run_docs) executed every Python example of the README in order against a throwaway prepared SQLite Instance (tables created and Initial Data inserted in a temporary directory) and compared each printed result with the text block that follows it; read the opening section.
+                outcome: The opening section introduces Logic in two sentences and holds one example (reading the seeded administrator) whose printed result matched.
             P3-G9-T02:
               id: P3-G9-T02
               source_id: '010'
@@ -5307,11 +5314,15 @@ content:
               constraints: []
               acceptance: The section lists exactly the publication-enabled Service Interfaces under their configured names, mentions no unpublished Service as an external capability, and defines no Action, wrapper, or duplicated symbol.
               verify: Comparing the section with the root Interface's published set shows an exact match and no mention of Storage Service as an external capability.
-              status: claimed
+              status: done
               log:
               - at: '2026-09-29T22:23:01Z'
                 transition: todo -> claimed
                 note: Claimed by my-interface-develop (log 011) before writing the documentation and Manifest entry.
+              - at: '2026-09-29T22:24:13Z'
+                transition: claimed -> done
+                check: Compared the Interface section with the root Interface's exports and searched it for definitions of Actions, wrappers, or duplicated symbols.
+                outcome: The section lists exactly one published Service Interface, Entity, under its configured name; it mentions Storage Service only to say it is internal and unpublished, defines no Action or wrapper, and repeats no symbol.
             P3-G9-T03:
               id: P3-G9-T03
               source_id: '010'
@@ -5330,11 +5341,15 @@ content:
               constraints: []
               acceptance: The text explains selecting a Child for each published Entity and choosing an Instance, and its example reproduces when run.
               verify: Following the text to select a Child and an Instance on a prepared Database reproduces the described result.
-              status: claimed
+              status: done
               log:
               - at: '2026-09-29T22:23:01Z'
                 transition: todo -> claimed
                 note: Claimed by my-interface-develop (log 011) before writing the documentation and Manifest entry.
+              - at: '2026-09-29T22:24:13Z'
+                transition: claimed -> done
+                check: Transient script (run_docs) executed every Python example of the README in order against a throwaway prepared SQLite Instance (tables created and Initial Data inserted in a temporary directory) and compared each printed result with the text block that follows it (the Child Service table and the Instance selection example).
+                outcome: The text names one Child Service per Entity in Target order and explains selecting a Child and an Instance; the Instance example matched.
             P3-G9-T04:
               id: P3-G9-T04
               source_id: '010'
@@ -5350,11 +5365,15 @@ content:
               constraints: []
               acceptance: Each changing Action has exactly one complete example whose stated outcome reproduces when run.
               verify: Running each example against a throwaway prepared Database Instance reproduces its stated outcome.
-              status: claimed
+              status: done
               log:
               - at: '2026-09-29T22:23:01Z'
                 transition: todo -> claimed
                 note: Claimed by my-interface-develop (log 011) before writing the documentation and Manifest entry.
+              - at: '2026-09-29T22:24:13Z'
+                transition: claimed -> done
+                check: Transient script (run_docs) executed every Python example of the README in order against a throwaway prepared SQLite Instance (tables created and Initial Data inserted in a temporary directory) and compared each printed result with the text block that follows it (Add, Update, Enable, Disable, Delete, Truncate examples; each restores the data it changes).
+                outcome: All six changing Actions have exactly one complete example and every printed result matched.
             P3-G9-T05:
               id: P3-G9-T05
               source_id: '010'
@@ -5370,11 +5389,15 @@ content:
               constraints: []
               acceptance: Each reading Action has exactly one complete example whose stated outcome reproduces when run.
               verify: Running each example against a throwaway prepared Database Instance reproduces its stated outcome.
-              status: claimed
+              status: done
               log:
               - at: '2026-09-29T22:23:01Z'
                 transition: todo -> claimed
                 note: Claimed by my-interface-develop (log 011) before writing the documentation and Manifest entry.
+              - at: '2026-09-29T22:24:13Z'
+                transition: claimed -> done
+                check: Transient script (run_docs) executed every Python example of the README in order against a throwaway prepared SQLite Instance (tables created and Initial Data inserted in a temporary directory) and compared each printed result with the text block that follows it (Get by ID, List, Count, Sum, Min, Max examples).
+                outcome: All six reading Actions have exactly one complete example and every printed result matched (USD None; the first three codes; 8; 14; 0; 2).
             P3-G9-T06:
               id: P3-G9-T06
               source_id: '010'
@@ -5390,11 +5413,15 @@ content:
               constraints: []
               acceptance: The text describes each credential treatment and the refusal accurately, and contains no real secret.
               verify: Comparing the text with the observed behaviour of a User, an Instance, and an Account write with and without the protection value shows agreement, and the text contains no real credential.
-              status: claimed
+              status: done
               log:
               - at: '2026-09-29T22:23:01Z'
                 transition: todo -> claimed
                 note: Claimed by my-interface-develop (log 011) before writing the documentation and Manifest entry.
+              - at: '2026-09-29T22:24:13Z'
+                transition: claimed -> done
+                check: Transient script (run_docs) executed every Python example of the README in order against a throwaway prepared SQLite Instance (tables created and Initial Data inserted in a temporary directory) and compared each printed result with the text block that follows it (the User hashing and Instance encryption examples), and compared the text with the behaviour observed in P3-G7; searched the text for real credentials.
+                outcome: The text describes hashing, encryption, the required protection value, keeping an unchanged stored credential, and returning only stored values, matching the observed behaviour; both examples matched and only obviously fictitious placeholder values appear.
             P3-G9-T07:
               id: P3-G9-T07
               source_id: '010'
@@ -5414,11 +5441,15 @@ content:
               constraints: []
               acceptance: Following the steps on a clean environment yields a working Logic, and every required configuration value is named without a real secret.
               verify: Following the section on a clean isolated environment installs Logic and lets the overview example run.
-              status: claimed
+              status: done
               log:
               - at: '2026-09-29T22:23:01Z'
                 transition: todo -> claimed
                 note: Claimed by my-interface-develop (log 011) before writing the documentation and Manifest entry.
+              - at: '2026-09-29T22:24:13Z'
+                transition: claimed -> done
+                check: In a clean copy of the three Components, followed the Setup steps exactly (install, create Tables, insert Initial Data, generate the protection value), then ran a reading example and an encrypted write.
+                outcome: Install resolved from the lock file; the Tables were created; 23 Initial Data records were inserted; a 44-character key was generated; the administrator was read, the readiness check printed 'Logic is ready', and an Instance credential was stored encrypted. The required value is named and no real secret appears.
             P3-G9-T08:
               id: P3-G9-T08
               source_id: '010'
@@ -5437,11 +5468,15 @@ content:
               constraints: []
               acceptance: The section reaches Logic only through the root Interface and its examples reproduce when run.
               verify: Running the section's steps reproduces its stated results and never reaches a Service implementation directly.
-              status: claimed
+              status: done
               log:
               - at: '2026-09-29T22:23:01Z'
                 transition: todo -> claimed
                 note: Claimed by my-interface-develop (log 011) before writing the documentation and Manifest entry.
+              - at: '2026-09-29T22:24:13Z'
+                transition: claimed -> done
+                check: Transient script (run_docs) executed every Python example of the README in order against a throwaway prepared SQLite Instance (tables created and Initial Data inserted in a temporary directory) and compared each printed result with the text block that follows it (the Use example, which reaches Logic only through its root Interface).
+                outcome: The Use section reaches Logic only through the root Interface; its example printed the first two seeded Asset symbols as stated.
             P3-G9-T09:
               id: P3-G9-T09
               source_id: '010'
@@ -5460,11 +5495,15 @@ content:
               constraints: []
               acceptance: The section states a check that uses only the public surface and its stated result reproduces on a prepared Database Instance.
               verify: Running the described check on a prepared Database Instance reproduces the stated result.
-              status: claimed
+              status: done
               log:
               - at: '2026-09-29T22:23:01Z'
                 transition: todo -> claimed
                 note: Claimed by my-interface-develop (log 011) before writing the documentation and Manifest entry.
+              - at: '2026-09-29T22:24:13Z'
+                transition: claimed -> done
+                check: Transient script (run_docs) executed every Python example of the README in order against a throwaway prepared SQLite Instance (tables created and Initial Data inserted in a temporary directory) and compared each printed result with the text block that follows it (the Verify example, which uses only the public surface).
+                outcome: The check printed 'Logic is ready' on the prepared Instance as stated.
             P3-G9-T10:
               id: P3-G9-T10
               source_id: '010'
@@ -5483,11 +5522,15 @@ content:
               constraints: []
               acceptance: Each documented failure reproduces with the described message and its fix resolves it.
               verify: Reproducing each documented failure shows the described message, and applying the described fix resolves it.
-              status: claimed
+              status: done
               log:
               - at: '2026-09-29T22:23:01Z'
                 transition: todo -> claimed
                 note: Claimed by my-interface-develop (log 011) before writing the documentation and Manifest entry.
+              - at: '2026-09-29T22:24:13Z'
+                transition: claimed -> done
+                check: 'Transient script (run_docs) executed every Python example of the README in order against a throwaway prepared SQLite Instance (tables created and Initial Data inserted in a temporary directory) and compared each printed result with the text block that follows it (the three failure examples: missing protection value, invalid protection value, mismatched Entity), applying each described fix.'
+                outcome: Each documented failure reproduced with exactly the documented message and the described fix (the Setup steps or the correct Child Service) resolves it; the invalid-value message does not repeat the supplied text.
         P3-G10:
           id: P3-G10
           title: Application metadata
@@ -5513,11 +5556,15 @@ content:
               constraints: []
               acceptance: Logic's section names the package, its location, its entrypoint, and exactly the published Service Interfaces, contains no secret and no unpublished Service, and every other Component's section is unchanged.
               verify: Comparing Logic's section with the published Interface shows an exact match, and comparing the rest of the Manifest before and after shows no difference.
-              status: claimed
+              status: done
               log:
               - at: '2026-09-29T22:23:01Z'
                 transition: todo -> claimed
                 note: Claimed by my-interface-develop (log 011) before writing the documentation and Manifest entry.
+              - at: '2026-09-29T22:24:13Z'
+                transition: claimed -> done
+                check: 'Transient script: compared Logic''s Application Manifest section with the root Interface''s exports and with the package and entrypoint names, and compared every other Component''s section before and after the edit.'
+                outcome: The section now names package 'logic', path 'logic', entrypoint 'logic.interface', and exactly the published Service Interface 'Entity' (it previously also listed Storage, which is not published); it holds no secret, and every other Component's section is identical to before.
         P3-G11:
           id: P3-G11
           title: Verification
@@ -5547,7 +5594,15 @@ content:
               constraints: []
               acceptance: Every Service keeps all its files in its own directory, the root Interface imports only publication-enabled Service Interfaces, no Service imports the root Interface, Entity Service reaches persistence only through Storage Service Interface, only Storage Service reaches Database Interface, and no dependency cycle exists.
               verify: Inspecting the structure and static imports shows only root-Interface-to-Service-Interface, Service-to-Service-Interface, Entity-to-Model, and Storage-to-Database edges, and no cycle.
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-29T22:24:43Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 011) before running the whole-Logic verification.
+              - at: '2026-09-29T22:27:11Z'
+                transition: claimed -> done
+                check: 'Transient script (check_g11): parsed the imports of all 50 Logic modules, resolved them to modules, and checked the edges against the layering rules; listed the Service directories.'
+                outcome: The root Interface imports only the Entity Service Interface; no Service imports the root Interface; Entity Service imports only Model Interface, Storage Service Interface, and Core; only Storage Service modules import Database (its gateway, catalogue, Interface, and Action files); Core imports no provider and no Service; exactly two Service directories exist (entity, storage), each holding all of its files; the module graph has no cycle.
             P3-G11-T02:
               id: P3-G11-T02
               source_id: '010'
@@ -5567,7 +5622,15 @@ content:
               constraints: []
               acceptance: Actions and Operations correspond one-to-one, every Action name identifies Storage Service, the Instance Enum is the identical object, and no Action adds a wrapper.
               verify: Comparing the Action set with the Operation set in both directions shows an exact match, the names show the required form, and the enum comparison shows identity.
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-29T22:24:43Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 011) before running the whole-Logic verification.
+              - at: '2026-09-29T22:27:11Z'
+                transition: claimed -> done
+                check: 'Transient script: compared Database''s published Operations with Storage Service''s Action files, exports, and derived set, and the Instance Enum objects.'
+                outcome: Fifteen Operations correspond one-to-one with fifteen Action files and fifteen exports, each named for Storage Service; the derived set equals the published set; the Instance Enum is the identical object; no Action adds a wrapper (each was shown to return Database's object unchanged in P3-G4).
             P3-G11-T03:
               id: P3-G11-T03
               source_id: '010'
@@ -5584,7 +5647,15 @@ content:
               constraints: []
               acceptance: Exactly one Child Service exists for every Model Entity in Target order, each is bound to Model's authoritative class, and no Base Entity or Storage Action is exposed.
               verify: Comparing the Children with Model's published Entities shows a one-to-one match in Target order with each bound class identical, and the Interface's contents show no Base Entity or Storage Action.
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-29T22:24:43Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 011) before running the whole-Logic verification.
+              - at: '2026-09-29T22:27:11Z'
+                transition: claimed -> done
+                check: 'Transient script: compared Entity Service''s Child Services with Model''s published Entities and listed the Interface''s public names.'
+                outcome: Fifteen Child Services correspond one-to-one, in Target order, to Model's Entities with identical bound classes; the sixteen public names are the Children and the Instance Enum, with no Base Entity, flattened Action, or Storage Action.
             P3-G11-T04:
               id: P3-G11-T04
               source_id: '010'
@@ -5605,7 +5676,15 @@ content:
               constraints: []
               acceptance: A record added with an explicit Instance appears there and not on another Instance, an omitted Instance uses Database's default, and the enum member reaches Database unchanged.
               verify: Adding a record with an explicit Instance and reading it back from each active Instance shows it only on the selected one, and an omitted Instance shows it on the default.
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-29T22:24:43Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 011) before running the whole-Logic verification.
+              - at: '2026-09-29T22:27:11Z'
+                transition: claimed -> done
+                check: 'Transient script on throwaway prepared Instances (a temporary SQLite file and a throwaway PostgreSQL database created with the existing local role and dropped afterwards; the shipped Instances were not used): added Brokers through the Broker Child Service with no Instance and with the PostgreSQL member (spying on the Database call), then read each Instance for each Broker.'
+                outcome: The omitted Instance reached Database as none and the record exists only on the default SQLite Instance; the explicit member reached Database as the identical enum member and the record exists only on PostgreSQL; each Instance held its own seeded Broker; the Tables and Initial Data were created on both Instances first.
             P3-G11-T05:
               id: P3-G11-T05
               source_id: '010'
@@ -5626,7 +5705,15 @@ content:
               constraints: []
               acceptance: For every Model, adding a valid Entity through its Child returns the created Entity with a generated identity, and reading it back shows every supplied value stored.
               verify: Adding a valid record for each Model through the root Interface and reading each back shows the returned identity and every supplied value.
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-29T22:24:43Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 011) before running the whole-Logic verification.
+              - at: '2026-09-29T22:27:11Z'
+                transition: claimed -> done
+                check: 'Transient script on throwaway prepared Instances (a temporary SQLite file and a throwaway PostgreSQL database created with the existing local role and dropped afterwards; the shipped Instances were not used): through the root Interface added a valid record for each of the fifteen Models and read each back.'
+                outcome: All fifteen added records returned an integer identity, read back equal to the returned Entity, and matched every supplied value (credential Fields excluded, decimals compared by value; a default decimal supplied as 0 comes back as 0.0, equal in value, which is Database's representation).
             P3-G11-T06:
               id: P3-G11-T06
               source_id: '010'
@@ -5647,7 +5734,15 @@ content:
               constraints: []
               acceptance: For every Model, updating an existing record changes its mutable Fields, leaves its identity unchanged, and returns the updated Entity, while an unknown identity returns an absent result.
               verify: Updating one record of each Model through the root Interface and reading it back shows the changed values and unchanged identity, and updating an unknown identity shows an absent result.
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-29T22:24:43Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 011) before running the whole-Logic verification.
+              - at: '2026-09-29T22:27:11Z'
+                transition: claimed -> done
+                check: 'Transient script on throwaway prepared Instances (a temporary SQLite file and a throwaway PostgreSQL database created with the existing local role and dropped afterwards; the shipped Instances were not used): through the root Interface edited the description of one record per Model, read it back, and updated a copy carrying an unknown identity.'
+                outcome: All fifteen updates returned the record with the changed value and unchanged identity and the change was read back; the unknown identity returned None for every Model.
             P3-G11-T07:
               id: P3-G11-T07
               source_id: '010'
@@ -5668,7 +5763,15 @@ content:
               constraints: []
               acceptance: For every Model, listing returns every stored record, including the Initial Data, and honours a filter, an ordering, and a limit.
               verify: Listing each Model through the root Interface shows the Initial Data records, and a filtered, ordered, limited list of one Model shows the expected subset.
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-29T22:24:43Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 011) before running the whole-Logic verification.
+              - at: '2026-09-29T22:27:11Z'
+                transition: claimed -> done
+                check: 'Transient script on throwaway prepared Instances (a temporary SQLite file and a throwaway PostgreSQL database created with the existing local role and dropped afterwards; the shipped Instances were not used): listed each Model, compared with its count and Initial Data, and listed Currency with a filter, an ordering with a limit, and two OR-combined filters.'
+                outcome: For all fifteen Models the list held every stored record (the Initial Data plus the added one) and equalled the count; the filter returned one record, the ordered limited list returned two in descending order, and the OR combination returned two.
             P3-G11-T08:
               id: P3-G11-T08
               source_id: '010'
@@ -5689,7 +5792,15 @@ content:
               constraints: []
               acceptance: For every Model, retrieving an existing identity returns that record and retrieving an unknown identity returns an absent result.
               verify: Retrieving a known and an unknown identity for each Model through the root Interface shows the record and an absent result respectively.
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-29T22:24:43Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 011) before running the whole-Logic verification.
+              - at: '2026-09-29T22:27:11Z'
+                transition: claimed -> done
+                check: 'Transient script on throwaway prepared Instances (a temporary SQLite file and a throwaway PostgreSQL database created with the existing local role and dropped afterwards; the shipped Instances were not used): retrieved a known and an unknown identity for each Model.'
+                outcome: All fifteen known identities returned the record and the unknown identity returned None.
             P3-G11-T09:
               id: P3-G11-T09
               source_id: '010'
@@ -5710,7 +5821,15 @@ content:
               constraints: []
               acceptance: For every Model, enabling an existing record sets its active Field to true and returns the Entity, and an unknown identity returns an absent result.
               verify: Disabling then enabling one record of each Model through the root Interface and reading it back shows the active Field true, and an unknown identity shows an absent result.
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-29T22:24:43Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 011) before running the whole-Logic verification.
+              - at: '2026-09-29T22:27:11Z'
+                transition: claimed -> done
+                check: 'Transient script on throwaway prepared Instances (a temporary SQLite file and a throwaway PostgreSQL database created with the existing local role and dropped afterwards; the shipped Instances were not used): disabled then enabled one record per Model, reading each back, and enabled an unknown identity.'
+                outcome: For all fifteen Models the active Field became true again and the returned Entity showed it; the unknown identity returned None.
             P3-G11-T10:
               id: P3-G11-T10
               source_id: '010'
@@ -5731,7 +5850,15 @@ content:
               constraints: []
               acceptance: For every Model, disabling an existing record sets its active Field to false and returns the Entity, and an unknown identity returns an absent result.
               verify: Disabling one record of each Model through the root Interface and reading it back shows the active Field false, and an unknown identity shows an absent result.
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-29T22:24:43Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 011) before running the whole-Logic verification.
+              - at: '2026-09-29T22:27:11Z'
+                transition: claimed -> done
+                check: 'Transient script on throwaway prepared Instances (a temporary SQLite file and a throwaway PostgreSQL database created with the existing local role and dropped afterwards; the shipped Instances were not used): disabled one record per Model, read it back, and disabled an unknown identity.'
+                outcome: For all fifteen Models the active Field became false and the returned Entity and a fresh read showed it; the unknown identity returned None.
             P3-G11-T11:
               id: P3-G11-T11
               source_id: '010'
@@ -5752,7 +5879,15 @@ content:
               constraints: []
               acceptance: For every Model, deleting an existing record reports success and the record no longer appears, and an unknown identity reports that nothing was deleted.
               verify: Deleting a newly added record of each Model through the root Interface shows success and its absence afterwards, and an unknown identity shows nothing deleted.
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-29T22:24:43Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 011) before running the whole-Logic verification.
+              - at: '2026-09-29T22:27:11Z'
+                transition: claimed -> done
+                check: 'Transient script on throwaway prepared Instances (a temporary SQLite file and a throwaway PostgreSQL database created with the existing local role and dropped afterwards; the shipped Instances were not used): deleted the added, unreferenced record of each Model in reverse order, read it back, and deleted it again.'
+                outcome: All fifteen deletions returned True and the record was gone; the second delete returned False for every Model.
             P3-G11-T12:
               id: P3-G11-T12
               source_id: '010'
@@ -5770,7 +5905,15 @@ content:
               constraints: []
               acceptance: Count returns the number of matching records, Sum totals the given Field and returns zero when nothing is usable, Min and Max return the extremes or an absent result, and Truncate removes every record of the Entity and reports how many.
               verify: Applying each Action to a Model holding known records shows the expected number, total, smallest, largest, and deleted count, and an empty match shows zero and absent results.
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-29T22:24:43Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 011) before running the whole-Logic verification.
+              - at: '2026-09-29T22:27:11Z'
+                transition: claimed -> done
+                check: 'Transient script on throwaway prepared Instances (a temporary SQLite file and a throwaway PostgreSQL database created with the existing local role and dropped afterwards; the shipped Instances were not used): counted, summed, minimized, and maximized Currency Fields with matching and empty filters; added two Positions with known decimal volumes and aggregated them, then truncated twice.'
+                outcome: Count returned 8 and 2 for the IN filter; Sum, Min, and Max returned 14, 0, and 2, then 0, None, None on an empty match; decimal Sum, Min, and Max returned 0.35, 0.1, and 0.25 exactly; Truncate returned 2 and then 0 and left the Entity empty.
             P3-G11-T13:
               id: P3-G11-T13
               source_id: '010'
@@ -5787,7 +5930,15 @@ content:
               constraints: []
               acceptance: Importing Logic starts no process, opens no connection, reads no runtime configuration, and Logic's dependencies contain no API framework and no transport schema.
               verify: Importing Logic with every external dependency replaced by an observer shows zero calls and no running process, and inspecting its dependencies shows no API framework.
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-29T22:24:43Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 011) before running the whole-Logic verification.
+              - at: '2026-09-29T22:27:11Z'
+                transition: claimed -> done
+                check: 'Transient scripts: in a fresh interpreter imported the root Interface and listed loaded API frameworks and the active thread count; read Logic''s declared dependencies; searched the source for process, socket, and framework use.'
+                outcome: No API framework module is loaded, only the main thread runs, and the declared dependencies are cryptography, Database, Model, and pyyaml; the source contains no process start, socket, or transport schema.
             P3-G11-T14:
               id: P3-G11-T14
               source_id: '010'
@@ -5813,7 +5964,15 @@ content:
               constraints: []
               acceptance: The Interface section matches the published set exactly, every Services example reproduces, every documented failure reproduces, and no real secret appears.
               verify: Running every documented example and failure against a prepared Database Instance reproduces the stated outcomes, and the Interface section matches the published set.
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-29T22:24:43Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 011) before running the whole-Logic verification.
+              - at: '2026-09-29T22:27:11Z'
+                transition: claimed -> done
+                check: 'Transient scripts: re-ran every README example against a throwaway prepared Instance and compared the Interface section with the published set; searched for real secrets.'
+                outcome: Twenty-one Python examples ran and every printed result matched (which includes the three documented failures); the Interface section lists exactly Entity and no unpublished Service as external capability; no real secret appears.
             P3-G11-T15:
               id: P3-G11-T15
               source_id: '010'
@@ -5843,4 +6002,12 @@ content:
               constraints: []
               acceptance: No file of Model or Database differs from its state before Logic work began.
               verify: A comparison of the two Components' contents before and after shows no difference.
-              status: todo
+              status: done
+              log:
+              - at: '2026-09-29T22:24:43Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 011) before running the whole-Logic verification.
+              - at: '2026-09-29T22:27:11Z'
+                transition: claimed -> done
+                check: Compared the Model and Database Components with the commit that preceded this work (git diff and untracked-file listing) and listed the Database storage area.
+                outcome: 'No tracked or untracked file under Model or Database differs from the preceding commit; the Database storage area still holds only its placeholder. Static checks on Logic: ruff check, ruff format, and pyright report no findings.'

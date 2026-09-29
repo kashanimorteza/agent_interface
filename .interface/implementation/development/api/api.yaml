@@ -2,9 +2,9 @@
 meta:
   path: ".interface/implementation/development/api/api.yaml"
   path_note: "The Preferences layer of the API Component."
-  purpose: "Configurable defaults for API identity, layout, Groups, realization, network, runtime, lifecycle, and documentation."
+  purpose: "Configurable defaults for API identity, layout, Groups, realization, network, and runtime."
   standard: "Agent Project Interface"
-  version: "8.0"
+  version: "9.0"
   updated: "2026-09-30"
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -16,22 +16,20 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings and layout; resolve the selected language and its packages; follow every Group Definition and Preferences reference; derive the Base URL from network values; then apply identity, runtime, lifecycle, and documentation defaults. Generate config.yaml according to the referenced API Configuration Structure."
+  consumption: "Read settings and layout; resolve the selected language and its packages; resolve every known Group Reference and follow that Group's eligibility rules during generation; derive the Base URL from network values; then apply identity and runtime defaults. Generate config.yaml according to the referenced API Configuration Structure. At runtime, Bootstrap reads config.yaml and registers only generated and enabled Group realizations."
   selection: "Preserve explicit compatible project choices. Use these Preferences for unstated API choices. A package may choose mechanics left unstated here but may not change the responsibilities or URL structure declared by API Definition."
-  version_resolution: "Resolve latest-compatible to a concrete mutually compatible package version at implementation time and preserve every explicit compatible version."
-  matching: "Match Groups by their exact configured identities and referenced files. Reject missing, stale, invalid, or colliding references without silent repair. Derive url from transport_protocol, host, port, and the optional key instead of resolving it independently."
+  version_resolution: "Resolve latest-compatible to a concrete mutually compatible package version at implementation time and preserve every explicit compatible package version."
+  matching: "Match every Group Reference key to the fixed role in its referenced Preferences and resolve exactly one Definition and Preferences file. Register only generated and enabled Groups. Derive a valid unique URL segment from each generated Group's configurable name, and reject missing, stale, invalid, ambiguous, or colliding values without silent repair. Derive url from transport_protocol, host, port, and the optional key instead of resolving it independently."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - "settings: identify API and its configuration structure."
-  - "layout: resolve Bootstrap, Groups, configuration, and documentation names."
+  - "layout: resolve Bootstrap, Groups container, and Configuration names."
   - "development: resolve the default language and its API-owned packages."
-  - "groups: follow every Group Definition and Preferences reference."
+  - "groups: resolve each stable Group role and follow its Definition, Preferences, and eligibility rules during generation."
   - "network: resolve transport_protocol, host, port, optional key, and derived url."
-  - "identity: resolve title, description, and the non-routing API version."
+  - "identity: resolve title and description."
   - "runtime: resolve the worker count."
-  - "lifecycle: resolve OpenAPI, interactive docs, and ReDoc runtime paths."
-  - "documentation: resolve file-based API documentation."
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
@@ -42,8 +40,6 @@ content_map:
   - network
   - identity
   - runtime
-  - lifecycle
-  - documentation
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
@@ -56,20 +52,15 @@ content:
       directory: "api"
       package: "api"
     configuration:
-      file: "config.yaml"
       structure: ".interface/foundation/schema/api.yaml"
 
   # <!-------------------------------------------- layout -->
   layout:
-    names_configurable: true
     directories:
       groups: "groups"
     files:
       bootstrap: "bootstrap"
       configuration: "config.yaml"
-      documentation: "README.md"
-    patterns:
-      group: "<group>"
 
   # <!-------------------------------------------- development -->
   development:
@@ -113,32 +104,7 @@ content:
   identity:
     title: "Target API"
     description: ""
-    version: "1.0.0"
 
   # <!-------------------------------------------- runtime -->
   runtime:
     workers: 2
-
-  # <!-------------------------------------------- lifecycle -->
-  lifecycle:
-    openapi:
-      path: "/schema"
-    docs:
-      path: "/docs"
-    redoc:
-      path: "/redoc"
-
-  # <!-------------------------------------------- documentation -->
-  documentation:
-    file: "README.md"
-    location: "the Component root"
-    format: "markdown"
-    audience: "API consumers"
-    order:
-      - overview
-      - groups
-      - setup
-      - use
-      - troubleshooting
-    sections:
-      groups: "Introduce every registered Group without creating separate Group documentation; runtime API documentation is produced by the selected API package from registered Endpoints."
