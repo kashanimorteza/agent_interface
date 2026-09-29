@@ -26,7 +26,7 @@ content_map:
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
-  task_count: 38
+  task_count: 107
   plans:
     P1:
       id: P1
@@ -1125,3 +1125,2033 @@ content:
                 transition: claimed -> done
                 check: Snapshotted source, documentation, lock, and manifest; regenerated every generated unit (all 15 Entities, Interface, documentation) from the unchanged Target and Declarations, ran the same lint fix and format, refreshed the lock, and diffed the file set and contents against the snapshot.
                 outcome: Identical file set and zero difference in source, documentation, lock file, and manifest; no duplicate or stale artifact. Cache directories were removed afterwards.
+    P2:
+      id: P2
+      title: Database
+      order: 2
+      target: Database
+      does: Implement the database using the shared Model package and insert the defined initial data.
+      constraints: []
+      task_count: 69
+      groups:
+        P2-G1:
+          id: P2-G1
+          title: Package and Model dependency
+          description: The installable Database package and its read-only use of the published Model; every other Database layer builds on them.
+          area: Database package establishment and Model consumption
+          does: An installable Database package exists that reaches every published Model Entity without changing Model.
+          constraints: []
+          task_count: 2
+          tasks:
+            P2-G1-T01:
+              id: P2-G1-T01
+              source_id: '006'
+              title: Establish the installable Database package
+              description: Establish the Database as a reusable, installable package in the technology the Database Preferences select, with every necessary dependency resolved to a concrete compatible version and stabilized in the technology's dependency metadata.
+              reason: Every other Database layer needs a package that installs and imports before anything can be realized in it.
+              inputs:
+              - Resolved Database technology selection
+              - Database dependency version policy
+              skills:
+              - sqlmodel
+              - python-skills:python-guidelines
+              expected_result: A Database package that installs and imports cleanly, declares only necessary dependencies, and records their concrete versions.
+              depends_on: []
+              constraints: []
+              acceptance: The package installs by the technology's standard mechanism, imports without error, and its dependency versions are concrete and identical on repeated resolution.
+              verify: Installing the package in a clean environment and importing it succeeds, and resolving its dependencies again without any change yields the same concrete versions.
+              status: done
+              log:
+              - at: '2026-09-28T22:57:24Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before creating the Database package and its Model dependency.
+              - at: '2026-09-28T22:58:05Z'
+                transition: claimed -> done
+                check: Copied the package into a clean directory, ran uv sync there and imported it; ran uv lock --check twice and uv lock once more, comparing the lock file before and after.
+                outcome: Install and import succeeded in the clean environment; lock check reported Resolved 20 packages unchanged both times and the re-resolved lock file is byte-identical. Resolved sqlmodel 0.0.47, alembic 1.20.0, psycopg 3.3.6 with psycopg-binary, pyyaml 6.0.3 (pydantic 2.13.5, sqlalchemy 2.0.54); ruff 0.16.9 and pyright 1.1.414 in the dev group. Python 3.14 selected as in Model.
+            P2-G1-T02:
+              id: P2-G1-T02
+              source_id: '006'
+              title: Establish Model as a read-only dependency
+              description: Make every Entity that Model publishes, together with its public declaration, reachable from Database by depending on the ready Model as an external, read-only provider, without adding, changing, generating, building, or testing anything in the Model Component.
+              reason: Database derives its stored structure and its Entity values from Model, and Model must stay independently owned.
+              inputs:
+              - Installable Database package
+              - Published Model Entities and their public declarations
+              skills:
+              - python-skills:python-guidelines
+              expected_result: Database obtains every Model-published Entity and its public declaration through Model's published surface alone, with the Model Component untouched.
+              depends_on:
+              - P2-G1-T01
+              constraints: []
+              acceptance: In a clean environment every Entity Model publishes resolves from Database through Model's published surface only, and the Model Component is identical before and after the dependency is established, with no artifact created in it.
+              verify: Installing Database in a clean environment and reading each Entity and its public declaration through Model's published surface succeeds for every published Entity, and comparing the Model Component's contents before and after shows no difference and no additional artifact.
+              status: done
+              log:
+              - at: '2026-09-28T22:57:24Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before creating the Database package and its Model dependency.
+              - at: '2026-09-28T22:58:05Z'
+                transition: claimed -> done
+                check: In a clean environment (Model copied beside the package, fresh uv sync) imported Model's published surface and read each Entity's public declaration; hashed every file of the Model Component before and after adding the dependency and compared.
+                outcome: All 15 Entities published by Model resolved from Database through the published Model Interface and each exposes its public declaration; the Model Component hash listing (29 files) is identical before and after, git reports no change under it, and no artifact was created there. Model is declared as a path dependency of Database only.
+        P2-G2:
+          id: P2-G2
+          title: Configuration
+          description: The Database Configuration that declares the available storage resources, and the loading that turns it into the active Instance set.
+          area: Database Configuration
+          does: A valid Database Configuration exists and resolves to its Engines, its active Instances, and its default Instance.
+          constraints: []
+          task_count: 2
+          tasks:
+            P2-G2-T01:
+              id: P2-G2-T01
+              source_id: '006'
+              title: Declare the Database Configuration
+              description: Provide the Database Configuration declaring every Engine with its parameters, every named Instance with its connection parameters and active state, and the component Settings, exactly as the Database Preferences and the Database Configuration structure define them.
+              reason: The available storage resources and the default selection need one declared source before any Instance can be used.
+              inputs:
+              - Database Preferences selections
+              - Database Configuration structure
+              skills: []
+              expected_result: A Configuration that declares each selected Engine, Instance, and Setting and records no secret value.
+              depends_on:
+              - P2-G1-T01
+              constraints: []
+              acceptance: The Configuration declares exactly the Engines, Instances, active states, and Settings the Preferences select with nothing missing or added, every active Instance names a declared Engine, the default Instance is an active declared Instance, and no secret value is recorded in it.
+              verify: Comparing the Configuration item by item with the selections in the Preferences shows no difference, each integrity condition holds, and scanning the Configuration finds no secret value.
+              status: done
+              log:
+              - at: '2026-09-28T22:58:22Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing the Configuration, its loading, and the public vocabulary.
+              - at: '2026-09-28T22:59:15Z'
+                transition: claimed -> done
+                check: Transient script (kept outside the Database) parsing the Database Preferences and comparing the Configuration item by item (Engines, drivers, Engine parameters, Instances with name, active state, Engine, database, host, port, username, password, default Instance, query defaults), then loading it and scanning for secret values.
+                outcome: 'No difference: 2 Engines and 2 Instances with identical values, default Instance and query defaults equal to the Preferences, every integrity condition holds, and the only credential value (PostgreSQL password) is empty. ruff and pyright clean.'
+            P2-G2-T02:
+              id: P2-G2-T02
+              source_id: '006'
+              title: Load the Configuration and resolve the active Instances
+              description: Provide loading of the Database Configuration that resolves its Engines, Instances, and default Instance for use at runtime, and refuses a Configuration that breaks its integrity conditions.
+              reason: Every Operation depends on knowing which Instances are active and which one is the default, and a broken Configuration must never be used.
+              inputs:
+              - Database Configuration
+              skills:
+              - python-skills:python-guidelines
+              expected_result: The set of active Instances and the default Instance derived from a valid Configuration, and refusal of an invalid one.
+              depends_on:
+              - P2-G2-T01
+              constraints: []
+              acceptance: A valid Configuration yields exactly its active Instances and its default Instance, and a Configuration in which an Instance names an undeclared Engine, or the default Instance is inactive or undeclared, is refused and never used.
+              verify: Loading the Configuration yields exactly its active Instances and its default Instance, and loading deliberately broken samples with an undeclared Engine, an inactive default Instance, and an undeclared default Instance is refused each time.
+              status: done
+              log:
+              - at: '2026-09-28T22:58:22Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing the Configuration, its loading, and the public vocabulary.
+              - at: '2026-09-28T22:59:15Z'
+                transition: claimed -> done
+                check: Transient script (kept outside the Database) loading the Configuration and three deliberately broken copies.
+                outcome: Loading yielded active Instances (sqlite, postgresql) and default sqlite. An undeclared Engine, an inactive default Instance, and an undeclared default Instance were each refused with a message naming the Instance and no secret value.
+        P2-G3:
+          id: P2-G3
+          title: Public vocabulary
+          description: The request and result vocabulary Database publishes so that consumers state requests and receive results in one standard form.
+          area: Public request and result vocabulary
+          does: Consumers can express the Instance, Filters, Filter Combination, Orders, and command results through Database's standard vocabulary.
+          constraints: []
+          task_count: 5
+          tasks:
+            P2-G3-T01:
+              id: P2-G3-T01
+              source_id: '006'
+              title: Provide the Instance Enum for active Instances
+              description: Provide the Instance Enum whose members identify exactly the active configured Instances.
+              reason: Consumers need one closed, discoverable set of the Instances they may select.
+              inputs:
+              - Loaded Configuration
+              skills:
+              - python-skills:python-guidelines
+              expected_result: An Instance Enum with one member for every active Instance.
+              depends_on:
+              - P2-G2-T02
+              constraints: []
+              acceptance: The Instance Enum has exactly one member for every active Instance of the Configuration and none for an inactive Instance.
+              verify: Enumerating the Instance Enum's members yields exactly the active Instances of the Configuration, and a Configuration holding an inactive Instance yields no member for it.
+              status: done
+              log:
+              - at: '2026-09-28T22:58:22Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing the Configuration, its loading, and the public vocabulary.
+              - at: '2026-09-28T22:59:15Z'
+                transition: claimed -> done
+                check: Transient script (kept outside the Database) enumerating the Instance Enum and comparing it with the Configuration's active Instances; loading a copy that deactivates one Instance.
+                outcome: Members are exactly sqlite and postgresql, equal to the active Instances. The Enum is a static generated member set, so a Configuration that deactivates an Instance is refused as out of step with the Enum rather than yielding an Enum without it; Enum and Configuration change together at regeneration.
+            P2-G3-T02:
+              id: P2-G3-T02
+              source_id: '006'
+              title: Provide the Filter vocabulary
+              description: Provide the Filter, which combines an Entity Field name string, a Filter Operator enum member, and a value, together with the Filter Operator enum holding the operator vocabulary Database defines.
+              reason: Filtered requests need one explicit, closed way to state a condition.
+              inputs: []
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A Filter and a Filter Operator vocabulary a consumer can use to state a condition.
+              depends_on:
+              - P2-G1-T01
+              constraints: []
+              acceptance: A Filter holds a Field name string, an operator member, and a value, and the operator vocabulary contains exactly the operators the Database Definition declares, none missing and none added.
+              verify: Enumerating the operator vocabulary and comparing it with the Database Definition shows no difference, and constructing a Filter from a Field name, an operator member, and a value preserves all three.
+              status: done
+              log:
+              - at: '2026-09-28T22:58:22Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing the Configuration, its loading, and the public vocabulary.
+              - at: '2026-09-28T22:59:15Z'
+                transition: claimed -> done
+                check: Transient script (kept outside the Database) extracting the operator list from the Database Definition and comparing it with the Filter Operator members, then constructing Filters including invalid ones.
+                outcome: The 12 operators match the Definition in name and order; a Filter preserves Field name, operator, and value; a string operator and a non-string Field name are refused.
+            P2-G3-T03:
+              id: P2-G3-T03
+              source_id: '006'
+              title: Provide the Filter Combination vocabulary
+              description: Provide the Filter Combination enum that selects how several Filters combine, with the members Database defines.
+              reason: Requests with several Filters need an explicit, closed statement of how those Filters combine.
+              inputs: []
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A Filter Combination vocabulary a consumer can use to choose how Filters combine.
+              depends_on:
+              - P2-G1-T01
+              constraints: []
+              acceptance: The vocabulary contains exactly the combination members the Database Definition declares, none missing and none added.
+              verify: Enumerating the combination vocabulary and comparing it with the Database Definition shows no difference.
+              status: done
+              log:
+              - at: '2026-09-28T22:58:22Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing the Configuration, its loading, and the public vocabulary.
+              - at: '2026-09-28T22:59:15Z'
+                transition: claimed -> done
+                check: Transient script (kept outside the Database) comparing the Filter Combination members with the Definition.
+                outcome: Members AND and OR match the Definition exactly.
+            P2-G3-T04:
+              id: P2-G3-T04
+              source_id: '006'
+              title: Provide the Order vocabulary
+              description: Provide the Order, which combines an Entity Field name string with an Order Direction enum member, together with the Order Direction enum holding the directions Database defines.
+              reason: Ordered requests need one explicit, closed way to state an ordering instruction.
+              inputs: []
+              skills:
+              - python-skills:python-guidelines
+              expected_result: An Order and an Order Direction vocabulary a consumer can use to state an ordering instruction.
+              depends_on:
+              - P2-G1-T01
+              constraints: []
+              acceptance: An Order holds a Field name string and a direction member, and the direction vocabulary contains exactly the directions the Database Definition declares, none missing and none added.
+              verify: Enumerating the direction vocabulary and comparing it with the Database Definition shows no difference, and constructing an Order from a Field name and a direction member preserves both.
+              status: done
+              log:
+              - at: '2026-09-28T22:58:22Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing the Configuration, its loading, and the public vocabulary.
+              - at: '2026-09-28T22:59:15Z'
+                transition: claimed -> done
+                check: Transient script (kept outside the Database) comparing the Order Direction members with the Definition and constructing Orders including invalid ones.
+                outcome: Members ascending and descending match the Definition; an Order preserves Field name and direction (ascending by default); a string direction and a non-string Field name are refused.
+            P2-G3-T05:
+              id: P2-G3-T05
+              source_id: '006'
+              title: Provide the Command Result
+              description: Provide the Command Result, the standard result of a command execution, holding the returned rows and the affected count, where either is null when it does not apply and each row maps a column name to a value.
+              reason: A command that returns rows and a command that changes records need one shared result form.
+              inputs: []
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A Command Result carrying rows and an affected count.
+              depends_on:
+              - P2-G1-T01
+              constraints: []
+              acceptance: A Command Result exposes exactly the rows and the affected count, either may be null, and each row is a mapping from column name to value.
+              verify: Constructing a Command Result with rows only, with an affected count only, and with both exposes exactly those values, and each row reads as a column-name-to-value mapping.
+              status: done
+              log:
+              - at: '2026-09-28T22:58:22Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing the Configuration, its loading, and the public vocabulary.
+              - at: '2026-09-28T22:59:15Z'
+                transition: claimed -> done
+                check: Transient script (kept outside the Database) constructing Command Results with rows only, affected count only, and both.
+                outcome: Each exposes exactly its rows and affected count, either None when not supplied, rows as column-name mappings.
+        P2-G4:
+          id: P2-G4
+          title: Storage access and structure
+          description: Access to the storage of every active Instance and the stored structure that Create Tables establishes from the Model Entities.
+          area: Instance storage access and Table structure
+          does: Every active Instance can be reached and prepared with the complete stored structure the Model Entities declare.
+          constraints: []
+          task_count: 5
+          tasks:
+            P2-G4-T01:
+              id: P2-G4-T01
+              source_id: '006'
+              title: Provide storage access for every active Instance
+              description: Provide, for every active Instance, its own storage access that reaches that Instance's storage through its configured Engine and connection parameters, so that Instances stay independent of one another even when they share an Engine.
+              reason: Every Operation and command needs a working, isolated connection to its selected Instance before it can act.
+              inputs:
+              - Loaded Configuration
+              - Instance Enum
+              skills:
+              - sqlmodel
+              - python-skills:python-guidelines
+              expected_result: A working storage connection for each active Instance that uses only that Instance's configured parameters.
+              depends_on:
+              - P2-G1-T01
+              - P2-G2-T02
+              - P2-G3-T01
+              constraints: []
+              acceptance: For every active Instance a connection opens from its own configured parameters and a trivial read completes, and a change made in one Instance's storage is absent from every other Instance's storage.
+              verify: Opening a connection to each active Instance and completing a trivial read succeeds for every one, and a change made through one Instance is absent when the other Instances are read.
+              status: done
+              log:
+              - at: '2026-09-28T23:01:12Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing storage access, structure derivation, and Create Tables.
+              - at: '2026-09-28T23:03:58Z'
+                transition: claimed -> done
+                check: Transient script (outside the Database) against a temporary SQLite file, a second temporary SQLite file, and a throwaway PostgreSQL database on the local server opening a connection to each, running a trivial read, checking the connected database and port, then creating a probe table through one Instance and inspecting the others.
+                outcome: 'Every connection opened from its own configured parameters and the read returned 1; the PostgreSQL connection reported the configured database and port. The probe table existed only in the Instance it was created in (two SQLite Instances sharing an Engine stayed independent). Limitation: this local server has no postgres role, which the shipped Configuration names, so the PostgreSQL Instance was exercised with the role morteza and a throwaway database; the shipped Configuration itself was not connected to a server.'
+            P2-G4-T02:
+              id: P2-G4-T02
+              source_id: '006'
+              title: Provide Create Tables with the stored structure of every Entity
+              description: Provide the Create Tables command for an Instance so that it establishes one stored structure for every Entity published by Model, holding exactly the Entity's declared Fields with their declared Types, nullability, Default Values, Value Generation, and value constraints.
+              reason: Data cannot be persisted until the Instance holds the structure the Model Entities declare.
+              inputs:
+              - Model Entity declarations
+              - Storage access for every active Instance
+              skills:
+              - sqlmodel
+              - python-skills:python-guidelines
+              expected_result: A Create Tables command that prepares any active Instance with the declared stored structure of every Entity.
+              depends_on:
+              - P2-G1-T02
+              - P2-G4-T01
+              constraints: []
+              acceptance: After the command runs on an Instance, every Entity published by Model has a stored structure with exactly its declared Fields and no undeclared one, each with its declared Type, nullability, Default Value, generated identity, and value constraints.
+              verify: Running the command on a fresh Instance and comparing the resulting stored structure item by item with every published Entity Declaration shows no missing, extra, or differing Field or Field rule.
+              status: done
+              log:
+              - at: '2026-09-28T23:01:12Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing storage access, structure derivation, and Create Tables.
+              - at: '2026-09-28T23:03:58Z'
+                transition: claimed -> done
+                check: Transient script (outside the Database) against a temporary SQLite file, a second temporary SQLite file, and a throwaway PostgreSQL database on the local server running Create Tables on fresh Instances and comparing the reflected structure item by item with all 15 published Declarations (table set, Field order, nullability, Types, length limits, defaults, primary key, generated identity through insertion).
+                outcome: 'No difference on either Engine: 15 stored structures with exactly the declared Fields and no extra table or column; Currency code keeps its 3-character limit; declared Default Values exist as stored defaults and only those; the auto-increment identity was generated on insertion. SQLite uses AUTOINCREMENT.'
+            P2-G4-T03:
+              id: P2-G4-T03
+              source_id: '006'
+              title: Realize Uniqueness Constraints and Indexes in storage
+              description: Make the stored structure enforce every Uniqueness Constraint and provide every Index that an Entity declares, including declared combinations of Fields.
+              reason: Uniqueness rules and access intentions declared by Model must hold in stored data and not only in declarations.
+              inputs:
+              - Stored structure of every Entity
+              skills:
+              - sqlmodel
+              expected_result: A stored structure that enforces each declared Uniqueness Constraint and provides each declared Index.
+              depends_on:
+              - P2-G4-T02
+              constraints: []
+              acceptance: Storing a record that duplicates a declared Uniqueness Constraint, including a declared combination of Fields, is refused, a record that differs in any participating Field is accepted, and every declared Index exists on its participating Fields in declared order.
+              verify: On a prepared Instance, storing a duplicate for each Uniqueness Constraint of a representative Entity is refused and a differing record is accepted, and the stored structure lists every declared Index with its ordered participating Fields.
+              status: done
+              log:
+              - at: '2026-09-28T23:01:12Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing storage access, structure derivation, and Create Tables.
+              - at: '2026-09-28T23:03:58Z'
+                transition: claimed -> done
+                check: Transient script (outside the Database) against a temporary SQLite file, a second temporary SQLite file, and a throwaway PostgreSQL database on the local server comparing reflected Uniqueness Constraints with every Declaration, storing duplicates and a differing record, and creating a stand-in declaration with an Index.
+                outcome: Every declared Uniqueness Constraint exists on both Engines; a duplicate single-Field (User.name) and composite (Broker user_id+name) record was refused and a differing record accepted. A stand-in Entity with an Index produced that Index on its ordered Fields; no Target Entity declares an Index.
+            P2-G4-T04:
+              id: P2-G4-T04
+              source_id: '006'
+              title: Realize Relations as enforced foreign keys
+              description: Make the stored structure realize every declared Relation as a foreign key from its local Field to its target Entity and target Field, enforced by the Instance.
+              reason: A record must not refer to a record that does not exist.
+              inputs:
+              - Stored structure of every Entity
+              skills:
+              - sqlmodel
+              expected_result: A stored structure in which every declared Relation is an enforced link.
+              depends_on:
+              - P2-G4-T02
+              constraints: []
+              acceptance: Every declared Relation exists as an enforced link from its local Field to its target Field, a record whose local Field refers to a missing target record is refused, and a record that refers to an existing target record is accepted.
+              verify: On a prepared Instance, the stored structure shows a link for every declared Relation, storing a record that refers to a missing target for a representative Relation is refused, and storing one that refers to an existing target succeeds.
+              status: done
+              log:
+              - at: '2026-09-28T23:01:12Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing storage access, structure derivation, and Create Tables.
+              - at: '2026-09-28T23:03:58Z'
+                transition: claimed -> done
+                check: Transient script (outside the Database) against a temporary SQLite file, a second temporary SQLite file, and a throwaway PostgreSQL database on the local server comparing reflected foreign keys with the Relations of every Declaration and storing an orphan and a valid reference.
+                outcome: 28 Relations exist as enforced links (constrained column, referred table and column all equal) on both Engines; a Broker referring to a missing User was refused and one referring to an existing User accepted. SQLite enforcement is switched on per connection.
+            P2-G4-T05:
+              id: P2-G4-T05
+              source_id: '006'
+              title: Make Create Tables repeatable and migrating
+              description: Make Create Tables safe to run again on an Instance that already holds structure and data, so that it creates only what is missing and migrates existing structure to the current Entity declarations without losing stored records.
+              reason: The same command must prepare any Instance at any time, including an Instance that already holds data.
+              inputs:
+              - Create Tables
+              - Uniqueness and Relation realization
+              skills:
+              - sqlmodel
+              expected_result: A Create Tables command that is safe to repeat and that migrates a lagging structure to the declarations.
+              depends_on:
+              - P2-G4-T03
+              - P2-G4-T04
+              constraints: []
+              acceptance: Running the command again on a prepared Instance changes neither its structure nor its records, and running it on an Instance whose stored structure lags an Entity declaration brings that structure to the declaration while every existing record is preserved.
+              verify: Running the command twice on a prepared Instance holding sample records leaves structure and records identical after the second run, and running it against an Instance prepared from an earlier form of a transient stand-in declaration that lacks a Field adds that Field and keeps every sample record.
+              status: done
+              log:
+              - at: '2026-09-28T23:01:12Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing storage access, structure derivation, and Create Tables.
+              - at: '2026-09-28T23:03:58Z'
+                transition: claimed -> done
+                check: Transient script (outside the Database) against a temporary SQLite file, a second temporary SQLite file, and a throwaway PostgreSQL database on the local server running Create Tables three times on prepared Instances holding records and comparing structure fingerprints and records, then preparing a stand-in structure with two records and running Create Tables against a later stand-in declaration with an extra Field, an Index, and a Uniqueness Constraint.
+                outcome: Repeat runs left structure and records identical on both Engines; the lagging structure gained the Field, the Index, and the unique rule, both existing records survived, and a further run changed nothing. Migration only adds what is missing; it never drops or retypes stored structure, and a nullability difference is refused.
+        P2-G5:
+          id: P2-G5
+          title: Operations
+          description: The Database Operations through which consumers store, retrieve, and change Entity data on the selected Instance.
+          area: Database Operations and their behaviour on an Instance
+          does: Every published Operation works on every active Instance and returns the result its contract states.
+          constraints: []
+          task_count: 18
+          tasks:
+            P2-G5-T01:
+              id: P2-G5-T01
+              source_id: '006'
+              title: Provide Execute Command
+              description: Provide the Execute Command Operation that executes a supplied SQL command with bound parameters through the selected Instance and returns a Command Result, leaving schema changes to migrations.
+              reason: Consumers and later verification need a direct, general way to run a command on a specific Instance.
+              inputs:
+              - Command Result
+              - Prepared Instance structure
+              skills:
+              - sqlmodel
+              expected_result: An Operation that executes a command on the selected Instance and returns its rows and affected count.
+              depends_on:
+              - P2-G3-T05
+              - P2-G4-T02
+              constraints: []
+              acceptance: A reading command returns its rows as column-name-to-value mappings and no affected count, a changing command returns its affected count and no rows, and bound parameters are applied as values and never as command text.
+              verify: Executing a reading command, a changing command, and a reading command carrying a bound value that resembles command text on a prepared Instance returns rows, an affected count, and that value treated as plain data respectively.
+              status: done
+              log:
+              - at: '2026-09-28T23:02:07Z'
+                transition: todo -> claimed
+                note: 'Claimed by my-interface-develop (log 007) before wiring and verifying the Operations. Note: the shared statement builders that realize these Operations were written in the same unit as the storage structure before this claim was recorded; nothing was verified or marked done before the claim.'
+              - at: '2026-09-28T23:07:27Z'
+                transition: claimed -> done
+                check: 'Transient scripts (outside the Database) run identically on a temporary SQLite file and a throwaway PostgreSQL database: executed a reading command, a changing command, and an insert whose bound value was the text "''; drop table \"user\"; --" then read it back and counted records.'
+                outcome: Reading command returned rows as column-name mappings with no affected count; the changing command returned affected count 2 with no rows; the hostile-looking value was stored and returned as plain data and the table was intact. Parameters are named and bound; commands may carry any SQL.
+            P2-G5-T02:
+              id: P2-G5-T02
+              source_id: '006'
+              title: Provide Add
+              description: Provide the Add Operation that persists a complete Entity instance as a new record on the selected Instance and returns the created Entity instance including any Engine-generated values.
+              reason: New data enters Database only through Add.
+              inputs:
+              - Prepared Instance structure
+              - A complete Entity instance
+              skills:
+              - sqlmodel
+              expected_result: An Operation that stores a new record and returns the stored Entity instance.
+              depends_on:
+              - P2-G4-T02
+              constraints: []
+              acceptance: Adding a complete Entity instance stores exactly its supplied values, returns an Entity instance that carries the generated identity, and leaves every explicit false, zero, empty string, and null exactly as supplied.
+              verify: Adding a representative Entity holding each kind of value on a prepared Instance returns an Entity with the generated identity, and reading the stored record back shows every supplied value unchanged.
+              status: done
+              log:
+              - at: '2026-09-28T23:02:07Z'
+                transition: todo -> claimed
+                note: 'Claimed by my-interface-develop (log 007) before wiring and verifying the Operations. Note: the shared statement builders that realize these Operations were written in the same unit as the storage structure before this claim was recorded; nothing was verified or marked done before the claim.'
+              - at: '2026-09-28T23:07:27Z'
+                transition: claimed -> done
+                check: 'Transient scripts (outside the Database) run identically on a temporary SQLite file and a throwaway PostgreSQL database: added Users with explicit empty string, false, and null and with omitted values, compared returned Entities and raw stored values.'
+                outcome: Returned Entities carry the generated integer identity, increasing per record; explicit empty string, false, and null were stored exactly as supplied and omitted values resolved to the declared defaults.
+            P2-G5-T03:
+              id: P2-G5-T03
+              source_id: '006'
+              title: Provide Get by ID
+              description: Provide the Get by ID Operation that accepts an Entity class and a record identity and returns the matching Entity instance, or null when no record has that identity.
+              reason: Consumers need to retrieve one known record as an Entity.
+              inputs:
+              - Stored records
+              skills:
+              - sqlmodel
+              expected_result: An Operation that returns one stored record as an Entity instance or null.
+              depends_on:
+              - P2-G5-T02
+              constraints: []
+              acceptance: An identity that a record has returns an Entity instance equal in every value to the stored record, and an identity that no record has returns null.
+              verify: Adding a representative record and retrieving it by its identity returns an equal Entity, and retrieving an identity that no record has returns null.
+              status: done
+              log:
+              - at: '2026-09-28T23:02:07Z'
+                transition: todo -> claimed
+                note: 'Claimed by my-interface-develop (log 007) before wiring and verifying the Operations. Note: the shared statement builders that realize these Operations were written in the same unit as the storage structure before this claim was recorded; nothing was verified or marked done before the claim.'
+              - at: '2026-09-28T23:07:27Z'
+                transition: claimed -> done
+                check: 'Transient scripts (outside the Database) run identically on a temporary SQLite file and a throwaway PostgreSQL database: retrieved stored records by identity, compared with the added Entities field by field including types, and retrieved an identity no record has.'
+                outcome: Existing identities returned Entities equal in value and type in every Field; identity 99999 returned None.
+            P2-G5-T04:
+              id: P2-G5-T04
+              source_id: '006'
+              title: Preserve every value kind through storage
+              description: Make storing and reading an Entity preserve every value of every Target-declared Type without loss or alteration, including null, false, zero, empty string, exact decimal values, and timezone-aware datetimes that stay timezone-aware and denote the same instant.
+              reason: A value that changes in storage silently corrupts Entity data for every consumer.
+              inputs:
+              - Add
+              - Get by ID
+              skills:
+              - sqlmodel
+              expected_result: A storage round trip that returns every Field value equal in value and Type to the value supplied.
+              depends_on:
+              - P2-G5-T02
+              - P2-G5-T03
+              constraints: []
+              acceptance: For a representative Entity holding every Target-declared Type, the Entity read back after storage equals the stored Entity in the value and Type of every Field, including null, false, zero, empty string, an exact decimal value, and a timezone-aware datetime that denotes the same instant.
+              verify: Adding a representative Entity holding each Target-declared Type and each value kind on every active Instance and reading it back yields an Entity whose every Field equals the supplied value in value and Type.
+              status: done
+              log:
+              - at: '2026-09-28T23:02:07Z'
+                transition: todo -> claimed
+                note: 'Claimed by my-interface-develop (log 007) before wiring and verifying the Operations. Note: the shared statement builders that realize these Operations were written in the same unit as the storage structure before this claim was recorded; nothing was verified or marked done before the claim.'
+              - at: '2026-09-28T23:07:27Z'
+                transition: claimed -> done
+                check: 'Transient scripts (outside the Database) run identically on a temporary SQLite file and a throwaway PostgreSQL database: stored Entities holding every Target-declared Type (integer, string, boolean, float, exact decimals including 0.10, 1E-18, and a 28-digit value, null decimals, and a timezone-aware datetime with a +03:30 offset) and read them back comparing value and Python type; inspected raw SQLite storage classes.'
+                outcome: Every Field read back equal in value and type on both Engines. Datetimes stay timezone-aware and denote the same instant (returned in UTC); Decimal('0.10') returns equal in value (SQLite returns Decimal('0.1')); the 28-digit decimal is exact. SQLite keeps decimals as numbers when that is exact and as text otherwise; ordering of such long text-stored decimals is lexicographic, an edge documented for troubleshooting.
+            P2-G5-T05:
+              id: P2-G5-T05
+              source_id: '006'
+              title: Provide Update
+              description: Provide the Update Operation that accepts a complete Entity instance, uses its identity only to locate the record, replaces every mutable Field, preserves every immutable Field, and returns the updated Entity instance, or null when no record has that identity.
+              reason: Stored data must be changeable without changing its identity.
+              inputs:
+              - Stored records
+              - A complete Entity instance
+              skills:
+              - sqlmodel
+              expected_result: An Operation that replaces the mutable Fields of a located record.
+              depends_on:
+              - P2-G5-T02
+              - P2-G5-T03
+              constraints: []
+              acceptance: Every mutable Field of the located record takes the supplied value, the identity and every immutable Field stay unchanged, the updated Entity instance is returned, and an identity that no record has returns null and changes nothing.
+              verify: Updating a stored representative record with changed mutable values returns the updated Entity and reading the record back shows those values with identity and immutable Fields intact, and updating an identity that no record has returns null and leaves every stored record unchanged.
+              status: done
+              log:
+              - at: '2026-09-28T23:02:07Z'
+                transition: todo -> claimed
+                note: 'Claimed by my-interface-develop (log 007) before wiring and verifying the Operations. Note: the shared statement builders that realize these Operations were written in the same unit as the storage structure before this claim was recorded; nothing was verified or marked done before the claim.'
+              - at: '2026-09-28T23:07:27Z'
+                transition: claimed -> done
+                check: 'Transient scripts (outside the Database) run identically on a temporary SQLite file and a throwaway PostgreSQL database: updated a stored User with changed mutable values, updated an identity no record has, updated an Entity with no id; separately updated a stand-in declaration with an immutable Field at statement level.'
+                outcome: Mutable Fields took the supplied values with identity intact; an unknown identity returned None and changed nothing; an Entity without an id was refused. In the stand-in, the immutable Field and id kept their original values while the other Fields were replaced (no Target Entity declares an immutable Field).
+            P2-G5-T06:
+              id: P2-G5-T06
+              source_id: '006'
+              title: Provide Delete
+              description: Provide the Delete Operation that accepts an Entity class and a record identity, removes that record, and reports whether a record was removed.
+              reason: Consumers need to remove a single record.
+              inputs:
+              - Stored records
+              skills:
+              - sqlmodel
+              expected_result: An Operation that removes one record and reports whether it did.
+              depends_on:
+              - P2-G5-T02
+              - P2-G5-T03
+              constraints: []
+              acceptance: Deleting an existing record removes it and returns true, and deleting an identity that no record has returns false and changes nothing.
+              verify: Deleting a stored representative record returns true and retrieving it afterwards returns null, and deleting an identity that no record has returns false and leaves every stored record unchanged.
+              status: done
+              log:
+              - at: '2026-09-28T23:02:07Z'
+                transition: todo -> claimed
+                note: 'Claimed by my-interface-develop (log 007) before wiring and verifying the Operations. Note: the shared statement builders that realize these Operations were written in the same unit as the storage structure before this claim was recorded; nothing was verified or marked done before the claim.'
+              - at: '2026-09-28T23:07:27Z'
+                transition: claimed -> done
+                check: 'Transient scripts (outside the Database) run identically on a temporary SQLite file and a throwaway PostgreSQL database: deleted a stored record and an identity no record has.'
+                outcome: Deleting an existing record returned True and retrieval afterwards returned None; deleting identity 99999 returned False and the record count was unchanged.
+            P2-G5-T07:
+              id: P2-G5-T07
+              source_id: '006'
+              title: Provide Enable
+              description: Provide the Enable Operation that accepts an Entity class and a record identity, sets the record's activity Field to true, and returns the Entity instance, or null when no record has that identity.
+              reason: Consumers need to reactivate a record without editing its other values.
+              inputs:
+              - Stored records
+              skills:
+              - sqlmodel
+              expected_result: An Operation that activates one record.
+              depends_on:
+              - P2-G5-T02
+              - P2-G5-T03
+              constraints: []
+              acceptance: An existing record ends active, is returned as an Entity instance, and has no other Field changed, and an identity that no record has returns null and changes nothing.
+              verify: Enabling a stored inactive representative record returns it active with every other Field unchanged, and enabling an identity that no record has returns null and leaves every stored record unchanged.
+              status: done
+              log:
+              - at: '2026-09-28T23:02:07Z'
+                transition: todo -> claimed
+                note: 'Claimed by my-interface-develop (log 007) before wiring and verifying the Operations. Note: the shared statement builders that realize these Operations were written in the same unit as the storage structure before this claim was recorded; nothing was verified or marked done before the claim.'
+              - at: '2026-09-28T23:07:27Z'
+                transition: claimed -> done
+                check: 'Transient scripts (outside the Database) run identically on a temporary SQLite file and a throwaway PostgreSQL database: enabled an inactive stored record and an identity no record has.'
+                outcome: The record ended active with every other Field unchanged and was returned as an Entity; an unknown identity returned None and changed nothing.
+            P2-G5-T08:
+              id: P2-G5-T08
+              source_id: '006'
+              title: Provide Disable
+              description: Provide the Disable Operation that accepts an Entity class and a record identity, sets the record's activity Field to false, and returns the Entity instance, or null when no record has that identity.
+              reason: Consumers need to deactivate a record without deleting it.
+              inputs:
+              - Stored records
+              skills:
+              - sqlmodel
+              expected_result: An Operation that deactivates one record.
+              depends_on:
+              - P2-G5-T02
+              - P2-G5-T03
+              constraints: []
+              acceptance: An existing record ends inactive, is returned as an Entity instance, and has no other Field changed, and an identity that no record has returns null and changes nothing.
+              verify: Disabling a stored active representative record returns it inactive with every other Field unchanged, and disabling an identity that no record has returns null and leaves every stored record unchanged.
+              status: done
+              log:
+              - at: '2026-09-28T23:02:07Z'
+                transition: todo -> claimed
+                note: 'Claimed by my-interface-develop (log 007) before wiring and verifying the Operations. Note: the shared statement builders that realize these Operations were written in the same unit as the storage structure before this claim was recorded; nothing was verified or marked done before the claim.'
+              - at: '2026-09-28T23:07:27Z'
+                transition: claimed -> done
+                check: 'Transient scripts (outside the Database) run identically on a temporary SQLite file and a throwaway PostgreSQL database: disabled an active stored record and an identity no record has.'
+                outcome: The record ended inactive with every other Field unchanged and was returned as an Entity; an unknown identity returned None and changed nothing.
+            P2-G5-T09:
+              id: P2-G5-T09
+              source_id: '006'
+              title: Provide Truncate
+              description: Provide the Truncate Operation that accepts an Entity class, removes all of its records while keeping its stored structure, and returns the number of records removed.
+              reason: Consumers need to clear an Entity's data without rebuilding its structure.
+              inputs:
+              - Stored records
+              skills:
+              - sqlmodel
+              expected_result: An Operation that empties one Entity's records and reports how many were removed.
+              depends_on:
+              - P2-G5-T02
+              - P2-G5-T03
+              constraints: []
+              acceptance: Every record of the Entity is removed, the returned count equals the number removed, the Entity's stored structure remains usable for a new Add, and the records of other Entities are unaffected.
+              verify: Truncating a representative Entity that no other stored record refers to and that holds several records returns their number, retrieving any of them afterwards returns null, a new record can still be added, and the records of another Entity are unchanged.
+              status: done
+              log:
+              - at: '2026-09-28T23:02:07Z'
+                transition: todo -> claimed
+                note: 'Claimed by my-interface-develop (log 007) before wiring and verifying the Operations. Note: the shared statement builders that realize these Operations were written in the same unit as the storage structure before this claim was recorded; nothing was verified or marked done before the claim.'
+              - at: '2026-09-28T23:07:27Z'
+                transition: claimed -> done
+                check: 'Transient scripts (outside the Database) run identically on a temporary SQLite file and a throwaway PostgreSQL database: truncated Position holding two records, counted Users before and after, then added a new Position.'
+                outcome: Truncate returned 2, both records were gone, User records were unchanged, and a new Position was added afterwards.
+            P2-G5-T10:
+              id: P2-G5-T10
+              source_id: '006'
+              title: Resolve the configured query defaults
+              description: Provide the resolution of the configured query defaults, namely the default Filter Combination, the default Order, and the default limit, into runtime vocabulary members and values that apply whenever a request omits them.
+              reason: Requests may omit the Filter Combination, Orders, and limit, and an omission must resolve to the configured default and never to a serialized string.
+              inputs:
+              - Loaded Configuration
+              - Filter Combination vocabulary
+              - Order vocabulary
+              skills:
+              - python-skills:python-guidelines
+              expected_result: Runtime query defaults derived from the Configuration.
+              depends_on:
+              - P2-G2-T02
+              - P2-G3-T03
+              - P2-G3-T04
+              constraints: []
+              acceptance: The default Filter Combination and the default Order direction resolve to members of their vocabularies, the default Order names a Field and a direction, and the default limit resolves to a value in which zero or a negative value means no limit.
+              verify: Reading the resolved defaults for the configured values yields vocabulary members and the configured limit, and a Configuration naming an unknown combination or direction is refused.
+              status: done
+              log:
+              - at: '2026-09-28T23:04:14Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing the query-default resolution and the shared Data layer with routing and request validation.
+              - at: '2026-09-28T23:07:27Z'
+                transition: claimed -> done
+                check: Transient script loading the Configuration and two copies naming an unknown combination and an unknown direction.
+                outcome: Defaults resolved to combination AND, default Order on Field id ascending as an Order, and limit -1 (zero or less means no limit); the unknown combination and the unknown direction were each refused at load.
+            P2-G5-T11:
+              id: P2-G5-T11
+              source_id: '006'
+              title: Provide List
+              description: Provide the List Operation that returns matching Entity instances of an Entity class, applying the default Order and limit when the request supplies none and treating a limit of zero or any negative value as no limit.
+              reason: Consumers need to retrieve many records in a predictable order and size.
+              inputs:
+              - Stored records
+              - Resolved query defaults
+              skills:
+              - sqlmodel
+              expected_result: An Operation that returns stored records of an Entity as Entity instances.
+              depends_on:
+              - P2-G5-T02
+              - P2-G5-T03
+              - P2-G5-T10
+              constraints: []
+              acceptance: Listing an Entity class with no other input returns every stored record as an Entity instance in the default order without a limit, a positive limit returns at most that many records from the start of the order, and a limit of zero and a negative limit each return every record.
+              verify: Listing a representative Entity holding several records returns all of them in the default order, listing it with limits of one, zero, and a negative value returns one record and then every record twice, and listing an Entity with no records returns an empty result.
+              status: done
+              log:
+              - at: '2026-09-28T23:02:07Z'
+                transition: todo -> claimed
+                note: 'Claimed by my-interface-develop (log 007) before wiring and verifying the Operations. Note: the shared statement builders that realize these Operations were written in the same unit as the storage structure before this claim was recorded; nothing was verified or marked done before the claim.'
+              - at: '2026-09-28T23:07:27Z'
+                transition: claimed -> done
+                check: 'Transient scripts (outside the Database) run identically on a temporary SQLite file and a throwaway PostgreSQL database: listed six Currency records with no input, limits 1, 2, 0, and -5, and an Entity with no records.'
+                outcome: All records returned as Entities in default id-ascending order; limit 1 and 2 returned that many from the start; limits 0 and -5 returned every record; an empty Entity returned an empty result.
+            P2-G5-T12:
+              id: P2-G5-T12
+              source_id: '006'
+              title: Provide Filter evaluation for every Filter Operator
+              description: Provide selection of records by Filters so that every Filter Operator compares a Field with its supplied value according to its stated meaning, usable to select the records a request applies to.
+              reason: Consumers need to select records by condition rather than retrieve everything.
+              inputs:
+              - Filter vocabulary
+              - List
+              skills:
+              - sqlmodel
+              expected_result: Record selection by a Filter for every operator in the vocabulary.
+              depends_on:
+              - P2-G3-T02
+              - P2-G5-T11
+              constraints: []
+              acceptance: 'For a representative Entity each operator selects exactly the records whose Field satisfies it: equality and inequality, the four ordered comparisons, membership in a supplied set, substring, prefix, and suffix matching, and presence or absence of null.'
+              verify: Listing a representative Entity holding known records with one Filter per operator returns exactly the records that satisfy that operator and no others.
+              status: done
+              log:
+              - at: '2026-09-28T23:02:07Z'
+                transition: todo -> claimed
+                note: 'Claimed by my-interface-develop (log 007) before wiring and verifying the Operations. Note: the shared statement builders that realize these Operations were written in the same unit as the storage structure before this claim was recorded; nothing was verified or marked done before the claim.'
+              - at: '2026-09-28T23:07:27Z'
+                transition: claimed -> done
+                check: 'Transient scripts (outside the Database) run identically on a temporary SQLite file and a throwaway PostgreSQL database: listed six Currency records with one Filter per operator (including % in a contains value and an empty in list) and compared with expected sets computed in the script.'
+                outcome: Each of the 12 operators selected exactly the expected records; a literal % in a contains value matched only the record holding it; an empty in collection selected nothing.
+            P2-G5-T13:
+              id: P2-G5-T13
+              source_id: '006'
+              title: Apply the Filter Combination to several Filters
+              description: Make several Filters combine according to the selected Filter Combination, or the configured default when none is supplied, without complex grouping.
+              reason: Consumers need to select records by more than one condition.
+              inputs:
+              - Filter Combination vocabulary
+              - Filter evaluation
+              - Resolved query defaults
+              skills:
+              - sqlmodel
+              expected_result: Record selection by several Filters under a chosen combination.
+              depends_on:
+              - P2-G3-T03
+              - P2-G5-T10
+              - P2-G5-T12
+              constraints: []
+              acceptance: Under the first combination member only records that satisfy every Filter are selected, under the second only records that satisfy at least one Filter are selected, and omitting the combination behaves as the configured default.
+              verify: Listing a representative Entity holding known records with two Filters under each combination member and with no combination returns exactly the records each rule selects, the omitted case matching the configured default.
+              status: done
+              log:
+              - at: '2026-09-28T23:02:07Z'
+                transition: todo -> claimed
+                note: 'Claimed by my-interface-develop (log 007) before wiring and verifying the Operations. Note: the shared statement builders that realize these Operations were written in the same unit as the storage structure before this claim was recorded; nothing was verified or marked done before the claim.'
+              - at: '2026-09-28T23:07:27Z'
+                transition: claimed -> done
+                check: 'Transient scripts (outside the Database) run identically on a temporary SQLite file and a throwaway PostgreSQL database: listed with two Filters under AND, under OR, and with no combination.'
+                outcome: AND selected only records satisfying both, OR selected records satisfying either (a different set), and omitting the combination matched AND, the configured default.
+            P2-G5-T14:
+              id: P2-G5-T14
+              source_id: '006'
+              title: Apply Orders to List
+              description: Make List order its results by a supplied ordered list of Orders, each with a Field and a direction, applied in the supplied sequence, and by the configured default Order when none is supplied.
+              reason: Consumers need results in a stated, repeatable order.
+              inputs:
+              - Order vocabulary
+              - List
+              - Resolved query defaults
+              skills:
+              - sqlmodel
+              expected_result: Ordered List results under one or several Orders.
+              depends_on:
+              - P2-G3-T04
+              - P2-G5-T10
+              - P2-G5-T11
+              constraints: []
+              acceptance: Records are ordered by the first Order, ties are ordered by each later Order in the supplied sequence, each ascending or descending as supplied, and omitting Orders uses the configured default Order.
+              verify: Listing a representative Entity holding known records with one Order in each direction, with two Orders that resolve ties, and with no Order returns the described sequence each time.
+              status: done
+              log:
+              - at: '2026-09-28T23:02:07Z'
+                transition: todo -> claimed
+                note: 'Claimed by my-interface-develop (log 007) before wiring and verifying the Operations. Note: the shared statement builders that realize these Operations were written in the same unit as the storage structure before this claim was recorded; nothing was verified or marked done before the claim.'
+              - at: '2026-09-28T23:07:27Z'
+                transition: claimed -> done
+                check: 'Transient scripts (outside the Database) run identically on a temporary SQLite file and a throwaway PostgreSQL database: listed with one Order in each direction, two Orders that resolve ties, and no Order.'
+                outcome: Single ascending and descending orders, a two-Order tie-break in the supplied sequence, and the default id ordering all returned the expected sequences on both Engines.
+            P2-G5-T15:
+              id: P2-G5-T15
+              source_id: '006'
+              title: Provide Count
+              description: Provide the Count Operation that accepts an Entity class with optional Filters and an optional Filter Combination and returns the number of matching records.
+              reason: Consumers need to know how many records match without retrieving them.
+              inputs:
+              - Filter evaluation
+              - Filter Combination
+              skills:
+              - sqlmodel
+              expected_result: An Operation that returns a record count.
+              depends_on:
+              - P2-G5-T02
+              - P2-G5-T12
+              - P2-G5-T13
+              constraints: []
+              acceptance: Count with no Filters equals the number of stored records, with Filters equals the number of records they select, and is zero when no record matches.
+              verify: Counting a representative Entity holding known records with no Filter, with a selecting Filter, and with a Filter that matches nothing returns the number of records, the selected number, and zero respectively.
+              status: done
+              log:
+              - at: '2026-09-28T23:02:07Z'
+                transition: todo -> claimed
+                note: 'Claimed by my-interface-develop (log 007) before wiring and verifying the Operations. Note: the shared statement builders that realize these Operations were written in the same unit as the storage structure before this claim was recorded; nothing was verified or marked done before the claim.'
+              - at: '2026-09-28T23:07:27Z'
+                transition: claimed -> done
+                check: 'Transient scripts (outside the Database) run identically on a temporary SQLite file and a throwaway PostgreSQL database: counted with no Filter, a selecting Filter, a non-matching Filter, and a combined OR selection.'
+                outcome: Counts were 6, 1, 0, and the size of the OR selection.
+            P2-G5-T16:
+              id: P2-G5-T16
+              source_id: '006'
+              title: Provide Sum
+              description: Provide the Sum Operation that accepts an Entity class, one Field name string, optional Filters, and an optional Filter Combination, ignores null values, and returns that Field's total, or zero when no usable value exists.
+              reason: Consumers need totals without retrieving every record.
+              inputs:
+              - Filter evaluation
+              - Filter Combination
+              skills:
+              - sqlmodel
+              expected_result: An Operation that returns a Field's total.
+              depends_on:
+              - P2-G5-T02
+              - P2-G5-T12
+              - P2-G5-T13
+              constraints: []
+              acceptance: Sum equals the total of the Field over the selected records with null values ignored, and is zero when no record or no non-null value is selected.
+              verify: Summing a numeric Field of a representative Entity holding known records, including a null value and a Filter that selects a subset, returns the expected totals, and summing over an empty selection returns zero.
+              status: done
+              log:
+              - at: '2026-09-28T23:02:07Z'
+                transition: todo -> claimed
+                note: 'Claimed by my-interface-develop (log 007) before wiring and verifying the Operations. Note: the shared statement builders that realize these Operations were written in the same unit as the storage structure before this claim was recorded; nothing was verified or marked done before the claim.'
+              - at: '2026-09-28T23:07:27Z'
+                transition: claimed -> done
+                check: 'Transient scripts (outside the Database) run identically on a temporary SQLite file and a throwaway PostgreSQL database: summed an integer Field with and without Filters and an empty selection, and decimal Fields including nulls and a 28-digit value; summed a non-numeric Field.'
+                outcome: Totals were exact (Decimal 0.6+1E-18 and the long-decimal total exact on both Engines), nulls were ignored, an empty selection returned 0, and Sum over a string Field was refused. Decimal totals are computed exactly from the selected values.
+            P2-G5-T17:
+              id: P2-G5-T17
+              source_id: '006'
+              title: Provide Min
+              description: Provide the Min Operation that accepts an Entity class, one Field name string, optional Filters, and an optional Filter Combination, ignores null values, and returns the smallest value, or null when no usable value exists.
+              reason: Consumers need the lowest value of a Field without retrieving every record.
+              inputs:
+              - Filter evaluation
+              - Filter Combination
+              skills:
+              - sqlmodel
+              expected_result: An Operation that returns a Field's smallest value.
+              depends_on:
+              - P2-G5-T02
+              - P2-G5-T12
+              - P2-G5-T13
+              constraints: []
+              acceptance: Min equals the smallest non-null value of the Field over the selected records, and is null when no record or no non-null value is selected.
+              verify: Taking the minimum of a Field of a representative Entity holding known records, including a null value and a Filter that selects a subset, returns the expected values, and taking it over an empty selection returns null.
+              status: done
+              log:
+              - at: '2026-09-28T23:02:07Z'
+                transition: todo -> claimed
+                note: 'Claimed by my-interface-develop (log 007) before wiring and verifying the Operations. Note: the shared statement builders that realize these Operations were written in the same unit as the storage structure before this claim was recorded; nothing was verified or marked done before the claim.'
+              - at: '2026-09-28T23:07:27Z'
+                transition: claimed -> done
+                check: 'Transient scripts (outside the Database) run identically on a temporary SQLite file and a throwaway PostgreSQL database: took minimum of string, integer, and decimal Fields including nulls and Filters, and over an empty selection.'
+                outcome: Expected smallest values returned (including Decimal -0.5 and 1E-18), nulls ignored, empty selection returned None.
+            P2-G5-T18:
+              id: P2-G5-T18
+              source_id: '006'
+              title: Provide Max
+              description: Provide the Max Operation that accepts an Entity class, one Field name string, optional Filters, and an optional Filter Combination, ignores null values, and returns the largest value, or null when no usable value exists.
+              reason: Consumers need the highest value of a Field without retrieving every record.
+              inputs:
+              - Filter evaluation
+              - Filter Combination
+              skills:
+              - sqlmodel
+              expected_result: An Operation that returns a Field's largest value.
+              depends_on:
+              - P2-G5-T02
+              - P2-G5-T12
+              - P2-G5-T13
+              constraints: []
+              acceptance: Max equals the largest non-null value of the Field over the selected records, and is null when no record or no non-null value is selected.
+              verify: Taking the maximum of a Field of a representative Entity holding known records, including a null value and a Filter that selects a subset, returns the expected values, and taking it over an empty selection returns null.
+              status: done
+              log:
+              - at: '2026-09-28T23:02:07Z'
+                transition: todo -> claimed
+                note: 'Claimed by my-interface-develop (log 007) before wiring and verifying the Operations. Note: the shared statement builders that realize these Operations were written in the same unit as the storage structure before this claim was recorded; nothing was verified or marked done before the claim.'
+              - at: '2026-09-28T23:07:27Z'
+                transition: claimed -> done
+                check: 'Transient scripts (outside the Database) run identically on a temporary SQLite file and a throwaway PostgreSQL database: took maximum of string, integer, and decimal Fields including nulls and Filters, and over an empty selection.'
+                outcome: Expected largest values returned (including the 28-digit decimal), nulls ignored, empty selection returned None.
+        P2-G6:
+          id: P2-G6
+          title: Request handling
+          description: How every request selects its Instance and how supplied request inputs are checked before any Instance acts on them.
+          area: Instance selection and request validation
+          does: Every request reaches only the intended Instance and is refused before it acts when its inputs are not valid.
+          constraints: []
+          task_count: 3
+          tasks:
+            P2-G6-T01:
+              id: P2-G6-T01
+              source_id: '006'
+              title: Route each request to the selected or default Instance
+              description: Make every Operation accept an optional Instance Enum member, serve the request from that Instance, and serve it from the configured default Instance when none is supplied.
+              reason: Consumers must reach the storage they intend and must be able to omit the choice.
+              inputs:
+              - Instance Enum
+              - Storage access for every active Instance
+              - Execute Command
+              - Add
+              - Get by ID
+              skills:
+              - sqlmodel
+              - python-skills:python-guidelines
+              expected_result: Request routing to the selected or default Instance.
+              depends_on:
+              - P2-G3-T01
+              - P2-G5-T01
+              - P2-G5-T02
+              - P2-G5-T03
+              constraints: []
+              acceptance: A request naming an active Instance reads and changes only that Instance, and a request naming none reads and changes only the configured default Instance.
+              verify: Adding and retrieving an equivalent record once for each active Instance selection and once with no selection shows that only the selected Instance, or the default Instance for the request with none, holds or returns the record.
+              status: done
+              log:
+              - at: '2026-09-28T23:04:14Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing the query-default resolution and the shared Data layer with routing and request validation.
+              - at: '2026-09-28T23:07:27Z'
+                transition: claimed -> done
+                check: 'Transient script (outside the Database): added and read records without an Instance, with the SQLite member, and with the PostgreSQL member, then compared list, count, get, and a raw query on both Instances.'
+                outcome: Explicit requests read and changed only the named Instance; requests naming none read and changed only the configured default Instance (sqlite). Verified across add, list, count, get, disable, and Execute Command.
+            P2-G6-T02:
+              id: P2-G6-T02
+              source_id: '006'
+              title: Validate supplied Field names against the selected Entity
+              description: Make every request that supplies an Entity Field name, whether in a Filter, an Order, or an aggregate, check that name against the selected Entity and refuse a name the Entity does not declare.
+              reason: An unknown Field name must never reach storage or silently select nothing.
+              inputs:
+              - Filter evaluation
+              - Orders
+              - Sum, Min, and Max
+              skills:
+              - python-skills:python-guidelines
+              expected_result: Field name validation for every request that carries one.
+              depends_on:
+              - P2-G5-T12
+              - P2-G5-T14
+              - P2-G5-T16
+              - P2-G5-T17
+              - P2-G5-T18
+              constraints: []
+              acceptance: A supplied Field name that the selected Entity declares is accepted, and a name it does not declare is refused before any Instance is read or changed, for Filters, Orders, Sum, Min, and Max alike.
+              verify: Issuing a Filter, an Order, and each aggregate first with a declared Field name and then with an undeclared one on a prepared Instance accepts the first and refuses the second without any read or change.
+              status: done
+              log:
+              - at: '2026-09-28T23:04:14Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing the query-default resolution and the shared Data layer with routing and request validation.
+              - at: '2026-09-28T23:07:27Z'
+                transition: claimed -> done
+                check: 'Transient script (outside the Database): issued Filters, Orders, Sum, Min, Max, and Count with an undeclared Field name through a Data layer whose Instance lookup fails if reached, then with declared names.'
+                outcome: Every undeclared Field name was refused with a ValueError naming the Entity before any Instance was reached; declared names proceeded to the Instance.
+            P2-G6-T03:
+              id: P2-G6-T03
+              source_id: '006'
+              title: Refuse enum values and Entities supplied in the wrong form
+              description: Make every public Operation refuse an enum value, including the Filter Combination and the Instance, supplied as a string, and refuse an Entity supplied by model name or identity instead of as an Entity class or Entity instance.
+              reason: Database's public contract accepts closed vocabulary members and Entities directly, and a string would silently hide a wrong request.
+              inputs:
+              - Every Operation
+              - Instance Enum
+              - Public vocabulary
+              skills:
+              - python-skills:python-guidelines
+              expected_result: Input-form validation on every Operation.
+              depends_on:
+              - P2-G3-T01
+              - P2-G5-T02
+              - P2-G5-T03
+              - P2-G5-T05
+              - P2-G5-T06
+              - P2-G5-T07
+              - P2-G5-T08
+              - P2-G5-T09
+              - P2-G5-T11
+              - P2-G5-T13
+              - P2-G5-T14
+              - P2-G5-T15
+              - P2-G5-T16
+              - P2-G5-T17
+              - P2-G5-T18
+              constraints: []
+              acceptance: Each Operation refuses a string in place of a Filter Operator, a Filter Combination, an Order Direction, or an Instance member, refuses a string name or identity in place of an Entity class or Entity instance, and accepts the correct members and Entities.
+              verify: Issuing each Operation with a string enum value and with an Entity supplied by name is refused every time, and issuing it with the proper member and Entity is accepted.
+              status: done
+              log:
+              - at: '2026-09-28T23:04:15Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing the query-default resolution and the shared Data layer with routing and request validation.
+              - at: '2026-09-28T23:07:27Z'
+                transition: claimed -> done
+                check: 'Transient script (outside the Database): issued every Operation with a string in place of an enum member, an Entity given by name, an Entity class where an instance is required and the reverse, an id given as text, and a non-string command; also passed the Instance and Create Tables Instance as strings against a real Data layer.'
+                outcome: 29 wrong-form requests were each refused with a TypeError before acting; proper members and Entities were accepted.
+        P2-G7:
+          id: P2-G7
+          title: Initial Data
+          description: The declared Initial Data, the command that inserts it, and the preparation of the default Instance with it.
+          area: Initial Data and default Instance preparation
+          does: The default Instance holds every Initial Data record the Target defines.
+          constraints: []
+          task_count: 15
+          tasks:
+            P2-G7-T01:
+              id: P2-G7-T01
+              source_id: '006'
+              title: Provide secure credential value generation
+              description: Provide the generation of the credential values that the Initial Data requires, each produced from a secure source of randomness, distinct from every other generated value, and never shown in any output, log, documentation, or version-controlled record.
+              reason: The Target requires credential Initial Data values to be generated securely rather than fixed, and a leaked credential cannot be recalled.
+              inputs: []
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A way to obtain secure, distinct credential values for Initial Data.
+              depends_on:
+              - P2-G1-T01
+              constraints: []
+              acceptance: Every generated value is non-empty, cannot be derived from earlier values or from the environment, and is distinct from every other generated value, and no generated value appears in any output, log, documentation, or version-controlled record produced by the generation.
+              verify: Generating a large set of values shows only non-empty distinct values drawn from a secure source, the check records only properties of the values such as count, distinctness, and length, and scanning every output and record of the check finds none of the values.
+              status: done
+              log:
+              - at: '2026-09-28T23:07:52Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing credential generation, the Insert Initial Data coordination, and the declared Initial Data records.
+              - at: '2026-09-28T23:09:40Z'
+                transition: claimed -> done
+                check: Transient script generating 20000 values from one generator and 2000 from another with output captured, then checking properties, the generator source, and the Database file tree before and after.
+                outcome: All values non-empty, 43+ characters, pairwise distinct, none shared between generators; drawn only from the secrets module (no random module); generation printed nothing and created no file. Only properties were recorded; no value is recorded here.
+            P2-G7-T02:
+              id: P2-G7-T02
+              source_id: '006'
+              title: Provide Insert Initial Data
+              description: Provide the Insert Initial Data command for an Instance so that it inserts every declared Initial Data record into the Instance once its Tables exist, in an order that satisfies every Relation, as one atomic change.
+              reason: Initial Data must reach any selected Instance through one explicit, repeatable command.
+              inputs:
+              - Prepared Instance structure
+              - Declared Initial Data records
+              - Request routing
+              skills:
+              - sqlmodel
+              - python-skills:python-guidelines
+              expected_result: A command that inserts the declared Initial Data into an active Instance.
+              depends_on:
+              - P2-G4-T05
+              - P2-G5-T02
+              - P2-G6-T01
+              constraints: []
+              acceptance: Running the command on an Instance whose Tables exist inserts every declared record with every Relation satisfied, a run that fails leaves no record inserted, and running it again on an Instance that already holds the data leaves every stored record unchanged and creates no duplicate.
+              verify: Running the command against a prepared Instance with a transient stand-in set of related records inserts all of them, a run forced to fail part-way leaves the Instance without any of them, and a repeated run leaves the records unchanged and unduplicated.
+              status: done
+              log:
+              - at: '2026-09-28T23:07:52Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing credential generation, the Insert Initial Data coordination, and the declared Initial Data records.
+              - at: '2026-09-28T23:09:40Z'
+                transition: claimed -> done
+                check: 'Transient script with a stand-in set of related records (User, Broker, Asset referring to earlier records) on a fresh SQLite file and a throwaway PostgreSQL database: ran with a forced failure on the third insert, then normally, then again.'
+                outcome: 'The failed run left no record on either Engine; the normal run inserted all 3 with Relations satisfied; the repeat inserted 0 and changed no record or credential. Defect found and fixed during this Task: on PostgreSQL a failed run still advances the identity sequence, so declared references (the Target refers to id 1) would have broken on retry; declared references now name the position of a declared record and resolve to its stored id within the same transaction.'
+            P2-G7-T03:
+              id: P2-G7-T03
+              source_id: '006'
+              title: Provide the User Initial Data
+              description: Provide the Initial Data of the User Entity exactly as the Target defines it, with its credential Fields holding securely generated values.
+              reason: The system needs its first user before any user-owned data can exist.
+              inputs:
+              - Insert Initial Data
+              - Secure credential values
+              skills:
+              - sqlmodel
+              expected_result: The User records the Target defines are inserted by Insert Initial Data.
+              depends_on:
+              - P2-G7-T01
+              - P2-G7-T02
+              constraints: []
+              acceptance: After Insert Initial Data on a prepared Instance, the stored User records equal the Target's definition in record count and in every value, except that each credential Field holds a securely generated value.
+              verify: Reading the stored User records after Insert Initial Data on a prepared Instance and comparing them with the Target shows no difference in record count or in any value, every credential Field holds a non-empty value that the check neither displays nor records.
+              status: done
+              log:
+              - at: '2026-09-28T23:07:52Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing credential generation, the Insert Initial Data coordination, and the declared Initial Data records.
+              - at: '2026-09-28T23:09:40Z'
+                transition: claimed -> done
+                check: Transient script parsing the Target's Initial Data sections and comparing them with the stored records on a fresh SQLite file and a throwaway PostgreSQL database, with output captured to prove nothing was displayed.
+                outcome: On a fresh Instance of each Engine, after Insert Initial Data the stored User records (1) equal the Target's Initial Data definition parsed from the Target in count and every value, each credential Field holds a generated 43+ character value that was neither displayed nor recorded and all generated values are distinct; a second run inserted nothing.
+            P2-G7-T04:
+              id: P2-G7-T04
+              source_id: '006'
+              title: Provide the Trading Platform Initial Data
+              description: Provide the Initial Data of the Trading Platform Entity exactly as the Target defines it.
+              reason: The supported trading platforms must exist before any instance can use one.
+              inputs:
+              - Insert Initial Data
+              skills:
+              - sqlmodel
+              expected_result: The Trading Platform records the Target defines are inserted by Insert Initial Data.
+              depends_on:
+              - P2-G7-T02
+              constraints: []
+              acceptance: After Insert Initial Data on a prepared Instance, the stored Trading Platform records equal the Target's definition in record count and in every value.
+              verify: Reading the stored Trading Platform records after Insert Initial Data on a prepared Instance and comparing them with the Target shows no difference in record count or in any value.
+              status: done
+              log:
+              - at: '2026-09-28T23:07:52Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing credential generation, the Insert Initial Data coordination, and the declared Initial Data records.
+              - at: '2026-09-28T23:09:40Z'
+                transition: claimed -> done
+                check: Transient script parsing the Target's Initial Data sections and comparing them with the stored records on a fresh SQLite file and a throwaway PostgreSQL database, with output captured to prove nothing was displayed.
+                outcome: On a fresh Instance of each Engine, after Insert Initial Data the stored Trading Platform records (2) equal the Target's Initial Data definition parsed from the Target in count and every value; a second run inserted nothing.
+            P2-G7-T05:
+              id: P2-G7-T05
+              source_id: '006'
+              title: Provide the Instance Initial Data
+              description: Provide the Initial Data of the Instance Entity exactly as the Target defines it, with its credential Fields holding securely generated values.
+              reason: A user-owned connection instance must exist before an account can be reached through it.
+              inputs:
+              - Insert Initial Data
+              - Secure credential values
+              - User Initial Data
+              - Trading Platform Initial Data
+              skills:
+              - sqlmodel
+              expected_result: The Instance records the Target defines are inserted by Insert Initial Data.
+              depends_on:
+              - P2-G7-T01
+              - P2-G7-T02
+              - P2-G7-T03
+              - P2-G7-T04
+              constraints: []
+              acceptance: After Insert Initial Data on a prepared Instance, the stored Instance records equal the Target's definition in record count and in every value, except that each credential Field holds a securely generated value, and every reference resolves to the stored record the Target names.
+              verify: Reading the stored Instance records after Insert Initial Data on a prepared Instance and comparing them with the Target shows no difference in record count or in any value, every credential Field holds a non-empty value that the check neither displays nor records, and each reference resolves to the intended record.
+              status: done
+              log:
+              - at: '2026-09-28T23:07:52Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing credential generation, the Insert Initial Data coordination, and the declared Initial Data records.
+              - at: '2026-09-28T23:09:40Z'
+                transition: claimed -> done
+                check: Transient script parsing the Target's Initial Data sections and comparing them with the stored records on a fresh SQLite file and a throwaway PostgreSQL database, with output captured to prove nothing was displayed.
+                outcome: On a fresh Instance of each Engine, after Insert Initial Data the stored Instance records (1) equal the Target's Initial Data definition parsed from the Target in count and every value, each credential Field holds a generated 43+ character value that was neither displayed nor recorded and all generated values are distinct, and every reference resolves to the record the Target names (ids 1..n); a second run inserted nothing.
+            P2-G7-T06:
+              id: P2-G7-T06
+              source_id: '006'
+              title: Provide the Currency Initial Data
+              description: Provide the Initial Data of the Currency Entity exactly as the Target defines it.
+              reason: Trading needs the standard currencies available to accounts.
+              inputs:
+              - Insert Initial Data
+              - User Initial Data
+              skills:
+              - sqlmodel
+              expected_result: The Currency records the Target defines are inserted by Insert Initial Data.
+              depends_on:
+              - P2-G7-T02
+              - P2-G7-T03
+              constraints: []
+              acceptance: After Insert Initial Data on a prepared Instance, the stored Currency records equal the Target's definition in record count and in every value, and every reference resolves to the stored record the Target names.
+              verify: Reading the stored Currency records after Insert Initial Data on a prepared Instance and comparing them with the Target shows no difference in record count or in any value, and each reference resolves to the intended record.
+              status: done
+              log:
+              - at: '2026-09-28T23:07:52Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing credential generation, the Insert Initial Data coordination, and the declared Initial Data records.
+              - at: '2026-09-28T23:09:40Z'
+                transition: claimed -> done
+                check: Transient script parsing the Target's Initial Data sections and comparing them with the stored records on a fresh SQLite file and a throwaway PostgreSQL database, with output captured to prove nothing was displayed.
+                outcome: On a fresh Instance of each Engine, after Insert Initial Data the stored Currency records (8) equal the Target's Initial Data definition parsed from the Target in count and every value, and every reference resolves to the record the Target names (ids 1..n); a second run inserted nothing.
+            P2-G7-T07:
+              id: P2-G7-T07
+              source_id: '006'
+              title: Provide the Broker Initial Data
+              description: Provide the Initial Data of the Broker Entity exactly as the Target defines it.
+              reason: A broker must exist before assets and accounts can belong to it.
+              inputs:
+              - Insert Initial Data
+              - User Initial Data
+              skills:
+              - sqlmodel
+              expected_result: The Broker records the Target defines are inserted by Insert Initial Data.
+              depends_on:
+              - P2-G7-T02
+              - P2-G7-T03
+              constraints: []
+              acceptance: After Insert Initial Data on a prepared Instance, the stored Broker records equal the Target's definition in record count and in every value, and every reference resolves to the stored record the Target names.
+              verify: Reading the stored Broker records after Insert Initial Data on a prepared Instance and comparing them with the Target shows no difference in record count or in any value, and each reference resolves to the intended record.
+              status: done
+              log:
+              - at: '2026-09-28T23:07:52Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing credential generation, the Insert Initial Data coordination, and the declared Initial Data records.
+              - at: '2026-09-28T23:09:40Z'
+                transition: claimed -> done
+                check: Transient script parsing the Target's Initial Data sections and comparing them with the stored records on a fresh SQLite file and a throwaway PostgreSQL database, with output captured to prove nothing was displayed.
+                outcome: On a fresh Instance of each Engine, after Insert Initial Data the stored Broker records (1) equal the Target's Initial Data definition parsed from the Target in count and every value, and every reference resolves to the record the Target names (ids 1..n); a second run inserted nothing.
+            P2-G7-T08:
+              id: P2-G7-T08
+              source_id: '006'
+              title: Provide the Asset Initial Data
+              description: Provide the Initial Data of the Asset Entity exactly as the Target defines it.
+              reason: The initial tradable assets must exist before actions can trade them.
+              inputs:
+              - Insert Initial Data
+              - Broker Initial Data
+              skills:
+              - sqlmodel
+              expected_result: The Asset records the Target defines are inserted by Insert Initial Data.
+              depends_on:
+              - P2-G7-T02
+              - P2-G7-T07
+              constraints: []
+              acceptance: After Insert Initial Data on a prepared Instance, the stored Asset records equal the Target's definition in record count and in every value, and every reference resolves to the stored record the Target names.
+              verify: Reading the stored Asset records after Insert Initial Data on a prepared Instance and comparing them with the Target shows no difference in record count or in any value, and each reference resolves to the intended record.
+              status: done
+              log:
+              - at: '2026-09-28T23:07:52Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing credential generation, the Insert Initial Data coordination, and the declared Initial Data records.
+              - at: '2026-09-28T23:09:40Z'
+                transition: claimed -> done
+                check: Transient script parsing the Target's Initial Data sections and comparing them with the stored records on a fresh SQLite file and a throwaway PostgreSQL database, with output captured to prove nothing was displayed.
+                outcome: On a fresh Instance of each Engine, after Insert Initial Data the stored Asset records (4) equal the Target's Initial Data definition parsed from the Target in count and every value, and every reference resolves to the record the Target names (ids 1..n); a second run inserted nothing.
+            P2-G7-T09:
+              id: P2-G7-T09
+              source_id: '006'
+              title: Provide the Account Group Initial Data
+              description: Provide the Initial Data of the Account Group Entity exactly as the Target defines it.
+              reason: An account group must exist before an account can be placed in one.
+              inputs:
+              - Insert Initial Data
+              - User Initial Data
+              skills:
+              - sqlmodel
+              expected_result: The Account Group records the Target defines are inserted by Insert Initial Data.
+              depends_on:
+              - P2-G7-T02
+              - P2-G7-T03
+              constraints: []
+              acceptance: After Insert Initial Data on a prepared Instance, the stored Account Group records equal the Target's definition in record count and in every value, and every reference resolves to the stored record the Target names.
+              verify: Reading the stored Account Group records after Insert Initial Data on a prepared Instance and comparing them with the Target shows no difference in record count or in any value, and each reference resolves to the intended record.
+              status: done
+              log:
+              - at: '2026-09-28T23:07:52Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing credential generation, the Insert Initial Data coordination, and the declared Initial Data records.
+              - at: '2026-09-28T23:09:40Z'
+                transition: claimed -> done
+                check: Transient script parsing the Target's Initial Data sections and comparing them with the stored records on a fresh SQLite file and a throwaway PostgreSQL database, with output captured to prove nothing was displayed.
+                outcome: On a fresh Instance of each Engine, after Insert Initial Data the stored Account Group records (1) equal the Target's Initial Data definition parsed from the Target in count and every value, and every reference resolves to the record the Target names (ids 1..n); a second run inserted nothing.
+            P2-G7-T10:
+              id: P2-G7-T10
+              source_id: '006'
+              title: Provide the Account Initial Data
+              description: Provide the Initial Data of the Account Entity exactly as the Target defines it, with its credential Fields holding securely generated values.
+              reason: A trading account must exist before an action can execute through it.
+              inputs:
+              - Insert Initial Data
+              - Secure credential values
+              - Account Group, Broker, Instance, and Currency Initial Data
+              skills:
+              - sqlmodel
+              expected_result: The Account records the Target defines are inserted by Insert Initial Data.
+              depends_on:
+              - P2-G7-T01
+              - P2-G7-T02
+              - P2-G7-T05
+              - P2-G7-T06
+              - P2-G7-T07
+              - P2-G7-T09
+              constraints: []
+              acceptance: After Insert Initial Data on a prepared Instance, the stored Account records equal the Target's definition in record count and in every value, except that each credential Field holds a securely generated value, and every reference resolves to the stored record the Target names, and no credential value stored for the account equals a credential value stored for its Instance.
+              verify: Reading the stored Account records after Insert Initial Data on a prepared Instance and comparing them with the Target shows no difference in record count or in any value, every credential Field holds a non-empty value that the check neither displays nor records, and each reference resolves to the intended record.
+              status: done
+              log:
+              - at: '2026-09-28T23:07:52Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing credential generation, the Insert Initial Data coordination, and the declared Initial Data records.
+              - at: '2026-09-28T23:09:40Z'
+                transition: claimed -> done
+                check: Transient script parsing the Target's Initial Data sections and comparing them with the stored records on a fresh SQLite file and a throwaway PostgreSQL database, with output captured to prove nothing was displayed; compared Instance and Account credential values.
+                outcome: The stored Account record (1) equals the Target's definition in every value; its credential holds a generated value that was neither displayed nor recorded and differs from every credential stored for the Instance; every reference resolves to the record the Target names; a second run inserted nothing.
+            P2-G7-T11:
+              id: P2-G7-T11
+              source_id: '006'
+              title: Provide the Trailing Group Initial Data
+              description: Provide the Initial Data of the Trailing Group Entity exactly as the Target defines it.
+              reason: A trailing group must exist before an action or position can apply one.
+              inputs:
+              - Insert Initial Data
+              - User Initial Data
+              skills:
+              - sqlmodel
+              expected_result: The Trailing Group records the Target defines are inserted by Insert Initial Data.
+              depends_on:
+              - P2-G7-T02
+              - P2-G7-T03
+              constraints: []
+              acceptance: After Insert Initial Data on a prepared Instance, the stored Trailing Group records equal the Target's definition in record count and in every value, and every reference resolves to the stored record the Target names.
+              verify: Reading the stored Trailing Group records after Insert Initial Data on a prepared Instance and comparing them with the Target shows no difference in record count or in any value, and each reference resolves to the intended record.
+              status: done
+              log:
+              - at: '2026-09-28T23:07:52Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing credential generation, the Insert Initial Data coordination, and the declared Initial Data records.
+              - at: '2026-09-28T23:09:40Z'
+                transition: claimed -> done
+                check: Transient script parsing the Target's Initial Data sections and comparing them with the stored records on a fresh SQLite file and a throwaway PostgreSQL database, with output captured to prove nothing was displayed.
+                outcome: On a fresh Instance of each Engine, after Insert Initial Data the stored Trailing Group records (1) equal the Target's Initial Data definition parsed from the Target in count and every value, and every reference resolves to the record the Target names (ids 1..n); a second run inserted nothing.
+            P2-G7-T12:
+              id: P2-G7-T12
+              source_id: '006'
+              title: Provide the Partial Group Initial Data
+              description: Provide the Initial Data of the Partial Group Entity exactly as the Target defines it.
+              reason: A partial group must exist before an action or position can apply one.
+              inputs:
+              - Insert Initial Data
+              - User Initial Data
+              skills:
+              - sqlmodel
+              expected_result: The Partial Group records the Target defines are inserted by Insert Initial Data.
+              depends_on:
+              - P2-G7-T02
+              - P2-G7-T03
+              constraints: []
+              acceptance: After Insert Initial Data on a prepared Instance, the stored Partial Group records equal the Target's definition in record count and in every value, and every reference resolves to the stored record the Target names.
+              verify: Reading the stored Partial Group records after Insert Initial Data on a prepared Instance and comparing them with the Target shows no difference in record count or in any value, and each reference resolves to the intended record.
+              status: done
+              log:
+              - at: '2026-09-28T23:07:52Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing credential generation, the Insert Initial Data coordination, and the declared Initial Data records.
+              - at: '2026-09-28T23:09:40Z'
+                transition: claimed -> done
+                check: Transient script parsing the Target's Initial Data sections and comparing them with the stored records on a fresh SQLite file and a throwaway PostgreSQL database, with output captured to prove nothing was displayed.
+                outcome: On a fresh Instance of each Engine, after Insert Initial Data the stored Partial Group records (1) equal the Target's Initial Data definition parsed from the Target in count and every value, and every reference resolves to the record the Target names (ids 1..n); a second run inserted nothing.
+            P2-G7-T13:
+              id: P2-G7-T13
+              source_id: '006'
+              title: Provide the Action Group Initial Data
+              description: Provide the Initial Data of the Action Group Entity exactly as the Target defines it.
+              reason: An action group must exist before an action can belong to one.
+              inputs:
+              - Insert Initial Data
+              - User Initial Data
+              skills:
+              - sqlmodel
+              expected_result: The Action Group records the Target defines are inserted by Insert Initial Data.
+              depends_on:
+              - P2-G7-T02
+              - P2-G7-T03
+              constraints: []
+              acceptance: After Insert Initial Data on a prepared Instance, the stored Action Group records equal the Target's definition in record count and in every value, and every reference resolves to the stored record the Target names.
+              verify: Reading the stored Action Group records after Insert Initial Data on a prepared Instance and comparing them with the Target shows no difference in record count or in any value, and each reference resolves to the intended record.
+              status: done
+              log:
+              - at: '2026-09-28T23:07:52Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing credential generation, the Insert Initial Data coordination, and the declared Initial Data records.
+              - at: '2026-09-28T23:09:40Z'
+                transition: claimed -> done
+                check: Transient script parsing the Target's Initial Data sections and comparing them with the stored records on a fresh SQLite file and a throwaway PostgreSQL database, with output captured to prove nothing was displayed.
+                outcome: On a fresh Instance of each Engine, after Insert Initial Data the stored Action Group records (1) equal the Target's Initial Data definition parsed from the Target in count and every value, and every reference resolves to the record the Target names (ids 1..n); a second run inserted nothing.
+            P2-G7-T14:
+              id: P2-G7-T14
+              source_id: '006'
+              title: Provide the Action Initial Data
+              description: Provide the Initial Data of the Action Entity exactly as the Target defines it.
+              reason: A default action must exist so that a position can be created from it.
+              inputs:
+              - Insert Initial Data
+              - Action Group, Asset, Account, Partial Group, and Trailing Group Initial Data
+              skills:
+              - sqlmodel
+              expected_result: The Action records the Target defines are inserted by Insert Initial Data.
+              depends_on:
+              - P2-G7-T02
+              - P2-G7-T08
+              - P2-G7-T10
+              - P2-G7-T11
+              - P2-G7-T12
+              - P2-G7-T13
+              constraints: []
+              acceptance: After Insert Initial Data on a prepared Instance, the stored Action records equal the Target's definition in record count and in every value, and every reference resolves to the stored record the Target names.
+              verify: Reading the stored Action records after Insert Initial Data on a prepared Instance and comparing them with the Target shows no difference in record count or in any value, and each reference resolves to the intended record.
+              status: done
+              log:
+              - at: '2026-09-28T23:07:52Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing credential generation, the Insert Initial Data coordination, and the declared Initial Data records.
+              - at: '2026-09-28T23:09:40Z'
+                transition: claimed -> done
+                check: Transient script parsing the Target's Initial Data sections and comparing them with the stored records on a fresh SQLite file and a throwaway PostgreSQL database, with output captured to prove nothing was displayed.
+                outcome: On a fresh Instance of each Engine, after Insert Initial Data the stored Action records (1) equal the Target's Initial Data definition parsed from the Target in count and every value, and every reference resolves to the record the Target names (ids 1..n); a second run inserted nothing.
+            P2-G7-T15:
+              id: P2-G7-T15
+              source_id: '006'
+              title: Prepare the default Instance with its tables and Initial Data
+              description: Bring the default Instance to its ready state by running Create Tables and then Insert Initial Data on it through Database's public surface.
+              reason: The phase outcome is a Database that already holds the defined Initial Data.
+              inputs:
+              - Create Tables
+              - Insert Initial Data
+              - Every Initial Data declaration
+              - Public surface
+              skills:
+              - sqlmodel
+              expected_result: A default Instance holding the complete stored structure and every Initial Data record.
+              depends_on:
+              - P2-G4-T05
+              - P2-G7-T03
+              - P2-G7-T04
+              - P2-G7-T05
+              - P2-G7-T06
+              - P2-G7-T07
+              - P2-G7-T08
+              - P2-G7-T09
+              - P2-G7-T10
+              - P2-G7-T11
+              - P2-G7-T12
+              - P2-G7-T13
+              - P2-G7-T14
+              - P2-G8-T01
+              constraints: []
+              acceptance: The default Instance holds the stored structure of every Entity and every Initial Data record the Target defines, reached through the public surface alone, and no credential value is displayed or recorded by the preparation.
+              verify: Reading the default Instance through the public surface after preparation shows every Entity's structure and, for each Entity with Initial Data, records equal to the Target's definition, running both commands again leaves it unchanged, and scanning the preparation's output finds no credential value.
+              status: done
+              log:
+              - at: '2026-09-28T23:09:53Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing the public Interface, publishing the Application Manifest entry, and preparing the default Instance.
+              - at: '2026-09-28T23:11:20Z'
+                transition: claimed -> done
+                check: Ran the manual commands for the default Instance through the installed entry point (create tables, insert initial data, then both again), scanned their output for token-like strings, then read the default Instance through the public surface and compared its structure and every record with the Target definitions.
+                outcome: First runs printed 'Tables are ready' and 'Inserted 23 records'; the repeat printed 'Tables are ready' and 'Inserted 0 records'; output contained no credential-like string. The default Instance (SQLite) holds the 15 stored structures and all 23 Initial Data records equal to the Target, with 5 distinct generated credential values, none displayed or recorded. Stored form of those credentials is as generated, because Database stores the values it receives; at-rest treatment named by the Target is Logic's responsibility and is flagged for the Human.
+        P2-G8:
+          id: P2-G8
+          title: Public gateway
+          description: The single public boundary of Database and its publication in the shared Application Manifest.
+          area: Public Interface and application metadata
+          does: Consumers reach all of Database through one public surface, and the shared application metadata describes it.
+          constraints: []
+          task_count: 2
+          tasks:
+            P2-G8-T01:
+              id: P2-G8-T01
+              source_id: '006'
+              title: Publish the Database Interface
+              description: Provide the Interface as the only public Database surface, publishing Database, the Instance Enum, every Operation, Create Tables, and Insert Initial Data, together with the request and result vocabulary consumers need to make every request, and exposing nothing else.
+              reason: Other Components need one dependable gateway that keeps routing and Engine behaviour out of consumers.
+              inputs:
+              - Every Operation
+              - Instance Enum
+              - Request and result vocabulary
+              - Create Tables
+              - Insert Initial Data
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A single public surface through which every published capability is usable.
+              depends_on:
+              - P2-G3-T01
+              - P2-G3-T02
+              - P2-G3-T03
+              - P2-G3-T04
+              - P2-G3-T05
+              - P2-G4-T05
+              - P2-G5-T01
+              - P2-G5-T02
+              - P2-G5-T03
+              - P2-G5-T04
+              - P2-G5-T05
+              - P2-G5-T06
+              - P2-G5-T07
+              - P2-G5-T08
+              - P2-G5-T09
+              - P2-G5-T10
+              - P2-G5-T11
+              - P2-G5-T12
+              - P2-G5-T13
+              - P2-G5-T14
+              - P2-G5-T15
+              - P2-G5-T16
+              - P2-G5-T17
+              - P2-G5-T18
+              - P2-G6-T01
+              - P2-G6-T02
+              - P2-G6-T03
+              - P2-G7-T02
+              constraints: []
+              acceptance: A consumer can make every Operation request, Create Tables, and Insert Initial Data through the public surface alone, and the surface exposes no routing, Engine-specific, or other internal element.
+              verify: Enumerating the public surface shows Database, the Instance Enum, every Operation, both commands, and the request and result vocabulary with nothing else, and using each capability through that surface alone works.
+              status: done
+              log:
+              - at: '2026-09-28T23:09:53Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing the public Interface, publishing the Application Manifest entry, and preparing the default Instance.
+              - at: '2026-09-28T23:11:20Z'
+                transition: claimed -> done
+                check: Transient script (outside the Database) enumerating the Interface's public surface and the Database class, comparing the Operation set with the Database Definition's catalogue, checking that no public attribute belongs to a database internal module, then using every capability through the surface alone (Database created from a scratch Configuration) on SQLite and on a throwaway PostgreSQL database.
+                outcome: 'Database exposes exactly the 15 catalogued Operations (including Create Tables and Insert Initial Data); the module''s published names are Database, the Instance Enum, Filter, Filter Operator, Filter Combination, Order, Order Direction, Command Result, the two commands, and the manual command entry; no routing or Engine-specific element is reachable (internal imports are private aliases; the only other attributes are standard-library names). Every capability worked through the surface alone on both Engines. Decision recorded: the request and result vocabulary is reached by re-export through the Interface, because the Definition names the vocabulary but not where it is reached; the manual command is a published entry point of the Interface.'
+            P2-G8-T02:
+              id: P2-G8-T02
+              source_id: '006'
+              title: Publish Database's public metadata in the Application Manifest
+              description: Record Database's non-secret public metadata, namely its package name, Component location, public entrypoint, and public interface, in Database's section of the Application Manifest.
+              reason: The Application Manifest is the shared view through which other Components discover Database without reading its private resources.
+              inputs:
+              - Published Database Interface
+              skills: []
+              expected_result: A Database section of the Application Manifest that describes the implemented Component's public facts.
+              depends_on:
+              - P2-G8-T01
+              constraints: []
+              acceptance: Database's section states its package name, Component location, public entrypoint, and public interface as implemented, contains no credential, secret value, private implementation detail, internal storage structure, or undeclared dependency, and leaves every other Component's section unchanged.
+              verify: Comparing Database's manifest section with the implemented Component's public facts shows no difference, scanning it finds no credential or private detail, and comparing every other section before and after shows no change.
+              status: done
+              log:
+              - at: '2026-09-28T23:09:53Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing the public Interface, publishing the Application Manifest entry, and preparing the default Instance.
+              - at: '2026-09-28T23:11:20Z'
+                transition: claimed -> done
+                check: Parsed Application Manifest before and after the change, compared every section except Database, and scanned the Database section for credential-related words.
+                outcome: Database's section now states its package name, Component location, public entrypoint, and public interface; all other 14 sections are identical before and after; no credential, secret, private detail, storage structure, or dependency appears in it.
+        P2-G9:
+          id: P2-G9
+          title: Documentation
+          description: Explanatory documentation of Database's public surface, written from the completed Database.
+          area: Database documentation
+          does: Database documentation explains the public surface to a consumer without exposing internals or secrets.
+          constraints: []
+          task_count: 8
+          tasks:
+            P2-G9-T01:
+              id: P2-G9-T01
+              source_id: '006'
+              title: Write the documentation Overview
+              description: 'Write the Overview section: a concise introduction to what Database provides and how consumers reach it.'
+              reason: A consumer needs a fast orientation before the detailed sections.
+              inputs:
+              - Published Interface
+              skills: []
+              expected_result: An Overview section that introduces Database concisely.
+              depends_on:
+              - P2-G8-T01
+              constraints: []
+              acceptance: The Overview introduces Database concisely and states only what the public surface provides.
+              verify: Comparing the Overview with the published Interface shows no claim that Database does not fulfil.
+              status: done
+              log:
+              - at: '2026-09-28T23:12:11Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing the documentation.
+              - at: '2026-09-28T23:15:18Z'
+                transition: claimed -> done
+                check: 'Transient scripts (outside the Database) that extract every example from the documentation, run it in a clean copy of the project against a prepared default Instance, and compare its output with the text shown: ran the Overview example and compared sections with the Interface.'
+                outcome: The Overview example printed USD as documented; the Overview is a concise introduction and states only what the public surface provides.
+            P2-G9-T02:
+              id: P2-G9-T02
+              source_id: '006'
+              title: Document importing Database and the active Instances
+              description: Write the part of the Interface section that explains how to import Database and which Instances are active, how to select one, and how the default applies.
+              reason: A consumer cannot use any Operation until it can import Database and choose an Instance.
+              inputs:
+              - Published Interface
+              - Instance Enum
+              skills: []
+              expected_result: An Interface section part covering import and active Instances.
+              depends_on:
+              - P2-G8-T01
+              - P2-G3-T01
+              constraints: []
+              acceptance: The section explains how to import Database through the public surface, lists exactly the active Instances, and states how to select one or accept the default.
+              verify: Following the explanation against the published Database imports it and selects each listed Instance and the default, and comparing the listed Instances with the Instance Enum shows no difference.
+              status: done
+              log:
+              - at: '2026-09-28T23:12:11Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing the documentation.
+              - at: '2026-09-28T23:15:18Z'
+                transition: claimed -> done
+                check: 'Transient scripts (outside the Database) that extract every example from the documentation, run it in a clean copy of the project against a prepared default Instance, and compare its output with the text shown: ran the importing example, compared the listed Instances with the Instance Enum and the stated default with the Configuration.'
+                outcome: The example printed ['sqlite', 'postgresql'] as documented, equal to the Instance Enum; the documented default (sqlite) equals the Configuration's default Instance; the explicit-Instance and omitted-Instance uses ran.
+            P2-G9-T03:
+              id: P2-G9-T03
+              source_id: '006'
+              title: Document one complete example for every Operation
+              description: Write the part of the Interface section that gives every published Operation one complete example.
+              reason: Consumers need a working demonstration of each Operation.
+              inputs:
+              - Published Interface
+              - Prepared default Instance
+              skills: []
+              expected_result: An Interface section part with one complete example per Operation.
+              depends_on:
+              - P2-G8-T01
+              - P2-G7-T15
+              constraints: []
+              acceptance: Every published Operation has exactly one complete example and each example produces the outcome its text describes.
+              verify: Running each example against the prepared Database produces the documented outcome, and comparing the documented Operations with the published Operations shows none missing and none extra.
+              status: done
+              log:
+              - at: '2026-09-28T23:12:11Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing the documentation.
+              - at: '2026-09-28T23:15:18Z'
+                transition: claimed -> done
+                check: 'Transient scripts (outside the Database) that extract every example from the documentation, run it in a clean copy of the project against a prepared default Instance, and compare its output with the text shown: ran the 13 Operation examples in documentation order and compared headings and coverage with the Database''s Operations.'
+                outcome: All 13 examples ran and printed the documented outcome; each Operation has exactly one example, in order Add, Update, List, Delete, Enable, Disable, Get by ID, Count, Sum, Min, Max, Truncate, Execute Command; no Operation is missing or extra. Examples leave the data as they found it so they can be run again.
+            P2-G9-T04:
+              id: P2-G9-T04
+              source_id: '006'
+              title: Document one complete example for Create Tables and Insert Initial Data
+              description: Write the part of the Interface section that gives Create Tables and Insert Initial Data one complete example each.
+              reason: Consumers need to prepare an Instance themselves, and each command needs its own demonstration.
+              inputs:
+              - Published Interface
+              - Create Tables
+              - Insert Initial Data
+              skills: []
+              expected_result: An Interface section part with one complete example for each command.
+              depends_on:
+              - P2-G8-T01
+              - P2-G4-T05
+              - P2-G7-T02
+              constraints: []
+              acceptance: Each command has exactly one complete example, and each example produces the outcome its text describes.
+              verify: Running each example against an unprepared Instance produces the documented outcome.
+              status: done
+              log:
+              - at: '2026-09-28T23:12:11Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing the documentation.
+              - at: '2026-09-28T23:15:18Z'
+                transition: claimed -> done
+                check: 'Transient scripts (outside the Database) that extract every example from the documentation, run it in a clean copy of the project against a prepared default Instance, and compare its output with the text shown: ran the Create Tables and Insert Initial Data examples on a prepared Instance and on a freshly emptied one.'
+                outcome: Create Tables printed 'Tables are ready' on both; Insert Initial Data printed 0 on the prepared Instance and 23 on the unprepared one, as the text states; each command has one example and the manual command forms were run in Setup.
+            P2-G9-T05:
+              id: P2-G9-T05
+              source_id: '006'
+              title: Document Setup
+              description: Write the Setup section with only the steps specific to the selected technology that a consumer needs to make Database usable.
+              reason: A consumer cannot use Database until it is installed and configured correctly.
+              inputs:
+              - Installable Database package
+              - Database Configuration
+              skills: []
+              expected_result: A Setup section containing the selected-technology installation and configuration steps.
+              depends_on:
+              - P2-G1-T01
+              - P2-G1-T02
+              - P2-G2-T01
+              constraints: []
+              acceptance: Setup contains only steps that the selected technology needs and no content about other Components.
+              verify: Following the Setup steps in a clean environment yields a Database that imports successfully and reaches its default Instance.
+              status: done
+              log:
+              - at: '2026-09-28T23:12:11Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing the documentation.
+              - at: '2026-09-28T23:15:18Z'
+                transition: claimed -> done
+                check: Followed the Setup steps verbatim in a brand-new directory holding only the project files and a copy of Model (uv sync, create-tables, insert-initial-data), then imported Database and read the default Instance.
+                outcome: Install succeeded, the commands printed 'Tables are ready' and 'Inserted 23 records' as documented, Database imported, and the default Instance answered 1 User, 8 Currencies, and username admin. Setup contains only steps the selected technology needs and no content about other Components (the PostgreSQL note is about Database's own Instance).
+            P2-G9-T06:
+              id: P2-G9-T06
+              source_id: '006'
+              title: Document Use
+              description: Write the Use section following the standard Database public surface.
+              reason: Consumers need guidance on the intended way to reach Database.
+              inputs:
+              - Published Interface
+              skills: []
+              expected_result: A Use section that follows the public surface.
+              depends_on:
+              - P2-G8-T01
+              constraints: []
+              acceptance: Use reaches every capability through the public surface only, and no example reaches an internal element.
+              verify: Following each Use example against the published Database works using only the public surface.
+              status: done
+              log:
+              - at: '2026-09-28T23:12:11Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing the documentation.
+              - at: '2026-09-28T23:15:18Z'
+                transition: claimed -> done
+                check: 'Transient scripts (outside the Database) that extract every example from the documentation, run it in a clean copy of the project against a prepared default Instance, and compare its output with the text shown: ran the three Use examples.'
+                outcome: All three printed the documented output ('8 8', ['CAD', 'CHF', 'JPY'], 2) using only the public surface; no example reaches an internal element.
+            P2-G9-T07:
+              id: P2-G9-T07
+              source_id: '006'
+              title: Document Verify
+              description: Write the Verify section by which a consumer confirms that a prepared Database works.
+              reason: A consumer needs a way to confirm a working Database before building on it.
+              inputs:
+              - Published Interface
+              - Prepared default Instance
+              skills: []
+              expected_result: A Verify section describing a confirmation through the public surface.
+              depends_on:
+              - P2-G8-T01
+              - P2-G7-T15
+              constraints: []
+              acceptance: Verify describes a confirmation that uses only the public surface, and its documented result is what the prepared Database actually produces.
+              verify: Following Verify against the prepared default Instance produces the confirmation the text describes.
+              status: done
+              log:
+              - at: '2026-09-28T23:12:11Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing the documentation.
+              - at: '2026-09-28T23:15:18Z'
+                transition: claimed -> done
+                check: 'Transient scripts (outside the Database) that extract every example from the documentation, run it in a clean copy of the project against a prepared default Instance, and compare its output with the text shown: ran the Verify example against the prepared default Instance.'
+                outcome: It printed '1 8 admin' as documented, using only the public surface. Content of this section is not defined by the Database Definition; it states one confirmation of structure and Initial Data.
+            P2-G9-T08:
+              id: P2-G9-T08
+              source_id: '006'
+              title: Document Troubleshooting
+              description: Write the Troubleshooting section for Database concerns only.
+              reason: Consumers need help interpreting the refusals and failures that Database itself reports.
+              inputs:
+              - Configuration loading
+              - Request validation
+              - Create Tables
+              - Insert Initial Data
+              skills: []
+              expected_result: A Troubleshooting section covering Database-reported failures.
+              depends_on:
+              - P2-G2-T02
+              - P2-G4-T05
+              - P2-G6-T02
+              - P2-G6-T03
+              - P2-G7-T02
+              constraints: []
+              acceptance: Each documented problem is one that Database actually reports and is paired with a resolution that works, and no guidance concerns another Component.
+              verify: Reproducing each documented problem against the published Database produces the described behaviour, and applying the described resolution clears it.
+              status: done
+              log:
+              - at: '2026-09-28T23:12:11Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before writing the documentation.
+              - at: '2026-09-28T23:15:18Z'
+                transition: claimed -> done
+                check: Transient script reproducing every documented problem against the published Database (both Instances and invalid Configurations included), comparing each documented message fragment with the reported text, then applying each documented resolution.
+                outcome: 16 rows and 20 message fragments were reproduced verbatim, including the real PostgreSQL failure on this machine (role postgres does not exist); all 19 resolutions cleared their problem; no guidance concerns another Component. Engine wording (UNIQUE, FOREIGN KEY, no such table) is stated as SQLite's.
+        P2-G10:
+          id: P2-G10
+          title: Verification
+          description: Whole-Database checks that prove the completed Database meets its authorities, beyond the check each individual Task carries.
+          area: Database conformance and repeatability
+          does: The completed Database is proven conformant, usable, and repeatable.
+          constraints: []
+          task_count: 9
+          tasks:
+            P2-G10-T01:
+              id: P2-G10-T01
+              source_id: '006'
+              title: Verify Architecture and dependency direction
+              description: Check the Database's layering, the ownership of each layer, and the direction of its dependencies.
+              reason: Clear ownership and one-way dependency are what keep routing, Engine behaviour, and the public boundary separate.
+              inputs:
+              - Completed Database
+              skills: []
+              expected_result: An architecture result for layer ownership and dependency direction.
+              depends_on:
+              - P2-G8-T01
+              - P2-G7-T02
+              constraints: []
+              acceptance: The Component has exactly the canonical Architecture members with their canonical ownership, exactly one implementation exists for every active Instance including Instances that share an Engine, no Instance-specific behaviour exists outside those implementations, no public surface exists outside the Interface, and no source lies in the storage area.
+              verify: Inspecting the Component's structure and dependency relationships shows only Interface-to-shared-layer and shared-layer-to-Instance-implementation edges, one implementation for every active Instance, and no source in the storage area.
+              status: done
+              log:
+              - at: '2026-09-28T23:15:39Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before running the whole-Database verification.
+              - at: '2026-09-28T23:18:44Z'
+                transition: claimed -> done
+                check: Transient scripts (outside the Database) analysing the Component's structure and the static imports of every module, checking layer edges, cycles, Instance-specific wording outside the implementations, and the storage area contents.
+                outcome: Root holds the Interface, config.yaml, core, engine, and db plus README at the Component directory; core holds data, tables, and initial_data with the shared helpers; engine holds exactly one implementation per active Instance (sqlite, postgresql); db holds no source. Static edges are Interface to shared layer and Instance implementation to shared helpers only; the shared layer never imports an Engine (it dispatches by configured Instance name at run time); no cycle; Instance names outside the implementations appear only in the Instance Enum. No public surface exists outside the Interface (see G8-T01). Two Instances sharing one Engine were exercised in G4-T01 using two instances of the same implementation type; the shipped Configuration has none.
+            P2-G10-T02:
+              id: P2-G10-T02
+              source_id: '006'
+              title: Verify Model is consumed read-only
+              description: Check how Database reaches Model and that nothing in the Model Component was created or changed by Database work.
+              reason: Model owns Entity meaning and its own output, and one stray artifact would break that ownership.
+              inputs:
+              - Completed Database
+              - Model Component
+              skills: []
+              expected_result: A result showing Database's use of Model and the state of the Model Component.
+              depends_on:
+              - P2-G8-T01
+              constraints: []
+              acceptance: Database reaches Model only through Model's published surface, imports no Model internal, and no artifact was created or changed in the Model Component throughout Database's work.
+              verify: Scanning Database's dependencies on Model shows only published-surface use, and comparing the Model Component against its last reviewed state shows no difference and no additional artifact.
+              status: done
+              log:
+              - at: '2026-09-28T23:15:39Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before running the whole-Database verification.
+              - at: '2026-09-28T23:18:44Z'
+                transition: claimed -> done
+                check: Static scan of every Database module for Model imports, plus hashing all 29 files of the Model Component before Database work began and after it finished and checking git status for the Model Component.
+                outcome: The only Model import in Database is 'from model import interface'; the Model Component's file hashes are identical to the baseline and git reports no change under it.
+            P2-G10-T03:
+              id: P2-G10-T03
+              source_id: '006'
+              title: Verify equal behaviour on every active Instance
+              description: Check that every Operation, Create Tables, and Insert Initial Data give the same observable result on every active Instance for the same request, and that each serves the selected Instance or the default Instance.
+              reason: Database's meaning must not depend on the Engine behind an Instance.
+              inputs:
+              - Completed Database
+              skills:
+              - sqlmodel
+              expected_result: A behaviour-parity result across every active Instance.
+              depends_on:
+              - P2-G4-T05
+              - P2-G6-T01
+              - P2-G6-T02
+              - P2-G6-T03
+              - P2-G7-T02
+              - P2-G8-T01
+              constraints: []
+              acceptance: Every Operation, Create Tables, and Insert Initial Data produce equal observable results on every active Instance for the same requests, and each request is served by the selected Instance or, when none is named, by the configured default Instance.
+              verify: Running the same representative request sequence that covers every Operation and both commands against each active Instance yields equal results, and repeating it with and without an Instance selection shows each request served by the intended Instance only.
+              status: done
+              log:
+              - at: '2026-09-28T23:15:39Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before running the whole-Database verification.
+              - at: '2026-09-28T23:18:44Z'
+                transition: claimed -> done
+                check: 'Transient script running one 19-step request sequence covering every Operation and both commands three times: without an Instance (default), naming the SQLite Instance, and naming the PostgreSQL Instance, on fresh storage each time, comparing results step by step (credential Fields excluded, everything else compared by value).'
+                outcome: All 19 results are equal across the three runs; the request without an Instance touched only the default Instance (the other Instance held no record afterwards). Decimal values compare equal in value (SQLite may return 0.1 where PostgreSQL returns 0.10).
+            P2-G10-T04:
+              id: P2-G10-T04
+              source_id: '006'
+              title: Verify atomic persistence of data-changing Operations
+              description: Check that every data-changing Operation, including a changing Execute Command and Insert Initial Data, persists its complete change or leaves the Instance exactly as it was.
+              reason: A partial change would leave stored data inconsistent with no way to see it.
+              inputs:
+              - Completed Database
+              skills:
+              - sqlmodel
+              expected_result: An atomicity result for every data-changing Operation.
+              depends_on:
+              - P2-G5-T01
+              - P2-G5-T02
+              - P2-G5-T05
+              - P2-G5-T06
+              - P2-G5-T07
+              - P2-G5-T08
+              - P2-G5-T09
+              - P2-G7-T02
+              - P2-G8-T01
+              constraints: []
+              acceptance: Every data-changing Operation either persists its complete change or leaves every stored record exactly as it was before, on every active Instance.
+              verify: Forcing a failure part-way through each data-changing Operation on a prepared Instance leaves the stored records identical to their state before it, and a successful run persists the whole change.
+              status: done
+              log:
+              - at: '2026-09-28T23:15:39Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before running the whole-Database verification.
+              - at: '2026-09-28T23:18:44Z'
+                transition: claimed -> done
+                check: 'Transient script that, on both Engines, wrapped the low-level change of each data-changing Operation so it raised after the change had executed inside its transaction: add, update, enable, disable, delete, truncate, and a changing Execute Command; compared a snapshot of every record of every Entity before and after; then ran each successfully. Insert Initial Data failure part-way was checked in G7-T02.'
+                outcome: After every forced failure the stored records were identical to the snapshot on both Engines; successful runs persisted the whole change (a changing command affected all matching records and truncate removed both records). SQLite uses explicit transactions so structure and data changes roll back together.
+            P2-G10-T05:
+              id: P2-G10-T05
+              source_id: '006'
+              title: Verify stored structure conformance for every Entity
+              description: Compare the stored structure of every Model Entity on every active Instance with its published declaration.
+              reason: Individual Task checks cannot prove that the whole set of Entities is realized completely and only once.
+              inputs:
+              - Completed Database
+              - Model Entity declarations
+              skills:
+              - sqlmodel
+              expected_result: A structure-conformance result for every Entity.
+              depends_on:
+              - P2-G4-T05
+              - P2-G8-T01
+              constraints: []
+              acceptance: For every Entity Model publishes, on every active Instance, the stored structure equals its declaration in Fields, Types, nullability, Default Values, Value Generation, value constraints, Uniqueness Constraints, and Indexes, with every Relation an enforced link and nothing missing, added, or reordered.
+              verify: Comparing the stored structure of every Entity on every active Instance with the public declarations reports no difference, and no stored structure exists for anything Model does not publish.
+              status: done
+              log:
+              - at: '2026-09-28T23:15:39Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before running the whole-Database verification.
+              - at: '2026-09-28T23:18:44Z'
+                transition: claimed -> done
+                check: Transient script comparing the reflected structure of the real default Instance and of a throwaway PostgreSQL database with all 15 published Declarations (table set, Field order, nullability, Types, length limits, defaults, primary key, Uniqueness Constraints, Indexes, foreign keys).
+                outcome: 'No difference on either Engine: 15 tables and 28 enforced Relations, nothing missing, added, or reordered, and no table for anything Model does not publish.'
+            P2-G10-T06:
+              id: P2-G10-T06
+              source_id: '006'
+              title: Verify Initial Data conformance with the Target
+              description: Compare the stored Initial Data of the default Instance with the Target's definition.
+              reason: Only a whole-set comparison proves that exactly the defined data exists and that credentials were handled safely.
+              inputs:
+              - Prepared default Instance
+              - Target Initial Data definitions
+              skills:
+              - sqlmodel
+              expected_result: An Initial Data conformance result.
+              depends_on:
+              - P2-G7-T15
+              constraints: []
+              acceptance: Every Entity with defined Initial Data holds exactly the defined records, every Entity without defined Initial Data holds no record, credential Fields hold distinct generated values, and no credential value appears in any output or record produced by the check.
+              verify: Comparing every Entity's stored records on the default Instance with the Target reports no difference, no other Entity holds a record, credential Fields are non-empty and distinct from one another, and scanning the check's output finds no credential value.
+              status: done
+              log:
+              - at: '2026-09-28T23:15:39Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before running the whole-Database verification.
+              - at: '2026-09-28T23:18:44Z'
+                transition: claimed -> done
+                check: Transient script comparing every Entity's stored records in the real default Instance with the Target's Initial Data definitions parsed from the Target, with all output captured and searched for the stored credential values.
+                outcome: Exactly the 23 defined records exist; Trailing Rule, Partial Rule, and Position hold none; the 5 credential values are non-empty and distinct, Instance and Account credentials differ, and the check displayed nothing.
+            P2-G10-T07:
+              id: P2-G10-T07
+              source_id: '006'
+              title: Verify documentation agrees with the public Database
+              description: Check the completed documentation against the public Database.
+              reason: Documentation that drifts from the Database misleads every consumer.
+              inputs:
+              - Completed documentation
+              - Completed Database
+              skills: []
+              expected_result: A documentation-agreement result covering content, order, and secrets.
+              depends_on:
+              - P2-G9-T01
+              - P2-G9-T02
+              - P2-G9-T03
+              - P2-G9-T04
+              - P2-G9-T05
+              - P2-G9-T06
+              - P2-G9-T07
+              - P2-G9-T08
+              constraints: []
+              acceptance: Sections appear in the order the Preferences select, every documented Operation, command, and Instance agrees with the public Database, no stale or additional meaning appears, and no real credential or secret appears.
+              verify: Comparing the documentation with the public Interface shows no difference, every example and documented outcome reproduces, and scanning the documentation finds no credential or secret value.
+              status: done
+              log:
+              - at: '2026-09-28T23:15:39Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before running the whole-Database verification.
+              - at: '2026-09-28T23:18:44Z'
+                transition: claimed -> done
+                check: Transient scripts re-running all 21 documentation examples in a clean copy, checking section order and comparing documented Operations, Instances, Filter Operators, defaults, and the Initial Data count with the public Database and Configuration, and searching the documentation for the stored credential values and secret-like tokens.
+                outcome: Sections follow the Preferences order; every documented item agrees with the public Database; all 21 examples reproduce their documented output; no credential or secret-like value appears. Earlier checks reproduced all Troubleshooting messages.
+            P2-G10-T08:
+              id: P2-G10-T08
+              source_id: '006'
+              title: Verify source quality and technology conformance
+              description: Check the completed Database source and package against the selected technology's standards.
+              reason: A semantically correct Database must also be a clean, usable package.
+              inputs:
+              - Completed Database
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A source-quality result for formatting, static checks, installation, and runtime.
+              depends_on:
+              - P2-G1-T01
+              - P2-G8-T01
+              constraints: []
+              acceptance: The source is formatted and passes every applicable import, build, lint, and static type check without a fixable warning in Database-owned code, contains no unused import, dead or duplicate code, cache, build output, machine path, timestamp, or generation narrative, and installs and runs on the selected runtime version.
+              verify: Running the technology's applicable format, import, build, lint, static type, and installation checks on Database reports no fixable Database-owned warning, and a scan of the source finds none of the excluded content.
+              status: done
+              log:
+              - at: '2026-09-28T23:15:39Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before running the whole-Database verification.
+              - at: '2026-09-28T23:18:44Z'
+                transition: claimed -> done
+                check: Ran the formatter check, the linter (default rules, plus a stricter pass over error, import, upgrade, bugbear, simplify, ruff-specific, comprehension, and print rules), the type checker, compilation of every module, a clean-environment install and import of the final source, a build of sdist and wheel checked for contents, and content scans for comments, suppressions, machine paths, identity, timestamps, generation narrative, and prints.
+                outcome: '15 files formatted; default lint clean; type check 0 errors; every module compiles; clean install imports and its commands work; scans found none of the excluded content (prints exist only in the manual command). The stricter pass reported only line length in docstrings and the two intentional prints, no fixable warning in any other category. Defect found and fixed: the build would have shipped the local storage file, including seeded credentials, in the wheel and sdist; storage is now excluded from both artifacts. Local cache directories are ignored and were removed afterwards.'
+            P2-G10-T09:
+              id: P2-G10-T09
+              source_id: '006'
+              title: Verify repeatability of unchanged regeneration
+              description: Regenerate the Database from unchanged authorities and compare the result with the existing Database.
+              reason: Deterministic output is what makes later reviews and regenerations trustworthy.
+              inputs:
+              - Completed Database
+              - Completed documentation
+              - Prepared default Instance
+              skills: []
+              expected_result: A repeatability result showing the effect of unchanged regeneration.
+              depends_on:
+              - P2-G10-T01
+              - P2-G10-T02
+              - P2-G10-T03
+              - P2-G10-T04
+              - P2-G10-T05
+              - P2-G10-T06
+              - P2-G10-T07
+              - P2-G10-T08
+              constraints: []
+              acceptance: Regeneration from unchanged authorities and selections produces zero source and documentation difference, leaves the stored records of the default Instance unchanged, and leaves no duplicate or stale artifact.
+              verify: Comparing the Database before and after an unchanged regeneration reports no difference in source or documentation, the default Instance's records are identical, and no additional artifact exists.
+              status: done
+              log:
+              - at: '2026-09-28T23:19:03Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 007) before regenerating the Database from unchanged authorities.
+              - at: '2026-09-28T23:19:27Z'
+                transition: claimed -> done
+                check: 'Transient script regenerating from the unchanged authorities and comparing with the existing Database: config.yaml rebuilt from the Database Preferences and Schema; the declared Initial Data rebuilt from the Target; formatter and fixable lint rerun; every documentation example re-executed in a clean prepared copy with its output text rewritten; both manual commands rerun on the default Instance with a hash of every stored record before and after; file-set and content hashes of the Component compared before and after.'
+                outcome: 'All six regenerations produced zero difference: config.yaml byte-identical; Initial Data identical in values and types; no source change from format or lint; README byte-identical; the default Instance''s records (hash of every record) unchanged and the insert command reported 0 records; no duplicate or stale artifact (file set and hashes identical). Local caches and the throwaway PostgreSQL database were removed afterwards.'

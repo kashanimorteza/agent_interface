@@ -27,7 +27,22 @@ content:
   components:
     development: {}
     model: {}
-    database: {}
+    database:
+      package_name: "database"
+      path: "database"
+      public_entrypoint: "database.interface"
+      public_interface:
+        - "Database"
+        - "DatabaseInstance"
+        - "Filter"
+        - "FilterOperator"
+        - "FilterCombination"
+        - "Order"
+        - "OrderDirection"
+        - "CommandResult"
+        - "create_tables"
+        - "insert_initial_data"
+        - "main"
     logic: {}
     api: {}
     presentation: {}

@@ -29,11 +29,11 @@ content_map:
 # <!--------------------------------------------------------------------------------- Content -->
 content:
   active:
-    mode: "reviewing"
-    phase: "P1"
-    mode_reason: "Review is examining phase P1 against its Plan."
-    set_by: "my-interface-review"
-    set_at: "2026-09-28T21:57:49Z"
+    mode: "development"
+    phase: "P2"
+    mode_reason: "Develop is executing the Plan for phase P2."
+    set_by: "my-interface-develop"
+    set_at: "2026-09-28T22:53:18Z"
   phases:
     P1:
       id: "P1"
@@ -43,8 +43,8 @@ content:
       completed_at: "2026-09-28T22:00:03Z"
     P2:
       id: "P2"
-      planning: "not started"
-      development: "not started"
+      planning: "completed"
+      development: "completed"
       review: "not started"
       completed_at: null
     P3:
@@ -210,3 +210,78 @@ content:
           - "Not exercised by any Task or the Target: the generated-identifier Value Generation path and non-length Field constraints. They exist as Declaration vocabulary and are neither required nor contradicted by the Plan."
           - "Develop Log Entry 004 and the entity Task Logs still mention the removed sensitivity markers; they are Develop-owned and were left unchanged."
           - "The Application Manifest section for Model is still empty. No Task in the Plan covers publishing it, so it is a Planning matter."
+    - id: "006"
+      skill: "my-interface-plan"
+      phase: "P2"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-09-28T22:32:32Z"
+      completed_at: "2026-09-28T22:38:09Z"
+      duration: "5:37"
+      open_questions: []
+      blockers: []
+      report: "Planned phase P2 (Database; argument '2' resolved to Phase 2) from scratch: one Plan, 10 Groups, 69 atomic Tasks (2 package and Model dependency, 2 configuration, 5 public vocabulary, 5 storage access and structure, 18 Operations, 3 request handling, 15 Initial Data, 2 public gateway, 8 documentation, 9 whole-Database verification). P1 was satisfied, so P2 is plannable; no prior P2 Plan existed, so nothing was preserved, changed, removed, or replaced. Every Task has source_id 006 and status todo; the dependency graph is acyclic and P1's Plan is unchanged. Open Questions: 0. Blockers: 0."
+      data:
+        duration_ms: 337000
+        task_changes:
+          added: 69
+          changed: 0
+          removed: 0
+          preserved: 0
+          replaced: 0
+          reason: "No Plan existed for P2; all Tasks are newly required by the Target phase goal, the Database Definition, and the Database Preferences."
+        decisions_to_confirm:
+          - "Credential storage treatment for Initial Data: the Target requires hash storage for User credentials and encrypted storage for Instance and Account credentials, and requires those Initial Data values to be generated securely. Logic owns any hashing or encryption before an Entity reaches Database, and Database stores the values it receives. Initial Data is inserted in P2, before Logic exists, so the seeded credential values will be stored as generated, never displayed or recorded. Tasks P2-G7-T01 and the three credential Initial Data Tasks are planned on that reading. The Human should confirm it, or direct which party applies the at-rest treatment and which key or scheme encrypted storage uses, before P3 begins."
+        notes:
+          - "Interface publication: the Database Definition lists Database, the Instance Enum, the Operations, Create Tables, and Insert Initial Data as Interface's published set but does not say where the Filter, Filter Operator, Filter Combination, Order, Order Direction, and Command Result vocabulary is reached. Task P2-G8-T01 requires that a consumer can make every request through the public surface alone; Develop should record how the vocabulary is exposed."
+          - "Value fidelity: Review of P1 observed that storage returned decimals padded to a scale of ten digits and that Model requires timezone-aware datetimes. Task P2-G5-T04 requires every Target-declared Type to survive storage equal in value and Type on every active Instance."
+          - "Instance parity: Database Preferences make both configured Instances active, so behavioural Tasks require verification on both. A reachable server for the second Instance is needed; PostgreSQL server binaries exist on this machine but a running server was not checked. If none can be reached, Develop should raise a Blocker rather than weaken verification."
+          - "Unspecified behaviour resolved as an observable boundary: repeating Insert Initial Data on an Instance that already holds the data leaves records unchanged and creates no duplicate (P2-G7-T02); the Verify documentation section has no defined content, so P2-G9-T07 states only that it confirms a prepared Database through the public surface."
+          - "Application Manifest: P2-G8-T02 covers publishing Database's public metadata, so the Database section will not repeat the gap found for Model."
+          - "Persistent testing is disabled in the Database Preferences, so Task verification is transient and adds no test artifacts."
+        necessary_but_not_performed:
+          - "The Application Manifest section for Model (package name, location, public entrypoint, public interface) is still empty and no P1 Task covers publishing it. It lies outside this invocation's phase selection, so it was not planned. A P1 replan, for example by planning phase 1, would add the Task."
+    - id: "007"
+      skill: "my-interface-develop"
+      phase: "P2"
+      event: "develop"
+      outcome: "completed"
+      started_at: "2026-09-28T22:53:18Z"
+      completed_at: "2026-09-28T23:19:37Z"
+      duration: "26:19"
+      skills_used:
+        - name: "sqlmodel"
+          report: "Guided the storage types (timezone-aware datetimes through UTCDateTime) and the SQLModel dependency; the Database derives its own tables from Model declarations, so SQLModel table classes were not used for storage."
+        - name: "python-skills:python-guidelines"
+          report: "Guided code style: uv, modern typing, Google-style docstrings, no speculative abstraction, no suppressions or comments."
+      open_questions: []
+      blockers: []
+      report: "Executed all 69 Tasks of the P2 Plan (Database): package and read-only Model dependency, configuration, vocabulary, storage structure and migration, every Operation, request handling, Initial Data, public Interface and Manifest entry, documentation, and nine whole-Database verifications. Every Task was claimed first, verified by a transient check on SQLite and on PostgreSQL where behaviour is engine-facing, and recorded done in its Task Log. The default Instance now holds 15 tables and the 23 Initial Data records. Four defects were found and fixed by verification (see data.defects_fixed). Open Questions: 0. Blockers: 0."
+      data:
+        duration_ms: 1579000
+        tasks: {done: 69, blocked: 0, todo: 0}
+        resolved_choices:
+          - "Python 3.14 with uv; dependencies sqlmodel 0.0.47, alembic 1.20.0, psycopg 3.3.6 (with psycopg-binary), pyyaml 6.0.3 (pydantic 2.13.5, sqlalchemy 2.0.54), stabilized in the lock file; ruff 0.16.9 and pyright 1.1.414 as development-only tools. Model is a path dependency of Database only."
+          - "Layout follows the Model precedent: the package root holds the Interface, config.yaml, core, engine, and db; README and packaging files sit at the Component directory."
+          - "The Instance Enum is a static member set (sqlite, postgresql); loading the Configuration refuses any difference between its members and the active Instances, so deactivating an Instance is done together with regeneration."
+          - "Storage structure is derived from the public Declarations into Database-owned tables named by the snake_case of the logical Entity name; Relations become enforced foreign keys, Uniqueness Constraints and Indexes are realized, declared Default Values become stored defaults; constraints storage cannot express are refused rather than ignored."
+          - "SQLite: explicit transactions (structure and data changes roll back together), foreign keys switched on per connection, AUTOINCREMENT identities, and decimals kept as a number when that is exact and as text otherwise. PostgreSQL uses unbounded exact numeric."
+          - "Create Tables migrates additively through Alembic's comparison (missing tables, Fields, Indexes, constraints); it never drops or retypes stored structure and refuses a nullability difference."
+          - "Initial Data: declared references name the position of a declared record and resolve to its stored id inside one transaction; a record is skipped when a Uniqueness Constraint is already satisfied; credentials come from the secrets module and are stored as generated because Database stores the values it receives."
+          - "Interface: Database class, module-level create_tables and insert_initial_data, a manual command entry, and the request and result vocabulary re-exported. Execute Command takes named parameters only."
+          - "Sum over decimal Fields is computed exactly from the selected values; Min and Max are done by the storage."
+          - "Storage files are excluded from the built wheel and sdist."
+        defects_fixed:
+          - "A failed Insert Initial Data on PostgreSQL still advances the identity sequence, so literal id references would have broken on retry; references are now resolved by position (found by G7-T02)."
+          - "Id validation ran after the Instance was resolved; it now runs first (found by G6-T03)."
+          - "The build would have shipped the local SQLite file with the seeded credentials in the wheel and sdist; storage is excluded (found by G10-T08)."
+          - "SQLAlchemy's default decimal handling on SQLite goes through floats and pads to ten digits (the P1 review observation); replaced by an exact decimal type (anticipated from that review and confirmed by G5-T04)."
+        decisions_to_confirm:
+          - "Credential storage treatment for Initial Data (raised by Planning, log 006): seeded credentials are stored as generated because Database stores the values it receives and Logic owns hashing and encryption. Confirm this, or direct which party applies the Target's at-rest treatment and which key or scheme encrypted storage uses, before P3."
+          - "PostgreSQL Instance on this machine: the shipped Preferences name the role postgres and the database application, and this server has neither. PostgreSQL behaviour was verified with the existing role morteza and a throwaway database that was dropped afterwards; the shipped Configuration was never connected. Decide whether to create that role and database locally or to change the Preferences."
+        notes:
+          - "Where the Interface exposes the vocabulary: re-exported through the Interface, because the Database Definition names the vocabulary but not where it is reached."
+          - "Model Component untouched: 29 file hashes identical before and after and git reports no change under it."
+          - "Verification scripts and transient copies were kept outside the project; local caches were removed."
+        necessary_but_not_performed:
+          - "The Application Manifest section for Model is still empty (raised by Develop log 004, Review 005, and Planning 006); it needs a Task in the P1 Plan."
