@@ -65,7 +65,7 @@ A Definition file carries these parts, in this order. A part marked *optional* i
 
 The Opening Summary is the file's one-line orientation: it names what the owner is and where it belongs, without explaining the file's structure or stating a Principle. Navigation follows it so the reader sees the whole shape before entering the content. Introduction is everything a reader has to take in before the rules mean anything, so it comes first, and its own Decisions part closes it, because how the Human arrived here is still context for the rules rather than one of them. What follows it is reference: the vocabulary, the parts, the edges, and the rules themselves.
 
-Overview, Purpose, and How It Works are always carried; Decisions is carried only by a Component whose recorded decisions need to be preserved; Operation Contract is carried only by an executable Operation Component whose operational contract needs to remain explicit for its Skill. The Opening Summary is unheaded and carries no Navigation entry. Navigation, Introduction, Terms, Architecture, Relationships, Boundaries, Layering, Authority, Principles, Operation Contract, and At a Glance carry their own second-level heading. Introduction's four parts and each Principle category carry third-level headings; each Principle carries a fourth-level heading under its category. A second-level heading therefore always names a section, a third-level heading names one member or category of that section, and a fourth-level heading names one Principle. A `<br>` separates each Introduction part from the next and each sibling Principle from the next; categories may also be separated by `<br>`. No blank line or `<br>` separates a Principle's Rule, Why, and Boundary.
+Overview, Purpose, and How It Works are always carried; Decisions is carried only by a Component whose recorded decisions need to be preserved; Operation Contract is carried only by an executable Operation Component whose operational contract needs to remain explicit for its Skill. The Opening Summary is unheaded and carries no Navigation entry. Navigation, Introduction, Terms, Architecture, Relationships, Boundaries, Layering, Authority, Principles, Operation Contract, and At a Glance carry their own second-level heading. Introduction's four parts and each Principle category carry third-level headings; each Principle carries a fourth-level heading under its category. A second-level heading therefore always names a section, a third-level heading names one member or category of that section, and a fourth-level heading names one Principle. A `<br>` separates each Introduction part from the next and each Principle category from the next. No `<br>` appears between sibling Principles within the same category, and no blank line or `<br>` separates a Principle's Rule, Why, and Boundary.
 
 
 <!--------------------------------------------------------------------------------- Title --->
@@ -306,6 +306,8 @@ Each category is a third-level heading. Each Principle is a fourth-level heading
 **Boundary:** <the limit of the rule>
 ```
 
+Adjacent Principles in the same category follow one another without a `<br>`. Each category after the first is preceded by one `<br>` separating it from the preceding category. Rule, Why, and Boundary remain consecutive inside one Principle, with neither a blank line nor a `<br>` between them.
+
 ### Title
 
 The category title names the owning Architecture or Layering part exactly, or names the coherent domain area when no such part exists. The Principle title states the rule as a claim, not as a topic: `Data Access is the only Logic route to Database`, not `Data Access`. It is read alone in a list of Principles and still communicates the rule, and it is how the Principle is cited — a Principle carries no number, so its title is its identity and is written to stay accurate if the rule is reworded.
@@ -465,7 +467,15 @@ a Principle, and a project may only add stricter rules, never looser ones.
 **Why:** <the reason it exists>
 **Boundary:** <the limit of the rule>
 
+#### <Title>
+
+**Rule:** ...
+**Why:** ...
+**Boundary:** ...
+
 <br>
+
+### <Next category>
 
 #### <Title>
 

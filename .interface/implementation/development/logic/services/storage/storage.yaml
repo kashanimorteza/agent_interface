@@ -1,0 +1,55 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/implementation/development/logic/services/storage/storage.yaml"
+  path_note: "The Preferences layer of the fixed Storage Role inside the Logic Component."
+  purpose: "Configurable names and realization defaults for Storage Service."
+  standard: "Agent Project Interface"
+  version: "3.0"
+  updated: "2026-09-29"
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned. Operations read it without writing resolved Storage Service choices back into it."
+  changed_by: "The human, directly. A missing critical Storage Service choice is raised through State."
+  precedence: "Explicit Target meaning and every applicable Storage Service, Logic, and Database Principle take precedence over this file."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read settings first to preserve the fixed Logic owner and Storage Role while resolving the configurable public Service name; then read layout. Read Storage Service Definition for responsibilities, Action derivation, naming, validation, and mandatory Behaviour. Resolve the language and shared development conventions from Logic Preferences."
+  selection: "Use these defaults when the Target is silent. Preserve an explicit compatible Target choice; raise an unresolved incompatible choice rather than inventing one."
+  version_resolution: "Storage Service introduces no independently versioned technology; versions resolve through Logic and Development Preferences."
+  matching: "Match each Action-name override to the stable identity of an Operation currently published by Database Interface. Derive a normalized base name when no override exists, reject unknown overrides, and preserve the responsibilities declared by Storage Service Definition."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "settings: identify the fixed Logic owner and Storage Role, then resolve the configurable public Service name."
+  - "layout: resolve the configurable Service directory, Interface file, Actions directory, identifier convention, and optional Action-name overrides."
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  - settings
+  - layout
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- settings -->
+  settings:
+    component:
+      role: "logic"
+    service:
+      role: "storage"
+      name: "Storage"
+
+  # <!-------------------------------------------- layout -->
+  layout:
+    names_configurable: true
+    naming:
+      identifier_case: "snake_case"
+    directory: "storage"
+    files:
+      interface: "interface"
+    directories:
+      actions: "actions"
+    action_name_overrides: {}

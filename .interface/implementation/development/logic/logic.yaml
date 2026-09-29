@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Logic Component — Logic-owned behavioural defaults and internal realization conventions."
   purpose: "Configurable defaults for Logic organization, reliability, and verification."
   standard: "Agent Project Interface"
-  version: "14.0"
+  version: "16.0"
   updated: "2026-09-29"
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -16,7 +16,7 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings for Logic's identity; then read the fixed Interface, Core, Services, configuration, and documentation layout, followed by Services, verification, and development language and capabilities. Read Connections from Development and resolve environment-specific Runtime Bindings from Platform. Use a Development Default only when this file leaves a shared choice unstated."
+  consumption: "Read settings for Logic's identity; then resolve the configurable names of the Interface, Core, Services, configuration, and documentation members declared by Logic Definition. Follow the Service references, then read verification, development language and capabilities, and documentation preferences. Read Connections from Development and resolve environment-specific Runtime Bindings from Platform. Use a Development Default only when this file leaves a shared choice unstated."
   selection: "Use a compatible configured Logic default when the Target is silent. For an explicit incompatible need, preserve Target intent under Logic Principles and record the consequential realization choice; ask only when no safe compatible choice can be established."
   version_resolution: "This file resolves versions for Logic-owned packages and tools. Development resolves versions only for its shared Defaults."
   matching: "Match standards and Logic settings by their exact keys. Resolve each Service through the Definition and Preferences references declared under services."
@@ -24,7 +24,7 @@ resolution:
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - "settings: identify Logic."
-  - "layout: locate the fixed Interface, Core, Services, configuration, and documentation members."
+  - "layout: resolve the configurable names of the Interface, Core, Services, configuration, and documentation members declared by Logic Definition."
   - "services: read each Service reference, then read that Service's Definition and Preferences."
   - "verification: apply Logic verification settings."
   - "development: apply the default language and the currently enabled or disabled component capabilities."
@@ -52,9 +52,7 @@ content:
 
   # <!-------------------------------------------- layout -->
   layout:
-    members_fixed: true
     names_configurable: true
-    rule: "Interface publishes Service Interfaces only; shared general files belong in Core; each Service owns one directory under Services. The members are fixed, while these directory and file names are configurable defaults."
     directories:
       core: "core"
       services: "services"
@@ -62,21 +60,15 @@ content:
       interface: "interface"
       configuration: "config.yaml"
       documentation: "README.md"
-      
+
   # <!-------------------------------------------- services -->
   services:
     entity:
-      name: "Entity Service"
-      fixed: true
-      public: true
       definition: "services/entity/entity.md"
       preferences: "services/entity/entity.yaml"
-    database:
-      name: "Database Service"
-      fixed: true
-      public: true
-      definition: "services/database/database.md"
-      preferences: "services/database/database.yaml"
+    storage:
+      definition: "services/storage/storage.md"
+      preferences: "services/storage/storage.yaml"
 
   # <!-------------------------------------------- verification -->
   verification:
@@ -93,7 +85,6 @@ content:
 
   # <!-------------------------------------------- documentation -->
   documentation:
-    file: "README.md"
     location: "the Component root"
     format: "markdown"
     order:
@@ -105,5 +96,5 @@ content:
       - verify
       - troubleshooting
     sections:
-      interface: "List each configured Service Interface exactly as Logic Interface publishes it under the Service name. Show how a consumer imports a Service Interface. Logic Interface defines no Actions, wrappers, Categories, or duplicated dependency symbols."
+      interface: "List each configured Service Interface exactly as Logic Interface publishes it under the configured Service name. Show both access paths: direct Actions from Storage Service Interface and Entity Child Services from Entity Service Interface. Logic Interface defines no Actions, wrappers, Categories, or duplicated dependency symbols."
       services: "For every configured Service, follow its referenced Definition and Preferences, document its published Interface, and give every capability it handles one complete example without copying the Service contract into Logic documentation."
