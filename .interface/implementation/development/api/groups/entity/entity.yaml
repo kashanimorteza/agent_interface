@@ -2,41 +2,37 @@
 meta:
   path: ".interface/implementation/development/api/groups/entity/entity.yaml"
   path_note: "The Preferences layer of Entity Group inside the API Component."
-  purpose: "Configurable names and external realization defaults for the fixed Entity Group Role."
+  purpose: "Configurable Entity Group names, Resource Adapter layout, fixed Endpoints, and documentation defaults."
   standard: "Agent Project Interface"
-  version: "1.0"
-  updated: "2026-09-29"
+  version: "2.1"
+  updated: "2026-09-30"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
   rule: "This file is human-owned. Operations read it without writing resolved Entity Group choices back into it."
   changed_by: "The human, directly. A missing critical Entity Group choice is raised through State."
-  precedence: "Explicit compatible Target meaning and every applicable Entity Group, API, Logic, and Entity Service Principle take precedence over this file."
+  precedence: "Explicit compatible project meaning and every applicable Entity Group, API, Logic, and Entity Service Principle take precedence over this file."
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings first to preserve the fixed API owner and Entity Group Role while resolving the configurable Group name. Read the referenced Entity Service Preferences to validate publish_in_logic_interface and generate_api, then read Entity Service Interface through Logic Interface to derive Resources and callable Action membership. Read layout, routing, queries, contract, and documentation for Entity Group-owned defaults."
-  selection: "Use these defaults when Target is silent. Preserve explicit compatible Target choices. Leave unstated HTTP methods, schema realization, pagination representation, and other package mechanics to the selected API package or implementation skill and record the resulting external contract."
-  version_resolution: "Entity Group introduces no independently versioned technology; versions resolve through API and Development Preferences."
-  matching: "Match the Group to the fixed Entity Service identity, each Resource to one Entity Child Service, and each Endpoint to one API-enabled callable Action. Reject unknown overrides, invalid identities, and collisions without silent repair."
+  consumption: "Read settings to identify Entity Group and its Entity Service source; read layout to resolve the Group and Adapter names; create one Resource Adapter per Entity presented by Entity Service; place every fixed Endpoint and Handler in every Adapter; then generate Group documentation from the resolved Adapters and Endpoints."
+  selection: "Preserve explicit compatible project choices. Use these Preferences for unstated Entity Group names and Endpoint mappings. Do not add, remove, or reinterpret an Entity Operation outside the fixed catalogue."
+  version_resolution: "Entity Group introduces no independently versioned technology."
+  matching: "Match every Resource Adapter to exactly one Entity presented by Entity Service and every Endpoint to the corresponding Logic Action. Reject missing Logic Actions, invalid identities, and final Method-and-Path collisions without silent repair."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "settings: identify the fixed API owner and Entity Group Role, resolve its configurable name, and validate Entity Service eligibility."
-  - "layout: resolve the Group directory, Router and Adapter directories, and Entity resource pattern."
-  - "routing: resolve Entity Group route defaults and any explicit compatible overrides."
-  - "queries: resolve bounded collection defaults for supported Entity Actions."
-  - "contract: resolve Group-specific external contract choices."
-  - "documentation: resolve detailed Entity Group documentation."
+  - "settings: identify Entity Group, validate Entity Service publication, and resolve its Group name."
+  - "layout: resolve the Group directory, Adapters directory, and Resource Adapter filename pattern."
+  - "endpoints: create the fixed Endpoint and Handler catalogue used by every Adapter."
+  - "documentation: resolve Entity Group documentation from the generated Resource Adapter and Endpoint set."
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
   - settings
   - layout
-  - routing
-  - queries
-  - contract
+  - endpoints
   - documentation
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -50,59 +46,176 @@ content:
       role: "entity"
       name: "Entity"
     source:
-      logic_service_role: "entity"
+      interface: "Logic Interface"
+      service_role: "entity"
       required_publish_in_logic_interface: true
       required_generate_api: true
-    endpoints:
-      callable_actions_default_generate_api: true
 
   # <!-------------------------------------------- layout -->
   layout:
     names_configurable: true
     directory: "entity"
     directories:
-      router: "router"
-      adapter: "adapter"
+      adapters: "adapters"
     patterns:
-      resource: "<entity>"
+      adapter: "<resource>"
 
-  # <!-------------------------------------------- routing -->
-  routing:
-    group_prefix: "/entity"
-    action_path: "/<entity>/<action>"
-    realization_defaults_source: "selected API package or implementation skill"
-    overrides: {}
-
-  # <!-------------------------------------------- queries -->
-  queries:
-    pagination:
-      default_limit: 50
-      maximum_limit: 100
-      representation_source: "matching Entity Action and selected API package or implementation skill"
-    overrides: {}
-
-  # <!-------------------------------------------- contract -->
-  contract:
-    schemas:
-      source: "published Entity Action contracts"
-      realization_source: "selected API package or implementation skill unless Target overrides"
-    outcomes:
-      success_envelope: false
-      unexpected_failure_request_id: true
+  # <!-------------------------------------------- endpoints -->
+  endpoints:
+    shared_parameters:
+      instance:
+        placement: "query"
+        required: false
+        source: "Logic Action contract"
+        forwarding: "unchanged"
+    catalogue:
+      add:
+        entity_operation: "add"
+        logic_action: "add"
+        method: "POST"
+        path: "/add"
+        parameters:
+          body:
+            resource:
+              required: true
+              value: "an instance of the Adapter's bound Entity Resource"
+      update:
+        entity_operation: "update"
+        logic_action: "update"
+        method: "PUT"
+        path: "/update/{id}"
+        parameters:
+          path:
+            id:
+              required: true
+          body:
+            resource:
+              required: true
+              value: "an instance of the Adapter's bound Entity Resource"
+      list:
+        entity_operation: "list"
+        logic_action: "list"
+        method: "GET"
+        path: "/list"
+        parameters:
+          query:
+            filters:
+              required: false
+            filter_combination:
+              required: false
+            orders:
+              required: false
+            limit:
+              required: false
+      delete:
+        entity_operation: "delete"
+        logic_action: "delete"
+        method: "DELETE"
+        path: "/delete/{id}"
+        parameters:
+          path:
+            id:
+              required: true
+      enable:
+        entity_operation: "enable"
+        logic_action: "enable"
+        method: "PATCH"
+        path: "/enable/{id}"
+        parameters:
+          path:
+            id:
+              required: true
+      disable:
+        entity_operation: "disable"
+        logic_action: "disable"
+        method: "PATCH"
+        path: "/disable/{id}"
+        parameters:
+          path:
+            id:
+              required: true
+      get_by_id:
+        entity_operation: "get_by_id"
+        logic_action: "get_by_id"
+        method: "GET"
+        path: "/get_by_id/{id}"
+        parameters:
+          path:
+            id:
+              required: true
+      count:
+        entity_operation: "count"
+        logic_action: "count"
+        method: "GET"
+        path: "/count"
+        parameters:
+          query:
+            filters:
+              required: false
+            filter_combination:
+              required: false
+      sum:
+        entity_operation: "sum"
+        logic_action: "sum"
+        method: "GET"
+        path: "/sum"
+        parameters:
+          query:
+            field:
+              required: true
+            filters:
+              required: false
+            filter_combination:
+              required: false
+      min:
+        entity_operation: "min"
+        logic_action: "min"
+        method: "GET"
+        path: "/min"
+        parameters:
+          query:
+            field:
+              required: true
+            filters:
+              required: false
+            filter_combination:
+              required: false
+      max:
+        entity_operation: "max"
+        logic_action: "max"
+        method: "GET"
+        path: "/max"
+        parameters:
+          query:
+            field:
+              required: true
+            filters:
+              required: false
+            filter_combination:
+              required: false
+      truncate:
+        entity_operation: "truncate"
+        logic_action: "truncate"
+        method: "DELETE"
+        path: "/truncate"
+        parameters: {}
 
   # <!-------------------------------------------- documentation -->
   documentation:
-    audience: "external consumers of Entity capabilities"
+    title: "Entity"
+    source: "generated Resource Adapters and the fixed Endpoint catalogue"
+    presentation: "selected by API composition"
     order:
       - overview
+      - address
       - resources
+      - adapters
       - endpoints
-      - requests
-      - responses
-      - failures
-      - collections
+      - parameters
       - examples
     sections:
-      resources: "Document every generated Entity Resource from its published Entity Child Service without copying Model definitions or Logic implementation."
-      endpoints: "Document every generated Endpoint under its Entity Resource, including purpose, accepted request, returned response, and declared failures."
-      examples: "Provide runnable consumer examples without exposing private API, Logic, Model, Database, framework, or package implementation details."
+      resources: "List every Entity Resource presented by Entity Service."
+      adapters: "Identify the one generated Adapter bound to every Resource."
+      endpoints: "For every Adapter, document each Entity Operation, HTTP Method, Path, and Logic Action."
+      parameters: "Document Path, Query, Body, and optional Instance Parameters exactly as the Endpoint catalogue declares them."
+      examples: "Provide usable requests for every fixed Endpoint without exposing Adapter implementation."
