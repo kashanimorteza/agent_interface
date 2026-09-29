@@ -40,7 +40,7 @@ The cost of the alternative is not untidiness, it is disagreement. Behaviour spr
 
 A consumer reaches Logic Interface and selects one of the Service Interfaces published there. Entity Service Interface is published by default and presents Entity Child Services, from which the consumer selects one Entity and then calls one of that child's Actions. Storage Service Interface remains available to internal Logic Services but is not published through Logic Interface by default. The owning Service works out what the request means: which Domain Definitions it concerns, which Components hold the answer, and in what order they have to be asked.
 
-It then carries the work out through its Services. Every Service keeps all of its files, including its own Interface, in its own directory. Entity Service and Storage Service are the two fixed internal Services; additional Services may be configured when the application needs them. Every Service Interface remains available for internal Service collaboration. Logic Interface publishes only those Service Interfaces whose `publish_in_logic_interface` setting is `true`, under each Service's configured name, and does nothing else: it neither redefines nor wraps any Service Action.
+It then carries the work out through its Services. Every Service keeps all of its files, including its own Interface, in its own directory. Entity Service and Storage Service are the two fixed internal Services; additional Services may be configured when the application needs them. Every Service Interface remains available for internal Service collaboration. Logic Interface publishes only those Service Interfaces whose `publish_in_logic_interface` setting is `true`, under each Service's configured name, and does nothing else: it neither redefines nor wraps any Service Action. A published Service becomes eligible for a corresponding API Group only when its independent `generate_api` setting is also `true`.
 
 What comes back is an Application Outcome: the result the consumer asked for, or one of the expected failures that the Action declares. Application Outcome is a concept, not a required wrapper or generated type; every Action returns its own declared result without a Logic-wide envelope. The consumer learns nothing else — not which Components were involved, not which Service performed which step, not how the answers were combined. That is the whole exchange, and it is the same exchange whether the consumer is an API process, a command-line entry point, or another Component.
 
@@ -55,6 +55,7 @@ What comes back is an Application Outcome: the result the consumer asked for, or
 - **Service** — one modular part of Logic that owns one coherent application responsibility and one Interface. Its implementation remains internal, while publication of its Interface through Logic Interface is configurable.
 - **Service Interface** — the outward gateway inside one Service's directory. It presents that Service's usable capabilities for internal collaboration and is exposed unchanged through Logic Interface only when publication is enabled.
 - **Service Interface Publication** — the Boolean Service Preference `publish_in_logic_interface`, which controls only whether Logic Interface exposes that Service Interface; it never creates, removes, or changes the Service or its Interface.
+- **API Group Generation** — the Boolean Service Preference `generate_api`, which requests one corresponding API Group only for a Service already published through Logic Interface.
 - **Service Action** — one function a Service class handles through its Service Interface.
 - **Entity Service** — one of Logic's two fixed Services, defined independently in [Entity Service Definition](services/entity/entity.md), with Interface publication enabled by default.
 - **Storage Service** — one of Logic's two fixed Services, defined independently in [Storage Service Definition](services/storage/storage.md), with Interface publication disabled by default.
@@ -211,6 +212,12 @@ Every Principle below is mandatory and belongs to the Architecture or Layering c
 **Why:** Giving each application responsibility one Service keeps its dependencies and behavior together, so a Service can change without that change spreading through unrelated Behaviour.
 **Boundary:** Services sit beside one another, not on top of one another: none is the foundation of another. A Service may use another Service only through that Service's Interface when its Behaviour requires that collaboration, including when the destination Interface is not published through Logic Interface. Additional Services may be configured, but they never replace either fixed Service. Each Service's own Definition and Preferences govern its internal contract, realization, and publication setting.
 
+#### API generation is independent and publication-dependent
+
+**Rule:** Every Service declares `generate_api` independently from `publish_in_logic_interface`. API may generate a Group only when both values are `true`; `generate_api: true` with publication disabled is invalid. Within an eligible Service, every callable Action is API-enabled by default and may explicitly set `generate_api: false` in that Service to remain outside API.
+**Why:** A Service may be useful through Logic Interface without needing HTTP exposure, while API membership still needs one authoritative source.
+**Boundary:** These settings declare eligibility only. Logic never generates routes, methods, schemas, or another API contract, and API never changes a Service or its Interface.
+
 #### Logic reaches another Component only through that Component's Interface
 
 **Rule:** Every route out of Logic runs through the Interface of the Component on the other side, and through the capabilities that Interface offers. The Service that owns a dependency makes those calls; Logic reaches no Component by another route and holds no part of one that its Interface does not publish.
@@ -297,6 +304,11 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — give every Service an outward Service Interface that presents its usable capabilities and is published unchanged by Logic Interface.
 - **Must** — include Entity Service and Storage Service internally, retain both Service Interfaces, and apply each Service's publication setting.
 - **Never** — let a consumer reach or depend on a Service implementation, or let a Service do its work through another Component's Service.
+
+**API generation is independent and publication-dependent**
+
+- **Must** — Generate an API Group only for a Service whose publication and API-generation settings are both enabled, and include its callable Actions by default.
+- **Never** — Allow API generation for an unpublished Service or treat a non-callable export as an Endpoint.
 
 **Logic reaches another Component only through that Component's Interface**
 

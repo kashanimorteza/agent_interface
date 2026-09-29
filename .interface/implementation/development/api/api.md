@@ -1,6 +1,6 @@
 # API Definition
 
-API is the executable Development Component that owns the external communication boundary and publishes selected application capabilities through a transport.
+API is the Development Component that publishes selected Logic Services as one external HTTP boundary.
 
 <br>
 
@@ -24,42 +24,41 @@ API is the executable Development Component that owns the external communication
 
 ### Overview
 
-API is an independent executable Component. It starts its own process, owns the selected external transport, validates transport data, invokes application capabilities through Logic Interface, and maps declared results and failures into public responses. API owns no authoritative application Behaviour or persistence.
+API is the single external HTTP gateway to the capabilities selected from Logic. It may contain several API Groups while all Groups share one running API, one address, and one lifecycle. Each eligible Logic Service receives exactly one corresponding Group with its own routes and internal boundary.
 
-Its Architecture and responsibilities remain stable across languages, frameworks, packages, and transports. API Preferences select the concrete realization and configurable Architecture names; Platform supplies runtime bindings.
-
-<br>
+API describes responsibilities and observable contracts independently of programming language, framework, package, or implementation technique. API Preferences may select a default realization, while the selected package or implementation skill decides its technical mechanics.
 
 ### Purpose
 
-A running application needs one owner for everything required to be externally reachable: process startup, protocol handling, request validation, identity establishment, response serialization, safe failure mapping, public documentation, and lifecycle endpoints. These responsibilities describe how the application is reached, not what the application means or permits.
+Logic may publish several Services, but an external consumer needs a clear and stable way to reach only the capabilities intended for API access. API provides that way without copying Behaviour into transport code or exposing internal Logic, Model, Database, or Storage details.
 
-API keeps those concerns outside Logic. A second transport or consumer can therefore be added without moving transport concepts into application Behaviour, and Logic can change behind its published Interface without exposing its implementation to external callers.
-
-<br>
+Each Group keeps one Service's external surface separate from the others. The shared API composes those Groups into one boundary, so adding or removing a Group does not create another server or change the ownership of application Behaviour.
 
 ### How It Works
 
-Application Bootstrap creates the selected framework application and wires Core, Routers, Services, middleware, exception mapping, authentication, and lifecycle hooks. A request reaches the matching Router, which owns the route, method, transport inputs and outputs, transport validation, and Request Context.
+API reads Logic Interface and the settings of its Services. A Service receives an API Group only when both `publish_in_logic_interface` and `generate_api` are `true`. The Group corresponds to that one Service and uses only the Service Interface published through Logic Interface.
 
-Router delegates the request to its corresponding API Service. Service prepares the transport-independent input and enters Logic through Logic Interface. It selects the required Logic Service Interface and then calls the capability that Interface publishes; for Entity Service this includes selecting the appropriate Entity Child Service before its Action. API never imports a private Logic implementation.
+Inside a Group, Router receives and returns HTTP data. Adapter translates between that external contract and the corresponding Logic Service Interface. Router calls only its own Adapter, and Adapter calls only its matching Logic Service through Logic Interface.
 
-The called Logic capability returns its declared result or expected failure. API introduces no assumed common Logic result wrapper. Router maps that declared outcome to the external response contract. Unexpected failures become safe generic responses carrying a non-secret request identifier, while credentials and internal details remain inside the boundary.
+Each callable Action published by the Service becomes an Endpoint by default. An Action may explicitly set `generate_api: false` in its owning Service to remain outside API. Support exports such as types, enums, constants, and metadata help define the contract but never become Endpoints.
+
+Bootstrap composes all Groups into one running API. Core contains only shared private API capabilities. The external contract, documentation, and running routes describe the same Groups and Endpoints.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
-- **API Interface** — the complete external boundary formed by published routes, request and response shapes, authentication requirements, and the machine-readable contract; it is not a root source file.
-- **Application Bootstrap** — the root file that creates the selected framework application and composes the API process.
-- **Core** — the private directory for shared API files and capabilities owned by no one Router or Service.
-- **Router** — one transport-facing module that owns routes, transport schemas, validation, Request Context, and response mapping for a domain area.
-- **API Service** — one transport-independent module between a Router and Logic Interface, normally paired with the same domain area.
-- **Logic Interface** — the public Logic surface through which API selects a Logic Service Interface and uses its published capabilities.
-- **Transport Schema** — an input or output shape owned by API when the external representation differs from a Logic or Model representation.
-- **Request Context** — validated non-secret identity and tracing information for one request.
-- **External Contract** — the human- and machine-readable description of API's published boundary.
+- **API Group** — the external API surface corresponding to exactly one eligible Logic Service.
+- **Eligible Logic Service** — a Service for which both `publish_in_logic_interface` and `generate_api` are `true`.
+- **Bootstrap** — the single composition point that assembles and starts the API and registers every Group.
+- **Core** — the private home of shared API capabilities owned by no single Group.
+- **Router** — the HTTP-facing part of one Group, responsible for its routes and external request and response contract.
+- **Adapter** — the transport-independent part of one Group that maps valid external data to its corresponding Logic Service Interface and maps the declared result back.
+- **Endpoint** — the public HTTP representation of one API-enabled callable Service Action.
+- **Transport Schema** — an external request or response shape owned by API; it is not a copied Domain Entity.
+- **Request Context** — non-secret request metadata carried across the API boundary when a capability needs it.
+- **External Contract** — the human- and machine-readable description of the API Groups, Endpoints, requests, responses, and failures.
 
 <br>
 
@@ -68,231 +67,231 @@ The called Logic capability returns its declared result or expected failure. API
 
 ```text
 API
-├── application
+├── bootstrap
 ├── core/
-├── router/
-│   └── <domain>
-├── service/
-│   └── <domain>
+├── groups/
+│   └── <service>/
+│       ├── router/
+│       └── adapter/
 ├── config.yaml
 └── README.md
 ```
 
-The names shown are defaults selected by API Preferences. Changing a name changes the realization path, not the responsibility represented by that member. API Interface is the external transport surface produced by this Architecture, not an additional source file.
+The names shown are defaults selected by API Preferences. A selected language may realize a small Group compactly and a large Group through several files, but the responsibilities and dependency direction remain unchanged. API Interface is the published HTTP contract and is not a separate root source file.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Consumes Logic** — invokes application capabilities only through Logic Interface and the Service Interfaces it publishes.
-- **Consumes Development** — receives shared Defaults and the declared direct Connection to Logic.
-- **Consumes Platform** — receives runtime bindings, secret references, and the shutdown deadline its process observes.
-- **Consumed by Presentation** — publishes the external contract and capabilities Presentation reaches through its API Access layer.
-- **Consumed by other external clients** — serves callers authorized by the Target through the selected transport.
+- **Consumes Logic** — discovers eligible Services and invokes their callable Actions only through Logic Interface.
+- **Consumes Development** — receives the shared implementation defaults and the declared connection to Logic.
+- **Consumes Platform** — receives the runtime bindings needed to run the API.
+- **Consumed by Presentation and external clients** — publishes one external HTTP contract containing every generated Group.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Boundaries --->
 ## Boundaries
 
-- **Application Behaviour and authorization decisions** — belong to Logic; API carries validated identity and invokes the applicable Logic capability.
-- **Domain meaning** — belongs to Model and is reached through Logic; API may own a Transport Schema without redefining a Domain Definition.
-- **Persistence and raw Database access** — belong behind Logic and Storage Service; API never calls Database or Storage Service outside Logic Interface.
-- **Transport routes, schemas, authentication, statuses, serialization, and public error shapes** — belong to API.
-- **Runtime values and process operation** — belong to Platform; API owns the contract that declares the values it requires and the lifecycle behavior it exposes.
-- **User-interface behavior** — belongs to Presentation; API publishes capabilities without deciding how they are displayed.
+- **Application Behaviour and application decisions** — belong to Logic; API only represents and carries a request to the owning Service.
+- **Domain meaning** — belongs to Model and reaches API through Logic contracts; API never reads Model directly.
+- **Persistence** — belongs behind Logic and Database; API never calls Database or Storage Service directly.
+- **HTTP routes, external shapes, transport validation, serialization, and public failures** — belong to API.
+- **Technical framework mechanics** — belong to the selected package and implementation skill, provided that they preserve this Definition.
+- **Runtime values and process operation** — are supplied by Platform; API declares only what its running boundary needs.
+- **Authentication** — is not part of the current API contract and is not generated implicitly. A future Target requirement must introduce it explicitly.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-API owns the external transport boundary and its process. Its internal dependency direction is Application Bootstrap → Router → API Service → Logic Interface. Core supplies shared private API capabilities without becoming another public layer.
+API has one dependency direction: Bootstrap registers Groups; within each Group, Router calls Adapter and Adapter calls the matching Logic Service through Logic Interface. Core may support the API internally but is never another public layer.
 
-### Application Bootstrap
+### Bootstrap
 
-The configured root application file. It creates the selected framework application, loads validated API configuration, registers Routers, installs middleware and exception handling, wires authentication, configures lifecycle hooks, and exposes the process entrypoint. It contains composition only.
+The single composition and startup point of API. It assembles the selected realization, registers every generated Group, applies shared API concerns, and exposes one running boundary. It contains no Group Action, application Behaviour, or persistence work.
 
 ### Core
 
-The private directory for shared API files used across domain Routers or Services but owned by none of them, such as common Request Context support, shared error representation, configuration loading, and lifecycle coordination. Core defines no route or application Behaviour.
+The private directory for API capabilities shared by several Groups and owned by none of them. A concern that belongs to only one Group remains inside that Group.
 
-### Routers
+### Groups
 
-The transport-facing directory. It contains one Router file per configured or selected domain area. A Router owns routes, Transport Schemas, transport validation, authentication dependencies, status mapping, response serialization, and machine-readable contract metadata. It calls its corresponding API Service and never Logic or Database directly.
+The directory containing exactly one Group for each eligible Logic Service. A Group is identified by its source Service, keeps its own Router and Adapter, and never calls another Group. If an external capability needs coordination across several Services, that coordination first becomes a Logic Service and API may then create a Group for it.
 
-### Services
+For Entity Service, there is one Entity Group rather than one Group per Entity. Each Entity Child Service becomes a resource inside that Group, and its API-enabled callable Actions become Endpoints. Router and Adapter may use one file per Entity when the selected realization benefits from that structure.
 
-The transport-independent API coordination directory. It contains one API Service file per applicable domain area. Service prepares inputs for Logic, selects a Logic Service Interface and its published capability, and returns that declared result to Router. It imports no Router, framework Request or Response type, transport status, or Database capability.
+### Router
+
+The HTTP-facing boundary of one Group. It owns the Group route namespace, methods selected by the API contract, external request and response shapes, transport validation, response production, and public contract metadata. It calls only its Group Adapter.
+
+### Adapter
+
+The transport-independent bridge between one Router and one Logic Service Interface. It maps validated external input to the published Action contract, invokes only the matching Service through Logic Interface, and returns the declared result or failure for Router to represent. It contains neither HTTP mechanics nor application Behaviour.
 
 ### Configuration
 
-`config.yaml` is API's generated or supplied runtime configuration file. API declares and validates its contract before readiness. Runtime values and secret delivery remain owned by Platform.
+`config.yaml` contains only runtime values declared by API. Component structure and configurable defaults remain in API Preferences, while Platform supplies environment-specific bindings.
 
 ### Documentation
 
-Documentation explains the external API contract for a consumer with no access to API internals. Its filename, location, format, order, and sections are selected by API Preferences. The machine-readable contract remains consistent with the running routes and complements rather than replaces consumer documentation.
+Documentation describes the external contract by Group and Endpoint. Each Group owns the explanation of its own operations, while the root documentation introduces the enabled Groups and presents one combined API boundary.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
-API Definition Principles are mandatory. API Preferences provide configurable defaults and conventions, while explicit Target meaning and applicable Principles take precedence. Preferences may make a rule stricter but may not weaken it.
+API Definition Principles are mandatory. API Preferences provide configurable defaults for unstated API choices. Explicit compatible Target meaning takes precedence over those defaults, while no Preference or package may weaken a Principle.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Principles --->
 ## Principles
 
-Every Principle below is mandatory and belongs to the Architecture or Layering category that owns it.
+Every Principle below is mandatory and belongs to the category that owns it.
 
 ### General
 
-#### API is an independent executable
+#### API remains independent of its realization
 
-**Rule:** API owns its process, startup, external transport, serialization, versioning, and external contract. Logic remains a library consumed through Logic Interface.
-**Why:** An independently executable boundary can be started, stopped, scaled, or replaced without moving process ownership into Logic.
-**Boundary:** API owns no authoritative application Behaviour, Domain Definition, persistence, or private Logic implementation.
+**Rule:** API Definition fixes responsibilities, boundaries, dependency direction, and observable contracts without requiring a programming language, framework, package, decorator, or implementation pattern.
+**Why:** The same API Component must remain understandable and implementable across compatible technology choices.
+**Boundary:** API Preferences may select defaults, and the selected package or implementation skill may choose mechanics, but neither may change the conceptual contract.
 
-#### API exposes Target-selected capabilities
+#### API publishes selected Logic capabilities only
 
-**Rule:** API publishes every capability selected by Target for external consumers without reducing the external contract to storage CRUD.
-**Why:** The external contract serves Target intent rather than exposing the shape of persistence and forcing clients to reconstruct application intent.
-**Boundary:** Target selects which capabilities are external. API selects only how those capabilities are represented over its transport.
-
-<br>
-
-### Architecture
-
-#### API preserves one structured Architecture
-
-**Rule:** API contains one Application Bootstrap file, one Core directory, one Routers directory, one Services directory, one configuration file, and one Documentation file. Routers and Services contain one corresponding file per applicable domain area. The names are configurable through API Preferences while these responsibilities and ownership locations remain fixed.
-**Why:** A stable structure keeps process composition, transport, coordination, shared internals, configuration, and documentation independently understandable.
-**Boundary:** Additional private API files belong to Core or the domain directory that owns them; they do not create another public layer or a second Application Bootstrap.
+**Rule:** API publishes only callable Actions reached through eligible Service Interfaces in Logic Interface. It never imports Logic internals, Model, Database, or Storage Service directly.
+**Why:** One public dependency keeps application Behaviour authoritative in Logic and prevents API from becoming another implementation of the application.
+**Boundary:** API may own an external representation of a published capability without copying its domain meaning or Behaviour.
 
 <br>
 
-### Application Bootstrap
+### Groups
 
-#### Application Bootstrap owns API composition
+#### Group membership comes from Logic Service settings
 
-**Rule:** Application Bootstrap creates the selected framework application, loads validated API configuration, registers Router modules, installs middleware and exception handlers, wires authentication, configures lifecycle hooks, and exposes the configured entrypoint. It contains composition and wiring only.
-**Why:** One composition root makes the running application readable in one place instead of assembling it through scattered side effects.
-**Boundary:** Application Bootstrap contains no route, Transport Schema, domain-specific operation logic, or application Behaviour. Runtime values come from API configuration or Platform Bindings.
+**Rule:** API creates exactly one Group for each Service whose `publish_in_logic_interface` and `generate_api` settings are both `true`, and no Group for any other Service. `generate_api: true` with root publication disabled is invalid.
+**Why:** Logic Service settings remain the single authority for whether a Service is reachable and whether API represents it.
+**Boundary:** API Preferences may override API-owned names or contract details but never maintain a second Service catalogue.
 
-<br>
+#### Each Group corresponds to one Logic Service
 
-### Core
+**Rule:** Router calls only its own Adapter, and Adapter calls only the Group's corresponding Logic Service Interface through Logic Interface. Groups never call one another.
+**Why:** A one-to-one boundary keeps ownership and dependency paths clear.
+**Boundary:** Cross-Service orchestration belongs to a Logic Service, which may receive its own Group when eligible.
 
-#### Core contains shared private API capabilities only
+#### Endpoint membership follows callable Action settings
 
-**Rule:** A file shared across API domain areas and owned by no one Router or Service belongs in Core. Core remains private, defines no route, and contains no application Behaviour or persistence implementation.
-**Why:** Shared API mechanics need one internal home without becoming a public layer or being copied across domains.
-**Boundary:** A domain-specific transport concern remains with its Router, and domain-specific API coordination remains with its Service.
+**Rule:** Every callable Action published by an eligible Service becomes exactly one Endpoint unless that Action explicitly sets `generate_api: false` in its owning Service. Non-callable exports never become Endpoints.
+**Why:** Endpoint membership stays aligned with the authoritative Service contract without a second hand-maintained catalogue.
+**Boundary:** An API override may change an Endpoint's external representation but never create an Action absent from the Service Interface.
 
-<br>
+#### Group identities and routes remain unique
 
-### Routers
-
-#### Router owns the transport boundary
-
-**Rule:** Router owns routes, transport inputs and outputs, Transport Schemas, parameters, headers, Request Context, transport validation, authentication dependencies, status and error mapping, response serialization, and machine-readable contract metadata. Router delegates to API Service and contains no application Behaviour.
-**Why:** Confining the protocol to Router keeps everything behind it transport-independent.
-**Boundary:** Router imports no private Logic implementation and calls neither Logic Interface nor Database directly.
-
-#### Transport validation does not replace Behaviour validation
-
-**Rule:** Router validates transport shape and rejects malformed requests before invoking Service. Logic validates resulting state, authorization, and application Behaviour; a valid request shape never implies a permitted operation.
-**Why:** Shape and meaning are separate checks owned by different boundaries.
-**Boundary:** API may enforce its published transport bounds but never copies a Logic rule into Router.
-
-#### Credentials never leave the API boundary
-
-**Rule:** Credential values may be accepted only by operations that require them and are excluded from responses, errors, diagnostics, logs, examples, and recorded output.
-**Why:** A credential exposed through any secondary output path is permanently compromised.
-**Boundary:** API may pass a required credential inward through the authorized Logic capability but never returns, records, or renders it.
-
-#### Declared results and failures are mapped safely
-
-**Rule:** Router maps each Logic capability's declared result or expected failure to the public contract without assuming a common Logic wrapper. Unexpected failures become safe generic responses with a non-secret request identifier; internal exceptions and persistence details never cross the boundary.
-**Why:** Consumers need stable public outcomes without learning internal implementation or failure details.
-**Boundary:** An unexpected failure remains a failure and is never reshaped into a successful response.
-
-#### Identity and authorization remain separate
-
-**Rule:** When authentication is enabled, API establishes validated requester identity in Request Context. Logic decides authorization for application Behaviour.
-**Why:** Knowing who is asking and deciding what they may do are separate responsibilities.
-**Boundary:** Transport validity and authenticated identity never imply permission.
-
-#### Queries are bounded and explicit
-
-**Rule:** List, filtering, ordering, and pagination parameters are explicitly allowlisted, bounded, and stable. API parameters never become direct storage commands.
-**Why:** Unbounded or storage-shaped inputs let an external caller control internal load and query construction.
-**Boundary:** API bounds its public contract; Logic and Database decide how a valid bounded request is fulfilled.
+**Rule:** Every Group identity, directory, route prefix, and final method-and-path combination is valid and unique after the selected realization's declared normalization. A collision or invalid identity stops generation with a clear error.
+**Why:** Silent renaming changes the public contract and makes routing ambiguous.
+**Boundary:** API never resolves a conflict by inventing a suffix, number, or hidden rename.
 
 <br>
 
-### Services
+### Router
 
-#### API Service mediates between Router and Logic
+#### Router owns HTTP representation only
 
-**Rule:** API Service receives transport-independent input from Router, prepares the call required by the selected Logic capability, and returns that capability's declared result. It selects the required Service Interface from Logic Interface and uses only capabilities that Interface publishes.
-**Why:** A mediating layer keeps Router free of application coordination and Logic free of transport concepts.
-**Boundary:** API Service imports no Router, framework Request or Response type, status code, middleware, Database Interface, or private Logic implementation and reimplements no authoritative Behaviour.
+**Rule:** Router owns its Group's external routes, methods, requests, responses, transport validation, serialization, and public failure representation. It calls its Adapter and contains no application Behaviour.
+**Why:** Keeping HTTP at the edge lets Logic and Adapter remain independent of transport.
+**Boundary:** Router never calls Logic, another Group, Database, or Storage Service directly.
 
-#### API consumes Logic through Logic Interface only
+#### Endpoint methods are explicit
 
-**Rule:** API reaches application Behaviour only through Logic Interface. It never imports a Logic Service implementation, Logic Core, Model, Database, or Storage Service directly.
-**Why:** One public dependency keeps API replaceable and lets Logic change behind its own boundary.
-**Boundary:** API may own Transport Schemas and mappings required by its external contract without redefining a Domain Definition or Logic capability.
+**Rule:** Every Endpoint receives an explicit HTTP method from Target or API Preferences. API never guesses a method from an Action name. A missing method stops generation of that Endpoint with a clear unresolved-choice error.
+**Why:** Action names do not reliably determine transport semantics.
+**Boundary:** The selected package implements the chosen method but does not choose the public contract silently.
+
+#### External schemas follow published Action contracts
+
+**Rule:** API derives an Endpoint's default request and response shapes from its published Action contract. API defines a distinct Transport Schema only when the external representation must differ. An insufficient Action contract stops Endpoint generation.
+**Why:** Derivation avoids copying meaning while still allowing a deliberate external representation.
+**Boundary:** Shape validation belongs to API; application validity and Behaviour remain in Logic.
+
+#### Collections remain explicit and bounded
+
+**Rule:** Filtering, ordering, and pagination are available only when an Endpoint contract declares them. Their public values are allowlisted and bounded, and never become direct storage commands.
+**Why:** An external caller must not control internal queries or request an unbounded public result.
+**Boundary:** The pagination form belongs to the Endpoint contract; Adapter only maps it to the corresponding Logic input.
+
+#### Public outcomes remain faithful and safe
+
+**Rule:** A successful Endpoint returns its declared Action result without an API-wide success envelope. Declared failures remain failures, and unexpected failures become a safe public response carrying a non-secret request identifier.
+**Why:** API must preserve the capability contract without exposing internal details or inventing a second result model.
+**Boundary:** Exact HTTP representation is selected by the API realization, but it may never expose internal exceptions, persistence details, secrets, or turn a failure into success.
 
 <br>
 
-### Configuration
+### Adapter
 
-#### Runtime configuration remains external and private
+#### Adapter maps without reimplementing Behaviour
 
-**Rule:** API declares and validates every required runtime configuration value before readiness. Platform supplies runtime values and secret references; values are never hard-coded as application meaning or written back into API Preferences.
-**Why:** An explicit configuration contract fails clearly before service instead of unpredictably during a request.
-**Boundary:** API owns the contract and validation, while Platform owns value delivery and runtime operation.
+**Rule:** Adapter maps validated external input to the matching published Action, invokes that Action through Logic Interface, and maps its declared result back toward Router. It contains no HTTP mechanics, application decision, or persistence implementation.
+**Why:** A narrow Adapter prevents transport and Behaviour from leaking into one another.
+**Boundary:** Adapter may perform representation mapping but never changes the meaning, permission, or result of an Action.
 
 <br>
 
-### Documentation
+### Bootstrap and Core
 
-#### API documentation describes the external contract only
+#### Bootstrap owns one shared API composition
 
-**Rule:** API documentation addresses an external consumer with access only to the published boundary. It covers every operation, purpose, accepted request, returned response, expected failures, authentication, applicable query controls, and runnable examples.
-**Why:** A consumer must be able to use the API without knowing which Logic Service, Database mechanism, or framework serves it.
-**Boundary:** Documentation never makes Logic, Database, framework, or private API details consumer dependencies.
+**Rule:** API has exactly one Bootstrap, one running boundary, and one shared lifecycle. Bootstrap registers every Group and contains composition only; a Group never creates its own server or process.
+**Why:** Groups are independent contract areas, not independent applications.
+**Boundary:** Runtime bindings come from Platform, and implementation mechanics come from the selected package or skill.
+
+#### Core remains shared and private
+
+**Rule:** A private API capability shared by several Groups and owned by none belongs in Core. Core publishes no Endpoint and contains no application Behaviour.
+**Why:** Shared concerns need one internal home without becoming another public layer.
+**Boundary:** A Group-specific concern remains in that Group even when a similar concern exists elsewhere.
+
+<br>
+
+### Contract and Documentation
 
 #### API owns one consistent external contract
 
-**Rule:** Human documentation, machine-readable contract, and implemented routes describe the same operations, schemas, versions, authentication, and approved outcomes.
-**Why:** A contract that differs from the running boundary causes consumers to build against behavior that does not exist.
-**Boundary:** API describes its own external representation; the meaning behind a capability remains owned by Logic.
+**Rule:** Running routes, machine-readable contract, and human documentation describe the same Groups, Endpoints, requests, responses, versions, and failures.
+**Why:** Consumers must not build against a description that differs from the running boundary.
+**Boundary:** The selected package may produce the machine-readable form; API Definition does not prescribe its technical format or default path.
+
+#### Versioning is an external-contract choice
+
+**Rule:** When Target requires versioning, API applies one declared versioning policy across the shared boundary unless Target explicitly gives a Group a different contract. API never infers a versioning strategy.
+**Why:** Versioning manages compatibility and must therefore be deliberate and visible.
+**Boundary:** API Preferences may provide a default strategy, while the selected package decides only how to realize it.
+
+#### Documentation is organized by Group
+
+**Rule:** Each Group documents its published Endpoints, accepted input, returned output, and failures. Root documentation introduces enabled Groups and presents them as one API.
+**Why:** Consumers need both a complete boundary and a clear view of each capability area.
+**Boundary:** Documentation exposes no unpublished Service, private API structure, Logic implementation, or Database detail.
 
 <br>
 
-### Lifecycle
+### Lifecycle and Verification
 
-#### API lifecycle is observable
+#### Health and readiness always exist
 
-**Rule:** API distinguishes health from readiness, validates required configuration and dependencies before readiness, and shuts down within the Platform-provided deadline.
-**Why:** Operators need to distinguish a live process from one ready to serve and need bounded shutdown behavior.
-**Boundary:** API reports and observes its own condition; Platform decides what to do with those signals and supplies the deadline.
+**Rule:** API always exposes distinct health and readiness signals. Health reports that the API is alive; readiness is positive only after required configuration and dependencies are ready. Their paths are configurable, but the signals cannot be disabled.
+**Why:** Operators need to distinguish a running process from one able to serve requests.
+**Boundary:** The selected package implements the signals, while Platform decides how to use them.
 
-<br>
+#### Verification covers the published boundary
 
-### Verification
-
-#### API verification covers the boundary
-
-**Rule:** Verification covers route contracts, Transport Schemas, declared outcomes, credential exclusion, lifecycle, Request Context, and consistency between the machine-readable contract and running routes.
-**Why:** The boundary is what external consumers actually rely on.
-**Boundary:** API verification does not replace Logic Behaviour verification or Database persistence verification.
+**Rule:** Verification confirms Group eligibility, one-to-one Group mapping, Endpoint membership, route uniqueness, Router-to-Adapter-to-Logic dependency direction, contract consistency, bounded collection input, safe failures, and lifecycle signals.
+**Why:** The published boundary is what external consumers rely on.
+**Boundary:** API verification never replaces Logic Behaviour or Database persistence verification.
 
 <br>
 
@@ -303,108 +302,109 @@ Every obligation in the file, under the Principle it comes from.
 
 ### General
 
-**API is an independent executable**
+**API remains independent of its realization**
 
-- **Must** — Own the API process, transport, serialization, versioning, and external contract.
-- **Never** — Own authoritative Behaviour, Domain Definitions, persistence, or Logic internals.
+- **Must** — Preserve the same responsibilities, boundaries, dependency direction, and observable contract across compatible realizations.
+- **Never** — Make a language, framework, package, or implementation pattern part of API Definition.
 
-**API exposes Target-selected capabilities**
+**API publishes selected Logic capabilities only**
 
-- **Must** — Publish every capability Target selects for external consumers.
-- **Never** — Reduce the external contract to storage CRUD.
+- **Must** — Reach API-enabled callable Actions only through eligible Service Interfaces in Logic Interface.
+- **Never** — Reimplement Behaviour or access Model, Database, Storage Service, or private Logic directly.
 
-### Architecture
+### Groups
 
-**API preserves one structured Architecture**
+**Group membership comes from Logic Service settings**
 
-- **Must** — Keep one Bootstrap file, Core, Routers, Services, configuration, and Documentation in their configured locations.
-- **Never** — Create a second public layer or Bootstrap through an additional private file.
+- **Must** — Create exactly one Group only when both Service settings are true.
+- **Never** — Maintain a second Service catalogue or generate a Group for an unpublished Service.
 
-### Application Bootstrap
+**Each Group corresponds to one Logic Service**
 
-**Application Bootstrap owns API composition**
+- **Must** — Keep each Router, Adapter, and Logic Service connection inside one Group boundary.
+- **Never** — Call between Groups or coordinate several Logic Services inside API.
 
-- **Must** — Compose and wire the running API in one Application Bootstrap.
-- **Never** — Put routes, Transport Schemas, domain operations, or application Behaviour in Bootstrap.
+**Endpoint membership follows callable Action settings**
 
-### Core
+- **Must** — Create exactly one Endpoint for each API-enabled callable Action.
+- **Never** — Turn a support export into an Endpoint or create an Action absent from the Service Interface.
 
-**Core contains shared private API capabilities only**
+**Group identities and routes remain unique**
 
-- **Must** — Keep shared non-domain API mechanics in private Core.
-- **Never** — Define routes, application Behaviour, or persistence in Core.
+- **Must** — Validate Group identities, paths, and final route combinations before realization.
+- **Never** — Repair an invalid or colliding value with a silent rename, suffix, or number.
 
-### Routers
+### Router
 
-**Router owns the transport boundary**
+**Router owns HTTP representation only**
 
-- **Must** — Keep transport routes, schemas, validation, identity, statuses, serialization, and contract metadata in Router.
-- **Never** — Call Logic or Database directly or put application Behaviour in Router.
+- **Must** — Keep routes, external shapes, transport validation, serialization, and public failures in Router.
+- **Never** — Put application Behaviour in Router or call Logic, another Group, Database, or Storage directly.
 
-**Transport validation does not replace Behaviour validation**
+**Endpoint methods are explicit**
 
-- **Must** — Validate transport shape at Router and leave application validity to Logic.
-- **Never** — Treat a well-formed request as automatically permitted.
+- **Must** — Obtain every Endpoint method from Target or API Preferences.
+- **Never** — Guess an HTTP method from an Action name.
 
-**Credentials never leave the API boundary**
+**External schemas follow published Action contracts**
 
-- **Never** — Return, record, log, diagnose, or document a credential value.
+- **Must** — Derive default external shapes from the Action contract and define a distinct shape only when needed.
+- **Never** — Copy Domain meaning or generate an Endpoint from an insufficient Action contract.
 
-**Declared results and failures are mapped safely**
+**Collections remain explicit and bounded**
 
-- **Must** — Map declared Logic results and failures without assuming a common wrapper and map unexpected failures to safe generic responses.
-- **Never** — Expose internal exceptions or persistence details or reshape a failure as success.
+- **Must** — Allow only declared and bounded filtering, ordering, and pagination.
+- **Never** — Expose an unbounded result or convert public input directly into a storage command.
 
-**Identity and authorization remain separate**
+**Public outcomes remain faithful and safe**
 
-- **Must** — Establish validated identity in Request Context when authentication is enabled.
-- **Never** — Decide application authorization at the transport boundary.
+- **Must** — Return the declared success result directly and represent failures safely.
+- **Never** — Add a universal success envelope, expose private failures, or turn a failure into success.
 
-**Queries are bounded and explicit**
+### Adapter
 
-- **Must** — Allowlist and bound public list, filter, order, and pagination parameters.
-- **Never** — Turn an API parameter into a direct storage command.
+**Adapter maps without reimplementing Behaviour**
 
-### Services
+- **Must** — Map between Router and the matching Service Action through Logic Interface.
+- **Never** — Add HTTP mechanics, application decisions, or persistence work to Adapter.
 
-**API Service mediates between Router and Logic**
+### Bootstrap and Core
 
-- **Must** — Use the selected capability published through Logic Interface and return its declared result to Router.
-- **Never** — Import transport concepts, Database, or private Logic implementation into API Service or reimplement Behaviour there.
+**Bootstrap owns one shared API composition**
 
-**API consumes Logic through Logic Interface only**
+- **Must** — Register all Groups through one Bootstrap, running boundary, and lifecycle.
+- **Never** — Create a separate server or process for a Group.
 
-- **Must** — Reach application Behaviour only through Logic Interface.
-- **Never** — Import Logic internals, Model, Database, or Storage Service directly.
+**Core remains shared and private**
 
-### Configuration
+- **Must** — Keep only shared private API capabilities in Core.
+- **Never** — Publish Core or move a Group-specific concern into it.
 
-**Runtime configuration remains external and private**
-
-- **Must** — Declare and validate required runtime configuration before readiness.
-- **Never** — Hard-code runtime values as application meaning or write resolved values into Preferences.
-
-### Documentation
-
-**API documentation describes the external contract only**
-
-- **Must** — Document every external operation, input, response, failure, authentication rule, query control, and runnable example.
-- **Never** — Expose internal Logic, Database, framework, or API details as consumer dependencies.
+### Contract and Documentation
 
 **API owns one consistent external contract**
 
-- **Must** — Keep documentation, machine-readable contract, and running routes consistent.
-- **Never** — Describe internal meaning as part of API's external representation.
+- **Must** — Keep running routes, machine-readable contract, and human documentation consistent.
+- **Never** — Let package mechanics silently redefine the external contract.
 
-### Lifecycle
+**Versioning is an external-contract choice**
 
-**API lifecycle is observable**
+- **Must** — Apply a declared versioning policy when Target requires versioning.
+- **Never** — Infer a versioning strategy or let each Group drift without explicit Target intent.
 
-- **Must** — Distinguish health from readiness, validate dependencies before readiness, and honor Platform's shutdown deadline.
+**Documentation is organized by Group**
 
-### Verification
+- **Must** — Document every generated Group and Endpoint as part of one API boundary.
+- **Never** — Expose unpublished Services or private implementation details.
 
-**API verification covers the boundary**
+### Lifecycle and Verification
 
-- **Must** — Verify routes, schemas, outcomes, credential exclusion, lifecycle, Request Context, and contract consistency.
-- **Never** — Treat API verification as a substitute for Logic or Database verification.
+**Health and readiness always exist**
+
+- **Must** — Expose distinct, configurable health and readiness signals.
+- **Never** — Disable either signal or report readiness before required configuration and dependencies are ready.
+
+**Verification covers the published boundary**
+
+- **Must** — Verify Group and Endpoint membership, dependency direction, route uniqueness, contract consistency, bounds, safe failures, and lifecycle.
+- **Never** — Treat API verification as a replacement for Logic or Database verification.

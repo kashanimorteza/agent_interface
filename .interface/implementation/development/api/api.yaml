@@ -1,10 +1,10 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/implementation/development/api/api.yaml"
-  path_note: "The Preferences layer of the API Component — configurable boundary, layout, transport, and runtime defaults."
-  purpose: "Configurable defaults for API identity, realization, external contract, requests, queries, and lifecycle."
+  path_note: "The Preferences layer of the API Component — configurable defaults for its public boundary and realization."
+  purpose: "Configurable defaults for API identity, layout, Group realization, transport contract, collections, lifecycle, and documentation."
   standard: "Agent Project Interface"
-  version: "5.0"
+  version: "6.0"
   updated: "2026-09-29"
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -12,39 +12,39 @@ policy:
   agent_may_edit: false
   rule: "This file is human-owned. Operations read it without writing resolved API choices back into it."
   changed_by: "The human, directly. A missing critical API choice is raised through State."
-  precedence: "Explicit Target meaning and every applicable API Principle take precedence over this file."
+  precedence: "Explicit compatible Target meaning and every applicable API Principle take precedence over this file."
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings and layout first; then resolve development, transport, contract, requests, queries, lifecycle, idempotency, and documentation. Use a Development Default only when this file leaves a shared choice unstated. Preserve every explicit value, including false and null, and never write resolved values back into this file."
-  selection: "When Target leaves an API-owned choice unstated and this file supplies no default, use compatible professional judgment under API Principles and record a consequential implementation choice. Ask only when no safe compatible choice can be established."
-  version_resolution: "This file resolves versions for API-owned packages. Development resolves versions only for shared Defaults."
-  matching: "Match configurable names by exact keys. A route- or resource-specific value takes precedence over a broader API default, and explicit Target meaning takes precedence over both."
+  consumption: "Read settings and layout first. Read Logic Interface and every referenced Logic Service Preference to resolve Group eligibility from publish_in_logic_interface and generate_api. Resolve callable Action membership from each Service Interface and its Action generate_api setting. Then apply API-owned Group overrides, transport, contract, request, query, lifecycle, and documentation defaults. Use Development Defaults only when this file leaves a shared realization choice unstated."
+  selection: "Preserve explicit compatible Target choices. Use these Preferences only for unstated API-owned choices. Leave package mechanics to the selected package or implementation skill. Raise a missing required Endpoint method or another unresolved public-contract choice instead of guessing it."
+  version_resolution: "API Preferences resolve API-owned packages. Development resolves only shared Defaults."
+  matching: "Match Groups to stable Logic Service identities and Endpoints to stable callable Action identities. Reject stale overrides, ineligible Services, invalid names, and collisions without silent repair."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - "settings: identify API and its generated Component root."
-  - "layout: resolve the configurable Application Bootstrap, Core, Router, Service, configuration, and documentation names."
-  - "development: resolve language, capabilities, and API-owned packages."
-  - "transport: resolve the selected external transport and its settings."
-  - "contract: resolve public contract metadata and versioning."
-  - "requests: resolve request-context conventions."
-  - "queries: resolve public query defaults and bounds."
-  - "lifecycle: resolve health and readiness endpoints."
-  - "idempotency: resolve repeated-execution defaults."
-  - "documentation: apply the required external-consumer documentation structure."
+  - "layout: resolve Bootstrap, Core, Groups, Group layers, configuration, and documentation names."
+  - "development: resolve the default language and API-owned package choices."
+  - "groups: derive eligible Groups and Endpoints from Logic, then apply API-owned overrides."
+  - "transport: resolve the shared external transport and CORS policy."
+  - "contract: resolve external identity and versioning."
+  - "requests: resolve observable request tracking."
+  - "queries: resolve default bounded collection behaviour."
+  - "lifecycle: resolve the mandatory health and readiness paths."
+  - "documentation: resolve external-consumer documentation."
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
   - settings
   - layout
   - development
+  - groups
   - transport
   - contract
   - requests
   - queries
   - lifecycle
-  - idempotency
   - documentation
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -62,26 +62,23 @@ content:
   layout:
     names_configurable: true
     files:
-      application_bootstrap: "application"
+      bootstrap: "bootstrap"
       configuration: "config.yaml"
       documentation: "README.md"
     directories:
       core: "core"
-      routers: "router"
-      services: "service"
+      groups: "groups"
+    group_directories:
+      router: "router"
+      adapter: "adapter"
     patterns:
-      router: "<domain>"
-      service: "<domain>"
+      group: "<service>"
+      resource: "<child_service>"
 
   # <!-------------------------------------------- development -->
   development:
     language:
       default: "Python"
-    capabilities:
-      testing: false
-      error_handling: false
-      logging: false
-      encryption: false
     packages:
       framework:
         name: "FastAPI"
@@ -91,71 +88,60 @@ content:
         modeling: "sqlmodel==0.0.47"
         http_testing: "httpx"
 
+  # <!-------------------------------------------- groups -->
+  groups:
+    source: "Logic Interface and referenced Logic Service Preferences"
+    eligibility:
+      publish_in_logic_interface: true
+      generate_api: true
+    endpoints:
+      callable_actions_default_generate_api: true
+      http_method_required: true
+    routing:
+      default_group_prefix: "/<group>"
+      default_action_path: "/<action>"
+      entity_action_path: "/<entity>/<action>"
+    overrides: {}
+
   # <!-------------------------------------------- transport -->
   transport:
     selected: "HTTP"
-    http:
-      root_path:
-        source: "Platform Runtime Binding"
-        default: ""
-      cors:
-        allowed_origins:
-          - "*"
-        allow_credentials: false
-        allowed_methods:
-          - "*"
-        allowed_headers:
-          - "*"
+    cors:
+      enabled: false
+      allowed_origins: []
 
   # <!-------------------------------------------- contract -->
   contract:
     application:
       title: "Target API"
       description: ""
-      version: "v1"
-      values_source: "Target or API Runtime Configuration"
-    machine_readable:
-      enabled: true
-      standard: "OpenAPI"
-      endpoint: "/openapi.json"
-      interactive_reference_endpoint: "/docs"
     versioning:
       enabled: true
-      strategy: "path"
+      default_strategy: "path"
       initial_version: "v1"
+    authentication:
+      enabled: false
 
   # <!-------------------------------------------- requests -->
   requests:
-    request_id:
-      required: true
-      accept_valid_incoming: true
-      generate_when_absent: true
-      include_in_error_response: true
+    error_tracking:
+      enabled: true
 
   # <!-------------------------------------------- queries -->
   queries:
-    strategy: "cursor"
-    default_limit: 50
-    maximum_limit: 100
+    pagination:
+      default_strategy: "cursor"
+      default_limit: 50
+      maximum_limit: 100
+    group_overrides: {}
 
   # <!-------------------------------------------- lifecycle -->
   lifecycle:
-    runtime:
-      entrypoint_source: "API Component"
-      host_source: "Platform Runtime Binding"
-      port_source: "Platform Runtime Binding"
+    runtime_bindings_source: "Platform"
     health:
-      enabled: true
       path: "/health"
     readiness:
-      enabled: true
       path: "/ready"
-
-  # <!-------------------------------------------- idempotency -->
-  idempotency:
-    enabled_when: "A Target operation is selected as sensitive to repeated execution."
-    key: "idempotency_key"
-    atomic_result_recording: true
 
   # <!-------------------------------------------- documentation -->
   documentation:
@@ -164,13 +150,15 @@ content:
     audience: "external consumers"
     order:
       - overview
-      - authentication
-      - operations
-      - queries
-      - outcomes
-      - examples
+      - groups
+      - endpoints
+      - requests
+      - responses
+      - failures
+      - collections
       - lifecycle
-      - troubleshooting
+      - examples
     sections:
-      operations: "Document every published operation, purpose, accepted request, returned response, expected failures, and applicable authentication."
-      examples: "Provide runnable external-consumer examples without exposing Logic, Database, framework, or private API implementation details."
+      groups: "Introduce every generated API Group and its corresponding published Logic Service without exposing Logic implementation."
+      endpoints: "Document every generated Endpoint under its Group, including its purpose, accepted request, returned response, and declared failures."
+      examples: "Provide runnable consumer examples without exposing private API, Logic, Model, Database, framework, or package implementation details."

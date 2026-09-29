@@ -24,7 +24,7 @@ Storage Service is the fixed internal Logic Service whose Interface gives other 
 
 ### Overview
 
-Storage Service is one of the two fixed internal Services of every Logic Component. It is Logic's complete gateway to Database: for every Operation currently published by Database Interface, Storage Service provides one corresponding Action. Its Interface also republishes the exact active Database Instance Enum accepted by those Actions. Its implementation remains internal, and its Interface is not published through Logic Interface by default.
+Storage Service is one of the two fixed internal Services of every Logic Component. It is Logic's complete gateway to Database: for every Operation currently published by Database Interface, Storage Service provides one corresponding Action. Its Interface also republishes the exact active Database Instance Enum accepted by those Actions. Its implementation remains internal, its Interface is not published through Logic Interface by default, and API Group generation is disabled by default.
 
 ### Purpose
 
@@ -43,6 +43,7 @@ Every Action and its file are named `<service>_<action>`. The configured Service
 
 - **Storage Role** — the fixed identity of this Service inside Logic, independent of its configurable public name.
 - **Storage Service Interface** — this Service's outward gateway for internal Logic collaboration, exposed unchanged through Logic Interface only when `publish_in_logic_interface` is enabled.
+- **API Generation Setting** — the Service-level `generate_api` value that may request one Storage API Group only when root publication is also enabled; its default is `false`.
 - **Action** — one Storage Service capability corresponding to one Operation published by Database Interface.
 - **Operation Identity** — the stable identity by which an Action and any configured override are matched to a Database Operation.
 - **Published Action Name** — the identifier formed as `<service>_<action>` from the configured Service name and derived or overridden Action base name.
@@ -119,6 +120,12 @@ Every Principle below is mandatory and belongs to the category that owns it.
 **Why:** Logic needs one stable and discoverable Database gateway without confusing the Service with the Database Component or exposing implementation files.
 **Boundary:** Disabling root publication never disables the Service Interface for internal Logic collaboration. Enabling publication exposes only the Interface, never the Service implementation, Logic Core, or Database internals.
 
+#### Storage API generation is disabled by default
+
+**Rule:** Storage Service defaults both `publish_in_logic_interface` and `generate_api` to `false`. API may create a Storage Group only when Target explicitly enables both settings. Every callable Storage Action is API-enabled by default once the Service becomes eligible and may explicitly set `generate_api: false` in Storage Service Preferences.
+**Why:** Raw persistence capabilities remain internal unless Target deliberately publishes and exposes the complete Service boundary.
+**Boundary:** These settings declare eligibility only. Storage Service owns no HTTP route, method, schema, or transport Behaviour.
+
 #### Storage Service is every internal Logic Service's only route to Database
 
 **Rule:** Entity Service and every other Service inside Logic use Storage Service Interface whenever they need Database. No other internal Logic Service calls Database Interface or a Database implementation detail directly.
@@ -182,6 +189,11 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — Include the Storage Role and its Interface internally in every Logic and apply its root-publication setting.
 - **Never** — Publish it through Logic Interface when publication is disabled, expose its private implementation, or confuse its configurable name with its fixed Role.
+
+**Storage API generation is disabled by default**
+
+- **Must** — Require explicit root publication and API generation before a Storage API Group can exist.
+- **Never** — Generate a Storage API Group while either setting is disabled or define HTTP details inside Storage Service.
 
 **Storage Service is every internal Logic Service's only route to Database**
 
