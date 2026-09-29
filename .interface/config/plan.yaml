@@ -26,7 +26,7 @@ content_map:
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
-  task_count: 107
+  task_count: 180
   plans:
     P1:
       id: P1
@@ -3155,3 +3155,2048 @@ content:
                 transition: claimed -> done
                 check: 'Transient script regenerating from the unchanged authorities and comparing with the existing Database: config.yaml rebuilt from the Database Preferences and Schema; the declared Initial Data rebuilt from the Target; formatter and fixable lint rerun; every documentation example re-executed in a clean prepared copy with its output text rewritten; both manual commands rerun on the default Instance with a hash of every stored record before and after; file-set and content hashes of the Component compared before and after.'
                 outcome: 'All six regenerations produced zero difference: config.yaml byte-identical; Initial Data identical in values and types; no source change from format or lint; README byte-identical; the default Instance''s records (hash of every record) unchanged and the insert command reported 0 records; no duplicate or stale artifact (file set and hashes identical). Local caches and the throwaway PostgreSQL database were removed afterwards.'
+    P3:
+      id: P3
+      title: Logic
+      order: 3
+      target: Logic
+      does: Implement the reusable Logic library for operating on the defined models.
+      constraints: []
+      task_count: 73
+      groups:
+        P3-G1:
+          id: P3-G1
+          title: Package and dependencies
+          description: The installable Logic package and its use of the published Model and Database; every other Logic layer builds on them.
+          area: Logic package establishment and consumption of Model and Database
+          does: An installable Logic package exists that reaches every published Model Entity and every published Database Operation without changing either Component.
+          constraints: []
+          task_count: 3
+          tasks:
+            P3-G1-T01:
+              id: P3-G1-T01
+              source_id: 008
+              title: Establish the installable Logic package
+              description: Establish Logic as a reusable, installable library in the technology the Logic Preferences select, with every necessary dependency resolved to a concrete compatible version and stabilized in the technology's dependency metadata.
+              reason: Every other Logic layer needs a package that installs and imports before anything can be realized in it.
+              inputs:
+              - Resolved Logic technology selection
+              - Logic dependency version policy
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A Logic package that installs and imports cleanly, declares only necessary dependencies, and records their concrete versions.
+              depends_on: []
+              constraints: []
+              acceptance: The package installs by the technology's standard mechanism, imports without error, and its dependency versions are concrete and identical on repeated resolution.
+              verify: Installing the package in a clean environment and importing it succeeds, and resolving its dependencies again without any change yields the same concrete versions.
+              status: done
+              log:
+              - at: '2026-09-29T08:33:51Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before creating the Logic package.
+              - at: '2026-09-29T08:34:43Z'
+                transition: claimed -> done
+                check: Copied Model, Database, and the Logic package into a clean directory, ran uv sync there and imported the package; ran uv lock --check twice and uv lock once more, comparing the lock file before and after.
+                outcome: Install and import succeeded in the clean environment; lock check reported Resolved 24 packages unchanged both times and the re-resolved lock file is byte-identical. Resolved cryptography 50.0.1, sqlalchemy 2.0.54, with model and database as path dependencies (sqlmodel 0.0.47, alembic, psycopg through Database); Python 3.14 selected as in Model and Database; ruff and pyright in the dev group.
+            P3-G1-T02:
+              id: P3-G1-T02
+              source_id: 008
+              title: Make the published Model Entities reachable from Logic
+              description: Make every Entity that Model publishes, together with its public declaration, reachable from Logic by depending on the ready Model as an external provider, using it through its published surface alone and without adding, changing, generating, building, or testing anything in the Model Component.
+              reason: Logic imports its domain meaning from Model and must never restate it, while Model stays independently owned.
+              inputs:
+              - Installable Logic package
+              - Published Model Entities and their public declarations
+              skills:
+              - python-skills:python-guidelines
+              expected_result: Logic obtains every Model-published Entity and its public declaration through Model's published surface alone, with the Model Component untouched.
+              depends_on:
+              - P3-G1-T01
+              constraints: []
+              acceptance: In a clean environment every Entity Model publishes resolves from Logic through Model's published surface only, and the Model Component is identical before and after the dependency is established, with no artifact created in it.
+              verify: Installing Logic in a clean environment and reading each Entity and its public declaration through Model's published surface succeeds for every published Entity, and comparing the Model Component's contents before and after shows no difference and no additional artifact.
+              status: done
+              log:
+              - at: '2026-09-29T08:34:44Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before making Model and Database reachable from Logic.
+              - at: '2026-09-29T08:35:00Z'
+                transition: claimed -> done
+                check: Hashed every file of the Model Component before and after running uv sync in the Logic package, then imported Model's published Interface from the Logic environment and read each Entity's public declaration.
+                outcome: All 15 Entities published by Model resolved from Logic through the published Model Interface and each exposes its public declaration; the Model Component hash (29 files) is identical before and after, git reports no change under it, and no artifact was created there. Model is declared as a path dependency of Logic.
+            P3-G1-T03:
+              id: P3-G1-T03
+              source_id: 008
+              title: Make the published Database Operations reachable from Logic
+              description: Make Database's published Operations, together with the request and result vocabulary it publishes (the Instance selection, Filters, Filter Combination, Orders, and Command Result), reachable from Logic by depending on the ready Database as an external provider, using it through its published surface alone and without changing anything in the Database Component.
+              reason: Logic reaches stored data only through Database's published surface, while Database stays independently owned.
+              inputs:
+              - Installable Logic package
+              - Published Database Operations and vocabulary
+              skills:
+              - python-skills:python-guidelines
+              expected_result: Logic obtains every Database Operation and every piece of request and result vocabulary through Database's published surface alone, with the Database Component untouched.
+              depends_on:
+              - P3-G1-T01
+              constraints: []
+              acceptance: In a clean environment every Operation and vocabulary item Database publishes resolves from Logic through Database's published surface only, and the Database Component is identical before and after the dependency is established, with no artifact created in it.
+              verify: Installing Logic in a clean environment and reading each published Operation and vocabulary item through Database's published surface succeeds, and comparing the Database Component's contents before and after shows no difference and no additional artifact.
+              status: done
+              log:
+              - at: '2026-09-29T08:34:44Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before making Model and Database reachable from Logic.
+              - at: '2026-09-29T08:35:00Z'
+                transition: claimed -> done
+                check: Hashed every file of the Database Component (excluding its storage files) before and after running uv sync in the Logic package, then imported Database's published Interface from the Logic environment and listed the published Operations and vocabulary.
+                outcome: Database, DatabaseInstance, Filter, FilterOperator, FilterCombination, Order, OrderDirection, CommandResult, create_tables, insert_initial_data, and main resolved through the published Database Interface; the Database Component hash (22 files) is identical before and after, git reports no change under it, and no artifact was created there. Database is declared as a path dependency of Logic.
+        P3-G2:
+          id: P3-G2
+          title: Configuration, outcomes, and bounded dependency use
+          description: 'The foundations every Operation shares: the runtime configuration contract, the Application Outcomes Logic returns, the translation of Database''s answers into those Outcomes, and the finite limits on waiting and retrying.'
+          area: Runtime configuration contract, Application Outcomes, and bounded use of dependencies
+          does: Logic validates its runtime configuration before use, answers every request with an Application Outcome, and never waits or retries without limit.
+          constraints: []
+          task_count: 5
+          tasks:
+            P3-G2-T01:
+              id: P3-G2-T01
+              source_id: 008
+              title: Define and validate the runtime configuration contract
+              description: Define the configuration contract that names every runtime value Logic's Behaviour requires, including the secret material the Target's encrypted credential treatment needs and the finite bounds on waiting and retrying, and validate that every required value is present and well formed before any Operation runs. Logic owns the contract and its validation, never the values or their delivery.
+              reason: A contract validated before readiness fails at start with a clear cause rather than mid-operation with an unclear one.
+              inputs:
+              - Behaviour that needs runtime values
+              - Platform-supplied runtime values
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A configuration contract whose complete set of values is accepted and whose incomplete or malformed set is refused before use, without revealing a secret value.
+              depends_on:
+              - P3-G1-T01
+              constraints: []
+              acceptance: A complete set of values is accepted; each missing or malformed required value is refused before any Operation runs, with a message that names the value and contains no supplied value; the contract holds no secret value.
+              verify: Supplying a complete set of placeholder values is accepted, omitting each required value in turn and supplying each in a malformed form is refused before any Operation is performed, every refusal names the value without revealing any supplied value, and scanning the contract finds no secret value.
+              status: done
+              log:
+              - at: '2026-09-29T08:35:19Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the configuration contract and the Outcome vocabulary.
+              - at: '2026-09-29T08:36:00Z'
+                transition: claimed -> done
+                check: Transient script (kept outside Logic) building the configuration from a complete set of placeholder values, from each set with one value omitted, from nine malformed sets (short secret, non-numeric, zero, negative, not-a-number, and infinite timeout, negative, non-numeric, and fractional retries), and from a boolean retry count; it also scanned the configuration source for long literals.
+                outcome: The complete set was accepted and its representation hides the secret; all 3 omissions, all 9 malformed sets, and the boolean were refused with ConfigurationError naming the value and never containing a supplied value (13 refusals); the source holds no secret literal, only the three value names. ruff and pyright clean.
+            P3-G2-T02:
+              id: P3-G2-T02
+              source_id: 008
+              title: Provide the Application Outcome vocabulary
+              description: 'Provide the closed set of Application Outcomes Logic returns: a success carrying the requested result, and the expected failures — a requested record that does not exist, a request that is invalid, a request that conflicts with a stored record, a request that breaks a reference between records, and a dependency that cannot answer in time. The set is independent of transport and persistence.'
+              reason: A consumer needs one transport-independent and storage-independent way to learn what happened, so the same request means the same thing through every consumer.
+              inputs:
+              - Behaviour the Operations must report
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A closed Outcome vocabulary in which a consumer can tell the success from each expected failure without inspecting anything else.
+              depends_on:
+              - P3-G1-T01
+              constraints: []
+              acceptance: Each situation named above maps to a distinct Outcome, a success carries its result, a failure carries a safe reason, and no Outcome carries a transport, engine, session, mapping, or schema detail.
+              verify: Constructing each Outcome shows the situations are distinguishable by a consumer, a success exposes its result, and inspecting every failure Outcome finds only a safe reason and no transport or storage detail.
+              status: done
+              log:
+              - at: '2026-09-29T08:35:19Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the configuration contract and the Outcome vocabulary.
+              - at: '2026-09-29T08:36:00Z'
+                transition: claimed -> done
+                check: Transient script constructing a success and one failure for each expected-failure kind, and attempting three contradictory outcomes (success with a reason, failure without a reason, failure with a value); it also listed the Outcome fields.
+                outcome: Six distinct kinds exist (success, not_found, invalid, conflict, broken_reference, unavailable); a success exposes its value and no reason, each failure exposes a reason and no value, all three contradictory outcomes were refused, and the Outcome holds only kind, value, and reason, so no transport or storage detail can travel in it.
+            P3-G2-T03:
+              id: P3-G2-T03
+              source_id: 008
+              title: Translate Database's answers and refusals into Application Outcomes
+              description: 'Turn every answer and refusal that Database returns into the matching Application Outcome: an absent record into the does-not-exist Outcome, a uniqueness refusal into the conflict Outcome, a refused reference into the broken-reference Outcome, and an unreachable Instance into the unavailable Outcome. A failure that is not an expected one is never reshaped into a success.'
+              reason: Logic must hide engine, session, mapping, and schema details from consumers while still telling them precisely what happened.
+              inputs:
+              - Application Outcome vocabulary
+              - Answers and refusals Database publishes
+              skills:
+              - python-skills:python-guidelines
+              expected_result: Each Database answer or refusal produces the Outcome that corresponds to it, with no storage detail exposed.
+              depends_on:
+              - P3-G2-T02
+              - P3-G1-T03
+              constraints: []
+              acceptance: Every situation listed produces its corresponding Outcome, an unrecognized failure is not turned into a success, and no Outcome exposes an engine, session, mapping, or schema detail.
+              verify: Standing in for Database with each answer and refusal in turn shows the corresponding Outcome each time, a failure of an unexpected kind does not surface as a success, and inspecting every Outcome finds no storage detail.
+              status: done
+              log:
+              - at: '2026-09-29T08:36:01Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the translation of Database answers and refusals.
+              - at: '2026-09-29T08:37:05Z'
+                transition: claimed -> done
+                check: Transient script that built a real Database over a throwaway SQLite file (a copy of the packaged configuration pointing at a temporary path; the shipped storage was never opened), provoked each refusal through Database's published Operations, and passed every raised failure to the translation; it also translated constructed PostgreSQL integrity and connection errors carrying their SQLSTATE codes, unrecognized failures, and scanned every reason for engine wording.
+                outcome: A repeated unique value gave the conflict Outcome; adding a record with a missing reference, deleting a referred-to record, and truncating a referred-to Entity each gave the broken-reference Outcome; an unknown Field, a non-numeric Sum, a wrongly typed id, a malformed command, a missing bind parameter, and an unknown column each gave the invalid Outcome; constructed PostgreSQL unique, foreign-key, not-null, syntax, connection, interface, and timeout errors gave conflict, broken-reference, invalid, invalid, unavailable, unavailable, and unavailable; RuntimeError, KeyError, and AttributeError were not translated so they surface as themselves; no reason contains engine, constraint, table, or command text.
+            P3-G2-T04:
+              id: P3-G2-T04
+              source_id: 008
+              title: Bound every wait on a dependency with a finite timeout
+              description: Apply a finite limit, taken from the runtime configuration, to every wait on Database or any other dependency; when the limit is reached the Operation ends with the unavailable Outcome.
+              reason: An unbounded wait turns one unavailable dependency into work that never ends.
+              inputs:
+              - Validated runtime configuration
+              - Application Outcome vocabulary
+              skills:
+              - python-skills:python-guidelines
+              expected_result: No Operation waits on a dependency for longer than the configured limit.
+              depends_on:
+              - P3-G2-T01
+              - P3-G2-T02
+              - P3-G1-T03
+              constraints: []
+              acceptance: A dependency that never answers ends the Operation within the configured limit with the unavailable Outcome, and no wait exists without a limit.
+              verify: Standing in for Database with an answer that never arrives shows the Operation ending within the configured limit with the unavailable Outcome, and examining every point where a dependency is awaited finds a limit at each.
+              status: done
+              log:
+              - at: '2026-09-29T08:37:06Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the bounded wait on dependency calls.
+              - at: '2026-09-29T08:38:16Z'
+                transition: claimed -> done
+                check: Transient script running a call that blocks until released with a 0.3 second configured limit, then a call that returns a value, one that returns nothing, one that raises an expected failure, and one that raises an unexpected failure; it also scanned Logic's source for every point that waits on a call.
+                outcome: The blocked call ended after 0.31 seconds with the unavailable Outcome saying the data did not answer within 0.3 seconds; the value and the empty answer came back as successes; the ValueError became the invalid Outcome; the RuntimeError surfaced as itself; the only wait point in the source is the single join carrying the configured limit. ruff and pyright clean.
+            P3-G2-T05:
+              id: P3-G2-T05
+              source_id: 008
+              title: Retry only safe or idempotent work, and only boundedly
+              description: When a dependency is temporarily unavailable, repeat only an operation that is safe or idempotent to repeat and only up to the configured number of attempts; an operation whose repetition could change data twice is attempted once.
+              reason: A retry of an unsafe change can silently apply it twice, and a retry without a limit never ends.
+              inputs:
+              - Validated runtime configuration
+              - Bounded waiting
+              skills:
+              - python-skills:python-guidelines
+              expected_result: Retries never exceed their configured bound and are never applied to work that is unsafe to repeat.
+              depends_on:
+              - P3-G2-T04
+              constraints: []
+              acceptance: A read that fails temporarily is repeated no more than the configured number of times and then ends unavailable; a change that is unsafe to repeat is attempted exactly once even when its outcome is uncertain.
+              verify: Standing in for Database with repeated temporary failures shows a read attempted no more than the configured bound before the unavailable Outcome, and an unsafe change attempted exactly once, with the number of attempts counted in each case.
+              status: done
+              log:
+              - at: '2026-09-29T08:38:17Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before adding bounded retries to dependency calls.
+              - at: '2026-09-29T08:38:34Z'
+                transition: claimed -> done
+                check: 'Transient script with a scripted dependency that fails temporarily a chosen number of times, run with two configured retries: a repeatable call that always fails, an unsafe call that always fails, a repeatable call failing once, a repeatable call failing with a non-temporary refusal, a stalled repeatable call, a stalled unsafe call, and a repeatable call with zero configured retries; calls were counted in each case.'
+                outcome: The always-failing repeatable call was attempted 3 times (1 plus 2 retries) and ended unavailable; the unsafe call was attempted exactly once; the call failing once succeeded on the second attempt; the non-temporary refusal was attempted once and gave the invalid Outcome; the stalled repeatable call was attempted 3 times, each bounded, in under a second; the stalled unsafe call once; with zero retries a repeatable call was attempted once. ruff and pyright clean.
+        P3-G3:
+          id: P3-G3
+          title: Entity Service shared Actions
+          description: 'The Entity-bound Actions implemented once for every Entity and inherited by each Entity''s own Service: one Action for every Database Operation that applies to an Entity.'
+          area: Entity Service shared Entity-bound Actions
+          does: Every Database Operation that applies to an Entity is available as an Action that works for any published Entity and answers with Application Outcomes.
+          constraints: []
+          task_count: 14
+          tasks:
+            P3-G3-T01:
+              id: P3-G3-T01
+              source_id: 008
+              title: Establish the shared Entity-bound Action foundation
+              description: 'Provide the single foundation on which every Entity''s Service is built: it receives an Entity type or Entity instance, reaches Database only through Database''s published surface, applies the bounded waiting and retrying, and answers with Application Outcomes. It is internal to the Entity Service and is never offered to a consumer.'
+              reason: Writing the shared Actions once keeps a rule from being written differently for each Entity.
+              inputs:
+              - Published Model Entities
+              - Published Database Operations
+              - Application Outcomes
+              - Bounded dependency use
+              skills:
+              - python-skills:python-guidelines
+              - sqlmodel
+              expected_result: A foundation that any Entity's Service can inherit and that reaches Database only through its published surface.
+              depends_on:
+              - P3-G1-T02
+              - P3-G1-T03
+              - P3-G2-T02
+              - P3-G2-T03
+              - P3-G2-T04
+              - P3-G2-T05
+              constraints: []
+              acceptance: A Service built on the foundation can perform a Database call for any published Entity through Database's published surface alone, its waits are bounded, and the foundation is not reachable by a consumer.
+              verify: Building a Service on the foundation for one representative Entity and calling Database through a stand-in shows the call arriving through Database's published surface only, a stalled stand-in ends within the configured limit, and nothing offered to a consumer exposes the foundation.
+              status: done
+              log:
+              - at: '2026-09-29T08:39:00Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the shared Entity-bound Action foundation.
+              - at: '2026-09-29T08:39:50Z'
+                transition: claimed -> done
+                check: 'Transient script that built a Service for one representative Entity on the foundation over a recording stand-in for Database (forwarding to a real Database over a throwaway SQLite file): it checked a valid Entity, an Entity of another type, and an Entity with a broken Field value; turned an absent answer into does-not-exist; made a call through the bounded dependency and compared the recorded call with Database''s published Operations; stalled the stand-in; and listed the package''s public names.'
+                outcome: A valid Entity was revalidated into an equal copy, an Entity of another type and a broken Entity were refused as invalid, an absent answer became the does-not-exist Outcome, the recorded call was Database's published get-by-id Operation with the Entity type, a stalled stand-in ended within the 0.3 second limit as unavailable, and the package exposes no name beyond its sub-packages. ruff and pyright clean.
+            P3-G3-T02:
+              id: P3-G3-T02
+              source_id: 008
+              title: Provide the Add Action
+              description: Provide the Action that accepts a complete Entity instance for a new record, applies the constraints Model declares for its values, persists it through Database, and returns the created Entity with any generated values as the success result. A value that violates a declared constraint is refused as invalid before Database is called; a conflict with a stored record and a reference to a record that does not exist are returned as their Outcomes.
+              reason: Users must be able to add data for every defined model.
+              inputs: &id001
+              - Shared Entity-bound Action foundation
+              - Published Database Operation contract
+              skills:
+              - python-skills:python-guidelines
+              expected_result: An Add Action that creates a record and answers with the created Entity or the applicable expected failure.
+              depends_on:
+              - P3-G3-T01
+              constraints: []
+              acceptance: A valid Entity is persisted and returned with its generated values; an Entity that violates a Model-declared constraint yields the invalid Outcome and Database is not called; a uniqueness clash yields the conflict Outcome; a reference to a missing record yields the broken-reference Outcome; and in every failure nothing is stored.
+              verify: Adding a valid Entity through a stand-in for Database returns the created Entity, and adding an Entity that breaks a declared constraint, one that clashes with a stored record, and one that refers to a missing record each yields the corresponding Outcome, with the stand-in showing no stored change in the failure cases.
+              status: done
+              log:
+              - at: '2026-09-29T08:39:51Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the shared Entity-bound Actions.
+              - at: '2026-09-29T08:41:09Z'
+                transition: claimed -> done
+                check: 'Transient script exercising the Add Action for User, Broker, and Currency Services over a recording stand-in for Database forwarding to a real Database over a throwaway SQLite file: a valid User, a Currency whose code was forced past its declared size, a repeated User, a Broker referring to a missing User, and a Broker handed to the User Service; the stand-in''s recorded calls and stored counts were compared.'
+                outcome: A valid User came back with generated id 1; the constraint-breaking Currency gave the invalid Outcome and no call reached Database; the repeated User gave the conflict Outcome; the Broker with a missing User gave the broken-reference Outcome; the wrong Entity type gave the invalid Outcome; stored counts stayed at one User and one Broker after every failure.
+            P3-G3-T03:
+              id: P3-G3-T03
+              source_id: 008
+              title: Provide the Get by ID Action
+              description: Provide the Action that accepts an Entity type and a record id and returns the matching Entity as the success result, or the does-not-exist Outcome when no record has that id.
+              reason: Users must be able to retrieve an individual item by its id for every defined model.
+              inputs: *id001
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A Get by ID Action answering with the record or the does-not-exist Outcome.
+              depends_on:
+              - P3-G3-T01
+              constraints: []
+              acceptance: An existing id returns its Entity; an id that no record has returns the does-not-exist Outcome, not a success.
+              verify: Requesting an existing id and an absent id through a stand-in for Database returns the Entity in the first case and the does-not-exist Outcome in the second.
+              status: done
+              log:
+              - at: '2026-09-29T08:39:51Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the shared Entity-bound Actions.
+              - at: '2026-09-29T08:41:09Z'
+                transition: claimed -> done
+                check: Transient script requesting an existing id, an absent id, and a text id through the Get by ID Action over a recording stand-in for Database forwarding to a real Database over a throwaway SQLite file.
+                outcome: The existing id returned the User, the absent id gave the does-not-exist Outcome, and the text id gave the invalid Outcome.
+            P3-G3-T04:
+              id: P3-G3-T04
+              source_id: 008
+              title: Provide the Update Action
+              description: Provide the Action that accepts a complete Entity instance, applies the constraints Model declares for its values, locates the record by its id alone, replaces every mutable Field, never changes the id or an immutable Field, and returns the updated Entity as the success result. An id that no record has yields the does-not-exist Outcome; conflicts and broken references are returned as their Outcomes.
+              reason: Users must be able to edit and update data for every defined model.
+              inputs: *id001
+              skills:
+              - python-skills:python-guidelines
+              expected_result: An Update Action that changes exactly the mutable Fields of an existing record and answers with the updated Entity or the applicable expected failure.
+              depends_on:
+              - P3-G3-T01
+              constraints: []
+              acceptance: Every mutable Field takes the supplied value, the id and every immutable Field keep their stored values, an absent id yields the does-not-exist Outcome, a value breaking a declared constraint yields the invalid Outcome with nothing changed, and a conflict or broken reference yields its Outcome with nothing changed.
+              verify: Updating an existing record through a stand-in for Database shows every mutable Field changed and the id and immutable Fields unchanged, and updating an absent id, a constraint-breaking value, a clashing value, and a value referring to a missing record each yields the corresponding Outcome with the stored record unchanged.
+              status: done
+              log:
+              - at: '2026-09-29T08:39:51Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the shared Entity-bound Actions.
+              - at: '2026-09-29T08:41:09Z'
+                transition: claimed -> done
+                check: 'Transient script updating through the Update Action over a recording stand-in for Database forwarding to a real Database over a throwaway SQLite file: changed mutable Fields of an existing User, an absent id, an Entity without an id, a clashing name, a Broker moved to a missing User, and a Currency code forced past its size; stored records were compared before and after each failure.'
+                outcome: Mutable Fields changed with the id kept; an absent id gave does-not-exist; a missing id gave invalid; the clash gave conflict, the missing reference gave broken-reference, and the oversize code gave invalid, each leaving the stored record identical.
+            P3-G3-T05:
+              id: P3-G3-T05
+              source_id: 008
+              title: Provide the Delete Action
+              description: Provide the Action that accepts an Entity type and a record id, removes the record, and answers with success when a record was removed and the does-not-exist Outcome when no record has that id. A record that other records still refer to is not removed and yields the broken-reference Outcome.
+              reason: Users must be able to delete data for every defined model.
+              inputs: *id001
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A Delete Action that removes exactly the identified record and answers with success or the applicable expected failure.
+              depends_on:
+              - P3-G3-T01
+              constraints: []
+              acceptance: An existing record is removed and success is returned; an absent id yields the does-not-exist Outcome; a record still referred to by another record is kept and yields the broken-reference Outcome.
+              verify: Deleting an existing record, an absent id, and a record another record refers to through a stand-in for Database shows the record gone with success in the first case, the does-not-exist Outcome in the second, and the record still present with the broken-reference Outcome in the third.
+              status: done
+              log:
+              - at: '2026-09-29T08:39:51Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the shared Entity-bound Actions.
+              - at: '2026-09-29T08:41:09Z'
+                transition: claimed -> done
+                check: 'Transient script deleting through the Delete Action over a recording stand-in for Database forwarding to a real Database over a throwaway SQLite file: an existing User, the same id again, an unknown id, and a User that a Broker refers to.'
+                outcome: The existing User was removed and True returned; the repeated and unknown ids gave the does-not-exist Outcome; the referred-to User was kept and gave the broken-reference Outcome. (A first draft returned success for an absent record; found while writing the check and fixed before it ran.)
+            P3-G3-T06:
+              id: P3-G3-T06
+              source_id: 008
+              title: Provide the Enable Action
+              description: Provide the Action that accepts an Entity type and a record id, marks the record active, and returns the Entity as the success result, or the does-not-exist Outcome when no record has that id.
+              reason: Users must be able to enable data for every defined model.
+              inputs: *id001
+              skills:
+              - python-skills:python-guidelines
+              expected_result: An Enable Action that activates exactly the identified record.
+              depends_on:
+              - P3-G3-T01
+              constraints: []
+              acceptance: An existing record becomes active and is returned; an absent id yields the does-not-exist Outcome; no other Field changes.
+              verify: Enabling a disabled record and an absent id through a stand-in for Database returns the record now active with every other Field unchanged in the first case and the does-not-exist Outcome in the second.
+              status: done
+              log:
+              - at: '2026-09-29T08:39:51Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the shared Entity-bound Actions.
+              - at: '2026-09-29T08:41:09Z'
+                transition: claimed -> done
+                check: 'Transient script enabling through the Enable Action over a recording stand-in for Database forwarding to a real Database over a throwaway SQLite file: a disabled User and an unknown id, comparing every other Field.'
+                outcome: The User became active with every other Field unchanged, and the unknown id gave the does-not-exist Outcome.
+            P3-G3-T07:
+              id: P3-G3-T07
+              source_id: 008
+              title: Provide the Disable Action
+              description: Provide the Action that accepts an Entity type and a record id, marks the record inactive, and returns the Entity as the success result, or the does-not-exist Outcome when no record has that id.
+              reason: Users must be able to disable data for every defined model.
+              inputs: *id001
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A Disable Action that deactivates exactly the identified record.
+              depends_on:
+              - P3-G3-T01
+              constraints: []
+              acceptance: An existing record becomes inactive and is returned; an absent id yields the does-not-exist Outcome; no other Field changes.
+              verify: Disabling an active record and an absent id through a stand-in for Database returns the record now inactive with every other Field unchanged in the first case and the does-not-exist Outcome in the second.
+              status: done
+              log:
+              - at: '2026-09-29T08:39:51Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the shared Entity-bound Actions.
+              - at: '2026-09-29T08:41:09Z'
+                transition: claimed -> done
+                check: 'Transient script disabling through the Disable Action over a recording stand-in for Database forwarding to a real Database over a throwaway SQLite file: an active User and an unknown id, comparing every other Field.'
+                outcome: The User became inactive with every other Field unchanged, and the unknown id gave the does-not-exist Outcome.
+            P3-G3-T08:
+              id: P3-G3-T08
+              source_id: 008
+              title: Provide the List Action
+              description: Provide the Action that accepts an Entity type, optional Filters, an optional Filter Combination, an optional ordered list of Orders, and an optional limit, uses Database's configured defaults for whatever is omitted, and returns the matching Entities as the success result. A Field name that the Entity does not have yields the invalid Outcome, and an empty result is a success.
+              reason: Users must be able to list data for every defined model.
+              inputs: *id001
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A List Action that returns the matching records in the requested order and limit, or the invalid Outcome for an unknown Field.
+              depends_on:
+              - P3-G3-T01
+              constraints: []
+              acceptance: Matching Entities come back honouring the Filters, their combination, the Orders in the supplied order, and the limit, with a zero or negative limit meaning no limit; omitted options use Database's defaults; an unknown Field name in a Filter or Order yields the invalid Outcome; no match returns an empty success.
+              verify: Listing through a stand-in for Database with each option supplied and omitted shows the request reaching Database in the vocabulary Database publishes and the matching Entities returned as given, listing with an unknown Field name yields the invalid Outcome, and listing with no match returns an empty success.
+              status: done
+              log:
+              - at: '2026-09-29T08:39:51Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the shared Entity-bound Actions.
+              - at: '2026-09-29T08:41:09Z'
+                transition: claimed -> done
+                check: Transient script listing five Currencies through the List Action over a recording stand-in for Database forwarding to a real Database over a throwaway SQLite file with defaults, a descending order with a limit, zero and negative limits, an AND default and an OR combination of two Filters, no match, an unknown Field in a Filter and in an Order, and a combination given as text.
+                outcome: Defaults came back in id order; the descending order with limit 2 gave USD then JPY; zero and negative limits returned all five; the two Filters gave none under the default AND and EUR and JPY under OR; no match gave an empty success; the unknown Fields and the text combination gave the invalid Outcome.
+            P3-G3-T09:
+              id: P3-G3-T09
+              source_id: 008
+              title: Provide the Count Action
+              description: Provide the Action that accepts an Entity type, optional Filters, and an optional Filter Combination and returns the number of matching records as the success result, with zero when none match. A Field name that the Entity does not have yields the invalid Outcome.
+              reason: Consumers need to know how many records match without retrieving them.
+              inputs: *id001
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A Count Action returning the number of matching records.
+              depends_on:
+              - P3-G3-T08
+              constraints: []
+              acceptance: The number equals the records matching the Filters under the chosen combination, zero when none match, and an unknown Field name yields the invalid Outcome.
+              verify: Counting through a stand-in for Database with matching, non-matching, and combined Filters returns the expected numbers, and an unknown Field name yields the invalid Outcome.
+              status: done
+              log:
+              - at: '2026-09-29T08:41:10Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the Count, Sum, Min, and Max Actions.
+              - at: '2026-09-29T08:41:39Z'
+                transition: claimed -> done
+                check: 'Transient script counting Currencies through the Count Action over a recording stand-in for Database forwarding to a real Database over a throwaway SQLite file: all, one Filter, two Filters under AND and OR, no match, and an unknown Field.'
+                outcome: All 4 counted; one Filter gave 2; two Filters gave 0 under the default AND and 2 under OR; no match gave 0; the unknown Field gave the invalid Outcome.
+            P3-G3-T10:
+              id: P3-G3-T10
+              source_id: 008
+              title: Provide the Sum Action
+              description: Provide the Action that accepts an Entity type, one Field name, optional Filters, and an optional Filter Combination and returns the total of that Field over the matching records as the success result, ignoring absent values and returning zero when no usable value exists. A Field name the Entity does not have, or a Field that cannot be totalled, yields the invalid Outcome.
+              reason: Consumers need totals over the records of an Entity without retrieving them.
+              inputs: *id001
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A Sum Action returning the total of one Field.
+              depends_on:
+              - P3-G3-T08
+              constraints: []
+              acceptance: The total equals the sum of the usable values of the matching records, zero when none is usable, and an unknown or non-totalable Field yields the invalid Outcome.
+              verify: Summing through a stand-in for Database over records with usable values, absent values, and no usable value returns the expected totals and zero, and an unknown Field and a Field that cannot be totalled each yield the invalid Outcome.
+              status: done
+              log:
+              - at: '2026-09-29T08:41:10Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the Count, Sum, Min, and Max Actions.
+              - at: '2026-09-29T08:41:39Z'
+                transition: claimed -> done
+                check: 'Transient script totalling through the Sum Action over a recording stand-in for Database forwarding to a real Database over a throwaway SQLite file: an integer Field over all and filtered Currencies, no match, a combination, an unknown Field, a text Field, and a float Field of Asset.'
+                outcome: Totals were 9, 2 (filtered), 0 (no match), 2 (OR combination), and 4.0 for the float Field; the unknown Field and the text Field each gave the invalid Outcome.
+            P3-G3-T11:
+              id: P3-G3-T11
+              source_id: 008
+              title: Provide the Min Action
+              description: Provide the Action that accepts an Entity type, one Field name, optional Filters, and an optional Filter Combination and returns the smallest usable value of that Field over the matching records as the success result, ignoring absent values; when no usable value exists the success result holds no value. An unknown Field name yields the invalid Outcome.
+              reason: Consumers need the lowest value of a Field over the records of an Entity without retrieving them.
+              inputs: *id001
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A Min Action returning the smallest usable value of one Field.
+              depends_on:
+              - P3-G3-T08
+              constraints: []
+              acceptance: The result is the smallest usable value of the matching records, a success holding no value when none is usable, and an unknown Field yields the invalid Outcome.
+              verify: Requesting the minimum through a stand-in for Database over records with usable values, absent values, and no usable value returns the smallest value, ignores absent values, and returns a success holding no value respectively, and an unknown Field yields the invalid Outcome.
+              status: done
+              log:
+              - at: '2026-09-29T08:41:10Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the Count, Sum, Min, and Max Actions.
+              - at: '2026-09-29T08:41:39Z'
+                transition: claimed -> done
+                check: 'Transient script requesting the minimum through the Min Action over a recording stand-in for Database forwarding to a real Database over a throwaway SQLite file: an integer Field, a text Field, a nullable Field holding only absent values, a filter with no match, one usable value among absent ones (set through Execute Command), and an unknown Field.'
+                outcome: The integer minimum was 0 and the text minimum CHF; the all-absent Field and the empty filter each gave a success holding no value; the single usable value was found; the unknown Field gave the invalid Outcome.
+            P3-G3-T12:
+              id: P3-G3-T12
+              source_id: 008
+              title: Provide the Max Action
+              description: Provide the Action that accepts an Entity type, one Field name, optional Filters, and an optional Filter Combination and returns the largest usable value of that Field over the matching records as the success result, ignoring absent values; when no usable value exists the success result holds no value. An unknown Field name yields the invalid Outcome.
+              reason: Consumers need the highest value of a Field over the records of an Entity without retrieving them.
+              inputs: *id001
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A Max Action returning the largest usable value of one Field.
+              depends_on:
+              - P3-G3-T08
+              constraints: []
+              acceptance: The result is the largest usable value of the matching records, a success holding no value when none is usable, and an unknown Field yields the invalid Outcome.
+              verify: Requesting the maximum through a stand-in for Database over records with usable values, absent values, and no usable value returns the largest value, ignores absent values, and returns a success holding no value respectively, and an unknown Field yields the invalid Outcome.
+              status: done
+              log:
+              - at: '2026-09-29T08:41:10Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the Count, Sum, Min, and Max Actions.
+              - at: '2026-09-29T08:41:39Z'
+                transition: claimed -> done
+                check: 'Transient script requesting the maximum through the Max Action over a recording stand-in for Database forwarding to a real Database over a throwaway SQLite file: an integer Field, a text Field, a nullable Field holding only absent values, one usable value among absent ones, and an unknown Field.'
+                outcome: The integer maximum was 5 and the text maximum USD; the all-absent Field gave a success holding no value; the single usable value was found; the unknown Field gave the invalid Outcome.
+            P3-G3-T13:
+              id: P3-G3-T13
+              source_id: 008
+              title: Provide the Truncate Action
+              description: Provide the Action that accepts an Entity type, removes every record of that Entity, and returns the number of removed records as the success result. When other records still refer to the Entity's records the operation removes nothing and yields the broken-reference Outcome.
+              reason: Every Database Operation that applies to an Entity is offered for every Entity, and Truncate is one of them.
+              inputs: *id001
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A Truncate Action that empties one Entity and reports how many records it removed.
+              depends_on:
+              - P3-G3-T01
+              constraints: []
+              acceptance: All records of the Entity are removed and their number is returned; records of other Entities are untouched; a removal blocked by a reference removes nothing and yields the broken-reference Outcome.
+              verify: Truncating through a stand-in for Database holding several Entities shows only the named Entity emptied with the removed count returned, and truncating an Entity whose records are referred to shows no record removed and the broken-reference Outcome.
+              status: done
+              log:
+              - at: '2026-09-29T08:39:51Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the shared Entity-bound Actions.
+              - at: '2026-09-29T08:41:09Z'
+                transition: claimed -> done
+                check: 'Transient script truncating through the Truncate Action over a recording stand-in for Database forwarding to a real Database over a throwaway SQLite file holding Currencies, a User, and a Broker: the Currency Entity, then the User Entity while a Broker referred to it, then Broker and User in dependency order.'
+                outcome: Truncating Currency removed 5 and returned 5 while the User and Broker stayed; truncating User while referred to gave the broken-reference Outcome and removed nothing; Broker then User truncated in order returned 1 each.
+            P3-G3-T14:
+              id: P3-G3-T14
+              source_id: 008
+              title: Confirm every shared Action works for any published Entity
+              description: Exercise every shared Action against more than one published Entity of different shape, for example one with relations and one without, and confirm each behaves exactly as its Action defines, so that the shared Actions can be relied on for every Entity's own Service.
+              reason: The shared Actions were written once for all Entities, and an Entity-specific Service can only inherit them safely if they hold for Entities that differ.
+              inputs:
+              - Shared Entity-bound Actions
+              - Published Model Entities
+              skills:
+              - python-skills:python-guidelines
+              expected_result: Evidence that each shared Action holds for Entities of different shape.
+              depends_on:
+              - P3-G3-T02
+              - P3-G3-T03
+              - P3-G3-T04
+              - P3-G3-T05
+              - P3-G3-T06
+              - P3-G3-T07
+              - P3-G3-T08
+              - P3-G3-T09
+              - P3-G3-T10
+              - P3-G3-T11
+              - P3-G3-T12
+              - P3-G3-T13
+              constraints: []
+              acceptance: Each shared Action produces the same kind of result and the same Outcomes for each Entity chosen, with no Action tied to one Entity's shape.
+              verify: Performing each shared Action through a stand-in for Database against at least two Entities of different shape returns the results and Outcomes the Actions define in every case.
+              status: done
+              log:
+              - at: '2026-09-29T08:41:40Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before confirming the shared Actions against Entities of different shape.
+              - at: '2026-09-29T08:41:57Z'
+                transition: claimed -> done
+                check: 'Transient script exercising every shared Action (Add, Get by ID, Enable, Disable, Update, Count, List, Sum, Min, Max, Delete, Truncate, and an unknown-Field request) through the foundation over a recording stand-in for Database (forwarding to a real Database over a throwaway SQLite file) for five Entities of different shape: User and Trading Platform with no relations, and Broker, Currency, and Asset each with a relation and different Field types.'
+                outcome: 'Every Action returned the same kind of result and Outcome for all five Entities: three records added per Entity, counts and lists matched, ids resolved and an unknown id gave does-not-exist, disable and enable flipped the active state, an edit persisted, aggregates succeeded on an integer Field of each, the unknown Field gave invalid, a delete succeeded once and then gave does-not-exist, and truncation returned the remaining counts. (One failed run came from a wrong expectation in the script, not from Logic: three records less one deleted leave two.)'
+        P3-G4:
+          id: P3-G4
+          title: Entity Services
+          description: One Service for every Entity Model publishes. Each inherits the shared Actions unchanged and adds Behaviour only where its Entity requires it. The Service Interface publishes them.
+          area: Entity Service per-Entity Services and their Service Interface
+          does: Every published Entity has its own Service offering every shared Action, and the Entity Service's Service Interface publishes those Services and their Actions.
+          constraints: []
+          task_count: 16
+          tasks:
+            P3-G4-T01:
+              id: P3-G4-T01
+              source_id: 008
+              title: Provide the User Service
+              description: Provide the Service for the User Entity so that every shared Entity-bound Action operates on User records. Any Behaviour specific to its credential Fields is added separately and is not part of this Task.
+              reason: Users must be able to operate on User records through Logic, and the Entity's own Service is where any Behaviour specific to it lives.
+              inputs:
+              - Published User Entity
+              - Confirmed shared Entity-bound Actions
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A User Service offering every shared Action for User records.
+              depends_on:
+              - P3-G3-T14
+              constraints: []
+              acceptance: Every shared Action, performed for User, gives the result and Outcomes the shared Action defines.
+              verify: Performing each shared Action for User through a stand-in for Database returns the results and Outcomes the shared Action defines.
+              status: done
+              log:
+              - at: '2026-09-29T08:41:58Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the per-Entity Services.
+              - at: '2026-09-29T08:42:42Z'
+                transition: claimed -> done
+                check: 'Transient script (kept outside Logic) that built the User Service over a recording stand-in for Database (forwarding to a real Database over a throwaway SQLite file) and performed every shared Action for User: add two records with valid references, get by id, an unknown id, list, count, an unknown Field, disable, enable, edit, sum, min, max, delete, and a repeated delete.'
+                outcome: 'The User Service names the User Entity Model publishes and every shared Action returned the result or Outcome the shared Action defines: both records were stored, the unknown id and repeated delete gave does-not-exist, the unknown Field gave invalid, the active state toggled, the edit persisted, and the aggregates matched the stored ids. ruff and pyright clean.'
+            P3-G4-T02:
+              id: P3-G4-T02
+              source_id: 008
+              title: Provide the Trading Platform Service
+              description: Provide the Service for the Trading Platform Entity so that every shared Entity-bound Action operates on Trading Platform records.
+              reason: Users must be able to operate on Trading Platform records through Logic, and the Entity's own Service is where any Behaviour specific to it lives.
+              inputs:
+              - Published Trading Platform Entity
+              - Confirmed shared Entity-bound Actions
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A Trading Platform Service offering every shared Action for Trading Platform records.
+              depends_on:
+              - P3-G3-T14
+              constraints: []
+              acceptance: Every shared Action, performed for Trading Platform, gives the result and Outcomes the shared Action defines.
+              verify: Performing each shared Action for Trading Platform through a stand-in for Database returns the results and Outcomes the shared Action defines.
+              status: done
+              log:
+              - at: '2026-09-29T08:41:58Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the per-Entity Services.
+              - at: '2026-09-29T08:42:42Z'
+                transition: claimed -> done
+                check: 'Transient script (kept outside Logic) that built the Trading Platform Service over a recording stand-in for Database (forwarding to a real Database over a throwaway SQLite file) and performed every shared Action for Trading Platform: add two records with valid references, get by id, an unknown id, list, count, an unknown Field, disable, enable, edit, sum, min, max, delete, and a repeated delete.'
+                outcome: 'The Trading Platform Service names the Trading Platform Entity Model publishes and every shared Action returned the result or Outcome the shared Action defines: both records were stored, the unknown id and repeated delete gave does-not-exist, the unknown Field gave invalid, the active state toggled, the edit persisted, and the aggregates matched the stored ids. ruff and pyright clean.'
+            P3-G4-T03:
+              id: P3-G4-T03
+              source_id: 008
+              title: Provide the Instance Service
+              description: Provide the Service for the Instance Entity so that every shared Entity-bound Action operates on Instance records. Any Behaviour specific to its credential Fields is added separately and is not part of this Task.
+              reason: Users must be able to operate on Instance records through Logic, and the Entity's own Service is where any Behaviour specific to it lives.
+              inputs:
+              - Published Instance Entity
+              - Confirmed shared Entity-bound Actions
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A Instance Service offering every shared Action for Instance records.
+              depends_on:
+              - P3-G3-T14
+              constraints: []
+              acceptance: Every shared Action, performed for Instance, gives the result and Outcomes the shared Action defines.
+              verify: Performing each shared Action for Instance through a stand-in for Database returns the results and Outcomes the shared Action defines.
+              status: done
+              log:
+              - at: '2026-09-29T08:41:58Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the per-Entity Services.
+              - at: '2026-09-29T08:42:42Z'
+                transition: claimed -> done
+                check: 'Transient script (kept outside Logic) that built the Instance Service over a recording stand-in for Database (forwarding to a real Database over a throwaway SQLite file) and performed every shared Action for Instance: add two records with valid references, get by id, an unknown id, list, count, an unknown Field, disable, enable, edit, sum, min, max, delete, and a repeated delete.'
+                outcome: 'The Instance Service names the Instance Entity Model publishes and every shared Action returned the result or Outcome the shared Action defines: both records were stored, the unknown id and repeated delete gave does-not-exist, the unknown Field gave invalid, the active state toggled, the edit persisted, and the aggregates matched the stored ids. ruff and pyright clean.'
+            P3-G4-T04:
+              id: P3-G4-T04
+              source_id: 008
+              title: Provide the Currency Service
+              description: Provide the Service for the Currency Entity so that every shared Entity-bound Action operates on Currency records.
+              reason: Users must be able to operate on Currency records through Logic, and the Entity's own Service is where any Behaviour specific to it lives.
+              inputs:
+              - Published Currency Entity
+              - Confirmed shared Entity-bound Actions
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A Currency Service offering every shared Action for Currency records.
+              depends_on:
+              - P3-G3-T14
+              constraints: []
+              acceptance: Every shared Action, performed for Currency, gives the result and Outcomes the shared Action defines.
+              verify: Performing each shared Action for Currency through a stand-in for Database returns the results and Outcomes the shared Action defines.
+              status: done
+              log:
+              - at: '2026-09-29T08:41:58Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the per-Entity Services.
+              - at: '2026-09-29T08:42:42Z'
+                transition: claimed -> done
+                check: 'Transient script (kept outside Logic) that built the Currency Service over a recording stand-in for Database (forwarding to a real Database over a throwaway SQLite file) and performed every shared Action for Currency: add two records with valid references, get by id, an unknown id, list, count, an unknown Field, disable, enable, edit, sum, min, max, delete, and a repeated delete.'
+                outcome: 'The Currency Service names the Currency Entity Model publishes and every shared Action returned the result or Outcome the shared Action defines: both records were stored, the unknown id and repeated delete gave does-not-exist, the unknown Field gave invalid, the active state toggled, the edit persisted, and the aggregates matched the stored ids. ruff and pyright clean.'
+            P3-G4-T05:
+              id: P3-G4-T05
+              source_id: 008
+              title: Provide the Broker Service
+              description: Provide the Service for the Broker Entity so that every shared Entity-bound Action operates on Broker records.
+              reason: Users must be able to operate on Broker records through Logic, and the Entity's own Service is where any Behaviour specific to it lives.
+              inputs:
+              - Published Broker Entity
+              - Confirmed shared Entity-bound Actions
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A Broker Service offering every shared Action for Broker records.
+              depends_on:
+              - P3-G3-T14
+              constraints: []
+              acceptance: Every shared Action, performed for Broker, gives the result and Outcomes the shared Action defines.
+              verify: Performing each shared Action for Broker through a stand-in for Database returns the results and Outcomes the shared Action defines.
+              status: done
+              log:
+              - at: '2026-09-29T08:41:58Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the per-Entity Services.
+              - at: '2026-09-29T08:42:42Z'
+                transition: claimed -> done
+                check: 'Transient script (kept outside Logic) that built the Broker Service over a recording stand-in for Database (forwarding to a real Database over a throwaway SQLite file) and performed every shared Action for Broker: add two records with valid references, get by id, an unknown id, list, count, an unknown Field, disable, enable, edit, sum, min, max, delete, and a repeated delete.'
+                outcome: 'The Broker Service names the Broker Entity Model publishes and every shared Action returned the result or Outcome the shared Action defines: both records were stored, the unknown id and repeated delete gave does-not-exist, the unknown Field gave invalid, the active state toggled, the edit persisted, and the aggregates matched the stored ids. ruff and pyright clean.'
+            P3-G4-T06:
+              id: P3-G4-T06
+              source_id: 008
+              title: Provide the Asset Service
+              description: Provide the Service for the Asset Entity so that every shared Entity-bound Action operates on Asset records.
+              reason: Users must be able to operate on Asset records through Logic, and the Entity's own Service is where any Behaviour specific to it lives.
+              inputs:
+              - Published Asset Entity
+              - Confirmed shared Entity-bound Actions
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A Asset Service offering every shared Action for Asset records.
+              depends_on:
+              - P3-G3-T14
+              constraints: []
+              acceptance: Every shared Action, performed for Asset, gives the result and Outcomes the shared Action defines.
+              verify: Performing each shared Action for Asset through a stand-in for Database returns the results and Outcomes the shared Action defines.
+              status: done
+              log:
+              - at: '2026-09-29T08:41:58Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the per-Entity Services.
+              - at: '2026-09-29T08:42:42Z'
+                transition: claimed -> done
+                check: 'Transient script (kept outside Logic) that built the Asset Service over a recording stand-in for Database (forwarding to a real Database over a throwaway SQLite file) and performed every shared Action for Asset: add two records with valid references, get by id, an unknown id, list, count, an unknown Field, disable, enable, edit, sum, min, max, delete, and a repeated delete.'
+                outcome: 'The Asset Service names the Asset Entity Model publishes and every shared Action returned the result or Outcome the shared Action defines: both records were stored, the unknown id and repeated delete gave does-not-exist, the unknown Field gave invalid, the active state toggled, the edit persisted, and the aggregates matched the stored ids. ruff and pyright clean.'
+            P3-G4-T07:
+              id: P3-G4-T07
+              source_id: 008
+              title: Provide the Account Group Service
+              description: Provide the Service for the Account Group Entity so that every shared Entity-bound Action operates on Account Group records.
+              reason: Users must be able to operate on Account Group records through Logic, and the Entity's own Service is where any Behaviour specific to it lives.
+              inputs:
+              - Published Account Group Entity
+              - Confirmed shared Entity-bound Actions
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A Account Group Service offering every shared Action for Account Group records.
+              depends_on:
+              - P3-G3-T14
+              constraints: []
+              acceptance: Every shared Action, performed for Account Group, gives the result and Outcomes the shared Action defines.
+              verify: Performing each shared Action for Account Group through a stand-in for Database returns the results and Outcomes the shared Action defines.
+              status: done
+              log:
+              - at: '2026-09-29T08:41:58Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the per-Entity Services.
+              - at: '2026-09-29T08:42:42Z'
+                transition: claimed -> done
+                check: 'Transient script (kept outside Logic) that built the Account Group Service over a recording stand-in for Database (forwarding to a real Database over a throwaway SQLite file) and performed every shared Action for Account Group: add two records with valid references, get by id, an unknown id, list, count, an unknown Field, disable, enable, edit, sum, min, max, delete, and a repeated delete.'
+                outcome: 'The Account Group Service names the Account Group Entity Model publishes and every shared Action returned the result or Outcome the shared Action defines: both records were stored, the unknown id and repeated delete gave does-not-exist, the unknown Field gave invalid, the active state toggled, the edit persisted, and the aggregates matched the stored ids. ruff and pyright clean.'
+            P3-G4-T08:
+              id: P3-G4-T08
+              source_id: 008
+              title: Provide the Account Service
+              description: Provide the Service for the Account Entity so that every shared Entity-bound Action operates on Account records. Any Behaviour specific to its credential Fields is added separately and is not part of this Task.
+              reason: Users must be able to operate on Account records through Logic, and the Entity's own Service is where any Behaviour specific to it lives.
+              inputs:
+              - Published Account Entity
+              - Confirmed shared Entity-bound Actions
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A Account Service offering every shared Action for Account records.
+              depends_on:
+              - P3-G3-T14
+              constraints: []
+              acceptance: Every shared Action, performed for Account, gives the result and Outcomes the shared Action defines.
+              verify: Performing each shared Action for Account through a stand-in for Database returns the results and Outcomes the shared Action defines.
+              status: done
+              log:
+              - at: '2026-09-29T08:41:58Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the per-Entity Services.
+              - at: '2026-09-29T08:42:42Z'
+                transition: claimed -> done
+                check: 'Transient script (kept outside Logic) that built the Account Service over a recording stand-in for Database (forwarding to a real Database over a throwaway SQLite file) and performed every shared Action for Account: add two records with valid references, get by id, an unknown id, list, count, an unknown Field, disable, enable, edit, sum, min, max, delete, and a repeated delete.'
+                outcome: 'The Account Service names the Account Entity Model publishes and every shared Action returned the result or Outcome the shared Action defines: both records were stored, the unknown id and repeated delete gave does-not-exist, the unknown Field gave invalid, the active state toggled, the edit persisted, and the aggregates matched the stored ids. ruff and pyright clean. One fixture correction was needed for Account: a second Account on the same group, broker, and Instance correctly gave the conflict Outcome, so the check used a second broker.'
+            P3-G4-T09:
+              id: P3-G4-T09
+              source_id: 008
+              title: Provide the Trailing Group Service
+              description: Provide the Service for the Trailing Group Entity so that every shared Entity-bound Action operates on Trailing Group records.
+              reason: Users must be able to operate on Trailing Group records through Logic, and the Entity's own Service is where any Behaviour specific to it lives.
+              inputs:
+              - Published Trailing Group Entity
+              - Confirmed shared Entity-bound Actions
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A Trailing Group Service offering every shared Action for Trailing Group records.
+              depends_on:
+              - P3-G3-T14
+              constraints: []
+              acceptance: Every shared Action, performed for Trailing Group, gives the result and Outcomes the shared Action defines.
+              verify: Performing each shared Action for Trailing Group through a stand-in for Database returns the results and Outcomes the shared Action defines.
+              status: done
+              log:
+              - at: '2026-09-29T08:41:58Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the per-Entity Services.
+              - at: '2026-09-29T08:42:42Z'
+                transition: claimed -> done
+                check: 'Transient script (kept outside Logic) that built the Trailing Group Service over a recording stand-in for Database (forwarding to a real Database over a throwaway SQLite file) and performed every shared Action for Trailing Group: add two records with valid references, get by id, an unknown id, list, count, an unknown Field, disable, enable, edit, sum, min, max, delete, and a repeated delete.'
+                outcome: 'The Trailing Group Service names the Trailing Group Entity Model publishes and every shared Action returned the result or Outcome the shared Action defines: both records were stored, the unknown id and repeated delete gave does-not-exist, the unknown Field gave invalid, the active state toggled, the edit persisted, and the aggregates matched the stored ids. ruff and pyright clean.'
+            P3-G4-T10:
+              id: P3-G4-T10
+              source_id: 008
+              title: Provide the Trailing Rule Service
+              description: Provide the Service for the Trailing Rule Entity so that every shared Entity-bound Action operates on Trailing Rule records.
+              reason: Users must be able to operate on Trailing Rule records through Logic, and the Entity's own Service is where any Behaviour specific to it lives.
+              inputs:
+              - Published Trailing Rule Entity
+              - Confirmed shared Entity-bound Actions
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A Trailing Rule Service offering every shared Action for Trailing Rule records.
+              depends_on:
+              - P3-G3-T14
+              constraints: []
+              acceptance: Every shared Action, performed for Trailing Rule, gives the result and Outcomes the shared Action defines.
+              verify: Performing each shared Action for Trailing Rule through a stand-in for Database returns the results and Outcomes the shared Action defines.
+              status: done
+              log:
+              - at: '2026-09-29T08:41:58Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the per-Entity Services.
+              - at: '2026-09-29T08:42:42Z'
+                transition: claimed -> done
+                check: 'Transient script (kept outside Logic) that built the Trailing Rule Service over a recording stand-in for Database (forwarding to a real Database over a throwaway SQLite file) and performed every shared Action for Trailing Rule: add two records with valid references, get by id, an unknown id, list, count, an unknown Field, disable, enable, edit, sum, min, max, delete, and a repeated delete.'
+                outcome: 'The Trailing Rule Service names the Trailing Rule Entity Model publishes and every shared Action returned the result or Outcome the shared Action defines: both records were stored, the unknown id and repeated delete gave does-not-exist, the unknown Field gave invalid, the active state toggled, the edit persisted, and the aggregates matched the stored ids. ruff and pyright clean.'
+            P3-G4-T11:
+              id: P3-G4-T11
+              source_id: 008
+              title: Provide the Partial Group Service
+              description: Provide the Service for the Partial Group Entity so that every shared Entity-bound Action operates on Partial Group records.
+              reason: Users must be able to operate on Partial Group records through Logic, and the Entity's own Service is where any Behaviour specific to it lives.
+              inputs:
+              - Published Partial Group Entity
+              - Confirmed shared Entity-bound Actions
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A Partial Group Service offering every shared Action for Partial Group records.
+              depends_on:
+              - P3-G3-T14
+              constraints: []
+              acceptance: Every shared Action, performed for Partial Group, gives the result and Outcomes the shared Action defines.
+              verify: Performing each shared Action for Partial Group through a stand-in for Database returns the results and Outcomes the shared Action defines.
+              status: done
+              log:
+              - at: '2026-09-29T08:41:58Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the per-Entity Services.
+              - at: '2026-09-29T08:42:42Z'
+                transition: claimed -> done
+                check: 'Transient script (kept outside Logic) that built the Partial Group Service over a recording stand-in for Database (forwarding to a real Database over a throwaway SQLite file) and performed every shared Action for Partial Group: add two records with valid references, get by id, an unknown id, list, count, an unknown Field, disable, enable, edit, sum, min, max, delete, and a repeated delete.'
+                outcome: 'The Partial Group Service names the Partial Group Entity Model publishes and every shared Action returned the result or Outcome the shared Action defines: both records were stored, the unknown id and repeated delete gave does-not-exist, the unknown Field gave invalid, the active state toggled, the edit persisted, and the aggregates matched the stored ids. ruff and pyright clean.'
+            P3-G4-T12:
+              id: P3-G4-T12
+              source_id: 008
+              title: Provide the Partial Rule Service
+              description: Provide the Service for the Partial Rule Entity so that every shared Entity-bound Action operates on Partial Rule records.
+              reason: Users must be able to operate on Partial Rule records through Logic, and the Entity's own Service is where any Behaviour specific to it lives.
+              inputs:
+              - Published Partial Rule Entity
+              - Confirmed shared Entity-bound Actions
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A Partial Rule Service offering every shared Action for Partial Rule records.
+              depends_on:
+              - P3-G3-T14
+              constraints: []
+              acceptance: Every shared Action, performed for Partial Rule, gives the result and Outcomes the shared Action defines.
+              verify: Performing each shared Action for Partial Rule through a stand-in for Database returns the results and Outcomes the shared Action defines.
+              status: done
+              log:
+              - at: '2026-09-29T08:41:58Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the per-Entity Services.
+              - at: '2026-09-29T08:42:42Z'
+                transition: claimed -> done
+                check: 'Transient script (kept outside Logic) that built the Partial Rule Service over a recording stand-in for Database (forwarding to a real Database over a throwaway SQLite file) and performed every shared Action for Partial Rule: add two records with valid references, get by id, an unknown id, list, count, an unknown Field, disable, enable, edit, sum, min, max, delete, and a repeated delete.'
+                outcome: 'The Partial Rule Service names the Partial Rule Entity Model publishes and every shared Action returned the result or Outcome the shared Action defines: both records were stored, the unknown id and repeated delete gave does-not-exist, the unknown Field gave invalid, the active state toggled, the edit persisted, and the aggregates matched the stored ids. ruff and pyright clean.'
+            P3-G4-T13:
+              id: P3-G4-T13
+              source_id: 008
+              title: Provide the Action Group Service
+              description: Provide the Service for the Action Group Entity so that every shared Entity-bound Action operates on Action Group records.
+              reason: Users must be able to operate on Action Group records through Logic, and the Entity's own Service is where any Behaviour specific to it lives.
+              inputs:
+              - Published Action Group Entity
+              - Confirmed shared Entity-bound Actions
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A Action Group Service offering every shared Action for Action Group records.
+              depends_on:
+              - P3-G3-T14
+              constraints: []
+              acceptance: Every shared Action, performed for Action Group, gives the result and Outcomes the shared Action defines.
+              verify: Performing each shared Action for Action Group through a stand-in for Database returns the results and Outcomes the shared Action defines.
+              status: done
+              log:
+              - at: '2026-09-29T08:41:58Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the per-Entity Services.
+              - at: '2026-09-29T08:42:42Z'
+                transition: claimed -> done
+                check: 'Transient script (kept outside Logic) that built the Action Group Service over a recording stand-in for Database (forwarding to a real Database over a throwaway SQLite file) and performed every shared Action for Action Group: add two records with valid references, get by id, an unknown id, list, count, an unknown Field, disable, enable, edit, sum, min, max, delete, and a repeated delete.'
+                outcome: 'The Action Group Service names the Action Group Entity Model publishes and every shared Action returned the result or Outcome the shared Action defines: both records were stored, the unknown id and repeated delete gave does-not-exist, the unknown Field gave invalid, the active state toggled, the edit persisted, and the aggregates matched the stored ids. ruff and pyright clean.'
+            P3-G4-T14:
+              id: P3-G4-T14
+              source_id: 008
+              title: Provide the Action Service
+              description: Provide the Service for the Action Entity so that every shared Entity-bound Action operates on Action records.
+              reason: Users must be able to operate on Action records through Logic, and the Entity's own Service is where any Behaviour specific to it lives.
+              inputs:
+              - Published Action Entity
+              - Confirmed shared Entity-bound Actions
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A Action Service offering every shared Action for Action records.
+              depends_on:
+              - P3-G3-T14
+              constraints: []
+              acceptance: Every shared Action, performed for Action, gives the result and Outcomes the shared Action defines.
+              verify: Performing each shared Action for Action through a stand-in for Database returns the results and Outcomes the shared Action defines.
+              status: done
+              log:
+              - at: '2026-09-29T08:41:58Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the per-Entity Services.
+              - at: '2026-09-29T08:42:42Z'
+                transition: claimed -> done
+                check: 'Transient script (kept outside Logic) that built the Action Service over a recording stand-in for Database (forwarding to a real Database over a throwaway SQLite file) and performed every shared Action for Action: add two records with valid references, get by id, an unknown id, list, count, an unknown Field, disable, enable, edit, sum, min, max, delete, and a repeated delete.'
+                outcome: 'The Action Service names the Action Entity Model publishes and every shared Action returned the result or Outcome the shared Action defines: both records were stored, the unknown id and repeated delete gave does-not-exist, the unknown Field gave invalid, the active state toggled, the edit persisted, and the aggregates matched the stored ids. ruff and pyright clean.'
+            P3-G4-T15:
+              id: P3-G4-T15
+              source_id: 008
+              title: Provide the Position Service
+              description: Provide the Service for the Position Entity so that every shared Entity-bound Action operates on Position records.
+              reason: Users must be able to operate on Position records through Logic, and the Entity's own Service is where any Behaviour specific to it lives.
+              inputs:
+              - Published Position Entity
+              - Confirmed shared Entity-bound Actions
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A Position Service offering every shared Action for Position records.
+              depends_on:
+              - P3-G3-T14
+              constraints: []
+              acceptance: Every shared Action, performed for Position, gives the result and Outcomes the shared Action defines.
+              verify: Performing each shared Action for Position through a stand-in for Database returns the results and Outcomes the shared Action defines.
+              status: done
+              log:
+              - at: '2026-09-29T08:41:58Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the per-Entity Services.
+              - at: '2026-09-29T08:42:42Z'
+                transition: claimed -> done
+                check: 'Transient script (kept outside Logic) that built the Position Service over a recording stand-in for Database (forwarding to a real Database over a throwaway SQLite file) and performed every shared Action for Position: add two records with valid references, get by id, an unknown id, list, count, an unknown Field, disable, enable, edit, sum, min, max, delete, and a repeated delete.'
+                outcome: 'The Position Service names the Position Entity Model publishes and every shared Action returned the result or Outcome the shared Action defines: both records were stored, the unknown id and repeated delete gave does-not-exist, the unknown Field gave invalid, the active state toggled, the edit persisted, and the aggregates matched the stored ids. ruff and pyright clean.'
+            P3-G4-T16:
+              id: P3-G4-T16
+              source_id: 008
+              title: Publish the Entity Service's Service Interface
+              description: Provide the internal Service Interface of the Entity Service that publishes each Entity's Service together with its available Actions, and does not publish the shared foundation.
+              reason: Logic's outward Interface gathers Actions from Service Interfaces, so the Entity Service must present its usable Services and Actions in one place, without letting a consumer depend on any Service.
+              inputs:
+              - Every Entity Service
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A Service Interface through which Logic and other Services reach each Entity's Service and its Actions.
+              depends_on:
+              - P3-G4-T01
+              - P3-G4-T02
+              - P3-G4-T03
+              - P3-G4-T04
+              - P3-G4-T05
+              - P3-G4-T06
+              - P3-G4-T07
+              - P3-G4-T08
+              - P3-G4-T09
+              - P3-G4-T10
+              - P3-G4-T11
+              - P3-G4-T12
+              - P3-G4-T13
+              - P3-G4-T14
+              - P3-G4-T15
+              constraints: []
+              acceptance: Every Entity's Service and each of its Actions can be reached through the Service Interface, and the shared foundation cannot be.
+              verify: Enumerating what the Service Interface publishes shows every published Entity's Service with all its Actions and shows the shared foundation absent.
+              status: done
+              log:
+              - at: '2026-09-29T08:42:43Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the Entity Service's Service Interface.
+              - at: '2026-09-29T08:43:04Z'
+                transition: claimed -> done
+                check: Transient script importing the Entity Service's Service Interface and enumerating what it publishes, comparing it with the Entities Model publishes, checking that each published Service extends the shared foundation, names its Entity, and offers all twelve Actions, and listing every name visible in the Service Interface.
+                outcome: The Service Interface publishes 15 Services, one for each Entity Model publishes; each offers add, get by id, update, delete, enable, disable, list, count, sum, min, max, and truncate; the shared foundation and its helper protocol are not published, and no name other than the 15 Services is visible. ruff and pyright clean.
+        P3-G5:
+          id: P3-G5
+          title: Credential handling
+          description: 'The treatment of the credential Fields the Target designates in User, Instance, and Account: protection before storage, and no exposure of an original credential value.'
+          area: Sensitive-value handling of credential Fields
+          does: Credentials are protected as the Target states before they reach Database, an unchanged credential survives an edit, and no original credential value leaves Logic.
+          constraints:
+          - Logic applies credential treatment only to values it receives through an Operation and does not rewrite credentials already stored.
+          - Reading a record whose stored credential is not in protected form never fails an Operation and never exposes that value.
+          task_count: 8
+          tasks:
+            P3-G5-T01:
+              id: P3-G5-T01
+              source_id: 008
+              title: Provide one-way credential protection
+              description: Provide protection of a credential value into a stored form from which the original cannot be recovered, together with the check of a candidate value against that stored form.
+              reason: The Target states hash storage at rest for the User credentials, and Logic owns that treatment.
+              inputs:
+              - Credential value
+              - Treatment the Target states for hash storage
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A protection whose stored form hides the original and can still confirm or reject a candidate.
+              depends_on:
+              - P3-G1-T01
+              constraints: []
+              acceptance: The stored form differs from the original and does not contain it, protecting the same value twice does not require the forms to match, a candidate equal to the original is confirmed against the stored form, and a different candidate is rejected.
+              verify: Protecting a placeholder value and inspecting the stored form shows it is neither the original nor contains it, checking the original against it succeeds, and checking a different value fails.
+              status: done
+              log:
+              - at: '2026-09-29T08:43:05Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the credential protections.
+              - at: '2026-09-29T08:43:42Z'
+                transition: claimed -> done
+                check: Transient script protecting a placeholder passphrase twice with the one-way protection and checking it against both stored forms, a different value, a malformed stored form, the original text itself, and a protector built with another secret.
+                outcome: The stored form differs from the value and does not contain it; the two stored forms differ from each other yet both confirm the original; a different value, a malformed form, and the plain text are all rejected; confirmation does not depend on the configured secret. ruff and pyright clean.
+            P3-G5-T02:
+              id: P3-G5-T02
+              source_id: 008
+              title: Provide reversible credential protection
+              description: Provide protection of a credential value into a stored form that only Logic can turn back into the original for its own use, using the secret material the runtime configuration supplies.
+              reason: The Target states encrypted storage at rest for the Instance and Account credentials, and Logic owns that treatment.
+              inputs:
+              - Credential value
+              - Treatment the Target states for encrypted storage
+              - Validated runtime configuration
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A protection whose stored form hides the original from everything except Logic's own use of the configured secret.
+              depends_on:
+              - P3-G2-T01
+              constraints: []
+              acceptance: The stored form differs from the original and does not contain it, Logic recovers the original from the stored form with the configured secret, and a different secret cannot recover it.
+              verify: Protecting a placeholder value and inspecting the stored form shows it is neither the original nor contains it, recovering it with the configured secret returns the original, and recovering it with another secret fails.
+              status: done
+              log:
+              - at: '2026-09-29T08:43:05Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the credential protections.
+              - at: '2026-09-29T08:43:42Z'
+                transition: claimed -> done
+                check: Transient script protecting a placeholder passphrase twice with the reversible protection and recovering it with the configured secret, with another secret, and from text that is not an encrypted form (the plain value, a one-way form, and a corrupted token).
+                outcome: Neither stored form equals or contains the value and the two forms differ; the configured secret recovers the original from both; another secret, the plain value, a one-way form, and a corrupted token recover nothing.
+            P3-G5-T03:
+              id: P3-G5-T03
+              source_id: 008
+              title: Protect the User credentials before they reach Database
+              description: Apply the one-way protection to each User credential Field of a record Logic is asked to add or change, before the User reaches Database, so the original value is never stored.
+              reason: The Target states hash storage at rest for the User credentials.
+              inputs:
+              - User Service
+              - Add and Update Actions
+              - One-way credential protection
+              skills:
+              - python-skills:python-guidelines
+              expected_result: User records whose credentials are stored only in protected form.
+              depends_on:
+              - P3-G5-T01
+              - P3-G4-T01
+              - P3-G3-T02
+              - P3-G3-T04
+              constraints: []
+              acceptance: After adding or updating a User with placeholder credentials, the values received by Database differ from the originals and cannot yield them, and a candidate equal to an original is confirmed against the stored form.
+              verify: Adding and updating a User through a stand-in for Database shows the credential values it receives are protected forms of the supplied placeholders, and checking each original against them succeeds while checking other values fails.
+              status: done
+              log:
+              - at: '2026-09-29T08:43:43Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before protecting User credentials in Add and Update.
+              - at: '2026-09-29T08:44:17Z'
+                transition: claimed -> done
+                check: Transient script adding a User through the User Service over a recording stand-in for Database (forwarding to a real Database over a throwaway SQLite file) with distinctive placeholder credentials, inspecting the Entity Database received and the stored record, then updating the User with new placeholder credentials and inspecting again; it also compared the caller's own Entity before and after.
+                outcome: The credential values Database received on Add and on Update were one-way protected forms that neither equal nor contain the placeholders; each original was confirmed against its stored form and a different value or the previous original was rejected; the stored record held the same protected forms; the caller's Entity kept its original values. The mapping of User credential Fields to the hash treatment follows the Target's stated at-rest rule (Open Question OQ-008-1 in log 008). ruff and pyright clean.
+            P3-G5-T04:
+              id: P3-G5-T04
+              source_id: 008
+              title: Protect the Instance credentials before they reach Database
+              description: Apply the reversible protection to each Instance credential Field of a record Logic is asked to add or change, before the Instance reaches Database, so the original value is never stored.
+              reason: The Target states encrypted storage at rest for the Instance credentials.
+              inputs:
+              - Instance Service
+              - Add and Update Actions
+              - Reversible credential protection
+              skills:
+              - python-skills:python-guidelines
+              expected_result: Instance records whose credentials are stored only in protected form.
+              depends_on:
+              - P3-G5-T02
+              - P3-G4-T03
+              - P3-G3-T02
+              - P3-G3-T04
+              constraints: []
+              acceptance: After adding or updating an Instance with placeholder credentials, the values received by Database differ from the originals and Logic can recover each original with the configured secret.
+              verify: Adding and updating an Instance through a stand-in for Database shows the credential values it receives are protected forms of the supplied placeholders and that Logic recovers each original from them with the configured secret.
+              status: done
+              log:
+              - at: '2026-09-29T08:44:18Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before protecting Instance and Account credentials.
+              - at: '2026-09-29T08:44:40Z'
+                transition: claimed -> done
+                check: Transient script adding and then updating an Instance through the Instance Service over a recording stand-in for Database (forwarding to a real Database over a throwaway SQLite file) with distinctive placeholder credentials, and once with no credentials; the Entity Database received and the stored record were decrypted with the configured secret and searched for the placeholders.
+                outcome: On Add and on Update the credential values Database received were reversible protected forms that neither equal nor contain the placeholders and that the configured secret opened to the originals; absent credentials stayed absent; the stored record held the same protected forms. The mapping of Instance credential Fields to the encrypted treatment follows the Target's stated at-rest rule (Open Question OQ-008-1 in log 008). ruff and pyright clean.
+            P3-G5-T05:
+              id: P3-G5-T05
+              source_id: 008
+              title: Protect the Account credential before it reaches Database
+              description: Apply the reversible protection to the Account credential Field of a record Logic is asked to add or change, before the Account reaches Database, so the original value is never stored.
+              reason: The Target states encrypted storage at rest for the Account credential.
+              inputs:
+              - Account Service
+              - Add and Update Actions
+              - Reversible credential protection
+              skills:
+              - python-skills:python-guidelines
+              expected_result: Account records whose credential is stored only in protected form.
+              depends_on:
+              - P3-G5-T02
+              - P3-G4-T08
+              - P3-G3-T02
+              - P3-G3-T04
+              constraints: []
+              acceptance: After adding or updating an Account with a placeholder credential, the value received by Database differs from the original and Logic can recover the original with the configured secret.
+              verify: Adding and updating an Account through a stand-in for Database shows the credential value it receives is a protected form of the supplied placeholder and that Logic recovers the original from it with the configured secret.
+              status: done
+              log:
+              - at: '2026-09-29T08:44:18Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before protecting Instance and Account credentials.
+              - at: '2026-09-29T08:44:40Z'
+                transition: claimed -> done
+                check: Transient script adding and then updating an Account through the Account Service over a recording stand-in for Database with distinctive placeholder credentials; the Entity Database received and the stored record were decrypted with the configured secret and searched for the placeholders.
+                outcome: On Add and on Update the credential value Database received was a reversible protected form that neither equals nor contains the placeholder and that the configured secret opened to the original; the stored record held the same protected form. The mapping of the Account credential Field to the encrypted treatment follows the Target's stated at-rest rule (Open Question OQ-008-1 in log 008). ruff and pyright clean.
+            P3-G5-T06:
+              id: P3-G5-T06
+              source_id: 008
+              title: Keep an unchanged credential intact when a record is edited
+              description: Make an edit of a User, Instance, or Account that does not supply a new credential leave the stored credential as it was, and make an edit that supplies a new credential replace it with the newly protected value, so a stored protected form is never protected a second time.
+              reason: Users must be able to edit these records without re-entering credentials and without corrupting them.
+              inputs:
+              - Protected User, Instance, and Account credentials
+              skills:
+              - python-skills:python-guidelines
+              expected_result: Edits that change a credential exactly when a new one is supplied.
+              depends_on:
+              - P3-G5-T03
+              - P3-G5-T04
+              - P3-G5-T05
+              constraints: []
+              acceptance: Editing any non-credential Field leaves every stored credential exactly as it was, and supplying a new credential stores the new protected value in its place.
+              verify: Editing a description of each of the three records through a stand-in for Database shows the stored credentials unchanged, and editing with a new credential shows the stored credential replaced by a protected form of the new value.
+              status: done
+              log:
+              - at: '2026-09-29T08:44:41Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before keeping unchanged credentials intact on edit.
+              - at: '2026-09-29T08:45:10Z'
+                transition: claimed -> done
+                check: 'Transient script over a recording stand-in for Database (forwarding to a real Database over a throwaway SQLite file) with a User, an Instance, and an Account stored through their Services: editing only a description with every credential Field carrying the withheld marker; editing one credential Field while the others carry the marker; clearing a nullable credential with an explicit absence; a marker for an unknown record; and a marker on Add. Stored records were compared field by field before and after.'
+                outcome: Editing a description left every stored credential exactly as it was for all three Entities; supplying a new User password stored a newly protected password and left the api key untouched; supplying a new Instance api key left its password untouched and still recoverable; a protected form was never protected a second time; an explicit absence cleared the nullable Instance password; the unknown record gave does-not-exist; a marker on Add gave the invalid Outcome with nothing stored. (One script fault, assigning a new id to a stored Entity, was refused by Model as immutable and was corrected in the script.) ruff and pyright clean.
+            P3-G5-T07:
+              id: P3-G5-T07
+              source_id: 008
+              title: Withhold original credential values from everything Logic returns
+              description: Ensure that no result, Outcome, or diagnostic Logic returns for a User, Instance, or Account contains an original credential value, whichever Operation produced it.
+              reason: Logic must never expose an original sensitive value through its Interface, errors, or Outcomes.
+              inputs:
+              - Protected User, Instance, and Account credentials
+              - Application Outcomes
+              skills:
+              - python-skills:python-guidelines
+              expected_result: Results and Outcomes that carry no original credential.
+              depends_on:
+              - P3-G5-T03
+              - P3-G5-T04
+              - P3-G5-T05
+              - P3-G2-T03
+              constraints: []
+              acceptance: For each of the three Entities and each Operation that returns a record or an Outcome, a search of the returned content finds no supplied credential value, and the failure Outcomes for these Entities contain none either.
+              verify: Adding, retrieving, listing, updating, enabling, and disabling each of the three Entities with distinctive placeholder credentials, and provoking each failure Outcome, shows no returned content contains any placeholder credential.
+              status: done
+              log:
+              - at: '2026-09-29T08:45:11Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before withholding original credential values from returned content.
+              - at: '2026-09-29T08:46:00Z'
+                transition: claimed -> done
+                check: Transient script over a recording stand-in for Database (forwarding to a real Database over a throwaway SQLite file) that stored a User, an Instance, and an Account with distinctive placeholder credentials, then for each Service serialized the result or Outcome of Add, Get by ID, List, Enable, Disable, an unknown id, Update, a withheld marker on Add, and Filter, Order, Count, Sum, Min, and Max requests on each credential Field, plus the duplicate-record, broken-value, and referred-to-record failures for User; it searched all 57 serialized results for the five placeholder values.
+                outcome: No returned content or Outcome contained any placeholder; every returned record carried the withheld marker in each stored credential Field and left an absent credential absent; every Filter, Order, Count, Sum, Min, and Max on a credential Field gave the invalid Outcome (added because Min and Max would otherwise return the stored protected form and an equality Filter could probe stored values). ruff and pyright clean.
+            P3-G5-T08:
+              id: P3-G5-T08
+              source_id: 008
+              title: Refuse an Account whose credential duplicates its Instance's credential
+              description: Refuse to add or change an Account whose credential equals a credential of the Instance it uses, answering with the invalid Outcome and storing nothing. No Trading Platform declares that it needs the same credential in both roles, so the exception the Target allows does not apply.
+              reason: The Target states that an Instance credential and an Account credential must not be duplicated across the two Models.
+              inputs:
+              - Instance credentials
+              - Account credential
+              - Protected credentials
+              skills:
+              - python-skills:python-guidelines
+              expected_result: Accounts that never share a credential value with their Instance.
+              depends_on:
+              - P3-G5-T04
+              - P3-G5-T05
+              - P3-G3-T03
+              constraints: []
+              acceptance: An Account whose credential equals one of its Instance's credentials is refused with the invalid Outcome and nothing is stored, and an Account whose credential differs from every credential of its Instance is accepted.
+              verify: Adding and updating an Account through a stand-in for Database, once with a credential equal to its Instance's and once with a different one, shows the first refused with the invalid Outcome and nothing stored and the second accepted.
+              status: done
+              log:
+              - at: '2026-09-29T08:46:01Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before refusing an Account whose credential duplicates its Instance's.
+              - at: '2026-09-29T08:46:44Z'
+                transition: claimed -> done
+                check: 'Transient script over a recording stand-in for Database (forwarding to a real Database over a throwaway SQLite file) with two Instances and Accounts: adding an Account whose credential equals each of its Instance''s credentials; updating an Account to a duplicate value; editing an Account with the withheld marker after its Instance''s credential became equal to the Account''s stored credential; moving an Account with the marker to a different Instance; an Instance credential stored unprotected; and a missing Instance and a wrong Entity type.'
+                outcome: Both duplicate additions gave the invalid Outcome without echoing the value and stored nothing; the update to a duplicate was refused and the stored Account credential was still the earlier one; the marker edit was refused once the Instance shared the credential and accepted against an Instance that did not; an unprotected stored Instance credential was compared as stored; a distinct credential was accepted; a missing Instance still gave the broken-reference Outcome and a wrong Entity type the invalid Outcome. Username is not treated as a credential and no Trading Platform declares a need for the same credential in both roles, so no exception applies. ruff and pyright clean.
+        P3-G6:
+          id: P3-G6
+          title: Database Service
+          description: The Service that owns the one Database Operation that does not concern a single Entity, and its Service Interface.
+          area: Database Service Execute Command and its Service Interface
+          does: Execute Command is available as a Service Action through the Database Service's Service Interface.
+          constraints: []
+          task_count: 2
+          tasks:
+            P3-G6-T01:
+              id: P3-G6-T01
+              source_id: 008
+              title: Provide the Execute Command Action
+              description: Provide the Action that accepts a command and its bound parameters, runs it through Database's published surface, and returns Database's Command Result, with its rows and affected count, as the success result. A command that Database refuses, or a dependency that cannot answer, yields the corresponding Application Outcome.
+              reason: Execute Command is the Database Operation that concerns no single Entity, and Logic must offer it like every other Operation.
+              inputs:
+              - Published Database Operation contract
+              - Application Outcomes
+              - Bounded dependency use
+              skills:
+              - python-skills:python-guidelines
+              expected_result: An Execute Command Action answering with the Command Result or an expected failure Outcome.
+              depends_on:
+              - P3-G1-T03
+              - P3-G2-T03
+              - P3-G2-T04
+              - P3-G2-T05
+              constraints: []
+              acceptance: The success result equals the Command Result Database returns for the same command and parameters, a refusal or a stalled dependency yields the corresponding Outcome, and no engine, session, or schema detail is exposed.
+              verify: Running a reading command and a changing command through a stand-in for Database returns the Command Result it produced in each case, and a refused command and a stalled stand-in yield the corresponding Outcomes with no storage detail.
+              status: done
+              log:
+              - at: '2026-09-29T08:46:45Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the Execute Command Action.
+              - at: '2026-09-29T08:47:00Z'
+                transition: claimed -> done
+                check: 'Transient script over a recording stand-in for Database (forwarding to a real Database over a throwaway SQLite file): a reading command with a bound parameter compared with the Command Result Database returns directly, a changing command, a malformed command, a command naming an unknown column, a command of the wrong type, and a stalled stand-in with two configured retries whose calls were counted.'
+                outcome: The reading result equals Database's own Command Result (rows [{id 1, name a}]); the changing command reported 1 affected record and the record changed; the malformed command, the unknown column, and the wrong type each gave the invalid Outcome with no command text in the reason; the stalled stand-in ended within the limit as unavailable after exactly one attempt despite the retries. ruff and pyright clean.
+            P3-G6-T02:
+              id: P3-G6-T02
+              source_id: 008
+              title: Publish the Database Service's Service Interface
+              description: Provide the internal Service Interface of the Database Service that publishes its Execute Command Action.
+              reason: Logic's outward Interface gathers Actions from Service Interfaces, so the Database Service must present its Action in one place without becoming a consumer dependency.
+              inputs:
+              - Execute Command Action
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A Service Interface through which Logic reaches the Database Service's Action.
+              depends_on:
+              - P3-G6-T01
+              constraints: []
+              acceptance: Execute Command can be reached through the Service Interface and nothing else the Service holds is published.
+              verify: Enumerating what the Service Interface publishes shows Execute Command and nothing else.
+              status: done
+              log:
+              - at: '2026-09-29T08:47:01Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the Database Service's Service Interface.
+              - at: '2026-09-29T08:47:12Z'
+                transition: claimed -> done
+                check: Transient script importing the Database Service's Service Interface and enumerating the names it publishes and the Actions its class offers. (A first draft expected an extra submodule name to be visible; the enumeration showed there is none, and the expectation was corrected.)
+                outcome: The Service Interface publishes exactly one name, DatabaseService, whose only public Action is execute_command; nothing else the Service holds is visible. ruff and pyright clean.
+        P3-G7:
+          id: P3-G7
+          title: Public gateway
+          description: The one outward Interface through which every consumer reaches Logic, and Logic's public metadata for the Application Manifest.
+          area: Logic's outward Interface and application metadata
+          does: Every consumer reaches all of Logic's Behaviour through one Interface whose Operations state what they accept, return, and can fail with.
+          constraints: []
+          task_count: 4
+          tasks:
+            P3-G7-T01:
+              id: P3-G7-T01
+              source_id: 008
+              title: Publish the Entity Service Operations through the outward Interface
+              description: Provide the single outward Interface that gathers every Action the Entity Service's Service Interface publishes as an Operation, in a Category for the Entity Service and, within it, a Category for each Entity, so that a consumer can add, edit, list, retrieve by id, enable, disable, and delete the records of every Entity through it alone.
+              reason: Users' requests reach Logic through one boundary, so a second consumer never needs a second way in.
+              inputs:
+              - Entity Service's Service Interface
+              skills:
+              - python-skills:python-guidelines
+              expected_result: An outward Interface with an Entity Service Category and an Entity Category for each published Entity, containing that Entity's Operations.
+              depends_on:
+              - P3-G4-T16
+              constraints: []
+              acceptance: Every Action of every Entity is reachable as an Operation in the Category of its Service and Entity, every Category performs no work of its own, and a consumer can complete every operation the Target requires for every Entity without reaching anything else.
+              verify: Enumerating the outward Interface shows a Category for the Entity Service with one Category per published Entity, each containing that Entity's Operations, and performing every required operation for every Entity through the Interface alone succeeds.
+              status: done
+              log:
+              - at: '2026-09-29T08:47:41Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the outward Interface and its Entity Service Categories.
+              - at: '2026-09-29T08:48:14Z'
+                transition: claimed -> done
+                check: Transient script that built the outward Interface over a recording stand-in for Database (forwarding to a real Database over a throwaway SQLite file) and listed the names in the Interface, in its Entity Service Category, and in each Entity Category; then, through the Interface alone, for each of the 15 Entities added two records with valid references, retrieved by id, listed, counted, disabled, enabled, edited, totalled, found the smallest and largest, deleted, and repeated a delete.
+                outcome: The Interface offers exactly the Categories entity and database; the Entity Service Category holds one Category for each of the 15 Entities, each offering exactly the twelve Operations; every operation the Target requires (add, edit, list, retrieve by id, enable, disable, delete) succeeded for all 15 Entities with the results and Outcomes the Actions define, and no Category performs work beyond handing the Operation to its Service. To make the Interface usable by its declared consumer, which has no declared Connection to Database or Model, the Interface also re-exports the Entities and Database's request vocabulary. ruff and pyright clean.
+            P3-G7-T02:
+              id: P3-G7-T02
+              source_id: 008
+              title: Publish the Database Service Operation through the outward Interface
+              description: Extend the outward Interface with a Category for the Database Service containing the Execute Command Operation gathered from its Service Interface.
+              reason: Execute Command must be reachable by a consumer through the same single boundary as every other Operation.
+              inputs:
+              - Database Service's Service Interface
+              skills:
+              - python-skills:python-guidelines
+              expected_result: An outward Interface whose Database Service Category contains Execute Command.
+              depends_on:
+              - P3-G6-T02
+              - P3-G7-T01
+              constraints: []
+              acceptance: Execute Command is reachable as an Operation in the Database Service Category, and the Category performs no work of its own.
+              verify: Enumerating the outward Interface shows a Database Service Category holding Execute Command, and running a command through it returns the result the Action produces.
+              status: done
+              log:
+              - at: '2026-09-29T08:48:15Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before verifying the Database Service Category, which was written with the outward Interface file.
+              - at: '2026-09-29T08:49:11Z'
+                transition: claimed -> done
+                check: 'Transient script over a recording stand-in for Database (forwarding to a real Database over a throwaway SQLite file): listed the names in the Database Service Category, ran a reading command with a bound parameter and a malformed command through the outward Interface, and counted the calls that reached Database. (The Category was written in the same file as the Entity Service Categories in the G7-T01 change and claimed here before this check.)'
+                outcome: The Category holds exactly execute_command; the reading command returned its row through the Interface, the malformed command gave the invalid Outcome, and exactly two execute-command calls reached Database; the Category does nothing beyond handing the Operation to its Service.
+            P3-G7-T03:
+              id: P3-G7-T03
+              source_id: 008
+              title: State what every Operation accepts, returns, and can fail with
+              description: For every Operation the outward Interface offers, state what it accepts, what it returns, and which Application Outcomes it can produce, in the consumer's terms.
+              reason: A consumer must be able to use an Operation and handle every expected failure without knowing anything behind the boundary.
+              inputs:
+              - Outward Interface Operations
+              - Application Outcomes
+              skills:
+              - python-skills:python-guidelines
+              expected_result: A statement of inputs, result, and Outcomes for every Operation that matches how the Operation behaves.
+              depends_on:
+              - P3-G7-T01
+              - P3-G7-T02
+              constraints: []
+              acceptance: Every Operation has a statement of what it accepts, returns, and can fail with, and each statement agrees with the Operation's observed behaviour.
+              verify: Comparing the statement of every Operation with the result and Outcomes observed when the Operation is exercised shows no difference and no Operation without a statement.
+              status: done
+              log:
+              - at: '2026-09-29T08:49:12Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before checking the Operation statements, which were written with the outward Interface file.
+              - at: '2026-09-29T08:49:13Z'
+                transition: claimed -> done
+                check: Transient script that drove every Operation of the outward Interface through success, absent-record, invalid-input, conflict, broken-reference, and stalled-Database scenarios over a recording stand-in for Database, collected the Outcome kinds actually observed for each Operation, and compared them with the Outcome kinds each Operation's statement (its inputs, result, and failures) names.
+                outcome: 'All 12 Entity Operations and Execute Command have a statement of what they accept, what they return, and which Outcomes they produce; for every Operation the observed failure kinds equal the stated ones (add: invalid, conflict, broken_reference, unavailable; get_by_id, enable, disable: not_found, invalid, unavailable; update also conflict and broken_reference; delete: not_found, invalid, broken_reference, unavailable; list, count, sum, min, max: invalid, unavailable; truncate: broken_reference, unavailable; Execute Command: invalid, unavailable). The statements were written with the Interface in G7-T01; no change was needed here.'
+            P3-G7-T04:
+              id: P3-G7-T04
+              source_id: 008
+              title: Publish Logic's public metadata in the Application Manifest
+              description: Publish Logic's non-secret public metadata — its package identity, its public entry point, and the items its public Interface offers — in the Application Manifest section that belongs to Logic, without changing any other Component's section.
+              reason: Other Components discover and compose Logic through the Application Manifest, which must describe it.
+              inputs:
+              - Logic's public identity
+              - Outward Interface
+              skills: []
+              expected_result: A Logic section in the Application Manifest that describes Logic's public composition.
+              depends_on:
+              - P3-G7-T03
+              constraints: []
+              acceptance: The Logic section is no longer empty, its entries match Logic's actual public identity and Interface, it holds no secret value or private detail, and every other section is unchanged.
+              verify: Comparing the Logic section item by item with Logic's public identity and Interface shows no difference, scanning it finds no secret value or private detail, and comparing the other sections before and after shows no change.
+              status: done
+              log:
+              - at: '2026-09-29T08:49:14Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before publishing Logic's public metadata in the Application Manifest.
+              - at: '2026-09-29T08:49:46Z'
+                transition: claimed -> done
+                check: Transient script that compared the Logic section of the Application Manifest with the names the outward Interface publishes, its entry point, and its location, scanned the section for secret words and values, and checked that every other section is unchanged (Model and the other empty sections still empty, Database's entry as before).
+                outcome: The Logic section now holds package name logic, path logic, public entry point logic.interface, and the 30 names the outward Interface publishes, identical to the Interface's own list; no secret value or private detail is present; every other section is unchanged. Model's section is still empty (not in this phase's scope).
+        P3-G8:
+          id: P3-G8
+          title: Documentation
+          description: Logic's documentation, written in the section order the Logic Preferences select.
+          area: Logic documentation
+          does: Logic has documentation that shows how a consumer reaches Logic, explains each internal Service, and helps a reader set up, use, verify, and troubleshoot it.
+          constraints: []
+          task_count: 9
+          tasks:
+            P3-G8-T01:
+              id: P3-G8-T01
+              source_id: 008
+              title: Write the documentation Overview
+              description: 'Write the Overview section: a concise introduction to what Logic is and what it offers a consumer.'
+              reason: A reader first needs to know what Logic is for before reading how to use it.
+              inputs:
+              - Logic's public purpose
+              skills: []
+              expected_result: An Overview a first-time reader can understand.
+              depends_on:
+              - P3-G7-T03
+              constraints: []
+              acceptance: The Overview states what Logic is and what a consumer can do with it, and contradicts nothing in the public Interface.
+              verify: Reading the Overview against the outward Interface finds no statement that disagrees with it.
+              status: done
+              log:
+              - at: '2026-09-29T08:49:47Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the Logic documentation.
+              - at: '2026-09-29T08:51:40Z'
+                transition: claimed -> done
+                check: Transient script (kept outside Logic) that copied Model, Database, and Logic into a clean directory, installed Logic there, prepared the Database with the documented commands, supplied the runtime values, then ran every Python example of the README in order and compared each printed result with the output block that follows it; a second transient script then compared each section with the surface it describes. For the Overview it ran the opening example and compared the stated purpose with the Interface.
+                outcome: The Overview example printed 'success USD' exactly as documented; the Overview states that Logic is a reusable library that stores and retrieves the Entities through Database, applies operation rules, and protects credentials, and contradicts nothing in the outward Interface.
+            P3-G8-T02:
+              id: P3-G8-T02
+              source_id: 008
+              title: Document the outward Interface and how to import it
+              description: 'Write the Interface section: show the outward Interface Categories organized by Service and, within the Entity Service, by Entity, and show how a consumer imports the outward Interface. Service Action examples are not repeated here.'
+              reason: A reader must be able to use Logic through its one public entry point.
+              inputs:
+              - Outward Interface
+              skills: []
+              expected_result: An Interface section that lets a consumer import Logic and find any Operation.
+              depends_on:
+              - P3-G7-T01
+              - P3-G7-T02
+              - P3-G7-T03
+              constraints: []
+              acceptance: Every Category appears in the organization the Interface has, the import shown works when followed, and the section presents no Service as a consumer dependency.
+              verify: Comparing the Categories in the section with the outward Interface shows no difference, and following the shown import in a clean environment gives access to the Interface.
+              status: done
+              log:
+              - at: '2026-09-29T08:49:47Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the Logic documentation.
+              - at: '2026-09-29T08:51:40Z'
+                transition: claimed -> done
+                check: Transient script (kept outside Logic) that copied Model, Database, and Logic into a clean directory, installed Logic there, prepared the Database with the documented commands, supplied the runtime values, then ran every Python example of the README in order and compared each printed result with the output block that follows it; a second transient script then compared each section with the surface it describes. For the Interface section it compared the Category tree and the list of re-exported names with the Interface's actual names and looked for Service imports in the examples.
+                outcome: The Category tree names exactly the 15 Entity Categories, the twelve Operations, and the Database Category the Interface has; every re-exported name listed is in the Interface; the import example printed 'EntityOperations True' as documented; no example imports a Service or an internal file, and the section states that a Service is not a consumer dependency.
+            P3-G8-T03:
+              id: P3-G8-T03
+              source_id: 008
+              title: Document the Entity Service and its Service Interface
+              description: 'Write the Entity Service part of the Services section: what the Service is for, its internal Service Interface and the Actions it handles, and the list of every Entity it handles.'
+              reason: A reader needs one complete and non-duplicated explanation of the Entity Service without mistaking its Service Interface for a consumer boundary.
+              inputs:
+              - Entity Service's Service Interface
+              skills: []
+              expected_result: An Entity Service explanation that lists every handled Entity and every Action.
+              depends_on:
+              - P3-G4-T16
+              constraints: []
+              acceptance: The list of handled Entities equals the Entities Model publishes, every Action the Service Interface publishes is described, and the text states that the Service is internal.
+              verify: Comparing the list of Entities and Actions in the section with those published by Model and by the Service Interface shows no difference.
+              status: done
+              log:
+              - at: '2026-09-29T08:49:47Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the Logic documentation.
+              - at: '2026-09-29T08:51:40Z'
+                transition: claimed -> done
+                check: Transient script (kept outside Logic) that copied Model, Database, and Logic into a clean directory, installed Logic there, prepared the Database with the documented commands, supplied the runtime values, then ran every Python example of the README in order and compared each printed result with the output block that follows it; a second transient script then compared each section with the surface it describes. For the Entity Service section it compared the handled Entities with the Entities Model publishes and the described Actions with the Actions offered.
+                outcome: The 15 handled Entities equal the 15 Entities Model publishes; the section states the Service Interface publishes one Service per Entity with the same twelve Actions, that the shared foundation is private and unpublished, and that Services are internal; the credential Behaviour it lists matches the implemented mappings.
+            P3-G8-T04:
+              id: P3-G8-T04
+              source_id: 008
+              title: Document one complete example for every Entity-bound Action
+              description: 'Write the examples part of the Services section for the Entity Service: for one representative Entity give one complete example for each Database Operation that applies to an Entity, as the pattern for the remaining Entities. Examples use non-secret placeholder credentials.'
+              reason: A reader learns each Action from one example and applies it to any other Entity.
+              inputs:
+              - Entity Service's Actions
+              - Representative Entity
+              skills: []
+              expected_result: One complete, runnable example for every Entity-bound Action.
+              depends_on:
+              - P3-G4-T16
+              - P3-G3-T14
+              - P3-G5-T06
+              - P3-G5-T07
+              constraints: []
+              acceptance: Every Entity-bound Action has exactly one example, every example produces the outcome the section states, and no example contains a real secret.
+              verify: Running each example through a stand-in for Database reproduces the stated outcome, the number of examples equals the number of Entity-bound Actions, and scanning the examples finds no real secret.
+              status: done
+              log:
+              - at: '2026-09-29T08:49:47Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the Logic documentation.
+              - at: '2026-09-29T08:51:40Z'
+                transition: claimed -> done
+                check: Transient script (kept outside Logic) that copied Model, Database, and Logic into a clean directory, installed Logic there, prepared the Database with the documented commands, supplied the runtime values, then ran every Python example of the README in order and compared each printed result with the output block that follows it; a second transient script then compared each section with the surface it describes. For the examples it counted the example headings against the Actions the Entity Operations offer and searched for real secrets.
+                outcome: Exactly 12 examples exist, one per Action (Add, Get by ID, Update, Disable, Enable, List, Count, Sum, Min, Max, Delete, Truncate); all 12 ran in order and printed the documented output (success 2 ********, success ada, success Swing trader, success False, success True, success ['ada'], success 2, success 3, success 1, success 2, success True, broken_reference 1); only placeholder credentials appear and no real secret.
+            P3-G8-T05:
+              id: P3-G8-T05
+              source_id: 008
+              title: Document the Database Service and Execute Command
+              description: 'Write the Database Service part of the Services section separately from the Entity Service: what the Service is for, its internal Service Interface, and one complete example for Execute Command.'
+              reason: Execute Command belongs to no Entity, so a reader needs it explained apart from the Entity Service.
+              inputs:
+              - Database Service's Service Interface
+              skills: []
+              expected_result: A Database Service explanation with one Execute Command example.
+              depends_on:
+              - P3-G6-T02
+              constraints: []
+              acceptance: The Service Interface is described accurately, the Execute Command example produces the outcome the section states, and the section states that the Service is internal.
+              verify: Running the example through a stand-in for Database reproduces the stated outcome, and comparing the description with the Service Interface shows no difference.
+              status: done
+              log:
+              - at: '2026-09-29T08:49:47Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the Logic documentation.
+              - at: '2026-09-29T08:51:40Z'
+                transition: claimed -> done
+                check: Transient script (kept outside Logic) that copied Model, Database, and Logic into a clean directory, installed Logic there, prepared the Database with the documented commands, supplied the runtime values, then ran every Python example of the README in order and compared each printed result with the output block that follows it; a second transient script then compared each section with the surface it describes. For the Database Service section it ran the Execute Command example and compared the description with the Service Interface.
+                outcome: 'The example printed "success [{''code'': ''USD''}]" as documented; the section names DatabaseService and execute_command, states the Service is internal, and states a command is attempted once, all matching the Service Interface.'
+            P3-G8-T06:
+              id: P3-G8-T06
+              source_id: 008
+              title: Document Setup
+              description: 'Write the Setup section: only the steps for the selected technology to install Logic and supply the runtime values its configuration contract requires, named without any real secret.'
+              reason: A reader must be able to prepare Logic for use.
+              inputs:
+              - Installable Logic package
+              - Runtime configuration contract
+              skills: []
+              expected_result: A Setup section that leads to a working installation.
+              depends_on:
+              - P3-G1-T01
+              - P3-G1-T02
+              - P3-G1-T03
+              - P3-G2-T01
+              constraints: []
+              acceptance: Following the steps in a clean environment yields an installation that imports, every required runtime value is named, and no real secret appears.
+              verify: Following the steps in a clean environment yields an importable installation, comparing the named values with the configuration contract shows no difference, and scanning the section finds no real secret.
+              status: done
+              log:
+              - at: '2026-09-29T08:49:47Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the Logic documentation.
+              - at: '2026-09-29T08:51:40Z'
+                transition: claimed -> done
+                check: Transient script (kept outside Logic) that copied Model, Database, and Logic into a clean directory, installed Logic there, prepared the Database with the documented commands, supplied the runtime values, then ran every Python example of the README in order and compared each printed result with the output block that follows it; a second transient script then compared each section with the surface it describes. For Setup it followed the documented steps in the clean copy (uv sync, create-tables, insert-initial-data, the three environment values) and compared the value names with the configuration contract.
+                outcome: Following the steps gave an importable installation, 'Tables are ready' and 'Inserted 23 records' exactly as the Database prints, and a Logic that constructs; the three value names equal the contract's names; no real secret appears (the value shown is a placeholder in angle brackets).
+            P3-G8-T07:
+              id: P3-G8-T07
+              source_id: 008
+              title: Document Use
+              description: 'Write the Use section: how a consumer performs typical work through the outward Interface and how it recognizes and handles each Application Outcome.'
+              reason: A reader needs to see how to obtain results and respond to expected failures.
+              inputs:
+              - Outward Interface
+              - Application Outcomes
+              skills: []
+              expected_result: A Use section covering typical work and Outcome handling.
+              depends_on:
+              - P3-G7-T03
+              - P3-G2-T02
+              constraints: []
+              acceptance: Every Outcome is explained, the shown typical work behaves as stated, and nothing directs a consumer to a Service.
+              verify: Running the shown work through a stand-in for Database reproduces the stated behaviour, and comparing the explained Outcomes with the Outcome vocabulary shows no difference.
+              status: done
+              log:
+              - at: '2026-09-29T08:49:47Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the Logic documentation.
+              - at: '2026-09-29T08:51:40Z'
+                transition: claimed -> done
+                check: Transient script (kept outside Logic) that copied Model, Database, and Logic into a clean directory, installed Logic there, prepared the Database with the documented commands, supplied the runtime values, then ran every Python example of the README in order and compared each printed result with the output block that follows it; a second transient script then compared each section with the surface it describes. For Use it ran the Outcome-handling example and compared the table of kinds with the Outcome vocabulary.
+                outcome: 'The match example printed ''not found: no User has that id'' as documented; the table lists exactly the six Outcome kinds; nothing directs a consumer to a Service.'
+            P3-G8-T08:
+              id: P3-G8-T08
+              source_id: 008
+              title: Document Verify
+              description: 'Write the Verify section: how a consumer confirms that a prepared Logic works through its public Interface.'
+              reason: A reader needs a way to check that Logic is ready.
+              inputs:
+              - Outward Interface
+              skills: []
+              expected_result: A Verify section a reader can follow.
+              depends_on:
+              - P3-G7-T03
+              constraints: []
+              acceptance: Following the section confirms a working Logic through the public Interface alone, and it mentions no internal Service as a way to verify.
+              verify: Following the section against a prepared Logic gives a positive result and requires no access to anything but the public Interface.
+              status: done
+              log:
+              - at: '2026-09-29T08:49:47Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the Logic documentation.
+              - at: '2026-09-29T08:51:40Z'
+                transition: claimed -> done
+                check: Transient script (kept outside Logic) that copied Model, Database, and Logic into a clean directory, installed Logic there, prepared the Database with the documented commands, supplied the runtime values, then ran every Python example of the README in order and compared each printed result with the output block that follows it; a second transient script then compared each section with the surface it describes. For Verify it ran the check snippet against the prepared clean copy.
+                outcome: The snippet printed 'Logic is ready' using only the public Interface and asserted a seeded Currency and User exist; the section names no internal Service.
+            P3-G8-T09:
+              id: P3-G8-T09
+              source_id: 008
+              title: Document Troubleshooting
+              description: 'Write the Troubleshooting section: the Logic concerns a reader can meet — an invalid configuration, each expected failure Outcome, a dependency that does not answer, and a refused Account credential — with the cause and remedy of each.'
+              reason: A reader who hits a problem needs to recognise and resolve it without reading Logic's source.
+              inputs:
+              - Runtime configuration contract
+              - Application Outcomes
+              - Bounded dependency use
+              skills: []
+              expected_result: A Troubleshooting section covering Logic's concerns only.
+              depends_on:
+              - P3-G2-T01
+              - P3-G2-T03
+              - P3-G2-T04
+              - P3-G2-T05
+              - P3-G5-T08
+              constraints: []
+              acceptance: Each concern listed has a cause and a remedy that resolves it when applied, and the section covers nothing outside Logic.
+              verify: Provoking each concern and applying the stated remedy resolves it, and the section states nothing about another Component's concerns.
+              status: done
+              log:
+              - at: '2026-09-29T08:49:47Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before writing the Logic documentation.
+              - at: '2026-09-29T08:51:40Z'
+                transition: claimed -> done
+                check: Transient script that provoked each concern in the Troubleshooting table through the Interface (missing and each malformed runtime value, unknown id, wrong Entity type, unknown Field, credential Field in a Filter, withheld marker on Add, duplicate Account credential, unique clash, missing reference, still-referred-to record, malformed command, a stalled Database, and a Database without tables) and compared each reason with the documented message; the missing-tables remedy was then applied.
+                outcome: Every listed message matched the message Logic produces and the table contains it verbatim; applying the stated remedies worked (supplying every value let the configuration validate; creating the tables turned the unavailable Outcome into a normal not_found); the section covers Logic's concerns only.
+        P3-G9:
+          id: P3-G9
+          title: Verification
+          description: Whole-Logic checks of conformance, behaviour, secrecy, and repeatability, run after the pieces exist.
+          area: Logic conformance and repeatability
+          does: Logic as a whole has been shown to satisfy its Definition, its Preferences, and the Target's required Behaviour.
+          constraints: []
+          task_count: 12
+          tasks:
+            P3-G9-T01:
+              id: P3-G9-T01
+              source_id: 008
+              title: Verify Architecture and dependency direction
+              description: Confirm that Logic reaches Model and Database only through their published surfaces, starts no process, owns no transport schema, depends on no API framework, offers exactly one outward Interface, exposes no Service, connection, session, or storage detail through it, and lets no Service depend on another except through that Service's Service Interface.
+              reason: The Architecture and dependency direction are what let Logic be reused by any consumer and its dependencies be replaced.
+              inputs:
+              - Whole Logic
+              skills: []
+              expected_result: Evidence of conformant Architecture and dependency direction.
+              depends_on:
+              - P3-G7-T03
+              - P3-G6-T02
+              - P3-G4-T16
+              constraints: []
+              acceptance: Every dependency runs through a published surface, no process is started, no transport or framework concept is used, one Interface is offered, and no consumer can reach a Service.
+              verify: Examining every dependency, every entry point, and everything the outward Interface exposes finds only published surfaces, no process start, no transport or framework concept, a single Interface, and no reachable Service.
+              status: done
+              log:
+              - at: '2026-09-29T08:52:05Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before the whole-Logic verification.
+              - at: '2026-09-29T08:55:03Z'
+                transition: claimed -> done
+                check: Transient script that parsed every Logic source module and listed its imports, flagged any import beyond the standard library, the two published Interfaces, and the declared technology, any transport, framework, or process-starting import, any Service importing another Service or the outward Interface, and any entry point; it then walked the outward Interface's names for Service, connection, session, or storage names.
+                outcome: 31 modules import Model only through its published Interface and Database only through its published Interface, plus the standard library and the declared technology (sqlalchemy for the failures Database raises, cryptography for credential protection); no transport, framework, process-starting, or entry-point construct exists; the project declares no script; no Service imports another Service or the outward Interface; the Interface publishes no Service, and no reachable name of the Logic object tree suggests a Service, connection, session, or storage detail.
+            P3-G9-T02:
+              id: P3-G9-T02
+              source_id: 008
+              title: Verify Model and Database are consumed without change
+              description: Confirm that Model's and Database's Components are identical after every Logic activity, with no artifact created in either.
+              reason: Model and Database are independently owned, and Logic must not alter them.
+              inputs:
+              - Model Component
+              - Database Component
+              skills: []
+              expected_result: Evidence that neither Component was changed.
+              depends_on:
+              - P3-G1-T02
+              - P3-G1-T03
+              - P3-G7-T03
+              constraints: []
+              acceptance: The contents of both Components are identical before and after Logic's activities, with no additional artifact in either.
+              verify: Comparing the contents of both Components before Logic's work and after its verification shows no difference and no additional artifact.
+              status: done
+              log:
+              - at: '2026-09-29T08:52:05Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before the whole-Logic verification.
+              - at: '2026-09-29T08:55:03Z'
+                transition: claimed -> done
+                check: Compared file-by-file hashes of the Model and Database Components (Database's storage files excluded) with the snapshots taken before any Logic work, and asked git for changes under both directories.
+                outcome: Both hashes are identical to the earlier snapshots (Model 29 files, Database 22 files) and git reports no change under either Component, so no artifact was created in them.
+            P3-G9-T03:
+              id: P3-G9-T03
+              source_id: 008
+              title: Verify the changing Operations for every Entity in isolation
+              description: For every published Entity, exercise Add, Update, Delete, Enable, Disable, and Truncate through the outward Interface with Database replaced by a stand-in, covering the inputs, the result, and every Outcome each Operation declares.
+              reason: Behaviour that can only be verified through a running consumer hides which layer failed.
+              inputs:
+              - Outward Interface
+              - Published Model Entities
+              skills:
+              - sqlmodel
+              expected_result: Evidence that every changing Operation behaves as declared for every Entity.
+              depends_on:
+              - P3-G4-T16
+              - P3-G5-T08
+              - P3-G7-T01
+              constraints: []
+              acceptance: For each Entity and each changing Operation, the result and each declared Outcome are as declared and a failure leaves no change in the stand-in.
+              verify: Exercising each changing Operation for each of the published Entities against a stand-in with success, absent record, invalid input, conflict, and reference cases produces the declared result or Outcome each time, with no change stored after a failure.
+              status: done
+              log:
+              - at: '2026-09-29T08:52:05Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before the whole-Logic verification.
+              - at: '2026-09-29T08:55:03Z'
+                transition: claimed -> done
+                check: Transient script over a recording stand-in for Database (forwarding to a real Database over a throwaway SQLite file) that populated one record of each of the 15 Entities through the outward Interface, then for each Entity exercised Add (valid, repeated, broken value, wrong type), Update (edit, unknown id, broken value with the stored record compared), Enable and Disable (present and absent), Delete (absent, wrongly typed id, referred-to and unreferred records), and Truncate (a referred-to Entity keeps every record; all 15 truncated in dependency order). The earlier per-Action and outward-Interface checks were rerun on the final code.
+                outcome: 'For all 15 Entities every changing Operation returned the declared result or Outcome: a repeated unique record gave conflict, a broken value or wrong type gave invalid, an unknown id gave not_found, a referred-to record or Entity gave broken_reference with every record kept, and failures left the stored record unchanged; Truncate returned the removed counts and emptied all 15 Entities in dependency order.'
+            P3-G9-T04:
+              id: P3-G9-T04
+              source_id: 008
+              title: Verify the reading Operations for every Entity in isolation
+              description: For every published Entity, exercise Get by ID, List, Count, Sum, Min, and Max through the outward Interface with Database replaced by a stand-in, covering the inputs, the result, and every Outcome each Operation declares.
+              reason: Reads and aggregates are what consumers rely on most, so each must be shown correct for every Entity.
+              inputs:
+              - Outward Interface
+              - Published Model Entities
+              skills:
+              - sqlmodel
+              expected_result: Evidence that every reading Operation behaves as declared for every Entity.
+              depends_on:
+              - P3-G4-T16
+              - P3-G5-T08
+              - P3-G7-T01
+              constraints: []
+              acceptance: For each Entity and each reading Operation, the result and each declared Outcome are as declared.
+              verify: Exercising each reading Operation for each of the published Entities against a stand-in with present, absent, empty, unknown-Field, and unusable-value cases produces the declared result or Outcome each time.
+              status: done
+              log:
+              - at: '2026-09-29T08:52:05Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before the whole-Logic verification.
+              - at: '2026-09-29T08:55:03Z'
+                transition: claimed -> done
+                check: Transient script over a recording stand-in for Database that, for each of the 15 Entities through the outward Interface, exercised Get by ID (present, absent, wrongly typed), List and Count (all, no match, unknown Field), and Sum, Min, and Max (a numeric Field, empty selection, unknown Field, unknown Field in a Filter, and a nullable Field holding only absent values). The earlier per-Action checks were rerun on the final code.
+                outcome: 'For all 15 Entities every reading Operation returned the declared result or Outcome: present records were found, absent and empty selections gave not_found or empty successes and totals of zero, minimum and maximum of nothing gave a success holding no value, and unknown or wrongly typed arguments gave invalid.'
+            P3-G9-T05:
+              id: P3-G9-T05
+              source_id: 008
+              title: Verify the Database Service Operation in isolation
+              description: Exercise Execute Command through the outward Interface with Database replaced by a stand-in, covering its inputs, its result, and every Outcome it declares.
+              reason: Execute Command belongs to no Entity and needs its own check.
+              inputs:
+              - Outward Interface
+              skills: []
+              expected_result: Evidence that Execute Command behaves as declared.
+              depends_on:
+              - P3-G6-T02
+              - P3-G7-T02
+              constraints: []
+              acceptance: The result and each declared Outcome are as declared for reading commands, changing commands, refused commands, and a stalled stand-in.
+              verify: Exercising Execute Command against a stand-in with each of these cases produces the declared result or Outcome each time.
+              status: done
+              log:
+              - at: '2026-09-29T08:52:05Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before the whole-Logic verification.
+              - at: '2026-09-29T08:55:03Z'
+                transition: claimed -> done
+                check: 'Transient script running Execute Command through the outward Interface over a recording stand-in for Database: a reading command, a changing command, a malformed command, a command naming an unknown column, a command of the wrong type, and a stalled stand-in with two configured retries whose calls were counted; the earlier Service and Category checks were rerun on the final code.'
+                outcome: The reading result equals Database's own Command Result, the changing command reported its affected count, the malformed command, unknown column, and wrong type gave invalid without command text in the reason, and the stalled stand-in ended within the limit as unavailable after exactly one attempt.
+            P3-G9-T06:
+              id: P3-G9-T06
+              source_id: 008
+              title: Verify each Service's calls into Database's published surface
+              description: 'Confirm that every call an Entity Service or the Database Service makes into Database conforms to Database''s published surface: the right Operation, an Entity type or instance as required, enum members and never strings, and the documented optional arguments.'
+              reason: A call that does not match the surface it depends on fails only when reached, and this check finds it earlier.
+              inputs:
+              - Every Service
+              - Published Database Operation contract
+              skills: []
+              expected_result: Evidence that every dependency call conforms.
+              depends_on:
+              - P3-G4-T16
+              - P3-G6-T02
+              - P3-G2-T03
+              constraints: []
+              acceptance: Every call observed at the stand-in for Database matches the published Operation contract.
+              verify: Recording the calls that arrive at a stand-in for Database while every Action runs shows each matching the published contract, with no enum supplied as text.
+              status: done
+              log:
+              - at: '2026-09-29T08:52:05Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before the whole-Logic verification.
+              - at: '2026-09-29T08:55:03Z'
+                transition: claimed -> done
+                check: Transient script that ran a wide workflow through the outward Interface (get, update, enable, disable, count with and without Filters and a combination, list with Filters, combination, Orders and limit, sum, min, max, delete, Execute Command, and truncate for all 15 Entities) over a recording stand-in for Database, then bound each of the 217 recorded calls to the signature of the published Database Operation and checked its arguments.
+                outcome: All 217 recorded calls were to published Database Operations and bound to their signatures; every entity argument was a published Entity type or instance, every Filter, Order, Filter Combination, and their enums were members and never text, ids were integers, Field names and commands were strings, no call selected an Instance explicitly, and neither Create Tables nor Insert Initial Data was called.
+            P3-G9-T07:
+              id: P3-G9-T07
+              source_id: 008
+              title: Verify credential handling end to end
+              description: Confirm for User, Instance, and Account that credentials reach Database only in protected form, that an unchanged credential survives an edit, that no original credential value appears in any returned content, Outcome, error, example, or documentation, that a duplicated Account credential is refused, and that a stored credential not in protected form neither fails an Operation nor is exposed.
+              reason: Credentials are the most sensitive content Logic handles, and a single leak is permanent.
+              inputs:
+              - Whole Logic
+              - Placeholder credentials
+              skills: []
+              expected_result: Evidence that credentials are handled as the Target states and never exposed.
+              depends_on:
+              - P3-G5-T08
+              - P3-G7-T01
+              - P3-G8-T04
+              constraints: []
+              acceptance: Every property listed holds for all three Entities, and a search of everything Logic returns or documents finds no original credential value.
+              verify: Adding, editing, retrieving, and listing each of the three Entities with distinctive placeholder credentials against a stand-in, including a stored record whose credential is unprotected, shows each property, and searching the returned content, Outcomes, errors, examples, and documentation finds none of the placeholders.
+              status: done
+              log:
+              - at: '2026-09-29T08:52:05Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before the whole-Logic verification.
+              - at: '2026-09-29T08:55:03Z'
+                transition: claimed -> done
+                check: Transient scripts, rerun on the final code, that stored, edited, retrieved, and listed User, Instance, and Account with distinctive placeholder credentials (including a stored record whose credential is unprotected, and the duplicated Account credential) over a recording stand-in for Database, and searched 57 returned results and Outcomes, and the documentation and source, for the placeholders.
+                outcome: Credentials reached Database only in protected forms (hash for User, encrypted for Instance and Account); an unchanged credential survived every edit byte for byte; a new credential replaced only the credential supplied; every returned record held the withheld marker; a duplicated Account credential was refused and nothing stored; an unprotected stored credential never failed an Operation and was never exposed; no placeholder appeared in any returned content, Outcome, error, or source, and the documentation contains only labelled non-secret placeholders.
+            P3-G9-T08:
+              id: P3-G9-T08
+              source_id: 008
+              title: Verify configuration validation and secret hygiene
+              description: Confirm that Logic refuses an incomplete or malformed configuration before any Operation runs, and that no secret value appears in source, errors, the public Interface, or Application Outcomes.
+              reason: A secret that reaches source or an error is exposed permanently.
+              inputs:
+              - Runtime configuration contract
+              skills: []
+              expected_result: Evidence of configuration validation and secret hygiene.
+              depends_on:
+              - P3-G2-T01
+              - P3-G7-T03
+              constraints: []
+              acceptance: Each missing or malformed value is refused before use, and no supplied secret value is found anywhere Logic can emit or store.
+              verify: Supplying incomplete and malformed sets refuses each before any Operation, and searching source, errors, the public Interface, and Outcomes for the supplied placeholder secrets finds none.
+              status: done
+              log:
+              - at: '2026-09-29T08:52:05Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before the whole-Logic verification.
+              - at: '2026-09-29T08:55:03Z'
+                transition: claimed -> done
+                check: Transient script that created Logic from eight incomplete or malformed configurations with a Database that fails if touched, created it from the process environment, and searched every project file, the Interface's names, the Logic object, and the results of failing Operations for a distinctive placeholder secret; it also scanned the source for long literals.
+                outcome: All eight configurations were refused with ConfigurationError before any Operation and the Database was never touched; the error messages name the value and never contain it; creating Logic from the environment worked and creating it with no values was refused; the secret was found in none of the 37 project files, the repr of the configuration, the Interface, or any Outcome; the source holds no secret literal.
+            P3-G9-T09:
+              id: P3-G9-T09
+              source_id: 008
+              title: Verify bounded execution
+              description: Confirm that no wait on a dependency is unbounded and no retry exceeds its bound or repeats work that is unsafe to repeat.
+              reason: One unavailable dependency must not create work that never ends or a change applied twice.
+              inputs:
+              - Bounded dependency use
+              skills: []
+              expected_result: Evidence that waiting and retrying are bounded.
+              depends_on:
+              - P3-G2-T04
+              - P3-G2-T05
+              - P3-G4-T16
+              - P3-G6-T02
+              constraints: []
+              acceptance: A stalled dependency ends every Operation within the configured limit, retries stay within their bound, and an unsafe change is never repeated.
+              verify: Stalling the stand-in for Database while each kind of Operation runs shows each ending within the limit, counting attempts shows the bound respected, and an unsafe change is attempted exactly once.
+              status: done
+              log:
+              - at: '2026-09-29T08:52:05Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before the whole-Logic verification.
+              - at: '2026-09-29T08:55:03Z'
+                transition: claimed -> done
+                check: Transient script with two configured retries and a 0.25 second limit that stalled the stand-in for Database while each kind of Operation ran through the outward Interface, timing each and counting the calls that reached Database; it also made a read fail temporarily twice and made an Add fail once.
+                outcome: Every stalled Operation ended with the unavailable Outcome within (retries+1) times the limit; the nine repeatable Operations (Get by ID, List, Count, Sum, Min, Max, Update, Enable, Disable) made exactly 3 attempts, the unsafe Add, Delete, Truncate, and Execute Command made exactly 1; an Update that must first read a withheld credential made 3 bounded reads and never attempted the change; a read failing twice succeeded on the third attempt within the bound and a failing Add was attempted once.
+            P3-G9-T10:
+              id: P3-G9-T10
+              source_id: 008
+              title: Verify documentation agrees with the public Logic
+              description: Confirm that every part of the documentation agrees with the outward Interface, the Service Interfaces, and the observed behaviour, with nothing stale and nothing added.
+              reason: Documentation that disagrees with Logic misleads every reader who trusts it.
+              inputs:
+              - Documentation
+              - Outward Interface
+              skills: []
+              expected_result: Evidence that the documentation is accurate.
+              depends_on:
+              - P3-G8-T01
+              - P3-G8-T02
+              - P3-G8-T03
+              - P3-G8-T04
+              - P3-G8-T05
+              - P3-G8-T06
+              - P3-G8-T07
+              - P3-G8-T08
+              - P3-G8-T09
+              constraints: []
+              acceptance: Every statement in the documentation agrees with Logic's public surface and behaviour, and every example reproduces its stated outcome.
+              verify: Comparing each section with the surface it describes and running every example through a stand-in for Database shows no disagreement.
+              status: done
+              log:
+              - at: '2026-09-29T08:52:05Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before the whole-Logic verification.
+              - at: '2026-09-29T08:55:03Z'
+                transition: claimed -> done
+                check: Reran the README example runner and the section checks in a freshly copied and installed Logic with a prepared Database, after all source changes.
+                outcome: All 17 Python examples ran in order and printed exactly the documented output; the Overview, Interface, Entity Service, examples, Database Service, Setup, Use, Verify, and Troubleshooting sections all agree with the outward Interface, the Service Interfaces, and the observed messages and Outcomes; no stale statement was found.
+            P3-G9-T11:
+              id: P3-G9-T11
+              source_id: 008
+              title: Verify source quality and technology conformance
+              description: Confirm that Logic's source passes the formatter, linter, and type checker the shared Development defaults select, and uses the language, packaging, and dependency choices the Logic Preferences and Development defaults select.
+              reason: Selected technology and quality tools keep the source consistent with the other Components.
+              inputs:
+              - Logic source
+              - Selected technology and quality tools
+              skills:
+              - python-skills:python-guidelines
+              expected_result: Evidence of source quality and technology conformance.
+              depends_on:
+              - P3-G1-T01
+              - P3-G7-T03
+              constraints: []
+              acceptance: The formatter, linter, and type checker report no issue, and the language and package choices equal the selections.
+              verify: Running the selected formatter, linter, and type checker reports no issue, and comparing the language and package choices with the selections shows no difference.
+              status: done
+              log:
+              - at: '2026-09-29T08:52:05Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before the whole-Logic verification.
+              - at: '2026-09-29T08:55:03Z'
+                transition: claimed -> done
+                check: Ran the formatter in check mode, the linter, and the type checker over the source, then compared the language and packaging choices in the project metadata with the Logic Preferences and Development defaults and scanned the source for legacy typing constructs and suppressions.
+                outcome: 31 files already formatted, ruff reports no issue, pyright reports 0 errors, 0 warnings; the project targets Python 3.14 with uv, a lock file that resolves unchanged, ruff and pyright as development-only tools, Model and Database as path dependencies, modern typing only, StrEnum for named closed sets, and no suppression comment anywhere (one rule is disabled for the single module whose worker thread must relay every failure, in the project's lint configuration).
+            P3-G9-T12:
+              id: P3-G9-T12
+              source_id: 008
+              title: Verify repeatability of unchanged regeneration
+              description: Confirm that regenerating Logic from unchanged authorities yields the same public surface and behaviour, so that every earlier verification still holds.
+              reason: Logic is regenerated over the life of the project, and regeneration must not change what was already correct.
+              inputs:
+              - Whole Logic
+              skills: []
+              expected_result: Evidence that unchanged regeneration is stable.
+              depends_on:
+              - P3-G9-T01
+              - P3-G9-T02
+              - P3-G9-T03
+              - P3-G9-T04
+              - P3-G9-T05
+              - P3-G9-T06
+              - P3-G9-T07
+              - P3-G9-T08
+              - P3-G9-T09
+              - P3-G9-T10
+              - P3-G9-T11
+              constraints: []
+              acceptance: A second generation from the same authorities has the same public surface and passes every earlier verification.
+              verify: Comparing the public surface of two generations from the same authorities shows no difference, and every earlier verification passes on the second generation.
+              status: done
+              log:
+              - at: '2026-09-29T08:55:04Z'
+                transition: todo -> claimed
+                note: Claimed by my-interface-develop (log 009) before the repeatability verification.
+              - at: '2026-09-29T08:56:08Z'
+                transition: claimed -> done
+                check: Copied Model, Database, and Logic into a clean directory and built the Logic wheel twice from it, comparing the two wheels file by file; installed the copy and compared its public surface (exported names, every Operation's signature and a digest of its statement, the Outcome kinds) with the working tree's; then reran the outward Interface, per-Entity, Outcome-statement, Database-call, credential, Execute Command, configuration, and bounded-execution checks against the freshly installed copy.
+                outcome: The two wheels are byte-identical (42 files each); the public surface of the copy equals the working tree's (35,791 bytes of signatures and digests, identical); all 14 rerun checks passed on the fresh install. Regeneration here means rebuilding and reinstalling Logic from its unchanged sources.

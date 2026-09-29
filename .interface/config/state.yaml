@@ -30,10 +30,10 @@ content_map:
 content:
   active:
     mode: "development"
-    phase: "P2"
-    mode_reason: "Develop is executing the Plan for phase P2."
+    phase: "P3"
+    mode_reason: "Develop executed the Plan for phase P3."
     set_by: "my-interface-develop"
-    set_at: "2026-09-28T22:53:18Z"
+    set_at: "2026-09-29T08:31:46Z"
   phases:
     P1:
       id: "P1"
@@ -49,8 +49,8 @@ content:
       completed_at: null
     P3:
       id: "P3"
-      planning: "not started"
-      development: "not started"
+      planning: "completed"
+      development: "completed"
       review: "not started"
       completed_at: null
     P4:
@@ -285,3 +285,85 @@ content:
           - "Verification scripts and transient copies were kept outside the project; local caches were removed."
         necessary_but_not_performed:
           - "The Application Manifest section for Model is still empty (raised by Develop log 004, Review 005, and Planning 006); it needs a Task in the P1 Plan."
+    - id: "008"
+      skill: "my-interface-plan"
+      phase: "P3"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-09-29T07:59:34Z"
+      completed_at: "2026-09-29T08:03:12Z"
+      duration: "3:38"
+      open_questions:
+        - "OQ-008-1: Credential treatment and the sensitivity marker (see data.open_questions)."
+        - "OQ-008-2: Credentials already stored by P2 Initial Data are in unprotected form (see data.open_questions)."
+      blockers: []
+      report: "Planned phase P3 (Logic; argument '3' resolved to Phase 3) from scratch: one Plan, 9 Groups, 73 atomic Tasks (3 package and dependencies, 5 configuration/outcomes/bounded dependency use, 14 shared Entity-bound Actions, 16 Entity Services and their Service Interface, 8 credential handling, 2 Database Service, 4 public gateway, 9 documentation, 12 whole-Logic verification). P1 and P2 are planned and developed without an open Blocker, so P3 is plannable; no prior P3 Plan existed, so nothing was preserved, changed, removed, or replaced, and the P1 and P2 Plans are unchanged. Every Task has source_id 008 and status todo; the dependency graph is acyclic. Open Questions: 2. Blockers: 0."
+      data:
+        duration_ms: 218000
+        task_changes:
+          added: 73
+          changed: 0
+          removed: 0
+          preserved: 0
+          replaced: 0
+          reason: "No Plan existed for P3; all Tasks are newly required by the Target phase goal, the Target's Behaviour, the Logic Definition, and the Logic Preferences."
+        open_questions:
+          - id: "OQ-008-1"
+            question: "Logic's Principle selects credential treatment by an Entity Field's sensitivity marker, but Model declares none: the Target names no marker, and Review (log 005, R2) removed the markers Develop had inferred. The marker vocabulary (password, sensitive) also cannot tell hash storage from encrypted storage, which the Target states per credential Field. Tasks P3-G5-T03 to T05 therefore take the treatment from the Target's stated at-rest rule for each credential Field (hash for User; encrypted for Instance and Account). The Human should confirm this reading, or direct the Target or Model to declare the markers Logic is to use, before Develop starts P3-G5."
+          - id: "OQ-008-2"
+            question: "Initial Data from P2 stored the seeded credentials as generated (log 006 and 007 asked for confirmation before P3). Once Logic protects credentials, those seeded values are not in protected form. Group P3-G5 is bounded so that reading such a record never fails and never exposes the value and Logic never rewrites stored credentials, but it does not decide whether or how the seeded values are converted, or which key or scheme encrypted storage uses. The Human should confirm this, or direct who converts the seeded credentials, before Develop starts P3-G5."
+        notes:
+          - "Plannability: P3 is enabled and Ready, and P1 and P2 are planned and developed with no Blocker. P2 Review has not yet run (its phase review is 'not started'); Planning does not require it, but Develop should expect Review of P2 to possibly reopen Database."
+          - "Operations covered: the Entity Service Preferences require every Database Operation that applies to an Entity (Add, Update, List, Delete, Enable, Disable, Get by ID, Count, Sum, Min, Max, Truncate) and the Database Service handles Execute Command. Create Tables and Insert Initial Data are Database commands, not Operations Logic Preferences assign to a Logic Service, so no Task covers them."
+          - "Grouped persistence: the Logic Principles anticipate forwarding grouped work through Database's transaction boundary, but Database's Interface publishes none, and no planned Operation groups several changes. No Task requires one; if later Behaviour needs it, it is a Database matter."
+          - "Instance connection requirements: the Target says the selected Trading Platform defines which connection Fields an Instance needs, but no Trading Platform states any (the platform modules are in disabled, not-designed phases). No Task enforces it; it belongs with the platform phases."
+          - "Account and Instance credential duplication: read as applying to the Fields the Target designates as credentials (password and api_key). No Trading Platform states that it needs the same credential in both roles, so the exception does not apply and Task P3-G5-T08 refuses every duplicate. Username is not treated as a credential."
+          - "Credential edits: Update takes a complete Entity, while Logic never returns an original credential. Task P3-G5-T06 states the observable behaviour that an edit without a new credential keeps the stored one; how the consumer signals this is left to Develop."
+          - "Authorization: the Target defines no authorization rule or quota, so no Task adds one; API establishes identity and Logic decides authorization only where the Target defines it."
+          - "Capabilities: Logic Preferences disable testing, error handling, and logging. Application Outcomes are a Logic Principle and are planned regardless; all verification is transient, uses a stand-in for Database (unit tests use no live dependencies), and adds no test artifacts."
+          - "Application Manifest: P3-G7-T04 covers publishing Logic's public metadata. The Application Manifest section for Model is still empty (raised by log 004, 005, 006, and 007) and lies outside this invocation's phase selection."
+        necessary_but_not_performed:
+          - "The Application Manifest section for Model (package name, location, public entrypoint, public interface) is still empty and no P1 Task covers publishing it. It lies outside this invocation's phase selection; planning phase 1 would add the Task."
+    - id: "009"
+      skill: "my-interface-develop"
+      phase: "P3"
+      event: "develop"
+      outcome: "completed"
+      started_at: "2026-09-29T08:31:46Z"
+      completed_at: "2026-09-29T08:56:14Z"
+      duration: "24:28"
+      skills_used:
+        - name: "python-skills:python-guidelines"
+          report: "Guided code style: uv, modern typing, Google-style docstrings, no speculative abstraction, no suppression comments."
+        - name: "sqlmodel"
+          report: "Consulted for the Entity Service foundation; Logic uses the SQLModel Entities Model publishes and Database's Operations, and defines no table models of its own."
+      open_questions: []
+      blockers: []
+      report: "Executed all 73 Tasks of the P3 Plan (Logic): package and dependencies, runtime configuration contract, Application Outcomes and bounded dependency use, the twelve shared Entity-bound Actions, 15 Entity Services and their Service Interface, credential handling, the Database Service, the outward Interface and Manifest entry, documentation, and twelve whole-Logic verifications. Every Task was claimed first, verified by a transient check, and recorded done in its Task Log. Checks ran over a recording stand-in that forwards to a real Database on a throwaway SQLite file; the shipped Database storage was never opened, and Model and Database are byte-identical to before. Open Questions: 0. Blockers: 0."
+      data:
+        duration_ms: 1468000
+        tasks: {done: 73, blocked: 0, todo: 0}
+        resolved_choices:
+          - "Python 3.14 with uv; dependencies cryptography 50.0.1 and sqlalchemy 2.0.54 declared directly, model and database as path dependencies (sqlmodel 0.0.47, alembic, psycopg through them), stabilized in the lock file; ruff and pyright as development-only tools. The lint configuration disables one rule (blind catch) for the single module whose worker thread must relay every failure to the caller."
+          - "Layout: the package root holds the Interface, the internal shared files (configuration, Outcomes, credentials, bounded dependency use, failure translation), and the Services directory; Entity Service holds its Service Interface, private foundation, and one file per Entity; Database Service holds its Service Interface and class. README and packaging files sit at the Component directory."
+          - "The outward Interface is a Logic object with Categories: entity (one Class Category of twelve Operations per Entity) and database (Execute Command). Each Entity Service inherits the shared Actions and names its Entity; Actions take the record or id, not an Entity type."
+          - "Application Outcomes: success, not_found, invalid, conflict, broken_reference, unavailable, each with a safe reason. Database publishes no failure vocabulary, so Logic translates what Database lets propagate: integrity failures by standard SQLSTATE where present and by the engine's wording otherwise (unique to conflict, foreign key to broken_reference, other to invalid), request refusals to invalid, unreachable or timed-out storage to unavailable; any other failure surfaces as itself."
+          - "Bounded dependency use: every call waits at most LOGIC_DEPENDENCY_TIMEOUT_SECONDS in a daemon worker thread (a stalled call is abandoned, not cancelled); reads, Update, Enable, and Disable are retried up to LOGIC_DEPENDENCY_RETRIES times, Add, Delete, Truncate, and Execute Command once."
+          - "Runtime configuration contract: LOGIC_CREDENTIAL_SECRET (at least 32 characters), LOGIC_DEPENDENCY_TIMEOUT_SECONDS, LOGIC_DEPENDENCY_RETRIES, all required, validated when Logic is created; errors name a value and never show it."
+          - "Credential treatment follows the Target's stated at-rest rule per Field because Model declares no sensitivity marker: hash (scrypt with random salt) for User password and api_key; encryption (Fernet under a key derived from the configured secret) for Instance password and api_key and Account password. Stored forms carry a prefix so an unprotected legacy value is recognized and never fails an Operation."
+          - "Consumers see a credential as the withheld marker '********'. Sending a record back with the marker in a credential Field keeps the stored credential (this is how an edit avoids re-entering credentials); the marker cannot be used on Add. A credential Field cannot be used in a Filter, Order, Count, Sum, Min, or Max, because Min and Max would return the stored protected form and an equality Filter could probe stored values."
+          - "Account credential duplication compares the Account's password with the Instance's password and api_key after recovering the originals (or as stored when unprotected); the Account/Instance rule is best effort against a concurrent writer, since comparing records across Entities is not a Database guarantee."
+          - "The outward Interface re-exports the Entities and Database's request vocabulary because Logic's declared consumer has no Connection to Model or Database. Logic accepts an optional Database and Configuration so it can be composed and verified in isolation."
+        decisions_to_confirm:
+          - "Credential treatment (Open Question OQ-008-1, log 008): treatment was taken from the Target's stated at-rest rules because Model declares no sensitivity marker. Confirm this, or direct the Target or Model to declare markers."
+          - "Seeded credentials (OQ-008-2): the Initial Data credentials stored in P2 are unprotected. Logic reads them without failing and never exposes them, but does not convert them, so the seeded admin credentials cannot be verified as hashes. Decide who converts them and how (a Logic operation, a Database change, or regenerating the seed)."
+          - "Database exception vocabulary: Logic recognizes Database's failures through the standard engine error types and SQLSTATE codes because Database's Interface publishes no failure types. Consider having Database publish typed refusals so Logic no longer depends on engine wording."
+          - "Timed-out calls are abandoned, not cancelled: a change whose answer is uncertain may still complete after Logic reported unavailable. Database owns cancellation."
+        notes:
+          - "Verification evidence: Task Logs record the concrete transient checks. They ran over a recording stand-in forwarding to a real Database on a throwaway SQLite file (the Preferences disable persistent testing, so no test artifacts were added); the PostgreSQL Instance was not used. PostgreSQL failure codes were checked with constructed driver errors only."
+          - "Documentation: all 17 README examples were run in order in a clean copy with a freshly prepared Database and matched the documented output."
+          - "Interpretations made during planning were kept: username is not a credential (the Account and Instance rule compares password and api_key); no authorization or quota exists in the Target, so none was added; grouped persistence and Trading Platform connection requirements were not needed."
+          - "G7-T02 and G7-T03 were claimed after the Database Category and Operation statements had been written together with the outward Interface file under G7-T01; their checks were run and recorded before they were marked done."
+          - "The Human edited the Model Preferences (the layout adds a core directory and a validation file and class) while this run was in progress. Logic consumes Model only through its Interface and was not affected; the Model Component was not regenerated here."
+        necessary_but_not_performed:
+          - "The Application Manifest section for Model is still empty (raised by Develop log 004, Review 005, Planning 006, and Develop 007); it needs a Task in the P1 Plan."

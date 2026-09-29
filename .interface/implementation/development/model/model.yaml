@@ -55,13 +55,16 @@ content:
   layout:
     directories:
       entity: "entity"
+      core: "core"
     files:
       interface: "interface"
       declaration: "declaration"
       foundation: "foundation"
+      validation: "validation"
     classes:
       declaration: "Declaration"
       foundation: "Foundation"
+      validation: "Validation"
     foundation:
       methods:
         to_json: "to_json"
