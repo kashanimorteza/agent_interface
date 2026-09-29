@@ -1,0 +1,28 @@
+[project]
+name = "trading-assistant-api"
+version = "0.1.0"
+description = "External HTTP boundary over the Trading Assistant Logic library."
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "fastapi[standard]>=0.141.1",
+    "logic",
+    "sqlmodel==0.0.47",
+]
+
+[project.scripts]
+trading-assistant-api = "trading_assistant_api.bootstrap:main"
+
+[build-system]
+requires = ["uv_build>=0.12.10,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "httpx",
+    "pyright>=1.1.414",
+    "ruff>=0.16.9",
+]
+
+[tool.uv.sources]
+logic = { path = "../logic" }

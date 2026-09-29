@@ -50,7 +50,15 @@ content:
       public_interface:
         - "Storage"
         - "Entity"
-    api: {}
+    api:
+      package_name: "trading-assistant-api"
+      path: "api"
+      public_entrypoint: "trading-assistant-api"
+      public_interface:
+        - "Group entity: /v1/entity/<resource>/<action>"
+        - "Contract: /openapi.json"
+        - "Health signal: /health"
+        - "Readiness signal: /ready"
     presentation: {}
     platform: {}
     configure: {}

@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the API Component — configurable defaults for its public boundary and realization."
   purpose: "Configurable defaults for API identity, layout, Group realization, transport contract, collections, lifecycle, and documentation."
   standard: "Agent Project Interface"
-  version: "6.0"
+  version: "6.1"
   updated: "2026-09-29"
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -17,7 +17,7 @@ policy:
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
   consumption: "Read settings and layout first. Read Logic Interface and every referenced Logic Service Preference to resolve Group eligibility from publish_in_logic_interface and generate_api. Resolve callable Action membership from each Service Interface and its Action generate_api setting. Then apply API-owned Group overrides, transport, contract, request, query, lifecycle, and documentation defaults. Use Development Defaults only when this file leaves a shared realization choice unstated."
-  selection: "Preserve explicit compatible Target choices. Use these Preferences only for unstated API-owned choices. Leave package mechanics to the selected package or implementation skill. Raise a missing required Endpoint method or another unresolved public-contract choice instead of guessing it."
+  selection: "Preserve explicit compatible Target choices. Use these Preferences only for unstated API-owned choices. Leave methods, schema realization, pagination representation, versioning mechanics, and other package concerns to the selected package or implementation skill when Target is silent. Record the resulting external contract without turning the realization choice into Domain meaning or application Behaviour."
   version_resolution: "API Preferences resolve API-owned packages. Development resolves only shared Defaults."
   matching: "Match Groups to stable Logic Service identities and Endpoints to stable callable Action identities. Reject stale overrides, ineligible Services, invalid names, and collisions without silent repair."
 
@@ -56,18 +56,18 @@ content:
       type: "executable"
       platform: "VPS"
       directory: "api"
-      package: "trading-assistant-api"
+      package: "api"
 
   # <!-------------------------------------------- layout -->
   layout:
     names_configurable: true
+    directories:
+      core: "core"
+      groups: "groups"
     files:
       bootstrap: "bootstrap"
       configuration: "config.yaml"
       documentation: "README.md"
-    directories:
-      core: "core"
-      groups: "groups"
     group_directories:
       router: "router"
       adapter: "adapter"
@@ -77,16 +77,24 @@ content:
 
   # <!-------------------------------------------- development -->
   development:
-    language:
+    capabilities:
+      testing: false
+      error_handling: false
+      logging: false
+    languages:
       default: "Python"
-    packages:
-      framework:
-        name: "FastAPI"
-        package: "fastapi[standard]"
-        version: "latest-compatible"
-      supporting:
-        modeling: "sqlmodel==0.0.47"
-        http_testing: "httpx"
+      python:
+        modeling:
+          package:
+            name: "SQLModel"
+            version: "latest-compatible"
+            skill: "sqlmodel"
+        api:
+          package:
+            name: "FastAPI"
+            package: "fastapi[standard]"
+            version: "latest-compatible"
+            skill: "fastapi"
 
   # <!-------------------------------------------- groups -->
   groups:
@@ -96,7 +104,7 @@ content:
       generate_api: true
     endpoints:
       callable_actions_default_generate_api: true
-      http_method_required: true
+      realization_defaults_source: "selected package or implementation skill"
     routing:
       default_group_prefix: "/<group>"
       default_action_path: "/<action>"
@@ -117,8 +125,8 @@ content:
       description: ""
     versioning:
       enabled: true
-      default_strategy: "path"
       initial_version: "v1"
+      strategy_source: "selected package or implementation skill unless Target overrides"
     authentication:
       enabled: false
 
@@ -130,9 +138,9 @@ content:
   # <!-------------------------------------------- queries -->
   queries:
     pagination:
-      default_strategy: "cursor"
       default_limit: 50
       maximum_limit: 100
+      representation_source: "matching Logic Action and selected package or implementation skill"
     group_overrides: {}
 
   # <!-------------------------------------------- lifecycle -->

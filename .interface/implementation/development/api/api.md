@@ -125,7 +125,7 @@ For Entity Service, there is one Entity Group rather than one Group per Entity. 
 
 ### Router
 
-The HTTP-facing boundary of one Group. It owns the Group route namespace, methods selected by the API contract, external request and response shapes, transport validation, response production, and public contract metadata. It calls only its Group Adapter.
+The HTTP-facing boundary of one Group. It owns the Group route namespace, external request and response shapes, transport validation, response production, and public contract metadata. It calls only its Group Adapter. When Target does not require a particular HTTP realization, the selected package or implementation skill chooses compatible technical details and records the resulting external contract.
 
 ### Adapter
 
@@ -205,23 +205,23 @@ Every Principle below is mandatory and belongs to the category that owns it.
 **Why:** Keeping HTTP at the edge lets Logic and Adapter remain independent of transport.
 **Boundary:** Router never calls Logic, another Group, Database, or Storage Service directly.
 
-#### Endpoint methods are explicit
+#### HTTP mechanics follow the selected realization
 
-**Rule:** Every Endpoint receives an explicit HTTP method from Target or API Preferences. API never guesses a method from an Action name. A missing method stops generation of that Endpoint with a clear unresolved-choice error.
-**Why:** Action names do not reliably determine transport semantics.
-**Boundary:** The selected package implements the chosen method but does not choose the public contract silently.
+**Rule:** An explicit compatible Target or API Preference for an Endpoint's HTTP representation is preserved. When no such choice exists, the selected package or implementation skill chooses compatible methods and other HTTP mechanics and makes the resulting external contract observable.
+**Why:** Technical HTTP choices should not block an otherwise complete capability or become permanent conceptual rules of API.
+**Boundary:** A realization choice may represent a published Action but never change its meaning, inputs, result, failure, eligibility, or owning Group.
 
 #### External schemas follow published Action contracts
 
-**Rule:** API derives an Endpoint's default request and response shapes from its published Action contract. API defines a distinct Transport Schema only when the external representation must differ. An insufficient Action contract stops Endpoint generation.
-**Why:** Derivation avoids copying meaning while still allowing a deliberate external representation.
-**Boundary:** Shape validation belongs to API; application validity and Behaviour remain in Logic.
+**Rule:** API bases an Endpoint's request and response shapes on its published Action contract. The selected package or implementation skill realizes a compatible external shape and may define a distinct Transport Schema when the external representation must differ.
+**Why:** Following the Action contract avoids copying meaning while allowing the realization to express it through HTTP.
+**Boundary:** The realization never invents Domain meaning or application Behaviour. Shape validation belongs to API; application validity and Behaviour remain in Logic.
 
 #### Collections remain explicit and bounded
 
-**Rule:** Filtering, ordering, and pagination are available only when an Endpoint contract declares them. Their public values are allowlisted and bounded, and never become direct storage commands.
+**Rule:** Filtering, ordering, and pagination are available only when the corresponding published Action supports them. Their public values are allowlisted and bounded, and never become direct storage commands. When Target does not select a representation, the package or implementation skill chooses one compatible with that Action.
 **Why:** An external caller must not control internal queries or request an unbounded public result.
-**Boundary:** The pagination form belongs to the Endpoint contract; Adapter only maps it to the corresponding Logic input.
+**Boundary:** Adapter only maps the public collection request to the corresponding Logic input and never adds a capability Logic does not publish.
 
 #### Public outcomes remain faithful and safe
 
@@ -267,9 +267,9 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 #### Versioning is an external-contract choice
 
-**Rule:** When Target requires versioning, API applies one declared versioning policy across the shared boundary unless Target explicitly gives a Group a different contract. API never infers a versioning strategy.
+**Rule:** When Target requires versioning, API applies one consistent versioning policy across the shared boundary unless Target explicitly gives a Group a different contract. When Target does not select the technical strategy, the selected package or implementation skill chooses a compatible strategy and documents it.
 **Why:** Versioning manages compatibility and must therefore be deliberate and visible.
-**Boundary:** API Preferences may provide a default strategy, while the selected package decides only how to realize it.
+**Boundary:** Versioning never changes Group eligibility, Action meaning, or Logic Behaviour.
 
 #### Documentation is organized by Group
 
@@ -341,15 +341,15 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — Keep routes, external shapes, transport validation, serialization, and public failures in Router.
 - **Never** — Put application Behaviour in Router or call Logic, another Group, Database, or Storage directly.
 
-**Endpoint methods are explicit**
+**HTTP mechanics follow the selected realization**
 
-- **Must** — Obtain every Endpoint method from Target or API Preferences.
-- **Never** — Guess an HTTP method from an Action name.
+- **Must** — Preserve explicit Target choices and otherwise let the selected package or skill choose and document compatible HTTP mechanics.
+- **Never** — Let a technical realization change the meaning or ownership of a published Action.
 
 **External schemas follow published Action contracts**
 
 - **Must** — Derive default external shapes from the Action contract and define a distinct shape only when needed.
-- **Never** — Copy Domain meaning or generate an Endpoint from an insufficient Action contract.
+- **Never** — Copy or invent Domain meaning or application Behaviour while realizing an external shape.
 
 **Collections remain explicit and bounded**
 
