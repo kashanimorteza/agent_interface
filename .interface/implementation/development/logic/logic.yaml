@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Logic Component — Logic-owned behavioural defaults and internal realization conventions."
   purpose: "Configurable defaults for Logic organization, reliability, and verification."
   standard: "Agent Project Interface"
-  version: "16.0"
+  version: "16.1"
   updated: "2026-09-29"
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -16,16 +16,16 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings for Logic's identity; then resolve the configurable names of the Interface, Core, Services, configuration, and documentation members declared by Logic Definition. Follow the Service references, then read verification, development language and capabilities, and documentation preferences. Read Connections from Development and resolve environment-specific Runtime Bindings from Platform. Use a Development Default only when this file leaves a shared choice unstated."
+  consumption: "Read settings for Logic's identity; then resolve the configurable names of the Interface, Core, Services, configuration, and documentation members declared by Logic Definition. Follow every Service reference, read its publish_in_logic_interface setting, and publish only enabled Service Interfaces. Then read verification, development language and capabilities, and documentation preferences. Read Connections from Development and resolve environment-specific Runtime Bindings from Platform. Use a Development Default only when this file leaves a shared choice unstated."
   selection: "Use a compatible configured Logic default when the Target is silent. For an explicit incompatible need, preserve Target intent under Logic Principles and record the consequential realization choice; ask only when no safe compatible choice can be established."
   version_resolution: "This file resolves versions for Logic-owned packages and tools. Development resolves versions only for its shared Defaults."
-  matching: "Match standards and Logic settings by their exact keys. Resolve each Service through the Definition and Preferences references declared under services."
+  matching: "Match standards and Logic settings by their exact keys. Resolve each Service through the Definition and Preferences references declared under services, and treat publish_in_logic_interface as controlling only root Interface publication."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - "settings: identify Logic."
   - "layout: resolve the configurable names of the Interface, Core, Services, configuration, and documentation members declared by Logic Definition."
-  - "services: read each Service reference, then read that Service's Definition and Preferences."
+  - "services: read each Service reference and Preferences, preserve every Service Interface for internal use, and publish only those with publish_in_logic_interface enabled."
   - "verification: apply Logic verification settings."
   - "development: apply the default language and the currently enabled or disabled component capabilities."
   - "documentation: apply the required Logic documentation structure and examples."
@@ -96,5 +96,5 @@ content:
       - verify
       - troubleshooting
     sections:
-      interface: "List each configured Service Interface exactly as Logic Interface publishes it under the configured Service name. Show both access paths: direct Actions from Storage Service Interface and Entity Child Services from Entity Service Interface. Logic Interface defines no Actions, wrappers, Categories, or duplicated dependency symbols."
-      services: "For every configured Service, follow its referenced Definition and Preferences, document its published Interface, and give every capability it handles one complete example without copying the Service contract into Logic documentation."
+      interface: "List only Service Interfaces whose publish_in_logic_interface setting is enabled, exactly as Logic Interface publishes them under their configured Service names. Logic Interface defines no Actions, wrappers, Categories, or duplicated dependency symbols."
+      services: "For every publication-enabled Service, follow its referenced Definition and Preferences, document its published Interface, and give every capability it handles one complete example without copying the Service contract into Logic documentation. Do not expose unpublished Services as external Logic capabilities."

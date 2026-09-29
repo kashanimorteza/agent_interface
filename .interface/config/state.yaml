@@ -30,10 +30,10 @@ content_map:
 content:
   active:
     mode: "development"
-    phase: "P2"
+    phase: "P3"
     mode_reason: "Develop executed the Plan for phase P3."
     set_by: "my-interface-develop"
-    set_at: "2026-09-29T08:31:46Z"
+    set_at: "2026-09-29T13:28:18Z"
   phases:
     P1:
       id: "P1"
@@ -49,8 +49,8 @@ content:
       completed_at: null
     P3:
       id: "P3"
-      planning: "not started"
-      development: "not started"
+      planning: "completed"
+      development: "completed"
       review: "not started"
       completed_at: null
     P4:
@@ -285,3 +285,74 @@ content:
           - "Verification scripts and transient copies were kept outside the project; local caches were removed."
         necessary_but_not_performed:
           - "The Application Manifest section for Model is still empty (raised by Develop log 004, Review 005, and Planning 006); it needs a Task in the P1 Plan."
+    - id: "008"
+      skill: "my-interface-plan"
+      phase: "P3"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-09-29T13:14:13Z"
+      completed_at: "2026-09-29T13:22:29Z"
+      duration: "8:16"
+      open_questions: []
+      blockers: []
+      report: "Planned phase P3 (Logic; argument '3' resolved to Phase 3) from scratch: one Plan, 12 Groups, 96 atomic Tasks (3 package and providers, 2 configuration, 15 Storage Actions, 4 Storage Interface, 17 Base Entity, 18 Entity Child Services, 2 Entity Interface, 8 credential protection, 3 Logic Interface, 1 Application Manifest, 9 documentation, 14 whole-Logic verification). Planning of P1 and P2 had concluded without an open Blocker, so P3 is plannable; no prior P3 Plan existed, so nothing was preserved, changed, removed, or replaced. Every new Task has source_id 008 and status todo, the dependency graph is acyclic, and the P1 and P2 Plans are unchanged. The Plan Config's top-level task_count read 180 while 107 Tasks were stored; it is recalculated to 203 (38 + 69 + 96). Open Questions: 0. Blockers: 0."
+      data:
+        duration_ms: 496000
+        task_changes:
+          added: 96
+          changed: 0
+          removed: 0
+          preserved: 0
+          replaced: 0
+          reason: "No Plan existed for P3; all Tasks are newly required by the Target phase goal, the Logic Definition, and the Storage Service and Entity Service Definitions and Preferences."
+        decisions_to_confirm:
+          - "Credential at-rest treatment (carried from Planning 006 and Develop 007, still unconfirmed): the Target requires hash storage for User password and api_key and encrypted storage for Instance password and api_key and Account password. Model applies no value handling and Database interprets no Field meaning, so Group P3-G8 plans the treatment in Logic's Entity route. The hashing or encryption scheme, the source of the encryption secret (a runtime value declared by P3-G2-T02 and supplied by the environment), and how a read presents a protected value are left to Develop under Logic and Development Principles. The Initial Data stored in P2 holds seeded credentials as generated, not protected. Confirm this reading, or direct otherwise, before Develop runs phase 3."
+          - "Raw Storage route: Storage Service forwards Database's contract unchanged, so a consumer that writes a User, Instance, or Account through Storage Service directly stores credentials unprotected. Group P3-G8 covers the Entity route only. Confirm that this is acceptable."
+          - "Cross-Entity credential rule (P3-G8-T06 and T07): the Target says the same credential must not be duplicated across Account and Instance unless the Trading Platform requires it in both roles. Planned reading: an Account password equal to its Instance's password or api_key is refused, and an Instance credential update equal to the password of an Account using it is refused; Account username is not treated as a credential, and no Platform declares a both-roles requirement. The Logic Boundaries place guarantees that compare stored records with Database; this rule involves only the two related records, but confirm the ownership and the reading, or remove the two Tasks."
+        notes:
+          - "Not planned, by decision: the Instance rule that every connection field the selected Trading Platform requires is present before the Instance can be used. No Platform declares its required fields and 'use' belongs to Trading Operations (P7, disabled)."
+          - "No additional Logic Services and no Action-name overrides are configured, so none are planned. Storage Actions are planned one per Operation in Database's current published catalogue (15, including Create Tables and Insert Initial Data); Entity Child Services one per Model Entity (15)."
+          - "Verification: persistent testing is disabled in the Logic Preferences, so Task verification is transient and adds no test artifacts. The Preferences also state that unit tests use no live dependencies; Develop decides whether whole-Logic verification uses a stand-in or a throwaway Database Instance. Instance parity (both configured Instances active) needs a reachable PostgreSQL server; the P2 finding that the shipped role and database are absent (Develop 007) is still open. If no server can be reached, Develop should raise a Blocker rather than weaken verification."
+          - "P2 Review has not run (P2 review: not started). Storage Actions derive from Database's current published surface, so a Review-driven change to that surface requires replanning P3."
+          - "Application Manifest: a Logic section already holds entries (including Category, Outcome, and Configuration items) although no Logic Plan or current Logic source authorizes them; P3-G10-T01 requires the section to be brought into agreement with the implemented Component."
+          - "Active State previously read mode development, phase P2, reason 'Develop executed the Plan for phase P3'; Planning now records mode planning for P3."
+        necessary_but_not_performed:
+          - "The Application Manifest section for Model is still empty (raised by Develop log 004, Review 005, Planning 006, and Develop 007); it needs a Task in the P1 Plan and lies outside this invocation's phase selection. Planning phase 1 would add it."
+    - id: "009"
+      skill: "my-interface-develop"
+      phase: "P3"
+      event: "develop"
+      outcome: "completed"
+      started_at: "2026-09-29T13:28:18Z"
+      completed_at: "2026-09-29T13:43:09Z"
+      duration: "14:51"
+      skills_used: []
+      open_questions: []
+      blockers: []
+      report: "Executed all 96 Tasks of the P3 Plan (Logic): package and read-only Model and Database providers, the reserved configuration record and runtime configuration contract, 15 Storage Actions and the Storage Interface, the shared Entity capability, 15 Entity Child Services and the Entity Interface, credential protection with the Account and Instance duplicate-credential rule, the root Logic Interface, the Application Manifest entry, documentation, and 14 whole-Logic verifications. Every Task was claimed, verified by a transient check, and recorded done in its Task Log. Model and Database are byte-identical to their state before the work. Open Questions: 0. Blockers: 0. Several choices need the Human's confirmation (see data.decisions_to_confirm)."
+      data:
+        duration_ms: 891000
+        tasks: {done: 96, blocked: 0, todo: 0}
+        resolved_choices:
+          - "Python 3.14 with uv; dependencies cryptography (resolved 50.0.1), and database and model as path dependencies (sqlmodel 0.0.47 arrives through them), stabilized in the lock file; ruff and pyright are development-only tools. The path dependencies are not editable, following the Database precedent, so Logic uses the copy of Database installed with it; the Database commands must therefore run from the Logic directory."
+          - "Layout follows the Model and Database precedent: the source package holds the root Interface, the empty configuration record, Core, and Services; README and packaging files sit at the Component directory. Storage Service keeps its Actions in an actions directory, one file per Database Operation named with the Service name, an underscore, and the Operation's base name; Entity Service keeps the shared capability and a child file per Entity."
+          - "Storage Actions are plain functions that call the shared Database handle in Core, created lazily on first use, and mirror the parameters of the Database Operations. Entity Actions are class methods, so a Child Service is used without creating an instance."
+          - "The root Interface publishes the two Service Interface modules as attributes named Storage and Entity, so a consumer writes Storage.storage_add and Entity.UserService.add."
+          - "Credential protection: User password and api_key are stored as salted scrypt hashes; Instance password and api_key and Account password are stored encrypted (Fernet) with a key supplied at runtime as LOGIC_ENCRYPTION_KEY, validated before use; an update that leaves a credential equal to the stored value keeps it; reads return the stored protected form and Logic offers no way to reveal a value."
+          - "Errors follow the disabled error-handling capability: refusals are plain TypeError (wrong Entity) and ValueError (missing or invalid runtime value, duplicated credential) with messages that name the rule or value and never contain a secret."
+          - "Entity Service may not reference Database, so its filter, combination, and order parameters are annotated as Any rather than with Database's vocabulary, and the Instance-side duplicate-credential rule reads Accounts through Storage and matches them by Instance in Logic."
+        decisions_to_confirm:
+          - "Credential at-rest treatment (raised in Planning 006 and 008 and Develop 007): the scheme, the encryption library, the runtime key name, and returning the protected form on reads are my choices under Logic and Development Principles (see resolved_choices). Credentials seeded by Database in P2 are stored as generated, not protected; an update of a seeded record that leaves such a credential unchanged keeps it as it is. Confirm, change the scheme, or direct that the seeded credentials be regenerated protected."
+          - "Request vocabulary reach: Filter, Filter Operator, Filter Combination, Order, Order Direction, and Command Result are published by Database, and neither Storage Service Interface nor any other Logic surface republishes them because the Storage Service Definition publishes only Actions and the Instance Enum. A consumer such as API, whose only declared Connection is to Logic, therefore cannot state a filtered request without a Database or Model import. Decide whether Logic should republish the vocabulary, or whether API also needs Connections."
+          - "Raw Storage route: a credential Entity written through Storage Service is stored unprotected; protection applies through the Entity route only (raised in Planning 008)."
+          - "Account and Instance duplicate-credential rule (raised in Planning 008): implemented as planned; the Instance side reads Accounts and matches them in Logic. Confirm the reading and the ownership."
+          - "PostgreSQL on this machine (carried from Develop 007): the shipped Database Preferences name the role postgres and the database application, and this server has neither. Parity was verified with the existing role morteza and a throwaway database that was dropped afterwards; the shipped Configuration was not connected."
+        notes:
+          - "Verification: persistent testing is disabled in the Logic Preferences, so every check was transient and the scripts and throwaway data (temporary SQLite files and one PostgreSQL database, dropped) were kept outside the project. Behaviour checks used a recording stand-in or a throwaway prepared Database; the project's own Database store was never used, and its file hash is unchanged."
+          - "Task Skills python-skills:python-guidelines was named on the code Tasks but the Skill was not loaded; code style followed the Model and Database precedent (uv, modern typing, Google-style docstrings, no speculative abstraction), ruff and pyright are clean."
+          - "Claim order: for a few Tasks the code existed before the claim (the Storage Interface file with G4-T02, the shared capability's Actions with G5-T02 to T13, and the protection helpers with G8-T01 to T05); each such Task was claimed before it was verified, and the Task Logs say so where it matters. Every Task has exactly one claim and one completion entry."
+          - "Naming rules (valid, unique identifiers) are generation-time rules and Logic ships no generator, so they were verified by a transient identity check applied to the realized names and to deliberately bad samples."
+          - "Application Manifest: Logic's section previously held entries that no current source authorized (Category, Outcome, Configuration and others); it now states the two names the root publishes."
+          - "Found and fixed by verification: the documentation's Setup first said to run the Database commands in the Database directory, which would have prepared a different store from the one Logic uses; it now says to run them from the Logic directory."
+        necessary_but_not_performed:
+          - "The Application Manifest section for Model is still empty (raised by Develop log 004, Review 005, Planning 006 and 008, and Develop 007); it needs a Task in the P1 Plan."

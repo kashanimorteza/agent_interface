@@ -1,121 +1,99 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/implementation/development/api/api.yaml"
-  path_note: "The Preferences layer of the API Component — API-owned boundary defaults and transport conventions."
-  purpose: "Defaults for the executable API boundary: technical selection, transport, contract, queries, and lifecycle."
+  path_note: "The Preferences layer of the API Component — configurable boundary, layout, transport, and runtime defaults."
+  purpose: "Configurable defaults for API identity, realization, external contract, requests, queries, and lifecycle."
   standard: "Agent Project Interface"
-  version: "4.1"
-  updated: "2026-09-25"
-
+  version: "5.0"
+  updated: "2026-09-29"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
   rule: "This file is human-owned. Operations read it without writing resolved API choices back into it."
   changed_by: "The human, directly. A missing critical API choice is raised through State."
-  precedence: "Target and API Principles take precedence over these Preferences."
-
+  precedence: "Explicit Target meaning and every applicable API Principle take precedence over this file."
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read component and packages for API's technical selection, then apply the boundary defaults in settings. Use a Development Default only when this file leaves a shared choice unstated. Preserve every explicit value, including false and null, and never write resolved values back into this file."
-  selection: "When the Target leaves an API-owned choice unstated and this file supplies no default, use compatible professional judgment under API Principles and record a consequential implementation choice with the implementation."
-  version_resolution: "This file resolves versions for API-owned packages; Development resolves versions only for its shared Defaults."
-  matching: "An explicit Target statement takes priority. A default here applies only where the Target leaves that boundary choice unstated; otherwise no default applies. Where two entries could apply, the one naming the more specific route or resource governs."
-
-
-
+  consumption: "Read settings and layout first; then resolve development, transport, contract, requests, queries, lifecycle, idempotency, and documentation. Use a Development Default only when this file leaves a shared choice unstated. Preserve every explicit value, including false and null, and never write resolved values back into this file."
+  selection: "When Target leaves an API-owned choice unstated and this file supplies no default, use compatible professional judgment under API Principles and record a consequential implementation choice. Ask only when no safe compatible choice can be established."
+  version_resolution: "This file resolves versions for API-owned packages. Development resolves versions only for shared Defaults."
+  matching: "Match configurable names by exact keys. A route- or resource-specific value takes precedence over a broader API default, and explicit Target meaning takes precedence over both."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "component"
-  - "capabilities"
-  - "packages"
-  - "settings"
-
+  - "settings: identify API and its generated Component root."
+  - "layout: resolve the configurable Application Bootstrap, Core, Router, Service, configuration, and documentation names."
+  - "development: resolve language, capabilities, and API-owned packages."
+  - "transport: resolve the selected external transport and its settings."
+  - "contract: resolve public contract metadata and versioning."
+  - "requests: resolve request-context conventions."
+  - "queries: resolve public query defaults and bounds."
+  - "lifecycle: resolve health and readiness endpoints."
+  - "idempotency: resolve repeated-execution defaults."
+  - "documentation: apply the required external-consumer documentation structure."
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  component: "API type, language, and platform."
-  capabilities: "Component capabilities that are currently inactive."
-  packages: "API-owned package selections."
-  settings: "Component directory and package name, plus API parts and runtime concerns: structure, transport, contract publication, requests, query limits, lifecycle endpoints, and idempotency."
-
+  - settings
+  - layout
+  - development
+  - transport
+  - contract
+  - requests
+  - queries
+  - lifecycle
+  - idempotency
+  - documentation
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
 
-  # <!-------------------------------------------- component -->
-  component:
-    type: "executable"
-    language: "Python"
-    platform: "VPS"
-
-  # <!-------------------------------------------- capabilities -->
-  capabilities:
-    testing: false
-    error_handling: false
-    logging: false
-    encryption: false
-
-  # <!-------------------------------------------- packages -->
-  packages:
-    api:
-      name: "FastAPI"
-      package: "fastapi[standard]"
-      version: "latest-compatible"
-      supporting_packages:
-        modeling: "sqlmodel==0.0.47"
-        http_testing: "httpx"
-
   # <!-------------------------------------------- settings -->
   settings:
-
     component:
+      type: "executable"
+      platform: "VPS"
       directory: "api"
       package: "trading-assistant-api"
 
-    parts:
-      application_bootstrap:
-        artifact: "API application bootstrap"
-      router:
-        directory: "router"
-        file_per_domain: true
-        controller_layer: "merged_into_router"
-      service:
-        directory: "service"
-        file_per_domain: true
-    runtime:
-      entrypoint_source: "API Component"
-      host_source: "Platform Runtime Binding"
-      port_source: "Platform Runtime Binding"
-    contract:
-      application:
-        title: "Target API"
-        description: ""
-        version: "v1"
-        values_source: "Target or API Runtime Configuration"
-      documentation:
-        enabled: true
-        contract_standard: "OpenAPI"
-        contract_endpoint: "/openapi.json"
-        interactive_reference_endpoint: "/docs"
-      versioning:
-        enabled: true
-        strategy: "path"
-        initial_version: "v1"
-    requests:
-      request_id:
-        required: true
-        accept_valid_incoming: true
-        generate_when_absent: true
-        include_in_error_response: true
-    queries:
-      strategy: "cursor"
-      default_limit: 50
-      maximum_limit: 100
-    transport:
-      selected: "HTTP"
+  # <!-------------------------------------------- layout -->
+  layout:
+    names_configurable: true
+    files:
+      application_bootstrap: "application"
+      configuration: "config.yaml"
+      documentation: "README.md"
+    directories:
+      core: "core"
+      routers: "router"
+      services: "service"
+    patterns:
+      router: "<domain>"
+      service: "<domain>"
+
+  # <!-------------------------------------------- development -->
+  development:
+    language:
+      default: "Python"
+    capabilities:
+      testing: false
+      error_handling: false
+      logging: false
+      encryption: false
+    packages:
+      framework:
+        name: "FastAPI"
+        package: "fastapi[standard]"
+        version: "latest-compatible"
+      supporting:
+        modeling: "sqlmodel==0.0.47"
+        http_testing: "httpx"
+
+  # <!-------------------------------------------- transport -->
+  transport:
+    selected: "HTTP"
     http:
       root_path:
         source: "Platform Runtime Binding"
@@ -128,14 +106,71 @@ content:
           - "*"
         allowed_headers:
           - "*"
-    lifecycle:
-      health:
-        enabled: true
-        path: "/health"
-      readiness:
-        enabled: true
-        path: "/ready"
-    idempotency:
-      enabled_when: "A Target operation is selected as sensitive to repeated execution."
-      key: "idempotency_key"
-      atomic_result_recording: true
+
+  # <!-------------------------------------------- contract -->
+  contract:
+    application:
+      title: "Target API"
+      description: ""
+      version: "v1"
+      values_source: "Target or API Runtime Configuration"
+    machine_readable:
+      enabled: true
+      standard: "OpenAPI"
+      endpoint: "/openapi.json"
+      interactive_reference_endpoint: "/docs"
+    versioning:
+      enabled: true
+      strategy: "path"
+      initial_version: "v1"
+
+  # <!-------------------------------------------- requests -->
+  requests:
+    request_id:
+      required: true
+      accept_valid_incoming: true
+      generate_when_absent: true
+      include_in_error_response: true
+
+  # <!-------------------------------------------- queries -->
+  queries:
+    strategy: "cursor"
+    default_limit: 50
+    maximum_limit: 100
+
+  # <!-------------------------------------------- lifecycle -->
+  lifecycle:
+    runtime:
+      entrypoint_source: "API Component"
+      host_source: "Platform Runtime Binding"
+      port_source: "Platform Runtime Binding"
+    health:
+      enabled: true
+      path: "/health"
+    readiness:
+      enabled: true
+      path: "/ready"
+
+  # <!-------------------------------------------- idempotency -->
+  idempotency:
+    enabled_when: "A Target operation is selected as sensitive to repeated execution."
+    key: "idempotency_key"
+    atomic_result_recording: true
+
+  # <!-------------------------------------------- documentation -->
+  documentation:
+    location: "the Component root"
+    format: "markdown"
+    audience: "external consumers"
+    order:
+      - overview
+      - authentication
+      - operations
+      - queries
+      - outcomes
+      - examples
+      - lifecycle
+      - troubleshooting
+    sections:
+      operations: "Document every published operation, purpose, accepted request, returned response, expected failures, and applicable authentication."
+      examples: "Provide runnable external-consumer examples without exposing Logic, Database, framework, or private API implementation details."

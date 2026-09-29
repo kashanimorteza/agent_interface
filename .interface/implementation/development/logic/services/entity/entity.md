@@ -1,6 +1,6 @@
 # Entity Service Definition
 
-Entity Service is the fixed internal Logic Service whose public Interface provides one Entity-oriented Child Service for every Entity published by Model.
+Entity Service is the fixed internal Logic Service whose Interface provides one Entity-oriented Child Service for every Entity published by Model.
 
 <br>
 
@@ -24,7 +24,7 @@ Entity Service is the fixed internal Logic Service whose public Interface provid
 
 ### Overview
 
-Entity Service is one of the two fixed internal Services of every Logic Component. It gives each Entity published by Model one Child Service through which consumers can add, update, retrieve, delete, list, aggregate, enable, disable, or truncate that Entity. The Child Service supplies its own Entity identity and uses the corresponding Actions published by Storage Service Interface. Entity Service remains internal, while Logic Interface publishes Entity Service Interface unchanged under its configured name.
+Entity Service is one of the two fixed internal Services of every Logic Component. It gives each Entity published by Model one Child Service through which consumers can add, update, retrieve, delete, list, aggregate, enable, disable, or truncate that Entity. The Child Service supplies its own Entity identity and uses the corresponding Actions presented by Storage Service Interface. Entity Service remains internal, while its Interface is published unchanged through Logic Interface by default.
 
 ### Purpose
 
@@ -38,7 +38,7 @@ Entity Service creates exactly one Child Service file and public structure for e
 
 For Add and Update, a Child Service accepts only an instance of its bound Entity and rejects a mismatched Entity before reaching Storage. For List, Delete, Enable, Disable, Get by ID, Count, Sum, Min, Max, and Truncate, the Child Service supplies its bound Entity class to the corresponding Storage Action. Every Entity Action may also accept the exact Database Instance Enum member republished by Storage Service Interface and passes it unchanged. When omitted, Storage delegates default selection to Database.
 
-Entity Service imports Model Interface and Storage Service Interface directly. It never imports Logic Interface. Entity Service Interface publishes every Child Service and its shared or Entity-specific Actions, never the private Base Entity capability.
+Entity Service imports Model Interface and Storage Service Interface directly. It never imports Logic Interface. Entity Service Interface presents every Child Service and its shared or Entity-specific Actions, never the private Base Entity capability. When Entity Service Interface is published, it also exposes the exact Database Instance Enum required by those Actions without exposing Storage Actions.
 
 <br>
 
@@ -46,7 +46,7 @@ Entity Service imports Model Interface and Storage Service Interface directly. I
 ## Terms
 
 - **Entity Role** — the fixed identity of this Service inside Logic, independent of its configurable public name.
-- **Entity Service Interface** — this Service's outward gateway, published unchanged under the configured Service name by Logic Interface.
+- **Entity Service Interface** — this Service's outward gateway, published unchanged under the configured Service name by Logic Interface when `publish_in_logic_interface` is enabled.
 - **Base Entity** — the private shared capability that implements Entity Actions through corresponding Storage Service Actions; `BaseEntity` is its default Python class name.
 - **Entity Child Service** — the public Service structure bound to one authoritative Entity published by Model and receiving the shared Base Entity capability.
 - **Entity-bound Action** — Add, Update, List, Delete, Enable, Disable, Get by ID, Count, Sum, Min, Max, or Truncate as exposed for one bound Entity.
@@ -73,10 +73,10 @@ The names shown are defaults selected by Entity Service Preferences. Changing a 
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Belongs to Logic** — is a fixed Service whose Interface Logic Interface always publishes.
+- **Belongs to Logic** — is a fixed Service whose Interface always exists and is published through Logic Interface only when configured; publication is enabled by default.
 - **Consumes Model** — discovers and imports authoritative Entity classes only through Model Interface.
 - **Consumes Storage Service** — performs persistence only through the Actions and exact Database Instance Enum published by Storage Service Interface.
-- **Consumed by Logic consumers** — is reached through Entity Service Interface as published by Logic Interface.
+- **Consumed by Logic consumers** — is reached through Entity Service Interface when its Logic Interface publication setting is enabled.
 
 <br>
 
@@ -97,7 +97,7 @@ The names shown are defaults selected by Entity Service Preferences. Changing a 
 
 ### Interface
 
-The outward gateway of Entity Service. It publishes every Entity Child Service together with the Actions supplied by Base Entity and any Action owned by that child. A consumer first selects the Child Service and then calls one of its Actions. Interface does not flatten every Entity Action into one surface, publish Base Entity, import Logic Interface, or duplicate a Storage Action.
+The outward gateway of Entity Service. It presents every Entity Child Service together with the Actions supplied by Base Entity and any Action owned by that child. When root publication is enabled, it also exposes the exact Database Instance Enum accepted by those Actions so a consumer can select an Instance without publishing Storage Service Interface. A consumer first selects the Child Service and then calls one of its Actions. Interface does not flatten every Entity Action into one surface, publish Base Entity, import Logic Interface, or duplicate a Storage Action.
 
 ### Base Entity
 
@@ -123,21 +123,21 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 ### General
 
-#### Entity Service is fixed and internal with a public Interface
+#### Entity Service is fixed and internal with its own Interface
 
-**Rule:** Every Logic contains the fixed Entity Role as an internal Service and publishes Entity Service Interface unchanged through Logic Interface. Its configured public name may change, but its Role and responsibilities do not. Its implementation remains internal.
+**Rule:** Every Logic contains the fixed Entity Role as an internal Service and always creates Entity Service Interface. Its configured name may change, but its Role and responsibilities do not. Logic Interface publishes Entity Service Interface only when `publish_in_logic_interface` is `true`; the default is `true`. Its implementation remains internal in every case.
 **Why:** Entity-oriented access has one stable and discoverable gateway without exposing shared or child implementation files.
-**Boundary:** Entity Service is not the exclusive public persistence route. A consumer may intentionally use Storage Service Interface directly for raw Database capabilities.
+**Boundary:** Disabling root publication never disables Entity Service Interface for internal collaboration. Storage Service becomes a separate root-public persistence route only when its own publication setting is enabled.
 
 <br>
 
 ### Interface
 
-#### Entity Service Interface publishes Entity Child Services only
+#### Entity Service Interface presents the complete Entity contract only
 
-**Rule:** Entity Service Interface publishes one Entity Child Service for every Entity published by Model Interface. Each child exposes its shared and Entity-specific Actions. Interface publishes neither Base Entity nor a flat duplicate of Child Actions, Storage Actions, or Database Instance identities.
+**Rule:** Entity Service Interface presents one Entity Child Service for every Entity published by Model Interface. Each child exposes its shared and Entity-specific Actions. When Entity Service Interface is published through Logic Interface, it also exposes the exact Database Instance Enum accepted by those Actions. It exposes neither Base Entity nor a flat duplicate of Child Actions or Storage Actions.
 **Why:** Consumers select an Entity once and use its capabilities without depending on the mechanism shared among Entities.
-**Boundary:** Logic Interface references and publishes Entity Service Interface unchanged. Consumers obtain the exact Database Instance Enum from Storage Service Interface when they want to select an Instance explicitly.
+**Boundary:** Logic Interface publishes Entity Service Interface unchanged only when its publication setting is enabled. Exposing the exact Instance Enum does not expose Storage Actions or publish Storage Service Interface.
 
 #### Entity Service never imports Logic Interface
 
@@ -202,17 +202,18 @@ Every obligation in the file, under the Principle it comes from.
 
 ### General
 
-**Entity Service is fixed and internal with a public Interface**
+**Entity Service is fixed and internal with its own Interface**
 
-- **Must** — Include the Entity Role internally in every Logic and publish its Interface unchanged under its configured name.
-- **Never** — Expose its private implementation or claim exclusive ownership of raw persistence access.
+- **Must** — Include the Entity Role and its Interface internally in every Logic and apply its root-publication setting.
+- **Never** — Expose its private implementation or publish it through Logic Interface when publication is disabled.
 
 ### Interface
 
-**Entity Service Interface publishes Entity Child Services only**
+**Entity Service Interface presents the complete Entity contract only**
 
 - **Must** — Publish one Child Service for every Entity Model Interface publishes.
-- **Never** — Publish Base Entity, flatten Child Actions, or republish Storage Actions or Database Instance identities.
+- **Must** — When published, expose the exact Database Instance Enum required by Entity Actions without exposing Storage Actions.
+- **Never** — Publish Base Entity, flatten Child Actions, or republish Storage Actions.
 
 **Entity Service never imports Logic Interface**
 

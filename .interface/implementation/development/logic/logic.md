@@ -1,6 +1,6 @@
 # Logic Definition
 
-Logic is the Development Component that organizes application Behaviour into modular Services and publishes their Interfaces through one reusable Interface.
+Logic is the Development Component that organizes application Behaviour into modular Services and publishes selected Service Interfaces through one reusable Interface.
 
 <br>
 
@@ -24,7 +24,7 @@ Logic is the Development Component that organizes application Behaviour into mod
 
 ### Overview
 
-Logic is the independent Component that organizes the Target's application Behaviour as a reusable library of Services. Its Services implement the Behaviour; Logic's root Interface only publishes their Interfaces. It is the hub of the Implementation: Model, Database, and every consumer — the API today, a command-line entry point or another Component tomorrow — meet through those Services. A consumer states what it wants done; the owning Service decides what to read from Model, what to ask of Database or another Component, what to compute, and what to answer.
+Logic is the independent Component that organizes the Target's application Behaviour as a reusable library of Services. Its Services implement the Behaviour; Logic's root Interface only publishes the Service Interfaces whose publication setting is enabled. It is the hub of the Implementation: Model, Database, and every consumer — the API today, a command-line entry point or another Component tomorrow — meet through those Services. A consumer states what it wants done; the owning Service decides what to read from Model, what to ask of Database or another Component, what to compute, and what to answer.
 
 Logic owns application Behaviour and the rules that depend on an operation and its application context. It does not own domain meaning, persistence, transport, presentation, or process operation. Whoever wants to enter or change data for a Model asks Logic to do it; Model and Database are never alternate doors for that request.
 
@@ -38,9 +38,9 @@ The cost of the alternative is not untidiness, it is disagreement. Behaviour spr
 
 ### How It Works
 
-A consumer reaches Logic Interface and selects the Service Interface it needs. Storage Service Interface publishes its Actions directly. Entity Service Interface publishes Entity Child Services, from which the consumer selects one Entity and then calls one of that child's Actions. The owning Service works out what the request means: which Domain Definitions it concerns, which Components hold the answer, and in what order they have to be asked.
+A consumer reaches Logic Interface and selects one of the Service Interfaces published there. Entity Service Interface is published by default and presents Entity Child Services, from which the consumer selects one Entity and then calls one of that child's Actions. Storage Service Interface remains available to internal Logic Services but is not published through Logic Interface by default. The owning Service works out what the request means: which Domain Definitions it concerns, which Components hold the answer, and in what order they have to be asked.
 
-It then carries the work out through its Services. Every Service keeps all of its files, including its own Interface, in its own directory. Entity Service and Storage Service are the two fixed internal Services whose Interfaces every Logic publishes; additional Services may be configured when the application needs them. Logic's Interface publishes each Service Interface under that Service's configured name and does nothing else: it neither redefines nor wraps any Service Action.
+It then carries the work out through its Services. Every Service keeps all of its files, including its own Interface, in its own directory. Entity Service and Storage Service are the two fixed internal Services; additional Services may be configured when the application needs them. Every Service Interface remains available for internal Service collaboration. Logic Interface publishes only those Service Interfaces whose `publish_in_logic_interface` setting is `true`, under each Service's configured name, and does nothing else: it neither redefines nor wraps any Service Action.
 
 What comes back is an Application Outcome: the result the consumer asked for, or one of the expected failures that the Action declares. Application Outcome is a concept, not a required wrapper or generated type; every Action returns its own declared result without a Logic-wide envelope. The consumer learns nothing else — not which Components were involved, not which Service performed which step, not how the answers were combined. That is the whole exchange, and it is the same exchange whether the consumer is an API process, a command-line entry point, or another Component.
 
@@ -50,13 +50,14 @@ What comes back is an Application Outcome: the result the consumer asked for, or
 ## Terms
 
 - **Behaviour** — what the application does when a consumer asks for something: the validation, the ordering, and the rules that hold for an operation in its application context rather than for one record on its own.
-- **Interface** — the root Logic boundary that publishes each configured Service Interface under its Service name without implementing Behaviour or Actions.
+- **Interface** — the root Logic boundary that publishes each publication-enabled Service Interface under its configured Service name without implementing Behaviour or Actions.
 - **Operation** — one complete unit of work a Service offers through its Service Interface, named by what the consumer wants done rather than by how it is carried out.
-- **Service** — one modular part of Logic that owns one coherent application responsibility. Its Interface is public through Logic Interface while its implementation remains internal.
-- **Service Interface** — the outward gateway inside one Service's directory. It publishes that Service's usable capabilities, which may be direct Actions or child Services, and Logic Interface exposes it unchanged under the configured Service name.
+- **Service** — one modular part of Logic that owns one coherent application responsibility and one Interface. Its implementation remains internal, while publication of its Interface through Logic Interface is configurable.
+- **Service Interface** — the outward gateway inside one Service's directory. It presents that Service's usable capabilities for internal collaboration and is exposed unchanged through Logic Interface only when publication is enabled.
+- **Service Interface Publication** — the Boolean Service Preference `publish_in_logic_interface`, which controls only whether Logic Interface exposes that Service Interface; it never creates, removes, or changes the Service or its Interface.
 - **Service Action** — one function a Service class handles through its Service Interface.
-- **Entity Service** — one of Logic's two fixed Services, defined independently in [Entity Service Definition](services/entity/entity.md) and published through its Service Interface.
-- **Storage Service** — one of Logic's two fixed Services, defined independently in [Storage Service Definition](services/storage/storage.md) and published through its Service Interface.
+- **Entity Service** — one of Logic's two fixed Services, defined independently in [Entity Service Definition](services/entity/entity.md), with Interface publication enabled by default.
+- **Storage Service** — one of Logic's two fixed Services, defined independently in [Storage Service Definition](services/storage/storage.md), with Interface publication disabled by default.
 - **Application Outcome** — the conceptual success or expected failure declared by an Action, independent of transport and persistence and never an implied common wrapper or generated type.
 
 <br>
@@ -108,7 +109,7 @@ Logic owns application Behaviour through its modular Services and their composit
 
 ### Interface
 
-Logic's outward surface. It publishes one unchanged reference to every configured Service Interface under that Service's configured name. It contains no Action implementation, wrapper, Category, dependency construction, or duplicated symbol from Model, Database, Core, or a Service. A consumer selects the Service Interface and uses the capabilities that Interface publishes. Logic Interface imports Service Interfaces; internal Services never import Logic Interface.
+Logic's outward surface. It publishes one unchanged reference to every publication-enabled Service Interface under that Service's configured name. It contains no Action implementation, wrapper, Category, dependency construction, or duplicated symbol from Model, Database, Core, or a Service. A consumer selects a published Service Interface and uses the capabilities that Interface presents. Logic Interface imports only the Service Interfaces it publishes; internal Services never import Logic Interface.
 
 ### Core
 
@@ -116,20 +117,20 @@ Logic's shared internal layer. It contains every general file and capability use
 
 ### Services
 
-Logic's responsibility layer. Every Service owns one directory containing all of its files, including its Service Interface and implementation files. A Service Interface presents the capabilities that Service publishes. Logic's root Interface publishes that Service Interface, never the Service implementation or its private files. The directory and file names shown in Architecture are defaults selected by Logic Preferences and may be changed there without changing these responsibilities.
+Logic's responsibility layer. Every Service owns one directory containing all of its files, including its Service Interface and implementation files. A Service Interface presents the capabilities available from that Service. Logic's root Interface publishes it only when `publish_in_logic_interface` is `true`, and never publishes the Service implementation or private files. The directory and file names shown in Architecture are defaults selected by Logic Preferences and may be changed there without changing these responsibilities.
 
-Every Logic carries these fixed public Service Interfaces:
+Every Logic carries these fixed Services and their Interfaces; their default root-publication choices are:
 
 ### Entity Service
 
-Entity Service is the fixed internal Service for Behaviour concerning Model Entities.
+Entity Service is the fixed internal Service for Behaviour concerning Model Entities. Its Interface is published through Logic Interface by default.
 
 → [Definition of Entity Service](services/entity/entity.md)<br>
 → [Preferences of Entity Service](services/entity/entity.yaml)
 
 ### Storage Service
 
-Storage Service is the fixed internal Service that provides Logic's only route to every Database Operation.
+Storage Service is the fixed internal Service that provides Logic's only route to every Database Operation. Its Interface is internal-only by default.
 
 → [Definition of Storage Service](services/storage/storage.md)<br>
 → [Preferences of Storage Service](services/storage/storage.yaml)
@@ -142,7 +143,7 @@ An additional Service follows the same modular rule: it receives its own directo
 
 ### Documentation
 
-Documentation explains Logic Interface, the Service Interfaces it publishes, and their usable capabilities without exposing private implementation. Its filename, location, format, order, and sections are selected by Logic Preferences.
+Documentation explains Logic Interface, only the Service Interfaces it publishes, and their usable capabilities without exposing unpublished Services or private implementation. Its filename, location, format, order, and sections are selected by Logic Preferences.
 
 <br>
 
@@ -182,21 +183,21 @@ Every Principle below is mandatory and belongs to the Architecture or Layering c
 
 ### Interface
 
-#### Logic Interface publishes Service Interfaces only
+#### Logic Interface publishes enabled Service Interfaces only
 
-**Rule:** Logic publishes exactly one root Interface, and every consumer reaches Logic through it. The root Interface publishes each configured Service Interface unchanged under its configured Service name. It defines no Action, wrapper, Category, Behaviour, dependency construction, result transformation, or duplicate export from Model, Database, Core, or a Service. Every Action remains defined and implemented by the Service that owns it and is published through that Service's Interface.
+**Rule:** Logic publishes exactly one root Interface, and every external consumer reaches Logic through it. The root Interface publishes each Service Interface whose `publish_in_logic_interface` setting is `true`, unchanged under its configured Service name, and omits each Service Interface whose setting is `false`. It defines no Action, wrapper, Category, Behaviour, dependency construction, result transformation, or duplicate export from Model, Database, Core, or a Service. Every Action remains defined and implemented by the Service that owns it.
 **Why:** One directory of Service gateways lets consumers discover Logic without creating a second implementation of the Services' contracts.
-**Boundary:** Logic Interface may name and publish a Service Interface but does not publish the Service implementation. Entity Service and Storage Service cannot be removed; Logic Preferences may declare additional Services, and adding or removing one of those changes only the additional Service Interfaces the root publishes.
+**Boundary:** The publication setting controls root exposure only; it never creates, removes, enables, disables, or changes a Service or its Interface. Entity Service and Storage Service cannot be removed. Entity Service publication defaults to `true`; Storage Service publication defaults to `false`.
 
 #### Interface dependencies point outward from Logic Interface
 
-**Rule:** Logic Interface imports and publishes Service Interfaces. An internal Service never imports Logic Interface; when one Service collaborates with another, it imports the destination Service Interface directly.
+**Rule:** Logic Interface imports and publishes only publication-enabled Service Interfaces. An internal Service never imports Logic Interface; when one Service collaborates with another, it imports the destination Service Interface directly regardless of that Interface's root-publication setting.
 **Why:** One-way imports prevent Logic Interface and its Services from forming a dependency cycle.
 **Boundary:** External consumers still enter through Logic Interface. Direct Service-Interface imports are for collaboration inside Logic, not an alternate external entry point.
 
 #### Published Service identities are valid and unique
 
-**Rule:** Every configured Service name and Service directory resolves to a valid identifier or path for the selected language and is unique after the language's declared normalization. A reserved, invalid, or colliding value stops generation with a clear configuration error.
+**Rule:** Every configured Service name and Service directory resolves to a valid identifier or path for the selected language and is unique after the language's declared normalization. Published Service names are unique within Logic Interface. A reserved, invalid, or colliding value stops generation with a clear configuration error.
 **Why:** Logic Interface cannot publish two Services under one identity, and a generator cannot realize a name the selected language rejects.
 **Boundary:** The generator applies only the declared normalization. It never invents a suffix, number, or silent rename to resolve a conflict.
 
@@ -206,9 +207,9 @@ Every Principle below is mandatory and belongs to the Architecture or Layering c
 
 #### Logic is composed of modular Services
 
-**Rule:** Inside Logic, work is divided into Services. Each Service owns one coherent application responsibility, keeps all of its files in its own directory, and presents its usable capabilities through its Service Interface. Logic Interface publishes that Service Interface unchanged. Entity Service and Storage Service are fixed Services of every Logic; their Interfaces are always published. The Service implementation remains internal.
+**Rule:** Inside Logic, work is divided into Services. Each Service owns one coherent application responsibility, keeps all of its files in its own directory, and presents its usable capabilities through its Service Interface. Entity Service and Storage Service are fixed Services of every Logic and always retain their Interfaces. Logic Interface publishes each Interface only when that Service's publication setting is enabled. Service implementations remain internal.
 **Why:** Giving each application responsibility one Service keeps its dependencies and behavior together, so a Service can change without that change spreading through unrelated Behaviour.
-**Boundary:** Services sit beside one another, not on top of one another: none is the foundation of another. A Service may use another Service only through that Service's Interface when its Behaviour requires that collaboration. Additional Services may be configured, but they never replace either fixed Service. Each Service's own Definition and Preferences govern its internal contract and realization.
+**Boundary:** Services sit beside one another, not on top of one another: none is the foundation of another. A Service may use another Service only through that Service's Interface when its Behaviour requires that collaboration, including when the destination Interface is not published through Logic Interface. Additional Services may be configured, but they never replace either fixed Service. Each Service's own Definition and Preferences govern its internal contract, realization, and publication setting.
 
 #### Logic reaches another Component only through that Component's Interface
 
@@ -270,16 +271,17 @@ Every obligation in the file, under the Principle it comes from.
 
 ### Interface
 
-**Logic Interface publishes Service Interfaces only**
+**Logic Interface publishes enabled Service Interfaces only**
 
-- **Must** — publish exactly one root Interface and expose every configured Service Interface unchanged under its configured Service name.
-- **Must** — keep every Action defined and implemented by its owning Service and published through that Service's Interface.
+- **Must** — publish exactly one root Interface and expose only publication-enabled Service Interfaces unchanged under their configured Service names.
+- **Must** — keep every Action defined and implemented by its owning Service.
+- **Never** — publish a Service Interface whose `publish_in_logic_interface` setting is `false`.
 - **Never** — define an Action, wrapper, Category, Behaviour, dependency construction, result transformation, or duplicate dependency symbol in Logic Interface.
 - **Never** — expose a Service implementation, connection, session, or storage detail through Logic Interface.
 
 **Interface dependencies point outward from Logic Interface**
 
-- **Must** — Let Logic Interface import Service Interfaces and let collaborating Services import the destination Service Interface directly.
+- **Must** — Let Logic Interface import only published Service Interfaces and let collaborating Services import destination Service Interfaces directly regardless of root publication.
 - **Never** — Import Logic Interface from an internal Service.
 
 **Published Service identities are valid and unique**
@@ -293,7 +295,7 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — Divide Logic into modular Services, each owning one coherent application responsibility and one directory containing all of its files.
 - **Must** — give every Service an outward Service Interface that presents its usable capabilities and is published unchanged by Logic Interface.
-- **Must** — include Entity Service and Storage Service internally and publish both Service Interfaces in every Logic.
+- **Must** — include Entity Service and Storage Service internally, retain both Service Interfaces, and apply each Service's publication setting.
 - **Never** — let a consumer reach or depend on a Service implementation, or let a Service do its work through another Component's Service.
 
 **Logic reaches another Component only through that Component's Interface**

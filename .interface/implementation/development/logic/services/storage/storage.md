@@ -1,6 +1,6 @@
 # Storage Service Definition
 
-Storage Service is the fixed internal Logic Service whose public Interface gives Logic consumers and Services access to every Operation published by Database.
+Storage Service is the fixed internal Logic Service whose Interface gives other Logic Services access to every Operation published by Database.
 
 <br>
 
@@ -24,11 +24,11 @@ Storage Service is the fixed internal Logic Service whose public Interface gives
 
 ### Overview
 
-Storage Service is one of the two fixed internal Services of every Logic Component. It is Logic's complete gateway to Database: for every Operation currently published by Database Interface, Storage Service provides one corresponding Action. Its public Interface also republishes the exact active Database Instance Enum accepted by those Actions. Its implementation remains internal, while Logic Interface publishes Storage Service Interface unchanged under its configured name.
+Storage Service is one of the two fixed internal Services of every Logic Component. It is Logic's complete gateway to Database: for every Operation currently published by Database Interface, Storage Service provides one corresponding Action. Its Interface also republishes the exact active Database Instance Enum accepted by those Actions. Its implementation remains internal, and its Interface is not published through Logic Interface by default.
 
 ### Purpose
 
-Logic Services need one controlled route to persistence, while consumers may also need direct access to raw Database capabilities. Storage Service provides both through one public Service Interface without exposing Database internals. Entity Service and every other internal Logic Service use it whenever they need Database; a consumer may use it directly when it intentionally needs raw persistence or Database-wide commands.
+Logic Services need one controlled route to persistence. Storage Service provides that route through its own Service Interface without exposing Database internals. Entity Service and every other internal Logic Service use it whenever they need Database. Its publication setting may explicitly expose that Interface through Logic Interface, but the default keeps raw persistence and Database-wide commands internal.
 
 ### How It Works
 
@@ -42,7 +42,7 @@ Every Action and its file are named `<service>_<action>`. The configured Service
 ## Terms
 
 - **Storage Role** — the fixed identity of this Service inside Logic, independent of its configurable public name.
-- **Storage Service Interface** — this Service's outward gateway, published unchanged under the configured Service name by Logic Interface.
+- **Storage Service Interface** — this Service's outward gateway for internal Logic collaboration, exposed unchanged through Logic Interface only when `publish_in_logic_interface` is enabled.
 - **Action** — one Storage Service capability corresponding to one Operation published by Database Interface.
 - **Operation Identity** — the stable identity by which an Action and any configured override are matched to a Database Operation.
 - **Published Action Name** — the identifier formed as `<service>_<action>` from the configured Service name and derived or overridden Action base name.
@@ -68,11 +68,11 @@ The names shown are defaults selected by Storage Service Preferences. Changing a
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Belongs to Logic** — is a fixed Service whose Interface Logic Interface always publishes.
+- **Belongs to Logic** — is a fixed Service whose Interface always exists but is published through Logic Interface only when configured.
 - **Consumes Database** — discovers and uses every Database Operation and the active Database Instance Enum only through Database Interface.
 - **Consumed by Entity Service** — provides the Entity-bound Database Actions and Instance Enum that Entity Service uses.
 - **Consumed by other Logic Services** — provides their only route to Database whenever their Behaviour requires persistence.
-- **Consumed by Logic consumers** — provides direct raw Database capabilities through Storage Service Interface as published by Logic Interface.
+- **Optionally consumed by Logic consumers** — becomes externally reachable only when its Interface publication setting is enabled; it is internal-only by default.
 
 <br>
 
@@ -82,7 +82,7 @@ The names shown are defaults selected by Storage Service Preferences. Changing a
 - **Entity-oriented convenience and Entity-specific Behaviour** — belong to Entity Service; Storage Service remains the raw Database gateway and does not absorb them.
 - **Operation execution, Engine selection, connections, transactions, and result production** — belong to Database; Storage Service only requests published capabilities.
 - **Operation meaning, identity, membership, and validity** — belong to Database Interface; Storage Service mirrors the catalogue without redefining it.
-- **Logic's root publication of Services** — belongs to Logic Interface; Storage Service owns only its own Interface.
+- **Logic's root publication of Services** — belongs to Logic Interface and follows this Service's publication setting; Storage Service owns only its own Interface.
 
 <br>
 
@@ -91,7 +91,7 @@ The names shown are defaults selected by Storage Service Preferences. Changing a
 
 ### Interface
 
-The outward gateway of Storage Service. It publishes every derived Storage Action and republishes the exact Database Instance Enum without recreating, renaming, converting, or copying its members. Logic Interface publishes this Service Interface unchanged under the configured Service name.
+The outward gateway of Storage Service. It presents every derived Storage Action and republishes the exact Database Instance Enum without recreating, renaming, converting, or copying its members. Internal Logic Services may import it directly. Logic Interface exposes it unchanged under the configured Service name only when `publish_in_logic_interface` is enabled.
 
 ### Actions
 
@@ -113,17 +113,17 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 ### General
 
-#### Storage Service is fixed and internal with a public Interface
+#### Storage Service is fixed and internal with its own Interface
 
-**Rule:** Every Logic contains the fixed Storage Role as an internal Service and publishes Storage Service Interface unchanged through Logic Interface. Its configured public name may change, but its Role and responsibilities do not. Consumers reach its raw Database capabilities through that public Interface; its implementation remains internal.
+**Rule:** Every Logic contains the fixed Storage Role as an internal Service and always creates Storage Service Interface. Its configured name may change, but its Role and responsibilities do not. Logic Interface publishes Storage Service Interface only when `publish_in_logic_interface` is `true`; the default is `false`. Its implementation remains internal in every case.
 **Why:** Logic needs one stable and discoverable Database gateway without confusing the Service with the Database Component or exposing implementation files.
-**Boundary:** Public means the Service Interface is reachable. It does not make the Service implementation, Logic Core, or Database internals public.
+**Boundary:** Disabling root publication never disables the Service Interface for internal Logic collaboration. Enabling publication exposes only the Interface, never the Service implementation, Logic Core, or Database internals.
 
 #### Storage Service is every internal Logic Service's only route to Database
 
 **Rule:** Entity Service and every other Service inside Logic use Storage Service Interface whenever they need Database. No other internal Logic Service calls Database Interface or a Database implementation detail directly.
 **Why:** One internal gateway keeps Database access consistent, discoverable, and replaceable across Logic Services.
-**Boundary:** A Logic consumer may intentionally use the public Storage Service Interface directly. Storage Service owns the route and its raw Actions, while a calling Service continues to own any Behaviour it adds and Database continues to own persistence.
+**Boundary:** A Logic consumer may use Storage Service Interface directly only when its root publication is enabled. Storage Service owns the route and its raw Actions, while a calling Service continues to own any Behaviour it adds and Database continues to own persistence.
 
 <br>
 
@@ -147,7 +147,7 @@ Every Principle below is mandatory and belongs to the category that owns it.
 **Why:** An Action remains visibly owned by Storage Service wherever another Service imports or calls it.
 **Boundary:** The prefixed name identifies the Logic Service Action; it neither renames nor alters the corresponding Database Operation identity.
 
-#### Public Storage identifiers are valid and unique
+#### Storage Interface identifiers are valid and unique
 
 **Rule:** The configured Service name, every Action base name, every final Action name, and every public Interface export are valid for the selected language and unique after declared normalization. An Action name never collides with the Database Instance Enum or another Interface export.
 **Why:** Two Operations cannot share one callable Action and an invalid identifier cannot be realized safely.
@@ -178,10 +178,10 @@ Every obligation in the file, under the Principle it comes from.
 
 ### General
 
-**Storage Service is fixed and internal with a public Interface**
+**Storage Service is fixed and internal with its own Interface**
 
-- **Must** — Include the Storage Role internally in every Logic and publish its Interface unchanged under its configured name.
-- **Never** — Expose its private implementation or confuse its configurable name with its fixed Role.
+- **Must** — Include the Storage Role and its Interface internally in every Logic and apply its root-publication setting.
+- **Never** — Publish it through Logic Interface when publication is disabled, expose its private implementation, or confuse its configurable name with its fixed Role.
 
 **Storage Service is every internal Logic Service's only route to Database**
 
@@ -205,7 +205,7 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — Name every Action and Action file `<service>_<action>` with exactly one underscore.
 - **Never** — Rename or alter the corresponding Database Operation identity.
 
-**Public Storage identifiers are valid and unique**
+**Storage Interface identifiers are valid and unique**
 
 - **Must** — Validate every public identifier for the selected language and uniqueness after normalization.
 - **Never** — Resolve an invalid or colliding identifier with an invented or silent rename.

@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of Entity Service inside the Logic Component."
   purpose: "Configurable names and realization defaults for the fixed Entity Role."
   standard: "Agent Project Interface"
-  version: "4.0"
+  version: "4.1"
   updated: "2026-09-29"
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -16,14 +16,14 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings first to preserve the fixed Logic owner and Entity Role while resolving the configurable public Service name; then read layout. Read Entity Service Definition for Entity binding, shared Base Entity capabilities, Storage Service routing, naming validation, and mandatory Behaviour. Resolve the language and shared development conventions from Logic Preferences."
+  consumption: "Read settings first to preserve the fixed Logic owner and Entity Role while resolving the configurable Service name and root Interface publication; then read layout. Read Entity Service Definition for Entity binding, shared Base Entity capabilities, Storage Service routing, naming validation, and mandatory Behaviour. Resolve the language and shared development conventions from Logic Preferences."
   selection: "Use these defaults when the Target is silent. Preserve an explicit compatible Target choice; raise an unresolved incompatible choice rather than inventing one."
   version_resolution: "Entity Service introduces no independently versioned technology; versions resolve through Logic and Development Preferences."
   matching: "Match every Child Service to one authoritative Entity identity from Model Interface. Apply the configured file and public-structure patterns with the selected language's normalization, reject invalid or colliding results, and preserve the responsibilities declared by Entity Service Definition."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "settings: identify the fixed Logic owner and Entity Role, then resolve the configurable public Service name."
+  - "settings: identify the fixed Logic owner and Entity Role, then resolve the configurable Service name and publish_in_logic_interface setting."
   - "layout: resolve its configurable directory, Interface, Base Entity, Child naming patterns, and language-specific realization names."
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
@@ -41,6 +41,7 @@ content:
     service:
       role: "entity"
       name: "Entity"
+      publish_in_logic_interface: true
 
   # <!-------------------------------------------- layout -->
   layout:
