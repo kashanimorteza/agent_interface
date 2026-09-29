@@ -1,0 +1,68 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/implementation/development/logic/services/entity/entity.yaml"
+  path_note: "The Preferences layer of Entity Service inside the Logic Component."
+  purpose: "Configurable defaults for Entity Service structure and realization."
+  standard: "Agent Project Interface"
+  version: "1.1"
+  updated: "2026-09-29"
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned. Operations read it without writing resolved Entity Service choices back into it."
+  changed_by: "The human, directly. A missing critical Entity Service choice is raised through State."
+  precedence: "Explicit Target meaning and every applicable Entity Service, Logic, Model, and Database Principle take precedence over this file."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read settings first, then layout and handling. Resolve the language and shared development conventions from Logic Preferences."
+  selection: "Use these defaults when the Target is silent. Preserve an explicit compatible Target choice; raise an unresolved incompatible choice rather than inventing one."
+  version_resolution: "Entity Service introduces no independently versioned technology; versions resolve through Logic and Development Preferences."
+  matching: "Match Entity classes by the exact publication of Model Interface and create exactly one child Service for each."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "settings: identify Entity Service and its authorities."
+  - "layout: resolve its configurable directory, file, and class names."
+  - "handling: realize its Entity discovery, shared Operations, Database Instance forwarding, and sensitive-value Behaviour."
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  - settings
+  - layout
+  - handling
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- settings -->
+  settings:
+    service:
+      name: "Entity Service"
+      owner: "Logic"
+      fixed: true
+      public_interface: true
+      source: "Entity classes published by Model Interface"
+
+  # <!-------------------------------------------- layout -->
+  layout:
+    names_configurable: true
+    directory: "entity"
+    files:
+      interface: "interface"
+      base: "base"
+    directories:
+      entities: "entity"
+    classes:
+      base: "EntityServiceBase"
+      child_suffix: "Service"
+
+  # <!-------------------------------------------- handling -->
+  handling:
+    shared_operations: "EntityServiceBase implements every Entity Action corresponding to an Entity-bound Action published by Database Service Interface."
+    entity_services: "Create exactly one child Service and implementation file for every Entity published by Model Interface."
+    specialization: "A child inherits shared Operations and only overrides an Operation or adds a capability when its Entity requires distinct Behaviour."
+    database_instance: "Every Action accepts an optional Database Instance and passes it unchanged with every applicable Database Service Interface call."
+    persistence_route: "Use Database Service Interface as Entity Service's only route to Database."
+    sensitive_values: "Apply application-required sensitive-value treatment from Model meaning before using Database Service."

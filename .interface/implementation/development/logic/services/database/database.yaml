@@ -1,0 +1,66 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/implementation/development/logic/services/database/database.yaml"
+  path_note: "The Preferences layer of Database Service inside the Logic Component."
+  purpose: "Configurable defaults for Database Service structure and realization."
+  standard: "Agent Project Interface"
+  version: "2.1"
+  updated: "2026-09-29"
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: "This file is human-owned. Operations read it without writing resolved Database Service choices back into it."
+  changed_by: "The human, directly. A missing critical Database Service choice is raised through State."
+  precedence: "Explicit Target meaning and every applicable Database Service, Logic, and Database Principle take precedence over this file."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read settings first, then layout. Read Database Service Definition for responsibilities, Actions, and mandatory Behaviour. Resolve the language and shared development conventions from Logic Preferences."
+  selection: "Use these defaults when the Target is silent. Preserve an explicit compatible Target choice; raise an unresolved incompatible choice rather than inventing one."
+  version_resolution: "Database Service introduces no independently versioned technology; versions resolve through Logic and Development Preferences."
+  matching: "Match configurable names by their exact keys and preserve the responsibilities declared by Database Service Definition."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "settings: resolve the configurable names of the owning Component, Service, Interface, Actions layer, and Actions."
+  - "layout: resolve its configurable Interface, Actions directory, and Action file names."
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  - settings
+  - layout
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+
+  # <!-------------------------------------------- settings -->
+  settings:
+    component: "Logic"
+    service: "Database"
+
+
+  # <!-------------------------------------------- layout -->
+  layout:
+    names_configurable: true
+    directory: "database"
+    files:
+      interface: "interface"
+    directories:
+      actions: "actions"
+    action_files:
+      add: "database_add"
+      update: "database_update"
+      list: "database_list"
+      delete: "database_delete"
+      enable: "database_enable"
+      disable: "database_disable"
+      get_by_id: "database_get_by_id"
+      count: "database_count"
+      sum: "database_sum"
+      min: "database_min"
+      max: "database_max"
+      truncate: "database_truncate"
+      execute_command: "database_execute_command"
+      create_tables: "database_create_tables"
+      insert_initial_data: "database_insert_initial_data"
