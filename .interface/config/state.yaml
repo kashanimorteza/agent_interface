@@ -29,11 +29,11 @@ content_map:
 # <!--------------------------------------------------------------------------------- Content -->
 content:
   active:
-    mode: "reviewing"
-    phase: "P3"
-    mode_reason: "Review found phase P3 (Logic) satisfied with no Finding."
-    set_by: "my-interface-review"
-    set_at: "2026-09-29T22:30:22Z"
+    mode: "development"
+    phase: "P4"
+    mode_reason: "Develop executed the P4 (API) Plan: 48 Tasks done, 1 blocked (P4-G7-T04, Blocker 014-B1), 2 waiting on it."
+    set_by: "my-interface-develop"
+    set_at: "2026-09-29T23:52:21Z"
   phases:
     P1:
       id: "P1"
@@ -55,8 +55,8 @@ content:
       completed_at: "2026-09-29T22:30:22Z"
     P4:
       id: "P4"
-      planning: "not started"
-      development: "not started"
+      planning: "completed"
+      development: "blocked"
       review: "not started"
       completed_at: null
     P5:
@@ -437,3 +437,102 @@ content:
           - "Behaviour involving the second Instance was exercised for selection and for Update; the Entity behaviours were exercised on the default Instance only."
           - "The Task Logs were written by Develop with checks described in prose because persistent testing is disabled; Review judged them by re-observing the conditions and by new probes, not by trusting the recorded outcomes."
           - "Process deviation recorded by Develop 011 (Tasks claimed in Group batches) does not affect the result and Review did not change any Task record."
+    - id: "013"
+      skill: "my-interface-plan"
+      phase: "P4"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-09-29T23:19:40Z"
+      completed_at: "2026-09-29T23:25:18Z"
+      duration: "5:38"
+      open_questions: ["013-Q1", "013-Q2"]
+      blockers: []
+      report: "Planned phase P4 (API; argument '4' resolved to Phase 4) from scratch: one Plan, 9 Groups, 51 atomic Tasks (2 package and Logic dependency, 4 runtime configuration, 4 shared boundary and serving, 4 Group references and registration, 3 Entity Group Adapters, 7 Entity Group Endpoints, 6 Entity Group Handlers, 1 Application Manifest, 20 whole-API verification). P3 was satisfied and no earlier phase has an open Blocker, so P4 is plannable; no prior P4 Plan existed, so nothing was preserved, changed, removed, or replaced. Every Task has source_id 013 and status todo; the dependency graph is acyclic with one root; the P1, P2, and P3 Plans are unchanged. Open Questions: 2 (013-Q1, 013-Q2, described in data). Blockers: 0."
+      data:
+        duration_ms: 338000
+        task_changes:
+          added: 51
+          changed: 0
+          removed: 0
+          preserved: 0
+          replaced: 0
+          reason: "No Plan existed for P4; all Tasks are newly required by the Target phase goal, the API Definition and Preferences, the Entity Group Definition and Preferences, the API Configuration Structure, and the Entity Service contract that Logic publishes."
+        task_skills_identified:
+          - "python-skills:python-guidelines (Python source Tasks)"
+          - "fastapi (Tasks that realize the HTTP boundary, Endpoints, and Handlers)"
+          - "sqlmodel (the Task that binds a request Body to the bound Entity)"
+        open_question_details:
+          - id: "013-Q1"
+            question: "Action Mapping placeholders do not match the Action inputs. Entity Group Preferences map update, delete, enable, disable, and get_by_id to Paths with an {id} placeholder. The Entity Service Actions name the record identifier input record_id (delete, enable, disable, get_by_id), and update takes no separate identifier because the id travels inside the Entity. The Entity Group Definition places in the Path only Parameters named by a placeholder and forbids renaming a Parameter, so the mapped Paths and the Action contract cannot both be honoured as written."
+            options_for_the_human:
+              - "Rename the placeholders in the Entity Group Preferences to the Action's input name and give update a Path without a placeholder."
+              - "State in the Entity Group Definition that a placeholder denotes the Action's record identifier input, and how update is addressed."
+              - "Change the Action input names in Logic so they equal the placeholders (a Logic replan)."
+            affects: "P4-G6-T02, P4-G6-T05, P4-G9-T06, and the record-addressing verifications P4-G9-T10 to P4-G9-T12. Planning wrote those Tasks to the Definition as stated and made no choice; Develop will meet the conflict at P4-G6-T05 and should raise a Blocker rather than choose a public address."
+          - id: "013-Q2"
+            question: "Filters, Filter Combination, and Orders are Database vocabulary, and the Entity Actions type them loosely because Entity Service may not import Database. Development declares no Connection from API to Database or Model, and Logic publishes neither the vocabulary nor the Entity classes. It is undecided how the API turns a request into the values List, Count, Sum, Min, and Max accept (already raised by Develop log 011)."
+            affects: "P4-G7-T04 and the reading verifications P4-G9-T09 and P4-G9-T13. The Entity Body binding (P4-G7-T03) is planned to use the bound Entity that each published Child Service carries, which stays inside the declared Connection."
+        decisions_to_confirm:
+          - "Credential values in responses: Actions return stored, protected credential values (hashes and ciphertext) and the API must answer with the Action outcome unchanged (P4-G7-T05). If serving those stored values over HTTP is unwanted, the Action contract in Logic must change; the API may not transform them."
+        notes:
+          - "Prerequisites: Plan Config and State Config parsed and matched their Schemas before planning (task_count 207 equals the stored Tasks; log ids sequential). The Agent Module was not read."
+          - "Testing and documentation: the API Definition and Preferences declare neither persistent testing nor documentation (and Platform lists testing as inactive), so no test or documentation Task was planned and Task verification is transient. Behavioural verification is bounded by one Group constraint on P4-G9: it runs on throwaway prepared storage and changes nothing else."
+          - "Application Manifest: the API section already holds an earlier description (package and entrypoint trading-assistant-api, a versioned Entity Path, and health and readiness signals) although no API source exists and the current API Definition defines none of those signals; P4-G8-T01 replaces it. application.yaml also holds the state section twice; Configure owns that, and it does not block Planning."
+          - "Runtime requirement: credential-bearing Entity Actions need Logic's environment-supplied protection value in the API process; Platform and Launch supply it in a deployment, and the verification Tasks use a throwaway value."
+          - "Platform's VPS launch item gives the API a different bind address and an empty cross-origin allow list than the API Preferences; the API Preferences govern this phase and the difference belongs to Launch."
+          - "Eligibility: Entity Service currently publishes through Logic and requests API generation (both true), so the Entity Group is eligible; P4-G4-T02 plans the decision, not a hard-coded assumption."
+        necessary_but_not_performed:
+          - "Task P3-G8-T03 (Honour Action-level API-generation overrides) is stale against the current Entity Service Definition, which forbids per-Action filtering; it needs a replacing Task through planning phase 3 (raised by Develop log 011 and Review log 012)."
+          - "The Application Manifest section for Model is still empty; it needs a Task in the P1 Plan and lies outside this invocation's phase selection."
+    - id: "014"
+      skill: "my-interface-develop"
+      phase: "P4"
+      event: "develop"
+      outcome: "blocked"
+      started_at: "2026-09-29T23:27:00Z"
+      completed_at: "2026-09-29T23:52:21Z"
+      duration: "25:21"
+      skills_used:
+        - name: "python-skills:python-guidelines"
+          report: "Guided code style: uv, modern typing, Google-style docstrings, no speculative abstraction, no needless try/except."
+        - name: "fastapi"
+          report: "Guided the HTTP boundary: Annotated parameters, one function per operation, embedded Body inputs, router prefixes, factory-based serving."
+      open_questions: []
+      blockers: ["014-B1"]
+      report: "Executed the P4 (API) Plan: 48 of 51 Tasks are done, 1 is blocked (P4-G7-T04, Blocker 014-B1) and 2 (P4-G9-T09, P4-G9-T13) wait on it. The API exists as a separate executable with runtime configuration, Bootstrap, Group registration, and the Entity Group (15 Adapters, 180 Endpoints, one Handler each). Through the real API on throwaway prepared Databases, Add, Update, Get by ID, Enable, Disable, Delete, Truncate, Instance selection, credential handling, and failure surfacing all match Logic for every defined Model; only requests carrying Filters, Orders, or Combination fail, because the vocabulary is unreachable from API. Open Questions: 0. Blockers: 1."
+      data:
+        duration_ms: 1521000
+        tasks: {done: 48, blocked: 1, todo: 2}
+        blocker_details:
+          - id: "014-B1"
+            task: "P4-G7-T04"
+            condition: "Filters, Filter Combination, and Orders are Database vocabulary objects. Logic's Entity Actions type them loosely and pass them to Database, which refuses anything else (verified: a List or Count carrying filters, orders, or combination answers 500). Logic publishes none of the vocabulary and Development declares no Connection from API to Database or Model, so API cannot build the values."
+            waiting_tasks: ["P4-G9-T09 (List through the API, with selection and ordering)", "P4-G9-T13 (Count, Sum, Min, Max, with Filters)"]
+            human_answer: "013-Q2: block these Tasks until the Human declares an API to Database Connection or has Logic republish the vocabulary."
+            to_resolve: "Declare the Connection in Development Preferences, or have Logic Interface republish Filter, Filter Combination, and Order, then run develop for phase 4 again: P4-G7-T04 can be claimed after the Blocker reference is cleared with verified evidence, then P4-G9-T09 and P4-G9-T13."
+        human_decisions_applied:
+          - "013-Q1 (Human): a Path placeholder {id} is an alias for the Action's record identifier input: record_id for delete, enable, disable, and get_by_id, and the Entity's own id for update. Applied by the Entity Group generation; the Action input names are not renamed."
+          - "013-Q2 (Human): block the Filter binding Task, as recorded in 014-B1."
+        resolved_choices:
+          - "Python 3.14 with uv; direct dependencies fastapi[standard] (0.141.1), logic (path dependency), and pyyaml (6.0.3); starlette 1.6.0, uvicorn 0.53.0, pydantic 2.13.5 resolved and stabilized in the lock file; ruff and pyright as development-only tools. The dependency lock was resolved offline because the package file host did not resolve (DNS timeout), so fastapi is the newest cached version (0.141.1) although the index lists 0.142.1; a later online lock upgrade moves it. SQLModel, named as API's modeling package in the API Preferences, is not a direct dependency because API never declares a model: requests are read by the bound Entity itself."
+          - "Layout follows the Model, Database, and Logic precedent: package api with Bootstrap, the runtime configuration, and the Groups container; the Entity Group is a package with one Adapter per Entity named by the Entity's snake_case identity (user, trading_platform, and so on) and the Group initialization that registers them; packaging files sit at the Component directory; the console script api runs Bootstrap."
+          - "Bootstrap validates the runtime configuration completely before serving, serves through a uvicorn application factory (so several workers each build the API), applies the preferred cross-origin policy once, derives each Group's URL segment from its configured name, and places the contract description and documentation beneath the Base URL and the URL Key like every Group."
+          - "Adapters and Handlers are generated code, one Endpoint function per Action named after it, with placement by Method (Path for placeholders, Query for GET and DELETE, an object Body keyed by input name for POST, PUT, and PATCH). An Entity in a Body is read by the bound Entity's own JSON reader and a refusal becomes a 422 carrying Model's own value-free message; results are returned as the Action returned them and serialized by the framework (datetimes with a trailing Z, decimals as text); an Action that fails becomes a generic 500."
+          - "Generation was done by a transient generator kept outside the project (it resolves the Entity Group Reference, evaluates eligibility, and reads Logic's Entity Service Interface and the Entity Group Action Mappings). Nothing in the API depends on it; regenerating after a change to Entity Service or the Action Mappings needs the same generation to be run again."
+        deviations:
+          - "Tasks of Groups P4-G6, P4-G7, and P4-G9 were claimed in batches before their prerequisites were recorded done, because generation writes a whole Group at once; each Task was verified in dependency order and none was marked done before its own check passed. The claims of P4-G5-T02 and of the P4-G7 batch were recorded a few seconds after the code was generated because the dependency guard rejected the first claim attempt."
+          - "The result recorded for P4-G9-T20 first said a type-checker setting had been added to the API project metadata; that setting broke the type checker (289 import errors), was removed, and a correction note and a final repeat of the checks are in the Task Log."
+        decisions_to_confirm:
+          - "Credential values in responses: Actions return the stored protected values (hashes and ciphertext) and the API answers with them unchanged, as recorded by Planning 013. Decide whether they should be served; if not, the Action contract in Logic must change."
+          - "Failures: no Definition maps Logic's or Database's failures to HTTP statuses, so any failing Action (for example a duplicate unique value) is a generic 500 with no detail. Decide whether the Entity Group should map declared expected failures (for example a uniqueness conflict) to specific statuses."
+          - "Serialization spelling: the framework writes UTC datetimes with a trailing Z while Model's own JSON form writes +00:00; both are the same instant and Body input accepts either. Say whether the Model spelling is required in responses."
+        notes:
+          - "Behavioural verification ran on a throwaway copy of the four Components with a prepared SQLite Database and a throwaway PostgreSQL database (created and dropped for this run; no other database was touched). The shipped Database storage and the shipped Configuration were never connected by this run; the shipped SQLite file has an unexplained modification time of 02:59 local, two minutes after this run began, but its content is the seeded data (8 Currencies, 1 User, 1 Broker, no Position) and this run made no connection to it."
+          - "Model, Database, and Logic are untouched: git reports no change under them; the only new tracked paths are the API Component and Config records, and the Application Manifest API section."
+          - "A no-longer-needed rsync of API sources into the sandbox and the temporary copies were removed after the run."
+          - "The API Preferences and Definitions declare no documentation or persistent tests, so none were added; verification is transient."
+          - "The starlette test client prints a deprecation warning about httpx during verification runs; it does not affect the API."
+        necessary_but_not_performed:
+          - "P4-G7-T04, P4-G9-T09, and P4-G9-T13 wait on Blocker 014-B1 (see blocker_details)."
+          - "Review of phase P4 has not run."
+          - "Task P3-G8-T03 is still stale against the Entity Service Definition; and the Application Manifest section for Model is still empty; both are outside this phase (carried from earlier entries)."

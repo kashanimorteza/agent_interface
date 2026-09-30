@@ -1,0 +1,9 @@
+# API runtime configuration: identity and network values read by Bootstrap.
+title: Target API
+description: ''
+key: ''
+host: 127.0.0.1
+port: 8000
+workers: 2
+transport_protocol: HTTP
+url: http://127.0.0.1:8000
