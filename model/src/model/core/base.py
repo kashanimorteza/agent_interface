@@ -4,7 +4,6 @@ from datetime import UTC
 from typing import Annotated, Any
 
 from pydantic import AfterValidator, AwareDatetime
-from sqlmodel.main import SQLModelConfig
 
 from .declaration import ValueGeneration
 from .foundation import Foundation
@@ -21,9 +20,12 @@ class EntityBase(Foundation):
     An Auto Increment Field stays pending (None) until its owner assigns it once.
     """
 
-    model_config = SQLModelConfig(
-        strict=True, extra="forbid", validate_assignment=True, hide_input_in_errors=True
-    )
+    model_config = Foundation.model_config | {
+        "strict": True,
+        "extra": "forbid",
+        "validate_assignment": True,
+        "hide_input_in_errors": True,
+    }
 
     def __init__(self, **data: Any) -> None:
         for declared in self.declaration.fields:

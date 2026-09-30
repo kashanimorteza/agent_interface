@@ -5,9 +5,7 @@ Model publishes the reusable, technology-independent data-model Entities of the 
 ```python
 from model import User
 
-user = User(
-    name="Admin", username="admin", password="change-me", api_key="change-me-too"
-)
+user = User(name="Admin", username="admin", password="change-me", api_key="change-me-too")
 print(user.is_active)  # True
 ```
 
@@ -20,9 +18,7 @@ Import one Entity directly:
 ```python
 from model import Currency
 
-currency = Currency(
-    user_id=1, code="USD", symbol="$", country="United States", decimal_digits=2
-)
+currency = Currency(user_id=1, code="USD", symbol="$", country="United States", decimal_digits=2)
 print(currency.code)  # USD
 ```
 
@@ -501,12 +497,8 @@ Follow the exports and the collection: import an Entity by name, or enumerate `e
 ```python
 from model import Account, User, entities
 
-user = User(
-    name="Admin", username="admin", password="change-me", api_key="change-me-too"
-)
-assert (
-    user.id is None
-)  # pending: an Auto Increment Field is assigned by its owner, never supplied
+user = User(name="Admin", username="admin", password="change-me", api_key="change-me-too")
+assert user.id is None  # pending: an Auto Increment Field is assigned by its owner, never supplied
 user.id = 1  # the owner assigns it once
 user.is_active = False  # a mutable Field revalidates on assignment
 account = Account(
@@ -539,35 +531,14 @@ Run this from an environment where Model is installed. It checks the Interface s
 import model
 from model import User, entities
 
-expected = [
-    "User",
-    "TradingPlatform",
-    "Instance",
-    "Currency",
-    "Broker",
-    "Asset",
-    "AccountGroup",
-    "Account",
-    "TrailingGroup",
-    "TrailingRule",
-    "PartialGroup",
-    "PartialRule",
-    "ActionGroup",
-    "Action",
-    "Position",
-]
+expected = ["User", "TradingPlatform", "Instance", "Currency", "Broker", "Asset", "AccountGroup", "Account", "TrailingGroup", "TrailingRule", "PartialGroup", "PartialRule", "ActionGroup", "Action", "Position"]
 
 assert [entity.__name__ for entity in entities] == expected
 assert isinstance(entities, tuple)
 assert all(getattr(model, name) is entity for name, entity in zip(expected, entities))
-assert {n for n in vars(model.interface) if not n.startswith("_")} == set(expected) | {
-    "entities"
-}
+assert {n for n in vars(model.interface) if not n.startswith("_")} == set(expected) | {"entities"}
 assert all("declaration" in vars(entity) for entity in entities)
-assert all(
-    entity.declaration.fields[0].name == "id" and entity.declaration.fields[0].immutable
-    for entity in entities
-)
+assert all(entity.declaration.fields[0].name == "id" and entity.declaration.fields[0].immutable for entity in entities)
 try:
     entities[0] = None
 except TypeError:
@@ -575,9 +546,7 @@ except TypeError:
 else:
     raise SystemExit("the collection must be immutable")
 
-user = User(
-    name="Admin", username="admin", password="change-me", api_key="change-me-too"
-)
+user = User(name="Admin", username="admin", password="change-me", api_key="change-me-too")
 assert user.declaration.name == "User" and user.id is None
 assert User.from_json(user.to_json()).to_json() == user.to_json()
 print("Model verified")

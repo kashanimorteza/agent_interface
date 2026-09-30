@@ -950,11 +950,17 @@ content:
               constraints: []
               acceptance: "Every applicable check passes with no fixable warning owned by the library, and the delivered library holds none of the excluded artifacts."
               verify: "Run every applicable format, import, static type, lint, and build check over the delivered library and observe a clean result; inspect the delivered content and observe none of the excluded artifacts."
-              status: "claimed"
+              status: "done"
               log:
                 - at: "2026-09-30T16:29:14Z"
                   transition: "todo -> claimed"
                   note: "Claimed by execution 004 before performing the whole-Model conformance work."
+                - at: "2026-09-30T16:37:38Z"
+                  transition: "claimed -> done"
+                  check: "Ran the selected formatter, linter, and static type checker (as development-only dependencies) over the whole library, built the wheel and source distribution, listed their contents, and scanned the delivered source for identifying, machine-specific, timestamped, or placeholder content. Fixed findings (import order, Decimal literal form, JSON root check, config typing); a re-run of every earlier check then caught and fixed a regression where SQLModel's metaclass silently dropped the strict config, and every check was run again against the final source."
+                  outcome: "Passed. Format check: 23 files already formatted. Lint: all checks passed. Static types: 0 errors, 0 warnings. Build succeeded. The wheel holds only the library source, its typing marker, and metadata; no bytecode, compiled, cache, or machine-specific artifact. Only uv.lock is tracked as a dependency record; the environment and tool caches are ignored by the repository."
+                - at: "2026-09-30T16:37:38Z"
+                  note: "Determinism note: generated Entity units, Interface, package entry, and documentation are produced by a Target-reading generator that formats its own output; hand-written Core files are static."
             P1-G10-T6:
               id: "P1-G10-T6"
               source_id: "003"
@@ -971,11 +977,15 @@ content:
               constraints: []
               acceptance: "Every declared dependency is used and pinned to a concrete version, and the library works with exactly those dependencies."
               verify: "Install the library into a clean environment from its declarations alone and observe that it imports and passes its checks, and observe that removing any declared dependency breaks it."
-              status: "claimed"
+              status: "done"
               log:
                 - at: "2026-09-30T16:29:14Z"
                   transition: "todo -> claimed"
                   note: "Claimed by execution 004 before performing the whole-Model conformance work."
+                - at: "2026-09-30T16:38:16Z"
+                  transition: "claimed -> done"
+                  check: "Copied the Component (without its environment) to a clean location and installed strictly from its dependency declarations and lock; imported the library and ran the format, lint, and static type checks there; scanned every library source for third-party imports and compared them with the declared runtime dependencies; blocked each declared runtime dependency in turn and tried to load the library."
+                  outcome: "Passed. Clean installation from the frozen lock succeeded (pydantic 2.13.5, sqlmodel 0.0.47 pinned; ruff 0.16.9 and pyright 1.1.414 pinned as development-only); library imports and all quality checks pass there; the third-party modules imported by the library are exactly pydantic and sqlmodel; without either one the library cannot load."
             P1-G10-T7:
               id: "P1-G10-T7"
               source_id: "003"
