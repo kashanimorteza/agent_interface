@@ -1,10 +1,9 @@
 # Database Definition
 
-Database is the structured Development Component that persists Entity data and provides one stable data-access gateway independently of Agent, programming language, and package.
+Database is the structured Development Component that persists public Entity data and provides one stable data-access gateway.
 
 <br>
 
-<!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation
 
 1. **[Introduction](#introduction)**
@@ -18,48 +17,43 @@ Database is the structured Development Component that persists Entity data and p
 
 <br>
 
-<!--------------------------------------------------------------------------------- Introduction --->
 ## Introduction
 
 ### Overview
 
-Database persists Model Entity data and publishes one simple public access surface for Database Operations and active Instances. Other Components use this gateway to store and retrieve data without depending on Database internals or the selected implementation technology. Its internal flow is Interface, Core Data, and one Engine file per active Instance.
+Database consumes public Entity classes and Declarations, derives their storage structure, and persists their instances through a selected active DatabaseInstance. Interface is its only public boundary. Core routes every request, and one isolated Engine file implements the contract for each active Instance.
 
 ### Purpose
 
-Database keeps persistence knowledge in one reusable Component. Its Architecture and observable behavior remain stable across Agents, programming languages, packages, and database technologies. Without that separation, consumers become coupled to Engine selection, storage behavior, and implementation details.
+Database keeps persistence, Instance selection, and Engine integration behind one reusable boundary. Consumers select an Instance and use the published contracts without accessing configuration, Core, Engine files, connection details, or storage paths.
 
 ### How It Works
 
-A consumer imports Database through Interface, selects an active Instance or accepts the default, and calls an Operation. Core's Data file forwards that request to the Engine file owned by the selected Instance. That file performs the Operation and returns the result through Data and Interface. Database also publishes commands for creating Tables and inserting Initial Data on a selected Instance.
+A consumer imports Interface, selects a DatabaseInstance or accepts the default, and calls an Entity Operation, Database-wide Operation, or Lifecycle Command. Core resolves the complete Instance configuration and forwards the request to that Instance's Engine file. The result returns through Core and Interface in the published form.
 
 <br>
 
-<!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
 - **Engine** — a declared database technology used by one or more Instances.
-- **Instance** — a named database connection and storage identity using one Engine; its active state determines whether Interface publishes it.
-- **Instance Implementation** — the file under `engine` owned by one active Instance, which implements every Database Operation for that Instance through its selected Engine.
-- **Instance Enum** — the public enum whose members identify the active Instances available through Interface.
-- **Database Configuration** — the generated `config.yaml` record declaring the Engines, Instances, and Settings available to Database.
-- **Settings** — component-wide choices such as the default Instance and other shared parameters.
-- **Interface** — the only public Database file, through which consumers import Database, discover active Instances, and request Database Operations.
-- **Operation** — one public Database action published through Interface.
-- **Filter** — one condition with an Entity Field name string, a Filter Operator enum member, and a value.
-- **Filter Operator** — an enum selecting one supported comparison: `equals`, `not_equals`, `greater_than`, `greater_or_equal`, `less_than`, `less_or_equal`, `in`, `contains`, `starts_with`, `ends_with`, `is_null`, or `is_not_null`.
-- **Filter Combination** — an enum selecting how List combines Filters: `AND` or `OR`.
-- **Order** — one ordering instruction with an Entity Field name string and an Order Direction enum member.
-- **Order Direction** — an enum selecting `ascending` or `descending`.
-- **Command Result** — the standard result of Execute Command, with `rows` and `affected_count`; either value is `null` when it does not apply. Each row is a mapping from column name to value.
-- **Execute Command** — an Operation that receives a SQL command and bound parameters, executes it through the selected Engine, and returns a Command Result.
-- **Create Tables** — a public command that receives an Instance and creates or migrates its Tables from the Entity declarations published by Model.
-- **Insert Initial Data** — a public command that receives an Instance and inserts the declared Initial Data after its Tables exist.
-- **Data** — the Engine-independent file inside `core` that defines the shared Database Operations, resolves the requested Instance, and forwards each request to that Instance's implementation.
+- **Instance** — one named database connection and storage identity, including its Engine, active state, database identity, connection values, and options.
+- **DatabaseInstance** — the public enum whose members identify exactly the active configured Instances; it contains no connection credentials.
+- **Database Configuration** — generated `config.yaml`, the sole runtime source for Engines, Instances, Settings, and Initial Data.
+- **Interface** — the only public Database file.
+- **Entity Operation** — an Operation scoped to one Entity: Add, Update, List, Delete, Enable, Disable, GetById, Count, Sum, Min, Max, or Truncate.
+- **Database-wide Operation** — an Operation scoped to the selected Instance rather than one Entity; currently ExecuteCommand.
+- **Lifecycle Command** — an explicit preparation command with a generated manual script: CreateTables or InsertInitialData.
+- **Filter** — an immutable condition containing `field`, `operator`, and a value when the selected operator requires one.
+- **FilterOperator** — the public enum containing EQUALS, NOT_EQUALS, GREATER_THAN, GREATER_OR_EQUAL, LESS_THAN, LESS_OR_EQUAL, IN, CONTAINS, STARTS_WITH, ENDS_WITH, IS_NULL, and IS_NOT_NULL.
+- **FilterCombination** — the public enum containing AND and OR.
+- **Order** — an immutable ordering instruction containing `field` and `direction`.
+- **OrderDirection** — the public enum containing ASCENDING and DESCENDING.
+- **CommandResult** — the public result of ExecuteCommand.
+- **LifecycleResult** — the public result of a Lifecycle Command.
+- **Data** — the Engine-independent Core file that validates, resolves, routes, and normalizes requests and results.
 
 <br>
 
-<!--------------------------------------------------------------------------------- Architecture --->
 ## Architecture
 
 ```text
@@ -70,7 +64,7 @@ Database
 │   ├── tables
 │   └── initial_data
 ├── engine/
-│   └── <instance>
+│   └── <active-instance>
 ├── db/
 ├── config.yaml
 └── README.md
@@ -78,253 +72,409 @@ Database
 
 <br>
 
-<!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Consumes Model** — uses the Entity classes and their public declarations from Model Interface to derive storage structure and recognize Entity-form data. Model is a read-only dependency; Database does not import Model internals or write, generate, build, test, or otherwise create output in Model's Component directory.
-- **Provides to Logic** — exposes Database Operations through Interface.
+- **Consumes Model** — imports public Entity classes and their public Declarations through Model Interface only. Model remains read-only and independently owned.
+- **Provides through Interface** — publishes Database contracts for any authorized consumer without naming or treating one consumer specially.
 
 <br>
 
-<!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
 ### Interface
 
-The only public Database file. It publishes Database as the consumer access surface, the Instance Enum for every active configured Instance, every Database Operation, Create Tables, and Insert Initial Data. Operations use an Entity class or Entity instance directly, as appropriate; they never select data by a Model name or identity. Every Operation and command accepts an optional Instance Enum member; when omitted, Database uses its configured default Instance.
+Interface publishes the Database access surface, DatabaseInstance, all Entity Operations, all Database-wide Operations, all Lifecycle Commands, Filter, FilterOperator, FilterCombination, Order, OrderDirection, CommandResult, and LifecycleResult. Consumers do not recreate these contracts. Interface declares and forwards behavior; it does not implement Engine work.
 
-#### Operations
+#### Entity Operations
 
-- **Add** — accepts a complete Entity instance for a new record, persists it, and returns the created Entity instance with any Engine-generated values.
-- **Update** — accepts a complete Entity instance; uses `id` only to locate the record, never changes it, updates every mutable Field, preserves immutable Fields, and returns the updated Entity instance or `null` when no record has that `id`.
-- **List** — accepts an Entity class, optional Filters, an optional Filter Combination enum member, an optional ordered list of Orders, and an optional limit; uses the configured default filter combination, Order, and limit when omitted. A limit of `0` or any negative value means no limit. It returns matching Entity instances.
-- **Delete** — accepts an Entity class and record `id`; returns `true` when it deletes a record and `false` when no record has that `id`.
-- **Enable** — accepts an Entity class and record `id`; sets its `is_active` Field to `true` and returns the Entity instance or `null` when no record has that `id`.
-- **Disable** — accepts an Entity class and record `id`; sets its `is_active` Field to `false` and returns the Entity instance or `null` when no record has that `id`.
-- **Get by ID** — accepts an Entity class and record `id`; returns the matching Entity instance or `null` when no record has that `id`.
-- **Count** — accepts an Entity class, optional Filters, and an optional Filter Combination enum member; returns the number of matching records.
-- **Sum** — accepts an Entity class, one Field name string, optional Filters, and an optional Filter Combination enum member; ignores `null` values and returns that Field's total, or `0` when no usable value exists.
-- **Min** — accepts an Entity class, one Field name string, optional Filters, and an optional Filter Combination enum member; ignores `null` values and returns the smallest value, or `null` when no usable value exists.
-- **Max** — accepts an Entity class, one Field name string, optional Filters, and an optional Filter Combination enum member; ignores `null` values and returns the largest value, or `null` when no usable value exists.
-- **Truncate** — accepts an Entity class; removes all of its records while keeping its Table structure and returns the number of deleted records.
-- **Execute Command** — accepts a SQL command and bound parameters; executes it through the selected Engine and returns a Command Result. Schema changes remain the responsibility of migrations.
-- **Create Tables** — accepts an optional Instance; creates or migrates every Table required by the Entity declarations published through Model Interface for the selected or default Instance.
-- **Insert Initial Data** — accepts an optional Instance; inserts the declared Initial Data into the selected or default Instance after its Tables exist.
+- **Add** — accepts a complete new Entity instance and returns the stored Entity with generated values.
+- **Update** — accepts a complete Entity instance, uses `id` only to locate the record, replaces every mutable Field, preserves immutable Fields, and returns the stored Entity or `null`.
+- **List** — accepts an Entity class, optional Filters, optional FilterCombination, optional ordered Orders, and optional limit; returns matching Entity instances.
+- **Delete** — accepts an Entity class and `id`; returns the last deleted Entity or `null`.
+- **Enable** — accepts an Entity class and `id`, sets only `is_active` to `true`, and returns the final Entity or `null`.
+- **Disable** — accepts an Entity class and `id`, sets only `is_active` to `false`, and returns the final Entity or `null`.
+- **GetById** — accepts an Entity class and `id`; returns the Entity or `null`.
+- **Count** — accepts an Entity class, optional Filters, and optional FilterCombination; returns the matching count.
+- **Sum** — accepts an Entity class, Field name, optional Filters, and optional FilterCombination; ignores `null` and returns the total or `0`.
+- **Min** — accepts an Entity class, Field name, optional Filters, and optional FilterCombination; ignores `null` and returns the minimum or `null`.
+- **Max** — accepts an Entity class, Field name, optional Filters, and optional FilterCombination; ignores `null` and returns the maximum or `null`.
+- **Truncate** — accepts an Entity class, removes all of its records without removing its Table, and returns the deleted count.
+
+Every Entity Operation also accepts an optional DatabaseInstance. Add and Update receive Entity instances; the other Entity Operations receive the public Entity class. No Operation selects an Entity by a Model name or other string identity.
+
+#### Database-wide Operations
+
+- **ExecuteCommand** — accepts a SQL command and bound parameters, runs any valid command supported by the selected Engine, and returns CommandResult.
+
+#### Lifecycle Commands
+
+- **CreateTables** — creates or safely aligns all Tables required by current public Entity Declarations on the selected Instance.
+- **InsertInitialData** — inserts missing configured Initial Data on the selected Instance after its Tables exist.
+
+Both commands accept an optional DatabaseInstance, default to the configured default Instance, return LifecycleResult, and are callable through Interface or their generated manual scripts. A script is only an invocation entry point; Core and the selected Engine own the work.
 
 ### Core
 
-The internal directory for Database files that are independent of any Engine. Its `data` file defines the shared behavior of every Database Operation, resolves the requested Instance, calls that Instance's implementation, materializes returned rows as Model Entity instances where an Operation publishes Entities, and returns the result according to the published Operation's contract. Core also owns the Engine-independent Create Tables and Insert Initial Data command coordination.
+`data` owns shared validation, default resolution, Instance selection, routing, and result normalization for all public requests. `tables` coordinates CreateTables. `initial_data` coordinates InsertInitialData. Core contains no Instance-specific connection or storage implementation.
 
 ### Engine
 
-The internal directory that keeps every active Instance isolated in one file. Each Instance file implements all Database Operations for that Instance through its configured Engine and connection parameters. Two active Instances using the same Engine still have separate files.
+`engine` contains exactly one file for every active Instance, named from that Instance. Each file implements all Entity Operations, ExecuteCommand, and the Engine capabilities required by both Lifecycle Commands. Two Instances using the same Engine still have separate files.
 
-Database's technical selections and defaults belong to Database Preferences. Its fixed Architecture names are recorded there for generation but are not customizable choices. The structure of generated `config.yaml` belongs to the Database Configuration Schema.
+### Storage
+
+`db` contains Database-owned persistent files and no source code. A file-backed Instance resolves its configured relative path from this Database-owned storage root, never from an installed package, a virtual environment, or a consuming Component.
 
 <br>
 
-<!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
-Every Database Principle is mandatory. Database Preferences may provide defaults and stricter conventions, but never weaken or override a Principle. An explicit Target requirement and an applicable Principle take precedence over a Preference.
+Every Database Principle is mandatory. Database Preferences may complete unstated realization choices but never weaken or replace a Principle. Explicit compatible Target values take precedence over defaults.
 
 <br>
 
-<!--------------------------------------------------------------------------------- Principles --->
 ## Principles
 
 Every Principle below is mandatory.
 
-### Database is implementation-independent
+### General
 
-**Rule:** Database Architecture, ownership, Interface Operations, Instance selection, request and result meaning, Core routing, and Instance implementation responsibilities remain the same regardless of the Agent that generates it, the programming language, the package, or the selected database technology. Database Preferences may select a concrete realization, but that realization neither adds, removes, nor changes Database meaning.
+#### Database owns one canonical Architecture
 
-**Why:** Other Components need one dependable persistence gateway without knowing how Database is generated or implemented.
+**Rule:** The Component root contains one Interface file, `core`, `engine`, `db`, generated `config.yaml`, and root `README.md`. Core contains `data`, `tables`, `initial_data`, and every additional internal source file. Engine contains one file per active Instance. Storage files belong only in `db`.
 
-**Boundary:** Language syntax, package APIs, drivers, and migration tools are realization details. If a selected technology cannot preserve a Database contract, generation reports the incompatibility instead of changing the contract.
+**Boundary:** Fixed Architecture members are not renamed or relocated. No additional internal source file is placed at the Component root, beside an Engine file, or inside `db`.
 
-<br>
+#### Database preserves one observable contract
 
-### Database consumes Model without owning it
+**Rule:** Architecture, public contracts, Instance selection, request meaning, result meaning, routing, and ownership remain stable across languages, packages, libraries, and database technologies.
 
-**Rule:** Database imports Model only through Model Interface and treats the published Entity classes and their public declarations as its complete Model input. Database may derive Tables, foreign keys, and runtime Entity values from that input, but it never changes Model meaning or implementation. Database creates, generates, builds, tests, and documents only its own Component output; it never writes, generates, builds, tests, or creates an artifact under Model's Component directory.
+**Boundary:** Syntax, drivers, ORMs, migration tools, query builders, sessions, connection pools, transactions, and SQL rendering are realization details. An incompatible technology fails generation rather than changing Database meaning.
 
-**Why:** Model owns Entity meaning and its own realization. Database needs that meaning as input, while remaining independently owned and realizable.
+#### Database consumes Model without owning it
 
-**Boundary:** A missing Model capability, incompatible Entity definition, or required change to Model is reported to Model's owner. Database does not work around it by importing Model internals or modifying Model.
+**Rule:** Database imports public Entity classes and complete public Declarations through Model Interface only. It never imports Model internals or creates, edits, builds, tests, documents, or generates an artifact inside Model.
 
-<br>
+**Boundary:** A missing or incompatible Model capability is reported; Database does not repair or redefine Model.
 
-### Database has one canonical Architecture
+#### Database stores values without interpreting domain meaning
 
-**Rule:** The Database Component root contains one Interface file, one `core` directory, one `engine` directory, one `db` directory, its generated `config.yaml`, and its `README.md`. `core` contains `data`, `tables`, `initial_data`, and every other internal source file Database needs beyond the fixed root files and Instance implementations. `data` defines and routes every Database Operation but implements no Instance-specific storage behavior. `tables` coordinates Create Tables, and `initial_data` coordinates Insert Initial Data. `engine` contains exactly one implementation file for each active Instance, named from that Instance; two Instances using the same Engine remain separate files. `db` contains database storage files. The Interface file and README remain at the Component root; only Interface is public. These names and ownership locations are fixed Database Architecture, not configurable preferences.
+**Rule:** Database persists declared Entity values and realizes declared Fields, Primary Keys, Relations, Uniqueness Constraints, Indexes, defaults, and Value Generation without adding behavior based on application meaning.
 
-**Why:** A fixed ownership structure makes Database independently realizable while keeping public access, shared routing, and Engine-specific work separate.
+**Boundary:** Database does not mask, hash, authorize, hide, or otherwise treat an Entity Field specially because it represents a password or sensitive value.
 
-**Boundary:** An Instance implementation does not define public Operations or shared routing. Core does not contain Instance-specific implementation. `db` does not contain source files. No additional internal source file is generated at the Component root or beside an Instance implementation; every additional internal source file belongs in `core` without exception.
+#### Generation verifies Database without changing dependencies
 
-<br>
+**Rule:** Generation verifies exact Architecture, one Engine file and one DatabaseInstance member per active Instance, complete Interface publication, valid config against its Schema, an active default Instance, Database-owned file storage resolution, complete Engine contracts, Documentation, and zero-diff regeneration.
 
-### Database configuration declares its available resources
-
-**Rule:** Database Configuration declares every Engine and its engine-specific parameters, every named Instance and its connection parameters, and component Settings such as the default Instance and other shared parameters. Every active Instance names one declared Engine, every configured Instance reference resolves to a declared Instance, and the default Instance is active. Database publishes exactly the active Instances through its Instance Enum and generates one implementation file for each of them.
-
-**Why:** One configuration source makes the available storage resources and their selection explicit.
-
-**Boundary:** This Definition does not choose configured Instance membership, connection values, or the default Instance. Target and Database Preferences provide those realization values under this contract.
+**Boundary:** Verification reads dependencies as needed but changes, generates, builds, tests, and documents only Database output.
 
 <br>
 
-### Database exposes explicit Interface Operations
+### Interface
 
-**Rule:** Interface publishes Database, the Operations described in this Component, the Instance Enum for active configured Instances, Create Tables, and Insert Initial Data. Each applicable Operation receives an Entity class or Entity instance directly, never a Model name or identity, and accepts an optional Instance Enum member that otherwise resolves to the configured default Instance. A Filter receives an Entity Field name string, a Filter Operator enum member, and a value; supported operators are `equals`, `not_equals`, `greater_than`, `greater_or_equal`, `less_than`, `less_or_equal`, `in`, `contains`, `starts_with`, `ends_with`, `is_null`, or `is_not_null`. List, Count, Sum, Min, and Max accept optional Filters and an optional Filter Combination enum member of `AND` or `OR`; when it is omitted, Filters combine with the configured default, without complex grouping. Each Order receives an Entity Field name string and an Order Direction enum member of `ascending` or `descending`. List alone accepts an ordered list of Orders or the configured default Order, and an optional limit; it uses the configured default limit when omitted, while `0` and every negative limit mean no limit. Interface validates each supplied Field name against the selected Entity. Public Database Actions reject an enum value or Filter Combination supplied as a string; serialized Configuration values are resolved to those runtime values before an Action is called. Count returns `0` for no records; Sum ignores `null` values and returns `0` when no usable value exists; Min and Max ignore `null` values and return `null` when no usable value exists. Add persists the complete supplied Entity instance. Update never changes `id` or an immutable Field and replaces every mutable Field from the complete supplied Entity instance. Execute Command receives a SQL command and bound parameters, executes it through the selected Instance, returns a Command Result, and does not change schema. Create Tables and Insert Initial Data each accept a selected Instance and are usable both through Interface and as a manual command.
+#### Interface is the only public Database boundary
 
-**Why:** An explicit operation catalogue keeps the public data surface stable and understandable.
+**Rule:** Interface publishes Database, DatabaseInstance, every member of the three public capability groups, Filter, FilterOperator, FilterCombination, Order, OrderDirection, CommandResult, and LifecycleResult. The groups are mandatory conceptual organization and do not require language-specific wrapper objects. Core, Engine, configuration details, and storage paths remain internal.
 
-**Boundary:** Interface receives and returns requests; it does not select an Engine or implement database-specific behavior.
+**Boundary:** Interface declares and forwards public behavior; it does not select a driver or implement Engine work.
 
-<br>
+#### Public query vocabulary is typed and canonical
 
-### Database stores Entity values without interpreting their domain meaning
+**Rule:** Public requests use FilterOperator, FilterCombination, and OrderDirection members, never free runtime strings. Serialized configuration stores canonical member names and resolves them during loading; an unknown name fails loading. Filter and Order are immutable values. IS_NULL and IS_NOT_NULL take no value; IN takes a compatible collection; textual operators require textual Fields; comparisons require compatible Field values.
 
-**Rule:** Database derives storage structure from the Entity declarations published by Model and stores and returns the Entity values it receives. It realizes declared Fields, constraints, indexes, Value Generation, and Relations through the selected Instance's Engine. Database does not add behavior based on the application meaning of a Field or value.
+**Boundary:** Field names remain strings because they refer to public Entity Fields, and each is validated against the selected Entity before an Instance is accessed.
 
-**Why:** Persistence remains general-purpose and can apply one consistent storage structure to every Entity value.
+#### Query defaults are deterministic
 
-**Boundary:** Any application behavior based on the meaning of a Field or value belongs outside Database. Database owns only persistence and the declared storage structure.
+**Rule:** List, Count, Sum, Min, and Max accept Filters and FilterCombination; omitted combination resolves from configuration and defaults to AND. List alone accepts ordered Orders and limit. Omitted Orders resolve to `id` ASCENDING. An Order missing direction uses ASCENDING. Omitted limit resolves to `-1`; `0` and every negative value normalize to `-1`, meaning no limit. Positive limit is the maximum returned count.
 
-<br>
+**Boundary:** Supplied Orders replace the default and are applied in supplied order. Aggregate Operations do not accept Order.
 
-### Database publishes Interface only
+#### Entity Operations have one request and result contract
 
-**Rule:** Interface is the only public Database layer. Core and Engine are internal implementation layers; consumers use Database only through Interface.
+**Rule:** Add and Update receive complete Entity instances. GetById, Delete, Enable, and Disable receive an Entity class and `id`; List, Count, and Truncate receive an Entity class; Sum, Min, and Max additionally receive one valid Field name. Update never changes `id` or another immutable Field. GetById, Update, Delete, Enable, and Disable return `null` when no record exists. Delete returns the final deleted Entity. Enable and Disable change only `is_active` and return the final Entity, including when it already has the requested state.
 
-**Why:** One public boundary keeps Engine selection, routing, and shared implementation details out of consumers.
+**Boundary:** A missing record is not an Engine failure. Invalid input, configuration, connection, or execution remains an error.
 
-**Boundary:** Interface publishes Database Operations; it does not make a consumer responsible for Data routing or Engine-specific storage behavior.
+#### ExecuteCommand is the Database-wide Operation
 
-<br>
+**Rule:** ExecuteCommand accepts a SQL command, bound parameters, and optional DatabaseInstance; it executes any valid command supported by the selected Engine and returns CommandResult with `rows`, `affected`, `columns`, `success`, `message`, and `instance`.
 
-### Core routes requests and handles results
+**Boundary:** CreateTables remains the standard schema-preparation path, but ExecuteCommand is not prohibited from changing schema.
 
-**Rule:** Core's Data file implements the shared form of every Database Operation, receives each request from Interface, resolves the requested Instance, forwards the Operation to that Instance's file under `engine`, materializes returned rows as Model Entity instances whenever an Operation publishes Entities, and returns the result according to the published Operation's contract.
+#### Public errors preserve common meaning
 
-**Why:** One Core Data file keeps selection, routing, and result handling consistent across Engines.
+**Rule:** Realizations make configuration or Instance invalidity, inactive Instance selection, invalid input or Field, Declaration incompatibility, connection failure, execution failure, and incomplete Lifecycle execution distinguishable without exposing credentials.
 
-**Boundary:** Data coordinates an Operation; each Instance implementation owns execution through its configured Engine. Core contains no Instance-specific storage behavior.
-
-<br>
-
-### Each active Instance implements the published Operations
-
-**Rule:** Every active Instance has one implementation file isolated from every other Instance. That file implements all published Database Operations through the Instance's configured Engine and connection parameters while preserving the applicable request and result standard.
-
-**Why:** Separate Instance implementations make each configured database independently selectable and maintainable, including when multiple Instances use the same Engine.
-
-**Boundary:** Instance implementations perform storage behavior; the Operation catalogue, routing, and public boundary remain outside them.
+**Boundary:** A language may realize these meanings through its normal error mechanism; the Definition imposes no language-specific Exception hierarchy.
 
 <br>
 
-### Database persists changes atomically
+### Lifecycle Commands
 
-**Rule:** Every successful Operation that changes data persists its complete change atomically in the selected Instance. If such an Operation fails, it leaves no partial change in that Instance.
+#### Lifecycle Commands are separate from Operations
 
-**Why:** Each data change has one reliable result regardless of the selected Engine.
+**Rule:** CreateTables and InsertInitialData are public Lifecycle Commands with generated manual scripts and LifecycleResult containing `command`, `instance`, `success`, `affected`, and `message`. They are not Entity Operations or Database-wide Operations.
 
-**Boundary:** This applies to data-changing Operations, including a changing Execute Command; it does not restrict the commands Execute Command may receive.
+**Boundary:** Manual and after-generation execution invoke the same public commands and do not duplicate their logic inside scripts.
+
+#### CreateTables safely realizes current Declarations
+
+**Rule:** CreateTables uses every public Entity Declaration to create or safely align required Tables, Fields, Primary Keys, Relations, Uniqueness Constraints, and Indexes. Re-execution on an aligned schema succeeds without destructive change. An incompatible or destructive implicit change stops with a clear failure unless the selected migration mechanism has an explicit safe plan.
+
+**Boundary:** It does not copy runtime records between Instances, invent Relation cascade behavior, or silently alter a Declaration. Cross-Instance transfer requires a future explicit command.
+
+#### InsertInitialData is repeatable
+
+**Rule:** InsertInitialData reads the shared Initial Data from Database Configuration, validates each record through its public Entity contract, inserts missing records, skips already-present identical records, and returns success with zero affected items when none are declared.
+
+**Boundary:** It does not silently update, delete, duplicate, or overwrite an existing record. Conflicting Initial Data fails clearly.
+
+#### After-generation preparation uses the default Instance
+
+**Rule:** When enabled, generation runs CreateTables and then InsertInitialData for the active default Instance. InsertInitialData does not run after CreateTables fails. Failure identifies the Instance and command and fails preparation.
+
+**Boundary:** Other active Instances are prepared only by explicit selection.
 
 <br>
 
-### Database publishes Table and Initial Data commands
+### Core
 
-**Rule:** Database publishes separate Create Tables and Insert Initial Data commands. Each command accepts an active Instance, uses that Instance's implementation, and can be run manually for any active Instance. Create Tables creates or migrates the Tables required by the Entity declarations published through Model Interface. Insert Initial Data inserts the declared Initial Data after the required Tables exist.
+#### Core owns shared routing
 
-**Why:** The same explicit commands can prepare any selected Instance without changing Database's public contract.
+**Rule:** Data receives each Interface request, validates public input, resolves defaults and the selected DatabaseInstance, loads its complete configuration, forwards work to that Instance file, materializes published Entity results, and normalizes every result.
 
-**Boundary:** The selected modeling and migration tools provide the implementation mechanism. Database owns the commands and their observable result, not a particular tool's internal workflow.
+**Boundary:** Core does not contain driver calls or Instance-specific storage behavior.
+
+#### Changes are atomic
+
+**Rule:** Every changing Operation and InsertInitialData completes atomically in its selected Instance or leaves no partial data change. CreateTables is atomic when supported; otherwise an incomplete state is explicitly reported as failure. Separate calls do not share a hidden transaction.
+
+**Boundary:** Libraries and Engines choose the technical transaction mechanism.
 
 <br>
 
-<!--------------------------------------------------------------------------------- At_a_Glance --->
+### Engine
+
+#### Every active Instance owns one complete implementation
+
+**Rule:** Generation creates exactly one Engine file per active Instance and none for an inactive Instance. Each file implements all Entity Operations, ExecuteCommand, and the capabilities required by both Lifecycle Commands while preserving public request, result, error, and atomicity meaning.
+
+**Boundary:** An Instance file implements storage behavior but never defines a new public contract or shared routing.
+
+#### Libraries own technical database mechanics
+
+**Rule:** The selected Library and Engine own type mapping, query construction, connection management, transaction mechanics, schema tooling, and driver integration.
+
+**Boundary:** Database Definition contains no Engine-specific SQL map, session algorithm, pool algorithm, or ORM API.
+
+#### Relations add no undeclared behavior
+
+**Rule:** An Engine realizes a declared Relation as a compatible foreign key or equivalent constraint. A conflicting change is rejected atomically.
+
+**Boundary:** No cascade, nested persistence, eager loading, or related-Entity mutation is invented from a Relation.
+
+<br>
+
+### Configuration and Storage
+
+#### Configuration has one runtime source
+
+**Rule:** `database.yaml` defines the Component contract and generation defaults. Generation produces `config.yaml`; after generation, config is the sole runtime source for Engines, complete Instances, Settings, and Initial Data. Runtime never reads `database.yaml`, and runtime configuration never writes back to it.
+
+**Boundary:** Regeneration may rebuild config from current Target input and Preferences; no hidden merge or second runtime source exists.
+
+#### Every Instance is complete and valid
+
+**Rule:** Each Instance has a unique key, name, active state, Engine, host, port, database, username, password, and options. Engine-specific validation requires applicable values and allows inapplicable values to remain empty. The default Instance exists, is active, and is published through DatabaseInstance. Updating an Instance replaces and revalidates its complete definition.
+
+**Boundary:** Consumers select a DatabaseInstance member; Core resolves connection values. Credentials are never members of DatabaseInstance or repeated in Operation requests.
+
+#### Active Instances determine generated and public resources
+
+**Rule:** Exactly active Instances become DatabaseInstance members and Engine files. Configuration loading rejects an unknown, inactive, colliding, or unresolved Instance selection.
+
+**Boundary:** Changing active membership takes effect through resolved configuration and the next generation where files must change.
+
+#### File storage remains Database-owned and persistent
+
+**Rule:** A file-backed Instance resolves its configured database path from Database's `db` storage root. The resolved path never depends on package installation, site-packages, a virtual environment, process working directory, or a consuming Component.
+
+**Boundary:** An invalid or escaping path fails before connection. Only Database creates and manages its storage files.
+
+#### Initial Data is shared configuration
+
+**Rule:** Configuration contains one shared Initial Data collection keyed by public Entity identity. The same collection may be applied to any active Instance; Instance selection changes only its destination.
+
+**Boundary:** Initial Data is not Model-owned and is not duplicated in Engine files or per-Instance definitions.
+
+<br>
+
+### Documentation
+
+#### Documentation explains the complete public contract
+
+**Rule:** Root README documents active Instance selection, every public capability group, all query vocabulary, defaults, result contracts, both manual Lifecycle Commands, Initial Data, persistent storage resolution, setup, verification, and Database-specific troubleshooting with complete examples.
+
+**Boundary:** Documentation does not create behavior absent from this Definition and does not expose credentials or Engine internals.
+
+<br>
+
 ## At a Glance
 
-Every obligation in the file, under the Principle it comes from.
+### General
 
-**Database configuration declares its available resources**
+**Database owns one canonical Architecture**
 
-- **Must** — declare every Engine, its parameters, named Instances, and component Settings in Database Configuration.
-- **Must** — make every active Instance name a declared Engine, every configured Instance reference resolve to a declared Instance, and the default Instance active.
-- **Must** — publish exactly the active Instances through the Instance Enum.
-- **Must** — generate one implementation file for every active Instance, including separate files for Instances that use the same Engine.
+- **Must** — preserve the canonical root, Core, Engine, storage, configuration, and Documentation ownership.
+- **Never** — place an internal source file outside Core or its owning Engine file, or place source code in `db`.
 
-**Database is implementation-independent**
+**Database preserves one observable contract**
 
-- **Must** — preserve Database Architecture, Interface Operations, Instance selection, request and result meaning, routing, and ownership across Agents, languages, packages, and database technologies.
-- **Must** — treat language, package, driver, and migration-tool choices as realization details only.
-- **Never** — change Database meaning to accommodate an Agent or selected technology.
+- **Must** — keep Database meaning stable across languages, packages, libraries, and Engines.
+- **Never** — change public behavior to accommodate a selected technology.
 
 **Database consumes Model without owning it**
 
-- **Must** — consume published Entity classes and public declarations through Model Interface only.
-- **Must** — create, generate, build, test, and document only Database's own Component output.
-- **Never** — import Model internals or write, generate, build, test, or create an artifact under Model's Component directory.
+- **Must** — consume public Entity classes and Declarations through Model Interface only.
+- **Never** — change, generate, build, test, or document Model output.
 
-**Database has one canonical Architecture**
+**Database stores values without interpreting domain meaning**
 
-- **Must** — provide one root Interface file, `core/`, `engine/`, `db/`, generated `config.yaml`, and root `README.md`.
-- **Must** — keep `data`, `tables`, `initial_data`, and every additional internal Database source file in `core/`; keep exactly one implementation file for each active Instance in `engine/`.
-- **Must** — keep database storage files in `db/`.
-- **Never** — rename or relocate a canonical Architecture member; put Instance-specific storage behavior in Core, shared routing or public Operations in an Instance file, source files in `db/`, or a public Database surface outside Interface.
+- **Must** — persist declared Entity meaning and metadata without adding application behavior.
+- **Never** — mask, hash, authorize, or otherwise reinterpret an Entity Field because of its meaning.
 
-**Database exposes explicit Interface Operations**
+**Generation verifies Database without changing dependencies**
 
-- **Must** — publish the Operations described by Interface.
-- **Must** — publish Database, the active Instance Enum, Create Tables, and Insert Initial Data through Interface.
-- **Must** — receive an Entity class or Entity instance directly, never a Model name or identity.
-- **Must** — publish the active Instance Enum, accept an optional Instance member, and use the configured default Instance when it is omitted.
-- **Must** — persist a complete supplied Entity instance during Add and return it with any Engine-generated values.
-- **Must** — use `id` only to locate an update; never change it or an immutable Field; update every mutable Field from the complete supplied Entity instance.
-- **Must** — return `null` when an id-based update, Enable, Disable, or Get by ID finds no record.
-- **Must** — set `is_active` to `true` for Enable and `false` for Disable.
-- **Must** — let Delete return `true` when it deletes a record and `false` when it finds none; let Truncate return its deleted-record count.
-- **Must** — let List accept optional Filters, an optional Filter Combination enum member, an ordered list of Orders, and an optional limit; use the configured defaults when omitted, and treat `0` or a negative limit as no limit.
-- **Must** — use an Entity Field name string, Filter Operator enum member, and value for every Filter; validate the Field name against the selected Entity and support the declared operator vocabulary without complex grouping.
-- **Must** — use an Entity Field name string and Order Direction enum member for every Order, in supplied order.
-- **Never** — accept an enum value, including a Filter Combination, as a string through a public Database Action.
-- **Must** — let Count, Sum, Min, and Max accept optional Filters and a Filter Combination; return `0` for empty Count or Sum and `null` for empty Min or Max; ignore `null` aggregate values.
-- **Must** — let Sum, Min, and Max receive an Entity Field name string.
-- **Must** — let Execute Command receive a SQL command and bound parameters, execute it through the selected Instance without changing schema, and return rows and affected count as a Command Result.
-- **Must** — let Create Tables and Insert Initial Data receive an active Instance and be callable through Interface and as manual commands.
+- **Must** — verify Architecture, active Instance resources, Interface, config, storage, Engine completeness, Documentation, and zero-diff regeneration.
+- **Never** — mutate another Component during Database generation or verification.
 
-**Database stores Entity values without interpreting their domain meaning**
+<br>
 
-- **Must** — derive storage structure from Entity declarations published through Model Interface.
-- **Must** — apply each Entity Field's declared Type, constraints, indexes, defaults, and persistence metadata through the selected Instance's Engine.
-- **Must** — realize every declared Relation as a foreign key from its local Field to the target Entity and target Field.
-- **Never** — add application behavior because of a Field or value's domain meaning.
+### Interface
 
-**Database publishes Interface only**
+**Interface is the only public Database boundary**
 
-- **Must** — provide Interface as the single gateway through which other Components store, retrieve, and operate on Database data.
-- **Must** — publish Database Operations through Interface only.
-- **Never** — expose Core or Engine as a consumer surface.
+- **Must** — publish DatabaseInstance, every member of the three conceptual capability groups, query vocabulary, CommandResult, and LifecycleResult through Interface.
+- **Never** — expose Core, Engine, connection configuration, credentials, or storage paths as public surfaces.
 
-**Core routes requests and handles results**
+**Public query vocabulary is typed and canonical**
 
-- **Must** — use Core's Data file to route every Interface request to the selected Instance's implementation file.
-- **Must** — materialize returned rows as Model Entity instances when an Operation publishes Entities, and return each result according to the published Operation's contract.
+- **Must** — use canonical enum members at runtime and validate every referenced Entity Field before Instance access.
+- **Never** — accept a free runtime string for FilterOperator, FilterCombination, or OrderDirection.
 
-**Each active Instance implements the published Operations**
+**Query defaults are deterministic**
 
-- **Must** — keep one isolated implementation file for every active Instance.
-- **Must** — implement all published Operations with that Instance's Engine and connection parameters.
-- **Must** — preserve each Operation's applicable request and result standard.
+- **Must** — apply AND, `id` ASCENDING, and unlimited `-1` defaults as defined.
+- **Must** — preserve supplied Order sequence and restrict Order to List.
 
-**Database persists changes atomically**
+**Entity Operations have one request and result contract**
 
-- **Must** — persist every successful data-changing Operation atomically in its selected Instance.
-- **Never** — leave a partial change when a data-changing Operation fails.
+- **Must** — preserve every Entity Operation's exact Entity input, immutable Field, missing-record, and result meaning.
+- **Must** — let Enable and Disable change only `is_active` and let Delete return the final deleted Entity.
 
-**Database publishes Table and Initial Data commands**
+**ExecuteCommand is the Database-wide Operation**
 
-- **Must** — provide separate Create Tables and Insert Initial Data commands for a selected active Instance.
+- **Must** — run any valid command supported by the selected Engine and return CommandResult.
+- **Never** — impose the removed schema-change restriction on ExecuteCommand.
+
+**Public errors preserve common meaning**
+
+- **Must** — distinguish public configuration, selection, validation, compatibility, connection, execution, and incomplete-Lifecycle failures.
+- **Never** — expose credentials in an error.
+
+<br>
+
+### Lifecycle Commands
+
+**Lifecycle Commands are separate from Operations**
+
+- **Must** — keep CreateTables and InsertInitialData separate from Operations and callable through Interface and manual scripts.
+- **Must** — return LifecycleResult from either invocation path.
+
+**CreateTables safely realizes current Declarations**
+
+- **Must** — create or safely align schema without hidden destructive change.
+- **Never** — copy runtime records between Instances or invent relationship behavior.
+
+**InsertInitialData is repeatable**
+
+- **Must** — insert shared Initial Data repeatably without silent overwrite, deletion, or duplication.
+- **Must** — validate every Initial Data record through its public Entity contract.
+
+**After-generation preparation uses the default Instance**
+
+- **Must** — prepare the default Instance in CreateTables-then-InsertInitialData order when enabled.
+- **Never** — run InsertInitialData after CreateTables fails or prepare other Instances implicitly.
+
+<br>
+
+### Core
+
+**Core owns shared routing**
+
+- **Must** — validate, resolve, route, materialize, and normalize through Core Data.
+- **Never** — put Instance-specific driver behavior in Core.
+
+**Changes are atomic**
+
+- **Must** — keep changing requests atomic and report incomplete schema work explicitly.
+- **Never** — create a hidden transaction across separate public calls.
+
+<br>
+
+### Engine
+
+**Every active Instance owns one complete implementation**
+
+- **Must** — generate one complete implementation file for every active Instance and none for an inactive Instance.
+- **Never** — define public contracts or shared routing in an Instance file.
+
+**Libraries own technical database mechanics**
+
+- **Must** — delegate database mechanics to the selected Library and Engine while preserving the public contract.
+- **Never** — define an Engine-specific SQL, session, pool, or ORM algorithm in the general contract.
+
+**Relations add no undeclared behavior**
+
+- **Must** — realize declared Relations as compatible constraints.
+- **Never** — invent cascade, eager loading, nested persistence, or related-Entity mutation.
+
+<br>
+
+### Configuration and Storage
+
+**Configuration has one runtime source**
+
+- **Must** — use generated config as the sole runtime source.
+- **Never** — read Database Preferences at runtime or maintain a hidden second source.
+
+**Every Instance is complete and valid**
+
+- **Must** — validate the complete Instance definition and replace it as one unit during Update.
+- **Never** — require a consumer to resend connection values with an Operation.
+
+**Active Instances determine generated and public resources**
+
+- **Must** — publish and generate resources from active Instances only and keep the default Instance active.
+- **Never** — accept an unknown, inactive, colliding, or unresolved Instance selection.
+
+**File storage remains Database-owned and persistent**
+
+- **Must** — resolve file storage from Database-owned `db`.
+- **Never** — resolve persistent storage from a package, virtual environment, working directory, or consumer.
+
+**Initial Data is shared configuration**
+
+- **Must** — keep one shared Initial Data collection usable by every active Instance.
+- **Never** — put Initial Data in Model, an Instance definition, or an Engine file.
+
+<br>
+
+### Documentation
+
+**Documentation explains the complete public contract**
+
+- **Must** — explain every public contract and its use with complete examples.
+- **Never** — define new behavior or expose secrets and Engine internals.

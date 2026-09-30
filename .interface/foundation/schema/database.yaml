@@ -1,7 +1,7 @@
 schema:
   id: "agent-interface-database-configuration"
-  version: "2.1"
-  purpose: "The independent structure of Database config.yaml: supported Engines and their parameters, named Instances, and component Settings."
+  version: "3.0"
+  purpose: "The independent structure of Database config.yaml: Engines, complete Instances, runtime Settings, query defaults, Lifecycle behavior, and shared Initial Data."
   kind: "Structure standard"
   applies_when: "The Implementation declares a Database Component."
   generates: "<database component path>/config.yaml"
@@ -11,7 +11,7 @@ structure:
 
   engines:
     required: true
-    purpose: "The database Engines supported by the component."
+    purpose: "Database Engines supported by the generated Component."
     shape:
       "<engine-key>":
         name: "<human-readable engine name>"
@@ -20,33 +20,59 @@ structure:
 
   instances:
     required: true
-    purpose: "Named database identities, each using one declared Engine."
+    purpose: "Complete named database identities; Engine validation determines which connection values must be non-empty."
     shape:
       "<instance-key>":
-        name: "<human-readable instance name>"
-        active: "<whether the Instance is available through Database Interface>"
-        purpose: "<what this instance stores>"
+        name: "<unique human-readable Instance name>"
+        active: "<boolean>"
         engine: "<engine-key declared under engines>"
-        database: "<database identity>"
-        host: "<host or empty>"
-        port: "<port or empty>"
-        path: "<storage path or empty>"
-        username: "<username or empty>"
-        password: "<password or empty>"
-        parameters: "<instance-specific configuration mapping>"
+        host: "<host or null>"
+        port: "<integer port or null>"
+        database: "<database identity or file name>"
+        username: "<username or null>"
+        password: "<password or null>"
+        options: "<instance-specific configuration mapping>"
 
   settings:
     required: true
-    purpose: "Component-wide Database settings."
+    purpose: "Component-wide runtime settings and canonical serialized query defaults."
     shape:
-      default_instance: "<instance-key declared under instances>"
-      parameters: "<component-specific configuration mapping>"
+      default_instance: "<active instance-key declared under instances>"
+      storage_root: "<Database-owned storage directory>"
+      query:
+        filter_combination: "<FilterCombination member name: AND or OR>"
+        default_limit: "<integer; zero or a negative value normalizes to -1>"
+        default_order:
+          field: "<public Entity Field name; default id>"
+          direction: "<OrderDirection member name: ASCENDING or DESCENDING>"
+      lifecycle:
+        after_generation:
+          enabled: "<boolean>"
+          instance: "<instance-key or default_instance>"
+          fail_on_error: "<boolean>"
+          commands: "<ordered Lifecycle Command names>"
+
+  initial_data:
+    required: true
+    purpose: "One shared, repeatable Initial Data collection that can target any active Instance."
+    shape:
+      - entity: "<public Entity identity>"
+        records: "<ordered list of complete Entity-compatible field mappings>"
 
 # <!--------------------------------------------------------------------------------- Rules -->
 rules:
-  instance_support: "Every active Instance has one implementation file under the fixed engine directory. Two active Instances using the same Engine still have separate files."
+  sole_runtime_source: "Generated config.yaml is the sole runtime source. Runtime does not read Database Preferences."
+  instance_identity: "Every Instance key and normalized public DatabaseInstance member is unique."
+  instance_completeness: "Every Instance contains name, active, engine, host, port, database, username, password, and options; its Engine validates applicable required values."
   instance_integrity: "Every Instance names an existing Engine."
-  setting_integrity: "settings.default_instance names an active existing Instance."
+  default_integrity: "settings.default_instance names an active existing Instance."
+  active_publication: "Exactly active Instances become DatabaseInstance members and receive Engine implementation files."
+  complete_update: "Updating an Instance replaces and revalidates its complete definition; no hidden partial merge occurs."
+  query_vocabulary: "Serialized enum defaults use canonical member names and resolve before any public call; unknown names fail configuration loading."
+  limit_normalization: "An omitted limit uses -1; zero and every negative limit normalize to -1, meaning no limit."
+  storage_ownership: "A file-backed database path resolves beneath settings.storage_root in the Database Component and may not escape it or resolve from an installed package, virtual environment, working directory, or consumer."
+  initial_data_ownership: "Initial Data is shared Database Configuration, not Model data and not per-Instance or Engine-file content."
+  lifecycle_order: "When enabled, after-generation commands run in listed order; a failed command prevents later commands and fails preparation when fail_on_error is true."
 
 # <!--------------------------------------------------------------------------------- Example -->
 example: |
@@ -60,32 +86,45 @@ example: |
       name: "PostgreSQL"
       driver: "postgresql"
       parameters: {}
+
   instances:
     sqlite:
       name: "SQLite"
       active: true
-      purpose: "Default application data."
       engine: "sqlite"
+      host: null
+      port: null
       database: "application.db"
-      host: ""
-      port: ""
-      path: "db/application.db"
-      username: ""
-      password: ""
-      parameters: {}
+      username: null
+      password: null
+      options: {}
     postgresql:
       name: "PostgreSQL"
       active: true
-      purpose: "Application data on PostgreSQL."
       engine: "postgresql"
-      database: "application"
       host: "127.0.0.1"
-      port: "5432"
-      path: ""
+      port: 5432
+      database: "application"
       username: "postgres"
-      password: "<secret reference or empty when local authentication does not require one>"
-      parameters: {}
+      password: ""
+      options: {}
 
   settings:
     default_instance: "sqlite"
-    parameters: {}
+    storage_root: "db"
+    query:
+      filter_combination: "AND"
+      default_limit: -1
+      default_order:
+        field: "id"
+        direction: "ASCENDING"
+    lifecycle:
+      after_generation:
+        enabled: true
+        instance: "default_instance"
+        fail_on_error: true
+        commands:
+          - "create_tables"
+          - "insert_initial_data"
+
+  initial_data: []
