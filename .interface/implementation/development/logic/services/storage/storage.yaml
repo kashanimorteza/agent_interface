@@ -4,8 +4,8 @@ meta:
   path_note: "The Preferences layer of the fixed Storage Role inside the Logic Component."
   purpose: "Configurable names and realization defaults for Storage Service."
   standard: "Agent Project Interface"
-  version: "3.2"
-  updated: "2026-09-29"
+  version: "4.0"
+  updated: "2026-09-30"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -16,10 +16,10 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings first to preserve the fixed Logic owner and Storage Role while resolving the configurable Service name, root Interface publication, API Group generation, and Action API-generation settings; then read layout. Read Storage Service Definition for responsibilities, Action derivation, naming, validation, and mandatory Behaviour. Resolve the language and shared development conventions from Logic Preferences."
+  consumption: "Read settings first to preserve the fixed Logic owner and Storage Role while resolving the configurable Service name, root Interface publication, API Group generation, and Action API-generation settings; then read layout. Read Database Interface and derive exactly one Action from every Entity Operation, Database-wide Operation, and Lifecycle Command together with the exact supporting contracts. Resolve the language and shared development conventions from Logic Preferences."
   selection: "Use these defaults when the Target is silent. Preserve an explicit compatible Target choice; raise an unresolved incompatible choice rather than inventing one."
   version_resolution: "Storage Service introduces no independently versioned technology; versions resolve through Logic and Development Preferences."
-  matching: "Match each Action-name override to the stable identity of an Operation currently published by Database Interface and each Action API-generation override to one callable Action identity published by Storage Service Interface. Derive a normalized base name when no naming override exists, reject unknown overrides, and preserve the responsibilities declared by Storage Service Definition."
+  matching: "Match each Action-name override to the stable identity and group of an Entity Operation, Database-wide Operation, or Lifecycle Command currently published by Database Interface and each Action API-generation override to one callable Action identity published by Storage Service Interface. Derive a normalized base name when no naming override exists, reject unknown or regrouped overrides, and preserve the responsibilities declared by Storage Service Definition."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:

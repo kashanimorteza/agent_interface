@@ -84,7 +84,7 @@ The names shown are defaults selected by Logic Preferences. Changing a name chan
 ## Relationships
 
 - **Consumes Model** — imports the authoritative Entities published through Model's Interface.
-- **Consumes Database** — reaches Database Interface only from the internal Storage Service; every other Logic Service uses Storage Service Interface instead.
+- **Consumes Database** — reaches Database Interface only from the internal Storage Service; Storage derives Actions from Database's Entity Operations, Database-wide Operations, and Lifecycle Commands, while every other Logic Service uses Storage Service Interface instead.
 - **Consumes Development** — takes from it what Logic does not choose for itself: its identity, its technology, and the Connections it is permitted to make.
 - **Consumes Platform** — receives the runtime values its configuration contract requires.
 - **Consumed by API** — provides the Interface through which API carries out the Operations Logic offers.
@@ -170,7 +170,7 @@ Every Principle below is mandatory and belongs to the Architecture or Layering c
 
 #### Logic owns Behaviour
 
-**Rule:** Logic's Services apply Model-declared constraints when an Operation requires them, apply operation and application-context rules, including applicable authorization and Target-defined quotas, and return Application Outcomes. The root Logic Interface only publishes Service Interfaces and implements none of this Behaviour. Behaviour remains independent of transport and storage.
+**Rule:** Logic's Services apply Model-declared constraints when an Operation requires them, apply only the operation and application-context rules declared by Target or their Service contract, and return Application Outcomes. The root Logic Interface only publishes Service Interfaces and implements none of this Behaviour. Behaviour remains independent of transport and storage.
 **Why:** One owner for Behaviour keeps the same rule from being written differently in the API, the Database, and the Presentation.
 **Boundary:** Model declares constraints determinable from a single Domain Definition's own data; Database owns storage guarantees. Logic applies Model-declared constraints when an Operation requires them without redefining them, and does not restate Database guarantees.
 
@@ -276,6 +276,8 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — Return each Action's own declared result or expected failure.
 - **Never** — Generate or add a common outcome wrapper merely because Logic uses the term Application Outcome.
 
+<br>
+
 ### Interface
 
 **Logic Interface publishes enabled Service Interfaces only**
@@ -295,6 +297,8 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — Validate Service names and directories for the selected language and uniqueness after normalization.
 - **Never** — Resolve an invalid or colliding Service identity with an invented suffix, number, or silent rename.
+
+<br>
 
 ### Services
 
@@ -329,6 +333,8 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — Use finite timeouts and bounded retries only for safe or idempotent operations.
 - **Never** — Retry without a limit.
+
+<br>
 
 ### Configuration
 

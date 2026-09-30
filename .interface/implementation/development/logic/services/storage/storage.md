@@ -1,6 +1,6 @@
 # Storage Service Definition
 
-Storage Service is the fixed internal Logic Service whose Interface gives other Logic Services access to every Operation published by Database.
+Storage Service is the fixed internal Logic Service whose Interface gives other Logic Services access to every public capability published by Database.
 
 <br>
 
@@ -24,17 +24,17 @@ Storage Service is the fixed internal Logic Service whose Interface gives other 
 
 ### Overview
 
-Storage Service is one of the two fixed internal Services of every Logic Component. It is Logic's complete gateway to Database: for every Operation currently published by Database Interface, Storage Service provides one corresponding Action. Its Interface also republishes the exact active Database Instance Enum and request Vocabulary accepted by those Actions. Its implementation remains internal, its Interface is not published through Logic Interface by default, and API Group generation is disabled by default.
+Storage Service is one of the two fixed internal Services of every Logic Component. It is Logic's complete gateway to Database: for every Entity Operation, Database-wide Operation, and Lifecycle Command currently published by Database Interface, Storage Service provides one corresponding Action. Its Interface also republishes the exact DatabaseInstance, request Vocabulary, and result contracts required by those Actions. Its implementation remains internal, its Interface is not published through Logic Interface by default, and API Group generation is disabled by default.
 
 ### Purpose
 
-Logic Services need one controlled route to persistence. Storage Service provides that route through its own Service Interface without exposing Database internals. Entity Service and every other internal Logic Service use it whenever they need Database. Its publication setting may explicitly expose that Interface through Logic Interface, but the default keeps raw persistence and Database-wide commands internal.
+Logic Services need one controlled route to persistence. Storage Service provides that route through its own Service Interface without exposing Database internals. Entity Service and every other internal Logic Service use it whenever they need Database. Its publication setting may explicitly expose that Interface through Logic Interface, but the default keeps raw persistence and Lifecycle capabilities internal.
 
 ### How It Works
 
-Storage Service carries an Interface and an Actions directory. It reads the authoritative Operation catalogue and Instance Enum from Database Interface. For every published Operation, it creates one corresponding Action file. That Action accepts the request defined by Database, forwards the request and selected Instance Enum member unchanged through Database Interface, and returns Database's declared result without adding a wrapper.
+Storage Service carries an Interface and an Actions directory. It reads the three authoritative capability groups and DatabaseInstance from Database Interface. For every published Entity Operation, Database-wide Operation, and Lifecycle Command, it creates one corresponding Action file. That Action accepts the request defined by Database, forwards the request and selected DatabaseInstance member unchanged through Database Interface, and returns Database's declared result without adding a wrapper.
 
-Every Action and its file are named `<service>_<action>`. The configured Service name is normalized, followed by exactly one underscore and the configured Action base name. With the default Service name, examples include `storage_add`, `storage_update`, and `storage_execute_command`. An Action-name override may replace an Operation's derived base name, but it never changes the Operation's identity or contract.
+Every Action and its file are named `<service>_<action>`. The configured Service name is normalized, followed by exactly one underscore and the configured Action base name. With the default Service name, examples include `storage_add`, `storage_execute_command`, and `storage_create_tables`. An Action-name override may replace a capability's derived base name, but it never changes that capability's identity, group, or contract.
 
 <br>
 
@@ -44,12 +44,13 @@ Every Action and its file are named `<service>_<action>`. The configured Service
 - **Storage Role** — the fixed identity of this Service inside Logic, independent of its configurable public name.
 - **Storage Service Interface** — this Service's outward gateway for internal Logic collaboration, exposed unchanged through Logic Interface only when `publish_in_logic_interface` is enabled.
 - **API Generation Setting** — the Service-level `generate_api` value that may request one Storage API Group only when root publication is also enabled; its default is `false`.
-- **Action** — one Storage Service capability corresponding to one Operation published by Database Interface.
-- **Operation Identity** — the stable identity by which an Action and any configured override are matched to a Database Operation.
+- **Action** — one Storage Service capability corresponding to one Entity Operation, Database-wide Operation, or Lifecycle Command published by Database Interface.
+- **Database Capability Identity** — the stable identity and group by which an Action and any configured override are matched to a Database capability.
 - **Published Action Name** — the identifier formed as `<service>_<action>` from the configured Service name and derived or overridden Action base name.
-- **Database Instance Enum** — the exact enum published by Database Interface for its active Instances and republished unchanged by Storage Service Interface.
-- **Database Request Vocabulary** — the exact Filter, Filter Operator, Filter Combination, Order, and Order Direction types published by Database Interface and republished unchanged by Storage Service Interface.
-- **Execute Command** — the Database capability that accepts a SQL command and bound parameters and returns Database's published Command Result.
+- **DatabaseInstance** — the exact enum published by Database Interface for its active Instances and republished unchanged by Storage Service Interface.
+- **Database Request Vocabulary** — the exact Filter, FilterOperator, FilterCombination, Order, and OrderDirection types published by Database Interface and republished unchanged by Storage Service Interface.
+- **Database Result Contracts** — the exact CommandResult and LifecycleResult types published by Database Interface and republished unchanged by Storage Service Interface.
+- **ExecuteCommand** — the Database-wide Operation that accepts a SQL command and bound parameters and returns CommandResult.
 
 <br>
 
@@ -71,8 +72,8 @@ The names shown are defaults selected by Storage Service Preferences. Changing a
 ## Relationships
 
 - **Belongs to Logic** — is a fixed Service whose Interface always exists but is published through Logic Interface only when configured.
-- **Consumes Database** — discovers and uses every Database Operation, the active Database Instance Enum, and required request Vocabulary only through Database Interface.
-- **Consumed by Entity Service** — provides the Entity-bound Database Actions, Instance Enum, and request Vocabulary that Entity Service uses.
+- **Consumes Database** — discovers and uses every member of Database's three public capability groups, DatabaseInstance, request Vocabulary, and result contracts only through Database Interface.
+- **Consumed by Entity Service** — provides the Entity Operation Actions, DatabaseInstance, and query Vocabulary that Entity Service uses.
 - **Consumed by other Logic Services** — provides their only route to Database whenever their Behaviour requires persistence.
 - **Optionally consumed by Logic consumers** — becomes externally reachable only when its Interface publication setting is enabled; it is internal-only by default.
 
@@ -83,7 +84,7 @@ The names shown are defaults selected by Storage Service Preferences. Changing a
 
 - **Entity-oriented convenience and Entity-specific Behaviour** — belong to Entity Service; Storage Service remains the raw Database gateway and does not absorb them.
 - **Operation execution, Engine selection, connections, transactions, and result production** — belong to Database; Storage Service only requests published capabilities.
-- **Operation meaning, identity, membership, and validity** — belong to Database Interface; Storage Service mirrors the catalogue without redefining it.
+- **Capability meaning, group, identity, membership, and validity** — belong to Database Interface; Storage Service mirrors them without redefining them.
 - **Logic's root publication of Services** — belongs to Logic Interface and follows this Service's publication setting; Storage Service owns only its own Interface.
 
 <br>
@@ -93,11 +94,11 @@ The names shown are defaults selected by Storage Service Preferences. Changing a
 
 ### Interface
 
-The outward gateway of Storage Service. It presents every derived Storage Action and republishes the exact Database Instance Enum and Database Request Vocabulary without recreating, renaming, converting, or copying them. Internal Logic Services may import it directly. Logic Interface exposes it unchanged under the configured Service name only when `publish_in_logic_interface` is enabled.
+The outward gateway of Storage Service. It presents every derived Storage Action and republishes the exact DatabaseInstance, Database Request Vocabulary, and Database Result Contracts without recreating, renaming, converting, or copying them. Internal Logic Services may import it directly. Logic Interface exposes it unchanged under the configured Service name only when `publish_in_logic_interface` is enabled.
 
 ### Actions
 
-The directory containing one Action file for every Operation currently published by Database Interface. Each file uses the published Action name, preserves its Operation's request and result contract, delegates to Database Interface, and contains no persistence implementation. A newly published Database Operation receives a derived Action automatically even when no override exists.
+The directory containing one Action file for every Entity Operation, Database-wide Operation, and Lifecycle Command currently published by Database Interface. Each file uses the published Action name, preserves its capability group and request and result contract, delegates to Database Interface, and contains no persistence implementation. A newly published Database capability receives a derived Action automatically even when no override exists.
 
 <br>
 
@@ -137,45 +138,45 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 ### Interface
 
-#### Storage Service Interface follows Database's complete Operation catalogue
+#### Storage Service Interface follows Database's complete capability catalogue
 
-**Rule:** Storage Service reads Database Interface as the authority for Operation membership and publishes exactly one corresponding Action for every Operation currently published there. A missing Action-name override never removes an Action; its name is derived from the Operation identity.
-**Why:** Storage Service remains complete when Database adds or removes an Operation without maintaining a second manual catalogue.
-**Boundary:** Storage Service neither adds an Operation absent from Database Interface nor treats a display label as a new Operation identity.
+**Rule:** Storage Service reads Database Interface as the authority for membership in Entity Operations, Database-wide Operations, and Lifecycle Commands and publishes exactly one corresponding Action for every member currently published there. A missing Action-name override never removes an Action; its name is derived from the stable capability identity.
+**Why:** Storage Service remains complete when Database adds, removes, or regroups a public capability without maintaining a second manual catalogue.
+**Boundary:** Storage Service neither adds a capability absent from Database Interface nor moves one to another group or treats a display label as a new identity.
 
-#### Storage Service Interface republishes exact Database request types
+#### Storage Service Interface republishes exact Database supporting contracts
 
-**Rule:** Storage Service Interface republishes the same Database Instance Enum, Filter, Filter Operator, Filter Combination, Order, and Order Direction objects or types published by Database Interface. Actions accept and pass these values unchanged; Storage Service creates no alternate request type, identity, name, or value.
+**Rule:** Storage Service Interface republishes the same DatabaseInstance, Filter, FilterOperator, FilterCombination, Order, OrderDirection, CommandResult, and LifecycleResult objects or types published by Database Interface. Actions accept, pass, and return these values unchanged; Storage Service creates no alternate request or result type, identity, name, or value.
 **Why:** A copied type may look identical while remaining incompatible with the Database request contract.
-**Boundary:** Republishing request Vocabulary exposes no Engine, connection, credential, session, mapping, configuration, or other private Database detail.
+**Boundary:** Republishing supporting contracts exposes no Engine, connection, credential, session, mapping, configuration, storage path, or other private Database detail.
 
 #### Published Action names identify Storage Service
 
 **Rule:** Every Storage Action and corresponding Action file is named `<service>_<action>`. The configured Service name comes first, followed by exactly one underscore and the derived or overridden Action base name. Values are normalized only by the selected language's declared identifier convention.
 **Why:** An Action remains visibly owned by Storage Service wherever another Service imports or calls it.
-**Boundary:** The prefixed name identifies the Logic Service Action; it neither renames nor alters the corresponding Database Operation identity.
+**Boundary:** The prefixed name identifies the Logic Service Action; it neither renames nor alters the corresponding Database capability identity or group.
 
 #### Storage Interface identifiers are valid and unique
 
-**Rule:** The configured Service name, every Action base name, every final Action name, and every public Interface export are valid for the selected language and unique after declared normalization. An Action name never collides with the Database Instance Enum or another Interface export.
-**Why:** Two Operations cannot share one callable Action and an invalid identifier cannot be realized safely.
+**Rule:** The configured Service name, every Action base name, every final Action name, and every public Interface export are valid for the selected language and unique after declared normalization. An Action name never collides with DatabaseInstance or another Interface export.
+**Why:** Two Database capabilities cannot share one callable Action and an invalid identifier cannot be realized safely.
 **Boundary:** An invalid, reserved, or colliding value stops generation with a clear configuration error. The generator never invents a suffix, number, or silent rename.
 
 <br>
 
 ### Actions
 
-#### Every Action preserves its Database Operation contract
+#### Every Action preserves its Database capability contract
 
-**Rule:** Every Storage Action accepts its Database Operation's request, forwards that request and the selected Database Instance Enum member unchanged through Database Interface, and returns the declared result unchanged. When the Instance is omitted, Database chooses its configured default. Storage Service adds no result envelope or persistence interpretation.
+**Rule:** Every Storage Action accepts its Database capability's request, forwards that request and the selected DatabaseInstance member unchanged through Database Interface, and returns the declared result unchanged. When the Instance is omitted, Database chooses its configured default. Storage Service adds no result envelope or persistence interpretation.
 **Why:** Database remains the single authority for persistence while Logic provides one consistent gateway for every Database request.
-**Boundary:** Storage Service never selects an Engine or default Instance, exposes Database internals, or classifies Execute Command as safe to retry.
+**Boundary:** Storage Service never selects an Engine or default Instance, exposes Database internals, or classifies ExecuteCommand or a Lifecycle Command as safe to retry.
 
-#### Action overrides match stable Database Operations
+#### Action overrides match stable Database capabilities
 
-**Rule:** Each configured Action-name override names one existing Database Operation by its stable identity. An Operation without an override uses a derived base name. An override for an unknown or removed Operation is a configuration error and is never ignored.
+**Rule:** Each configured Action-name override names one existing Database capability by its stable identity. A capability without an override uses a derived base name. An override for an unknown, removed, or regrouped identity is a configuration error and is never ignored.
 **Why:** Overrides remain deliberate naming choices instead of a stale second catalogue of Database capabilities.
-**Boundary:** An override changes only the Storage Action's published name; it never changes Operation membership, identity, request, or result meaning.
+**Boundary:** An override changes only the Storage Action's published name; it never changes capability membership, group, identity, request, or result meaning.
 
 <br>
 
@@ -201,36 +202,40 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — Require every internal Logic Service needing Database to use Storage Service Interface.
 - **Never** — Let another internal Logic Service call Database Interface or Database internals directly.
 
+<br>
+
 ### Interface
 
-**Storage Service Interface follows Database's complete Operation catalogue**
+**Storage Service Interface follows Database's complete capability catalogue**
 
-- **Must** — Derive exactly one Action for every Operation currently published by Database Interface.
-- **Never** — Maintain a second authoritative Operation catalogue or omit an Operation because no override exists.
+- **Must** — Derive exactly one Action for every Entity Operation, Database-wide Operation, and Lifecycle Command currently published by Database Interface.
+- **Never** — Maintain a second authoritative catalogue, omit a capability because no override exists, or change its group.
 
-**Storage Service Interface republishes exact Database request types**
+**Storage Service Interface republishes exact Database supporting contracts**
 
-- **Must** — Republish and pass the exact Database Instance Enum and request Vocabulary unchanged.
-- **Never** — Recreate, rename, convert, or copy Database request types or identities.
+- **Must** — Republish and pass the exact DatabaseInstance, request Vocabulary, CommandResult, and LifecycleResult unchanged.
+- **Never** — Recreate, rename, convert, or copy Database request or result contracts or identities.
 
 **Published Action names identify Storage Service**
 
 - **Must** — Name every Action and Action file `<service>_<action>` with exactly one underscore.
-- **Never** — Rename or alter the corresponding Database Operation identity.
+- **Never** — Rename or alter the corresponding Database capability identity or group.
 
 **Storage Interface identifiers are valid and unique**
 
 - **Must** — Validate every public identifier for the selected language and uniqueness after normalization.
 - **Never** — Resolve an invalid or colliding identifier with an invented or silent rename.
 
+<br>
+
 ### Actions
 
-**Every Action preserves its Database Operation contract**
+**Every Action preserves its Database capability contract**
 
-- **Must** — Forward every Operation request and selected Instance Enum member unchanged and return Database's declared result unchanged.
-- **Never** — Add a result wrapper, reinterpret a Database Operation, expose Database internals, select an Engine or default Instance, or retry Execute Command as safe.
+- **Must** — Forward every Database capability request and selected DatabaseInstance member unchanged and return Database's declared result unchanged.
+- **Never** — Add a result wrapper, reinterpret a Database capability, expose Database internals, select an Engine or default Instance, or retry ExecuteCommand or a Lifecycle Command as safe.
 
-**Action overrides match stable Database Operations**
+**Action overrides match stable Database capabilities**
 
-- **Must** — Match every override to an existing stable Operation identity and derive the name when no override exists.
-- **Never** — Ignore a stale override or let an override change an Operation contract.
+- **Must** — Match every override to an existing stable Database capability identity and group and derive the name when no override exists.
+- **Never** — Ignore a stale override or let an override change a capability's group or contract.

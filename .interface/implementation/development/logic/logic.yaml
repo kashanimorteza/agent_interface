@@ -4,8 +4,8 @@ meta:
   path_note: "The Preferences layer of the Logic Component — Logic-owned behavioural defaults and internal realization conventions."
   purpose: "Configurable defaults for Logic organization, reliability, and verification."
   standard: "Agent Project Interface"
-  version: "16.2"
-  updated: "2026-09-29"
+  version: "17.0"
+  updated: "2026-09-30"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -76,8 +76,8 @@ content:
 
   # <!-------------------------------------------- development -->
   development:
-    language:
-      default: "Python"
+    languages:
+      default: "python"
     capabilities:
       testing: false
       error_handling: false
