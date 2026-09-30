@@ -27,6 +27,973 @@ content_map:
 # <!--------------------------------------------------------------------------------- Content -->
 content:
   # Total number of Tasks across all phase Plans; recalculate whenever Tasks are added or removed.
-  task_count: 0
+  task_count: 34
   # Phase Plans keyed by phase identifier; empty before any phase is planned.
-  plans: {}
+  plans:
+    P1:
+      id: "P1"
+      title: "Model"
+      order: 1
+      target: "Model"
+      does: "Deliver the independent Model library that publishes every Target Entity with its complete public meaning through one conformant public Interface, together with complete documentation."
+      constraints: []
+      task_count: 34
+      groups:
+        P1-G1:
+          id: "P1-G1"
+          title: "Library establishment"
+          description: "The Model library as a delivered unit that later work fills."
+          area: "The Model library as an installable, importable unit"
+          does: "An empty Model library that installs into a fresh isolated environment and imports cleanly."
+          constraints: []
+          task_count: 1
+          tasks:
+            P1-G1-T1:
+              id: "P1-G1-T1"
+              source_id: "003"
+              title: "Establish the installable Model library"
+              description: "Create the Model library as a unit a consumer can install and import, holding no Entity yet, using the shared language standards and quality defaults Development supplies to it."
+              reason: "Every later result needs a delivered library to live in and to be imported by its consumers."
+              inputs:
+                - "Development's shared defaults"
+                - "Model's selected realization choices"
+              skills:
+                - "python-skills:python-guidelines"
+              expected_result: "A Model library that installs into a fresh isolated environment and can be imported by a consumer."
+              depends_on: []
+              constraints: []
+              acceptance: "Installation succeeds without error and importing the library succeeds."
+              verify: "Install the library into a clean isolated environment, import it from a separate consumer context, and observe that both succeed and that nothing from another Component is required."
+              status: "done"
+              log:
+                - at: "2026-09-30T16:13:44Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before establishing the library."
+                - at: "2026-09-30T16:15:52Z"
+                  transition: "claimed -> done"
+                  check: "Built the library wheel, created a fresh isolated environment, installed only the wheel with its declared dependencies, and imported the library from a separate working directory."
+                  outcome: "Installation and import both succeeded (Python 3.14.7). The environment held only the library, pydantic, sqlmodel, and their transitive dependencies; no other Component was required. Location of the library: model/ with src layout; dependency records pyproject.toml and uv.lock."
+
+        P1-G2:
+          id: "P1-G2"
+          title: "Shared Core contracts"
+          description: "The public Declaration contract, the strict Field value contract, and the Foundation JSON conversion that every Entity relies on."
+          area: "Shared Declaration, value-contract enforcement, and Foundation conversion"
+          does: "Every Entity can rely on one Declaration contract, one strict value contract, and one lossless JSON conversion."
+          constraints: []
+          task_count: 5
+          tasks:
+            P1-G2-T1:
+              id: "P1-G2-T1"
+              source_id: "003"
+              title: "Provide the public Declaration contract"
+              description: "Provide the immutable structured records that publish an Entity's and a Field's complete logical meaning, holding no runtime behaviour."
+              reason: "Every other Component reads Entity meaning only through one canonical logical shape."
+              inputs:
+                - "The Model Definition's canonical Declaration members"
+              skills:
+                - "python-skills:python-guidelines"
+              expected_result: "A public Declaration contract for an Entity and for a Field that exposes every canonical logical member."
+              depends_on:
+                - "P1-G1-T1"
+              constraints: []
+              acceptance: "An Entity Declaration exposes its name, description, ordered Fields, Primary Key, Relations, Uniqueness Constraints, and Indexes; a Field Declaration exposes its name, description, Type, nullability, explicit Default Value presence and value, sensitivity, immutability, constraints, and Value Generation."
+              verify: "Build one representative Entity Declaration for the check alone and read every acceptance member back through its public surface; observe that each is present, that Field and metadata order is preserved, that an absent Default Value is distinguishable from an explicit null default, and that reading it performs no behaviour."
+              status: "done"
+              log:
+                - at: "2026-09-30T16:15:52Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before generating the shared Core contracts."
+                - at: "2026-09-30T16:18:08Z"
+                  transition: "claimed -> done"
+                  check: "Ran a transient probe Entity check (session scratchpad, not persisted; testing capability is disabled) against the generated Core (model/src/model/core). Built one representative Declaration and read back every Entity and Field member, order, absent-versus-null default, sensitivity, constraints; attempted mutation of a Declaration and its constraints."
+                  outcome: "Passed. All members present in order; absent default distinguishable from explicit null default; Declaration is frozen and constraints are read-only."
+            P1-G2-T2:
+              id: "P1-G2-T2"
+              source_id: "003"
+              title: "Provide strict Field value-contract enforcement"
+              description: "Provide the shared behaviour every Entity applies identically to direct construction, construction from a JSON Object, and assignment to a mutable Field: only declared Fields are accepted, required values, nullability, Types, defaults, and constraints are enforced without implicit coercion, explicit false, zero, empty string, and null stay supplied values, a failed assignment leaves the earlier value in place, and an immutable Field never changes."
+              reason: "One enforcement behaviour prevents each Entity and each construction path from interpreting values differently."
+              inputs:
+                - "The completed Declaration contract"
+              skills:
+                - "pydantic:pydantic"
+                - "sqlmodel"
+              expected_result: "A shared enforcement behaviour every Entity can apply on all three entry paths."
+              depends_on:
+                - "P1-G2-T1"
+              constraints: []
+              acceptance: "A representative Entity built for the check accepts valid values and rejects an undeclared Field, a wrong Type, a missing required value, and a change to an immutable Field; a rejected assignment preserves the earlier value."
+              verify: "Exercise the representative Entity through direct construction, construction from a JSON Object, and assignment; observe identical accept and reject outcomes on all three paths, that false, zero, empty string, and null are kept as supplied, and that no rejection message reveals a sensitive value."
+              status: "done"
+              log:
+                - at: "2026-09-30T16:15:52Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before generating the shared Core contracts."
+                - at: "2026-09-30T16:18:08Z"
+                  transition: "claimed -> done"
+                  check: "Ran a transient probe Entity check (session scratchpad, not persisted; testing capability is disabled) against the generated Core (model/src/model/core). Exercised the probe through direct construction, JSON construction, and assignment; included undeclared Field, wrong Type, boolean given an integer, missing required value, naive datetime, null on a non-nullable Field, immutable change, and sensitive values placed in invalid input."
+                  outcome: "Passed. Identical accept and reject outcomes on all three paths; rejected assignment kept the earlier value; false, zero, empty string, and null kept as supplied; no diagnostic contained the sensitive value."
+            P1-G2-T3:
+              id: "P1-G2-T3"
+              source_id: "003"
+              title: "Support the pending state of an Auto Increment Field"
+              description: "Let an Entity whose identity is produced by its owning persistence realization exist before that value is assigned: an omitted Auto Increment Field stays explicitly pending while remaining non-nullable, and a caller-supplied value is rejected unless the Target explicitly permits one."
+              reason: "Target Entities take their identity from elsewhere, so they must be constructible before it exists."
+              inputs:
+                - "The completed value-contract enforcement"
+              skills:
+                - "pydantic:pydantic"
+              expected_result: "An Entity with an omitted Auto Increment Field can be created in an explicit pending state."
+              depends_on:
+                - "P1-G2-T2"
+              constraints: []
+              acceptance: "The pending Field is reported as pending, its Declaration still states it non-nullable, and a supplied value is rejected."
+              verify: "Construct the representative Entity without the Field and observe the pending state and the unchanged non-nullable Declaration; construct it with a supplied value and observe rejection; observe that its JSON Object shows the pending state as null."
+              status: "done"
+              log:
+                - at: "2026-09-30T16:15:52Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before generating the shared Core contracts."
+                - at: "2026-09-30T16:18:08Z"
+                  transition: "claimed -> done"
+                  check: "Ran a transient probe Entity check (session scratchpad, not persisted; testing capability is disabled) against the generated Core (model/src/model/core). Constructed the probe without and with an Auto Increment value, and through JSON with null and with a value."
+                  outcome: "Passed. Omitted identity is pending (None) while its Declaration stays non-nullable; a supplied value is rejected on direct and JSON construction; pending appears as JSON null and round-trips."
+            P1-G2-T4:
+              id: "P1-G2-T4"
+              source_id: "003"
+              title: "Convert an Entity to JSON text"
+              description: "Provide the shared conversion that turns any Entity into JSON text with one object at its root whose keys are exactly the Entity's Fields in Declaration order, preserving Type semantics and distinguishing null, false, zero, and empty string, without adding keys, nesting Entities, or transforming a sensitive value."
+              reason: "Consumers need one portable, lossless representation of an Entity."
+              inputs:
+                - "The completed Declaration contract"
+                - "The pending-state behaviour"
+              skills:
+                - "pydantic:pydantic"
+              expected_result: "Any Entity can be converted to conformant JSON text."
+              depends_on:
+                - "P1-G2-T1"
+                - "P1-G2-T3"
+              constraints: []
+              acceptance: "The text is valid JSON whose root is one object with exactly the Entity's Field names in Declaration order, with decimal and datetime values represented exactly as their Types define."
+              verify: "Convert the representative Entity holding decimal, datetime, boolean, null, zero, and empty-string values, read the text with an independent JSON reader, and observe the key set and order, the exact values, and an unchanged sensitive value."
+              status: "done"
+              log:
+                - at: "2026-09-30T16:15:52Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before generating the shared Core contracts."
+                - at: "2026-09-30T16:18:08Z"
+                  transition: "claimed -> done"
+                  check: "Ran a transient probe Entity check (session scratchpad, not persisted; testing capability is disabled) against the generated Core (model/src/model/core). Converted a probe holding exact decimal, datetime with offset, boolean false, null, zero, empty string, float, and a sensitive value; parsed the text with a separate JSON reader."
+                  outcome: "Passed. Valid JSON; keys exactly the Field names in Declaration order; decimal held as exact string 1.10; datetime as ISO 8601 UTC with offset; null, false, zero, and empty string distinct; sensitive value unchanged; no nesting."
+            P1-G2-T5:
+              id: "P1-G2-T5"
+              source_id: "003"
+              title: "Reconstruct an Entity from JSON text"
+              description: "Provide the shared conversion that rebuilds an Entity from JSON text without loss, rejects malformed text, and otherwise applies the same strict value contract as direct construction."
+              reason: "A one-way conversion cannot serve as a portable contract; consumers must be able to return to the Entity."
+              inputs:
+                - "The completed value-contract enforcement"
+                - "The Entity-to-JSON conversion"
+              skills:
+                - "pydantic:pydantic"
+              expected_result: "Any Entity's JSON text can be turned back into an Entity."
+              depends_on:
+                - "P1-G2-T2"
+                - "P1-G2-T4"
+              constraints: []
+              acceptance: "Text produced from an Entity reconstructs an Entity whose every Field value matches the original; malformed text and text carrying an undeclared key or an invalid value are rejected."
+              verify: "Reconstruct the representative Entity from its own text and compare every Field value, including exact decimal and datetime values and the pending state; supply malformed text and text with an undeclared key and observe rejection."
+              status: "done"
+              log:
+                - at: "2026-09-30T16:15:52Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before generating the shared Core contracts."
+                - at: "2026-09-30T16:18:08Z"
+                  transition: "claimed -> done"
+                  check: "Ran a transient probe Entity check (session scratchpad, not persisted; testing capability is disabled) against the generated Core (model/src/model/core). Reconstructed the probe from its own text and compared every Field value and Type; supplied malformed text, non-object roots, NaN, undeclared key, invalid decimal, decimal as a JSON number, naive datetime, and a non-string datetime."
+                  outcome: "Passed. Every Field value matched including exact decimal digits, UTC datetime, and pending id; every invalid input was rejected."
+
+        P1-G3:
+          id: "P1-G3"
+          title: "Platform access Entities"
+          description: "The Entities that identify who uses the system and the trading platform connections they own."
+          area: "Entities for users, supported trading platforms, and user-owned platform connections"
+          does: "The User, Trading Platform, and Instance Entities are available with their complete declared meaning."
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G3-T1:
+              id: "P1-G3-T1"
+              source_id: "003"
+              title: "Realize the User Entity"
+              description: "Realize the User Entity, the independent user of the system, including uniqueness of its display name and of its username and the sensitivity of its two credential Fields."
+              reason: "Every user-owned Entity refers to a User, and User comes first in Target order."
+              inputs:
+                - "The Target definition of the User Entity"
+              skills:
+                - "sqlmodel"
+              expected_result: "The User Entity is available with its complete Fields and Entity Metadata."
+              depends_on:
+                - "P1-G2-T5"
+              constraints: []
+              acceptance: "The User Declaration reproduces the Target definition of User: a uniqueness constraint on each identifying Field, a sensitivity marker on both credential Fields, and no Relation."
+              verify: "Read the User Declaration and compare every Field property and metadata item with the Target definition; construct a User omitting its activity Field and observe that it is active, and construct one with credential values and observe them held unchanged."
+              status: "done"
+              log:
+                - at: "2026-09-30T16:18:08Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before generating the Entity."
+                - at: "2026-09-30T16:21:47Z"
+                  transition: "claimed -> done"
+                  check: "Transient check (session scratchpad; testing capability disabled): read the generated Entity's public Declaration and compared description, Field membership and order, Types, nullability, defaults (value and presence), sensitivity, constraints, identity, Relations, and uniqueness with an independent second reading of the Target's definition; confirmed the runtime Fields, requiredness, defaults, and null handling agree with the Declaration; then constructed the Entity to observe the Entity-specific behaviour named by the Task."
+                  outcome: "Passed. User Declaration equals the Target; uniqueness on display name and on username; sensitivity on both credential Fields; no Relation; omitted activity Field is active; credential values held unchanged."
+            P1-G3-T2:
+              id: "P1-G3-T2"
+              source_id: "003"
+              title: "Realize the Trading Platform Entity"
+              description: "Realize the Trading Platform Entity, the supported trading API standard identified by an implementation code, with a unique display name."
+              reason: "Instance and Position refer to a trading platform, and its meaning must stay independent of any exchange or broker."
+              inputs:
+                - "The Target definition of the Trading Platform Entity"
+              skills:
+                - "sqlmodel"
+              expected_result: "The Trading Platform Entity is available with its complete Fields and Entity Metadata."
+              depends_on:
+                - "P1-G2-T5"
+              constraints: []
+              acceptance: "The Trading Platform Declaration reproduces the Target definition, with a uniqueness constraint on its display name and no Relation."
+              verify: "Read the Trading Platform Declaration and compare every Field property and metadata item with the Target definition; construct one omitting its activity Field and observe that it is active."
+              status: "done"
+              log:
+                - at: "2026-09-30T16:18:08Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before generating the Entity."
+                - at: "2026-09-30T16:21:47Z"
+                  transition: "claimed -> done"
+                  check: "Transient check (session scratchpad; testing capability disabled): read the generated Entity's public Declaration and compared description, Field membership and order, Types, nullability, defaults (value and presence), sensitivity, constraints, identity, Relations, and uniqueness with an independent second reading of the Target's definition; confirmed the runtime Fields, requiredness, defaults, and null handling agree with the Declaration; then constructed the Entity to observe the Entity-specific behaviour named by the Task."
+                  outcome: "Passed. Trading Platform Declaration equals the Target; uniqueness on display name; no Relation; omitted activity Field is active."
+            P1-G3-T3:
+              id: "P1-G3-T3"
+              source_id: "003"
+              title: "Realize the Instance Entity"
+              description: "Realize the Instance Entity, a user-owned connection to a trading platform, with Relations to its owner and its platform, uniqueness of owner and name together, and sensitivity on its two optional credential Fields."
+              reason: "Account uses an Instance for its platform connection, so its ownership and platform links must be declared."
+              inputs:
+                - "The Target definition of the Instance Entity"
+              skills:
+                - "sqlmodel"
+              expected_result: "The Instance Entity is available with its complete Fields and Entity Metadata."
+              depends_on:
+                - "P1-G2-T5"
+              constraints: []
+              acceptance: "The Instance Declaration reproduces the Target definition: a Relation to User, a Relation to Trading Platform, one uniqueness constraint over owner and name in that order, and a sensitivity marker on both credential Fields, which remain nullable."
+              verify: "Read the Instance Declaration and compare every Field property and metadata item with the Target definition; construct an Instance leaving its optional connection Fields out and observe that it is accepted."
+              status: "done"
+              log:
+                - at: "2026-09-30T16:18:08Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before generating the Entity."
+                - at: "2026-09-30T16:21:47Z"
+                  transition: "claimed -> done"
+                  check: "Transient check (session scratchpad; testing capability disabled): read the generated Entity's public Declaration and compared description, Field membership and order, Types, nullability, defaults (value and presence), sensitivity, constraints, identity, Relations, and uniqueness with an independent second reading of the Target's definition; confirmed the runtime Fields, requiredness, defaults, and null handling agree with the Declaration; then constructed the Entity to observe the Entity-specific behaviour named by the Task."
+                  outcome: "Passed. Instance Declaration equals the Target; Relations to User and Trading Platform; one uniqueness constraint over user_id then name; sensitivity on both credential Fields, which are nullable; an Instance without its optional connection Fields is accepted."
+
+        P1-G4:
+          id: "P1-G4"
+          title: "Reference data Entities"
+          description: "The Entities that define currencies, brokers, and the assets a broker provides."
+          area: "Entities for currencies, brokers, and tradable assets"
+          does: "The Currency, Broker, and Asset Entities are available with their complete declared meaning."
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G4-T1:
+              id: "P1-G4-T1"
+              source_id: "003"
+              title: "Realize the Currency Entity"
+              description: "Realize the Currency Entity, with a Relation to its owner, a three-character restriction on its code, a default of two decimal digits, and uniqueness of owner and code together."
+              reason: "Account refers to a currency as its base currency."
+              inputs:
+                - "The Target definition of the Currency Entity"
+              skills:
+                - "sqlmodel"
+              expected_result: "The Currency Entity is available with its complete Fields and Entity Metadata."
+              depends_on:
+                - "P1-G2-T5"
+              constraints: []
+              acceptance: "The Currency Declaration reproduces the Target definition, with the owner Relation, the code length restriction, the decimal-digit default, and one uniqueness constraint over owner and code in that order."
+              verify: "Read the Currency Declaration and compare every Field property and metadata item with the Target definition; construct a Currency whose code is not three characters and observe rejection, and one omitting decimal digits and observe the default."
+              status: "done"
+              log:
+                - at: "2026-09-30T16:18:08Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before generating the Entity."
+                - at: "2026-09-30T16:21:47Z"
+                  transition: "claimed -> done"
+                  check: "Transient check (session scratchpad; testing capability disabled): read the generated Entity's public Declaration and compared description, Field membership and order, Types, nullability, defaults (value and presence), sensitivity, constraints, identity, Relations, and uniqueness with an independent second reading of the Target's definition; confirmed the runtime Fields, requiredness, defaults, and null handling agree with the Declaration; then constructed the Entity to observe the Entity-specific behaviour named by the Task."
+                  outcome: "Passed. Currency Declaration equals the Target; owner Relation; code size constraint of three rejects two and four characters; decimal_digits defaults to 2; one uniqueness constraint over user_id then code."
+            P1-G4-T2:
+              id: "P1-G4-T2"
+              source_id: "003"
+              title: "Realize the Broker Entity"
+              description: "Realize the Broker Entity, with a Relation to its owner and uniqueness of owner and name together, kept independent of any trading platform."
+              reason: "Asset, Account, and Position refer to a broker."
+              inputs:
+                - "The Target definition of the Broker Entity"
+              skills:
+                - "sqlmodel"
+              expected_result: "The Broker Entity is available with its complete Fields and Entity Metadata."
+              depends_on:
+                - "P1-G2-T5"
+              constraints: []
+              acceptance: "The Broker Declaration reproduces the Target definition, with the owner Relation, one uniqueness constraint over owner and name in that order, and no Relation to a trading platform."
+              verify: "Read the Broker Declaration and compare every Field property and metadata item with the Target definition; observe that its Relations list holds only the owner."
+              status: "done"
+              log:
+                - at: "2026-09-30T16:18:08Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before generating the Entity."
+                - at: "2026-09-30T16:21:47Z"
+                  transition: "claimed -> done"
+                  check: "Transient check (session scratchpad; testing capability disabled): read the generated Entity's public Declaration and compared description, Field membership and order, Types, nullability, defaults (value and presence), sensitivity, constraints, identity, Relations, and uniqueness with an independent second reading of the Target's definition; confirmed the runtime Fields, requiredness, defaults, and null handling agree with the Declaration; then constructed the Entity to observe the Entity-specific behaviour named by the Task."
+                  outcome: "Passed. Broker Declaration equals the Target; Relations list holds only the owner; one uniqueness constraint over user_id then name."
+            P1-G4-T3:
+              id: "P1-G4-T3"
+              source_id: "003"
+              title: "Realize the Asset Entity"
+              description: "Realize the Asset Entity, with a Relation to the broker that provides it, defaults for point size and price digits, and uniqueness of broker and symbol together."
+              reason: "Action refers to an Asset as the thing that is traded."
+              inputs:
+                - "The Target definition of the Asset Entity"
+              skills:
+                - "sqlmodel"
+              expected_result: "The Asset Entity is available with its complete Fields and Entity Metadata."
+              depends_on:
+                - "P1-G2-T5"
+              constraints: []
+              acceptance: "The Asset Declaration reproduces the Target definition, with the broker Relation, the point-size and digits defaults, and one uniqueness constraint over broker and symbol in that order."
+              verify: "Read the Asset Declaration and compare every Field property and metadata item with the Target definition; construct an Asset omitting point size and digits and observe their defaults."
+              status: "done"
+              log:
+                - at: "2026-09-30T16:18:08Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before generating the Entity."
+                - at: "2026-09-30T16:21:47Z"
+                  transition: "claimed -> done"
+                  check: "Transient check (session scratchpad; testing capability disabled): read the generated Entity's public Declaration and compared description, Field membership and order, Types, nullability, defaults (value and presence), sensitivity, constraints, identity, Relations, and uniqueness with an independent second reading of the Target's definition; confirmed the runtime Fields, requiredness, defaults, and null handling agree with the Declaration; then constructed the Entity to observe the Entity-specific behaviour named by the Task."
+                  outcome: "Passed. Asset Declaration equals the Target; broker Relation; point_size defaults to 0.0 and digits to 0; one uniqueness constraint over broker_id then symbol."
+
+        P1-G5:
+          id: "P1-G5"
+          title: "Account Entities"
+          description: "The Entities that organize and define funded trading accounts."
+          area: "Entities for account grouping and funded trading accounts"
+          does: "The Account Group and Account Entities are available with their complete declared meaning."
+          constraints: []
+          task_count: 2
+          tasks:
+            P1-G5-T1:
+              id: "P1-G5-T1"
+              source_id: "003"
+              title: "Realize the Account Group Entity"
+              description: "Realize the Account Group Entity, with a Relation to its owner and uniqueness of owner and name together."
+              reason: "Account belongs to an account group."
+              inputs:
+                - "The Target definition of the Account Group Entity"
+              skills:
+                - "sqlmodel"
+              expected_result: "The Account Group Entity is available with its complete Fields and Entity Metadata."
+              depends_on:
+                - "P1-G2-T5"
+              constraints: []
+              acceptance: "The Account Group Declaration reproduces the Target definition, with the owner Relation and one uniqueness constraint over owner and name in that order."
+              verify: "Read the Account Group Declaration and compare every Field property and metadata item with the Target definition; construct one omitting its activity Field and observe that it is active."
+              status: "done"
+              log:
+                - at: "2026-09-30T16:18:08Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before generating the Entity."
+                - at: "2026-09-30T16:21:47Z"
+                  transition: "claimed -> done"
+                  check: "Transient check (session scratchpad; testing capability disabled): read the generated Entity's public Declaration and compared description, Field membership and order, Types, nullability, defaults (value and presence), sensitivity, constraints, identity, Relations, and uniqueness with an independent second reading of the Target's definition; confirmed the runtime Fields, requiredness, defaults, and null handling agree with the Declaration; then constructed the Entity to observe the Entity-specific behaviour named by the Task."
+                  outcome: "Passed. Account Group Declaration equals the Target; owner Relation; one uniqueness constraint over user_id then name; omitted activity Field is active."
+            P1-G5-T2:
+              id: "P1-G5-T2"
+              source_id: "003"
+              title: "Realize the Account Entity"
+              description: "Realize the Account Entity, with Relations to its group, broker, instance, and base currency, a unique display name, uniqueness of group, broker, and instance together, a sensitive credential Field, and an exact decimal balance defaulting to zero."
+              reason: "Action and Position refer to the account through which trades are executed."
+              inputs:
+                - "The Target definition of the Account Entity"
+              skills:
+                - "sqlmodel"
+              expected_result: "The Account Entity is available with its complete Fields and Entity Metadata."
+              depends_on:
+                - "P1-G2-T5"
+              constraints: []
+              acceptance: "The Account Declaration reproduces the Target definition: four Relations, a uniqueness constraint on its display name, one uniqueness constraint over group, broker, and instance in that order, a sensitivity marker on its credential Field, and a balance of exact decimal Type defaulting to zero."
+              verify: "Read the Account Declaration and compare every Field property and metadata item with the Target definition; construct an Account omitting its balance and observe zero held as an exact decimal, and observe its credential value held unchanged."
+              status: "done"
+              log:
+                - at: "2026-09-30T16:18:08Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before generating the Entity."
+                - at: "2026-09-30T16:21:47Z"
+                  transition: "claimed -> done"
+                  check: "Transient check (session scratchpad; testing capability disabled): read the generated Entity's public Declaration and compared description, Field membership and order, Types, nullability, defaults (value and presence), sensitivity, constraints, identity, Relations, and uniqueness with an independent second reading of the Target's definition; confirmed the runtime Fields, requiredness, defaults, and null handling agree with the Declaration; then constructed the Entity to observe the Entity-specific behaviour named by the Task."
+                  outcome: "Passed. Account Declaration equals the Target; four Relations; uniqueness on display name and one constraint over group_id, broker_id, instance_id in that order; sensitivity on password; balance omitted is exact Decimal zero; password held unchanged."
+
+        P1-G6:
+          id: "P1-G6"
+          title: "Position management rule Entities"
+          description: "The Entities that group and define the rules managing an open position's stop loss, take profit, and partial closing."
+          area: "Entities for trailing rule sets and partial-close rule sets"
+          does: "The Trailing Group, Trailing Rule, Partial Group, and Partial Rule Entities are available with their complete declared meaning."
+          constraints: []
+          task_count: 4
+          tasks:
+            P1-G6-T1:
+              id: "P1-G6-T1"
+              source_id: "003"
+              title: "Realize the Trailing Group Entity"
+              description: "Realize the Trailing Group Entity, with a Relation to its owner and uniqueness of owner and name together."
+              reason: "Trailing Rule, Action, and Position refer to a trailing group."
+              inputs:
+                - "The Target definition of the Trailing Group Entity"
+              skills:
+                - "sqlmodel"
+              expected_result: "The Trailing Group Entity is available with its complete Fields and Entity Metadata."
+              depends_on:
+                - "P1-G2-T5"
+              constraints: []
+              acceptance: "The Trailing Group Declaration reproduces the Target definition, with the owner Relation and one uniqueness constraint over owner and name in that order."
+              verify: "Read the Trailing Group Declaration and compare every Field property and metadata item with the Target definition; construct one omitting its activity Field and observe that it is active."
+              status: "done"
+              log:
+                - at: "2026-09-30T16:18:08Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before generating the Entity."
+                - at: "2026-09-30T16:21:47Z"
+                  transition: "claimed -> done"
+                  check: "Transient check (session scratchpad; testing capability disabled): read the generated Entity's public Declaration and compared description, Field membership and order, Types, nullability, defaults (value and presence), sensitivity, constraints, identity, Relations, and uniqueness with an independent second reading of the Target's definition; confirmed the runtime Fields, requiredness, defaults, and null handling agree with the Declaration; then constructed the Entity to observe the Entity-specific behaviour named by the Task."
+                  outcome: "Passed. Trailing Group Declaration equals the Target; owner Relation; one uniqueness constraint over user_id then name; omitted activity Field is active."
+            P1-G6-T2:
+              id: "P1-G6-T2"
+              source_id: "003"
+              title: "Realize the Trailing Rule Entity"
+              description: "Realize the Trailing Rule Entity, with a Relation to its trailing group, a unique display name, uniqueness of group and trigger percentage together, and two optional adjustment Fields."
+              reason: "A trailing group has no effect until its individual rules exist."
+              inputs:
+                - "The Target definition of the Trailing Rule Entity"
+              skills:
+                - "sqlmodel"
+              expected_result: "The Trailing Rule Entity is available with its complete Fields and Entity Metadata."
+              depends_on:
+                - "P1-G2-T5"
+              constraints: []
+              acceptance: "The Trailing Rule Declaration reproduces the Target definition, with the trailing group Relation, a uniqueness constraint on its display name, one uniqueness constraint over group and trigger percentage in that order, and both adjustment Fields nullable."
+              verify: "Read the Trailing Rule Declaration and compare every Field property and metadata item with the Target definition; construct a Trailing Rule omitting both adjustments and observe that it is accepted."
+              status: "done"
+              log:
+                - at: "2026-09-30T16:18:08Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before generating the Entity."
+                - at: "2026-09-30T16:21:47Z"
+                  transition: "claimed -> done"
+                  check: "Transient check (session scratchpad; testing capability disabled): read the generated Entity's public Declaration and compared description, Field membership and order, Types, nullability, defaults (value and presence), sensitivity, constraints, identity, Relations, and uniqueness with an independent second reading of the Target's definition; confirmed the runtime Fields, requiredness, defaults, and null handling agree with the Declaration; then constructed the Entity to observe the Entity-specific behaviour named by the Task."
+                  outcome: "Passed. Trailing Rule Declaration equals the Target; trailing group Relation; uniqueness on display name and one constraint over trailing_group_id then trigger_percentage; both adjustment Fields nullable and accepted when omitted."
+            P1-G6-T3:
+              id: "P1-G6-T3"
+              source_id: "003"
+              title: "Realize the Partial Group Entity"
+              description: "Realize the Partial Group Entity, with a Relation to its owner and uniqueness of owner and name together."
+              reason: "Partial Rule, Action, and Position refer to a partial group."
+              inputs:
+                - "The Target definition of the Partial Group Entity"
+              skills:
+                - "sqlmodel"
+              expected_result: "The Partial Group Entity is available with its complete Fields and Entity Metadata."
+              depends_on:
+                - "P1-G2-T5"
+              constraints: []
+              acceptance: "The Partial Group Declaration reproduces the Target definition, with the owner Relation and one uniqueness constraint over owner and name in that order."
+              verify: "Read the Partial Group Declaration and compare every Field property and metadata item with the Target definition; construct one omitting its activity Field and observe that it is active."
+              status: "done"
+              log:
+                - at: "2026-09-30T16:18:08Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before generating the Entity."
+                - at: "2026-09-30T16:21:47Z"
+                  transition: "claimed -> done"
+                  check: "Transient check (session scratchpad; testing capability disabled): read the generated Entity's public Declaration and compared description, Field membership and order, Types, nullability, defaults (value and presence), sensitivity, constraints, identity, Relations, and uniqueness with an independent second reading of the Target's definition; confirmed the runtime Fields, requiredness, defaults, and null handling agree with the Declaration; then constructed the Entity to observe the Entity-specific behaviour named by the Task."
+                  outcome: "Passed. Partial Group Declaration equals the Target; owner Relation; one uniqueness constraint over user_id then name; omitted activity Field is active."
+            P1-G6-T4:
+              id: "P1-G6-T4"
+              source_id: "003"
+              title: "Realize the Partial Rule Entity"
+              description: "Realize the Partial Rule Entity, with a Relation to its partial group, a unique display name, and uniqueness of group and profit percentage together."
+              reason: "A partial group has no effect until its individual rules exist."
+              inputs:
+                - "The Target definition of the Partial Rule Entity"
+              skills:
+                - "sqlmodel"
+              expected_result: "The Partial Rule Entity is available with its complete Fields and Entity Metadata."
+              depends_on:
+                - "P1-G2-T5"
+              constraints: []
+              acceptance: "The Partial Rule Declaration reproduces the Target definition, with the partial group Relation, a uniqueness constraint on its display name, and one uniqueness constraint over group and profit percentage in that order."
+              verify: "Read the Partial Rule Declaration and compare every Field property and metadata item with the Target definition; observe that its percentage Fields are of exact decimal Type."
+              status: "done"
+              log:
+                - at: "2026-09-30T16:18:08Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before generating the Entity."
+                - at: "2026-09-30T16:21:47Z"
+                  transition: "claimed -> done"
+                  check: "Transient check (session scratchpad; testing capability disabled): read the generated Entity's public Declaration and compared description, Field membership and order, Types, nullability, defaults (value and presence), sensitivity, constraints, identity, Relations, and uniqueness with an independent second reading of the Target's definition; confirmed the runtime Fields, requiredness, defaults, and null handling agree with the Declaration; then constructed the Entity to observe the Entity-specific behaviour named by the Task."
+                  outcome: "Passed. Partial Rule Declaration equals the Target; partial group Relation; uniqueness on display name and one constraint over partial_group_id then profit_percentage; both percentage Fields are exact Decimal."
+
+        P1-G7:
+          id: "P1-G7"
+          title: "Trade definition Entities"
+          description: "The Entities that define how a position is opened and record the positions the system creates."
+          area: "Entities for action grouping, actions, and positions"
+          does: "The Action Group, Action, and Position Entities are available with their complete declared meaning."
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G7-T1:
+              id: "P1-G7-T1"
+              source_id: "003"
+              title: "Realize the Action Group Entity"
+              description: "Realize the Action Group Entity, with a Relation to its owner and uniqueness of owner and name together."
+              reason: "Action and Position refer to an action group that organizes trades by risk profile."
+              inputs:
+                - "The Target definition of the Action Group Entity"
+              skills:
+                - "sqlmodel"
+              expected_result: "The Action Group Entity is available with its complete Fields and Entity Metadata."
+              depends_on:
+                - "P1-G2-T5"
+              constraints: []
+              acceptance: "The Action Group Declaration reproduces the Target definition, with the owner Relation and one uniqueness constraint over owner and name in that order."
+              verify: "Read the Action Group Declaration and compare every Field property and metadata item with the Target definition; construct one omitting its activity Field and observe that it is active."
+              status: "done"
+              log:
+                - at: "2026-09-30T16:18:08Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before generating the Entity."
+                - at: "2026-09-30T16:21:47Z"
+                  transition: "claimed -> done"
+                  check: "Transient check (session scratchpad; testing capability disabled): read the generated Entity's public Declaration and compared description, Field membership and order, Types, nullability, defaults (value and presence), sensitivity, constraints, identity, Relations, and uniqueness with an independent second reading of the Target's definition; confirmed the runtime Fields, requiredness, defaults, and null handling agree with the Declaration; then constructed the Entity to observe the Entity-specific behaviour named by the Task."
+                  outcome: "Passed. Action Group Declaration equals the Target; owner Relation; one uniqueness constraint over user_id then name; omitted activity Field is active."
+            P1-G7-T2:
+              id: "P1-G7-T2"
+              source_id: "003"
+              title: "Realize the Action Entity"
+              description: "Realize the Action Entity, with Relations to its action group, asset, account, partial group, and trailing group, and uniqueness of action group and name together."
+              reason: "Position is created from an Action, which selects the asset, account, and rule sets for it."
+              inputs:
+                - "The Target definition of the Action Entity"
+              skills:
+                - "sqlmodel"
+              expected_result: "The Action Entity is available with its complete Fields and Entity Metadata."
+              depends_on:
+                - "P1-G2-T5"
+              constraints: []
+              acceptance: "The Action Declaration reproduces the Target definition, with its five Relations and one uniqueness constraint over action group and name in that order."
+              verify: "Read the Action Declaration and compare every Field property and metadata item with the Target definition; observe that the risk, take-profit, and stop-loss Fields are of exact decimal Type."
+              status: "done"
+              log:
+                - at: "2026-09-30T16:18:08Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before generating the Entity."
+                - at: "2026-09-30T16:21:47Z"
+                  transition: "claimed -> done"
+                  check: "Transient check (session scratchpad; testing capability disabled): read the generated Entity's public Declaration and compared description, Field membership and order, Types, nullability, defaults (value and presence), sensitivity, constraints, identity, Relations, and uniqueness with an independent second reading of the Target's definition; confirmed the runtime Fields, requiredness, defaults, and null handling agree with the Declaration; then constructed the Entity to observe the Entity-specific behaviour named by the Task."
+                  outcome: "Passed. Action Declaration equals the Target; five Relations; one uniqueness constraint over action_group_id then name; risk_by_reward, take_profit, and stop_loss are exact Decimal."
+            P1-G7-T3:
+              id: "P1-G7-T3"
+              source_id: "003"
+              title: "Realize the Position Entity"
+              description: "Realize the Position Entity, with Relations to its owner, trading platform, broker, account, trailing group, partial group, action group, and action, a unique display name, exact decimal value Fields, a date-and-time Field, and defaults for profit and executed state."
+              reason: "The system must identify and track every position it creates, whether opened or still pending."
+              inputs:
+                - "The Target definition of the Position Entity"
+              skills:
+                - "sqlmodel"
+              expected_result: "The Position Entity is available with its complete Fields and Entity Metadata."
+              depends_on:
+                - "P1-G2-T5"
+              constraints: []
+              acceptance: "The Position Declaration reproduces the Target definition: eight Relations, a uniqueness constraint on its display name, and the profit and executed-state defaults."
+              verify: "Read the Position Declaration and compare every Field property and metadata item with the Target definition; construct a Position omitting profit and executed state and observe zero and not executed."
+              status: "done"
+              log:
+                - at: "2026-09-30T16:18:08Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before generating the Entity."
+                - at: "2026-09-30T16:21:47Z"
+                  transition: "claimed -> done"
+                  check: "Transient check (session scratchpad; testing capability disabled): read the generated Entity's public Declaration and compared description, Field membership and order, Types, nullability, defaults (value and presence), sensitivity, constraints, identity, Relations, and uniqueness with an independent second reading of the Target's definition; confirmed the runtime Fields, requiredness, defaults, and null handling agree with the Declaration; then constructed the Entity to observe the Entity-specific behaviour named by the Task."
+                  outcome: "Passed. Position Declaration equals the Target; eight Relations; uniqueness on display name; profit omitted is exact Decimal zero and is_executed omitted is false."
+
+        P1-G8:
+          id: "P1-G8"
+          title: "Public Interface"
+          description: "The single public entry through which consumers reach every Entity."
+          area: "Model's public Interface: Entity exports and Entity Collection"
+          does: "Consumers can import any Entity by its own name and enumerate all of them, and nothing else is published."
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G8-T1:
+              id: "P1-G8-T1"
+              source_id: "003"
+              title: "Publish one explicit export per Entity"
+              description: "Publish every Target Entity through the Interface by its own explicit name, each being the actual Entity, with each Entity exposing its own actual Declaration."
+              reason: "A consumer working with one Entity must be able to import it directly with its real type."
+              inputs:
+                - "The Target's ordered list of Entities"
+                - "The Model Interface Schema"
+                - "The completed Entity realizations"
+              skills:
+                - "python-skills:python-guidelines"
+              expected_result: "Every Target Entity is importable directly by its own name from the Interface, and no other Entity is."
+              depends_on:
+                - "P1-G3-T1"
+                - "P1-G3-T2"
+                - "P1-G3-T3"
+                - "P1-G4-T1"
+                - "P1-G4-T2"
+                - "P1-G4-T3"
+                - "P1-G5-T1"
+                - "P1-G5-T2"
+                - "P1-G6-T1"
+                - "P1-G6-T2"
+                - "P1-G6-T3"
+                - "P1-G6-T4"
+                - "P1-G7-T1"
+                - "P1-G7-T2"
+                - "P1-G7-T3"
+              constraints: []
+              acceptance: "The set of exported Entities equals the set of Target Entities, each export is the actual Entity, and each exposes its own actual Declaration."
+              verify: "From a separate consumer context import each Target Entity by name and observe that it is the actual Entity and that its exposed Declaration is its own; observe that no other Entity is exported and that none is published by wildcard or dynamic means."
+              status: "done"
+              log:
+                - at: "2026-09-30T16:21:48Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before generating the Interface."
+                - at: "2026-09-30T16:22:51Z"
+                  transition: "claimed -> done"
+                  check: "Transient consumer-context check (session scratchpad): built the wheel, installed it alone into a clean environment, and from a separate working directory imported each of the 15 Target Entities by name from the package, compared each with the Entity defined in its own unit, read its Declaration, listed every public name of the package and of the Interface, and inspected their source for wildcard or dynamic publication."
+                  outcome: "Passed. 15 explicit exports in Target order, each the actual Entity with its own Declaration; the only other public names are the collection and the internal areas; no wildcard, dynamic export, or reflection in the Interface."
+            P1-G8-T2:
+              id: "P1-G8-T2"
+              source_id: "003"
+              title: "Publish the ordered immutable Entity Collection"
+              description: "Publish one ready-to-use collection of every actual Entity in Target order that cannot change after loading, with no other registry, lookup, or discovery mechanism beside it."
+              reason: "A consumer working with all Entities must be able to enumerate them without knowing their names."
+              inputs:
+                - "The explicit Entity exports"
+              skills:
+                - "python-skills:python-guidelines"
+              expected_result: "One ordered immutable collection of every actual Entity."
+              depends_on:
+                - "P1-G8-T1"
+              constraints: []
+              acceptance: "The collection holds exactly the exported Entities, each once, in Target order, and refuses change after loading."
+              verify: "Enumerate the collection and compare its members and order with the Target's Entity order and with the exports; attempt to add, remove, and reorder a member and observe refusal; observe that no other registry, lookup, or discovery mechanism is published."
+              status: "done"
+              log:
+                - at: "2026-09-30T16:21:48Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before generating the Interface."
+                - at: "2026-09-30T16:22:51Z"
+                  transition: "claimed -> done"
+                  check: "Same consumer context: enumerated the collection, compared members and order with the Target's Entity order and with the exports, attempted append, remove, insert, sort, reverse, item replacement, and item deletion, and listed the Interface's public names."
+                  outcome: "Passed. The collection is an immutable tuple of exactly the 15 exported Entities, each once, in Target order; every attempted change was refused; no other registry, lookup, or discovery mechanism is published."
+            P1-G8-T3:
+              id: "P1-G8-T3"
+              source_id: "003"
+              title: "Prove Interface loading has no side effect"
+              description: "Demonstrate that loading the Interface creates no Entity instance, data, connection, file, or process and performs no network, storage, runtime-configuration, or other external effect."
+              reason: "Consumers must be able to import the Model anywhere without consequence."
+              inputs:
+                - "The published Interface"
+              skills: []
+              expected_result: "Loading the Interface is shown to be free of every external effect."
+              depends_on:
+                - "P1-G8-T2"
+              constraints: []
+              acceptance: "A fresh load of the Interface produces no observable effect beyond making its exports and collection available."
+              verify: "Load the Interface in a fresh context while observing Entity creation, storage, network, runtime-configuration, file, and process activity; observe none."
+              status: "done"
+              log:
+                - at: "2026-09-30T16:21:48Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before generating the Interface."
+                - at: "2026-09-30T16:22:51Z"
+                  transition: "claimed -> done"
+                  check: "Loaded the Interface in a fresh interpreter from a clean working directory with an audit hook watching network, process, storage, environment, file-write, and file-creation activity and with a scan for Entity instances; a negative control that opens a file for writing and imports a network module was also run to prove the hook detects violations."
+                  outcome: "Passed. Load produced no Entity instance, no file, no network, process, storage, or environment effect, and read only installed source. The negative control was detected."
+
+        P1-G9:
+          id: "P1-G9"
+          title: "Documentation"
+          description: "The root documentation that explains the complete public surface."
+          area: "Model's public documentation"
+          does: "A consumer can use and verify Model without reading its source."
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G9-T1:
+              id: "P1-G9-T1"
+              source_id: "003"
+              title: "Document the Interface and every Entity"
+              description: "Write the overview with one simple example, then explain the Entity exports and the Entity Collection and list every Entity once in Target order with its description, complete Field table, and Entity Metadata kept outside that table, showing one consumer importing an Entity directly and one enumerating the collection."
+              reason: "Consumers learn the public surface from documentation, not from source."
+              inputs:
+                - "The published Interface"
+                - "The Model documentation Preferences"
+              skills: []
+              expected_result: "The overview and interface documentation exist and describe every Entity."
+              depends_on:
+                - "P1-G8-T2"
+              constraints: []
+              acceptance: "Every Target Entity appears exactly once in Target order with Fields and metadata that match its Declaration, and no stale meaning or real credential appears."
+              verify: "Compare each documented Entity's Fields and metadata with its Declaration and the Target; carry out both consumer examples exactly as written and observe that they work."
+              status: "done"
+              log:
+                - at: "2026-09-30T16:22:51Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before writing the documentation."
+                - at: "2026-09-30T16:29:14Z"
+                  transition: "claimed -> done"
+                  check: "Transient check (session scratchpad): parsed the generated documentation back and compared every Entity section, Field table row (Type, nullability, default, purpose, sensitivity, size), Relation, and uniqueness item with the Entity's public Declaration and with the Target's definition; carried out the overview example and both Interface examples exactly as written; scanned for real credentials."
+                  outcome: "Passed. All 15 Entities appear once in Target order with Fields and metadata matching their Declarations and the Target; all three examples ran and printed the stated results; only placeholder credential values appear."
+            P1-G9-T2:
+              id: "P1-G9-T2"
+              source_id: "003"
+              title: "Document the Declaration and Foundation capabilities"
+              description: "Write how a consumer reads one Entity's Declaration, then one example for each Foundation capability and one complete Entity-to-JSON-text-to-Entity round trip."
+              reason: "Declaration and Foundation are public contracts consumers rely on."
+              inputs:
+                - "The published Declaration and Foundation contracts"
+                - "The Model documentation Preferences"
+              skills: []
+              expected_result: "The Declaration and Foundation documentation exist with working examples."
+              depends_on:
+                - "P1-G8-T2"
+              constraints: []
+              acceptance: "Each documented example produces the result the documentation states, including the lossless round trip."
+              verify: "Carry out every Declaration and Foundation example exactly as written and observe the stated results, and that the round trip returns matching Field values."
+              status: "done"
+              log:
+                - at: "2026-09-30T16:22:51Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before writing the documentation."
+                - at: "2026-09-30T16:29:14Z"
+                  transition: "claimed -> done"
+                  check: "Transient check: extracted the Declaration example and both Foundation examples from the documentation and executed them exactly as written against the library."
+                  outcome: "Passed. The Declaration example printed the Entity's members and metadata; the Foundation examples printed the stated JSON text and code; the complete Position round trip returned identical JSON text with exact decimal and datetime values."
+            P1-G9-T3:
+              id: "P1-G9-T3"
+              source_id: "003"
+              title: "Document setup, use, verification, and troubleshooting"
+              description: "Write the setup steps, use that follows the exports and the collection, verification of the public surface, and troubleshooting limited to Model concerns, and arrange the complete documentation in its selected section order."
+              reason: "A consumer needs to install, use, and check the Model unaided."
+              inputs:
+                - "The overview, interface, Declaration, and Foundation documentation"
+                - "The Model documentation Preferences"
+              skills: []
+              expected_result: "The documentation is complete and ordered."
+              depends_on:
+                - "P1-G9-T1"
+                - "P1-G9-T2"
+              constraints: []
+              acceptance: "All selected sections exist in their selected order, the documented setup and verification steps succeed as written, and the documentation defines no other Component and exposes no private helper."
+              verify: "Follow the setup, use, and verification sections from a clean context and observe success; compare the section order with the selected order; observe that no other Component is described and no private helper is presented as contract."
+              status: "done"
+              log:
+                - at: "2026-09-30T16:22:51Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before writing the documentation."
+                - at: "2026-09-30T16:29:20Z"
+                  transition: "claimed -> done"
+                  check: "Transient checks (session scratchpad): compared the documentation's section order with the selected order; carried out the Use and Verify examples as written; copied the Component without its environment to a clean location and followed the Setup steps literally, including adding it by path to a fresh consumer project; imported the library from an empty directory; exercised every Troubleshooting statement; searched for private helpers and other Components."
+                  outcome: "Passed. Sections appear in the selected order; Use and Verify examples succeeded; both setup routes and the empty-directory import succeeded and left the directory empty; every Troubleshooting statement held and no error showed the offending value; no private helper or other Component is described."
+
+        P1-G10:
+          id: "P1-G10"
+          title: "Whole-Model conformance"
+          description: "Checks across the finished library that prove every Model contract holds together."
+          area: "Model conformance across every Entity and the delivered library"
+          does: "Every Model conformance contract, source quality, and repeatability is proven for the finished library."
+          constraints: []
+          task_count: 7
+          tasks:
+            P1-G10-T1:
+              id: "P1-G10-T1"
+              source_id: "003"
+              title: "Prove every Entity Metadata reference resolves"
+              description: "Demonstrate that every local Field reference, Relation target Entity, and Relation target Field resolves within the Model, that Relation endpoint Types are compatible, and that no metadata declaration is repeated or duplicated."
+              reason: "Entities record cross-Entity meaning by name only, so completeness can only be shown across the whole Model."
+              inputs:
+                - "The Entity Collection"
+              skills: []
+              expected_result: "Complete resolution of all Entity Metadata across the Model is demonstrated."
+              depends_on:
+                - "P1-G8-T2"
+              constraints: []
+              acceptance: "Every reference resolves, every Relation pair has compatible Types, and no reference is unresolved, incompatible, repeated, or duplicated."
+              verify: "Walk every Entity Declaration in the collection, resolve each metadata reference by logical name, and observe resolution and Type compatibility of all; observe that a deliberately unresolved reference in a transient copy is rejected rather than ignored."
+              status: "done"
+              log:
+                - at: "2026-09-30T16:29:14Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before performing the whole-Model conformance work."
+                - at: "2026-09-30T16:30:23Z"
+                  transition: "claimed -> done"
+                  check: "Transient check (session scratchpad): walked every Declaration in the Entity Collection and resolved each local Field reference, Primary Key, Relation target Entity and Field by logical name, Relation endpoint Type compatibility, and repeated or duplicated metadata; then fed the generator five deliberately broken copies of the Target (unknown target Entity, uniqueness naming a missing Field, uniqueness repeating a Field, incompatible Relation Type, unknown Type) and checked each was rejected with no output written."
+                  outcome: "Passed. All 28 Relations and every uniqueness constraint resolve with compatible Types and no repeated or duplicated metadata; all five broken Targets were rejected with an actionable, non-secret message and nothing written."
+            P1-G10-T2:
+              id: "P1-G10-T2"
+              source_id: "003"
+              title: "Prove every Entity enforces its value contract"
+              description: "Demonstrate for every Entity in the collection that it constructs from valid values and rejects an undeclared Field, a wrong Type, and a missing required value."
+              reason: "The value contract is what consumers rely on, and a single lax Entity would break it."
+              inputs:
+                - "The Entity Collection"
+              skills: []
+              expected_result: "Value-contract enforcement is demonstrated for every Entity."
+              depends_on:
+                - "P1-G8-T2"
+              constraints: []
+              acceptance: "Every Entity accepts valid values and rejects each of the three invalid cases."
+              verify: "For each Entity in the collection construct it from valid values, then with an undeclared Field, a wrong Type, and a missing required value, and observe acceptance in the first case and rejection in the others."
+              status: "done"
+              log:
+                - at: "2026-09-30T16:29:14Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before performing the whole-Model conformance work."
+                - at: "2026-09-30T16:30:23Z"
+                  transition: "claimed -> done"
+                  check: "Transient check: for each of the 15 Entities in the collection, constructed it from valid values, then with an undeclared Field, then per Field with a wrong Type, with the value missing, and with null on non-nullable Fields."
+                  outcome: "Passed. Valid values accepted and every invalid case rejected for all 15 Entities."
+            P1-G10-T3:
+              id: "P1-G10-T3"
+              source_id: "003"
+              title: "Prove every Entity round-trips through JSON text"
+              description: "Demonstrate for every Entity in the collection that converting it to JSON text and back returns an Entity whose every Field value matches, with decimal and datetime values keeping their exact value."
+              reason: "The lossless round trip is the portable reconstruction contract."
+              inputs:
+                - "The Entity Collection"
+              skills: []
+              expected_result: "A lossless JSON round trip is demonstrated for every Entity."
+              depends_on:
+                - "P1-G8-T2"
+              constraints: []
+              acceptance: "For every Entity every Field value survives the round trip unchanged, including exact decimal and datetime values, null, and the pending state."
+              verify: "For each Entity in the collection convert a representative instance to JSON text and back and compare every Field value, including decimal and datetime values, with the original."
+              status: "done"
+              log:
+                - at: "2026-09-30T16:29:14Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before performing the whole-Model conformance work."
+                - at: "2026-09-30T16:30:24Z"
+                  transition: "claimed -> done"
+                  check: "Transient check: for each Entity, built two representative instances (nullable Fields null, then set; decimals with trailing zeros; datetimes with a non-UTC offset), converted to JSON text and back, compared every Field value and Type, decimal digits, UTC offset, key order, and the text of a second conversion."
+                  outcome: "Passed. All 15 Entities round-trip losslessly: exact decimal digits kept as JSON strings, datetimes held in UTC with Z, null and pending id preserved, keys in Declaration order."
+            P1-G10-T4:
+              id: "P1-G10-T4"
+              source_id: "003"
+              title: "Prove every Entity has its identity and activity contract"
+              description: "Demonstrate that every Entity in the collection has an immutable, non-nullable identity and a mutable, non-nullable Boolean activity Field."
+              reason: "Every Entity must be identifiable and be able to leave use without deletion."
+              inputs:
+                - "The Entity Collection"
+              skills: []
+              expected_result: "The identity and activity contract is demonstrated for every Entity."
+              depends_on:
+                - "P1-G8-T2"
+              constraints: []
+              acceptance: "Each Entity's Declaration names its identity as its Primary Key, and its identity refuses change once assigned while its activity Field accepts a Boolean change."
+              verify: "For each Entity in the collection read its Declaration, attempt to change an assigned identity and observe refusal, and change its activity Field and observe acceptance."
+              status: "done"
+              log:
+                - at: "2026-09-30T16:29:14Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before performing the whole-Model conformance work."
+                - at: "2026-09-30T16:30:24Z"
+                  transition: "claimed -> done"
+                  check: "Transient check: for each Entity read the Declaration for its identity and activity Fields, assigned the pending identity once, attempted to change it again, changed the activity Field to a Boolean, and attempted a string and a null."
+                  outcome: "Passed. Identity is the Primary Key, non-nullable, immutable, Auto Increment; it refuses change once assigned. Activity is a non-nullable, mutable Boolean defaulting to true; it accepts a Boolean and rejects string and null, keeping the prior value."
+            P1-G10-T5:
+              id: "P1-G10-T5"
+              source_id: "003"
+              title: "Bring the library source to the selected technology standard"
+              description: "Make the library's source clean under the selected technology's format, import, static type, lint, and build checks, with no fixable warning it owns and no dead, duplicate, incomplete, cached, compiled, machine-specific, Agent-identifying, or timestamped artifact."
+              reason: "Correct meaning must be delivered as clean, usable source."
+              inputs:
+                - "The complete library source"
+              skills:
+                - "python-skills:python-guidelines"
+              expected_result: "The library source passes every applicable technology check without a fixable warning."
+              depends_on:
+                - "P1-G8-T3"
+                - "P1-G10-T1"
+                - "P1-G10-T2"
+                - "P1-G10-T3"
+                - "P1-G10-T4"
+              constraints: []
+              acceptance: "Every applicable check passes with no fixable warning owned by the library, and the delivered library holds none of the excluded artifacts."
+              verify: "Run every applicable format, import, static type, lint, and build check over the delivered library and observe a clean result; inspect the delivered content and observe none of the excluded artifacts."
+              status: "claimed"
+              log:
+                - at: "2026-09-30T16:29:14Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before performing the whole-Model conformance work."
+            P1-G10-T6:
+              id: "P1-G10-T6"
+              source_id: "003"
+              title: "Declare only necessary dependencies at concrete versions"
+              description: "Make the library declare only the dependencies it needs, each resolved to a concrete compatible version and preserved in its dependency records."
+              reason: "Consumers must be able to reproduce the library's environment and carry nothing unnecessary."
+              inputs:
+                - "The complete library source"
+              skills:
+                - "python-skills:python-guidelines"
+              expected_result: "A minimal, version-stabilized dependency declaration."
+              depends_on:
+                - "P1-G10-T5"
+              constraints: []
+              acceptance: "Every declared dependency is used and pinned to a concrete version, and the library works with exactly those dependencies."
+              verify: "Install the library into a clean environment from its declarations alone and observe that it imports and passes its checks, and observe that removing any declared dependency breaks it."
+              status: "claimed"
+              log:
+                - at: "2026-09-30T16:29:14Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before performing the whole-Model conformance work."
+            P1-G10-T7:
+              id: "P1-G10-T7"
+              source_id: "003"
+              title: "Prove regeneration produces no difference"
+              description: "Demonstrate that regenerating the Model from unchanged Target, Definition, Preferences, and resolved technical selections yields the same ordered output with no source or documentation difference."
+              reason: "Repeatable output makes review meaningful and protects existing meaning during evolution."
+              inputs:
+                - "The complete library and its documentation"
+              skills: []
+              expected_result: "Zero difference between the delivered output and a regeneration from unchanged authorities is demonstrated."
+              depends_on:
+                - "P1-G9-T3"
+                - "P1-G10-T6"
+              constraints: []
+              acceptance: "A regeneration from unchanged authorities differs from the delivered output in no source or documentation content."
+              verify: "Regenerate into a separate location from the same authorities and compare the whole output with the delivered library and documentation; observe no difference."
+              status: "claimed"
+              log:
+                - at: "2026-09-30T16:29:14Z"
+                  transition: "todo -> claimed"
+                  note: "Claimed by execution 004 before performing the whole-Model conformance work."
