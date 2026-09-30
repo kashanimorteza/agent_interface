@@ -2,30 +2,30 @@
 meta:
   path: ".interface/implementation/development/model/model.yaml"
   path_note: "The Preferences layer of the Model Component."
-  purpose: "Configurable component, layout, and technical implementation choices for Model."
+  purpose: "Configurable component, layout, language, technical realization, Entity defaults, and documentation choices for Model."
   standard: "Agent Project Interface"
-  version: "13.0"
-  updated: "2026-09-25"
+  version: "14.0"
+  updated: "2026-09-30"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
   rule: "This file is human-owned. Operations read it without writing resolved Model choices back into it."
   changed_by: "The human, directly. A missing critical Model choice is raised through State."
-  precedence: "An explicit Model definition and every applicable Principle take precedence over this file."
+  precedence: "Explicit compatible Target meaning and every applicable Model Principle take precedence over this file."
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings for Model identity; read layout for Model's configured names and layout; then read Model's development section for capabilities, naming, and technical implementation choices. Use Development Defaults only when Model leaves a shared choice unstated. Preserve every explicit Target property, including false and null, and never write resolved values back into this file."
-  selection: "When the Target leaves a Model-owned choice unstated and this file supplies no default, use compatible professional judgment under Model Principles and record a consequential implementation choice with the implementation."
-  version_resolution: "Model's development section resolves Model-owned versioned technical items. Development resolves only its shared Defaults."
-  matching: "An explicit Target property takes priority. A Preference default applies only to a missing property of an existing Field when the Target leaves that property unstated; otherwise no default applies. A Preference never creates, removes, or renames Target meaning."
+  consumption: "Read settings for Model identity, platform, and defaults; read layout for the configurable names of Interface, Entity, Core, Declaration, and Foundation artifacts; resolve the selected language and its naming, symbols, capabilities, package, and method names from development; then apply documentation preferences. Preserve every explicit Target property, including false and null, and never write resolved values back into this file."
+  selection: "Preserve explicit compatible Target choices. Use these Preferences only for choices the Target leaves unstated. Use compatible professional judgment under Model Principles only when neither authority supplies a choice, and record a consequential realization choice with the implementation."
+  version_resolution: "Resolve Model-owned versioned technical items from the selected language in development. Resolve latest-compatible to a concrete compatible version and preserve that resolution in dependency or lock metadata."
+  matching: "An explicit compatible Target property always takes priority. Every Entity receives the mandatory id and is_active Fields defined by Model; Preferences complete only their missing properties. Every other Field originates in Target, and a Preference may complete only a missing property of that existing Field. A Preference never creates another Field, removes or renames Target meaning, or overrides an explicit value."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "settings: identify the Model Component and its technical selection."
-  - "layout: locate Model's Interface, Entity, Declaration, and Foundation layers and their configured names."
-  - "development: apply Model capabilities, naming conventions, language, package, and implementation defaults."
+  - "settings: identify Model, its platform, and the defaults used only when mandatory or Target-declared Field properties are missing."
+  - "layout: resolve the configurable physical names of Model's Interface, Entity, Core, Declaration, and Foundation artifacts."
+  - "development: resolve the default language and that language's capabilities, naming, symbols, methods, package, and realization."
   - "documentation: apply the required Model documentation structure and examples."
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
@@ -42,14 +42,23 @@ content:
   settings:
     component:
       type: "library"
-      language: "Python"
       platform: "VPS"
       directory: "model"
       package: "model"
     defaults:
+      identity:
+        type: "integer"
+        nullable: false
+        immutable: true
+        value_generation: "auto_increment"
+      activity:
+        type: "boolean"
+        nullable: false
+        default: true
+        immutable: false
       value_generation:
-        generated_id: "uuid4"
-        # Alternatives: uuid1, ulid.
+        generated_identifier: "uuid4"
+        # Alternatives include uuid1 and ulid.
 
   # <!-------------------------------------------- layout -->
   layout:
@@ -60,16 +69,6 @@ content:
       interface: "interface"
       declaration: "declaration"
       foundation: "foundation"
-      validation: "validation"
-    classes:
-      declaration: "Declaration"
-      foundation: "Foundation"
-      validation: "Validation"
-    foundation:
-      methods:
-        to_json: "to_json"
-        from_json: "from_json"
-    casing: "Spell every name in the selected language's own casing standard, and name files and folders by the same standard, as development.languages states it."
 
   # <!-------------------------------------------- development -->
   development:
@@ -77,19 +76,27 @@ content:
       testing: false
       error_handling: false
       logging: false
-    naming:
-      entity: "PascalCase"
-      fields: "snake_case"
-      modules: "snake_case"
     languages:
+      default: "Python"
       python:
+        naming:
+          entity: "PascalCase"
+          fields: "snake_case"
+          modules: "snake_case"
+        symbols:
+          declaration: "Declaration"
+          foundation: "Foundation"
+        foundation:
+          methods:
+            to_json: "to_json"
+            from_json: "from_json"
         modeling:
           package:
             name: "SQLModel"
             version: "latest-compatible"
             skill: "sqlmodel"
-          realization: "Implement each Entity as a SQLModel table model and realize its declared Fields and metadata through SQLModel."
-  
+          realization: "Implement each Entity as a SQLModel model and realize its declared Fields and metadata without assigning storage or Table ownership to Model."
+
   # <!-------------------------------------------- documentation -->
   documentation:
     file: "README.md"
@@ -98,11 +105,15 @@ content:
     order:
       - overview
       - interface
+      - declaration
       - foundation
       - setup
       - use
+      - verify
       - troubleshooting
     sections:
-      overview: "Give one concise example using one Entity."
-      interface: "List every public Entity separately and show its Fields in a table. Do not include usage examples in this section."
-      foundation: "Give an example for each Foundation capability, then one complete example that uses all Foundation capabilities with one Entity."
+      overview: "Give one concise introduction and one simple example using one Entity."
+      interface: "List every public Entity once in Target order, with its description, complete Field table, and Entity Metadata outside that table. Do not put usage examples in this section."
+      declaration: "Show how a consumer reads one Entity's public Declaration, including Fields, Primary Key, Relations, Uniqueness Constraints, and Indexes."
+      foundation: "Give one example for each Foundation capability, then one complete Entity-to-JSON-object-to-Entity round trip."
+      verify: "Verify public import, construction of a representative Entity, access to its Declaration, and a lossless JSON Object round trip."
