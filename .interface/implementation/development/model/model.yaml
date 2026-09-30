@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Model Component."
   purpose: "Configurable component, stable Interface realization, layout, language, Entity defaults, and documentation choices for Model."
   standard: "Agent Project Interface"
-  version: "21.0"
+  version: "22.0"
   updated: "2026-09-30"
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -34,7 +34,7 @@ content_map:
   settings: "Model's identity, the default properties of id and is_active, and the recognized Sensitivity Markers."
   interface: "The Model Interface Schema version and the names of the published symbols."
   layout: "The physical names of Model's directories and files."
-  development: "The fixed verification checks, development capabilities, the selected language and its realization profile, and the selected generated-identifier algorithm with its alternatives."
+  development: "Development capabilities, the selected language and its realization profile, and the selected generated-identifier algorithm with its alternatives."
   documentation: "The documentation file, its section order, and the content of each section."
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -82,16 +82,6 @@ content:
 
   # <!-------------------------------------------- development -->
   development:
-    verification:
-    - every Target Entity has exactly one export, in Target order
-    - entities equals the set of exports, in the same order
-    - each Entity's declaration matches the Target — Fields, order, Types, nullability, defaults, and metadata
-    - every Entity has an immutable id and a Boolean is_active
-    - each Entity constructs from valid values and rejects an unknown Field, a wrong Type, and a missing required value
-    - to_json followed by from_json returns an equal Entity, for every Entity
-    - decimal and datetime values keep their exact value through JSON
-    - importing model has no side effect
-    - an unknown Type in the Target stops generation
     capabilities:
       testing: false
       error_handling: false

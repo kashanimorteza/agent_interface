@@ -285,6 +285,8 @@ No Definition file omits or weakens any of the three.
 
 The section that carries the file's mandatory rules. It opens with one or two short sentences stating that each rule below is mandatory, then groups the Principles by the Component parts named in Architecture and Layering. Cross-cutting Principles that belong to the Component as a whole are grouped under `General`; a Component with no Architecture groups them by coherent domain area instead. No Principle remains uncategorized.
 
+Every Development Component also carries a `Review` category, placed last. It holds everything the Review Operation checks to establish that the Component was realized as its Principles and Introduction describe: what conformance means for this Component, and the fixed observations that prove it. Every checking or verification rule of the Component lives there and nowhere else in the file, and it states what is observed, never the command, tool, or code that observes it. The Plan and Develop Operations check nothing; Review reads this category.
+
 Each category is a third-level heading. Each Principle is a fourth-level heading under its owning category, carrying its title followed by three labelled subsections:
 
 ```markdown

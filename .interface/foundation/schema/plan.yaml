@@ -183,10 +183,6 @@ sections:
                             required: true
                             default: ""
                             purpose: "The observable criterion that determines whether the intended result is correct."
-                          verify:
-                            required: true
-                            default: ""
-                            purpose: "The condition that must be observed to prove acceptance, stated in terms of the interfaces and behaviour the result publishes. It names no command, tool, path, or code; the concrete executable check that satisfies it is constructed and run at implementation time and recorded in the log."
                           status:
                             required: true
                             default: "todo"
@@ -204,13 +200,13 @@ sections:
                           log:
                             required: false
                             default: []
-                            purpose: "The append-only Task-local progress history; absent until the first recorded transition. Records meaningful transitions, verified Blocker resolution evidence when applicable, and, for completed work, the actual executable check and its observed outcome. Concrete commands, technologies, and locations are allowed here as historical evidence, with secret values excluded; they are not planning prescriptions."
+                            purpose: "The append-only Task-local progress history; absent until the first recorded transition. Records meaningful transitions and verified Blocker resolution evidence when applicable. Concrete commands, technologies, and locations are allowed here as historical evidence, with secret values excluded; they are not planning prescriptions."
 definitions:
   task_status:
     todo: "Defined and not started."
     claimed: "Claimed by an executor before work begins."
     blocked: "Waiting on the referenced critical Blocker."
-    done: "Acceptance proven by verification."
+    done: "Developed; whether acceptance holds is established by Review."
     replaced: "No longer executable because a newer Task identifies it through that Task's replaces field."
 initial:
   task_count: 0

@@ -40,7 +40,7 @@ For each eligible Task, Develop considers the Task Skills identified by Planning
 ## Terms
 
 - **Development Result** — the authorized Source, interface, configuration, or evidence produced by a completed development Task.
-- **Task Evidence** — the observable information showing what a Develop operation produced and verified.
+- **Task Evidence** — the observable information showing what a Develop operation produced.
 - **Developable Phase** — an active Target phase whose required Config records are valid and whose current Plan exists.
 
 <br>
@@ -79,7 +79,7 @@ Every Principle below is mandatory.
 
 **Rule:** Develop accepts one or more Target phase identifiers, or considers every active and developable Target phase when none is selected, in Target order. It starts only when required Config records are valid and the current Plan for each applicable phase exists. Develop executes only selected eligible Tasks whose authority, scope, inputs, outputs, and completion conditions are understood. It considers each Task's Task Skills, may use any other suitable available Skill, and never invokes another Core Operation.
 
-Before changing a Task's result, Develop claims that eligible Task. It preserves valid existing work, records Task-specific evidence, progress transitions, verification results, and any Task-specific Blocker in the Task Log, and updates the Task status accordingly. When a new Task identifies an earlier developed Task through `replaces`, Develop marks that earlier Task as `replaced` and records the relationship in its Task Log before executing the new Task. If Config or Plan is unavailable, Develop stops; it does not execute Configure or Plan.
+Before changing a Task's result, Develop claims that eligible Task. It preserves valid existing work, records Task-specific evidence, progress transitions, and any Task-specific Blocker in the Task Log, and updates the Task status accordingly. When a new Task identifies an earlier developed Task through `replaces`, Develop marks that earlier Task as `replaced` and records the relationship in its Task Log before executing the new Task. If Config or Plan is unavailable, Develop stops; it does not execute Configure or Plan.
 **Why:** Bounded execution keeps implementation traceable to the Plan and prevents an execution operation from becoming an unplanned design authority.
 **Boundary:** Develop never changes Target meaning, Plan authority, Development Principles, or another Component's owned record without explicit authority. It does not design or change Tasks, does not run another Core Operation, and stops and reports when another Operation is required.
 
@@ -91,7 +91,7 @@ These Principles hold for every Development Component Develop realizes. A Compon
 
 #### Generation writes only inside the Component it realizes
 
-**Rule:** Develop generates, changes, verifies, documents, and removes artifacts only inside the Component a Task realizes. A Component's contract changes only under its own authorities, never because another Component's implementation lacks a capability.
+**Rule:** Develop generates, changes, documents, and removes artifacts only inside the Component a Task realizes. A Component's contract changes only under its own authorities, never because another Component's implementation lacks a capability.
 **Why:** Independent ownership keeps each Component reusable and prevents one Component's work from rewriting another's contract.
 **Boundary:** A Component may use the language and packages its own Preferences select; those are realization dependencies, not dependencies on another Component.
 
@@ -101,23 +101,17 @@ These Principles hold for every Development Component Develop realizes. A Compon
 **Why:** Determinism makes reviews meaningful and protects existing meaning during evolution.
 **Boundary:** Runtime-generated values are not source nondeterminism. Compatibility aliases or historical versions exist only when explicit authority requires them, and Develop owns no data migration.
 
-#### Generation verifies complete conformance
-
-**Rule:** Before publication, generation validates input completeness, uniqueness, compatibility, naming, reference resolution, and technology support; then verifies every contract the Component's Definition names as its conformance, its Architecture and dependencies, its Documentation, source quality, and zero-diff regeneration. Disabled persistent testing requires transient verification rather than skipping it.
-**Why:** Generation is complete only when observable output proves it preserved every authority and public contract.
-**Boundary:** Verification observes and rejects mismatch; it never repairs ambiguity by invention or changes another Component.
-
 #### Failure is explicit and atomic
 
-**Rule:** Generation collects independent actionable failures when safe, identifies the affected item or artifact without exposing a sensitive value, and publishes candidate output only after every required check passes. Failure preserves the last valid output and publishes no partial result.
+**Rule:** Generation collects independent actionable failures when safe, identifies the affected item or artifact without exposing a sensitive value, and publishes only complete output. Failure preserves the last valid output and publishes no partial result. Develop checks nothing beyond completing its own output; conformance is established by the Review Operation.
 **Why:** A failed generation must not look complete or destroy usable output.
 **Boundary:** Warnings are limited to meaning-neutral issues; omission, coercion, fallback, invention, or partial publication never hides an error.
 
 #### Generated source meets the selected technology standard
 
-**Rule:** Generated output is installable and importable and passes applicable format, import, compile, build, lint, static type, dependency, and runtime checks without a fixable warning owned by the Component. It declares only necessary dependencies, with concrete versions stabilized, and contains no dead, duplicate, incomplete, cached, compiled, machine-specific, Agent-identifying, timestamped, or narratively generated artifact.
+**Rule:** Generated output is written to the selected technology's standard. It declares only necessary dependencies, with concrete versions stabilized, and contains no dead, duplicate, incomplete, cached, compiled, machine-specific, Agent-identifying, timestamped, or narratively generated artifact. Whether it passes the technology's checks is established by the Review Operation.
 **Why:** Correct meaning must be delivered as clean, usable source.
-**Boundary:** Language-required technical artifacts do not create meaning, and disabled persistent testing prevents a permanent test suite rather than verification.
+**Boundary:** Language-required technical artifacts do not create meaning.
 
 <br>
 
@@ -148,17 +142,12 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — produce zero diff from unchanged authorities and reconcile explicit changes across all affected surfaces.
 - **Never** — guess a rename or removal, retain obsolete generated duplication, or own data migration.
 
-**Generation verifies complete conformance**
-
-- **Must** — verify inputs, the Component's own conformance contracts, Architecture, dependencies, Documentation, source quality, and repeatability.
-- **Never** — skip verification because persistent testing is disabled.
-
 **Failure is explicit and atomic**
 
-- **Must** — report actionable non-secret failures and publish only a fully valid candidate.
+- **Must** — report actionable non-secret failures and publish only complete output.
 - **Never** — hide an error or replace the last valid output with partial output.
 
 **Generated source meets the selected technology standard**
 
-- **Must** — produce clean, installable, importable output with only necessary, version-stabilized dependencies that passes applicable technology checks.
+- **Must** — write output to the selected technology's standard with only necessary, version-stabilized dependencies.
 - **Never** — emit unnecessary, dead, duplicate, cached, compiled, machine-specific, Agent-identifying, or timestamped output.

@@ -58,7 +58,7 @@ Interface follows the fixed Model Interface Schema. It exports every Entity by i
 
 **Generation rules**
 
-1. The general generation rules — writing only inside the Component, determinism, conformance verification, atomic failure, and source quality — are stated once in the Develop Operation, so every Component shares one statement of them. Model keeps only what its own conformance means.
+1. The general generation rules — writing only inside the Component, determinism, atomic failure, and source standard — are stated once in the Develop Operation, so every Component shares one statement of them. Every check is made by the Review Operation, which reads this file's Review category; Plan and Develop check nothing.
 
 **Sensitive values**
 
@@ -180,12 +180,6 @@ Every Principle below is mandatory and belongs to the Architecture or Layering c
 **Why:** Stable ownership makes implementations comparable and prevents cycles.
 **Boundary:** Language-required manifests, package entrypoints, annotations, inheritance from a shared private base, and similar technical files may exist without creating another conceptual layer or moving an owned responsibility.
 
-#### Model conformance covers every Model contract
-
-**Rule:** Model output is conformant only when it shows exact Entity and Field membership and order, every parameter and explicit value, complete Entity Metadata, conformance to the Model Interface Schema — Entity Export membership, Entity Collection membership, order, and correspondence, actual Entity and Declaration references, and immutability — public Declarations, lossless JSON Object round trips, and Documentation.
-**Why:** These are the contracts consumers rely on; a check that omits one lets a broken Model look complete.
-**Boundary:** How and when these checks run belongs to the Develop Operation's generation rules; this Principle names only what Model conformance means.
-
 <br>
 
 ### Interface
@@ -294,6 +288,33 @@ Every Principle below is mandatory and belongs to the Architecture or Layering c
 
 <br>
 
+### Review
+
+#### Model conformance covers every Model contract
+
+**Rule:** Model output is conformant only when it shows exact Entity and Field membership and order, every parameter and explicit value, complete Entity Metadata, conformance to the Model Interface Schema — Entity Export membership, Entity Collection membership, order, and correspondence, actual Entity and Declaration references, and immutability — public Declarations, lossless JSON Object round trips, and Documentation.
+**Why:** These are the contracts consumers rely on; a check that omits one lets a broken Model look complete.
+**Boundary:** The Review Operation establishes this; Plan and Develop check nothing. This Principle names only what Model conformance means.
+
+#### Review observes Model through a fixed set of checks
+
+**Rule:** Review establishes Model conformance through these observations, every one of them on every review:
+
+- Every Target Entity has exactly one Entity Export, in Target order.
+- The Entity Collection holds exactly the Entities that are exported, in the same order.
+- Each Entity's Declaration matches the Target — Fields, order, Types, nullability, defaults, and metadata.
+- Every Entity has an immutable id and a Boolean is_active.
+- Each Entity constructs from valid values and rejects an unknown Field, a wrong Type, and a missing required value.
+- Converting any Entity to its JSON Object and back returns an equal Entity.
+- Decimal and datetime values keep their exact value through JSON.
+- Loading Interface has no side effect.
+- An unknown Type in the Target stops generation.
+
+**Why:** A fixed set of observations proves the same things on every review, so a result is never judged by a different standard from one run to the next.
+**Boundary:** Each observation states what is seen, never the command, tool, or code that observes it; how it is realized belongs to the Review Operation.
+
+<br>
+
 <!--------------------------------------------------------------------------------- At_a_Glance --->
 ## At a Glance
 
@@ -315,10 +336,6 @@ Every obligation below derives from the Principle with the same title.
 
 - **Must** — preserve canonical ownership and one-way dependencies.
 - **Never** — create a dependency cycle or a replacement conceptual layer.
-
-**Model conformance covers every Model contract**
-
-- **Must** — show every Model contract — membership, order, values, metadata, Interface Schema conformance, actual references, Declarations, round trips, and Documentation — before Model is conformant.
 
 ### Interface
 
@@ -403,3 +420,14 @@ Every obligation below derives from the Principle with the same title.
 
 - **Must** — document the complete public surface together with setup, use, and verification.
 - **Never** — define another Component, expose private implementation, retain stale meaning, or contain a real secret.
+
+### Review
+
+**Model conformance covers every Model contract**
+
+- **Must** — show every Model contract — membership, order, values, metadata, Interface Schema conformance, actual references, Declarations, round trips, and Documentation — before Model is conformant.
+
+**Review observes Model through a fixed set of checks**
+
+- **Must** — make every listed observation on every review.
+- **Never** — replace an observation with a command, tool, or code, or judge by a different set.

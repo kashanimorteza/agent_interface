@@ -142,6 +142,26 @@ Every Principle below is mandatory.
 
 <br>
 
+### Review checks every Component against its Review category
+
+**Rule:** For each phase, Review also reads the `Review` category of every Development Component the phase realizes and checks each of its observations, in addition to judging the result against the current Plan. A Task's acceptance and a Component's Review category are both baselines: a result that fails either is a Finding, and a Task's acceptance holds only once Review has established it.
+
+**Why:** Plan and Develop check nothing. A Component's Review category states what makes that Component correct whatever a particular Plan contained, so this is where its correctness is established.
+
+**Boundary:** Review applies each Component's Review category as that Component states it; it does not add observations the Component does not name.
+
+<br>
+
+### Review establishes technical and repeatable conformance
+
+**Rule:** Review validates the generation inputs — completeness, uniqueness, compatibility, naming, reference resolution, and technology support — and verifies that generated output is installable and importable, passes the selected technology's format, import, compile, build, lint, static type, dependency, and runtime checks without a fixable warning owned by the Component, and that regeneration from unchanged authorities produces no source or documentation difference. The applicable testing authority determines whether the evidence is persisted or transient: disabled persistent testing requires transient verification rather than skipping it, and Review never widens the declared testing scope.
+
+**Why:** A result that does not build, or that changes on every generation, cannot be trusted whatever its meaning.
+
+**Boundary:** Verification observes and rejects mismatch; resolving a Finding never repairs ambiguity by invention or changes another Component.
+
+<br>
+
 <!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance
 
@@ -178,3 +198,15 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — every Finding is stored with its Review and keeps its state until resolved or left open
 - **Never** — Review reopens Tasks or changes Plan content
+
+**Review checks every Component against its Review category**
+
+- **Must** — check every observation in the Review category of each Component the phase realizes, alongside the current Plan
+- **Must** — treat a Task's acceptance as holding only once Review has established it
+- **Never** — add an observation a Component's Review category does not name
+
+**Review establishes technical and repeatable conformance**
+
+- **Must** — validate generation inputs and verify installability, the technology's checks, and zero-diff regeneration
+- **Must** — verify transiently when persistent testing is disabled, without widening the declared testing scope
+- **Never** — repair ambiguity by invention or change another Component while resolving a Finding

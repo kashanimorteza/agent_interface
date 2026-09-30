@@ -46,7 +46,6 @@ Each Planning invocation produces or reconciles the applicable Plans once agains
 - **Plannable Phase** — an active Target phase whose Target-defined prerequisites permit Planning to begin.
 - **Dependency** — another Task whose completed result this Task requires before it can begin.
 - **Acceptance** — the observable criterion that determines whether a Task's result is correct.
-- **Verification** — the condition that must be observed to prove acceptance, stated as behaviour rather than as a command.
 - **Task Skills** — the Skills Planning identifies as useful for completing one Task, distinct from that Task's Source ID.
 - **Status** — the current progress value of a Task, updated by Develop and distinct from the aggregate Workflow State.
 - **State Log** — State's ordered record of an Operation execution and its result.
@@ -101,7 +100,7 @@ Every Principle below is mandatory.
 
 **Why:** Grouping supplies this shared context so that an individual Task does not have to carry it.
 
-**Boundary:** The Group does not absorb the activity, expected result, or verification that belong to one Task.
+**Boundary:** The Group does not absorb the activity, expected result, or acceptance that belong to one Task.
 
 <br>
 
@@ -156,9 +155,9 @@ Every Principle below is mandatory.
 - which Component and specific work area it targets;
 - which applicable authorities and constraints govern it;
 - which inputs, dependencies, constraints, and Task Skills matter; and
-- how completion is accepted and verified.
+- what completion must deliver.
 
-The Task itself carries only what is its own: the activity, its reason, its inputs and dependencies, its Task Skills, its expected result, its acceptance and verification, its progress, and any constraint that applies to it alone. Planning records every Skill it identifies as useful for completing the Task in Task Skills. That guidance helps Develop choose a suitable Skill but does not limit Develop to that list.
+The Task itself carries only what is its own: the activity, its reason, its inputs and dependencies, its Task Skills, its expected result, its acceptance, its progress, and any constraint that applies to it alone. Planning records every Skill it identifies as useful for completing the Task in Task Skills. That guidance helps Develop choose a suitable Skill but does not limit Develop to that list.
 
 **Why:** Understanding is a property of the Task together with its place in the Plan, so completeness is measured across the three levels rather than inside one record.
 
@@ -168,7 +167,7 @@ The Task itself carries only what is its own: the activity, its reason, its inpu
 
 ### A Task is independent of the implementation structure
 
-**Rule:** Planning content in Plans, Groups, and Tasks is expressed in terms of responsibilities, behaviour, and observable results. It never states where anything lives: no file, folder, path, module, package layout, class, function, symbol, or command appears in that planning content, and it never asserts that a particular artifact already exists at a particular location. The target and work area identify a Component and a responsibility inside it, not a directory. Planning content carries no list of sources to consult. Execution history is distinct: a Task's log records the concrete check actually performed, relevant locations, and the observed outcome, with secret values excluded.
+**Rule:** Planning content in Plans, Groups, and Tasks is expressed in terms of responsibilities, behaviour, and observable results. It never states where anything lives: no file, folder, path, module, package layout, class, function, symbol, or command appears in that planning content, and it never asserts that a particular artifact already exists at a particular location. The target and work area identify a Component and a responsibility inside it, not a directory. Planning content carries no list of sources to consult. Execution history is distinct: a Task's log records what was actually done, relevant locations, and the observed outcome, with secret values excluded.
 
 **Why:** The shared understanding a Task depends on is produced by the Interface itself — the human project definition together with the applicable Principles and Preferences. That understanding is established from those current sources at the moment the Task is executed, so a Task remains valid when the implementation is rearranged and is never invalidated by a path that has moved.
 
@@ -196,13 +195,13 @@ The Task itself carries only what is its own: the activity, its reason, its inpu
 
 <br>
 
-### Completion must be demonstrable
+### Completion is defined as observable behaviour
 
-**Rule:** Every Task states an acceptance criterion and a verification condition, both expressed as observable behaviour. Acceptance states what makes the result correct. Verification states what must be observed to prove it, in terms of the interfaces and behaviour the result publishes, without naming the command, tool, path, or code that observes it. The concrete executable check that satisfies the verification condition is constructed and run at implementation time, and the check used and its outcome are recorded in the Task's log. A Task is complete only when that check has passed. The applicable testing authority determines whether the evidence is persisted or transient; Plan never widens that scope.
+**Rule:** Every Task states an acceptance criterion expressed as observable behaviour, in terms of the interfaces and behaviour the result publishes, without naming the command, tool, path, or code that would observe it. Acceptance states what the result must deliver. Plan checks nothing; whether acceptance holds is established by the Review Operation.
 
-**Why:** Writing code or changing a file is never sufficient evidence of completion, and a proof expressed as behaviour survives every rearrangement of the implementation that produces it.
+**Why:** Writing code or changing a file is never sufficient evidence of completion, and a criterion expressed as behaviour survives every rearrangement of the implementation that produces it.
 
-**Boundary:** Verification describes how to prove the expected result after implementation. It never doubles as a hidden implementation procedure.
+**Boundary:** Acceptance describes what must be true after implementation. It never doubles as a hidden implementation procedure or as a check.
 
 <br>
 
@@ -263,7 +262,7 @@ Every obligation in the file, under the Principle it comes from.
 **Groups organize related work**
 
 - **Must** — every Task belongs to one Group that holds the context its Tasks share
-- **Never** — a Group absorbs the activity, expected result, or verification of one Task
+- **Never** — a Group absorbs the activity, expected result, or acceptance of one Task
 
 **A Task is one atomic action**
 
@@ -286,7 +285,7 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — a Task is expressed in responsibilities, behaviour, and observable results
 - **Never** — planning content names a file, folder, path, module, layout, class, function, symbol, or command, asserts an artifact's location, or carries a list of sources to consult
-- **Must** — execution history records actual checks, relevant locations, and observed results without secret values or prescriptions for future implementation
+- **Must** — execution history records what was done, relevant locations, and observed results without secret values or prescriptions for future implementation
 
 **Task defines the activity and Development defines the implementation**
 
@@ -298,13 +297,10 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — a Task names every other Task whose completed result it requires
 - **Never** — readiness is guessed from file order or proximity inside a Group
 
-**Completion must be demonstrable**
+**Completion is defined as observable behaviour**
 
-- **Must** — every Task states acceptance and a verification condition, both as observable behaviour
-- **Must** — the executable check used and its outcome are recorded in the Task's log, and the Task is complete only once it passes
-- **Never** — verification names the command, tool, path, or code that observes it, or doubles as an implementation procedure
-- **Must** — let the applicable testing authority determine whether verification evidence is persisted or transient
-- **Never** — widen the declared testing scope merely to demonstrate a Task
+- **Must** — every Task states acceptance as observable behaviour
+- **Never** — acceptance names the command, tool, path, or code that observes it, or doubles as an implementation procedure or a check
 
 **Task progress and Workflow State remain separate**
 
