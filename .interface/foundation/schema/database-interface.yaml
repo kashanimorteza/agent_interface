@@ -1,6 +1,6 @@
 schema:
   id: "agent-interface-database-interface"
-  version: "1.0"
+  version: "1.1"
   purpose: "The stable, language-independent structure through which consumers use every Database Operation and Lifecycle Command."
   kind: "Interface structure standard"
   applies_when: "The Implementation declares a Database Component."
@@ -41,7 +41,7 @@ structure:
         effect: "replaces every mutable Field; never changes id or another immutable Field"
         returns: "the stored Entity, or null when no record exists"
       list:
-        accepts: "an Entity class, optional Filters, an optional FilterCombination, optional ordered Orders, and an optional limit"
+        accepts: "an Entity class, optional Filters, an optional FilterCombination, optional ordered Orders, and an optional limit; a zero or negative limit means no limit"
         returns: "the matching Entity instances"
       get_by_id:
         accepts: "an Entity class and an id"
@@ -61,15 +61,15 @@ structure:
         accepts: "an Entity class, optional Filters, and an optional FilterCombination"
         returns: "the matching count"
       sum:
-        accepts: "an Entity class, one numeric Field of that Entity, optional Filters, and an optional FilterCombination"
+        accepts: "an Entity class, one numeric Field reference of that Entity, optional Filters, and an optional FilterCombination"
         effect: "ignores null values"
         returns: "the total, or zero when nothing matches"
       min:
-        accepts: "an Entity class, one comparable Field of that Entity, optional Filters, and an optional FilterCombination"
+        accepts: "an Entity class, one comparable Field reference of that Entity, optional Filters, and an optional FilterCombination"
         effect: "ignores null values"
         returns: "the smallest value, or null when nothing matches"
       max:
-        accepts: "an Entity class, one comparable Field of that Entity, optional Filters, and an optional FilterCombination"
+        accepts: "an Entity class, one comparable Field reference of that Entity, optional Filters, and an optional FilterCombination"
         effect: "ignores null values"
         returns: "the largest value, or null when nothing matches"
       truncate:
@@ -83,6 +83,7 @@ structure:
     operations:
       execute_command:
         accepts: "a native command in the Instance Engine's query language and its bound parameters"
+        effect: "runs any valid command the Engine supports, including a schema change; create_tables remains the standard schema-preparation path"
         returns: "a CommandResult"
 
   lifecycle_commands:
@@ -90,10 +91,13 @@ structure:
     purpose: "Explicit preparation commands, callable through Interface and through generated manual entry points. Each also accepts an optional DatabaseInstance."
     commands:
       create_tables:
-        effect: "creates or safely aligns every Table required by the Declarations of the Model Entity Collection"
+        effect: "creates every Table required by the Declarations of the Model Entity Collection, using nothing else; matching Tables are left unchanged; a difference with an existing Table stops the command"
         returns: "a LifecycleResult"
       insert_initial_data:
         effect: "inserts every missing configured Initial Data record; skips an identical present record; fails on a conflicting one"
+        returns: "a LifecycleResult"
+      prepare:
+        effect: "runs create_tables and then insert_initial_data; stops without running insert_initial_data when create_tables fails"
         returns: "a LifecycleResult"
 
   vocabulary:
@@ -108,13 +112,14 @@ structure:
     filter:
       immutable: true
       fields:
-        field: "a Field of the given Entity"
+        field: "a Field reference the given Entity exposes, never a Field name string"
         operator: "a FilterOperator member"
         value: "an operator-compatible value; absent for IS_NULL and IS_NOT_NULL; a compatible collection for IN"
+      compatibility: "CONTAINS, STARTS_WITH, and ENDS_WITH require a textual Field; comparison operators require a value compatible with the Field"
     order:
       immutable: true
       fields:
-        field: "a Field of the given Entity"
+        field: "a Field reference the given Entity exposes, never a Field name string"
         direction: "an OrderDirection member; ASCENDING when omitted"
 
   results:
@@ -149,7 +154,7 @@ structure:
 rules:
   stable_shape: "Changing Entities, Instances, Engines, languages, packages, or internal implementation never changes this structure."
   entity_by_value: "Every Entity Operation receives an Entity instance or class. No Operation selects an Entity by name."
-  no_strings: "Instances, operators, combinations, and directions are passed as imported enumeration members, never as strings."
+  no_strings: "Entities, Fields, Instances, operators, combinations, and directions are passed as imported values, never as strings."
   missing_record: "A missing record returns null; it is never an error. Invalid input, configuration, connection, or execution remains an error."
   capability_groups: "Entity Operations, Database-wide Operations, and Lifecycle Commands are mandatory conceptual groups; they do not require language-specific wrapper objects."
   field_validation: "Every Field in a Filter, Order, or aggregate is validated against the given Entity before any Instance is accessed."
@@ -172,4 +177,4 @@ example: |
                   orders=[Order(User.name, OrderDirection.ASCENDING)],
                   limit=10)
   db.disable(User, user.id)
-  db.create_tables()
+  db.prepare()                                                   # create_tables, then insert_initial_data

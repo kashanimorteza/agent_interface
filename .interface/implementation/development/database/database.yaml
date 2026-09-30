@@ -4,8 +4,8 @@ meta:
   path_note: "Preferences and machine-readable public contract for the Database Component."
   purpose: "Database layout, Interface contract, runtime configuration defaults, and technical defaults."
   standard: "Agent Project Interface"
-  version: "12.1"
-  updated: "2026-09-30"
+  version: "13.0"
+  updated: "2026-10-01"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -16,32 +16,31 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings and instances; generate config from its Foundation Schema; publish the exact Interface contract; realize the fixed layout; then apply development and documentation preferences."
-  selection: "Use compatible professional judgment only for an unstated Database-owned technical choice and record consequential implementation choices with the implementation."
+  consumption: "Read settings, instances, and initial_data; generate config from its Foundation Schema; realize Interface from the Database Interface Schema; realize the fixed layout; then apply development and documentation preferences."
+  selection: "Preserve explicit compatible Target choices. Use these Preferences only for choices the Target leaves unstated, and choose only among the values they list. When neither the Target nor these Preferences supply a choice, Database stops and reports the missing choice through State. It never fills a gap by its own judgment."
   runtime: "Generated config.yaml is the sole runtime source for Engines, Instances, Settings, and Initial Data. Runtime never reads this file."
+  version_resolution: "Resolve Database-owned versioned technical items from the selected language profile in development. Resolve latest-compatible to a concrete compatible version and preserve that resolution in dependency or lock metadata."
   matching: "Each active Instance receives one implementation file beneath layout.directories.engine, including when multiple Instances use the same Engine."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "settings: identify Database, its read-only Model dependency, configuration, and query defaults."
-  - "instances: resolve default Instance definitions."
-  - "initial_data: copy every Target-defined Initial Data record into the shared collection."
-  - "initial_data_policy: resolve requested generated values and never hold records because of sensitivity or at-rest security metadata."
-  - "interface: generate the exact public capability groups, vocabulary, values, and publication surface."
-  - "layout: realize fixed Database-owned files and directories."
-  - "development: select language, packages, Engine technology, and after-generation behavior."
-  - "documentation: generate the root README from the public contract."
-
-# <!--------------------------------------------------------------------------------- Content_Map -->
-content_map:
   - settings
   - instances
   - initial_data
-  - initial_data_policy
   - interface
   - layout
   - development
   - documentation
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  settings: "Database's identity, the Model Interface Schema it consumes, the configuration file, the default Instance, the Storage root, and the query defaults."
+  instances: "The default definition of every Instance."
+  initial_data: "The shared Initial Data collection copied from the Target."
+  interface: "The Database Interface Schema and its version."
+  layout: "The physical names of Database's directories and files."
+  development: "Development capabilities, the selected language and its profile, after-generation behavior, and Engine technology."
+  documentation: "The documentation file, its section order, and the content of each section."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
@@ -54,11 +53,7 @@ content:
       directory: "database"
       package: "database"
     model_dependency:
-      interface: "model.interface"
       schema: ".interface/foundation/schema/model-interface.yaml"
-      entity_collection: "entities"
-      consumption: "Enumerate Entities only through the Schema-defined Entity Collection, import a specific Entity through its Entity Export, and use each Entity's own exposed Declaration. Never inspect __all__, wildcard exports, package attributes, directories, or internal Entity paths."
-      ownership: "Database writes only inside its own Component output and never changes Model."
     configuration:
       file: "config.yaml"
       structure: ".interface/foundation/schema/database.yaml"
@@ -98,91 +93,10 @@ content:
   # <!-------------------------------------------- initial_data -->
   initial_data: []
 
-  # <!-------------------------------------------- initial_data_policy -->
-  initial_data_policy:
-    source: "Every Target-defined Initial Data record"
-    generated_values: "Resolve Target generation instructions, including Generate securely, to concrete values before emitting config.yaml."
-    persistence: "Insert resolved values unchanged. Database performs no hash, encryption, masking, authorization, or other security transformation."
-    blocking: "Sensitivity markers, at-rest instructions, credential Fields, and unavailable security processors never omit, postpone, or block Initial Data."
-
   # <!-------------------------------------------- interface -->
   interface:
-    publication:
-      - "Database"
-      - "DatabaseInstance"
-      - "Filter"
-      - "FilterOperator"
-      - "FilterCombination"
-      - "Order"
-      - "OrderDirection"
-      - "CommandResult"
-      - "LifecycleResult"
-    grouping: "Entity Operations, Database-wide Operations, and Lifecycle Commands are mandatory conceptual groups, not required language-specific wrapper symbols."
-    entity_operations:
-      - "add"
-      - "update"
-      - "list"
-      - "delete"
-      - "enable"
-      - "disable"
-      - "get_by_id"
-      - "count"
-      - "sum"
-      - "min"
-      - "max"
-      - "truncate"
-    database_wide_operations:
-      - "execute_command"
-    lifecycle_commands:
-      - "create_tables"
-      - "insert_initial_data"
-    vocabulary:
-      FilterOperator:
-        - "EQUALS"
-        - "NOT_EQUALS"
-        - "GREATER_THAN"
-        - "GREATER_OR_EQUAL"
-        - "LESS_THAN"
-        - "LESS_OR_EQUAL"
-        - "IN"
-        - "CONTAINS"
-        - "STARTS_WITH"
-        - "ENDS_WITH"
-        - "IS_NULL"
-        - "IS_NOT_NULL"
-      FilterCombination:
-        - "AND"
-        - "OR"
-      OrderDirection:
-        - "ASCENDING"
-        - "DESCENDING"
-    values:
-      Filter:
-        immutable: true
-        fields:
-          field: "Entity Field name"
-          operator: "FilterOperator"
-          value: "operator-compatible value; absent for IS_NULL and IS_NOT_NULL"
-      Order:
-        immutable: true
-        fields:
-          field: "Entity Field name"
-          direction: "OrderDirection; defaults to ASCENDING when omitted"
-      CommandResult:
-        fields:
-          rows: "returned row mappings or null"
-          affected: "affected row count or null"
-          columns: "ordered column names or null"
-          success: "execution success"
-          message: "public result or error message"
-          instance: "DatabaseInstance used"
-      LifecycleResult:
-        fields:
-          command: "Lifecycle Command name"
-          instance: "DatabaseInstance used"
-          success: "execution success"
-          affected: "processed table or record count or null"
-          message: "public result or error message"
+    schema: ".interface/foundation/schema/database-interface.yaml"
+    contract_version: "1.1"
 
   # <!-------------------------------------------- layout -->
   layout:
@@ -198,6 +112,7 @@ content:
       tables: "tables"
       initial_data: "initial_data"
       engine: "<active-instance>"
+      lifecycle_entry_points: "<lifecycle-command>"
       configuration: "config.yaml"
       documentation: "README.md"
 
@@ -207,26 +122,24 @@ content:
       testing: false
       error_handling: false
       logging: false
-    languages:
-      default: "python"
-      python:
-        modeling:
-          package:
-            name: "SQLModel"
-            version: "latest-compatible"
-            skill: "sqlmodel"
-        migration:
-          name: "Alembic"
-          package: "Alembic"
-          version: "latest-compatible"
-          compatible_modeling: "SQLModel"
+    language:
+      selected: "python"
+      options:
+        python:
+          modeling:
+            package:
+              name: "SQLModel"
+              version: "latest-compatible"
+            agent_skills:
+              - resource: "sqlmodel"
+                requirement: "required"
+                activation: "when_selected"
+                purpose: "Apply SQLModel guidance while realizing Tables and Engine units."
     after_generation:
       enabled: true
       instance: "<default_instance>"
       fail_on_error: true
-      commands:
-        - "create_tables"
-        - "insert_initial_data"
+      command: "prepare"
     database_engines:
       sqlite:
         version: "runtime-provided"
@@ -269,11 +182,12 @@ content:
       - setup
       - use
       - lifecycle
+      - initial_data
       - verify
       - troubleshooting
     sections:
       interface: "Document all three capability groups, public vocabulary, value contracts, defaults, results, and errors with complete examples."
       instances: "Explain active DatabaseInstance members, default selection, and Database-owned storage without exposing credentials."
-      lifecycle: "Explain manual CreateTables and InsertInitialData use and after-generation order."
-      initial_data: "List every Target-defined Initial Data record, explain generated-value resolution, and state that Database inserts resolved values unchanged without security-based omission."
+      lifecycle: "Explain manual CreateTables, InsertInitialData, and Prepare use, and that generation runs Prepare."
+      initial_data: "List every Target-defined Initial Data record and state that Database inserts its values unchanged without security-based omission."
       verify: "Verify public import, Instance selection, query vocabulary, each capability group, persistent file location, and repeatable Lifecycle Commands."
