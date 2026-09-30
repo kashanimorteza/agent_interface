@@ -79,8 +79,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/interface-boundary-guard.py\"",
-            "timeout": 10
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/interface_guard.py\" pre-tool-use || { echo 'interface-boundary-guard could not run; failing closed' >&2; exit 2; }",
+            "timeout": 30
           }
         ]
       }
@@ -91,19 +91,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/agent-native-read-grant.py\"",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/agent-native-read-grant.py\"",
-            "timeout": 10
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/interface_guard.py\" grant || { echo 'agent-native-read-grant could not run; failing closed' >&2; exit 2; }",
+            "timeout": 30
           }
         ]
       }
