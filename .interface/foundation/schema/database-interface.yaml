@@ -169,7 +169,7 @@ structure:
 
 # <!--------------------------------------------------------------------------------- Rules -->
 rules:
-  stable_shape: "Changing Entities, Instances, Engines, languages, packages, or internal implementation never changes this structure."
+  stable_shape: "Changing Entities, Instances, Engines, languages, packages, or internal implementation never changes this structure. An incompatible technology fails generation rather than changing Database meaning."
   parameter_order: "Every Operation and Lifecycle Command takes exactly the listed parameters, by these names and in this order. entity accepts the Entity class or instance the Operation states. Every parameter after entity, id, field, and command is optional with a default; instance is always last."
   entity_by_value: "Every Entity Operation receives an Entity instance or class. No Operation selects an Entity by name."
   no_strings: "Entities, Fields, Instances, operators, combinations, and directions are passed as imported values, never as strings."

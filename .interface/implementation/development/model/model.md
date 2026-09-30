@@ -309,6 +309,7 @@ Every Principle below is mandatory and belongs to the Architecture or Layering c
 - Decimal and datetime values keep their exact value through JSON.
 - Loading Interface has no side effect.
 - An unknown Type in the Target stops generation.
+- Each Entity's storage mapping — Table and column names, constraint and index names, and the identity column — takes exactly the form Model Preferences list.
 
 **Why:** A fixed set of observations proves the same things on every review, so a result is never judged by a different standard from one run to the next.
 **Boundary:** Each observation states what is seen, never the command, tool, or code that observes it; how it is realized belongs to the Review Operation.

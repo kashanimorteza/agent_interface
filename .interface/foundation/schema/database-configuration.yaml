@@ -48,7 +48,6 @@ structure:
       lifecycle:
         after_generation:
           enabled: "<boolean>"
-          instance: "<instance-key or default_instance>"
           fail_on_error: "<boolean>"
           command: "prepare"
 
@@ -62,15 +61,20 @@ structure:
 # <!--------------------------------------------------------------------------------- Rules -->
 rules:
   sole_runtime_source: "Generated config.yaml is the sole runtime source. Runtime does not read Database Preferences."
+  no_write_back: "Runtime never writes back to Database Preferences."
+  regeneration: "Regeneration rebuilds config from the current Target and Preferences; no hidden merge or second runtime source exists."
+  credential_scope: "Connection values and credentials never appear in DatabaseInstance or in any Operation request; Core resolves them from config."
   instance_identity: "Every Instance key and normalized public DatabaseInstance member is unique."
   instance_completeness: "Every Instance contains name, active, engine, host, port, database, username, password, and options; its Engine validates applicable required values."
   instance_integrity: "Every Instance names an existing Engine."
   default_integrity: "settings.default_instance names an active existing Instance."
   active_publication: "Exactly active Instances become DatabaseInstance members; exactly the Engines they use receive one Engine implementation file each."
+  membership_change: "A change to active membership takes effect through config and the next generation where generated units must change; an unresolved Instance selection fails configuration loading."
   complete_update: "When an Instance definition changes in Configuration, its complete definition is replaced and revalidated; no hidden partial merge occurs."
   query_vocabulary: "Serialized enum defaults use canonical member names and resolve before any public call; unknown names fail configuration loading."
   limit_normalization: "An omitted limit uses -1; zero and every negative limit normalize to -1, meaning no limit."
   storage_ownership: "A file-backed database path resolves beneath settings.storage_root in the Database Component and may not escape it or resolve from an installed package, virtual environment, working directory, or consumer."
+  storage_failure: "An invalid or escaping path fails before any connection. Only Database creates and manages its storage files."
   initial_data_ownership: "Initial Data is shared Database Configuration, not Model data and not per-Instance or Engine-file content."
   initial_data_completeness: "When the Target declares Initial Data, generation copies every declared record into this collection and may not emit an empty or partial collection."
   generated_initial_values: "A Target Initial Data value that is not concrete, including Generate securely, is copied as an empty string; generation continues and no value is generated. The user fills such values later."
@@ -123,7 +127,6 @@ example: |
     lifecycle:
       after_generation:
         enabled: true
-        instance: "default_instance"
         fail_on_error: true
         command: "prepare"
 
