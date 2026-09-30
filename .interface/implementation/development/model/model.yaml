@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Model Component."
   purpose: "Configurable component, stable Interface realization, layout, language, Entity defaults, and documentation choices for Model."
   standard: "Agent Project Interface"
-  version: "15.0"
+  version: "21.0"
   updated: "2026-09-30"
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -16,26 +16,26 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings for Model identity, platform, and defaults; read interface and its Foundation Schema as the mandatory stable consumer boundary; read layout for physical artifacts; resolve the selected language and its naming, symbols, capabilities, package, and method names from development; then apply documentation preferences. Preserve every explicit Target property, including false and null, and never write resolved values back into this file."
-  selection: "Preserve explicit compatible Target choices. Use these Preferences only for choices the Target leaves unstated. Use compatible professional judgment under Model Principles only when neither authority supplies a choice, and record a consequential realization choice with the implementation."
-  version_resolution: "Resolve Model-owned versioned technical items from the selected language in development. Resolve latest-compatible to a concrete compatible version and preserve that resolution in dependency or lock metadata."
-  matching: "An explicit compatible Target property always takes priority. Every Entity receives the mandatory id and is_active Fields defined by Model; Preferences complete only their missing properties. Every other Field originates in Target. Interface always conforms to the referenced Model Interface Schema: Target Entity changes update EntityCatalog membership only and never replace its fixed structure."
+  consumption: "Read settings for Model's identity and Entity defaults, interface for the published symbols, layout for physical names, development for the selected language and its profile, and documentation last; apply Preferences only where the Target is silent, and never write resolved values back into this file."
+  selection: "Preserve explicit compatible Target choices. Use these Preferences only for choices the Target leaves unstated, and choose only among the values they list. When neither the Target nor these Preferences supply a choice, Model stops and reports the missing choice through State. It never fills a gap by its own judgment."
+  version_resolution: "Resolve Model-owned versioned technical items from the selected language profile in development. Resolve latest-compatible to a concrete compatible version and preserve that resolution in dependency or lock metadata."
+  matching: "An explicit compatible Target property is matched first; a Preference applies only to a property the Target leaves unstated, and only to id, is_active, and properties Model Principles allow Preferences to complete."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "settings: identify Model, its platform, and the defaults used only when mandatory or Target-declared Field properties are missing."
-  - "interface: apply the fixed Model Interface Schema, public symbols, EntityEntry shape, and EntityCatalog capabilities."
-  - "layout: resolve the configurable physical names of Model's Interface, Entity, Core, Declaration, and Foundation artifacts."
-  - "development: resolve the default language and that language's capabilities, naming, symbols, methods, package, and realization."
-  - "documentation: apply the required Model documentation structure and examples."
-
-# <!--------------------------------------------------------------------------------- Content_Map -->
-content_map:
   - settings
   - interface
   - layout
   - development
   - documentation
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  settings: "Model's identity, the default properties of id and is_active, and the recognized Sensitivity Markers."
+  interface: "The Model Interface Schema version and the names of the published symbols."
+  layout: "The physical names of Model's directories and files."
+  development: "The fixed verification checks, development capabilities, the selected language and its realization profile, and the selected generated-identifier algorithm with its alternatives."
+  documentation: "The documentation file, its section order, and the content of each section."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
@@ -43,106 +43,144 @@ content:
   # <!-------------------------------------------- settings -->
   settings:
     component:
-      type: "library"
-      platform: "VPS"
-      directory: "model"
-      package: "model"
-    defaults:
-      identity:
-        type: "integer"
-        nullable: false
-        immutable: true
-        value_generation: "auto_increment"
-      activity:
-        type: "boolean"
-        nullable: false
-        default: true
-        immutable: false
-      value_generation:
-        generated_identifier: "uuid4"
-        # Alternatives include uuid1 and ulid.
+      type: library
+      directory: model
+      package: model
+    entity:
+      defaults:
+        identity:
+          type: integer
+          nullable: false
+          immutable: true
+          value_generation: auto_increment
+        activity:
+          type: boolean
+          nullable: false
+          default: true
+          immutable: false
+      sensitivity_markers:
+      - password
+      - sensitive
 
   # <!-------------------------------------------- interface -->
   interface:
-    schema: ".interface/foundation/schema/model-interface.yaml"
-    contract_version: "1.0"
-    fixed: true
-    publication:
-      catalog:
-        symbol: "Entities"
-        kind: "ready immutable value"
-      entry:
-        symbol: "EntityEntry"
-        kind: "immutable value contract"
-      per_entity_root_exports: false
-    catalog:
-      membership: "Every Target Entity exactly once in Target order"
-      immutable_after_load: true
-      capabilities:
-        entries: "entries"
-        get: "get"
-        contains: "contains"
-        declaration_of: "declaration_of"
-    entry:
-      members:
-        name: "name"
-        entity: "entity"
-        declaration: "declaration"
+    schema: .interface/foundation/schema/model-interface.yaml
+    contract_version: '2.0'
+    symbols:
+      entity_collection: entities
+      entity_declaration: declaration
 
   # <!-------------------------------------------- layout -->
   layout:
     directories:
-      entity: "entity"
-      core: "core"
+      entity: entity
+      core: core
     files:
-      interface: "interface"
-      declaration: "declaration"
-      foundation: "foundation"
+      interface: interface
+      declaration: declaration
+      foundation: foundation
 
   # <!-------------------------------------------- development -->
   development:
+    verification:
+    - every Target Entity has exactly one export, in Target order
+    - entities equals the set of exports, in the same order
+    - each Entity's declaration matches the Target — Fields, order, Types, nullability, defaults, and metadata
+    - every Entity has an immutable id and a Boolean is_active
+    - each Entity constructs from valid values and rejects an unknown Field, a wrong Type, and a missing required value
+    - to_json followed by from_json returns an equal Entity, for every Entity
+    - decimal and datetime values keep their exact value through JSON
+    - importing model has no side effect
+    - an unknown Type in the Target stops generation
     capabilities:
       testing: false
       error_handling: false
       logging: false
-    languages:
-      default: "Python"
-      python:
-        naming:
-          entity: "PascalCase"
-          fields: "snake_case"
-          modules: "snake_case"
-        symbols:
-          declaration: "Declaration"
-          foundation: "Foundation"
-        foundation:
-          methods:
-            to_json: "to_json"
-            from_json: "from_json"
-        modeling:
-          package:
-            name: "SQLModel"
-            version: "latest-compatible"
-            skill: "sqlmodel"
-          realization: "Implement each Entity as a SQLModel model and realize its declared Fields and metadata without assigning storage or Table ownership to Model."
+    language:
+      selected: python
+      options:
+        python:
+          naming:
+            entity: PascalCase
+            fields: snake_case
+            modules: snake_case
+          symbols:
+            declaration: Declaration
+            foundation: Foundation
+          types:
+            string: {python: str, json: string}
+            integer: {python: int, json: number}
+            float: {python: float, json: number}
+            decimal: {python: decimal.Decimal, json: string, note: never float; the string keeps precision exact}
+            boolean: {python: bool, json: true / false}
+            datetime: {python: pydantic.AwareDatetime, json: ISO 8601 string with offset, note: always timezone-aware, stored in UTC}
+            date: {python: datetime.date, json: ISO 8601 date string}
+            time: {python: datetime.time, json: ISO 8601 time string}
+            uuid: {python: uuid.UUID, json: string}
+          nullable: T | None
+          unknown_type: stop and report; never guess
+          declaration_access: class attribute
+          declaration_kind: frozen dataclass
+          pending_value: None
+          field_realization: Use Field only for value rules (default, nullable, description, value constraints). Never pass primary_key, unique, index, or foreign_key; Entity Metadata lives only in Declaration.
+          declaration_members:
+            entity:
+              name: name
+              description: description
+              fields: fields
+              primary_key: primary_key
+              relations: relations
+              uniqueness_constraints: unique_constraints
+              indexes: indexes
+            relation:
+              local_field: local_field
+              target_entity: target_entity
+              target_field: target_field
+          foundation:
+            methods:
+              to_json: to_json
+              from_json: from_json
+            methods_note: These names were once rejected because the output was not JSON text. Foundation now produces JSON text, so that reason no longer applies.
+          modeling:
+            package:
+              name: SQLModel
+              version: latest-compatible
+            reason: One modeling package shared across the project's Python Components. A Python-specific choice, not a Model rule; Model classes are never tables.
+            realization: Implement each Entity as a SQLModel model and realize its declared Fields and metadata without assigning storage or Table ownership to Model.
+            agent_skills:
+            - resource: sqlmodel
+              requirement: required
+              activation: when_selected
+              purpose: Apply SQLModel guidance while realizing and reviewing Entities.
+            agent_avoid:
+            - Never declare a Model class with table=True; Model defines no tables.
+    generated_identifier:
+      selected: uuid4
+      options:
+        uuid4: {}
+        uuid1: {}
+        ulid: {}
 
   # <!-------------------------------------------- documentation -->
   documentation:
-    file: "README.md"
-    location: "the Component root"
-    format: "markdown"
+    file: README.md
+    location: the Component root
+    format: markdown
     order:
-      - overview
-      - interface
-      - declaration
-      - foundation
-      - setup
-      - use
-      - verify
-      - troubleshooting
+    - overview
+    - interface
+    - declaration
+    - foundation
+    - setup
+    - use
+    - verify
+    - troubleshooting
     sections:
-      overview: "Give one concise introduction and one simple example using one Entity."
-      interface: "Explain the fixed EntityCatalog and EntityEntry contract, then list every Catalog member once in Target order with its description, complete Field table, and Entity Metadata outside that table. Show consumers using Catalog rather than wildcard exports, __all__, reflection, directory scanning, or internal paths."
-      declaration: "Show how a consumer reads one Entity's public Declaration, including Fields, Primary Key, Relations, Uniqueness Constraints, and Indexes."
-      foundation: "Give one example for each Foundation capability, then one complete Entity-to-JSON-object-to-Entity round trip."
-      verify: "Verify Schema-conformant Interface shape, exact Catalog membership and order, actual Entity and Declaration references, capability behavior, immutability, side-effect freedom, representative Entity construction, and a lossless JSON Object round trip."
+      overview: Give one concise introduction and one simple example using one Entity.
+      interface: Explain the Entity Exports and the Entity Collection, then list every Entity once in Target order with its description, complete Field table, and Entity Metadata outside that table. Show one consumer importing an Entity directly and one enumerating the Entity Collection, rather than using wildcard exports, __all__, reflection, directory scanning, or internal paths.
+      declaration: Show how a consumer reads one Entity's public Declaration, including Fields, Primary Key, Relations, Uniqueness Constraints, and Indexes, through the Entity itself.
+      foundation: Give one example for each Foundation capability, then one complete Entity-to-JSON-text-to-Entity round trip.
+      setup: Give the setup steps for the selected technology.
+      use: Show use that follows the Entity Exports and the Entity Collection.
+      verify: Verify Schema-conformant Interface shape, exact Entity Export membership, Entity Collection membership and order and its correspondence with the Exports, actual Entity and Declaration references, immutability, side-effect freedom, representative Entity construction, Declaration access, and a lossless JSON text round trip.
+      troubleshooting: Cover Model concerns only.

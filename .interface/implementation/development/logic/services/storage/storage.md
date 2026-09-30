@@ -73,9 +73,6 @@ The names shown are defaults selected by Storage Service Preferences. Changing a
 
 - **Belongs to Logic** — is a fixed Service whose Interface always exists but is published through Logic Interface only when configured.
 - **Consumes Database** — discovers and uses every member of Database's three public capability groups, DatabaseInstance, request Vocabulary, and result contracts only through Database Interface.
-- **Consumed by Entity Service** — provides the Entity Operation Actions, DatabaseInstance, and query Vocabulary that Entity Service uses.
-- **Consumed by other Logic Services** — provides their only route to Database whenever their Behaviour requires persistence.
-- **Optionally consumed by Logic consumers** — becomes externally reachable only when its Interface publication setting is enabled; it is internal-only by default.
 
 <br>
 

@@ -32,7 +32,7 @@ Storage Service is Logic's internal raw Database gateway. Entity Service adds an
 
 ### How It Works
 
-Entity Service reads Model Interface's Schema-defined EntityCatalog. For every Catalog Entry, it uses the actual Entity and Declaration references and creates one bound Child Service. It carries one private shared Base Entity capability implementing the Entity-facing Actions corresponding exactly to Database Entity Operations: Add, Update, List, Delete, Enable, Disable, GetById, Count, Sum, Min, Max, and Truncate. ExecuteCommand remains a Database-wide Storage Action; CreateTables and InsertInitialData remain Lifecycle Storage Actions. None is an Entity Action.
+Entity Service reads Model Interface's Schema-defined Entity Collection. For every Entity in it, it uses the actual Entity and the Declaration that Entity exposes and creates one bound Child Service. It carries one private shared Base Entity capability implementing the Entity-facing Actions corresponding exactly to Database Entity Operations: Add, Update, List, Delete, Enable, Disable, GetById, Count, Sum, Min, Max, and Truncate. ExecuteCommand remains a Database-wide Storage Action; CreateTables and InsertInitialData remain Lifecycle Storage Actions. None is an Entity Action.
 
 Entity Service creates exactly one Child Service file and public structure for every Model Entity inside its configured Entities directory. Each Child Service receives the shared Base Entity capability and binds itself to its own authoritative Model Entity class. In a language that supports class inheritance, the preferred realization is a child class inheriting the configured Base Entity class. Another language uses its equivalent mechanism, such as composition, embedding, or traits, without changing the public Behaviour.
 
@@ -77,9 +77,8 @@ The names shown are defaults selected by Entity Service Preferences. Changing a 
 ## Relationships
 
 - **Belongs to Logic** — is a fixed Service whose Interface always exists and is published through Logic Interface only when configured; publication is enabled by default.
-- **Consumes Model** — discovers authoritative Entities and Declarations only through Model Interface's Schema-defined EntityCatalog.
+- **Consumes Model** — reaches authoritative Entities and their Declarations only through Model Interface's Schema-defined Entity Collection and Entity Exports.
 - **Consumes Storage Service** — performs persistence only through the Entity Operation Actions and exact DatabaseInstance published by Storage Service Interface.
-- **Consumed by Logic consumers** — is reached through Entity Service Interface when its Logic Interface publication setting is enabled.
 
 <br>
 
@@ -109,7 +108,7 @@ The private shared capability held in the configured Base Entity file. It implem
 
 ### Entities
 
-One file and one public Child Service structure per EntityCatalog Entry published by Model Interface. The default file pattern is `<entity>` and the default public structure pattern is `<entity><child_suffix>`, normalized according to the selected language. Every child binds the Entry's actual Entity, receives all shared Entity Actions, and contains only Behaviour or Actions specific to that Entity.
+One file and one public Child Service structure per Entity in the Entity Collection published by Model Interface. The default file pattern is `<entity>` and the default public structure pattern is `<entity><child_suffix>`, normalized according to the selected language. Every child binds its actual Entity, receives all shared Entity Actions, and contains only Behaviour or Actions specific to that Entity.
 
 <br>
 
@@ -145,13 +144,13 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 #### Entity Service Interface presents the complete Entity contract only
 
-**Rule:** Entity Service Interface presents one Entity Child Service for every Entry in Model Interface EntityCatalog, preserving Catalog order. Each child exposes its shared and Entity-specific Actions. When Entity Service Interface is published through Logic Interface, it also exposes the exact DatabaseInstance and Entity Query Vocabulary accepted by those Actions. It exposes neither Base Entity nor a flat duplicate of Child Actions or Storage Actions.
+**Rule:** Entity Service Interface presents one Entity Child Service for every Entity in Model Interface's Entity Collection, preserving its order. Each child exposes its shared and Entity-specific Actions. When Entity Service Interface is published through Logic Interface, it also exposes the exact DatabaseInstance and Entity Query Vocabulary accepted by those Actions. It exposes neither Base Entity nor a flat duplicate of Child Actions or Storage Actions.
 **Why:** Consumers select an Entity once and can construct every Action request without depending on the mechanism shared among Entities or importing another Component.
 **Boundary:** Logic Interface publishes Entity Service Interface unchanged only when its publication setting is enabled. Exposing exact request types does not expose Storage Actions or publish Storage Service Interface.
 
 #### Entity Service never imports Logic Interface
 
-**Rule:** Entity Service imports Model Interface and Storage Service Interface directly and never imports Logic Interface. It discovers Model membership only from EntityCatalog and never from wildcard exports, `__all__`, package reflection, attribute discovery, directory scanning, internal Entity paths, or its own registry. Logic Interface imports Entity Service Interface only to publish it.
+**Rule:** Entity Service imports Model Interface and Storage Service Interface directly and never imports Logic Interface. It learns Model membership only from the Entity Collection and never from wildcard exports, `__all__`, package reflection, attribute discovery, directory scanning, internal Entity paths, or its own registry. Logic Interface imports Entity Service Interface only to publish it.
 **Why:** One-way imports prevent a dependency cycle between Logic Interface and its internal Services.
 **Boundary:** External consumers continue to enter through Logic Interface; the direct Storage Service Interface import is internal Service collaboration.
 
@@ -171,7 +170,7 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 #### Every Model Entity receives one bound Child Service
 
-**Rule:** Entity Service creates exactly one Child Service file and public structure for every Model EntityCatalog Entry in Catalog order. Each child binds the Entry's actual Entity, receives Base Entity capabilities, and never copies or redefines the Entity or Declaration.
+**Rule:** Entity Service creates exactly one Child Service file and public structure for every Entity in the Model Entity Collection, in its order. Each child binds its actual Entity, receives Base Entity capabilities, and never copies or redefines the Entity or Declaration.
 **Why:** The Child Service set remains complete and synchronized with Model while each request carries an unambiguous Entity identity.
 **Boundary:** An Entity-specific child may add Behaviour or Actions but cannot change the Entity declaration or detach itself from the shared Base Entity capability.
 
@@ -228,13 +227,13 @@ Every obligation in the file, under the Principle it comes from.
 
 **Entity Service Interface presents the complete Entity contract only**
 
-- **Must** — Publish one Child Service for every Model EntityCatalog Entry in Catalog order.
+- **Must** — Publish one Child Service for every Entity in the Model Entity Collection, in its order.
 - **Must** — When published, expose the exact DatabaseInstance and Entity Query Vocabulary required by Entity Actions without exposing Storage Actions.
 - **Never** — Publish Base Entity, flatten Child Actions, or republish Storage Actions.
 
 **Entity Service never imports Logic Interface**
 
-- **Must** — Import Model Interface and Storage Service Interface directly and discover Model membership only through EntityCatalog.
+- **Must** — Import Model Interface and Storage Service Interface directly and learn Model membership only through the Entity Collection.
 - **Never** — Import Logic Interface or inspect Model exports, `__all__`, attributes, directories, internal paths, or another registry from Entity Service.
 
 <br>
@@ -252,7 +251,7 @@ Every obligation in the file, under the Principle it comes from.
 
 **Every Model Entity receives one bound Child Service**
 
-- **Must** — Create exactly one bound Child file and public structure for every Model EntityCatalog Entry.
+- **Must** — Create exactly one bound Child file and public structure for every Entity in the Model Entity Collection.
 - **Never** — Copy or redefine the Model Entity or detach a child from Base Entity capability.
 
 **Each Child Service enforces its bound Entity**

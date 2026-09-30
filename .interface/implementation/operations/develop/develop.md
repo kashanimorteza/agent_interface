@@ -64,7 +64,7 @@ Develop owns Task execution. Technical choices and defaults belong to the owning
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
-The Principle in this Definition governs Develop. Develop Preferences can supply execution defaults only where the Plan and owning Development authorities are silent.
+The Principles in this Definition govern Develop. Develop Preferences can supply execution defaults only where the Plan and owning Development authorities are silent.
 
 <br>
 
@@ -73,17 +73,51 @@ The Principle in this Definition governs Develop. Develop Preferences can supply
 
 Every Principle below is mandatory.
 
-<br>
+### Execution
 
-### Develop executes planned work within its authority
+#### Develop executes planned work within its authority
 
 **Rule:** Develop accepts one or more Target phase identifiers, or considers every active and developable Target phase when none is selected, in Target order. It starts only when required Config records are valid and the current Plan for each applicable phase exists. Develop executes only selected eligible Tasks whose authority, scope, inputs, outputs, and completion conditions are understood. It considers each Task's Task Skills, may use any other suitable available Skill, and never invokes another Core Operation.
 
 Before changing a Task's result, Develop claims that eligible Task. It preserves valid existing work, records Task-specific evidence, progress transitions, verification results, and any Task-specific Blocker in the Task Log, and updates the Task status accordingly. When a new Task identifies an earlier developed Task through `replaces`, Develop marks that earlier Task as `replaced` and records the relationship in its Task Log before executing the new Task. If Config or Plan is unavailable, Develop stops; it does not execute Configure or Plan.
-
 **Why:** Bounded execution keeps implementation traceable to the Plan and prevents an execution operation from becoming an unplanned design authority.
-
 **Boundary:** Develop never changes Target meaning, Plan authority, Development Principles, or another Component's owned record without explicit authority. It does not design or change Tasks, does not run another Core Operation, and stops and reports when another Operation is required.
+
+<br>
+
+### Generation
+
+These Principles hold for every Development Component Develop realizes. A Component's own Definition states what its conformance means; these state how generation reaches and proves it.
+
+#### Generation writes only inside the Component it realizes
+
+**Rule:** Develop generates, changes, verifies, documents, and removes artifacts only inside the Component a Task realizes. A Component's contract changes only under its own authorities, never because another Component's implementation lacks a capability.
+**Why:** Independent ownership keeps each Component reusable and prevents one Component's work from rewriting another's contract.
+**Boundary:** A Component may use the language and packages its own Preferences select; those are realization dependencies, not dependencies on another Component.
+
+#### Generation and evolution are deterministic
+
+**Rule:** Unchanged Target, Definition, Preferences, and resolved technical selections produce the same ordered Component output with no source or documentation difference. Regeneration classifies authoritative additions, modifications, explicit renames, and removals; updates every affected public surface together; preserves unaffected and still-declared meaning; removes only the Component's own obsolete output; and never infers rename or removal from name similarity, missing understanding, or generator limitation.
+**Why:** Determinism makes reviews meaningful and protects existing meaning during evolution.
+**Boundary:** Runtime-generated values are not source nondeterminism. Compatibility aliases or historical versions exist only when explicit authority requires them, and Develop owns no data migration.
+
+#### Generation verifies complete conformance
+
+**Rule:** Before publication, generation validates input completeness, uniqueness, compatibility, naming, reference resolution, and technology support; then verifies every contract the Component's Definition names as its conformance, its Architecture and dependencies, its Documentation, source quality, and zero-diff regeneration. Disabled persistent testing requires transient verification rather than skipping it.
+**Why:** Generation is complete only when observable output proves it preserved every authority and public contract.
+**Boundary:** Verification observes and rejects mismatch; it never repairs ambiguity by invention or changes another Component.
+
+#### Failure is explicit and atomic
+
+**Rule:** Generation collects independent actionable failures when safe, identifies the affected item or artifact without exposing a sensitive value, and publishes candidate output only after every required check passes. Failure preserves the last valid output and publishes no partial result.
+**Why:** A failed generation must not look complete or destroy usable output.
+**Boundary:** Warnings are limited to meaning-neutral issues; omission, coercion, fallback, invention, or partial publication never hides an error.
+
+#### Generated source meets the selected technology standard
+
+**Rule:** Generated output is installable and importable and passes applicable format, import, compile, build, lint, static type, dependency, and runtime checks without a fixable warning owned by the Component. It declares only necessary dependencies, with concrete versions stabilized, and contains no dead, duplicate, incomplete, cached, compiled, machine-specific, Agent-identifying, timestamped, or narratively generated artifact.
+**Why:** Correct meaning must be delivered as clean, usable source.
+**Boundary:** Language-required technical artifacts do not create meaning, and disabled persistent testing prevents a permanent test suite rather than verification.
 
 <br>
 
@@ -92,6 +126,8 @@ Before changing a Task's result, Develop claims that eligible Task. It preserves
 
 Every obligation in the file, under the Principle it comes from.
 
+### Execution
+
 **Develop executes planned work within its authority**
 
 - **Must** — select one or more Target phases, or every active and developable phase when none is selected, in Target order.
@@ -99,3 +135,30 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — execute only understood, claimed, eligible Tasks; consider their Task Skills and record Task evidence and progress in their Task Logs.
 - **Must** — mark an earlier developed Task as `replaced` and record the relationship before executing a new Task that identifies it through `replaces`.
 - **Never** — invoke another Core Operation, expand Task scope, or replace Target, Plan, or Development authority.
+
+### Generation
+
+**Generation writes only inside the Component it realizes**
+
+- **Must** — change only the output of the Component a Task realizes.
+- **Never** — change a Component's contract because another Component lacks a capability.
+
+**Generation and evolution are deterministic**
+
+- **Must** — produce zero diff from unchanged authorities and reconcile explicit changes across all affected surfaces.
+- **Never** — guess a rename or removal, retain obsolete generated duplication, or own data migration.
+
+**Generation verifies complete conformance**
+
+- **Must** — verify inputs, the Component's own conformance contracts, Architecture, dependencies, Documentation, source quality, and repeatability.
+- **Never** — skip verification because persistent testing is disabled.
+
+**Failure is explicit and atomic**
+
+- **Must** — report actionable non-secret failures and publish only a fully valid candidate.
+- **Never** — hide an error or replace the last valid output with partial output.
+
+**Generated source meets the selected technology standard**
+
+- **Must** — produce clean, installable, importable output with only necessary, version-stabilized dependencies that passes applicable technology checks.
+- **Never** — emit unnecessary, dead, duplicate, cached, compiled, machine-specific, Agent-identifying, or timestamped output.

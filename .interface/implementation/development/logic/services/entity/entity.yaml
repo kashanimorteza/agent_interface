@@ -16,10 +16,10 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings first to preserve the fixed Logic owner and Entity Role while resolving the configurable Service name, root Interface publication, and Service-level API Group generation; then read layout. Read Model Interface through .interface/foundation/schema/model-interface.yaml and derive Child membership only from its EntityCatalog; derive shared Action membership from Database Entity Operations exposed by Storage. Resolve language and shared development conventions from Logic Preferences."
+  consumption: "Read settings first to preserve the fixed Logic owner and Entity Role while resolving the configurable Service name, root Interface publication, and Service-level API Group generation; then read layout. Read Model Interface through .interface/foundation/schema/model-interface.yaml and derive Child membership only from its Entity Collection; derive shared Action membership from Database Entity Operations exposed by Storage. Resolve language and shared development conventions from Logic Preferences."
   selection: "Use these defaults when the Target is silent. Preserve an explicit compatible Target choice; raise an unresolved incompatible choice rather than inventing one."
   version_resolution: "Entity Service introduces no independently versioned technology; versions resolve through Logic and Development Preferences."
-  matching: "Match every Child Service to one EntityCatalog Entry in Catalog order, bind its actual Entity reference, and match every shared Entity Action to one current Entity Operation Action from Storage Service Interface. Never interpret Model package exports or include ExecuteCommand or a Lifecycle Action in Base Entity. When API generation is enabled, preserve every published Child Service and all Actions as the complete eligible Entity API contract."
+  matching: "Match every Child Service to one Entity of the Entity Collection in its order, bind that actual Entity, and match every shared Entity Action to one current Entity Operation Action from Storage Service Interface. Never interpret Model package exports or include ExecuteCommand or a Lifecycle Action in Base Entity. When API generation is enabled, preserve every published Child Service and all Actions as the complete eligible Entity API contract."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:

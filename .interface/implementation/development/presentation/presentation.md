@@ -76,7 +76,6 @@ The dependency direction is View Layer → Interaction Logic → API Access → 
 
 - **Consumes API** — the public API through which all application data and application capabilities are reached.
 - **Consumes Development** — the common package standard and the cross-cutting capabilities selected for the project.
-- **Consumed by no other Component** — Presentation is an outermost layer, and nothing in the architecture depends on it.
 
 <br>
 

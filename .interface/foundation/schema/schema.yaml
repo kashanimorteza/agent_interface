@@ -1,6 +1,6 @@
 schema:
   id: "agent-interface-preferences"
-  version: "6.1"
+  version: "7.0"
   purpose: "The common structure every Component Preferences file follows. It defines selected values, supported alternatives, settings, declarations, and optional Agent parameters without deciding Target-specific meaning."
 
 # <!--------------------------------------------------------------------------------- Frame -->
@@ -8,7 +8,7 @@ frame:
   source: ".interface/foundation/schema/yaml.yaml"
   inherited: "A Preferences file is a YAML Interface file, so it already has the common YAML frame: meta, policy, resolution, read_order, content_map, content. This schema does not redefine that frame and never repeats it."
   scope: "This schema defines the structure of Preferences content and states the additional expectations placed on the inherited meta and policy sections."
-  path: ".interface/<module>/<component>/<component>.yaml for each Component."
+  path: ".interface/implementation/<subsystem>/<component>/<component>.yaml for each Implementation Component, and .interface/agent/<component>/<component>.yaml for each Agent Component."
   ownership: "The file is human-owned. Operations read it and never write resolved choices back into it."
 
 # <!--------------------------------------------------------------------------------- Purpose -->
@@ -95,70 +95,101 @@ resolution:
 
 # <!--------------------------------------------------------------------------------- Structure -->
 structure:
-  - "selected"
-  - "options"
-  - "settings"
+  common:
+    - "settings"
+    - "interface"
+    - "layout"
+    - "development"
+    - "documentation"
+  rule: "Every Component carries the common sections that apply to it, in this order, under exactly these names. A Component adds sections of its own for subjects the common ones do not hold — Instances, Services, Groups — placed after settings and before documentation. A common section a Component has nothing for is omitted rather than left empty, except settings, which is always present."
 
 # <!--------------------------------------------------------------------------------- Sections -->
 sections:
 
-  selected:
-    required: true
-    default: {}
-    purpose: "The Component's selected default technical profile: package identity and code path when owned, selected technologies and resolved version constraints, selected declared resources, and concise high-level contract choices used when the Target is silent."
-    rules:
-      what_belongs: "Only the compact resolved profile belongs here: Component-owned identity and code path, one entry for each selected alternative or declared resource, its explicit version constraint when needed, and high-level choices required to interpret the profile as one coherent selection."
-      names_an_option: "A value selecting an alternative is written as that option's exact key and the entry exists in the matching options catalogue. A value selecting a declared resource resolves to exactly one entry in settings."
-      one_per_decision: "A decision appears here exactly once, under a key naming the kind of thing chosen, such as the language, the library, or the engine."
-      no_detailed_configuration: "Operational configuration, field defaults, resource bodies, and layer settings do not belong here; they remain in settings."
-      no_code_level_detail: "Typing APIs, framework usage rules, quality tools, mapping mechanics, and other code-level realization conventions belong to settings, grouped with the part of the Component they govern."
-      no_repetition: "A selected entry may reference or summarize another section but never copies a detailed option or setting body."
-    empty: "An empty mapping when the Component chooses nothing."
-
-  options:
-    required: true
-    default: {}
-    purpose: "What this file's owner supports. The alternatives available for each decision, so that a reader can see the full set rather than only the chosen one."
-    shape: "One mapping per kind of top-level alternative, named in the plural, each holding entries keyed by the option's name. An option may contain embedded subordinate profiles when those choices exist only within that parent, such as one language's environment or API framework."
-    entry:
-      version:
-        required: "Only for a versioned technology or definition."
-        purpose: "The version of a versioned option: a concrete version, `latest` when it is resolved at implementation time, or `runtime-provided` when the environment supplies it. A conceptual option with no meaningful version omits this field."
-      attributes:
-        required: false
-        purpose: "The properties that belong to this option alone, such as its package, driver, conventions, or capabilities."
-      compatibility:
-        required: false
-        purpose: "Other options this one works with, named by their keys in their own catalogues."
-      subordinate_profiles:
-        required: false
-        purpose: "Choices whose meaning and availability depend on this parent option, represented inside the parent rather than as unrelated top-level catalogues."
-        shape: "A singular key names each resolved subordinate kind and contains its name, version when applicable, option-owned attributes, and its own Agent parameters when it has any."
-        rules:
-          ownership: "Nest a choice only when it has no independent meaning outside its parent. A reusable cross-language or cross-owner choice remains in its own owning catalogue or Component."
-          resolution: "Selecting the parent resolves each embedded subordinate profile unless an explicit project value replaces that subordinate choice."
-          recursion: "The Agent parameter rules defined for an option entry apply identically to every embedded subordinate profile, which may carry its own."
-    rules:
-      no_decision: "An option entry describes an alternative; it never states that it is the chosen one. Adding an entry never changes what is selected."
-      no_project_data: "An option entry carries no Models, fields, records, or other project data."
-      self_contained: "An entry describes only itself. A value shared by every option of a kind belongs to `settings`."
-      agent_parameters: "An entry may carry the Agent parameters — `agent_consider`, `agent_avoid`, and `agent_skills` — beside its own fields. They are defined once in the Agent Parameters section of this schema and an option entry carries them under the same rules as any other item."
-      conditional_agent: "An option's Agent parameters apply only after that top-level or embedded option is resolved as selected; an unselected option contributes nothing to the Agent."
-    empty: "An empty mapping when the Component supports no alternatives."
-
   settings:
     required: true
     default: {}
-    purpose: "How selected options are configured, together with declared resources, operational defaults, and the code-level and realization conventions owned by the Component."
-    grouping: "By the parts the owner's Principles name in its Architecture, using exactly those names, when it has an Architecture. Otherwise by domain area, one group per coherent subject. A setting that belongs to no single named part — one that spans the Component or governs it as a whole — is its own group beside them, named for its subject; it is never forced under a part it does not belong to."
+    purpose: "The Component's identity — type, directory, package — and the defaults and conventions that belong to the Component as a whole rather than to its interface, layout, development, or documentation."
+    grouping: "By the parts the owner's Principles name in its Architecture, using exactly those names, when a setting belongs to one of them; otherwise one group per coherent subject."
     rules:
-      no_repetition: "A setting never repeats a value already stated in `selected` or in an `options` entry. It refers to it instead."
+      no_repetition: "A setting never repeats a value stated in another section. It refers to it instead."
       resolved_or_stated: "A setting states a concrete value, or an explicit marker that the value is supplied elsewhere, such as by the runtime environment or by the engine's own default."
       no_secrets: "A setting may name where a secret is read from; it never contains the secret value."
-      declared_resources: "A resource the Component declares, such as a named instance, is recorded here with its identity and configuration."
-      conventions: "A code-level or realization convention — how something is written rather than which value it takes — belongs here too, grouped with the part of the Component it governs."
+      declared_resources: "A resource the Component declares, such as a named instance, is recorded with its identity and configuration, in settings or in a section of its own."
       no_new_authority: "A setting supplies a preference only. It never introduces a mandatory rule, changes Target intent, or claims a choice owned by another Component."
     empty: "An empty mapping when the Component configures nothing."
+
+  interface:
+    required: false
+    purpose: "The names and versions through which the Component's public boundary is realized: the Schema it conforms to and its version, and the names of its published symbols. The shape of that boundary belongs to the Component's Definition or its Schema; this section only names it."
+
+  layout:
+    required: false
+    purpose: "The physical names of the Component's directories and files. The parts they realize are named in the Component's Architecture."
+
+  development:
+    required: false
+    purpose: "How the Component is built: its development capabilities, the selected language with each language's realization profile — naming, symbols, method names, packages and their versions — and every other technical choice. Everything a language, package, or tool decides lives here and nowhere in the Definition."
+    selection: "A choice with alternatives is written with the selection pattern: `selected` naming one entry of its `options`."
+    conventions: "A code-level or realization convention — how something is written rather than which value it takes — belongs here, under the language or choice it governs."
+
+  documentation:
+    required: false
+    purpose: "The documentation file, its location and format, the order of its sections, and what each section contains."
+
+# <!--------------------------------------------------------------------------------- Selection Pattern -->
+selection_pattern:
+  purpose: "How any section writes a choice that has alternatives: one `selected` key naming the choice in force and one `options` catalogue listing every supported alternative. It is used wherever a choice is made, most often inside development."
+  shape: |
+    <choice>:
+      selected: "<key of one entry in options>"
+      options:
+        <key>: { ... }
+  note: "The rules below were written when selected and options were top-level sections. They now apply to every use of the pattern."
+  former_sections:
+    selected:
+      required: true
+      default: {}
+      purpose: "The Component's selected default technical profile: package identity and code path when owned, selected technologies and resolved version constraints, selected declared resources, and concise high-level contract choices used when the Target is silent."
+      rules:
+        what_belongs: "Only the compact resolved profile belongs here: Component-owned identity and code path, one entry for each selected alternative or declared resource, its explicit version constraint when needed, and high-level choices required to interpret the profile as one coherent selection."
+        names_an_option: "A value selecting an alternative is written as that option's exact key and the entry exists in the matching options catalogue. A value selecting a declared resource resolves to exactly one entry in settings."
+        one_per_decision: "A decision appears here exactly once, under a key naming the kind of thing chosen, such as the language, the library, or the engine."
+        no_detailed_configuration: "Operational configuration, field defaults, resource bodies, and layer settings do not belong here; they remain in settings."
+        no_code_level_detail: "Typing APIs, framework usage rules, quality tools, mapping mechanics, and other code-level realization conventions belong to settings, grouped with the part of the Component they govern."
+        no_repetition: "A selected entry may reference or summarize another section but never copies a detailed option or setting body."
+      empty: "An empty mapping when the Component chooses nothing."
+
+    options:
+      required: true
+      default: {}
+      purpose: "What this file's owner supports. The alternatives available for each decision, so that a reader can see the full set rather than only the chosen one."
+      shape: "One mapping per kind of top-level alternative, named in the plural, each holding entries keyed by the option's name. An option may contain embedded subordinate profiles when those choices exist only within that parent, such as one language's environment or API framework."
+      entry:
+        version:
+          required: "Only for a versioned technology or definition."
+          purpose: "The version of a versioned option: a concrete version, `latest` when it is resolved at implementation time, or `runtime-provided` when the environment supplies it. A conceptual option with no meaningful version omits this field."
+        attributes:
+          required: false
+          purpose: "The properties that belong to this option alone, such as its package, driver, conventions, or capabilities."
+        compatibility:
+          required: false
+          purpose: "Other options this one works with, named by their keys in their own catalogues."
+        subordinate_profiles:
+          required: false
+          purpose: "Choices whose meaning and availability depend on this parent option, represented inside the parent rather than as unrelated top-level catalogues."
+          shape: "A singular key names each resolved subordinate kind and contains its name, version when applicable, option-owned attributes, and its own Agent parameters when it has any."
+          rules:
+            ownership: "Nest a choice only when it has no independent meaning outside its parent. A reusable cross-language or cross-owner choice remains in its own owning catalogue or Component."
+            resolution: "Selecting the parent resolves each embedded subordinate profile unless an explicit project value replaces that subordinate choice."
+            recursion: "The Agent parameter rules defined for an option entry apply identically to every embedded subordinate profile, which may carry its own."
+      rules:
+        no_decision: "An option entry describes an alternative; it never states that it is the chosen one. Adding an entry never changes what is selected."
+        no_project_data: "An option entry carries no Models, fields, records, or other project data."
+        self_contained: "An entry describes only itself. A value shared by every option of a kind belongs to `settings`."
+        agent_parameters: "An entry may carry the Agent parameters — `agent_consider`, `agent_avoid`, and `agent_skills` — beside its own fields. They are defined once in the Agent Parameters section of this schema and an option entry carries them under the same rules as any other item."
+        conditional_agent: "An option's Agent parameters apply only after that top-level or embedded option is resolved as selected; an unselected option contributes nothing to the Agent."
+      empty: "An empty mapping when the Component supports no alternatives."
 
 
 # <!--------------------------------------------------------------------------------- Agent Parameters -->
@@ -217,5 +248,5 @@ agent_parameters:
 conventions:
   placeholders: "A value that is completed at resolution time is written in angle brackets, such as `<project>` or `<role>`. A key in angle brackets describes the shape of future entries rather than one real entry."
   unresolved: "A choice that the project must make and this file cannot supply is written as `to be defined`, and the operation that meets it raises an Open Question rather than inventing a value."
-  read_order: "`read_order` lists all three content sections in their structural order: selected, options, settings."
-  content_map: "`content_map` carries exactly one line per content section, naming what that section holds for this file's owner."
+  read_order: "`read_order` lists the content sections the file carries, in the order the file carries them."
+  content_map: "`content_map` carries exactly one line per content section the file carries, naming what that section holds for this file's owner."

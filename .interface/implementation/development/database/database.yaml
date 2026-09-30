@@ -56,8 +56,8 @@ content:
     model_dependency:
       interface: "model.interface"
       schema: ".interface/foundation/schema/model-interface.yaml"
-      catalog: "Entities"
-      consumption: "Discover Entities only through the Schema-defined EntityCatalog and use each Entry's actual Entity and Declaration references. Never inspect __all__, wildcard exports, package attributes, directories, or internal Entity paths."
+      entity_collection: "entities"
+      consumption: "Enumerate Entities only through the Schema-defined Entity Collection, import a specific Entity through its Entity Export, and use each Entity's own exposed Declaration. Never inspect __all__, wildcard exports, package attributes, directories, or internal Entity paths."
       ownership: "Database writes only inside its own Component output and never changes Model."
     configuration:
       file: "config.yaml"

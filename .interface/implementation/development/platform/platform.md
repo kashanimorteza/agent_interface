@@ -27,8 +27,6 @@ Platform defines named Launch Items that describe how a completed Target is prep
 
 Platform owns runtime preparation and operation rather than the internal meaning or implementation of a developed Component. It uses each Component only through its public boundary.
 
-<br>
-
 ### Purpose
 
 Software that has been built still has to be brought online: something must decide where each part runs, what it needs in order to start, what values it is given at runtime, and whether it is actually up. Those decisions belong to no Component in particular — each one knows what it needs, none of them knows how the whole is operated — and a project that leaves them implicit ends up with a system only one person can launch, on one machine, from memory.
@@ -77,7 +75,6 @@ A Launch Item is the complete selectable definition. Its Component Runtime Requi
 ## Relationships
 
 - **Consumes Development** — uses the declared Components, Connections, and public boundaries of the composed application.
-- **Consumed by Development** — provides named Platform definitions that Development may reference without copying their contents.
 
 <br>
 

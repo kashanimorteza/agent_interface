@@ -21,7 +21,7 @@ Database is the structured Development Component that persists public Entity dat
 
 ### Overview
 
-Database consumes the stable EntityCatalog published by Model Interface, derives storage structure from each Entry's actual Entity and Declaration, and persists Entity instances through a selected active DatabaseInstance. Interface is its only public boundary. Core routes every request, and one isolated Engine file implements the contract for each active Instance.
+Database enumerates every Entity through the Entity Collection published by Model Interface, derives storage structure from each actual Entity and the Declaration it exposes, and persists Entity instances through a selected active DatabaseInstance. Interface is its only public boundary. Core routes every request, and one isolated Engine file implements the contract for each active Instance.
 
 ### Purpose
 
@@ -74,7 +74,7 @@ Database
 
 ## Relationships
 
-- **Consumes Model** — imports Model Interface and consumes its Schema-defined EntityCatalog only. It uses each Entry's actual Entity and Declaration without interpreting Model exports or internals. Model remains read-only and independently owned.
+- **Consumes Model** — imports Model Interface and uses its Schema-defined Entity Collection and Entity Exports only. It uses each actual Entity and the Declaration that Entity exposes without interpreting Model internals. Model remains read-only and independently owned.
 - **Provides through Interface** — publishes Database contracts for any authorized consumer without naming or treating one consumer specially.
 
 <br>
@@ -153,7 +153,7 @@ Every Principle below is mandatory.
 
 #### Database consumes Model without owning it
 
-**Rule:** Database imports Model Interface and discovers Entities only through its Schema-defined EntityCatalog. It iterates Catalog Entries and uses each Entry's actual public Entity and complete public Declaration. It never reads `__all__`, uses wildcard or attribute discovery, scans Model directories, imports Entity-unit paths, builds another Model registry, or creates, edits, builds, tests, documents, or generates an artifact inside Model.
+**Rule:** Database imports Model Interface and reaches Entities only through its Schema-defined Entity Collection and Entity Exports. It iterates the Entity Collection and uses each actual public Entity and the complete public Declaration it exposes. It never uses wildcard or attribute discovery, scans Model directories, imports Entity-unit paths, builds another Model registry, or creates, edits, builds, tests, documents, or generates an artifact inside Model.
 
 **Boundary:** A missing or incompatible Model capability is reported; Database does not repair or redefine Model.
 
@@ -221,7 +221,7 @@ Every Principle below is mandatory.
 
 #### CreateTables safely realizes current Declarations
 
-**Rule:** CreateTables uses the actual Declaration from every Model EntityCatalog Entry to create or safely align required Tables, Fields, Primary Keys, Relations, Uniqueness Constraints, and Indexes. Re-execution on an aligned schema succeeds without destructive change. An incompatible or destructive implicit change stops with a clear failure unless the selected migration mechanism has an explicit safe plan.
+**Rule:** CreateTables uses the actual Declaration of every Entity in the Model Entity Collection to create or safely align required Tables, Fields, Primary Keys, Relations, Uniqueness Constraints, and Indexes. Re-execution on an aligned schema succeeds without destructive change. An incompatible or destructive implicit change stops with a clear failure unless the selected migration mechanism has an explicit safe plan.
 
 **Boundary:** It does not copy runtime records between Instances, invent Relation cascade behavior, or silently alter a Declaration. Cross-Instance transfer requires a future explicit command.
 
@@ -337,8 +337,8 @@ Every Principle below is mandatory.
 
 **Database consumes Model without owning it**
 
-- **Must** — consume actual Entity and Declaration references only from Model Interface EntityCatalog.
-- **Never** — interpret Model package exports, `__all__`, attributes, directories, internal paths, or construct another Entity registry.
+- **Must** — consume actual Entity and Declaration references only through Model Interface's Entity Collection and Entity Exports.
+- **Never** — use wildcard or attribute discovery, directories, internal paths, or construct another Entity registry.
 - **Never** — change, generate, build, test, or document Model output.
 
 **Database stores values without interpreting domain meaning**

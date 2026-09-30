@@ -115,6 +115,7 @@ Platform provides the runtime and deployment foundation used by the other Compon
 
 - **Components use Development** — receive applicable shared defaults and the Connection graph.
 - **Development uses Components** — derives the Application Manifest from their public composition and declared Connections.
+- **Consumes Platform** — references named Platform definitions without copying their contents.
 - **Application Manifest is stored in Config** — presents the current public application composition without becoming its source of authority.
 
 <br>

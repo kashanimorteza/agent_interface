@@ -83,11 +83,10 @@ The names shown are defaults selected by Logic Preferences. Changing a name chan
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Consumes Model** — Entity Service discovers authoritative Entities and Declarations only through Model Interface's Schema-defined EntityCatalog.
+- **Consumes Model** — Entity Service reaches authoritative Entities and their Declarations only through Model Interface's Schema-defined Entity Collection and Entity Exports.
 - **Consumes Database** — reaches Database Interface only from the internal Storage Service; Storage derives Actions from Database's Entity Operations, Database-wide Operations, and Lifecycle Commands, while every other Logic Service uses Storage Service Interface instead.
 - **Consumes Development** — takes from it what Logic does not choose for itself: its identity, its technology, and the Connections it is permitted to make.
 - **Consumes Platform** — receives the runtime values its configuration contract requires.
-- **Consumed by API** — provides the Interface through which API carries out the Operations Logic offers.
 
 <br>
 

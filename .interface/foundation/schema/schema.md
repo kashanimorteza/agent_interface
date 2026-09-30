@@ -2,7 +2,7 @@
 
 This document is the common structure every Definition file follows. It defines the shape of a Definition file, not the content of any Implementation or Agent Component. Each owner describes itself inside this shape so that every Definition file is written, read, and reasoned about the same way.
 
-One Definition file exists per Implementation Component at `.interface/implementation/<component>/<component>.md` and per Agent Component at `.interface/agent/<component>/<component>.md`. Each file is human-owned and never written by an Interface operation. Operational Skills read applicable Implementation Definitions; only explicitly Human-invoked Agent Sync reads Agent Definitions, then realizes them as Runtime artifacts consumed by every other Skill.
+One Definition file exists per Implementation Component at `.interface/implementation/<subsystem>/<component>/<component>.md` — for example `.interface/implementation/development/model/model.md` — and per Agent Component at `.interface/agent/<component>/<component>.md`. Each file is human-owned and never written by an Interface operation. Operational Skills read applicable Implementation Definitions; only explicitly Human-invoked Agent Sync reads Agent Definitions, then realizes them as Runtime artifacts consumed by every other Skill.
 
 
 <!--------------------------------------------------------------------------------- Purpose --->
@@ -33,7 +33,7 @@ Operation-backed Skill behavior belongs to its owning Implementation Operation C
 
 Relationships between Components are permitted and belong in Relationships. They describe what each Component consumes or provides without directing a Skill's execution.
 
-Two rules follow from this Scope and hold in every part of the file, so no part restates them. **No tool, package, version, file, directory, or layout is ever named**, except where Scope's own exception for Agent Skill Definitions applies; a part that would need one describes the concept instead. **Only a Principle states an obligation**: every other part explains, records, or maps, and a sentence a reader would have to obey belongs in a Principle's Rule wherever it was written.
+Three rules follow from this Scope and hold in every part of the file, so no part restates them. **No tool, package, version, file, directory, or layout is ever named**, except where Scope's own exception for Agent Skill Definitions applies; a part that would need one describes the concept instead. **Only a Principle states an obligation**: every other part explains, records, or maps, and a sentence a reader would have to obey belongs in a Principle's Rule wherever it was written. **A Definition describes only its own Component**: it never states how another Component uses it, and never states what another Component owns or does. A Component that consumes another describes that use in its own Definition, so each Component keeps its own identity and stays general.
 
 A Principle is portable: the same file can be handed unchanged to another project or another Agent.
 
@@ -65,7 +65,7 @@ A Definition file carries these parts, in this order. A part marked *optional* i
 
 The Opening Summary is the file's one-line orientation: it names what the owner is and where it belongs, without explaining the file's structure or stating a Principle. Navigation follows it so the reader sees the whole shape before entering the content. Introduction is everything a reader has to take in before the rules mean anything, so it comes first, and its own Decisions part closes it, because how the Human arrived here is still context for the rules rather than one of them. What follows it is reference: the vocabulary, the parts, the edges, and the rules themselves.
 
-Overview, Purpose, and How It Works are always carried; Decisions is carried only by a Component whose recorded decisions need to be preserved; Operation Contract is carried only by an executable Operation Component whose operational contract needs to remain explicit for its Skill. The Opening Summary is unheaded and carries no Navigation entry. Navigation, Introduction, Terms, Architecture, Relationships, Boundaries, Layering, Authority, Principles, Operation Contract, and At a Glance carry their own second-level heading. Introduction's four parts and each Principle category carry third-level headings; each Principle carries a fourth-level heading under its category. A second-level heading therefore always names a section, a third-level heading names one member or category of that section, and a fourth-level heading names one Principle. A `<br>` separates each Introduction part from the next and each Principle category from the next. No `<br>` appears between sibling Principles within the same category, and no blank line or `<br>` separates a Principle's Rule, Why, and Boundary.
+Overview, Purpose, and How It Works are always carried; Decisions is carried only by a Component whose recorded decisions need to be preserved; Operation Contract is carried only by an executable Operation Component whose operational contract needs to remain explicit for its Skill. The Opening Summary is unheaded and carries no Navigation entry. Navigation, Introduction, Terms, Architecture, Relationships, Boundaries, Layering, Authority, Principles, Operation Contract, and At a Glance carry their own second-level heading. Introduction's four parts and each Principle category carry third-level headings; each Principle carries a fourth-level heading under its category. A second-level heading therefore always names a section, a third-level heading names one member or category of that section, and a fourth-level heading names one Principle. No `<br>` appears between Introduction's parts; a `<br>` separates each Principle category from the next. No `<br>` appears between sibling Principles within the same category, and no blank line or `<br>` separates a Principle's Rule, Why, and Boundary.
 
 
 <!--------------------------------------------------------------------------------- Title --->
@@ -97,16 +97,12 @@ The Opening Summary is written as one unheaded paragraph immediately after the T
 
 The map of the file's own sections, so a reader — and an Agent looking for one part of it — sees the whole shape before reading any of it.
 
-A numbered list, one line per section the file actually carries, each linking to that section's heading. Nothing else: no description beside an entry, and no entry for a section the file omits. The Principles are one entry; individual Principle titles are not listed as Navigation subentries:
+A numbered list, one line per section the file actually carries, each linking to that section's heading. Nothing else: no description beside an entry, and no entry for a section the file omits. No entry carries subentries: neither Introduction's parts nor individual Principles are listed beneath their section:
 
 ```markdown
 ## Navigation
 
 1. **[Introduction](#introduction)**
-   - **[Overview](#overview)**
-   - **[Purpose](#purpose)**
-   - **[How It Works](#how-it-works)**
-   - **[Decisions](#decisions)**
 2. **[Terms](#terms)**
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
@@ -223,16 +219,15 @@ A Component formed from named parts — internal layers, services, foundations, 
 
 ## Relationships
 
-A short list naming the Components or Modules this Definition owner consumes and the Components or Modules that consume it, each with the reason for the connection.
+A short list naming the Components or Modules this Definition owner consumes, each with what it takes and how. It never names the Components that consume this owner: each consumer describes that use in its own Definition.
 
 ```markdown
 ## Relationships
 
-- **Consumes <Component>** — <what it takes and why>
-- **Consumed by <Component>** — <what it provides and why>
+- **Consumes <Component>** — <what it takes and how>
 ```
 
-Relationships are stated between Components and Modules only. No Skill, operation, Mode, or Workflow step appears here. An owner that consumes nothing, or that nothing consumes, records that fact rather than inventing a connection.
+Relationships are stated between Components and Modules only. No Skill, operation, Mode, or Workflow step appears here. An owner that consumes nothing records that fact rather than inventing a connection.
 
 
 <!--------------------------------------------------------------------------------- Boundaries --->
@@ -240,17 +235,17 @@ Relationships are stated between Components and Modules only. No Skill, operatio
 
 ## Boundaries
 
-The work that looks like this Component's but is not, each named with the Component that owns it and the reason the line falls there.
+The work that looks like this Component's but is not, each with the reason the line falls there. The entry never names the Component that owns that work.
 
-Relationships says what this Component consumes and provides. Boundaries says where a reader — human or Agent — is most likely to put something in the wrong place, and settles it in advance:
+Relationships says what this Component consumes. Boundaries says where a reader — human or Agent — is most likely to put something in the wrong place, and settles it in advance:
 
 ```markdown
 ## Boundaries
 
-- **<the work that looks like this Component's>** — belongs to <Component>, because <what makes it theirs>.
+- **<the work that looks like this Component's>** — is not this Component's, because <what puts it outside>.
 ```
 
-Each entry is a case that has actually caused confusion or plausibly would: a rule that could be read as either Component's, a setting two Components could both claim, a concern whose name appears in both. An entry states the reason, not only the owner, so the same reasoning settles the next case that is not listed.
+Each entry is a case that has actually caused confusion or plausibly would: a rule that could be read as this Component's, a setting it could wrongly claim, a concern whose name suggests it belongs here. An entry states the reason, so the same reasoning settles the next case that is not listed.
 
 It is not a restatement of the Component's boundary sentence in Introduction or of a Principle's own **Boundary**. A Component carries it when its edges are genuinely easy to cross and omits the section when they are not.
 
@@ -378,10 +373,6 @@ This section is derived, never authoritative, and it is rewritten whenever a Pri
 ## Navigation
 
 1. **[Introduction](#introduction)**
-   - **[Overview](#overview)**
-   - **[Purpose](#purpose)**
-   - **[How It Works](#how-it-works)**
-   - **[Decisions](#decisions)**
 2. **[Terms](#terms)**
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
@@ -434,12 +425,11 @@ whole section when the Component has no internal structure worth naming.>
 
 ## Relationships
 
-- **Consumes <Component>** — <what it takes and why>
-- **Consumed by <Component>** — <what it provides and why>
+- **Consumes <Component>** — <what it takes and how>
 
 ## Boundaries
 
-- **<work that looks like this Component's>** — belongs to <Component>, because <the reason>.
+- **<work that looks like this Component's>** — is not this Component's, because <the reason>.
 
 <Omit this whole section when this Component's edges are not easy to cross.>
 
