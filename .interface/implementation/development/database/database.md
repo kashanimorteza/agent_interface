@@ -159,9 +159,9 @@ Every Principle below is mandatory.
 
 #### Database stores values without interpreting domain meaning
 
-**Rule:** Database persists declared Entity values and realizes declared Fields, Primary Keys, Relations, Uniqueness Constraints, Indexes, defaults, and Value Generation without adding behavior based on application meaning.
+**Rule:** Database persists declared Entity values and realizes declared Fields, Primary Keys, Relations, Uniqueness Constraints, Indexes, defaults, and Value Generation without adding behavior based on application meaning. Sensitivity markers and at-rest security instructions never remove, postpone, or block a Target Initial Data record.
 
-**Boundary:** Database does not mask, hash, authorize, hide, or otherwise treat an Entity Field specially because it represents a password or sensitive value.
+**Boundary:** Database does not mask, hash, encrypt, authorize, hide, or otherwise treat an Entity Field specially because it represents a password or sensitive value. It stores the concrete value supplied to it unchanged; any security transformation belongs outside Database and its absence does not block Database generation or insertion.
 
 #### Generation verifies Database without changing dependencies
 
@@ -227,9 +227,9 @@ Every Principle below is mandatory.
 
 #### InsertInitialData is repeatable
 
-**Rule:** InsertInitialData reads the shared Initial Data from Database Configuration, validates each record through its public Entity contract, inserts missing records, skips already-present identical records, and returns success with zero affected items when none are declared.
+**Rule:** Generation copies every Target-defined Initial Data record into the shared Database Configuration. A Target instruction requesting a generated initial value, including `Generate securely`, is resolved during generation to a concrete value before config is emitted. InsertInitialData reads that complete collection, validates each record through its public Entity contract, inserts missing records, skips already-present identical records, and returns success with zero affected items only when the Target declares no Initial Data.
 
-**Boundary:** It does not silently update, delete, duplicate, or overwrite an existing record. Conflicting Initial Data fails clearly.
+**Boundary:** A sensitivity marker, hash or encryption instruction, credential Field, or missing security processor never causes a record to be omitted or held. Database inserts the resolved value unchanged. It does not silently update, delete, duplicate, or overwrite an existing record; conflicting Initial Data fails clearly.
 
 #### After-generation preparation uses the default Instance
 
@@ -305,9 +305,9 @@ Every Principle below is mandatory.
 
 #### Initial Data is shared configuration
 
-**Rule:** Configuration contains one shared Initial Data collection keyed by public Entity identity. The same collection may be applied to any active Instance; Instance selection changes only its destination.
+**Rule:** Configuration contains one complete shared Initial Data collection keyed by public Entity identity. It contains every Target-defined Initial Data record, including records with credential or sensitive Fields. The same collection may be applied to any active Instance; Instance selection changes only its destination.
 
-**Boundary:** Initial Data is not Model-owned and is not duplicated in Engine files or per-Instance definitions.
+**Boundary:** Initial Data is not Model-owned and is not duplicated in Engine files or per-Instance definitions. Generation must not replace a non-empty Target Initial Data set with an empty collection.
 
 <br>
 
@@ -343,7 +343,8 @@ Every Principle below is mandatory.
 **Database stores values without interpreting domain meaning**
 
 - **Must** — persist declared Entity meaning and metadata without adding application behavior.
-- **Never** — mask, hash, authorize, or otherwise reinterpret an Entity Field because of its meaning.
+- **Must** — keep Target Initial Data eligible for insertion regardless of sensitivity or at-rest metadata.
+- **Never** — mask, hash, encrypt, authorize, or otherwise reinterpret an Entity Field because of its meaning.
 
 **Generation verifies Database without changing dependencies**
 
@@ -400,8 +401,9 @@ Every Principle below is mandatory.
 
 **InsertInitialData is repeatable**
 
-- **Must** — insert shared Initial Data repeatably without silent overwrite, deletion, or duplication.
+- **Must** — copy every Target Initial Data record into config and insert the complete collection repeatably without silent overwrite, deletion, or duplication.
 - **Must** — validate every Initial Data record through its public Entity contract.
+- **Never** — omit or hold credential-bearing Initial Data because a security transformation is absent.
 
 **After-generation preparation uses the default Instance**
 
@@ -467,7 +469,8 @@ Every Principle below is mandatory.
 
 **Initial Data is shared configuration**
 
-- **Must** — keep one shared Initial Data collection usable by every active Instance.
+- **Must** — keep one complete shared Initial Data collection containing every Target-defined record and usable by every active Instance.
+- **Never** — emit an empty collection when the Target declares Initial Data.
 - **Never** — put Initial Data in Model, an Instance definition, or an Engine file.
 
 <br>

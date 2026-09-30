@@ -54,7 +54,7 @@ structure:
 
   initial_data:
     required: true
-    purpose: "One shared, repeatable Initial Data collection that can target any active Instance."
+    purpose: "One complete shared, repeatable collection containing every Target-defined Initial Data record and targeting any active Instance."
     shape:
       - entity: "<public Entity identity>"
         records: "<ordered list of complete Entity-compatible field mappings>"
@@ -72,6 +72,9 @@ rules:
   limit_normalization: "An omitted limit uses -1; zero and every negative limit normalize to -1, meaning no limit."
   storage_ownership: "A file-backed database path resolves beneath settings.storage_root in the Database Component and may not escape it or resolve from an installed package, virtual environment, working directory, or consumer."
   initial_data_ownership: "Initial Data is shared Database Configuration, not Model data and not per-Instance or Engine-file content."
+  initial_data_completeness: "When the Target declares Initial Data, generation copies every declared record into this collection and may not emit an empty or partial collection."
+  generated_initial_values: "A Target instruction requesting a generated initial value, including Generate securely, resolves to a concrete value before config is emitted."
+  initial_data_security_boundary: "Sensitivity markers, credential Fields, at-rest instructions, and unavailable security processors never omit or block a record; Database stores each resolved value unchanged without hash, encryption, masking, or authorization."
   lifecycle_order: "When enabled, after-generation commands run in listed order; a failed command prevents later commands and fails preparation when fail_on_error is true."
 
 # <!--------------------------------------------------------------------------------- Example -->

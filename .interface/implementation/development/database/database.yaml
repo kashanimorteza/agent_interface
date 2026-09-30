@@ -25,7 +25,8 @@ resolution:
 read_order:
   - "settings: identify Database, its read-only Model dependency, configuration, and query defaults."
   - "instances: resolve default Instance definitions."
-  - "initial_data: resolve shared Initial Data."
+  - "initial_data: copy every Target-defined Initial Data record into the shared collection."
+  - "initial_data_policy: resolve requested generated values and never hold records because of sensitivity or at-rest security metadata."
   - "interface: generate the exact public capability groups, vocabulary, values, and publication surface."
   - "layout: realize fixed Database-owned files and directories."
   - "development: select language, packages, Engine technology, and after-generation behavior."
@@ -36,6 +37,7 @@ content_map:
   - settings
   - instances
   - initial_data
+  - initial_data_policy
   - interface
   - layout
   - development
@@ -93,6 +95,13 @@ content:
 
   # <!-------------------------------------------- initial_data -->
   initial_data: []
+
+  # <!-------------------------------------------- initial_data_policy -->
+  initial_data_policy:
+    source: "Every Target-defined Initial Data record"
+    generated_values: "Resolve Target generation instructions, including Generate securely, to concrete values before emitting config.yaml."
+    persistence: "Insert resolved values unchanged. Database performs no hash, encryption, masking, authorization, or other security transformation."
+    blocking: "Sensitivity markers, at-rest instructions, credential Fields, and unavailable security processors never omit, postpone, or block Initial Data."
 
   # <!-------------------------------------------- interface -->
   interface:
@@ -264,4 +273,5 @@ content:
       interface: "Document all three capability groups, public vocabulary, value contracts, defaults, results, and errors with complete examples."
       instances: "Explain active DatabaseInstance members, default selection, and Database-owned storage without exposing credentials."
       lifecycle: "Explain manual CreateTables and InsertInitialData use and after-generation order."
+      initial_data: "List every Target-defined Initial Data record, explain generated-value resolution, and state that Database inserts resolved values unchanged without security-based omission."
       verify: "Verify public import, Instance selection, query vocabulary, each capability group, persistent file location, and repeatable Lifecycle Commands."

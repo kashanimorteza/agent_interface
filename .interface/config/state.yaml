@@ -30,10 +30,10 @@ content_map:
 content:
   active:
     mode: "reviewing"
-    phase: "P1"
-    mode_reason: "Reviewing phase P1 for Implement execution 002."
+    phase: "P2"
+    mode_reason: "Reviewed phase P2 for Implement execution 006; satisfied against the current Plan, Initial Data content held on Open Question 007-Q1."
     set_by: "my-interface-review"
-    set_at: "2026-09-30T12:31:50.000+03:30"
+    set_at: "2026-09-30T15:34:18.278+03:30"
   phases:
     P1:
       id: "P1"
@@ -41,6 +41,12 @@ content:
       development: "completed"
       review: "satisfied"
       completed_at: "2026-09-30T12:55:14.642+03:30"
+    P2:
+      id: "P2"
+      planning: "blocked"
+      development: "completed"
+      review: "satisfied"
+      completed_at: "2026-09-30T15:34:18.278+03:30"
   log:
     - id: "001"
       skill: "my-interface-configure"
@@ -353,3 +359,225 @@ content:
           - "Pass 2: model_validate_json cannot succeed for Entities with decimal or datetime Fields because strict mode rejects JSON strings for those types; text parsing is outside Model, so by design."
           - "Pass 3: unknown caller key names appear as error locations (names, not values); the README does not mention that copy(include/exclude) is refused; Entity.copy no longer emits pydantic's deprecation warning."
           - "Pass 2: re-calling __init__ on an existing Entity resets a generated identity, and private or dunder attributes can be set; pydantic behaviour outside the contract."
+    - id: "006"
+      skill: "my-interface-implement"
+      parent_id: ""
+      phase: null
+      event: "Implement"
+      outcome: "blocked"
+      started_at: "2026-09-30T14:51:23.000+03:30"
+      completed_at: "2026-09-30T15:34:32.736+03:30"
+      duration: "43:09"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used: []
+      open_questions:
+        - "007-Q1"
+      blockers: []
+      report: "Implemented phase P2 (Database): Config already valid (no Configure needed); Plan produced 62 Tasks in 12 Groups; Develop completed all 62; Review satisfied after three passes (6 Findings, all resolved). Outcome is blocked, not satisfied end to end: the Target-defined Initial Data content is not planned or developed because no source says who applies the Target's at-rest protection and secure generation for credential-bearing initial records (Open Question 007-Q1). A Human decision is needed, then Plan P2 must be re-run."
+      data:
+        duration_ms: 2589736
+        requested_phase: "2"
+        resolved_phase: "P2"
+        coordinated:
+          plan: "007"
+          develop: "008"
+          review: "009"
+        configure: "not coordinated; Config records were present and structurally valid"
+        outcomes:
+          P2:
+            planning: "blocked"
+            development: "completed"
+            review: "satisfied"
+        aggregate_counts:
+          open_questions: 1
+          blockers: 0
+        next_human_action: "Decide 007-Q1 by editing the authored source that should own it (Database or Model Definition, another Component's Definition, or the Target), then run /my-interface-implement 2 again so Plan adds the held Initial Data Tasks."
+    - id: "007"
+      skill: "my-interface-plan"
+      parent_id: "006"
+      phase: "P2"
+      event: "Plan"
+      outcome: "blocked"
+      started_at: "2026-09-30T14:53:00.000+03:30"
+      completed_at: "2026-09-30T14:58:10.971+03:30"
+      duration: "5:10"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used: []
+      open_questions:
+        - "007-Q1"
+      blockers: []
+      report: "Planned P2 (Database) into 12 Groups and 62 Tasks covering every part of the Database Definition except the Target-defined Initial Data content. That slice is held because no source says who applies the Target's at-rest protection and secure generation for credential-bearing initial records (Open Question 007-Q1). The 62 planned Tasks are independent of the answer and eligible for Develop."
+      data:
+        duration_ms: 310971
+        phase: "P2"
+        plan_result:
+          groups: 12
+          tasks: 62
+          plan_total_tasks: 93
+        task_changes:
+          added: "All 62 P2 Tasks (P2-G1 through P2-G12), because no P2 Plan existed; each records source_id 007."
+          changed: []
+          removed: []
+          replaced: []
+          preserved: "The P1 Plan and its 31 completed Tasks were not touched; only the Plan Config total task_count was recalculated from 31 to 93."
+        understanding_established:
+          - "Interface and Foundation section files"
+          - "Technical Definition (non-technical Definition is empty)"
+          - "Database Definition and Preferences; Development Definition and Preferences; Plan Definition, Preferences, and Schema; State Schema; Database configuration structure standard"
+        held_slice:
+          reason: "Open Question 007-Q1 is unresolved."
+          not_yet_planned:
+            - "Populate the shared Initial Data collection with the Target-defined records (User, Trading Platform, Instance, Currency, Broker, Asset, Account Group, Account, Trailing Group, Partial Group, Action Group, Action). Every record is reachable from the User record, so none can be populated independently of the credential decision."
+            - "Verify that the defined initial data is present after after-generation preparation."
+            - "Document the defined Initial Data content."
+            - "Verify that regeneration of the finished Database produces no difference."
+        open_question_details:
+          "007-Q1":
+            question: "Which Component realizes the Target's at-rest protection and secure generation for credential values in the defined initial data?"
+            context: "The Target requires User password and api_key to use hash storage at rest, Instance and Account credentials to use encrypted storage at rest, and initial credential values to be 'Generate securely'. The Model Definition (markers only, never hashes or encrypts) and the Database Definition (stores values without interpreting them, never hashes or masks) both forbid realizing this, and no other Definition assigns it. Initial Data lives in the shared Database configuration, which must not contain a secret value, and the Target's initial records depend on one another through the User record."
+            options:
+              - "Amend the Database or Model Definition so one of them owns at-rest protection and secure generation for marked Fields, then re-run Plan for P2."
+              - "Assign the responsibility to another Component (for example Logic) and state how credential values in Initial Data are supplied, then re-run Plan for P2."
+              - "Amend the Target so the initial credential values and their at-rest form are supplied or specified differently, then re-run Plan for P2."
+            decides: "Human, by editing an authored source; Plan cannot change it."
+        observations:
+          - "Verification of the server-based Instance needs a reachable server and connection credentials, which no source defines; Develop may need to report a Blocker for that check."
+    - id: "008"
+      skill: "my-interface-develop"
+      parent_id: "006"
+      phase: "P2"
+      event: "Develop"
+      outcome: "completed"
+      started_at: "2026-09-30T14:58:20.000+03:30"
+      completed_at: "2026-09-30T15:26:38.018+03:30"
+      duration: "28:18"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used: []
+      open_questions: []
+      blockers: []
+      report: "Executed all 62 planned Tasks of P2 (Database): 62 done, 0 blocked. Database library created at the project root with Interface, Core, one implementation per active Instance (file-backed SQLite, server-based PostgreSQL), runtime configuration, documentation and console entry points. Verified by 470 transient checks on both Instances (PostgreSQL on a throwaway local cluster, the machine's own server untouched), strict quality gate clean, and the README followed end to end in isolated copies. The Target-defined Initial Data content is not developed: it is not in the Plan (Open Question 007-Q1)."
+      data:
+        duration_ms: 1698018
+        phase: "P2"
+        tasks:
+          done: 62
+          blocked: 0
+          ids: "P2-G1-T1 through P2-G12-T16"
+        component:
+          location: "database/ at the project root (library, uv_build, src layout; Interface, Core and Instance implementations under src/database; runtime configuration, data directory and README at the Component root)"
+          data_file: "database/db/application.db created by the after-generation preparation; 15 tables, no Initial Data declared"
+          console_entries: "database-create-tables, database-insert-initial-data, database-prepare"
+        implementation_choices:
+          - "Database Preferences left these unstated, so they are recorded here for later operations: Model is consumed as an editable path dependency and imported only as the top-level public package; tables are derived from Model's plain-data Declarations (Model Entities are not table models)."
+          - "SQL is built with SQLAlchemy Core (the layer under the selected SQLModel dependency); Alembic performs the comparison for CreateTables alignment; psycopg (binary) drives the server Instance; PyYAML reads the configuration; every dependency is pinned to one resolved version."
+          - "Both Instance implementations delegate storage mechanics to one private SQL unit under Core; each still implements the complete contract and holds all Instance-specific detail (location resolution and pragmas for the file Instance, connection URL for the server Instance)."
+          - "Type mapping: integers are 64-bit; decimals are numeric(38,12) on the server Instance and a double on the file Instance where a value is accepted only if the double reproduces it exactly, and a value beyond 12 decimals or 26 integer digits is refused, never rounded; datetimes must be time zone aware and are stored and returned as UTC instants."
+          - "Public failures are distinct classes with a meaning attribute, each deriving from a built-in error type; they are deliberately not among the nine published symbols; each failure is detached from the driver error so no bound value is carried. ExecuteCommand raises the execution failure for a rejected command instead of returning success=false."
+          - "Initial Data entries are keyed by the public Entity class name; a record is present when identical, in conflict when it matches a Uniqueness Constraint but differs; the whole insertion is atomic."
+          - "Testing capability is off in the Preferences, so verification was transient and nothing but the Component itself was persisted."
+        task_log_notes:
+          - "P2-G4-T3 completion entry corrected by a note (23 invalid cases, not 24)."
+          - "P2-G6-T1 result refined after the exact-decimal finding; every earlier check was re-run afterwards."
+          - "P2-G11-T2 wording refined (editable installation requirement)."
+          - "P2-G4-T7 result extended (failures detached from driver errors); full regression re-run."
+          - "Most Tasks' results were drafted together before each was claimed; claims record this, and every Task was claimed before its verification and completion."
+        carried_open_questions: "007-Q1 (credential-bearing Initial Data ownership) still held; not resolved by Develop."
+        environment:
+          - "The machine's own PostgreSQL server on the standard port was not used or written; the server Instance was verified on a temporary cluster that has been stopped."
+    - id: "009"
+      skill: "my-interface-review"
+      parent_id: "006"
+      phase: "P2"
+      event: "Review"
+      outcome: "satisfied"
+      started_at: "2026-09-30T15:26:46.000+03:30"
+      completed_at: "2026-09-30T15:34:18.099+03:30"
+      duration: "7:32"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used: []
+      open_questions: []
+      blockers: []
+      report: "Reviewed phase P2 (Database) against its current Plan in three passes: 6 Findings recorded (5 in pass 1, 1 in pass 2), all 6 resolved and rechecked; pass 3 found nothing further. Result satisfied. The Plan's 62 Tasks all have observable evidence that this review re-established with fresh probes (cross-Instance parity on both a C-locale and a locale-aware server cluster, 388 compared results, out-of-range and NUL inputs, concurrency, credential exposure, layout, documentation followed as a newcomer). Task acceptance criteria all hold; Target-defined Initial Data content is outside the current Plan (Open Question 007-Q1, still held) and was not judged."
+      data:
+        phase: "P2"
+        passes:
+          - pass: 1
+            scope: "Public Interface, Core, both Instance implementations, configuration, documentation and the 62 Task acceptance and verification conditions against the current Plan; fresh probes written for this review rather than the Develop scripts, including a second, locale-aware server cluster."
+            result: "5 Findings recorded"
+          - pass: 2
+            scope: "Re-examined the restructured Source and probed cross-Instance parity broadly (148 comparisons on edge text values, ordering and null placement)."
+            result: "1 further Finding recorded (F6); F1-F5 verified resolved"
+          - pass: 3
+            scope: "Rechecked the final Source: full re-run of all 470 transient Develop checks after the restructuring, quality gate, real Component preparation, and a broader parity sweep (numbers, decimals, datetimes, booleans, nulls)."
+            result: "No new Findings; F6 verified resolved"
+        findings:
+          - id: "F1"
+            state: "resolved"
+            task: "P2-G7-T5"
+            expected: "Each text operator (CONTAINS, STARTS_WITH, ENDS_WITH) selects the records its meaning defines identically on every active Instance (one observable contract; EQUALS is case-sensitive on both)."
+            observed: "Filtering the same six Currency records with CONTAINS 'alpha' returned ['AAA','BBB'] on the file-backed Instance and ['BBB'] on the server-based Instance; STARTS_WITH 'Alpha' returned ['AAA','BBB'] versus ['AAA']; ENDS_WITH 'BETA' returned ['BBB'] versus []. The file-backed Instance matches text case-insensitively."
+            evidence: "Review probe r1 (temporary configuration, throwaway server cluster): output lines 'DIFF CONTAINS', 'DIFF STARTS_WITH', 'DIFF ENDS_WITH'. Location: database/src/database/core/_sql.py (_condition, LIKE-based text operators) and database/src/database/engine/sqlite.py (connection setup)."
+            resolution: "Resolved in pass 1: the file-backed Instance now matches text exactly (instr/substr comparisons) instead of the case-insensitive LIKE; verified identical results on both Instances for all three operators (probe r1, r1b) and by a 148-result parity sweep (probe r3, no text-operator difference). Locations: database/src/database/engine/sqlite.py (_text_condition), engine/postgresql.py."
+          - id: "F2"
+            state: "resolved"
+            task: "P2-G7-T5"
+            expected: "Ordering, ordered comparison (GREATER_THAN etc.) and Min/Max of text agree on every active Instance."
+            observed: "Against a server cluster using the en_US.UTF-8 locale, ordering the same records by a text Field gave ['AAA','EEE','BBB','FFF','DDD','CCC'] on the file-backed Instance and ['AAA','BBB','FFF','CCC','DDD','EEE'] on the server-based Instance; GREATER_THAN 'B' returned five versus three records; Max returned 'Éclair' versus 'Zulu'. (Agreement seen earlier was only because the first throwaway cluster used the C locale.)"
+            evidence: "Review probe r1b against a cluster with datcollate en_US.UTF-8: 'DIFF order country asc', 'DIFF GREATER_THAN', 'DIFF min/max'. Location: database/src/database/core/_schema.py (text column type carries no collation)."
+            resolution: "Resolved in pass 1: the server-based Instance creates text columns with byte-order ('C') collation, so ordering, ordered comparison and Min/Max agree with the file-backed Instance regardless of server locale; verified against clusters with C.UTF-8 and en_US.UTF-8 (probe r1b). Location: database/src/database/engine/postgresql.py (_column_type). README updated; a table created earlier keeps its own collation (observation)."
+          - id: "F3"
+            state: "resolved"
+            task: "P2-G4-T7"
+            expected: "Every failure a consumer can meet is one of the seven public meanings, on every Instance (Task P2-G4-T7 and the Database Definition's public-errors Principle)."
+            observed: "An integer beyond 64 bits used as an identifier, in a Filter, or in an Entity Field raised a raw OverflowError ('Python int too large to convert to SQLite INTEGER') on the file-backed Instance, while the server-based Instance raised the execution-failure meaning."
+            evidence: "Review probe r2: get_by_id(User, 2**70), Filter('id', EQUALS, 2**70) and Currency(decimal_digits=2**70) -> '!! NON-DATABASE OverflowError' on sqlite, 'ExecutionFailure(execution_failure)' on postgresql. Location: database/src/database/core/_sql.py (_transaction) and core/data.py (_compatible, _identifier)."
+            resolution: "Resolved in pass 1: integers beyond 64 bits are refused in Core with the invalid-input meaning before any Instance is reached (identifiers, Filter values, stored Field values), and each Instance additionally maps a driver overflow to the execution-failure meaning; verified on both Instances (probe r2). Locations: database/src/database/core/data.py (_INT64, _compatible, _identifier, _storable), engine/*.py (_transaction)."
+          - id: "F4"
+            state: "resolved"
+            task: "P2-G7-T1"
+            expected: "Adding and querying a text value behaves the same on every active Instance."
+            observed: "Adding a Currency whose text Field contains a NUL character succeeded on the file-backed Instance and failed with execution failure on the server-based Instance; filtering on such text returned [] versus execution failure."
+            evidence: "Review probe r2: 'add text with NUL' -> ok on sqlite, ExecutionFailure(DataError) on postgresql; 'filter text with NUL' -> [] versus ExecutionFailure. Location: database/src/database/core/data.py (request validation)."
+            resolution: "Resolved in pass 1: text containing a NUL character is refused in Core with the invalid-input meaning on every Instance (stored values and Filter values), so both Instances behave alike; verified (probe r2). Location: database/src/database/core/data.py (_compatible, _storable)."
+          - id: "F5"
+            state: "resolved"
+            task: "P2-G4-T5"
+            expected: "Plan acceptance: 'shared code holds no driver or storage behaviour'; each Instance's implementation owns its complete behaviour so Instances stay independent and Core stays free of storage logic (Task P2-G5-T1 reason; Database Definition: an Instance file implements storage behaviour, Core contains no Instance-specific storage behaviour, two Instances have separate files)."
+            observed: "Both Instance implementation units are thin wrappers that delegate every Entity Operation, ExecuteCommand and Lifecycle capability to one shared unit inside Core (query construction and execution, transaction and failure translation, schema alignment), and the shared column types switch on the dialect name; the completion evidence for the routing Task scanned only the routing and validation units and excluded these Core units. A change to one Instance's behaviour is therefore a change to code both Instances execute."
+            evidence: "database/src/database/core/_sql.py (SqlOperations, 300+ lines of SQL execution), core/_align.py (Alembic alignment), core/_schema.py (ExactDecimal.load_dialect_impl / process_bind_param branch on dialect.name); database/src/database/engine/sqlite.py and postgresql.py (every method is a one-line delegation to self._sql); Task P2-G4-T5 log (scan list omits _sql.py, _align.py, _schema.py)."
+            resolution: "Resolved in pass 1: the shared SQL execution and alignment units in Core were removed; each Instance file now contains its complete implementation (transactions and failure translation, conditions, every Entity Operation, ExecuteCommand, schema alignment, Initial Data capabilities) plus its own column types; Core keeps only validation, routing, configuration and lifecycle coordination and one dialect-free structure-derivation helper that takes each Instance's column types. Verified: 470 earlier checks re-run, all pass; Core imports the SQL library only in the structure-derivation helper. Locations: database/src/database/engine/sqlite.py, postgresql.py, core/_schema.py."
+          - id: "F6"
+            state: "resolved"
+            task: "P2-G7-T5"
+            expected: "Ordering, including where null values sort, is identical on every active Instance (one observable contract)."
+            observed: "Ordering the same twenty records by a nullable text Field ascending placed the null record first on the file-backed Instance and last on the server-based Instance; descending placed it last versus first. The other 146 compared results (every text operator against 16 edge values including empty, percent, underscore, backslash, accented and CJK text, IN, Min/Max) were identical."
+            evidence: "Review probe r3 (both Instances, same data): keys 'asc' and 'desc' differ only in the position of record C19 (null country); 'keys compared: 148 differences: 2'. Location: database/src/database/engine/postgresql.py and sqlite.py (list ordering)."
+            resolution: "Resolved in pass 2: each Instance now orders null as the smallest value (first ascending, last descending): the server-based Instance adds explicit null placement and the file-backed Instance's native behaviour is kept; verified by the parity sweep (148 results, 0 differences) and a further sweep over numbers, decimals, datetimes, booleans and nulls with orders, comparisons, IN, IS_NULL, Min/Max/Sum/Count (240 results, 0 differences). README updated. Locations: database/src/database/engine/postgresql.py and sqlite.py (_order)."
+        observations:
+          - "A Filter carrying a decimal value with more than 12 decimals is refused as an execution failure on both Instances (consistent), rather than matching nothing; the Plan does not state which is required."
+          - "ExecuteCommand treats a colon followed by a name in SQL text as a bound parameter on both Instances; a literal colon needs escaping (not documented)."
+          - "CreateTables does not compare column types or collations, so a table created earlier keeps its earlier column definition after a mapping change."
+          - "The Target-defined Initial Data content is outside the current Plan (Open Question 007-Q1); Review judged Source only against the current Plan."
+          - "Task Logs of P2 cite units (a shared SQL unit and an alignment unit in Core) that no longer exist after Finding F5 was resolved; Review does not edit Task Logs, so those historical locations are stale while every Task's condition was re-established against the current Source."
+          - "The decimal Filter value with more than 12 decimals raises the execution-failure meaning on both Instances (consistent)."
+          - "The file-backed Instance is used by the Component's own real data file, which the after-generation preparation created (15 tables, no Initial Data declared)."
+        duration_ms: 452099
+        outcome_by_phase:
+          P2: "satisfied"
+        counts:
+          findings: 6
+          resolved: 6
+          open: 0
+        independence: "Fresh probes were written for this review rather than reusing the Develop scripts; the Develop scripts were re-run only as a regression net after changes. Two server clusters (C.UTF-8 and en_US.UTF-8) were used; the machine's own server was not touched and both clusters are stopped."
