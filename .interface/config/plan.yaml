@@ -1,0 +1,968 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/plan.yaml"
+  path_note: "Mutable Plans, Groups, Tasks, counts and progress."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current Plan Component and the active operation's ownership rules."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read task_count, then the Plan selected by stable Target phase identifier, with its Groups and Tasks in nesting order."
+  selection: "A requested phase resolves to the Plan keyed by that phase identifier; a Task resolves within its containing Group and Plan."
+  absence: "No matching Plan means no current planning record exists for that phase."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "task_count"
+  - "plans"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  task_count: "Total number of stored Tasks."
+  plans: "Current phase Plans and their Groups and Tasks."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  task_count: 31
+  plans:
+    P1:
+      id: P1
+      title: Model
+      order: 1
+      target: Model
+      does: Implement the independent Model layer and its reusable package from the defined models, fields, relationships, and rules.
+      constraints: []
+      task_count: 31
+      groups:
+        P1-G1:
+          id: P1-G1
+          title: Library foundation
+          description: The independent library that holds everything else the phase produces.
+          area: Component packaging
+          does: Model exists as an installable, loadable library that every later Model result is placed in.
+          constraints: []
+          task_count: 1
+          tasks:
+            P1-G1-T1:
+              id: P1-G1-T1
+              source_id: '003'
+              title: Establish Model as an installable, loadable library
+              description: Create the independent Model library so a consumer can install it into a clean environment and load it, declaring only the dependencies Model itself needs, each resolved to a concrete compatible version.
+              reason: Every other Model result is delivered through this library, and consumers reach Model only when it can be installed and loaded.
+              inputs:
+              - Model's selected technology and package identity
+              - The shared development defaults for language and dependency management
+              skills:
+              - sqlmodel
+              expected_result: A library that installs into a clean isolated environment and loads without error, with a minimal, version-resolved dependency declaration and no application behaviour yet.
+              depends_on: []
+              constraints: []
+              acceptance: The library installs into a clean isolated environment and loads without error, and its dependency declaration lists only what Model needs, each with a concrete resolved version.
+              verify: Observe that a fresh isolated environment installs and loads the library successfully, and that its dependency declaration contains no unnecessary item and no unresolved version.
+              status: done
+              log:
+              - at: '2026-09-30T12:15:18.156+03:30'
+                transition: todo -> claimed
+                evidence: Dependencies done; claimed before changing the result.
+              - at: '2026-09-30T12:15:55.023+03:30'
+                transition: claimed -> done
+                check: Built the library, installed the built wheel into a fresh isolated Python 3.14 environment, and loaded it; listed the installed distributions.
+                outcome: 'Install and load succeeded. Runtime dependencies are pydantic 2.13.5 and sqlmodel 0.0.47 (exact pins) with their transitive packages only; ruff 0.16.9 and pyright 1.1.414 are in the dev group and absent from the clean install. Locations: Component directory model/, manifest pyproject.toml, lock uv.lock.'
+              - at: '2026-09-30T12:29:28.087+03:30'
+                note: 'Amended after verification by P1-G10-T6: a dependency audit (imports versus declarations) showed pydantic_core is imported directly but was declared only transitively. Declared pydantic-core at the exact version pydantic already pins, relocked, rebuilt, and reinstalled the wheel into a fresh environment: 12 packages resolve, runtime set unchanged in substance, load succeeds.'
+        P1-G2:
+          id: P1-G2
+          title: Shared Core contracts
+          description: The public contracts and shared behaviour that every Entity relies on and that depend on no specific Entity.
+          area: Core
+          does: Declaration, Field-contract enforcement, and Foundation conversion exist as reusable Core capabilities independent of any Entity.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G2-T1:
+              id: P1-G2-T1
+              source_id: '003'
+              title: Establish the public Declaration contract
+              description: Provide the public structured contract through which every Entity and Field publishes its complete logical meaning, as the Model Definition's Declaration contract requires, carrying no runtime behaviour.
+              reason: Consumers and every Entity need one canonical, technology-independent representation of Entity and Field meaning.
+              inputs:
+              - The Model Definition's Declaration contract
+              skills:
+              - sqlmodel
+              expected_result: A public Declaration contract able to represent any Entity and Field the Target declares, including the difference between an absent default and an explicit null default.
+              depends_on:
+              - P1-G1-T1
+              constraints: []
+              acceptance: A Declaration built for a sample Entity exposes every Entity-level and Field-level member with exact values, distinguishes an absent default from an explicit null default, and carries no behaviour.
+              verify: Observe through the public contract that a sample Entity Declaration and its Field Declarations return every member unchanged and that an absent default reads differently from an explicit null default.
+              status: done
+              log:
+              - at: '2026-09-30T12:15:55.186+03:30'
+                transition: todo -> claimed
+                evidence: Dependencies done; claimed before changing the result.
+              - at: '2026-09-30T12:16:49.388+03:30'
+                transition: claimed -> done
+                check: Ran format, lint (ruff) and strict static-type (pyright) checks on the Declaration unit, then a transient behavioural script against the public contract (outside the Component; Model testing capability is off).
+                outcome: 'Passed. A sample Declaration exposes name, description, ordered fields, primary key, relations, uniqueness constraints and indexes unchanged; a Field exposes type, nullability, description, sensitivity, immutability, constraints and value generation. Absent default (has_default False) reads differently from explicit null default (has_default True, default None). The records are frozen data with no callable members. Integrity failures (missing/repeated Field, wrong primary key, unresolved relation/constraint, default+generation, null default on non-nullable) are rejected. Unit: model/src/model/core/declaration.py.'
+            P1-G2-T2:
+              id: P1-G2-T2
+              source_id: '003'
+              title: Establish shared enforcement of Field contracts
+              description: Provide the shared behaviour by which any Entity accepts only its declared Fields and enforces required values, nullability, Types, defaults, value generation, constraints, and immutability identically on direct construction and on assignment, keeping an omitted auto-increment identity pending until its owner assigns it.
+              reason: A single enforcement path prevents construction and mutation from interpreting omission, null, defaults, or generation differently from one Entity to another.
+              inputs:
+              - The Declaration contract
+              - The Model Definition's construction, mutation, and identity rules
+              skills:
+              - sqlmodel
+              expected_result: Shared behaviour under which an Entity built or changed through the public surface is strictly validated without implicit coercion, and a rejected assignment leaves the prior value intact.
+              depends_on:
+              - P1-G2-T1
+              constraints: []
+              acceptance: Unknown Fields, missing required values, null in a non-nullable Field, incompatible values, and changes to an immutable Field are rejected; explicit false, zero, empty string, and null are kept as supplied; a rejected assignment leaves the prior value; an omitted auto-increment identity stays pending and refuses a caller-supplied value.
+              verify: Observe on a sample Entity that each invalid construction or assignment is rejected without exposing a sensitive value, each valid supplied value is retained exactly, a rejected assignment leaves the prior value, and an omitted auto-increment identity reads as pending.
+              status: done
+              log:
+              - at: '2026-09-30T12:16:49.555+03:30'
+                transition: todo -> claimed
+                evidence: Dependencies done; claimed before changing the result.
+              - at: '2026-09-30T12:19:06.246+03:30'
+                transition: claimed -> done
+                check: Format, lint and strict static-type checks on the shared base, then a transient behavioural script (outside the Component) building a sample Entity with integer, string, boolean, float, decimal, datetime, nullable, defaulted and auto-increment Fields.
+                outcome: 'Passed. Rejected: unknown Field, missing required value, null in non-nullable Field, wrong types (including bool for integer, str for integer, int for decimal, naive datetime, wrong-size string, NaN float), and any caller-supplied auto-increment value through direct construction, model_validate and JSON validation (even null). Kept exactly: explicit false, zero, empty string and null. A rejected assignment left the prior value. An omitted auto-increment identity reads as pending; it accepts one integer assignment, then refuses any change or reset. Diagnostics from failures on a password-marked Field did not contain the supplied value. A Declaration that disagrees with the annotated Fields (type, nullability, presence, default, order, membership) fails at class creation. Unit: model/src/model/core/_entity.py (private).'
+              - at: '2026-09-30T12:29:28.309+03:30'
+                note: 'Amended after verification by P1-G10-T5: pydantic''s structured error views (errors() and json()) carried caller-supplied input values, including the whole input mapping when a generated identity was supplied, although str() and repr() did not. Added an outermost wrapping validator that rebuilds any validation failure with the same type, location and message but no input. Reproduced the leak before the change and confirmed no view contains the value afterwards on every entry path (construction, model_validate, JSON validation, assignment, from_json). Earlier enforcement, foundation, entity, interface, documentation and Target checks re-run and pass.'
+            P1-G2-T3:
+              id: P1-G2-T3
+              source_id: '003'
+              title: Establish shared Entity-to-JSON Object conversion
+              description: Provide the public shared capability that turns an Entity into a decoded JSON Object whose keys are exactly its Field names in Declaration order, and rebuilds an Entity from such an Object without loss.
+              reason: Consumers need one portable, lossless value representation of every Entity.
+              inputs:
+              - The Declaration contract
+              - The Field-contract enforcement behaviour
+              skills:
+              - sqlmodel
+              expected_result: A Foundation capability that converts any Entity to a JSON Object and back with no change of value, and rejects a malformed Object.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              constraints: []
+              acceptance: Converting a sample Entity yields exactly its Field names in Declaration order with null, false, zero, and empty string kept distinct; rebuilding from that Object yields identical Field values; a malformed Object, an unknown Field, a missing required value, or an incompatible value is rejected.
+              verify: Observe on a sample Entity that conversion and reconstruction round-trip with identical values, that the Object's keys equal the Declaration's Field names in order, and that each listed malformed input is rejected.
+              status: done
+              log:
+              - at: '2026-09-30T12:19:06.409+03:30'
+                transition: todo -> claimed
+                evidence: Dependencies done; claimed before changing the result.
+              - at: '2026-09-30T12:19:38.741+03:30'
+                transition: claimed -> done
+                check: Format, lint and strict static-type checks on the Foundation unit; transient script (outside the Component) round-tripping sample Entities and feeding malformed input. Earlier Declaration and enforcement checks re-run after Entity began inheriting Foundation.
+                outcome: 'Passed. Conversion yields exactly the Field names in Declaration order, JSON-compatible (survives real JSON text outside Model). Reconstruction gives identical values and identical value kinds for null, false, zero, empty string, exact decimals (carried as text) and aware datetimes (carried as ISO 8601 text); a pending auto-increment identity stays pending and an assigned one is restored. Rejected without echoing values: non-mapping input, unknown Field, missing required value, null in non-nullable Field, wrong types, non-text decimal, unparsable or non-finite decimal, unparsable or naive datetime, bad identity value. Unit: model/src/model/core/foundation.py.'
+        P1-G3:
+          id: P1-G3
+          title: Access and connectivity Entities
+          description: The Entities that identify a user, a supported trading platform, and a user's connection to one.
+          area: Entity definitions
+          does: User, Trading Platform, and Instance exist as independent public Entities with their Target-declared meaning.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G3-T1:
+              id: P1-G3-T1
+              source_id: '003'
+              title: Realize the User Entity
+              description: Bring the User Entity into Model as its own public unit, preserving the sensitivity meaning of its credential Fields and its uniqueness rules.
+              reason: Most other Entities are owned by a User, so its meaning must exist for those Relations to resolve.
+              inputs:
+              - The Target definition of the User Entity
+              skills:
+              - sqlmodel
+              expected_result: A User Entity that publishes its complete Declaration and the shared conversion capability.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              constraints: []
+              acceptance: The User Declaration carries a sensitivity marker on each credential Field and records the display name and the username as individually unique.
+              verify: Observe the credential markers and both uniqueness rules in the published User Declaration, and observe that a User omitting a required Field is rejected while one omitting the activity flag is active by default.
+              status: done
+              log:
+              - at: '2026-09-30T12:19:38.909+03:30'
+                transition: todo -> claimed
+                evidence: Dependencies done; claimed before changing the result.
+              - at: '2026-09-30T12:22:13.472+03:30'
+                transition: claimed -> done
+                check: Generated the unit from the Target transcription, then format, lint (ruff) and strict static-type (pyright) checks, import-time Declaration-versus-Field consistency check on class creation, and a transient behavioural script (outside the Component) constructing, mutating, converting and round-tripping the Entity.
+                outcome: 'Passed. Password Field carries the password marker and api_key the sensitive marker; name and username are each recorded as unique; constructing without username or api_key is rejected; is_active defaults to true and description to null. Unit: model/src/model/entity/user.py.'
+            P1-G3-T2:
+              id: P1-G3-T2
+              source_id: '003'
+              title: Realize the Trading Platform Entity
+              description: Bring the Trading Platform Entity into Model as its own public unit.
+              reason: Instance and Position both refer to a supported trading platform.
+              inputs:
+              - The Target definition of the Trading Platform Entity
+              skills:
+              - sqlmodel
+              expected_result: A Trading Platform Entity that publishes its complete Declaration and the shared conversion capability.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              constraints: []
+              acceptance: The Trading Platform Declaration records its name as unique and its implementation code as a required value.
+              verify: Observe the name uniqueness in the published Declaration, and observe that a platform built without its implementation code is rejected.
+              status: done
+              log:
+              - at: '2026-09-30T12:19:38.909+03:30'
+                transition: todo -> claimed
+                evidence: Dependencies done; claimed before changing the result.
+              - at: '2026-09-30T12:22:13.598+03:30'
+                transition: claimed -> done
+                check: Generated the unit from the Target transcription, then format, lint (ruff) and strict static-type (pyright) checks, import-time Declaration-versus-Field consistency check on class creation, and a transient behavioural script (outside the Component) constructing, mutating, converting and round-tripping the Entity.
+                outcome: 'Passed. Name uniqueness recorded; constructing without the implementation code is rejected. Unit: model/src/model/entity/trading_platform.py.'
+            P1-G3-T3:
+              id: P1-G3-T3
+              source_id: '003'
+              title: Realize the Instance Entity
+              description: Bring the Instance Entity into Model as its own public unit, relating it to its owning User and its Trading Platform and preserving its optional connection Fields.
+              reason: An Instance is what Accounts use to reach a trading platform, so its meaning must be available to them.
+              inputs:
+              - The Target definition of the Instance Entity
+              skills:
+              - sqlmodel
+              expected_result: An Instance Entity that publishes its complete Declaration and the shared conversion capability.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              constraints: []
+              acceptance: The Instance Declaration records both Relations by logical name, the composite uniqueness of owner and name, and a sensitivity marker on each connection credential, and keeps the optional connection Fields nullable.
+              verify: Observe the two Relations, the composite uniqueness, and the markers in the published Declaration, and observe that an Instance without its optional connection Fields is accepted while one lacking its owner or platform is rejected.
+              status: done
+              log:
+              - at: '2026-09-30T12:19:38.909+03:30'
+                transition: todo -> claimed
+                evidence: Dependencies done; claimed before changing the result.
+              - at: '2026-09-30T12:22:13.724+03:30'
+                transition: claimed -> done
+                check: Generated the unit from the Target transcription, then format, lint (ruff) and strict static-type (pyright) checks, import-time Declaration-versus-Field consistency check on class creation, and a transient behavioural script (outside the Component) constructing, mutating, converting and round-tripping the Entity.
+                outcome: 'Passed. Relations to User and Trading Platform by logical name; owner-plus-name uniqueness; password and api_key markers; ip, username, password and api_key nullable and null when omitted; constructing without owner or platform is rejected. Unit: model/src/model/entity/instance.py.'
+        P1-G4:
+          id: P1-G4
+          title: Reference data Entities
+          description: The Entities that define currencies, brokers, and the assets a broker provides.
+          area: Entity definitions
+          does: Currency, Broker, and Asset exist as independent public Entities with their Target-declared meaning.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G4-T1:
+              id: P1-G4-T1
+              source_id: '003'
+              title: Realize the Currency Entity
+              description: Bring the Currency Entity into Model as its own public unit with its owner Relation and its fixed-size standard code.
+              reason: Accounts use a Currency as their base currency, so its meaning must be available to them.
+              inputs:
+              - The Target definition of the Currency Entity
+              skills:
+              - sqlmodel
+              expected_result: A Currency Entity that publishes its complete Declaration and the shared conversion capability.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              constraints: []
+              acceptance: The Currency Declaration constrains its code to the declared size, defaults its decimal precision as declared, and records owner-plus-code uniqueness.
+              verify: Observe that a code of the wrong length is rejected, that omitting decimal digits yields the declared default, and that the published Declaration records the owner-plus-code uniqueness.
+              status: done
+              log:
+              - at: '2026-09-30T12:19:38.909+03:30'
+                transition: todo -> claimed
+                evidence: Dependencies done; claimed before changing the result.
+              - at: '2026-09-30T12:22:13.853+03:30'
+                transition: claimed -> done
+                check: Generated the unit from the Target transcription, then format, lint (ruff) and strict static-type (pyright) checks, import-time Declaration-versus-Field consistency check on class creation, and a transient behavioural script (outside the Component) constructing, mutating, converting and round-tripping the Entity.
+                outcome: 'Passed. Code of length 2, 4 or 0 rejected, size constraint 3 recorded; decimal_digits defaults to 2 and an explicit 0 is kept; owner Relation and owner-plus-code uniqueness recorded. Unit: model/src/model/entity/currency.py.'
+            P1-G4-T2:
+              id: P1-G4-T2
+              source_id: '003'
+              title: Realize the Broker Entity
+              description: Bring the Broker Entity into Model as its own public unit with its owner Relation.
+              reason: Assets, Accounts, and Positions refer to a Broker.
+              inputs:
+              - The Target definition of the Broker Entity
+              skills:
+              - sqlmodel
+              expected_result: A Broker Entity that publishes its complete Declaration and the shared conversion capability.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              constraints: []
+              acceptance: The Broker Declaration records its owner Relation and the uniqueness of owner and name.
+              verify: Observe the owner Relation and the owner-plus-name uniqueness in the published Declaration, and observe that a Broker built without its owner is rejected.
+              status: done
+              log:
+              - at: '2026-09-30T12:19:38.909+03:30'
+                transition: todo -> claimed
+                evidence: Dependencies done; claimed before changing the result.
+              - at: '2026-09-30T12:22:13.983+03:30'
+                transition: claimed -> done
+                check: Generated the unit from the Target transcription, then format, lint (ruff) and strict static-type (pyright) checks, import-time Declaration-versus-Field consistency check on class creation, and a transient behavioural script (outside the Component) constructing, mutating, converting and round-tripping the Entity.
+                outcome: 'Passed. Owner Relation and owner-plus-name uniqueness recorded; constructing without an owner is rejected. Unit: model/src/model/entity/broker.py.'
+            P1-G4-T3:
+              id: P1-G4-T3
+              source_id: '003'
+              title: Realize the Asset Entity
+              description: Bring the Asset Entity into Model as its own public unit with its Broker Relation and its numeric price attributes.
+              reason: Actions select an Asset to trade, so its meaning must be available to them.
+              inputs:
+              - The Target definition of the Asset Entity
+              skills:
+              - sqlmodel
+              expected_result: An Asset Entity that publishes its complete Declaration and the shared conversion capability.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              constraints: []
+              acceptance: The Asset Declaration records its Broker Relation, the uniqueness of broker and symbol, and the declared defaults of its point size and digits.
+              verify: Observe that omitting point size and digits yields their declared defaults, and that the published Declaration records the Broker Relation and the broker-plus-symbol uniqueness.
+              status: done
+              log:
+              - at: '2026-09-30T12:19:38.910+03:30'
+                transition: todo -> claimed
+                evidence: Dependencies done; claimed before changing the result.
+              - at: '2026-09-30T12:22:14.114+03:30'
+                transition: claimed -> done
+                check: Generated the unit from the Target transcription, then format, lint (ruff) and strict static-type (pyright) checks, import-time Declaration-versus-Field consistency check on class creation, and a transient behavioural script (outside the Component) constructing, mutating, converting and round-tripping the Entity.
+                outcome: 'Passed. point_size defaults to 0.0 and digits to 0, explicit values kept; Broker Relation and broker-plus-symbol uniqueness recorded. Unit: model/src/model/entity/asset.py.'
+        P1-G5:
+          id: P1-G5
+          title: Account Entities
+          description: The Entities that organize and define funded trading accounts.
+          area: Entity definitions
+          does: Account Group and Account exist as independent public Entities with their Target-declared meaning.
+          constraints: []
+          task_count: 2
+          tasks:
+            P1-G5-T1:
+              id: P1-G5-T1
+              source_id: '003'
+              title: Realize the Account Group Entity
+              description: Bring the Account Group Entity into Model as its own public unit with its owner Relation.
+              reason: Every Account belongs to an Account Group.
+              inputs:
+              - The Target definition of the Account Group Entity
+              skills:
+              - sqlmodel
+              expected_result: An Account Group Entity that publishes its complete Declaration and the shared conversion capability.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              constraints: []
+              acceptance: The Account Group Declaration records its owner Relation and the uniqueness of owner and name.
+              verify: Observe the owner Relation and uniqueness in the published Declaration, and observe that an Account Group built without a name is rejected.
+              status: done
+              log:
+              - at: '2026-09-30T12:19:38.910+03:30'
+                transition: todo -> claimed
+                evidence: Dependencies done; claimed before changing the result.
+              - at: '2026-09-30T12:22:14.248+03:30'
+                transition: claimed -> done
+                check: Generated the unit from the Target transcription, then format, lint (ruff) and strict static-type (pyright) checks, import-time Declaration-versus-Field consistency check on class creation, and a transient behavioural script (outside the Component) constructing, mutating, converting and round-tripping the Entity.
+                outcome: 'Passed. Owner Relation and owner-plus-name uniqueness recorded; constructing without a name is rejected. Unit: model/src/model/entity/account_group.py.'
+            P1-G5-T2:
+              id: P1-G5-T2
+              source_id: '003'
+              title: Realize the Account Entity
+              description: Bring the Account Entity into Model as its own public unit, relating it to its group, broker, instance, and base currency and preserving its credential sensitivity and exact-decimal balance.
+              reason: Actions and Positions execute through an Account, so its meaning must be available to them.
+              inputs:
+              - The Target definition of the Account Entity
+              skills:
+              - sqlmodel
+              expected_result: An Account Entity that publishes its complete Declaration and the shared conversion capability.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              constraints: []
+              acceptance: The Account Declaration records its four Relations by logical name, its unique display name, the composite uniqueness of group, broker, and instance, a sensitivity marker on its credential, and a balance with the declared default.
+              verify: Observe the four Relations, both uniqueness rules, and the marker in the published Declaration, and observe that an Account omitting its balance carries the declared default while one omitting its base currency is rejected.
+              status: done
+              log:
+              - at: '2026-09-30T12:19:38.910+03:30'
+                transition: todo -> claimed
+                evidence: Dependencies done; claimed before changing the result.
+              - at: '2026-09-30T12:22:14.383+03:30'
+                transition: claimed -> done
+                check: Generated the unit from the Target transcription, then format, lint (ruff) and strict static-type (pyright) checks, import-time Declaration-versus-Field consistency check on class creation, and a transient behavioural script (outside the Component) constructing, mutating, converting and round-tripping the Entity.
+                outcome: 'Passed. Four Relations (Account Group, Broker, Instance, Currency) by logical name; name uniqueness and group-broker-instance uniqueness; password marker; balance defaults to exact decimal 0; constructing without base currency is rejected. Unit: model/src/model/entity/account.py.'
+        P1-G6:
+          id: P1-G6
+          title: Risk-rule Entities
+          description: The Entities that group and define the rules governing trailing and partial closing of a position.
+          area: Entity definitions
+          does: Trailing Group, Trailing Rule, Partial Group, and Partial Rule exist as independent public Entities with their Target-declared meaning.
+          constraints: []
+          task_count: 4
+          tasks:
+            P1-G6-T1:
+              id: P1-G6-T1
+              source_id: '003'
+              title: Realize the Trailing Group Entity
+              description: Bring the Trailing Group Entity into Model as its own public unit with its owner Relation.
+              reason: Actions and Positions apply a Trailing Group, and its rules belong to it.
+              inputs:
+              - The Target definition of the Trailing Group Entity
+              skills:
+              - sqlmodel
+              expected_result: A Trailing Group Entity that publishes its complete Declaration and the shared conversion capability.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              constraints: []
+              acceptance: The Trailing Group Declaration records its owner Relation and the uniqueness of owner and name.
+              verify: Observe the owner Relation and uniqueness in the published Declaration, and observe that a Trailing Group built without an owner is rejected.
+              status: done
+              log:
+              - at: '2026-09-30T12:19:38.910+03:30'
+                transition: todo -> claimed
+                evidence: Dependencies done; claimed before changing the result.
+              - at: '2026-09-30T12:22:14.518+03:30'
+                transition: claimed -> done
+                check: Generated the unit from the Target transcription, then format, lint (ruff) and strict static-type (pyright) checks, import-time Declaration-versus-Field consistency check on class creation, and a transient behavioural script (outside the Component) constructing, mutating, converting and round-tripping the Entity.
+                outcome: 'Passed. Owner Relation and owner-plus-name uniqueness recorded; constructing without an owner is rejected. Unit: model/src/model/entity/trailing_group.py.'
+            P1-G6-T2:
+              id: P1-G6-T2
+              source_id: '003'
+              title: Realize the Trailing Rule Entity
+              description: Bring the Trailing Rule Entity into Model as its own public unit with its Trailing Group Relation and its optional adjustment values.
+              reason: A Trailing Group is only meaningful through the rules it contains.
+              inputs:
+              - The Target definition of the Trailing Rule Entity
+              skills:
+              - sqlmodel
+              expected_result: A Trailing Rule Entity that publishes its complete Declaration and the shared conversion capability.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              constraints: []
+              acceptance: The Trailing Rule Declaration records its unique name, its Trailing Group Relation, the uniqueness of group and trigger percentage, and keeps both adjustment values nullable.
+              verify: Observe the name uniqueness, the Relation, and the group-plus-trigger uniqueness in the published Declaration, and observe that a rule with neither adjustment is accepted while one without a trigger percentage is rejected.
+              status: done
+              log:
+              - at: '2026-09-30T12:19:38.910+03:30'
+                transition: todo -> claimed
+                evidence: Dependencies done; claimed before changing the result.
+              - at: '2026-09-30T12:22:14.657+03:30'
+                transition: claimed -> done
+                check: Generated the unit from the Target transcription, then format, lint (ruff) and strict static-type (pyright) checks, import-time Declaration-versus-Field consistency check on class creation, and a transient behavioural script (outside the Component) constructing, mutating, converting and round-tripping the Entity.
+                outcome: 'Passed. Name uniqueness, Trailing Group Relation and group-plus-trigger uniqueness recorded; both adjustments null when omitted; constructing without a trigger percentage is rejected. Unit: model/src/model/entity/trailing_rule.py.'
+            P1-G6-T3:
+              id: P1-G6-T3
+              source_id: '003'
+              title: Realize the Partial Group Entity
+              description: Bring the Partial Group Entity into Model as its own public unit with its owner Relation.
+              reason: Actions and Positions apply a Partial Group, and its rules belong to it.
+              inputs:
+              - The Target definition of the Partial Group Entity
+              skills:
+              - sqlmodel
+              expected_result: A Partial Group Entity that publishes its complete Declaration and the shared conversion capability.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              constraints: []
+              acceptance: The Partial Group Declaration records its owner Relation and the uniqueness of owner and name.
+              verify: Observe the owner Relation and uniqueness in the published Declaration, and observe that a Partial Group built without a name is rejected.
+              status: done
+              log:
+              - at: '2026-09-30T12:19:38.910+03:30'
+                transition: todo -> claimed
+                evidence: Dependencies done; claimed before changing the result.
+              - at: '2026-09-30T12:22:14.797+03:30'
+                transition: claimed -> done
+                check: Generated the unit from the Target transcription, then format, lint (ruff) and strict static-type (pyright) checks, import-time Declaration-versus-Field consistency check on class creation, and a transient behavioural script (outside the Component) constructing, mutating, converting and round-tripping the Entity.
+                outcome: 'Passed. Owner Relation and owner-plus-name uniqueness recorded; constructing without a name is rejected. Unit: model/src/model/entity/partial_group.py.'
+            P1-G6-T4:
+              id: P1-G6-T4
+              source_id: '003'
+              title: Realize the Partial Rule Entity
+              description: Bring the Partial Rule Entity into Model as its own public unit with its Partial Group Relation and its two percentage values.
+              reason: A Partial Group is only meaningful through the rules it contains.
+              inputs:
+              - The Target definition of the Partial Rule Entity
+              skills:
+              - sqlmodel
+              expected_result: A Partial Rule Entity that publishes its complete Declaration and the shared conversion capability.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              constraints: []
+              acceptance: The Partial Rule Declaration records its unique name, its Partial Group Relation, and the uniqueness of group and profit percentage.
+              verify: Observe the name uniqueness, the Relation, and the group-plus-profit uniqueness in the published Declaration, and observe that a rule without a close percentage is rejected.
+              status: done
+              log:
+              - at: '2026-09-30T12:19:38.910+03:30'
+                transition: todo -> claimed
+                evidence: Dependencies done; claimed before changing the result.
+              - at: '2026-09-30T12:22:14.940+03:30'
+                transition: claimed -> done
+                check: Generated the unit from the Target transcription, then format, lint (ruff) and strict static-type (pyright) checks, import-time Declaration-versus-Field consistency check on class creation, and a transient behavioural script (outside the Component) constructing, mutating, converting and round-tripping the Entity.
+                outcome: 'Passed. Name uniqueness, Partial Group Relation and group-plus-profit uniqueness recorded; constructing without a close percentage is rejected. Unit: model/src/model/entity/partial_rule.py.'
+        P1-G7:
+          id: P1-G7
+          title: Trading Entities
+          description: The Entities that define how a position is opened and record every position the system creates.
+          area: Entity definitions
+          does: Action Group, Action, and Position exist as independent public Entities with their Target-declared meaning.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G7-T1:
+              id: P1-G7-T1
+              source_id: '003'
+              title: Realize the Action Group Entity
+              description: Bring the Action Group Entity into Model as its own public unit with its owner Relation.
+              reason: Every Action belongs to an Action Group.
+              inputs:
+              - The Target definition of the Action Group Entity
+              skills:
+              - sqlmodel
+              expected_result: An Action Group Entity that publishes its complete Declaration and the shared conversion capability.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              constraints: []
+              acceptance: The Action Group Declaration records its owner Relation and the uniqueness of owner and name.
+              verify: Observe the owner Relation and uniqueness in the published Declaration, and observe that an Action Group built without an owner is rejected.
+              status: done
+              log:
+              - at: '2026-09-30T12:19:38.910+03:30'
+                transition: todo -> claimed
+                evidence: Dependencies done; claimed before changing the result.
+              - at: '2026-09-30T12:22:15.081+03:30'
+                transition: claimed -> done
+                check: Generated the unit from the Target transcription, then format, lint (ruff) and strict static-type (pyright) checks, import-time Declaration-versus-Field consistency check on class creation, and a transient behavioural script (outside the Component) constructing, mutating, converting and round-tripping the Entity.
+                outcome: 'Passed. Owner Relation and owner-plus-name uniqueness recorded; constructing without an owner is rejected. Unit: model/src/model/entity/action_group.py.'
+            P1-G7-T2:
+              id: P1-G7-T2
+              source_id: '003'
+              title: Realize the Action Entity
+              description: Bring the Action Entity into Model as its own public unit, relating it to its group, asset, account, partial group, and trailing group and preserving its exact-decimal risk settings.
+              reason: Positions are created from an Action, so its meaning must be available to them.
+              inputs:
+              - The Target definition of the Action Entity
+              skills:
+              - sqlmodel
+              expected_result: An Action Entity that publishes its complete Declaration and the shared conversion capability.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              constraints: []
+              acceptance: The Action Declaration records its five Relations by logical name and the uniqueness of group and name.
+              verify: Observe the five Relations and the uniqueness in the published Declaration, and observe that an Action omitting its stop loss is rejected.
+              status: done
+              log:
+              - at: '2026-09-30T12:19:38.910+03:30'
+                transition: todo -> claimed
+                evidence: Dependencies done; claimed before changing the result.
+              - at: '2026-09-30T12:22:15.223+03:30'
+                transition: claimed -> done
+                check: Generated the unit from the Target transcription, then format, lint (ruff) and strict static-type (pyright) checks, import-time Declaration-versus-Field consistency check on class creation, and a transient behavioural script (outside the Component) constructing, mutating, converting and round-tripping the Entity.
+                outcome: 'Passed. Five Relations (Action Group, Asset, Account, Partial Group, Trailing Group) and group-plus-name uniqueness recorded; constructing without stop_loss is rejected. Unit: model/src/model/entity/action.py.'
+            P1-G7-T3:
+              id: P1-G7-T3
+              source_id: '003'
+              title: Realize the Position Entity
+              description: Bring the Position Entity into Model as its own public unit, relating it to every Entity it refers to and preserving its date, exact-decimal values, and execution flag.
+              reason: Position stores every position the system creates and refers to most other Entities.
+              inputs:
+              - The Target definition of the Position Entity
+              skills:
+              - sqlmodel
+              expected_result: A Position Entity that publishes its complete Declaration and the shared conversion capability.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T2
+              - P1-G2-T3
+              constraints: []
+              acceptance: The Position Declaration records its eight Relations by logical name, its unique display name, a date-and-time value, and an execution flag that is false by default.
+              verify: Observe the eight Relations and the name uniqueness in the published Declaration, and observe that a Position omitting its execution flag reads as not executed while one omitting its date is rejected.
+              status: done
+              log:
+              - at: '2026-09-30T12:19:38.910+03:30'
+                transition: todo -> claimed
+                evidence: Dependencies done; claimed before changing the result.
+              - at: '2026-09-30T12:22:15.367+03:30'
+                transition: claimed -> done
+                check: Generated the unit from the Target transcription, then format, lint (ruff) and strict static-type (pyright) checks, import-time Declaration-versus-Field consistency check on class creation, and a transient behavioural script (outside the Component) constructing, mutating, converting and round-tripping the Entity.
+                outcome: 'Passed. Eight Relations by logical name; name uniqueness; is_executed defaults to false and profit to exact decimal 0; a missing or naive date is rejected. Unit: model/src/model/entity/position.py.'
+        P1-G8:
+          id: P1-G8
+          title: Public Interface
+          description: The single public entrypoint through which every Entity is published.
+          area: Interface
+          does: Every Entity is reachable through one predictable entrypoint that has no side effect.
+          constraints: []
+          task_count: 1
+          tasks:
+            P1-G8-T1:
+              id: P1-G8-T1
+              source_id: '003'
+              title: Publish every Entity through the Model entrypoint
+              description: Provide the standard public entrypoint that publishes each Entity exactly once in Target order, with no helper, copy, alias, string-named, or unrelated symbol, and with no side effect when loaded.
+              reason: Consumers must reach every Entity and its complete Declaration through one stable boundary without importing Model internals.
+              inputs:
+              - Every realized Entity
+              - The Target's ordered Entity list
+              skills: []
+              expected_result: An entrypoint whose published set equals the Target's Entities in Target order and whose loading has no side effect.
+              depends_on:
+              - P1-G3-T1
+              - P1-G3-T2
+              - P1-G3-T3
+              - P1-G4-T1
+              - P1-G4-T2
+              - P1-G4-T3
+              - P1-G5-T1
+              - P1-G5-T2
+              - P1-G6-T1
+              - P1-G6-T2
+              - P1-G6-T3
+              - P1-G6-T4
+              - P1-G7-T1
+              - P1-G7-T2
+              - P1-G7-T3
+              constraints: []
+              acceptance: The entrypoint exposes every Entity the Target declares, in Target order, and nothing else, and loading it creates no Entity instance and performs no network, storage, configuration, or data-creation activity.
+              verify: Observe that the entrypoint's published set and order equal the Target's Entity list, and observe that loading it in an environment without network, storage, or configuration produces no external activity and no created instance.
+              status: done
+              log:
+              - at: '2026-09-30T12:22:38.950+03:30'
+                transition: todo -> claimed
+                evidence: Dependencies done; claimed before changing the result.
+              - at: '2026-09-30T12:23:28.503+03:30'
+                transition: claimed -> done
+                check: Format, lint and strict static-type checks; transient script (outside the Component) comparing the entrypoint's published set against the Entity list parsed directly from the Target's Technical Definition, listing its public names, and loading the package in a clean-environment subprocess (no config, audit hook recording network, process, filesystem-write and database events, and counting live Entity instances).
+                outcome: 'Passed. Published set equals the Target''s 15 Entities, in Target order, each exactly once; the only public names are the 15 Entity classes (actual definitions, not copies, aliases, strings or helpers); the package root re-exports the identical set. Clean-environment load recorded zero network, process, write or database events and created zero Entity instances. Units: model/src/model/interface.py (entrypoint) and model/src/model/__init__.py (package root re-export).'
+        P1-G9:
+          id: P1-G9
+          title: Documentation
+          description: The Component's root documentation explaining the complete public surface.
+          area: Documentation
+          does: A consumer can understand, set up, use, and verify Model from its root documentation alone.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G9-T1:
+              id: P1-G9-T1
+              source_id: '003'
+              title: Document every public Entity
+              description: Write the documentation section that lists every public Entity once in Target order with its description, a complete Field table, and its Entity Metadata presented separately from that table.
+              reason: Consumers must learn each Entity's complete public meaning without reading Model internals.
+              inputs:
+              - The published Declarations of every Entity
+              skills: []
+              expected_result: A documentation section covering every Entity in Target order, with Fields and Entity Metadata separated and no usage examples.
+              depends_on:
+              - P1-G8-T1
+              constraints: []
+              acceptance: Every Entity appears exactly once in Target order with its description, a Field table listing every Field with its properties, and its Relations, uniqueness rules, and indexes outside that table.
+              verify: Observe that the section's Entities and their order equal the published set and that each Field table and Metadata listing equals the corresponding published Declaration.
+              status: done
+              log:
+              - at: '2026-09-30T12:23:28.711+03:30'
+                transition: todo -> claimed
+                evidence: Dependencies done; claimed before changing the result.
+              - at: '2026-09-30T12:24:48.384+03:30'
+                transition: claimed -> done
+                check: Built the section from the published Declarations, then ran a separate transient parser (outside the Component) that reads the written documentation and compares it to the Target's Entity list and to each published Declaration.
+                outcome: Passed. 15 Entities appear once each in Target order (matching the Target's Models list); each has its description, a Field table with one row per Field matching type, nullability, default (absent, null, true, false, value), sensitivity, immutability, generation, constraints and description, and its Primary Key, Relations, Uniqueness Constraints and Indexes listed separately from the table. The section contains no usage example. Documentation lives in the Component root (model/README.md).
+            P1-G9-T2:
+              id: P1-G9-T2
+              source_id: '003'
+              title: Document Declaration access and Foundation conversion
+              description: Write the documentation sections that show how a consumer reads one Entity's public Declaration and uses each Foundation capability, ending in one complete Entity-to-JSON-Object-to-Entity round trip.
+              reason: Consumers need working examples of the two public Core contracts.
+              inputs:
+              - The Declaration contract
+              - The Foundation conversion capability
+              - One realized Entity as the example
+              skills: []
+              expected_result: Documentation sections whose examples read every Declaration member and perform a complete round trip.
+              depends_on:
+              - P1-G2-T1
+              - P1-G2-T3
+              - P1-G8-T1
+              constraints: []
+              acceptance: The Declaration section shows access to Fields, Primary Key, Relations, Uniqueness Constraints, and Indexes; the Foundation section gives one example per capability and one complete round trip; every example is correct against the public surface.
+              verify: Observe that each documented example, when followed as written, produces the result the documentation states.
+              status: done
+              log:
+              - at: '2026-09-30T12:23:28.711+03:30'
+                transition: todo -> claimed
+                evidence: Dependencies done; claimed before changing the result.
+              - at: '2026-09-30T12:24:48.589+03:30'
+                transition: claimed -> done
+                check: Extracted every runnable example from the Declaration and Foundation sections and executed it, comparing printed output with the output shown in the documentation.
+                outcome: Passed. The Declaration section lists every Entity- and Field-level member and its example reads Fields, Primary Key, Relations, Uniqueness Constraints, Indexes and a Field's properties with the shown output. The Foundation section gives one example each for to_json and from_json and one complete Entity to JSON Object to Entity round trip (with caller-side JSON text encoding), all reproducing the documented output.
+            P1-G9-T3:
+              id: P1-G9-T3
+              source_id: '003'
+              title: Document overview, setup, use, verification, and troubleshooting
+              description: Write the remaining documentation sections — overview with one simple Entity example, setup, use, verification, and Model-specific troubleshooting — and ensure the whole document reads in its selected order.
+              reason: A consumer must be able to install, use, and check Model correctly from the documentation.
+              inputs:
+              - The other documentation sections
+              - Model's selected technology setup
+              skills: []
+              expected_result: A complete root document in the selected section order that contains no real credential or secret and no stale meaning.
+              depends_on:
+              - P1-G1-T1
+              - P1-G9-T1
+              - P1-G9-T2
+              constraints: []
+              acceptance: All required sections exist in the selected order; the verification section checks public loading, construction of a representative Entity, Declaration access, and a lossless round trip; troubleshooting covers only Model concerns.
+              verify: Observe that the sections appear in the selected order and that every documented example uses only placeholder values.
+              status: done
+              log:
+              - at: '2026-09-30T12:24:48.798+03:30'
+                transition: todo -> claimed
+                evidence: Dependencies done; claimed before changing the result.
+              - at: '2026-09-30T12:25:04.856+03:30'
+                transition: claimed -> done
+                check: 'Built the remaining sections, then a transient checker (outside the Component) read the whole document: section order, the overview example, the Verify section (ran its script and compared its printed output), troubleshooting entries, and a scan for credential-shaped text.'
+                outcome: Passed. Sections appear as Overview, Interface, Declaration, Foundation, Setup, Use, Verify, Troubleshooting. The overview has one simple User example whose shown output reproduces. The Verify section checks public import, construction of a representative Entity, Declaration access and a lossless round trip, and its expected output reproduces. Troubleshooting has 7 Model-only entries. Every password/api_key value in the document is the placeholder text; no credential-shaped text found. Realization choices (non-table SQLModel, sensitivity marker mapping, exact size-3 code, aware datetimes, identity assignment) are recorded in the Use section.
+              - at: '2026-09-30T12:30:28.476+03:30'
+                note: 'Amended after verification by P1-G10-T7: the consumer walkthrough showed a wrong-typed decimal reports ''Input should be an instance of Decimal'', which the troubleshooting entry did not mention. Corrected that one entry (single-line change); the documentation checker and the walkthrough re-run and pass.'
+        P1-G10:
+          id: P1-G10
+          title: Conformance verification
+          description: Whole-Model verification that the finished result preserves every authority and public contract.
+          area: Verification
+          does: The complete Model is proven to conform to the Target, its metadata, its behavioural contracts, its quality standard, and its documentation.
+          constraints: []
+          task_count: 8
+          tasks:
+            P1-G10-T1:
+              id: P1-G10-T1
+              source_id: '003'
+              title: Verify Entity and Field conformance to the Target
+              description: Confirm that the published Entities and their Fields match the Target exactly in membership, order, and every declared parameter, with the mandatory identity and activity Fields present once per Entity.
+              reason: Exact preservation of Target meaning is the phase's central obligation.
+              inputs:
+              - The Target's Model definitions
+              - The published Declarations
+              skills: []
+              expected_result: A recorded comparison result showing membership, order, and parameters equal to the Target.
+              depends_on:
+              - P1-G8-T1
+              constraints: []
+              acceptance: No Entity or Field is missing, extra, reordered, renamed, or altered, and every explicit false and explicit null is preserved.
+              verify: Observe a comparison of every published Declaration against the Target definitions that reports no difference.
+              status: done
+              log:
+              - at: '2026-09-30T12:25:05.097+03:30'
+                transition: todo -> claimed
+                evidence: Dependencies done; claimed before changing the result.
+              - at: '2026-09-30T12:27:10.726+03:30'
+                transition: claimed -> done
+                check: Transient script (outside the Component) parsed the Target's Technical Definition Models section directly (Entity purposes, every Field line's Type, Nullable, Auto Increment, Primary Key, Unique, Default, Size and Purpose, Relationships and Rules) and compared it to every published Declaration. Independent grep cross-check of counts; mutation test with three defects the class-creation guard cannot see (uniqueness member, relation target name, description punctuation) plus two it can.
+                outcome: Passed. 15 Entities, 124 Fields, 28 Relations and 19 Uniqueness Constraints match the Target exactly in membership, order and every parameter (type, nullability, default value and presence, size, description, generation, immutability of id, credential markers); id and is_active appear once per Entity; no extra index. Grep counts agree (124/28/19). All mutants were detected and the sources were restored byte-identical.
+            P1-G10-T2:
+              id: P1-G10-T2
+              source_id: '003'
+              title: Verify Entity Metadata resolves across the Model
+              description: Confirm that every Primary Key, Relation, Uniqueness Constraint, and Index resolves within its Entity and across Model, with compatible endpoint Types and no repeated or duplicate declaration.
+              reason: Consumers can realize structure only from complete, unambiguous metadata.
+              inputs:
+              - The published Declarations
+              skills: []
+              expected_result: A recorded result showing every metadata reference resolves.
+              depends_on:
+              - P1-G8-T1
+              constraints: []
+              acceptance: Every Relation names an existing target Entity and Field with a compatible Type, every referenced local Field exists, and no participating Field or declaration is repeated.
+              verify: Observe a check over all published Declarations that reports zero unresolved, incompatible, or duplicate metadata.
+              status: done
+              log:
+              - at: '2026-09-30T12:25:05.097+03:30'
+                transition: todo -> claimed
+                evidence: Dependencies done; claimed before changing the result.
+              - at: '2026-09-30T12:27:10.933+03:30'
+                transition: claimed -> done
+                check: Same transient script resolved every Relation, Primary Key, Uniqueness Constraint and Index against the published Declarations of the whole Model.
+                outcome: 'Passed. 28 Relations across 15 Entities: every local Field exists, every target Entity and Field exists and is the target''s Primary Key, endpoint Types are compatible (integer to integer), no Field is related twice, and there are no repeated or duplicate uniqueness constraints or indexes.'
+            P1-G10-T3:
+              id: P1-G10-T3
+              source_id: '003'
+              title: Verify construction and mutation behaviour across Entities
+              description: Confirm the strict Field contracts hold on representative Entities covering nullable, defaulted, immutable, and auto-increment Fields.
+              reason: The runtime contract must be identical across every Entity, not only the sample used while building the shared behaviour.
+              inputs:
+              - The published Entities
+              skills: []
+              expected_result: A recorded result that construction and assignment follow the contract on every representative Entity.
+              depends_on:
+              - P1-G8-T1
+              constraints: []
+              acceptance: On each representative Entity, invalid input and immutable changes are rejected, supplied false, zero, empty string, and null are preserved, a rejected assignment leaves the prior value, and an omitted auto-increment identity stays pending.
+              verify: Observe the outcomes of valid and invalid construction and assignment on each representative Entity.
+              status: done
+              log:
+              - at: '2026-09-30T12:25:05.097+03:30'
+                transition: todo -> claimed
+                evidence: Dependencies done; claimed before changing the result.
+              - at: '2026-09-30T12:29:28.534+03:30'
+                transition: claimed -> done
+                check: 'Transient script (outside the Component) derived cases from each of the 15 published Declarations: for every Field, omission, null, wrong types and bad values (bool/int/str/float/decimal/naive-datetime confusions, wrong-size strings, NaN and infinity), on construction and on assignment; explicit false, zero, empty string and null; valid changes; unknown Field and attribute; generated identity through direct construction, model_validate, JSON validation and assignment.'
+                outcome: 'Passed: 15 Entities, 1130 assertions. Invalid input and unknown Fields are rejected naming the offending Field; explicit falsy values and null are kept exactly and with exact kinds; every rejected assignment left the prior value; supplied identity (including null) is refused on every path; the pending identity accepts one integer assignment then rejects any change or reset.'
+            P1-G10-T4:
+              id: P1-G10-T4
+              source_id: '003'
+              title: Verify lossless JSON Object round trips for every Entity
+              description: Confirm that every Entity converts to a JSON Object and back with no change of value.
+              reason: Foundation's promise of lossless conversion must hold for the whole Model.
+              inputs:
+              - The published Entities
+              skills: []
+              expected_result: A recorded result that every Entity round-trips without loss.
+              depends_on:
+              - P1-G8-T1
+              constraints: []
+              acceptance: For every Entity, conversion yields exactly its Field names in Declaration order and reconstruction reproduces identical values, with null, false, zero, and empty string kept distinct.
+              verify: Observe a round trip of a representative instance of each Entity that reports identical values in every Field.
+              status: done
+              log:
+              - at: '2026-09-30T12:25:05.097+03:30'
+                transition: todo -> claimed
+                evidence: Dependencies done; claimed before changing the result.
+              - at: '2026-09-30T12:29:28.753+03:30'
+                transition: claimed -> done
+                check: Transient script (outside the Component) built four instances per Entity (minimal, fully populated, all-falsy values, all-null) with identities assigned or pending, converted each to a JSON Object, through real JSON text and back, and compared every Field's value and kind.
+                outcome: 'Passed: 60 instances across 15 Entities. Keys equal the Field names in Declaration order; reconstruction gives identical values and identical kinds; null, false, zero and empty string stay distinct in the Object; the Object survives JSON text encoding and decoding outside Model.'
+            P1-G10-T5:
+              id: P1-G10-T5
+              source_id: '003'
+              title: Verify sensitive values stay unchanged and undisclosed
+              description: Confirm that sensitivity markers are exposed through Declaration, actual values pass through unchanged, and no sensitive value appears in diagnostics, documentation, fixtures, or generated artifacts.
+              reason: Model preserves sensitivity meaning without protecting values, and must never leak a real secret.
+              inputs:
+              - The published Declarations
+              - Rejection diagnostics
+              - The Component's documentation and artifacts
+              skills: []
+              expected_result: A recorded result covering marker exposure, value preservation, and absence of leaked secrets.
+              depends_on:
+              - P1-G8-T1
+              - P1-G2-T3
+              - P1-G9-T3
+              constraints: []
+              acceptance: Every marked Field exposes its marker, a supplied value survives conversion unchanged, and no real credential or sensitive value appears in any diagnostic, document, or artifact.
+              verify: Observe marker exposure and value preservation on a representative instance, provoke validation failures on marked Fields and inspect their diagnostics, and scan the Component's documentation and artifacts for credential values.
+              status: done
+              log:
+              - at: '2026-09-30T12:25:05.097+03:30'
+                transition: todo -> claimed
+                evidence: Dependencies done; claimed before changing the result.
+              - at: '2026-09-30T12:29:28.971+03:30'
+                transition: claimed -> done
+                check: 'Transient script (outside the Component) over the 5 marked Fields (User.password, User.api_key, Instance.password, Instance.api_key, Account.password): marker exposure, value preservation through state, JSON Object and JSON text, ten failure paths per Field inspected through str, repr, json(), errors() (with and without input), __context__ and __cause__, and a scan of every text artifact in the Component for the canary value, credential-shaped text, non-placeholder credential values, machine paths and Agent-identifying words. Before the fix the same probe showed json() and errors() leaking (see the note on P1-G2-T2).'
+                outcome: 'Passed after the fix: markers exposed (password on password Fields, sensitive on api_key Fields); actual values preserved unchanged; no failure view on any path contained the canary; 30 text artifacts scanned, only the documented placeholder appears.'
+            P1-G10-T6:
+              id: P1-G10-T6
+              source_id: '003'
+              title: Verify generated source meets the technology standard
+              description: Confirm the finished Model passes the applicable format, load, build, lint, static-type, and dependency checks without a fixable warning, and contains no dead, duplicate, cached, compiled, machine-specific, Agent-identifying, or timestamped artifact.
+              reason: Correct meaning must be delivered as clean, installable source.
+              inputs:
+              - The complete Model library
+              - The shared development quality standards
+              skills: []
+              expected_result: A recorded result of every applicable quality check passing with a clean artifact set.
+              depends_on:
+              - P1-G8-T1
+              constraints: []
+              acceptance: Every applicable check passes with no fixable Model-owned warning, and the library contains only necessary artifacts.
+              verify: Observe the outcome of each applicable quality check and an inventory of the library's artifacts that shows no excluded kind.
+              status: done
+              log:
+              - at: '2026-09-30T12:25:05.097+03:30'
+                transition: todo -> claimed
+                evidence: Dependencies done; claimed before changing the result.
+              - at: '2026-09-30T12:29:29.190+03:30'
+                transition: claimed -> done
+                check: ruff format --check and ruff check, pyright in strict mode, import with warnings raised as errors, a built wheel installed into a fresh environment and loaded with warnings as errors, wheel contents listing, an AST dependency audit (imports versus declarations), usage check of every private helper, and an on-disk inventory of the Component after removing regenerable caches.
+                outcome: 'Passed after one fix: format and lint clean, pyright strict 0 errors and 0 warnings, no import warnings, clean-environment load succeeds. The audit initially found the undeclared direct dependency pydantic_core (now declared; imports and declarations match exactly). Wheel holds only the Model source and py.typed. Component inventory: manifest, lock, pinned Python version file, README and src only; no cache, compiled, log or distribution artifact (caches created by the checks were removed).'
+            P1-G10-T7:
+              id: P1-G10-T7
+              source_id: '003'
+              title: Verify the documentation works for a consumer
+              description: Follow the finished documentation's setup, use, and verification steps as a consumer would.
+              reason: Documentation is complete only when following it succeeds.
+              inputs:
+              - The finished documentation
+              skills: []
+              expected_result: A recorded result that every documented step succeeds as written.
+              depends_on:
+              - P1-G9-T1
+              - P1-G9-T2
+              - P1-G9-T3
+              constraints: []
+              acceptance: Setup completes, each documented usage and verification step yields its stated result, and no step depends on private implementation.
+              verify: Observe a walkthrough of every documented step from a clean environment that ends with the documented verification passing.
+              status: done
+              log:
+              - at: '2026-09-30T12:29:29.418+03:30'
+                transition: todo -> claimed
+                evidence: Dependencies done; claimed before changing the result.
+              - at: '2026-09-30T12:30:28.701+03:30'
+                transition: claimed -> done
+                check: 'Copied the Component without environment or caches to a fresh location and followed the finished README as a consumer: uv sync at the Component root, the documented Verify block run exactly as written, a separate consumer project adding Model as a path dependency, every documented example run in that consumer environment, a scan for private-implementation references, and reproduction of each documented troubleshooting message.'
+                outcome: 'Passed after one documentation fix: setup completes; the Verify block''s output equals the documented output; all 5 documented examples reproduce their documented output in the consumer environment; examples import only the package root and the standard library and no step references private implementation; the documented error messages reproduce (5 cases plus 2 from_json cases). The initial run found one inaccurate troubleshooting entry, since corrected.'
+            P1-G10-T8:
+              id: P1-G10-T8
+              source_id: '003'
+              title: Verify regeneration produces no difference
+              description: Confirm that regenerating Model from unchanged authorities and technical selections produces no source or documentation difference.
+              reason: Deterministic generation makes review meaningful and protects existing meaning.
+              inputs:
+              - All finished Model output
+              - The unchanged Target, Definition, and Preferences
+              skills: []
+              expected_result: A recorded result of zero difference between the finished Model and a regeneration from the same authorities.
+              depends_on:
+              - P1-G10-T1
+              - P1-G10-T2
+              - P1-G10-T3
+              - P1-G10-T4
+              - P1-G10-T5
+              - P1-G10-T6
+              - P1-G10-T7
+              constraints: []
+              acceptance: A regeneration from unchanged authorities differs from the finished Model in no source or documentation content.
+              verify: Observe a comparison between the finished Model and a fresh regeneration that reports no difference.
+              status: done
+              log:
+              - at: '2026-09-30T12:30:28.923+03:30'
+                transition: todo -> claimed
+                evidence: Dependencies done; claimed before changing the result.
+              - at: '2026-09-30T12:31:08.003+03:30'
+                transition: claimed -> done
+                check: Copied the finished Component without environment or caches to a fresh location, deleted every script-generated artifact (all 15 Entity units and the documentation), regenerated them from the unchanged Target transcription with the same format and lint fixes, regenerated the documentation from the regenerated Model, confirmed the lock file is current for the unchanged manifest, then diffed the whole Component recursively against the original and built the original and regenerated Components separately to compare artifact hashes.
+                outcome: 'Passed. Recursive diff reports no difference in source, documentation, manifest, or lock; original and regenerated builds produce byte-identical wheel and source distribution (wheel sha256 40559aae..., sdist 06d193ab...). Scope note: the hand-authored units (Declaration, Foundation, private Core units, entrypoint and package root) are not produced by a generator, so they were carried into the copy unchanged rather than regenerated.'

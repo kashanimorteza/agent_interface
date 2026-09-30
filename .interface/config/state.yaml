@@ -1,0 +1,355 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/state.yaml"
+  path_note: "Mutable Workflow position, aggregate phase progress, and the recorded execution history."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current State Schema and preserve existing operational records; never replace them with defaults."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read active for the current Workflow position, phases for aggregate progress, then log for the recorded execution history."
+  selection: "A requested phase resolves to the phases entry keyed by its stable Target phase identifier; a Log Entry resolves by its id."
+  absence: "No matching phases entry means no progress has been recorded for that phase."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "active"
+  - "phases"
+  - "log"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  active: "The active Workflow position: mode, phase, and the reason and time it was set."
+  phases: "Aggregate operation progress keyed by stable Target phase identifier."
+  log: "The project's preserved history of recorded Skill executions and their outcomes."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  active:
+    mode: "reviewing"
+    phase: "P1"
+    mode_reason: "Reviewing phase P1 for Implement execution 002."
+    set_by: "my-interface-review"
+    set_at: "2026-09-30T12:31:50.000+03:30"
+  phases:
+    P1:
+      id: "P1"
+      planning: "completed"
+      development: "completed"
+      review: "satisfied"
+      completed_at: "2026-09-30T12:55:14.642+03:30"
+  log:
+    - id: "001"
+      skill: "my-interface-configure"
+      parent_id: ""
+      phase: null
+      event: "Configure"
+      outcome: "completed"
+      started_at: "2026-09-30T12:06:16.263+03:30"
+      completed_at: "2026-09-30T12:06:32.095+03:30"
+      duration: "16 seconds"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used: []
+      open_questions: []
+      blockers: []
+      report: "Generated application.yaml, plan.yaml, and state.yaml from their Schemas composed with the general YAML structure; all three parse and follow the six-section frame. No prior records existed."
+      data:
+        duration_ms: 15832
+        created:
+          - "application.yaml"
+          - "plan.yaml"
+          - "state.yaml"
+    - id: "002"
+      skill: "my-interface-implement"
+      parent_id: ""
+      phase: null
+      event: "Implement"
+      outcome: "satisfied"
+      started_at: "2026-09-30T12:08:49.004+03:30"
+      completed_at: "2026-09-30T12:55:23.844+03:30"
+      duration: "46:34"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used: []
+      open_questions: []
+      blockers: []
+      report: "Implemented phase P1 (Model) end to end: Config already valid (no Configure needed), then Plan (31 Tasks), Develop (31/31 done) and Review (satisfied after three independent passes and a direct final recheck). No Blockers or Open Questions."
+      data:
+        duration_ms: 2794840
+        requested_phase: "1"
+        resolved_phase: "P1"
+        coordinated:
+          plan: "003"
+          develop: "004"
+          review: "005"
+        configure: "not coordinated; Config records were present and structurally valid"
+        outcomes:
+          P1:
+            planning: "completed"
+            development: "completed"
+            review: "satisfied"
+        aggregate_counts:
+          open_questions: 0
+          blockers: 0
+    - id: "003"
+      skill: "my-interface-plan"
+      parent_id: "002"
+      phase: "P1"
+      event: "Plan"
+      outcome: "completed"
+      started_at: "2026-09-30T12:08:57.990+03:30"
+      completed_at: "2026-09-30T12:12:17.316+03:30"
+      duration: "3:19"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used: []
+      open_questions: []
+      blockers: []
+      report: "Created the Plan for phase P1 (Model): 10 Groups and 31 Tasks, no prior Plan existed. No Blockers or Open Questions."
+      data:
+        duration_ms: 199326
+        requested_phase: "1"
+        resolved_phase: "P1"
+        resolution_note: "The invocation selected '1'; Target Phase 1 carries the stable identifier P1, which is the key used in Plan and State."
+        task_changes:
+          added: 31
+          changed: 0
+          removed: 0
+          preserved: 0
+          replaced: 0
+          reason: "First Planning of P1; no earlier Plan existed to reconcile."
+        groups:
+          - "P1-G1 Library foundation (1)"
+          - "P1-G2 Shared Core contracts (3)"
+          - "P1-G3 Access and connectivity Entities (3)"
+          - "P1-G4 Reference data Entities (3)"
+          - "P1-G5 Account Entities (2)"
+          - "P1-G6 Risk-rule Entities (4)"
+          - "P1-G7 Trading Entities (3)"
+          - "P1-G8 Public Interface (1)"
+          - "P1-G9 Documentation (3)"
+          - "P1-G10 Conformance verification (8)"
+    - id: "004"
+      skill: "my-interface-develop"
+      parent_id: "002"
+      phase: "P1"
+      event: "Develop"
+      outcome: "completed"
+      started_at: "2026-09-30T12:12:33.987+03:30"
+      completed_at: "2026-09-30T12:31:23.135+03:30"
+      duration: "18:49"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used:
+        - name: "sqlmodel"
+          duration: null
+          token_usage:
+            input: null
+            output: null
+            total: null
+          report: "Loaded as the Model Preferences' associated Skill; each Entity is a non-table SQLModel class."
+      open_questions: []
+      blockers: []
+      report: "Developed phase P1 (Model): all 31 Tasks done, each with a passing recorded check. Two defects found by the phase's own verification Tasks were fixed inside Model and re-verified. No Blockers or Open Questions."
+      data:
+        duration_ms: 1129148
+        tasks:
+          total: 31
+          done: 31
+          blocked: 0
+          replaced: 0
+        amendments:
+          - "P1-G1-T1: declared pydantic-core explicitly after a dependency audit found it imported but only transitively present."
+          - "P1-G2-T2: structured error views leaked caller-supplied values; added an outermost validator that withholds inputs."
+          - "P1-G9-T3: one troubleshooting entry corrected after the consumer walkthrough."
+        interpretive_choices:
+          - "Non-table SQLModel classes; no storage or table ownership (Model Preferences)."
+          - "Sensitivity markers: password Fields carry 'password'; api_key Fields carry 'sensitive' (Target names both as credentials)."
+          - "Currency.code Size 3 is enforced as exactly three characters (Target: standard three-letter code)."
+          - "A generated identity is refused at construction on every path (a JSON Object may restore one after construction; null restores pending)."
+          - "Decimal and datetime travel through the JSON Object as text; datetimes must carry a time zone."
+        not_done_out_of_scope:
+          - "Application Manifest entry for model: no Task in the Plan covers publishing public metadata to Config."
+        component_directory: "model"
+    - id: "005"
+      skill: "my-interface-review"
+      parent_id: "002"
+      phase: "P1"
+      event: "Review"
+      outcome: "satisfied"
+      started_at: "2026-09-30T12:31:48.346+03:30"
+      completed_at: "2026-09-30T12:55:14.642+03:30"
+      duration: "23:26"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used: []
+      open_questions: []
+      blockers: []
+      report: "Reviewed phase P1 in four passes: three by fresh independent read-only reviewers and a final direct recheck. 11 Findings were recorded (1 blocking, 4 should-fix, 6 minor across passes), each reproduced before recording and resolved with recheck; the last independent pass returned satisfied. Aggregate outcome: satisfied. No Blockers or Open Questions."
+      data:
+        duration_ms: 1406296
+        outcome_by_phase:
+          P1: "satisfied"
+        finding_totals:
+          recorded: 11
+          resolved: 11
+          open: 0
+        review_method: "Examination delegated to one fresh, read-only Agent Instance that formed its own observations (own probes, own Target parser) and did not use the implementer's verification scripts; each Finding was then reproduced directly before recording."
+        passes:
+          - pass: 1
+            outcome: "not satisfied"
+            findings_raised: ["F1", "F2", "F3", "F4", "F5", "F6"]
+          - pass: 2
+            outcome: "not satisfied"
+            reviewer: "fresh independent read-only Agent Instance; own probes"
+            confirmed_holding: ["F2", "F4 (cited routes)", "F5", "F6", "F3 (cited case)", "F1 (every Entity-owned route, 15 Entities, about 1900 failing calls)"]
+            findings_raised: ["N1", "N2", "N3"]
+          - pass: 3
+            outcome: "satisfied"
+            reviewer: "fresh independent read-only Agent Instance; tightly scoped to N1-N3 plus a bounded regression hunt; own probes"
+            confirmed_holding: ["N1 (nine routes plus legitimate values)", "N2 (every guaranteed route clean on 15 Entities; residual routes as documented)", "N3", "all 15 Declarations against the Target", "README tables and executable examples"]
+            findings_raised: ["G1", "G2"]
+          - pass: 4
+            outcome: "satisfied"
+            reviewer: "primary Agent, direct recheck of G1 and G2 only, plus the complete verification battery re-run on the final state"
+            scope: "G1, G2 and regression of everything else"
+        findings:
+          - id: "F1"
+            severity: "blocking"
+            kind: "defect"
+            state: "resolved_for_entity_routes_residual_recorded_as_N2"
+            pass2_note: "Pass 2 confirmed no view leaks on any Entity-owned route; residual on pydantic routes that never reach the Entity recorded as N2."
+            resolution: "Overrode model_validate_json and model_validate_strings on the shared Entity base so that any failure, including text that is not valid JSON, is rebuilt with type, location and message but no input. Recheck: unparsable and malformed JSON text carrying a canary value, through every entry path, across all 15 Entities: no view (str, repr, json(), errors(), errors(include_input=True), context, cause) contains it. The extended T5 sensitivity check now includes these paths. Files: model/src/model/core/_entity.py."
+            title: "Malformed JSON text leaks the whole input, including sensitive values, through errors() and json()"
+            expected: "A sensitive value is never echoed in validation diagnostics (Model Principle: Sensitivity remains metadata; Plan P1-G10-T5 acceptance)."
+            observed: "For model_validate_json on text that is not valid JSON, str(error) is clean but errors() and json() carry the raw JSON text as input, including the password value. The JSON parse failure occurs before the wrapping validator can rebuild the error."
+            evidence: "Probe: User.model_validate_json('{\"password\":\"SECRETPW\"} SECRETPW') then error.json() and repr(error.errors()) both contain SECRETPW (reproduced independently; syntax-error variant also leaks). Location: the wrapping validator in model/src/model/core/_entity.py only wraps handler(data)."
+            missing_evidence: "P1-G10-T5's recorded check exercised no malformed-JSON path, so its outcome did not establish the condition for that path."
+          - id: "F2"
+            severity: "should-fix"
+            kind: "defect"
+            state: "resolved"
+            pass2_note: "Pass 2 confirmed rejection on every route tried, including subclasses, other Entity instances, mapping types and TypeAdapter."
+            resolution: "The generated-value refusal now also applies when the raw input is an object carrying the identity as an attribute (including a null identity); an existing Entity of the same class is not treated as supplied input. Recheck: refused across all 15 Entities for from_attributes with and without strict; an object without an id is accepted. Files: model/src/model/core/_entity.py."
+            title: "A generated identity can be supplied through model_validate(obj, from_attributes=True)"
+            expected: "A caller-supplied Auto Increment value is rejected on every construction path; the documentation says model_validate is included."
+            observed: "The generated-value refusal returns early for non-mapping input, so an object carrying an id attribute sets id on a fresh Entity."
+            evidence: "Probe: class O with id=77 and the required attributes; User.model_validate(O(), from_attributes=True).id returns 77 (reproduced independently). Location: the before-validator in model/src/model/core/_entity.py."
+          - id: "F3"
+            severity: "should-fix"
+            kind: "defect"
+            state: "resolved_residual_recorded_as_N1"
+            pass2_note: "Pass 2 confirmed integers are refused everywhere and legitimate floats accepted; residual conversion of non-float numeric objects recorded as N1."
+            resolution: "Float Fields now refuse integers and booleans (a before-validator on the shared Float type). from_json restores a whole JSON number for a float Field only when it is exactly representable, as a float; larger, huge, boolean, text and non-finite values are rejected. Documented in the README Use section and Troubleshooting. Recheck: construction, assignment, model_copy and from_json on Asset.point_size. Files: model/src/model/core/_types.py, foundation.py, README.md."
+            title: "Float Fields silently coerce int to float and can change the value"
+            expected: "Field contracts are enforced without implicit coercion (Model Principle: Construction and mutation enforce Field contracts; documentation says without coercion)."
+            observed: "An int is accepted for a float Field and stored as a float; 2**53+1 is stored as 2**53, silently changing the value."
+            evidence: "Probe: Asset(broker_id=1, symbol='s', category='c', point_size=2**53+1).point_size == 2**53+1 is False (reproduced independently). Location: Float alias in model/src/model/core/_types.py."
+          - id: "F4"
+            severity: "minor"
+            kind: "defect"
+            state: "resolved_residual_recorded_as_N3"
+            pass2_note: "Pass 2 confirmed del and model_copy enforcement; residual bypass through the deprecated copy() recorded as N3."
+            resolution: "Added __delattr__ refusing deletion of any declared Field and made model_copy apply each update through the same assignment enforcement; documented that pydantic's non-validating model_construct is outside the contract. Recheck across all 15 Entities: every declared Field deletion refused, valid and invalid updates handled, assigned id immutable on the copy, unknown update key refused, original untouched. Files: model/src/model/core/_entity.py, README.md."
+            title: "Field enforcement can be bypassed by deleting an attribute or by model_copy(update=...)"
+            expected: "An immutable Field cannot change and Field rules apply identically to every change (Model Principle: Construction and mutation enforce Field contracts)."
+            observed: "del entity.id succeeds on an assigned identity; model_copy(update={'name': 123}) and model_copy(update={'id': 7}) return Entities holding unvalidated values."
+            evidence: "Probe on an Entity with id assigned: delattr(entity, 'id') raises nothing; entity.model_copy(update={'name': 123}).name == 123; entity.model_copy(update={'id': 7}).id == 7 (reproduced independently). Location: model/src/model/core/_entity.py overrides only __setattr__."
+          - id: "F5"
+            severity: "minor"
+            kind: "defect"
+            state: "resolved"
+            pass2_note: "Pass 2 confirmed every guard and that all 15 shipped Declarations still conform to the Target."
+            resolution: "FieldDeclaration now validates type, sensitivity and value generation membership, auto-increment only on integers, constraint keys and size values, and that a default has exactly the Field's type (time-zone-aware for datetimes) and size; Declaration rejects a local Field appearing in more than one Relation; the class-creation check now also compares default type. Recheck: 10 wrong-default cases, unknown names, bad constraints, repeated relation Field all rejected; valid declarations accepted. Files: model/src/model/core/declaration.py, _entity.py."
+            title: "Declaration integrity guards are incomplete"
+            expected: "Every default satisfies its Field contract and contradictory values fail; participating Fields are not repeated (Model Principles: Fields preserve a complete value contract; Entity Metadata resolves completely)."
+            observed: "A string default is accepted for an integer Field; an unknown type name is accepted; one local Field can carry two Relations."
+            evidence: "Probe: FieldDeclaration('x','integer',nullable=False,has_default=True,default='a') is accepted; FieldDeclaration('x','bogus',nullable=False) is accepted; a Declaration with Relation('id','A','id') and Relation('id','B','id') is accepted (reproduced independently). Location: model/src/model/core/declaration.py. All shipped Declarations are correct; the gap is in the guard."
+          - id: "F6"
+            severity: "minor"
+            kind: "defect"
+            state: "resolved"
+            pass2_note: "Pass 2 confirmed rejections and canonical acceptances, and lossless round trip of sign, exponent and digits."
+            resolution: "from_json now accepts decimal text only in plain ASCII decimal or exponent form; whitespace, underscores, non-ASCII digits and other forms are rejected. Recheck: 17 malformed and 7 canonical texts on every decimal Field. Files: model/src/model/core/foundation.py; README Use section."
+            title: "from_json accepts non-canonical decimal text"
+            expected: "Foundation rejects malformed Objects and incompatible values; decimals travel as text such as 10.50."
+            observed: "Decimal text with surrounding whitespace or underscores is accepted and normalized."
+            evidence: "Probe: Account.from_json with balance ' 1 ' returns Decimal('1') and with '1_0' returns Decimal('10') (reproduced independently). Location: model/src/model/core/foundation.py."
+          - id: "N1"
+            severity: "should-fix"
+            kind: "unmet-requirement"
+            state: "resolved"
+            pass3_note: "Pass 3 confirmed on nine validation routes and legitimate float values including -0.0, subnormals and float subclasses."
+            resolution: "Float now refuses anything that is not already a float (integers, booleans, Decimal, Fraction, objects defining __float__, text, bytes, containers); genuine floats including -0.0, subnormal and near-maximum values and float subclasses are accepted; whole JSON numbers via from_json remain the documented exact-representation exception. Recheck: construction, assignment, model_copy, copy, model_validate, from_json and JSON validation on the float Field, plus legitimate values. Files: model/src/model/core/_types.py, README.md."
+            raised_in_pass: 2
+            title: "A float Field silently converts Decimal, Fraction and any object with __float__"
+            expected: "Enforcement without implicit coercion (Model Definition: Construction and mutation enforce Field contracts; Plan P1-G2-T2 expected result); the documentation states float Fields hold only float values."
+            observed: "The Float type refuses only integers, so other numeric objects are converted to float."
+            evidence: "Probe: Asset(broker_id=1, symbol='s', category='c', point_size=Decimal('0.1')).point_size is 0.1 (a float); Fraction(1,2) gives 0.5; an object defining __float__ gives 2.5; same on model_validate and assignment. Location: model/src/model/core/_types.py, the before-validator on Float."
+          - id: "N2"
+            severity: "should-fix"
+            kind: "unmet-requirement"
+            state: "resolved_by_narrowing_claim_with_recorded_decision"
+            pass3_note: "Pass 3 confirmed the guaranteed routes are clean and the residual routes leak as documented. Pass 3 showed that replacing an Entity's __pydantic_validator__ with a sanitizing proxy, and overriding parse_raw, could close two of the residual routes (not composite adapters such as TypeAdapter(list[User])). Decision recorded: not adopted. The proxy depends on pydantic internals, is reset by model_rebuild, would leave composite adapters open, and would raise the guarantee only from 'Entity-owned routes' to 'most routes'; the documented, exact boundary is kept. The Human may direct otherwise."
+            resolution: "Not closable inside Model: for text that cannot be parsed as JSON, pydantic-core raises during parsing before any schema or Entity code runs, so TypeAdapter, an Entity's raw __pydantic_validator__ and the deprecated parse_raw cannot be intercepted by the Entity. Resolved by making the documented claim exact: the README now guarantees withheld input only for the Entity's own methods, names the pydantic routes outside that guarantee, and tells consumers to use the Entity's methods when text may hold a sensitive value. Recheck: the guaranteed routes are clean on the canary, the named residual routes behave as documented, and the documentation names them. Files: model/README.md."
+            raised_in_pass: 2
+            title: "Input echo remains on pydantic routes that never reach the Entity (TypeAdapter and the raw validator on unparsable JSON text; deprecated parse_raw)"
+            expected: "A sensitive value is never echoed in validation diagnostics (Model Definition: Sensitivity remains metadata); the documentation claims failures never carry the caller's input, including for text that is not valid JSON."
+            observed: "For unparsable JSON text passed to TypeAdapter(User).validate_json(...), to User.__pydantic_validator__.validate_json(...), or to the deprecated User.parse_raw(...), errors() and json() contain the raw text. The failure occurs during JSON parsing in pydantic itself, before any Entity code can run, so the Entity-level wrappers cannot see it."
+            evidence: "Reviewer probes reproduced on all 15 Entities; the claim in model/README.md (Use section) is broader than what holds."
+          - id: "N3"
+            severity: "minor"
+            kind: "defect"
+            state: "resolved"
+            pass3_note: "Pass 3 confirmed enforcement, include/exclude refusal, and copy.copy, deepcopy and pickle behaviour."
+            resolution: "Overrode the deprecated copy so it applies updates through the same enforcement as model_copy and rejects include and exclude; documented alongside model_copy and added construct to the outside-the-contract note. Recheck across all 15 Entities: valid update accepted, wrong-type and immutable-id and unknown-key updates refused, include and exclude refused, plain and deep copies equal, pending id assignable on the copy only. Files: model/src/model/core/_entity.py, README.md."
+            raised_in_pass: 2
+            title: "The deprecated copy(update=...) bypasses assignment enforcement"
+            expected: "An immutable Field cannot change and Field rules apply identically to every change (Model Definition); the documentation says updated values go through assignment rules."
+            observed: "model_copy was overridden but the deprecated BaseModel.copy was not."
+            evidence: "Probe: with an assigned id, e.copy(update={'name': 5, 'id': 9}) returns an Entity with id 9 and name 5 and no error. Location: model/src/model/core/_entity.py (no override of copy)."
+          - id: "G1"
+            severity: "minor"
+            kind: "defect"
+            state: "resolved"
+            resolution: "Both datetime and decimal decode failures in from_json are now raised outside the exception handler, so the failure carries no __cause__ or __context__. Recheck: 96 failing from_json calls across every decimal and datetime Field of all 15 Entities have empty exception chains and no view containing the canary; the reviewer's own probe (Position.from_json with a bad date) shows both empty. Files: model/src/model/core/foundation.py."
+            recheck: "Direct reproduction of the reviewer's probe and an extended check across all Entities; not a further independent pass, because both are minor and the change is a restructure of two raise sites and one documentation sentence."
+            raised_in_pass: 3
+            title: "from_json on a datetime Field leaves the input text in the failure's __context__"
+            expected: "Rejections do not expose a sensitive value (Plan P1-G2-T2; Model Definition: Sensitivity remains metadata); the documentation says a failure through from_json never carries the caller's input."
+            observed: "The datetime failure is raised while handling the parser's own exception, so the original error, whose message quotes the text, remains reachable as __context__ although the traceback hides it."
+            evidence: "Probe: Position.from_json({'date': 'CANARYSECRET'}) raises a clean ValidationError whose __context__ is the ValueError quoting the text. Location: model/src/model/core/foundation.py, the datetime decode (the decimal decode has the same shape but its context carries no text)."
+          - id: "G2"
+            severity: "minor"
+            kind: "defect"
+            state: "resolved"
+            resolution: "README now states that parse_raw also shows the raw text in str() and repr() (TypeAdapter and the raw validator: errors() and json()), and that copy refuses include and exclude. Recheck: the README contains the exact statements and the documented parse_raw exposure is observable. Files: model/README.md."
+            recheck: "Direct reproduction of the reviewer's probe and an extended check across all Entities; not a further independent pass, because both are minor and the change is a restructure of two raise sites and one documentation sentence."
+            raised_in_pass: 3
+            title: "README understates the parse_raw exposure"
+            expected: "The README states accurately which routes are outside the input-withholding guarantee."
+            observed: "The README says the residual routes report the raw text in errors() and json(); for the deprecated parse_raw the text also appears in str() and repr()."
+            evidence: "Probe: User.parse_raw('{CANARYSECRET}') shows input_value='{CANARYSECRET}' in str(error). Location: model/README.md, Use section."
+        observations_about_the_review:
+          - "A time-zone-aware datetime with a named zone loses the zone identity on a JSON round trip (offset and instant preserved); the documentation only promises time-zone-aware."
+          - "Unknown caller key names appear in error locations (names, not values)."
+          - "repr(entity) shows sensitive values; consistent with preserving values and not a validation or generation diagnostic."
+          - "The regeneration evidence for P1-G10-T8 used transient scripts kept outside the repository, so it cannot be repeated by a reader who lacks them."
+          - "Pass 2: errors() reports input None for every failure because inputs are withheld; cosmetic."
+          - "Pass 2: model_validate_json cannot succeed for Entities with decimal or datetime Fields because strict mode rejects JSON strings for those types; text parsing is outside Model, so by design."
+          - "Pass 3: unknown caller key names appear as error locations (names, not values); the README does not mention that copy(include/exclude) is refused; Entity.copy no longer emits pydantic's deprecation warning."
+          - "Pass 2: re-calling __init__ on an existing Entity resets a generated identity, and private or dunder attributes can be set; pydantic behaviour outside the contract."
