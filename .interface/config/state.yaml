@@ -1,0 +1,104 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/state.yaml"
+  path_note: "Mutable operational State: the active Workflow position, aggregate Phase progress, and the preserved execution Log."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current State Schema and the State Component's ownership rules; reconciliation preserves existing operational records and never replaces them with defaults."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read active, then the aggregate progress of the Phase concerned, then the Log."
+  selection: "A Phase resolves to the record keyed by its stable Target phase identifier; a Log Entry resolves by its project-wide identifier."
+  absence: "No matching Phase record means the Phase has not been reconciled; an empty Log means no Skill execution has been recorded."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "active"
+  - "phases"
+  - "log"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  active: "The current or most recently recorded Workflow Mode, its Phase when applicable, and its provenance."
+  phases: "Aggregate Planning, Development, and Review progress keyed by stable Target phase identifier."
+  log: "The project's preserved history of recorded Skill executions and their outcomes."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  active:
+    mode: "not set"
+    phase: null
+    mode_reason: "No Workflow operation has been recorded."
+    set_by: "initialization"
+    set_at: null
+  phases:
+    P1:
+      id: "P1"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      completed_at: null
+    P2:
+      id: "P2"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      completed_at: null
+    P3:
+      id: "P3"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      completed_at: null
+    P4:
+      id: "P4"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      completed_at: null
+    P5:
+      id: "P5"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      completed_at: null
+    P6:
+      id: "P6"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      completed_at: null
+    P7:
+      id: "P7"
+      planning: "not started"
+      development: "not started"
+      review: "not started"
+      completed_at: null
+  log:
+    - id: "001"
+      skill: "my-interface-configure"
+      event: "Configure Config records"
+      outcome: "completed"
+      started_at: "2026-09-30T22:07:53Z"
+      completed_at: "2026-09-30T22:08:09Z"
+      duration: "16 seconds"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used: []
+      open_questions: []
+      blockers: []
+      report: "Generated Application, Plan, and State Config from their Schemas; none existed before. Reconciled State phases P1-P7 from the Technical Definition with initial values; left State active at its initial values because no Operation Definition assigns Mode-setting to Configure. All three records validated against their Schemas; only .interface/config/ changed."
+      data:
+        records:
+          application: "created"
+          plan: "created"
+          state: "created"
+        phases_reconciled: ["P1", "P2", "P3", "P4", "P5", "P6", "P7"]
+        decisions:
+          - "State Schema has no generation block; state.yaml frame values (path_note, policy rule, resolution, content_map) were derived from the Schema's own text."
+          - "Log Entry 001 has no parent_id because Configure was invoked directly by the Human."
