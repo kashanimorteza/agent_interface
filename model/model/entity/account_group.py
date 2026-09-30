@@ -46,12 +46,8 @@ class AccountGroup(Foundation):
             ),
         ),
         primary_key="id",
-        relations=(
-            Relation("user_id", "User", "id"),
-        ),
-        unique_constraints=(
-            ("user_id", "name"),
-        ),
+        relations=(Relation("user_id", "User", "id"),),
+        unique_constraints=(("user_id", "name"),),
     )
 
     id: int | None = None

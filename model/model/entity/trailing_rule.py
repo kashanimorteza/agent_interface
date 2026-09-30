@@ -65,9 +65,7 @@ class TrailingRule(Foundation):
             ),
         ),
         primary_key="id",
-        relations=(
-            Relation("trailing_group_id", "Trailing Group", "id"),
-        ),
+        relations=(Relation("trailing_group_id", "Trailing Group", "id"),),
         unique_constraints=(
             ("name",),
             ("trailing_group_id", "trigger_percentage"),

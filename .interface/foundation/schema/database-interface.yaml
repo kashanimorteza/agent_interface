@@ -1,0 +1,175 @@
+schema:
+  id: "agent-interface-database-interface"
+  version: "1.0"
+  purpose: "The stable, language-independent structure through which consumers use every Database Operation and Lifecycle Command."
+  kind: "Interface structure standard"
+  applies_when: "The Implementation declares a Database Component."
+  generates: "<database component path>/<interface file>"
+
+# <!--------------------------------------------------------------------------------- Structure -->
+structure:
+
+  interface:
+    required: true
+    purpose: "The public entrypoint. It publishes exactly these contracts, each importable by a consumer, and nothing else."
+    public_contracts:
+      database: "The Database class. A consumer creates one Database object and calls every Operation and Lifecycle Command on it."
+      database_instance: "The enumeration of the active configured Instances; it carries no connection values."
+      filter: "An immutable condition value."
+      filter_operator: "The enumeration of comparison operators."
+      filter_combination: "The enumeration of ways Filters combine."
+      order: "An immutable ordering value."
+      order_direction: "The enumeration of ordering directions."
+      command_result: "The result of a Database-wide Operation."
+      lifecycle_result: "The result of a Lifecycle Command."
+
+  instance_selection:
+    required: true
+    purpose: "Which Instance a call runs on."
+    rule: "Every Operation and Lifecycle Command accepts an optional DatabaseInstance member. When none is given, the call runs on the configured default Instance."
+    values: "Only members of DatabaseInstance; an unknown or inactive Instance fails the call before any storage is touched."
+
+  entity_operations:
+    required: true
+    purpose: "Operations scoped to one Entity. Each receives the Entity itself — an Entity instance or the Entity class imported from Model — never an Entity name or other string identity. Every one also accepts an optional DatabaseInstance."
+    operations:
+      add:
+        accepts: "one complete new Entity instance"
+        returns: "the stored Entity, including generated values"
+      update:
+        accepts: "one complete Entity instance; its id only locates the record"
+        effect: "replaces every mutable Field; never changes id or another immutable Field"
+        returns: "the stored Entity, or null when no record exists"
+      list:
+        accepts: "an Entity class, optional Filters, an optional FilterCombination, optional ordered Orders, and an optional limit"
+        returns: "the matching Entity instances"
+      get_by_id:
+        accepts: "an Entity class and an id"
+        returns: "the Entity, or null when no record exists"
+      delete:
+        accepts: "an Entity class and an id"
+        returns: "the final deleted Entity, or null when no record exists"
+      enable:
+        accepts: "an Entity class and an id"
+        effect: "sets only is_active to true"
+        returns: "the final Entity, including when it was already enabled, or null when no record exists"
+      disable:
+        accepts: "an Entity class and an id"
+        effect: "sets only is_active to false"
+        returns: "the final Entity, including when it was already disabled, or null when no record exists"
+      count:
+        accepts: "an Entity class, optional Filters, and an optional FilterCombination"
+        returns: "the matching count"
+      sum:
+        accepts: "an Entity class, one numeric Field of that Entity, optional Filters, and an optional FilterCombination"
+        effect: "ignores null values"
+        returns: "the total, or zero when nothing matches"
+      min:
+        accepts: "an Entity class, one comparable Field of that Entity, optional Filters, and an optional FilterCombination"
+        effect: "ignores null values"
+        returns: "the smallest value, or null when nothing matches"
+      max:
+        accepts: "an Entity class, one comparable Field of that Entity, optional Filters, and an optional FilterCombination"
+        effect: "ignores null values"
+        returns: "the largest value, or null when nothing matches"
+      truncate:
+        accepts: "an Entity class"
+        effect: "removes every record of that Entity and keeps its Table"
+        returns: "the deleted count"
+
+  database_wide_operations:
+    required: true
+    purpose: "Operations scoped to an Instance rather than one Entity. Each also accepts an optional DatabaseInstance."
+    operations:
+      execute_command:
+        accepts: "a native command in the Instance Engine's query language and its bound parameters"
+        returns: "a CommandResult"
+
+  lifecycle_commands:
+    required: true
+    purpose: "Explicit preparation commands, callable through Interface and through generated manual entry points. Each also accepts an optional DatabaseInstance."
+    commands:
+      create_tables:
+        effect: "creates or safely aligns every Table required by the Declarations of the Model Entity Collection"
+        returns: "a LifecycleResult"
+      insert_initial_data:
+        effect: "inserts every missing configured Initial Data record; skips an identical present record; fails on a conflicting one"
+        returns: "a LifecycleResult"
+
+  vocabulary:
+    required: true
+    purpose: "The closed member sets of the enumerations. A consumer imports and passes members; a string is never accepted in their place."
+    filter_operator: ["EQUALS", "NOT_EQUALS", "GREATER_THAN", "GREATER_OR_EQUAL", "LESS_THAN", "LESS_OR_EQUAL", "IN", "CONTAINS", "STARTS_WITH", "ENDS_WITH", "IS_NULL", "IS_NOT_NULL"]
+    filter_combination: ["AND", "OR"]
+    order_direction: ["ASCENDING", "DESCENDING"]
+
+  values:
+    required: true
+    filter:
+      immutable: true
+      fields:
+        field: "a Field of the given Entity"
+        operator: "a FilterOperator member"
+        value: "an operator-compatible value; absent for IS_NULL and IS_NOT_NULL; a compatible collection for IN"
+    order:
+      immutable: true
+      fields:
+        field: "a Field of the given Entity"
+        direction: "an OrderDirection member; ASCENDING when omitted"
+
+  results:
+    required: true
+    command_result:
+      rows: "returned row mappings, or null"
+      affected: "affected row count, or null"
+      columns: "ordered column names, or null"
+      success: "whether the command succeeded"
+      message: "a public result or error message"
+      instance: "the DatabaseInstance used"
+    lifecycle_result:
+      command: "the Lifecycle Command name"
+      instance: "the DatabaseInstance used"
+      success: "whether the command succeeded"
+      affected: "the processed Table or record count, or null"
+      message: "a public result or error message"
+
+  errors:
+    required: true
+    purpose: "Failure meanings every realization keeps distinguishable, through the language's own error mechanism, without exposing credentials."
+    kinds:
+      - "invalid configuration or Instance"
+      - "inactive Instance selected"
+      - "invalid input or Field"
+      - "Declaration incompatibility"
+      - "connection failure"
+      - "execution failure"
+      - "incomplete Lifecycle execution"
+
+# <!--------------------------------------------------------------------------------- Rules -->
+rules:
+  stable_shape: "Changing Entities, Instances, Engines, languages, packages, or internal implementation never changes this structure."
+  entity_by_value: "Every Entity Operation receives an Entity instance or class. No Operation selects an Entity by name."
+  no_strings: "Instances, operators, combinations, and directions are passed as imported enumeration members, never as strings."
+  missing_record: "A missing record returns null; it is never an error. Invalid input, configuration, connection, or execution remains an error."
+  capability_groups: "Entity Operations, Database-wide Operations, and Lifecycle Commands are mandatory conceptual groups; they do not require language-specific wrapper objects."
+  field_validation: "Every Field in a Filter, Order, or aggregate is validated against the given Entity before any Instance is accessed."
+  serialized_vocabulary: "Configuration stores canonical enumeration member names and resolves them when loading; an unknown name fails loading."
+  instance_enumeration: "DatabaseInstance has exactly one member per active configured Instance and none for an inactive one."
+  internal_hidden: "Core, Engine implementations, configuration, connection values, and storage paths are never published."
+  side_effect_free: "Loading Interface opens no connection and creates no data or file."
+  contract_change: "Changing any public contract, its members, or its meaning requires an explicit Schema version change and consumer review."
+
+# <!--------------------------------------------------------------------------------- Example -->
+example: |
+  from database import Database, DatabaseInstance, Filter, FilterOperator, Order, OrderDirection
+  from model import User
+
+  db = Database()
+  user = db.add(User(name="Admin", ...))                        # default Instance
+  db.add(User(name="Test", ...), DatabaseInstance.POSTGRESQL)   # chosen Instance
+  users = db.list(User,
+                  filters=[Filter(User.is_active, FilterOperator.EQUALS, True)],
+                  orders=[Order(User.name, OrderDirection.ASCENDING)],
+                  limit=10)
+  db.disable(User, user.id)
+  db.create_tables()

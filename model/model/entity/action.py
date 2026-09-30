@@ -96,9 +96,7 @@ class Action(Foundation):
             Relation("partial_group_id", "Partial Group", "id"),
             Relation("trailing_group_id", "Trailing Group", "id"),
         ),
-        unique_constraints=(
-            ("action_group_id", "name"),
-        ),
+        unique_constraints=(("action_group_id", "name"),),
     )
 
     id: int | None = None

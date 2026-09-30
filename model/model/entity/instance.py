@@ -80,9 +80,7 @@ class Instance(Foundation):
             Relation("user_id", "User", "id"),
             Relation("trading_platform_id", "Trading Platform", "id"),
         ),
-        unique_constraints=(
-            ("user_id", "name"),
-        ),
+        unique_constraints=(("user_id", "name"),),
     )
 
     id: int | None = None

@@ -505,7 +505,8 @@ def raises(error, call):
     return False
 
 
-check("Interface publishes exactly one export per Entity", all(getattr(interface, name).__name__ == name for name in EXPECTED))
+published = sorted(name for name, value in vars(interface).items() if isinstance(value, type) and issubclass(value, Foundation))
+check("Interface publishes exactly one export per Entity", published == sorted(EXPECTED) and all(getattr(interface, name).__name__ == name for name in EXPECTED))
 check("Entity Collection holds exactly the exports, in order", [entity.__name__ for entity in entities] == EXPECTED and all(getattr(interface, entity.__name__) is entity for entity in entities))
 check("Entity Collection is immutable", isinstance(entities, tuple) and not hasattr(entities, "__setitem__"))
 check("Every Entity exposes its actual Declaration", all(entity.declaration is entity.__dict__["declaration"] for entity in entities))

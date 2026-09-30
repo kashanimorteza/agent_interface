@@ -73,7 +73,7 @@ class Account(Foundation):
                 type="decimal",
                 nullable=False,
                 has_default=True,
-                default=Decimal("0"),
+                default=Decimal(0),
             ),
             FieldDeclaration(
                 name="account_type",
@@ -118,7 +118,7 @@ class Account(Foundation):
     username: str
     password: str
     leverage: int
-    balance: Decimal = Decimal("0")
+    balance: Decimal = Decimal(0)
     account_type: str
     is_active: bool = True
     description: str | None = None

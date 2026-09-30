@@ -68,12 +68,8 @@ class Asset(Foundation):
             ),
         ),
         primary_key="id",
-        relations=(
-            Relation("broker_id", "Broker", "id"),
-        ),
-        unique_constraints=(
-            ("broker_id", "symbol"),
-        ),
+        relations=(Relation("broker_id", "Broker", "id"),),
+        unique_constraints=(("broker_id", "symbol"),),
     )
 
     id: int | None = None

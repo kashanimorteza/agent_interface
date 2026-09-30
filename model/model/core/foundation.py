@@ -28,7 +28,7 @@ def _parse(parser: Callable[[str], Any], value: Any) -> Any:
         return value
     try:
         return parser(value)
-    except (ArithmeticError, ValueError):
+    except ArithmeticError, ValueError:
         return value
 
 

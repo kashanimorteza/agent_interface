@@ -59,9 +59,7 @@ class PartialRule(Foundation):
             ),
         ),
         primary_key="id",
-        relations=(
-            Relation("partial_group_id", "Partial Group", "id"),
-        ),
+        relations=(Relation("partial_group_id", "Partial Group", "id"),),
         unique_constraints=(
             ("name",),
             ("partial_group_id", "profit_percentage"),

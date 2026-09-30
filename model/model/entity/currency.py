@@ -69,12 +69,8 @@ class Currency(Foundation):
             ),
         ),
         primary_key="id",
-        relations=(
-            Relation("user_id", "User", "id"),
-        ),
-        unique_constraints=(
-            ("user_id", "code"),
-        ),
+        relations=(Relation("user_id", "User", "id"),),
+        unique_constraints=(("user_id", "code"),),
     )
 
     id: int | None = None

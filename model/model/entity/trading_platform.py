@@ -46,9 +46,7 @@ class TradingPlatform(Foundation):
             ),
         ),
         primary_key="id",
-        unique_constraints=(
-            ("name",),
-        ),
+        unique_constraints=(("name",),),
     )
 
     id: int | None = None

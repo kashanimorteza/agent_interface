@@ -4,10 +4,10 @@ from contextvars import ContextVar
 from datetime import date, time
 from decimal import Decimal
 from types import NoneType
-from typing import Any, ClassVar, NoReturn, get_args
+from typing import Any, ClassVar, LiteralString, NoReturn, get_args
 from uuid import UUID
 
-from pydantic import AwareDatetime, ConfigDict, ValidationError
+from pydantic import AwareDatetime, ValidationError
 from pydantic_core import InitErrorDetails, PydanticCustomError
 from sqlmodel import SQLModel
 
@@ -28,7 +28,7 @@ _PYTHON_TYPES: dict[str, Any] = {
 reconstructing: ContextVar[bool] = ContextVar("reconstructing", default=False)
 
 
-def _reject(entity: str, name: str, message: str) -> NoReturn:
+def _reject(entity: str, name: str, message: LiteralString) -> NoReturn:
     """Raise a validation error for one Field without echoing any value."""
     detail = InitErrorDetails(
         type=PydanticCustomError("field_contract", message), loc=(name,), input=None
@@ -84,13 +84,13 @@ def _verify(
 class Base(SQLModel):
     """Enforce strict Field contracts and Declaration consistency for every Entity."""
 
-    model_config = ConfigDict(
-        extra="forbid",
-        strict=True,
-        validate_assignment=True,
-        allow_inf_nan=False,
-        hide_input_in_errors=True,
-    )
+    model_config = SQLModel.model_config | {
+        "extra": "forbid",
+        "strict": True,
+        "validate_assignment": True,
+        "allow_inf_nan": False,
+        "hide_input_in_errors": True,
+    }
 
     declaration: ClassVar[Declaration]
 

@@ -93,7 +93,7 @@ class Position(Foundation):
                 type="decimal",
                 nullable=False,
                 has_default=True,
-                default=Decimal("0"),
+                default=Decimal(0),
             ),
             FieldDeclaration(
                 name="is_executed",
@@ -159,9 +159,7 @@ class Position(Foundation):
             Relation("action_group_id", "Action Group", "id"),
             Relation("action_id", "Action", "id"),
         ),
-        unique_constraints=(
-            ("name",),
-        ),
+        unique_constraints=(("name",),),
     )
 
     id: int | None = None
@@ -176,7 +174,7 @@ class Position(Foundation):
     action_id: int
     date: AwareDatetime
     volume: Decimal
-    profit: Decimal = Decimal("0")
+    profit: Decimal = Decimal(0)
     is_executed: bool = False
     order_type: str
     base_tp: Decimal
