@@ -16,10 +16,10 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings to identify Entity Group; read layout to resolve its directory and Adapter filename pattern; when Entity Service publication and Service-level API generation are enabled, create one Adapter directly inside the Group directory for every Entity Child Service presented through Logic Interface; create one Endpoint for every Action of that Child Service; then apply action_mappings or the POST /<action> fallback."
+  consumption: "Read settings to identify Entity Group; read layout to resolve its directory and Adapter filename pattern; when Entity Service publication and Service-level API generation are enabled, create one Adapter directly inside the Group directory for every Entity Child Service presented through Logic Interface; create one Endpoint for every Action of that Child Service; bind every Handler only to that Child Service through Logic Interface; then apply action_mappings or the POST /<action> fallback. Generate no direct Model, Database, or Storage Service dependency, configuration, initialization, schema, or storage resource in API."
   selection: "Preserve explicit compatible project choices. Use these Preferences for unstated Entity Group names, layout names, and known Action Mappings. A compatible Target may override a default Method or Path without changing its destination Action or Behaviour."
   version_resolution: "Entity Group introduces no independently versioned technology."
-  matching: "Match every Adapter to exactly one Entity Child Service and every Endpoint to exactly one Action presented by that Child Service. Derive Adapter and Entity URL identities from the bound Entity rather than a language-specific Child Service structure name. Reject invalid identities and final Method-and-Path collisions without silent repair."
+  matching: "Match every Adapter to exactly one Entity Child Service and every Endpoint to exactly one Action presented by that Child Service. Every Handler resolves and calls only that bound Child Service through Logic Interface. Derive Adapter and Entity URL identities from the bound Entity rather than a language-specific Child Service structure name. Reject a direct Model, Database, or Storage Service dependency or resource, invalid identities, and final Method-and-Path collisions without silent repair."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:

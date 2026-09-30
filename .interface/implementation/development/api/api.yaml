@@ -2,7 +2,7 @@
 meta:
   path: ".interface/implementation/development/api/api.yaml"
   path_note: "The Preferences layer of the API Component."
-  purpose: "Configurable defaults for API identity, layout, Groups, realization, network, and runtime."
+  purpose: "Configurable defaults for API identity, layout, Groups, realization, network, runtime, and documentation."
   standard: "Agent Project Interface"
   version: "9.0"
   updated: "2026-09-30"
@@ -16,7 +16,7 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings and layout; resolve the selected language and its packages; resolve every known Group Reference and follow that Group's eligibility rules during generation; derive the Base URL from network values; then apply identity and runtime defaults. Generate config.yaml according to the referenced API Configuration Structure. At runtime, Bootstrap reads config.yaml and registers only generated and enabled Group realizations."
+  consumption: "Read settings and layout; resolve the selected language and its packages; resolve every known Group Reference and follow that Group's eligibility rules during generation; derive the Base URL from network values; then apply identity, runtime, and documentation defaults. Generate config.yaml according to the referenced API Configuration Structure. At runtime, Bootstrap reads config.yaml and registers only generated and enabled Group realizations."
   selection: "Preserve explicit compatible project choices. Use these Preferences for unstated API choices. A package may choose mechanics left unstated here but may not change the responsibilities or URL structure declared by API Definition."
   version_resolution: "Resolve latest-compatible to a concrete mutually compatible package version at implementation time and preserve every explicit compatible package version."
   matching: "Match every Group Reference key to the fixed role in its referenced Preferences and resolve exactly one Definition and Preferences file. Register only generated and enabled Groups. Derive a valid unique URL segment from each generated Group's configurable name, and reject missing, stale, invalid, ambiguous, or colliding values without silent repair. Derive url from transport_protocol, host, port, and the optional key instead of resolving it independently."
@@ -24,12 +24,13 @@ resolution:
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - "settings: identify API and its configuration structure."
-  - "layout: resolve Bootstrap, Groups container, and Configuration names."
+  - "layout: resolve Bootstrap, Groups container, Configuration, and Documentation names."
   - "development: resolve the default language and its API-owned packages."
   - "groups: resolve each stable Group role and follow its Definition, Preferences, and eligibility rules during generation."
   - "network: resolve transport_protocol, host, port, optional key, and derived url."
   - "identity: resolve title and description."
   - "runtime: resolve the worker count."
+  - "documentation: apply the required Root API documentation structure without copying Group-owned capability contracts."
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
@@ -40,6 +41,7 @@ content_map:
   - network
   - identity
   - runtime
+  - documentation
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
@@ -61,6 +63,7 @@ content:
     files:
       bootstrap: "bootstrap"
       configuration: "config.yaml"
+      documentation: "README.md"
 
   # <!-------------------------------------------- development -->
   development:
@@ -108,3 +111,19 @@ content:
   # <!-------------------------------------------- runtime -->
   runtime:
     workers: 2
+
+  # <!-------------------------------------------- documentation -->
+  documentation:
+    location: "the Component root"
+    format: "markdown"
+    order:
+      - overview
+      - configuration
+      - groups
+      - setup
+      - use
+      - verify
+      - troubleshooting
+    sections:
+      configuration: "Explain the runtime Configuration values, their Base URL relationship, and how the generated config.yaml is used without treating it as conceptual Group authority."
+      groups: "List every generated and enabled Group beneath its configured URL segment and explain how it is registered. Do not copy or redefine Group-owned Adapters, Endpoints, Handlers, Parameters, requests, responses, failures, or downstream connections."

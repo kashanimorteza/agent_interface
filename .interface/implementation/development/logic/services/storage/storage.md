@@ -24,7 +24,7 @@ Storage Service is the fixed internal Logic Service whose Interface gives other 
 
 ### Overview
 
-Storage Service is one of the two fixed internal Services of every Logic Component. It is Logic's complete gateway to Database: for every Operation currently published by Database Interface, Storage Service provides one corresponding Action. Its Interface also republishes the exact active Database Instance Enum accepted by those Actions. Its implementation remains internal, its Interface is not published through Logic Interface by default, and API Group generation is disabled by default.
+Storage Service is one of the two fixed internal Services of every Logic Component. It is Logic's complete gateway to Database: for every Operation currently published by Database Interface, Storage Service provides one corresponding Action. Its Interface also republishes the exact active Database Instance Enum and request Vocabulary accepted by those Actions. Its implementation remains internal, its Interface is not published through Logic Interface by default, and API Group generation is disabled by default.
 
 ### Purpose
 
@@ -48,6 +48,7 @@ Every Action and its file are named `<service>_<action>`. The configured Service
 - **Operation Identity** — the stable identity by which an Action and any configured override are matched to a Database Operation.
 - **Published Action Name** — the identifier formed as `<service>_<action>` from the configured Service name and derived or overridden Action base name.
 - **Database Instance Enum** — the exact enum published by Database Interface for its active Instances and republished unchanged by Storage Service Interface.
+- **Database Request Vocabulary** — the exact Filter, Filter Operator, Filter Combination, Order, and Order Direction types published by Database Interface and republished unchanged by Storage Service Interface.
 - **Execute Command** — the Database capability that accepts a SQL command and bound parameters and returns Database's published Command Result.
 
 <br>
@@ -70,8 +71,8 @@ The names shown are defaults selected by Storage Service Preferences. Changing a
 ## Relationships
 
 - **Belongs to Logic** — is a fixed Service whose Interface always exists but is published through Logic Interface only when configured.
-- **Consumes Database** — discovers and uses every Database Operation and the active Database Instance Enum only through Database Interface.
-- **Consumed by Entity Service** — provides the Entity-bound Database Actions and Instance Enum that Entity Service uses.
+- **Consumes Database** — discovers and uses every Database Operation, the active Database Instance Enum, and required request Vocabulary only through Database Interface.
+- **Consumed by Entity Service** — provides the Entity-bound Database Actions, Instance Enum, and request Vocabulary that Entity Service uses.
 - **Consumed by other Logic Services** — provides their only route to Database whenever their Behaviour requires persistence.
 - **Optionally consumed by Logic consumers** — becomes externally reachable only when its Interface publication setting is enabled; it is internal-only by default.
 
@@ -92,7 +93,7 @@ The names shown are defaults selected by Storage Service Preferences. Changing a
 
 ### Interface
 
-The outward gateway of Storage Service. It presents every derived Storage Action and republishes the exact Database Instance Enum without recreating, renaming, converting, or copying its members. Internal Logic Services may import it directly. Logic Interface exposes it unchanged under the configured Service name only when `publish_in_logic_interface` is enabled.
+The outward gateway of Storage Service. It presents every derived Storage Action and republishes the exact Database Instance Enum and Database Request Vocabulary without recreating, renaming, converting, or copying them. Internal Logic Services may import it directly. Logic Interface exposes it unchanged under the configured Service name only when `publish_in_logic_interface` is enabled.
 
 ### Actions
 
@@ -142,11 +143,11 @@ Every Principle below is mandatory and belongs to the category that owns it.
 **Why:** Storage Service remains complete when Database adds or removes an Operation without maintaining a second manual catalogue.
 **Boundary:** Storage Service neither adds an Operation absent from Database Interface nor treats a display label as a new Operation identity.
 
-#### Storage Service Interface republishes the exact Database Instance Enum
+#### Storage Service Interface republishes exact Database request types
 
-**Rule:** Storage Service Interface republishes the same Instance Enum object or type published by Database Interface. Every Action accepts a member of that Enum and passes it unchanged; Storage Service creates no alternate Instance enum, identity, name, or value.
-**Why:** A copied Enum may look identical while remaining incompatible with the Database request contract.
-**Boundary:** Republishing the Enum exposes no Engine, connection, credential, session, mapping, configuration, or other private Database detail.
+**Rule:** Storage Service Interface republishes the same Database Instance Enum, Filter, Filter Operator, Filter Combination, Order, and Order Direction objects or types published by Database Interface. Actions accept and pass these values unchanged; Storage Service creates no alternate request type, identity, name, or value.
+**Why:** A copied type may look identical while remaining incompatible with the Database request contract.
+**Boundary:** Republishing request Vocabulary exposes no Engine, connection, credential, session, mapping, configuration, or other private Database detail.
 
 #### Published Action names identify Storage Service
 
@@ -207,10 +208,10 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — Derive exactly one Action for every Operation currently published by Database Interface.
 - **Never** — Maintain a second authoritative Operation catalogue or omit an Operation because no override exists.
 
-**Storage Service Interface republishes the exact Database Instance Enum**
+**Storage Service Interface republishes exact Database request types**
 
-- **Must** — Republish and pass the exact Database Instance Enum unchanged.
-- **Never** — Recreate, rename, convert, or copy Database Instance identities.
+- **Must** — Republish and pass the exact Database Instance Enum and request Vocabulary unchanged.
+- **Never** — Recreate, rename, convert, or copy Database request types or identities.
 
 **Published Action names identify Storage Service**
 

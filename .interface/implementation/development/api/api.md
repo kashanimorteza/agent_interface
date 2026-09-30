@@ -62,10 +62,11 @@ API
 ├── bootstrap
 ├── groups/
 │   └── <group>/
-└── config.yaml
+├── config.yaml
+└── README.md
 ```
 
-The names shown are defaults selected by API Preferences. Root API owns only Bootstrap, the Groups container, and Configuration. Each generated `<group>` directory is an executable Group realization whose internal structure is governed by that Group's Definition and Preferences. Conceptual Definition and Preferences files remain in `.interface` and are not copied into this structure.
+The names shown are defaults selected by API Preferences. Root API owns Bootstrap, the Groups container, Configuration, and Documentation. Each generated `<group>` directory is an executable Group realization whose internal structure is governed by that Group's Definition and Preferences. Conceptual Definition and Preferences files remain in `.interface` and are not copied into this structure.
 
 <br>
 
@@ -80,6 +81,7 @@ API has no direct dependency on another Component. Any connection beyond the API
 ## Boundaries
 
 - **The shared process, Base URL, Group registration, and runtime configuration** — belong to Root API.
+- **Root API documentation** — explains the shared boundary and generated Group registration without redefining any Group-owned capability.
 - **Adapters, Endpoints, Handlers, Parameters, requests, responses, failures, and connections beneath a Group segment** — belong to that Group; Root API only registers and serves them.
 - **Group eligibility and internal realization** — belong to each Group's Definition and Preferences; a Reference alone never forces generation or registration.
 - **An optional URL Key** — changes the Base URL path but does not authenticate a request or authorize a capability.
@@ -89,7 +91,7 @@ API has no direct dependency on another Component. Any connection beyond the API
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-API consists of one Bootstrap, one directory containing generated Groups, and one runtime Configuration file.
+API consists of one Bootstrap, one directory containing generated Groups, one runtime Configuration file, and one Documentation file.
 
 ### Bootstrap
 
@@ -111,6 +113,10 @@ An additional Group follows the same modular rule: it receives its own Definitio
 ### Configuration
 
 `config.yaml` contains the values used to identify and run the API and follows [API Configuration Structure](../../../foundation/schema/api.yaml). API Preferences supply defaults from which that file may be generated. Bootstrap reads this runtime file but never reads conceptual Group files.
+
+### Documentation
+
+Documentation explains the shared API boundary, runtime Configuration, Base URL, startup, and generated and enabled Groups. It does not copy or redefine a Group's Adapters, Endpoints, Handlers, Parameters, requests, responses, failures, or downstream connections. Its filename, location, format, order, and sections are selected by API Preferences.
 
 <br>
 

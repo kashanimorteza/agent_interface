@@ -26,7 +26,7 @@ Entity Group is the API Group that gives every Entity presented by Entity Servic
 
 Entity Group represents Entity Service as an API Group. Every Entity Child Service published through Logic Interface becomes one Adapter. Every Action presented by that Child Service becomes one Endpoint in the Entity's Adapter.
 
-An Endpoint combines an HTTP Method, a Path, Parameters derived from the Action contract, and a Handler. The Handler receives the request, calls the same Action on the Adapter's bound Entity Child Service, and returns its result unchanged. Entity Group neither performs the Action nor reaches Model, Database, Storage Service, or another system directly.
+An Endpoint combines an HTTP Method, a Path, Parameters derived from the Action contract, and a Handler. The Handler receives the request, resolves the Adapter's bound Entity Child Service only through Logic Interface, calls the same Action on that Child Service, and returns its result unchanged. Entity Group neither performs the Action nor imports, configures, initializes, or reaches Model, Database, Storage Service, or another system directly.
 
 ### Purpose
 
@@ -74,7 +74,8 @@ Adapter files are placed directly inside the Entity Group directory. There is no
 ## Relationships
 
 - **Belongs to API** — is registered and served as one API Group.
-- **Consumes Entity Service through Logic Interface** — obtains every Entity Child Service and its Actions from the published Entity Service boundary and calls those Actions through the same boundary.
+- **Consumes Entity Service through Logic Interface** — obtains every Entity Child Service, its Actions, and every public request type required by those Actions from the published Entity Service boundary and calls those Actions through the same boundary.
+- **Has no direct Model or Database connection** — declares and uses Logic Interface as its only application connection; any dependency used behind Entity Service remains private to Logic and is never an API dependency or resource.
 
 <br>
 
@@ -85,6 +86,8 @@ Adapter files are placed directly inside the Entity Group directory. There is no
 - **Action Behaviour and work performed after an Action call** — remain behind Entity Service; an Adapter never reaches another Component or system directly.
 - **HTTP Method and Path** — come from Entity Group Action Mappings or the declared fallback.
 - **Parameter names, requirements, structures, meanings, and defaults** — come from the Entity Service Action contract; Entity Group only determines their HTTP placement.
+- **Parameter types and Vocabulary** — must be reachable through Entity Service Interface; Entity Group neither defines them nor imports them from another Component.
+- **Database configuration, initialization, Instances, storage paths, schema preparation, and persistence lifecycle** — remain behind Logic Interface; Entity Group neither owns nor performs them, and API generation creates no Database resource or configuration.
 
 <br>
 
@@ -103,7 +106,7 @@ Every Adapter contains one Endpoint and Handler for every Action presented by it
 
 Each Endpoint uses the Action Mapping for its Entity Service Action. When no explicit mapping exists, the Endpoint uses `POST /<action>`. Path placeholders select Path Parameters. Remaining Action inputs become Query Parameters for `GET` and `DELETE`, or Body Parameters for `POST`, `PUT`, and `PATCH`.
 
-The Handler performs only the structural request binding needed by the Endpoint, calls the corresponding Action on the bound Entity Child Service, and returns the Action result unchanged. Semantic validation, application decisions, persistence, retries, and result transformation remain outside Entity Group.
+The Handler performs only the structural request binding needed by the Endpoint, resolves the bound Entity Child Service through Logic Interface, calls the corresponding Action on that Child Service, and returns the Action result unchanged. Semantic validation, application decisions, dependency initialization, Database configuration, persistence, retries, and result transformation remain outside Entity Group.
 
 <br>
 
@@ -123,9 +126,9 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 #### Entity Group represents Entity Service only
 
-**Rule:** Entity Group obtains Entities and Actions only from Entity Service through Logic Interface and calls those Actions only through the same boundary. It represents no other Service or capability.
+**Rule:** Entity Group obtains Entities, Actions, and their public request types only from Entity Service through Logic Interface and calls those Actions only through the same boundary. Its generated realization imports and declares no direct dependency on Model, Database, or Storage Service and creates no configuration, initialization, schema, or storage resource for them.
 **Why:** One source keeps every Adapter and Endpoint aligned with the authoritative Entity-facing contract.
-**Boundary:** Entity Group publishes Endpoints but neither performs Entity Service work nor contacts Model, Database, Storage Service, or another system directly.
+**Boundary:** Entity Group publishes Endpoints but neither performs Entity Service work nor imports, configures, initializes, or contacts Model, Database, Storage Service, or another system directly. A transitive dependency used privately behind Logic never becomes an API connection or API-owned resource.
 
 #### Entity Group generation is controlled at Service level
 
@@ -151,9 +154,9 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 #### Handlers only call corresponding Entity Service Actions
 
-**Rule:** A Handler binds the request values required by its Action, calls that Action on the Adapter's bound Entity Child Service, and returns the result unchanged.
+**Rule:** A Handler binds the request values required by its Action, resolves the Adapter's bound Entity Child Service through Logic Interface, calls that Action on the bound Child Service, and returns the result unchanged.
 **Why:** Entity Service remains the single owner of Behaviour while Adapter code stays uniform and direct.
-**Boundary:** A Handler adds no application decision, semantic validation, persistence operation, result wrapper, downstream call, retry, or alternate execution path.
+**Boundary:** A Handler adds no application decision, semantic validation, dependency initialization, Database configuration, persistence operation, result wrapper, downstream call, retry, or alternate execution path.
 
 <br>
 
@@ -169,7 +172,7 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 **Rule:** Every Endpoint derives its Parameters from the corresponding Entity Service Action contract. Parameters named by Path placeholders use Path; remaining parameters use Query for `GET` and `DELETE`, and Body for `POST`, `PUT`, and `PATCH`.
 **Why:** Endpoint generation must not duplicate or drift from Action signatures while still placing inputs predictably in HTTP requests.
-**Boundary:** Entity Group performs structural request binding only and never changes a Parameter's name, requirement, structure, meaning, default, or semantic validation owner.
+**Boundary:** Every required Parameter type must be published through Entity Service Interface. Entity Group performs structural request binding only, defines no Vocabulary, imports no request type from another Component, and never changes a Parameter's name, requirement, structure, meaning, default, or semantic validation owner.
 
 #### Adapter identities and Endpoints are unique
 
@@ -188,8 +191,8 @@ Every obligation in the file, under the Principle it comes from.
 
 **Entity Group represents Entity Service only**
 
-- **Must** — Obtain Entities and Actions from Entity Service through Logic Interface and call Actions through the same boundary.
-- **Never** — Represent another capability or contact another Component or system directly.
+- **Must** — Obtain Entities, Actions, and public request types from Entity Service through Logic Interface and call Actions through the same boundary.
+- **Never** — Import or declare a direct Model, Database, or Storage Service dependency, or create their configuration, initialization, schema, or storage resources.
 
 **Entity Group generation is controlled at Service level**
 
@@ -210,8 +213,8 @@ Every obligation in the file, under the Principle it comes from.
 
 **Handlers only call corresponding Entity Service Actions**
 
-- **Must** — Bind request values, call the corresponding Action, and return its result unchanged.
-- **Never** — Add Behaviour, semantic validation, persistence, a result wrapper, a downstream call, a retry, or an alternate path.
+- **Must** — Bind request values, resolve the bound Child Service through Logic Interface, call its corresponding Action, and return the result unchanged.
+- **Never** — Add Behaviour, semantic validation, dependency initialization, Database configuration, persistence, a result wrapper, a downstream call, a retry, or an alternate path.
 
 ### Endpoints
 

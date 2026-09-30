@@ -38,7 +38,7 @@ Entity Service creates exactly one Child Service file and public structure for e
 
 For Add and Update, a Child Service accepts only an instance of its bound Entity and rejects a mismatched Entity before reaching Storage. For List, Delete, Enable, Disable, Get by ID, Count, Sum, Min, Max, and Truncate, the Child Service supplies its bound Entity class to the corresponding Storage Action. Every Entity Action may also accept the exact Database Instance Enum member republished by Storage Service Interface and passes it unchanged. When omitted, Storage delegates default selection to Database.
 
-Entity Service imports Model Interface and Storage Service Interface directly. It never imports Logic Interface. Entity Service Interface presents every Child Service and its shared or Entity-specific Actions, never the private Base Entity capability. When Entity Service Interface is published, it also exposes the exact Database Instance Enum required by those Actions without exposing Storage Actions.
+Entity Service imports Model Interface and Storage Service Interface directly. It never imports Logic Interface. Entity Service Interface presents every Child Service and its shared or Entity-specific Actions, never the private Base Entity capability. When Entity Service Interface is published, it also exposes the exact Database Instance Enum and Entity Query Vocabulary required by those Actions without exposing Storage Actions.
 
 <br>
 
@@ -53,6 +53,7 @@ Entity Service imports Model Interface and Storage Service Interface directly. I
 - **Entity-bound Action** — Add, Update, List, Delete, Enable, Disable, Get by ID, Count, Sum, Min, Max, or Truncate as exposed for one bound Entity.
 - **Database-wide Action** — Execute Command, Create Tables, or Insert Initial Data, which remains available from Storage Service and is not added to Base Entity.
 - **Database Instance Enum** — the exact active-Instance enum republished by Storage Service Interface and optionally selected for one Entity Action.
+- **Entity Query Vocabulary** — the exact Filter, Filter Operator, Filter Combination, Order, and Order Direction types accepted by Entity reading Actions and republished through Entity Service Interface.
 
 <br>
 
@@ -98,7 +99,7 @@ The names shown are defaults selected by Entity Service Preferences. Changing a 
 
 ### Interface
 
-The outward gateway of Entity Service. It presents every Entity Child Service together with the Actions supplied by Base Entity and any Action owned by that child. When root publication is enabled, it also exposes the exact Database Instance Enum accepted by those Actions so a consumer can select an Instance without publishing Storage Service Interface. A consumer first selects the Child Service and then calls one of its Actions. Interface does not flatten every Entity Action into one surface, publish Base Entity, import Logic Interface, or duplicate a Storage Action.
+The outward gateway of Entity Service. It presents every Entity Child Service together with the Actions supplied by Base Entity and any Action owned by that child. When root publication is enabled, it also exposes the exact Database Instance Enum and Entity Query Vocabulary accepted by those Actions so a consumer can construct every request without publishing Storage Service Interface. A consumer first selects the Child Service and then calls one of its Actions. Interface does not flatten every Entity Action into one surface, publish Base Entity, import Logic Interface, or duplicate a Storage Action.
 
 ### Base Entity
 
@@ -142,9 +143,9 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 #### Entity Service Interface presents the complete Entity contract only
 
-**Rule:** Entity Service Interface presents one Entity Child Service for every Entity published by Model Interface. Each child exposes its shared and Entity-specific Actions. When Entity Service Interface is published through Logic Interface, it also exposes the exact Database Instance Enum accepted by those Actions. It exposes neither Base Entity nor a flat duplicate of Child Actions or Storage Actions.
-**Why:** Consumers select an Entity once and use its capabilities without depending on the mechanism shared among Entities.
-**Boundary:** Logic Interface publishes Entity Service Interface unchanged only when its publication setting is enabled. Exposing the exact Instance Enum does not expose Storage Actions or publish Storage Service Interface.
+**Rule:** Entity Service Interface presents one Entity Child Service for every Entity published by Model Interface. Each child exposes its shared and Entity-specific Actions. When Entity Service Interface is published through Logic Interface, it also exposes the exact Database Instance Enum and Entity Query Vocabulary accepted by those Actions. It exposes neither Base Entity nor a flat duplicate of Child Actions or Storage Actions.
+**Why:** Consumers select an Entity once and can construct every Action request without depending on the mechanism shared among Entities or importing another Component.
+**Boundary:** Logic Interface publishes Entity Service Interface unchanged only when its publication setting is enabled. Exposing exact request types does not expose Storage Actions or publish Storage Service Interface.
 
 #### Entity Service never imports Logic Interface
 
@@ -224,7 +225,7 @@ Every obligation in the file, under the Principle it comes from.
 **Entity Service Interface presents the complete Entity contract only**
 
 - **Must** — Publish one Child Service for every Entity Model Interface publishes.
-- **Must** — When published, expose the exact Database Instance Enum required by Entity Actions without exposing Storage Actions.
+- **Must** — When published, expose the exact Database Instance Enum and Entity Query Vocabulary required by Entity Actions without exposing Storage Actions.
 - **Never** — Publish Base Entity, flatten Child Actions, or republish Storage Actions.
 
 **Entity Service never imports Logic Interface**
