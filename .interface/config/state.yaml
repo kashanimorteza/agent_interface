@@ -1,0 +1,61 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".interface/config/state.yaml"
+  path_note: "Mutable operational State: the active Workflow position, aggregate Phase progress, and the Log of recorded Skill executions."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current State Schema and State Principles; preserve existing operational records and never replace them with defaults."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read active for the current Workflow position, phases for aggregate progress by stable Target phase identifier, then log for recorded execution history."
+  selection: "A requested phase resolves to the phases entry keyed by that phase identifier; a Log Entry resolves by its project-wide sequential id."
+  absence: "No matching phase entry means no progress has been recorded for that phase; an empty log means no Skill execution has been recorded."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "active"
+  - "phases"
+  - "log"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  active: "The current or most recently recorded Workflow Mode, its Phase when applicable, and its recorded provenance."
+  phases: "Aggregate planning, development, and review progress keyed by stable Target phase identifier."
+  log: "One Entry for every recorded Skill execution, preserved in order."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  active:
+    mode: "not set"
+    phase: null
+    mode_reason: "No Workflow operation has been recorded."
+    set_by: "initialization"
+    set_at: null
+  phases: {}
+  log:
+    - id: "001"
+      skill: "my-interface-configure"
+      parent_id: ""
+      phase: null
+      event: "Configure Config records"
+      outcome: "completed"
+      started_at: "2026-09-30T16:02:49Z"
+      completed_at: "2026-09-30T16:03:17Z"
+      duration: "28 seconds"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used: []
+      open_questions: []
+      blockers: []
+      report: "Generated Application, Plan, and State Config records from their Schemas composed with the general YAML structure. Directory was empty, so nothing was reconciled. All three records verified against both layers."
+      data:
+        records_generated:
+          - "application.yaml"
+          - "plan.yaml"
+          - "state.yaml"
+        records_reconciled: []
