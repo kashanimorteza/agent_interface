@@ -50,7 +50,7 @@ structure:
           enabled: "<boolean>"
           instance: "<instance-key or default_instance>"
           fail_on_error: "<boolean>"
-          commands: "<ordered Lifecycle Command names>"
+          command: "prepare"
 
   initial_data:
     required: true
@@ -66,16 +66,16 @@ rules:
   instance_completeness: "Every Instance contains name, active, engine, host, port, database, username, password, and options; its Engine validates applicable required values."
   instance_integrity: "Every Instance names an existing Engine."
   default_integrity: "settings.default_instance names an active existing Instance."
-  active_publication: "Exactly active Instances become DatabaseInstance members and receive Engine implementation files."
-  complete_update: "Updating an Instance replaces and revalidates its complete definition; no hidden partial merge occurs."
+  active_publication: "Exactly active Instances become DatabaseInstance members; exactly the Engines they use receive one Engine implementation file each."
+  complete_update: "When an Instance definition changes in Configuration, its complete definition is replaced and revalidated; no hidden partial merge occurs."
   query_vocabulary: "Serialized enum defaults use canonical member names and resolve before any public call; unknown names fail configuration loading."
   limit_normalization: "An omitted limit uses -1; zero and every negative limit normalize to -1, meaning no limit."
   storage_ownership: "A file-backed database path resolves beneath settings.storage_root in the Database Component and may not escape it or resolve from an installed package, virtual environment, working directory, or consumer."
   initial_data_ownership: "Initial Data is shared Database Configuration, not Model data and not per-Instance or Engine-file content."
   initial_data_completeness: "When the Target declares Initial Data, generation copies every declared record into this collection and may not emit an empty or partial collection."
-  generated_initial_values: "A Target instruction requesting a generated initial value, including Generate securely, resolves to a concrete value before config is emitted."
-  initial_data_security_boundary: "Sensitivity markers, credential Fields, at-rest instructions, and unavailable security processors never omit or block a record; Database stores each resolved value unchanged without hash, encryption, masking, or authorization."
-  lifecycle_order: "When enabled, after-generation commands run in listed order; a failed command prevents later commands and fails preparation when fail_on_error is true."
+  generated_initial_values: "A Target Initial Data value that is not concrete, including Generate securely, is copied as an empty string; generation continues and no value is generated. The user fills such values later."
+  initial_data_security_boundary: "Sensitivity markers, credential Fields, at-rest instructions, and unavailable security processors never omit or block a record; Database stores each value unchanged without hash, encryption, masking, or authorization."
+  lifecycle_order: "When enabled, Prepare runs after generation; its failure fails preparation when fail_on_error is true."
 
 # <!--------------------------------------------------------------------------------- Example -->
 example: |
@@ -83,8 +83,7 @@ example: |
     sqlite:
       name: "SQLite"
       driver: "sqlite"
-      parameters:
-        timeout_seconds: 30
+      parameters: {}
     postgresql:
       name: "PostgreSQL"
       driver: "postgresql"
@@ -103,7 +102,7 @@ example: |
       options: {}
     postgresql:
       name: "PostgreSQL"
-      active: true
+      active: false
       engine: "postgresql"
       host: "127.0.0.1"
       port: 5432
@@ -126,8 +125,6 @@ example: |
         enabled: true
         instance: "default_instance"
         fail_on_error: true
-        commands:
-          - "create_tables"
-          - "insert_initial_data"
+        command: "prepare"
 
   initial_data: []

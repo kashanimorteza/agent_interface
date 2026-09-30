@@ -16,17 +16,14 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings, instances, and initial_data; generate config from its Foundation Schema; realize Interface from the Database Interface Schema; realize the fixed layout; then apply development and documentation preferences."
+  consumption: "Read settings and instances; copy the Target Initial Data; generate config from its Foundation Schema; realize Interface from the Database Interface Schema; realize the fixed layout; then apply development and documentation preferences."
   selection: "Preserve explicit compatible Target choices. Use these Preferences only for choices the Target leaves unstated, and choose only among the values they list. When neither the Target nor these Preferences supply a choice, Database stops and reports the missing choice through State. It never fills a gap by its own judgment."
-  runtime: "Generated config.yaml is the sole runtime source for Engines, Instances, Settings, and Initial Data. Runtime never reads this file."
   version_resolution: "Resolve Database-owned versioned technical items from the selected language profile in development. Resolve latest-compatible to a concrete compatible version and preserve that resolution in dependency or lock metadata."
-  matching: "Each active Instance receives one implementation file beneath layout.directories.engine, including when multiple Instances use the same Engine."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - settings
   - instances
-  - initial_data
   - interface
   - layout
   - development
@@ -36,7 +33,6 @@ read_order:
 content_map:
   settings: "Database's identity, the Model Interface Schema it consumes, the configuration file, the default Instance, the Storage root, and the query defaults."
   instances: "The default definition of every Instance."
-  initial_data: "The shared Initial Data collection copied from the Target."
   interface: "The Database Interface Schema and its version."
   layout: "The physical names of Database's directories and files."
   development: "Development capabilities, the selected language and its profile, after-generation behavior, and Engine technology."
@@ -56,7 +52,7 @@ content:
       schema: ".interface/foundation/schema/model-interface.yaml"
     configuration:
       file: "config.yaml"
-      structure: ".interface/foundation/schema/database.yaml"
+      structure: ".interface/foundation/schema/database-configuration.yaml"
       runtime_source: true
     default_instance: "sqlite"
     storage_root: "db"
@@ -81,7 +77,7 @@ content:
       options: {}
     postgresql:
       name: "PostgreSQL"
-      active: true
+      active: false
       engine: "postgresql"
       host: "127.0.0.1"
       port: 5432
@@ -90,28 +86,24 @@ content:
       password: ""
       options: {}
 
-  # <!-------------------------------------------- initial_data -->
-  initial_data: []
-
   # <!-------------------------------------------- interface -->
   interface:
     schema: ".interface/foundation/schema/database-interface.yaml"
-    contract_version: "1.1"
+    contract_version: "1.3"
 
   # <!-------------------------------------------- layout -->
   layout:
-    fixed: true
-    rule: "These names and ownership locations are fixed Database Architecture. Every additional internal source file belongs under core."
     directories:
       core: "core"
       engine: "engine"
+      entry_points: "scripts"
       database: "db"
     files:
       interface: "interface"
       data: "data"
       tables: "tables"
       initial_data: "initial_data"
-      engine: "<active-instance>"
+      engine: "<engine-in-use>"
       lifecycle_entry_points: "<lifecycle-command>"
       configuration: "config.yaml"
       documentation: "README.md"
@@ -135,40 +127,88 @@ content:
                 requirement: "required"
                 activation: "when_selected"
                 purpose: "Apply SQLModel guidance while realizing Tables and Engine units."
+            agent_avoid:
+              - "Never declare or subclass a table class inside Database; Tables come only from the Model Entities."
+          table_creation: "Core Tables creates exactly the Tables of the Model Entity Collection's table models through their shared metadata (create_all restricted to those Tables). It writes no per-Entity code."
+          value_shapes:
+            database: "a plain class, created with Database()"
+            filter: "frozen dataclass with fields field, operator, value"
+            order: "frozen dataclass with fields field, direction"
+            command_result: "frozen dataclass with the Schema's fields, in Schema order"
+            lifecycle_result: "frozen dataclass with the Schema's fields, in Schema order"
+            enumerations: "enum.Enum for FilterOperator, FilterCombination, OrderDirection, and DatabaseInstance; each member's value equals its name"
+          error_classes:
+            base: "DatabaseError"
+            invalid_configuration_or_instance: "ConfigurationError"
+            inactive_instance: "InactiveInstanceError"
+            invalid_input_or_field: "InvalidInputError"
+            declaration_incompatibility: "DeclarationMismatchError"
+            connection_failure: "ConnectionFailureError"
+            execution_failure: "ExecutionError"
+            incomplete_lifecycle: "LifecycleError"
+          field_reference: "A Field reference is the Entity's class attribute for that Field, such as User.is_active."
+          row_materialization: "Convert each stored value back to its Model Type, then build the Entity with its own constructor from all Field values."
+          engines:
+            sqlite:
+              driver:
+                name: "sqlite3"
+                version: "runtime-provided"
+                package: null
+              url_scheme: "sqlite"
+              connect_arguments:
+                check_same_thread: false
+              types:
+                string: "VARCHAR, or VARCHAR(<declared length>)"
+                integer: "INTEGER"
+                float: "FLOAT"
+                decimal: "VARCHAR (exact decimal text)"
+                boolean: "BOOLEAN (stored as 0 or 1)"
+                datetime: "DATETIME (stored in UTC, read back as UTC-aware)"
+                date: "DATE"
+                time: "TIME"
+                uuid: "CHAR(32)"
+            postgresql:
+              driver:
+                name: "psycopg"
+                version: "latest-compatible"
+                package: "psycopg"
+              url_scheme: "postgresql+psycopg"
+              types:
+                string: "VARCHAR, or VARCHAR(<declared length>)"
+                integer: "INTEGER"
+                float: "FLOAT"
+                decimal: "VARCHAR (exact decimal text)"
+                boolean: "BOOLEAN"
+                datetime: "TIMESTAMP WITH TIME ZONE"
+                date: "DATE"
+                time: "TIME"
+                uuid: "UUID"
     after_generation:
       enabled: true
       instance: "<default_instance>"
       fail_on_error: true
       command: "prepare"
+    type_resolution: "Each Engine's type table lives in the selected language profile, under its engines; it lists the column type the Model Entities produce for each logical Type, and Review compares against it. A Type missing from that table stops generation and is reported."
     database_engines:
       sqlite:
         version: "runtime-provided"
-        driver:
-          name: "sqlite3"
-          version: "runtime-provided"
-          package: null
         storage:
           kind: "file"
           relative_to: "<database-component>/db"
           location: "<database>"
           reject_escape: true
         connection:
-          url_scheme: "sqlite"
           required_parameters: ["database"]
           foreign_keys: true
-          check_same_thread: false
+        auto_increment: "INTEGER PRIMARY KEY AUTOINCREMENT"
       postgresql:
         version: "latest-compatible"
-        driver:
-          name: "psycopg"
-          version: "latest-compatible"
-          package: "psycopg"
         storage:
           kind: "server"
         connection:
-          url_scheme: "postgresql+psycopg"
           default_port: 5432
           required_parameters: ["host", "port", "database", "username", "password"]
+        auto_increment: "INTEGER GENERATED BY DEFAULT AS IDENTITY"
 
   # <!-------------------------------------------- documentation -->
   documentation:
@@ -186,7 +226,11 @@ content:
       - verify
       - troubleshooting
     sections:
-      interface: "Document all three capability groups, public vocabulary, value contracts, defaults, results, and errors with complete examples."
+      overview: "Give one short introduction and one simple example: create Database, then one add and one list."
+      interface: "For every published contract (Database, DatabaseInstance, Filter, FilterOperator, FilterCombination, Order, OrderDirection, CommandResult, LifecycleResult, and every error) and for every Operation and Lifecycle Command with each of its parameters, explain what it is for and how to use it, with one example each. Cover every enumeration member, defaults, results, and errors."
+      setup: "Give the setup steps for the selected technology and state that generation runs Prepare automatically."
+      use: "Show every capability group used only through Interface, with Field references and enumeration members and never strings."
+      troubleshooting: "Cover Database concerns only, including an inactive Instance, a difference between an existing Table and its Entity, and empty Initial Data values."
       instances: "Explain active DatabaseInstance members, default selection, and Database-owned storage without exposing credentials."
       lifecycle: "Explain manual CreateTables, InsertInitialData, and Prepare use, and that generation runs Prepare."
       initial_data: "List every Target-defined Initial Data record and state that Database inserts its values unchanged without security-based omission."

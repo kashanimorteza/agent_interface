@@ -112,7 +112,23 @@ content:
           declaration_access: class attribute
           declaration_kind: frozen dataclass
           pending_value: None
-          field_realization: Use Field only for value rules (default, nullable, description, value constraints). Never pass primary_key, unique, index, or foreign_key; Entity Metadata lives only in Declaration.
+          field_realization: Realize every Field with Field. Value rules (default, nullable, description, value constraints) come from the Field; primary_key, unique, index, and foreign_key are copied from the Entity's Declaration, which stays their only source.
+          table_model:
+            declaration: Every Entity class is declared with table=True.
+            table_name: exactly the Entity name, set through __tablename__
+            column_name: exactly the Field name
+            construction: The Core base runs model_validate on every direct construction before initializing, because a table model skips validation on construction.
+            field_reference: Each Field's class attribute is its public Field reference.
+            auto_increment: An auto_increment Identity column carries an Identity construct, and its table sets sqlite_autoincrement to true, so each Engine renders the form its Database Preferences list.
+            constraint_names:
+              mechanism: SQLAlchemy naming_convention on the shared metadata
+              primary_key: pk_<table>
+              foreign_key: fk_<table>_<field>
+              unique: uq_<table>_<fields joined by _>
+              index: ix_<table>_<fields joined by _>
+            datetime_column: A datetime Field uses DateTime(timezone=True) and is always stored in UTC; where an Engine drops the offset, the value is read back as UTC-aware.
+            column_types: Every other column takes the library's default type for its Python type.
+            decimal_column: A decimal Field uses one fixed column type that stores the exact decimal text and returns decimal.Decimal when read, on every Engine.
           declaration_members:
             entity:
               name: name
@@ -135,15 +151,15 @@ content:
             package:
               name: SQLModel
               version: latest-compatible
-            reason: One modeling package shared across the project's Python Components. A Python-specific choice, not a Model rule; Model classes are never tables.
-            realization: Implement each Entity as a SQLModel model and realize its declared Fields and metadata without assigning storage or Table ownership to Model.
+            reason: One modeling package shared across the project's Python Components. A Python-specific choice, not a Model rule.
+            realization: Implement each Entity as a SQLModel table model whose Fields and metadata realize its Declaration exactly.
             agent_skills:
             - resource: sqlmodel
               requirement: required
               activation: when_selected
               purpose: Apply SQLModel guidance while realizing and reviewing Entities.
             agent_avoid:
-            - Never declare a Model class with table=True; Model defines no tables.
+            - Never construct an Entity in a way that skips validation.
     generated_identifier:
       selected: uuid4
       options:

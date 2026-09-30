@@ -1,6 +1,6 @@
 schema:
   id: "agent-interface-database-interface"
-  version: "1.1"
+  version: "1.3"
   purpose: "The stable, language-independent structure through which consumers use every Database Operation and Lifecycle Command."
   kind: "Interface structure standard"
   applies_when: "The Implementation declares a Database Component."
@@ -22,6 +22,7 @@ structure:
       order_direction: "The enumeration of ordering directions."
       command_result: "The result of a Database-wide Operation."
       lifecycle_result: "The result of a Lifecycle Command."
+      errors: "One base error and one error for each failure kind, each importable so a consumer can catch it."
 
   instance_selection:
     required: true
@@ -34,45 +35,57 @@ structure:
     purpose: "Operations scoped to one Entity. Each receives the Entity itself — an Entity instance or the Entity class imported from Model — never an Entity name or other string identity. Every one also accepts an optional DatabaseInstance."
     operations:
       add:
+        parameters: [entity, instance]
         accepts: "one complete new Entity instance"
         returns: "the stored Entity, including generated values"
       update:
+        parameters: [entity, instance]
         accepts: "one complete Entity instance; its id only locates the record"
         effect: "replaces every mutable Field; never changes id or another immutable Field"
         returns: "the stored Entity, or null when no record exists"
       list:
+        parameters: [entity, filters, combination, orders, limit, instance]
         accepts: "an Entity class, optional Filters, an optional FilterCombination, optional ordered Orders, and an optional limit; a zero or negative limit means no limit"
         returns: "the matching Entity instances"
       get_by_id:
+        parameters: [entity, id, instance]
         accepts: "an Entity class and an id"
         returns: "the Entity, or null when no record exists"
       delete:
+        parameters: [entity, id, instance]
         accepts: "an Entity class and an id"
         returns: "the final deleted Entity, or null when no record exists"
       enable:
+        parameters: [entity, id, instance]
         accepts: "an Entity class and an id"
         effect: "sets only is_active to true"
         returns: "the final Entity, including when it was already enabled, or null when no record exists"
       disable:
+        parameters: [entity, id, instance]
         accepts: "an Entity class and an id"
         effect: "sets only is_active to false"
         returns: "the final Entity, including when it was already disabled, or null when no record exists"
       count:
+        parameters: [entity, filters, combination, instance]
         accepts: "an Entity class, optional Filters, and an optional FilterCombination"
         returns: "the matching count"
       sum:
+        parameters: [entity, field, filters, combination, instance]
         accepts: "an Entity class, one numeric Field reference of that Entity, optional Filters, and an optional FilterCombination"
         effect: "ignores null values"
         returns: "the total, or zero when nothing matches"
       min:
+        parameters: [entity, field, filters, combination, instance]
         accepts: "an Entity class, one comparable Field reference of that Entity, optional Filters, and an optional FilterCombination"
         effect: "ignores null values"
         returns: "the smallest value, or null when nothing matches"
       max:
+        parameters: [entity, field, filters, combination, instance]
         accepts: "an Entity class, one comparable Field reference of that Entity, optional Filters, and an optional FilterCombination"
         effect: "ignores null values"
         returns: "the largest value, or null when nothing matches"
       truncate:
+        parameters: [entity, instance]
         accepts: "an Entity class"
         effect: "removes every record of that Entity and keeps its Table"
         returns: "the deleted count"
@@ -82,6 +95,7 @@ structure:
     purpose: "Operations scoped to an Instance rather than one Entity. Each also accepts an optional DatabaseInstance."
     operations:
       execute_command:
+        parameters: [command, parameters, instance]
         accepts: "a native command in the Instance Engine's query language and its bound parameters"
         effect: "runs any valid command the Engine supports, including a schema change; create_tables remains the standard schema-preparation path"
         returns: "a CommandResult"
@@ -91,12 +105,15 @@ structure:
     purpose: "Explicit preparation commands, callable through Interface and through generated manual entry points. Each also accepts an optional DatabaseInstance."
     commands:
       create_tables:
-        effect: "creates every Table required by the Declarations of the Model Entity Collection, using nothing else; matching Tables are left unchanged; a difference with an existing Table stops the command"
+        parameters: [instance]
+        effect: "creates every Table from the Entities of the Model Entity Collection and their Declarations, using nothing else; matching Tables are left unchanged; a difference with an existing Table stops the command"
         returns: "a LifecycleResult"
       insert_initial_data:
+        parameters: [instance]
         effect: "inserts every missing configured Initial Data record; skips an identical present record; fails on a conflicting one"
         returns: "a LifecycleResult"
       prepare:
+        parameters: [instance]
         effect: "runs create_tables and then insert_initial_data; stops without running insert_initial_data when create_tables fails"
         returns: "a LifecycleResult"
 
@@ -140,7 +157,7 @@ structure:
 
   errors:
     required: true
-    purpose: "Failure meanings every realization keeps distinguishable, through the language's own error mechanism, without exposing credentials."
+    purpose: "Failure meanings every realization keeps distinguishable, through the language's own error mechanism, without exposing credentials. Each kind is published as its own error, derived from one base error; their names belong to the selected language profile."
     kinds:
       - "invalid configuration or Instance"
       - "inactive Instance selected"
@@ -153,6 +170,7 @@ structure:
 # <!--------------------------------------------------------------------------------- Rules -->
 rules:
   stable_shape: "Changing Entities, Instances, Engines, languages, packages, or internal implementation never changes this structure."
+  parameter_order: "Every Operation and Lifecycle Command takes exactly the listed parameters, by these names and in this order. entity accepts the Entity class or instance the Operation states. Every parameter after entity, id, field, and command is optional with a default; instance is always last."
   entity_by_value: "Every Entity Operation receives an Entity instance or class. No Operation selects an Entity by name."
   no_strings: "Entities, Fields, Instances, operators, combinations, and directions are passed as imported values, never as strings."
   missing_record: "A missing record returns null; it is never an error. Invalid input, configuration, connection, or execution remains an error."
@@ -166,8 +184,8 @@ rules:
 
 # <!--------------------------------------------------------------------------------- Example -->
 example: |
-  from database import Database, DatabaseInstance, Filter, FilterOperator, Order, OrderDirection
-  from model import User
+  from database.interface import Database, DatabaseInstance, Filter, FilterOperator, Order, OrderDirection
+  from model.interface import User
 
   db = Database()
   user = db.add(User(name="Admin", ...))                        # default Instance

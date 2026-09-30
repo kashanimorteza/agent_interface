@@ -142,7 +142,7 @@ The structure of the Database Component's runtime configuration file — support
 
 Responsibility: Defines the conditional shape of the Database Component's runtime configuration file so that adding an Instance or changing a credential is one edit in one file and no value is hardcoded in source.
 
-→ [Read more about Database Configuration Schema](schema/database.yaml)
+→ [Read more about Database Configuration Schema](schema/database-configuration.yaml)
 
 ### Operational formats
 

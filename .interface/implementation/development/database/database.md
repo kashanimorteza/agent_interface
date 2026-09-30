@@ -10,10 +10,11 @@ Database is the structured Development Component that persists public Entity dat
 2. **[Terms](#terms)**
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
-5. **[Layering](#layering)**
-6. **[Authority](#authority)**
-7. **[Principles](#principles)**
-8. **[At a Glance](#at-a-glance)**
+5. **[Boundaries](#boundaries)**
+6. **[Layering](#layering)**
+7. **[Authority](#authority)**
+8. **[Principles](#principles)**
+9. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -21,7 +22,7 @@ Database is the structured Development Component that persists public Entity dat
 
 ### Overview
 
-Database enumerates every Entity through the Entity Collection published by Model Interface, derives storage structure from each actual Entity and the Declaration it exposes, and persists Entity instances through a selected active DatabaseInstance. Interface is its only public boundary. Core routes every request, and one isolated Engine unit implements the contract for each active Instance.
+Database enumerates every Entity through the Entity Collection published by Model Interface, derives storage structure from each actual Entity and the Declaration it exposes, and persists Entity instances through a selected active DatabaseInstance. Interface is its only public boundary. Core routes every request, and one isolated Engine unit implements the contract for each Engine used by at least one active Instance.
 
 ### Purpose
 
@@ -29,7 +30,7 @@ Database keeps persistence, Instance selection, and Engine integration behind on
 
 ### How It Works
 
-A consumer imports Interface, selects a DatabaseInstance or accepts the default, and calls an Entity Operation, Database-wide Operation, or Lifecycle Command. Core resolves the complete Instance configuration and forwards the request to that Instance's Engine unit. The result returns through Core and Interface in the published form.
+A consumer imports Interface, selects a DatabaseInstance or accepts the default, and calls an Entity Operation, Database-wide Operation, or Lifecycle Command. Core resolves the complete Instance configuration and forwards the request, with that Instance's connection, to its Engine's unit. The result returns through Core and Interface in the published form.
 
 <br>
 
@@ -40,6 +41,7 @@ A consumer imports Interface, selects a DatabaseInstance or accepts the default,
 - **DatabaseInstance** — the public enumeration whose members identify exactly the active configured Instances; it contains no connection credentials.
 - **Database Configuration** — the generated runtime configuration, the sole runtime source for Engines, Instances, Settings, and Initial Data.
 - **Database Interface Schema** — the versioned structure that fixes every public Database contract: the Operations and Lifecycle Commands with their inputs, effects, and results, the query vocabulary, values, results, and error meanings.
+- **Database Configuration Schema** — the versioned structure that fixes the shape of the Database Configuration.
 - **Interface** — the only public Database entry point.
 - **Entity Operation** — an Operation scoped to one Entity.
 - **Database-wide Operation** — an Operation scoped to the selected Instance rather than one Entity.
@@ -59,38 +61,48 @@ Database
 │   ├── Data          ← shared validation, resolution, routing, and normalization
 │   ├── Tables        ← coordinates CreateTables
 │   └── Initial Data  ← coordinates InsertInitialData
-├── Engine            ← one unit per active Instance
+├── Engine            ← one unit per Engine in use
+├── Entry Points      ← one manual entry point per Lifecycle Command
 ├── Storage           ← Database-owned persistent data, no source
 ├── Configuration     ← the generated Database Configuration
 └── Documentation     ← the public explanation of the surface above
 ```
+
+**Interface** — Interface publishes exactly the contracts the Database Interface Schema defines: the Database access surface, DatabaseInstance, every Entity Operation, Database-wide Operation, and Lifecycle Command, the query vocabulary and values, and the results. Consumers do not recreate these contracts. Interface declares and forwards behavior; it does not implement Engine work. Each Lifecycle Command is callable through Interface or its generated manual entry point; an entry point only invokes the command, and Core and the selected Engine own the work.
+
+**Core** — Data owns shared validation, default resolution, Instance selection, routing, and result normalization for all public requests. Tables coordinates CreateTables. Initial Data coordinates InsertInitialData. Core contains no Instance-specific connection or storage implementation.
+
+**Engine** — Engine contains exactly one unit for every Engine used by at least one active Instance, named from that Engine. Each unit implements all Entity Operations, ExecuteCommand, and the Engine capabilities required by the Lifecycle Commands, and returns raw results. Instances that use the same Engine share its unit and differ only in their connection.
+
+**Entry Points** — one manual entry point for each Lifecycle Command. Each only invokes its command through Interface and holds no logic of its own.
+
+**Storage** — Storage contains Database-owned persistent data and no source code. A file-backed Instance resolves its configured relative path from this Database-owned storage root, never from an installed package, a virtual environment, or a consuming Component.
+
+**Configuration** — the generated Database Configuration, the only source Core reads at runtime.
+
+**Documentation** — the root documentation explaining every public contract, Instance selection, the Lifecycle Commands, Initial Data, setup, use, verification, and Database-specific troubleshooting.
 
 <br>
 
 ## Relationships
 
 - **Consumes Model** — imports Model Interface and uses its Schema-defined Entity Collection and Entity Exports only. It uses each actual Entity and the Declaration that Entity exposes without interpreting Model internals. Model remains read-only and independently owned.
-- **Provides through Interface** — publishes Database contracts for any authorized consumer without naming or treating one consumer specially.
+
+<br>
+
+## Boundaries
+
+- **The meaning of data — Entities, Fields, Types, and constraints** — is not Database's, because Database stores data rather than defining what it means.
+- **Hashing, encryption, masking, and secret storage** — are not Database's, because they change a value rather than store it.
+- **Business rules, workflows, authorization, and orchestration** — are not Database's, because they depend on how data is used, not on how it is stored.
+- **Changing the structure of existing Tables** — is not Database's, because Database only creates Tables from the current Entities and stops on any difference.
+- **Endpoints, requests, responses, and protocols** — are not Database's, because they are properties of moving data, not of storing it.
 
 <br>
 
 ## Layering
 
-### Interface
-
-Interface publishes exactly the contracts the Database Interface Schema defines: the Database access surface, DatabaseInstance, every Entity Operation, Database-wide Operation, and Lifecycle Command, the query vocabulary and values, and the results. Consumers do not recreate these contracts. Interface declares and forwards behavior; it does not implement Engine work. Each Lifecycle Command is callable through Interface or its generated manual entry point; an entry point only invokes the command, and Core and the selected Engine own the work.
-
-### Core
-
-Data owns shared validation, default resolution, Instance selection, routing, and result normalization for all public requests. Tables coordinates CreateTables. Initial Data coordinates InsertInitialData. Core contains no Instance-specific connection or storage implementation.
-
-### Engine
-
-Engine contains exactly one unit for every active Instance, named from that Instance. Each unit implements all Entity Operations, ExecuteCommand, and the Engine capabilities required by the Lifecycle Commands. Two Instances using the same Engine still have separate units.
-
-### Storage
-
-Storage contains Database-owned persistent data and no source code. A file-backed Instance resolves its configured relative path from this Database-owned storage root, never from an installed package, a virtual environment, or a consuming Component.
+Database Preferences own configurable names, language, packages, Engines, type mapping, Instance defaults, query defaults, layout, technical realization, and documentation choices; these selections realize the responsibilities in Architecture without changing them. The shape of Interface belongs to the Database Interface Schema, and the shape of the Database Configuration belongs to the Database Configuration Schema. Implementation applies them to the current Target.
 
 <br>
 
@@ -108,15 +120,21 @@ Every Principle below is mandatory.
 
 #### Database owns one canonical Architecture
 
-**Rule:** The Component contains one Interface, Core, Engine, Storage, the generated Database Configuration, and Documentation. Core contains Data, Tables, Initial Data, and every additional internal source unit. Engine contains one unit per active Instance. Persistent data belongs only in Storage.
+**Rule:** The Component contains one Interface, Core, Engine, Entry Points, Storage, the generated Database Configuration, and Documentation. Core contains Data, Tables, Initial Data, and every additional internal source unit. Engine contains one unit per Engine used by at least one active Instance. Persistent data belongs only in Storage.
 **Why:** A fixed layout lets every generation place each file in the same place, so an Agent never decides structure and consumers always find the same parts.
 **Boundary:** Fixed Architecture members are not renamed or relocated. No additional internal source unit is placed at the Component root, beside an Engine unit, or inside Storage.
+
+#### Database never decides by judgment
+
+**Rule:** Every choice that changes Database's structure, public surface, names, technology, types, or data comes only from the Target, Database Preferences, or this Definition. When none of them supplies it, Database stops and reports the missing choice through State.
+**Why:** When no decision is guessed, every generation yields the same result.
+**Boundary:** Internal details that change none of these are not governed by this Principle.
 
 #### Database preserves one observable contract
 
 **Rule:** Architecture, public contracts, Instance selection, request meaning, result meaning, routing, and ownership remain stable across languages, packages, libraries, and database technologies.
 **Why:** Consumers depend on meaning, not technology; if a package or Engine could change behaviour, every technology change would break its consumers.
-**Boundary:** Syntax, drivers, ORMs, migration tools, query builders, sessions, connection pools, transactions, and query rendering are realization details. An incompatible technology fails generation rather than changing Database meaning.
+**Boundary:** Syntax, drivers, ORMs, query builders, sessions, connection pools, transactions, and query rendering are realization details. An incompatible technology fails generation rather than changing Database meaning.
 
 #### Database consumes Model without owning it
 
@@ -158,13 +176,13 @@ Every Principle below is mandatory.
 
 #### CreateTables builds Tables only from Model Entities
 
-**Rule:** CreateTables uses only the actual Declaration of every Entity in the Model Entity Collection to create the required Tables, Fields, Primary Keys, Relations, Uniqueness Constraints, and Indexes. It never reads the Target. Re-execution on matching Tables succeeds without change. A difference between an existing Table and its Declaration stops the command and is reported; it is never resolved by judgment.
+**Rule:** CreateTables uses only the actual Entities of the Model Entity Collection and their Declarations to create the required Tables, Fields, Primary Keys, Relations, Uniqueness Constraints, and Indexes. It never reads the Target. Re-execution on matching Tables succeeds without change. A difference between an existing Table and its Declaration stops the command and is reported; it is never resolved by judgment.
 **Why:** The generated Entities already carry every structural fact, so Tables follow them exactly and the same Entities always yield the same Tables.
 **Boundary:** It does not copy runtime records between Instances, invent Relation cascade behavior, or alter a Declaration. Cross-Instance transfer requires a future explicit command.
 
 #### InsertInitialData is repeatable
 
-**Rule:** Generation copies every Target-defined Initial Data record into the shared Database Configuration. Every Initial Data value is concrete in the Target; a request for a generated value, including `Generate securely`, is a missing choice that Database stops and reports through State. InsertInitialData reads that complete collection, validates each record through its public Entity contract, inserts missing records, skips already-present identical records, and returns success with zero affected items only when the Target declares no Initial Data.
+**Rule:** Generation copies every Target-defined Initial Data record into the shared Database Configuration. A Target value that is not concrete, including `Generate securely`, is copied as an empty string and generation continues; Database never produces a value itself, and the user fills such values later. InsertInitialData reads that complete collection, validates each record through its public Entity contract, inserts missing records, skips already-present identical records, and returns success with zero affected items only when the Target declares no Initial Data.
 **Why:** Running it again must never duplicate or lose records, so preparation can be repeated safely on any Instance.
 **Boundary:** A sensitivity marker, hash or encryption instruction, credential Field, or missing security processor never causes a record to be omitted or held. Database inserts the value unchanged. It does not silently update, delete, duplicate, or overwrite an existing record; conflicting Initial Data fails clearly.
 
@@ -180,7 +198,7 @@ Every Principle below is mandatory.
 
 #### Core owns shared routing
 
-**Rule:** Data receives each Interface request, validates public input, resolves defaults and the selected DatabaseInstance, loads its complete configuration, forwards work to that Instance unit, materializes published Entity results, and normalizes every result.
+**Rule:** Data receives each Interface request, validates public input, resolves defaults and the selected DatabaseInstance, loads its complete configuration, forwards work with that Instance's connection to its Engine unit, materializes published Entity results, and normalizes every result. Each stored row becomes an Entity through that Entity's own construction, after every stored value is converted back to its Model Type; a row that does not satisfy the Entity contract is an error and is never repaired.
 **Why:** Shared validation and routing in one place make every Engine receive the same checked request and return the same normalised result.
 **Boundary:** Core does not contain driver calls or Instance-specific storage behavior.
 
@@ -194,15 +212,15 @@ Every Principle below is mandatory.
 
 ### Engine
 
-#### Every active Instance owns one complete implementation
+#### Every Engine in use owns one complete implementation
 
-**Rule:** Generation creates exactly one Engine unit per active Instance and none for an inactive Instance. Each unit implements all Entity Operations, ExecuteCommand, and the capabilities required by the Lifecycle Commands while preserving public request, result, error, and atomicity meaning.
-**Why:** A complete unit per Instance means any active Instance can serve any call, and an inactive one leaves nothing behind.
-**Boundary:** An Instance unit implements storage behavior but never defines a new public contract or shared routing.
+**Rule:** Generation creates exactly one Engine unit for every Engine used by at least one active Instance and none for any other Engine. Instances of the same Engine share its unit and differ only in the connection Core passes to it. Each unit implements all Entity Operations, ExecuteCommand, and the capabilities required by the Lifecycle Commands while preserving public request, result, error, and atomicity meaning.
+**Why:** Instances of one Engine work the same way, so one complete unit serves them all without duplicated code, and an Engine nobody uses leaves nothing behind.
+**Boundary:** An Engine unit implements storage behavior but never defines a new public contract or shared routing.
 
 #### Libraries own technical database mechanics
 
-**Rule:** The selected Library and Engine own type mapping, query construction, connection management, transaction mechanics, schema tooling, and driver integration.
+**Rule:** The selected Library and Engine own query construction, connection management, transaction mechanics, schema tooling, and driver integration. Column types are those the Model Entities produce; Database Preferences list them per Engine as the reference Review compares against.
 **Why:** Proven libraries already solve these mechanics correctly; restating them here would tie the Definition to one technology.
 **Boundary:** Database Definition contains no Engine-specific query map, session algorithm, pool algorithm, or ORM API.
 
@@ -224,14 +242,14 @@ Every Principle below is mandatory.
 
 #### Every Instance is complete and valid
 
-**Rule:** Each Instance has a unique key, name, active state, Engine, host, port, database, username, password, and options. Engine-specific validation requires applicable values and allows inapplicable values to remain empty. The default Instance exists, is active, and is published through DatabaseInstance. Updating an Instance replaces and revalidates its complete definition.
+**Rule:** Each Instance has a unique key, name, active state, Engine, host, port, database, username, password, and options. Engine-specific validation requires applicable values and allows inapplicable values to remain empty. The default Instance exists, is active, and is published through DatabaseInstance. When an Instance definition changes in Configuration, its complete definition is replaced and revalidated; no hidden partial merge occurs.
 **Why:** An incomplete Instance fails late and unclearly; validating each one fully makes failure immediate and exact.
 **Boundary:** Consumers select a DatabaseInstance member; Core resolves connection values. Credentials are never members of DatabaseInstance or repeated in Operation requests.
 
 #### Active Instances determine generated and public resources
 
-**Rule:** Exactly active Instances become DatabaseInstance members and Engine units. Configuration loading rejects an unknown, inactive, colliding, or unresolved Instance selection.
-**Why:** Public members and Engine units that match active Instances exactly mean every offered choice works and none is dead.
+**Rule:** Exactly active Instances become DatabaseInstance members, and exactly the Engines they use receive Engine units. Configuration loading rejects an unknown, inactive, colliding, or unresolved Instance selection.
+**Why:** Public members and Engine units that match active use exactly mean every offered choice works and none is dead.
 **Boundary:** Changing active membership takes effect through resolved configuration and the next generation where units must change.
 
 #### File storage remains Database-owned and persistent
@@ -262,7 +280,7 @@ Every Principle below is mandatory.
 
 #### Database conformance covers every Database contract
 
-**Rule:** Database output is conformant only when it shows exact Architecture, one Engine unit and one DatabaseInstance member per active Instance, complete Interface publication conforming to the Database Interface Schema, valid config against its Schema, an active default Instance, Database-owned file storage resolution, complete Engine contracts, Documentation, and zero-diff regeneration.
+**Rule:** Database output is conformant only when it shows exact Architecture, one DatabaseInstance member per active Instance, one Engine unit per Engine in use, complete Interface publication conforming to the Database Interface Schema, valid config against its Schema, an active default Instance, Database-owned file storage resolution, complete Engine contracts, Documentation, and zero-diff regeneration.
 **Why:** These are the contracts consumers rely on; a check that omits one lets a broken Database look complete.
 **Boundary:** Review reads dependencies as needed but changes, generates, builds, tests, and documents only Database output. The Review Operation establishes this; Plan and Develop check nothing.
 
@@ -276,9 +294,13 @@ Every Principle below is mandatory.
 - DatabaseInstance holds exactly one member per active configured Instance and none for an inactive one.
 - A call without a DatabaseInstance runs on the configured default Instance.
 - No Operation accepts an Entity name, a Field name, or any other string in place of an imported value.
-- CreateTables uses only the Declarations of the Model Entity Collection and stops on a difference with an existing Table.
+- CreateTables uses only the Entities of the Model Entity Collection and their Declarations, and stops on a difference with an existing Table.
+- Each Table name is exactly its Entity name, and each column name exactly its Field name.
+- Each column type is the one its Engine lists for the Field's Model Type; an unlisted Type stops generation.
+- Each auto-increment identity column and each constraint and index name takes exactly the form Preferences list.
+- Every returned Entity is built through its own construction, and a row that breaks the Entity contract is an error.
 - Prepare runs CreateTables and then InsertInitialData, and stops when CreateTables fails.
-- A requested generated Initial Data value stops generation and is reported.
+- A Target Initial Data value that is not concrete is copied as an empty string, and no value is generated.
 - A missing record returns null, never an error.
 - Loading Interface opens no connection and creates no data or file.
 
@@ -293,8 +315,13 @@ Every Principle below is mandatory.
 
 **Database owns one canonical Architecture**
 
-- **Must** — preserve the canonical root, Core, Engine, storage, configuration, and Documentation ownership.
+- **Must** — preserve the canonical root, Core, Engine, Entry Points, storage, configuration, and Documentation ownership.
 - **Never** — place an internal source unit outside Core or its owning Engine unit, or place source code in Storage.
+
+**Database never decides by judgment**
+
+- **Must** — take every structural, public, naming, technology, type, or data choice from the Target, Preferences, or this Definition, and stop and report when none supplies it.
+- **Never** — fill such a choice by judgment.
 
 **Database preserves one observable contract**
 
@@ -338,7 +365,7 @@ Every Principle below is mandatory.
 
 **CreateTables builds Tables only from Model Entities**
 
-- **Must** — build Tables only from the Declarations of the Model Entity Collection and stop on any difference with an existing Table.
+- **Must** — build Tables only from the Entities of the Model Entity Collection and their Declarations, and stop on any difference with an existing Table.
 - **Never** — read the Target, alter an existing Table by judgment, copy records between Instances, or invent relationship behavior.
 
 **InsertInitialData is repeatable**
@@ -346,7 +373,7 @@ Every Principle below is mandatory.
 - **Must** — copy every Target Initial Data record into config and insert the complete collection repeatably without silent overwrite, deletion, or duplication.
 - **Must** — validate every Initial Data record through its public Entity contract.
 - **Never** — omit or hold credential-bearing Initial Data because a security transformation is absent.
-- **Never** — produce an Initial Data value itself; a requested generated value is reported as a missing choice.
+- **Never** — produce an Initial Data value itself; a value that is not concrete in the Target is copied as an empty string.
 
 **After-generation preparation uses the default Instance**
 
@@ -360,6 +387,8 @@ Every Principle below is mandatory.
 **Core owns shared routing**
 
 - **Must** — validate, resolve, route, materialize, and normalize through Core Data.
+- **Must** — build every returned Entity through its own construction.
+- **Never** — repair a row that does not satisfy the Entity contract.
 - **Never** — put Instance-specific driver behavior in Core.
 
 **Changes are atomic**
@@ -371,14 +400,14 @@ Every Principle below is mandatory.
 
 ### Engine
 
-**Every active Instance owns one complete implementation**
+**Every Engine in use owns one complete implementation**
 
-- **Must** — generate one complete implementation unit for every active Instance and none for an inactive Instance.
-- **Never** — define public contracts or shared routing in an Instance unit.
+- **Must** — generate one complete implementation unit for every Engine used by at least one active Instance and none for any other Engine.
+- **Never** — define public contracts or shared routing in an Engine unit, or duplicate a unit for another Instance of the same Engine.
 
 **Libraries own technical database mechanics**
 
-- **Must** — delegate database mechanics to the selected Library and Engine while preserving the public contract.
+- **Must** — delegate database mechanics to the selected Library and Engine while preserving the public contract, and keep column types equal to each Engine's listed types.
 - **Never** — define an Engine-specific query, session, pool, or ORM algorithm in the general contract.
 
 **Relations add no undeclared behavior**
@@ -397,7 +426,7 @@ Every Principle below is mandatory.
 
 **Every Instance is complete and valid**
 
-- **Must** — validate the complete Instance definition and replace it as one unit during Update.
+- **Must** — validate the complete Instance definition and replace it as one unit whenever it changes in Configuration.
 - **Never** — require a consumer to resend connection values with an Operation.
 
 **Active Instances determine generated and public resources**
