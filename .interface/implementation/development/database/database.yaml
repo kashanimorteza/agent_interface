@@ -4,7 +4,7 @@ meta:
   path_note: "Preferences and machine-readable public contract for the Database Component."
   purpose: "Database layout, Interface contract, runtime configuration defaults, and technical defaults."
   standard: "Agent Project Interface"
-  version: "12.0"
+  version: "12.1"
   updated: "2026-09-30"
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -55,7 +55,9 @@ content:
       package: "database"
     model_dependency:
       interface: "model.interface"
-      consumption: "Import public Entity classes and their complete public Declarations through Model Interface only."
+      schema: ".interface/foundation/schema/model-interface.yaml"
+      catalog: "Entities"
+      consumption: "Discover Entities only through the Schema-defined EntityCatalog and use each Entry's actual Entity and Declaration references. Never inspect __all__, wildcard exports, package attributes, directories, or internal Entity paths."
       ownership: "Database writes only inside its own Component output and never changes Model."
     configuration:
       file: "config.yaml"

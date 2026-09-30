@@ -36,7 +36,7 @@ Model gives every consumer one reusable public representation of the Target's da
 
 ### How It Works
 
-Interface publishes every Entity. Each published Entity exposes its own complete Declaration as structured public meaning. Foundation supplies shared Entity-to-JSON Object and JSON Object-to-Entity conversion. Declaration and Foundation are public contracts; optional base units and helpers remain private unless this Definition explicitly makes them public.
+Interface follows the fixed Model Interface Schema and publishes one stable EntityCatalog. The Catalog contains one EntityEntry for every Target Entity in Target order; each Entry references the actual public Entity and its actual public Declaration. Foundation supplies shared Entity-to-JSON Object and JSON Object-to-Entity conversion. Consumers use the Catalog contract and never interpret Model files, package exports, or implementation details.
 
 <br>
 
@@ -62,7 +62,10 @@ Interface publishes every Entity. Each published Entity exposes its own complete
 - **Declaration** — the public Core contract that represents Entity and Field Declarations without defining Entity behaviour.
 - **Foundation** — the public Core contract that supplies shared conversion capabilities without defining domain meaning.
 - **JSON Object** — the decoded, JSON-compatible key-and-value representation of one Entity; it is not encoded JSON text.
-- **Interface** — the standard public entrypoint that publishes every Entity.
+- **EntityCatalog** — the stable ordered immutable public collection through which consumers discover every current Entity.
+- **EntityEntry** — one immutable Catalog member containing exact logical name, actual public Entity, and that Entity's actual public Declaration.
+- **Model Interface Schema** — the Foundation structure standard that fixes EntityCatalog, EntityEntry, their capabilities, and the boundary consumers may rely on.
+- **Interface** — the standard public entrypoint that realizes the Model Interface Schema and publishes EntityCatalog.
 - **Deterministic Generation** — generation in which unchanged authorities and resolved technical selections produce no source or documentation difference.
 - **Conformance Validation** — verification that Model input and output preserve every applicable authority and public contract.
 
@@ -72,7 +75,7 @@ Interface publishes every Entity. Each published Entity exposes its own complete
 ## Architecture
 
     Model
-    ├── interface
+    ├── interface  [Entities: EntityCatalog, EntityEntry]
     ├── entity/
     │   └── <entity>
     ├── core/
@@ -89,7 +92,7 @@ The names shown are defaults selected by Model Preferences. Responsibilities and
 ## Relationships
 
 - **Consumes no Development Component** — Model depends on no Database, Logic, API, Presentation, or other generated Development Component.
-- **Provides reusable public Entities** — any consumer may use every Entity and its public contract without Model naming, restricting, or implementing that consumer's usage.
+- **Provides reusable public Entities** — any consumer discovers and uses every Entity and Declaration through the stable EntityCatalog without interpreting Model internals.
 
 <br>
 
@@ -112,7 +115,7 @@ Model Preferences own configurable names, language, package, platform, naming, s
 
 ### Interface
 
-The standard package-root entrypoint that publishes every actual Entity once in Target order. It publishes no helper, consumer, copied Entity, string identity, compatibility alias, or unrelated symbol.
+The standard package-root entrypoint that conforms to `.interface/foundation/schema/model-interface.yaml`. It publishes one ready-to-use EntityCatalog value and the immutable EntityEntry value contract. It does not publish one root symbol per Entity. Catalog membership contains every actual Entity exactly once in Target order, while the outer Interface structure remains unchanged when Entity membership or implementation changes.
 
 ### Entity
 
@@ -182,7 +185,7 @@ Every Principle below is mandatory and belongs to the Architecture or Layering c
 
 #### Generation verifies complete conformance
 
-**Rule:** Before publication, generation validates input completeness, uniqueness, compatibility, naming, metadata resolution, and technology support; then verifies exact Entity and Field membership and order, every parameter and explicit value, Entity Metadata, Architecture, dependencies, Interface publication, public Declarations, Foundation round trips, Documentation, source quality, and zero-diff regeneration. Disabled persistent testing requires transient verification rather than skipping it.
+**Rule:** Before publication, generation validates input completeness, uniqueness, compatibility, naming, metadata resolution, and technology support; then verifies exact Entity and Field membership and order, every parameter and explicit value, Entity Metadata, Architecture, dependencies, conformance to the Model Interface Schema, exact Catalog membership and order, actual Entity and Declaration references, Catalog capabilities and immutability, public Declarations, Foundation round trips, Documentation, source quality, and zero-diff regeneration. Disabled persistent testing requires transient verification rather than skipping it.
 **Why:** Generation is complete only when observable output proves it preserved every authority and public contract.
 **Boundary:** Verification observes and rejects mismatch; it never repairs ambiguity by invention or changes another Component.
 
@@ -202,17 +205,23 @@ Every Principle below is mandatory and belongs to the Architecture or Layering c
 
 ### Interface
 
-#### Model publishes every Entity as a reusable public contract
+#### Model Interface follows one stable Schema
 
-**Rule:** Interface publishes every Target Entity exactly once in Target order. Every published Entity exposes its complete Declaration as structured public meaning, so any consumer can use its Fields and Entity Metadata without importing Model internals or being named by Model.
-**Why:** Consumers need complete reusable Entity meaning through one stable boundary.
-**Boundary:** Model neither prescribes a consumer nor publishes that consumer's behaviour, configuration, or realization.
+**Rule:** Every realization of Interface conforms to the versioned Model Interface Schema. EntityCatalog, EntityEntry, and their capability meanings remain structurally fixed across Target Entity additions, modifications, renames, removals, languages, packages, and internal implementations. Changing that structure requires an explicit Schema version change and consumer review.
+**Why:** Consumers can depend on one contract instead of reinterpreting each generated Model realization.
+**Boundary:** Entity membership and Entity meaning may change under Target authority without becoming an Interface-structure change.
 
-#### Interface publishes only actual Entities and has no side effect
+#### EntityCatalog publishes every actual Entity
 
-**Rule:** Interface publishes the actual Entity definitions with no missing, additional, copied, string-named, compatibility-aliased, helper, or internal symbol. Loading Interface creates no Entity instance and performs no network, storage, runtime-configuration, data-creation, or other external side effect.
-**Why:** A precise entrypoint remains predictable for every consumer.
-**Boundary:** Declaration and Foundation remain public through each Entity and their own public Core contracts but are not added as unrelated root Interface exports.
+**Rule:** Interface publishes one ready-to-use immutable EntityCatalog value that consumers never construct or populate. It contains exactly one immutable EntityEntry for every Target Entity in Target order and no other Entry. Each Entry's name is the exact logical Entity name, its entity is the actual public Entity, and its declaration is that Entity's actual public Declaration. Catalog supports entries, get by exact logical name returning Entry or null, contains by actual Entity, and declaration_of returning the actual Declaration or null.
+**Why:** Complete actual references let generic consumers discover Model membership and meaning without building another registry.
+**Boundary:** EntityEntry never copies, wraps, aliases, reconstructs, or translates an Entity or Declaration.
+
+#### Interface is the only Entity discovery path and has no side effect
+
+**Rule:** Consumers discover Entities only through EntityCatalog. Interface does not publish one root symbol per Entity. Consumers do not use wildcard exports, `__all__`, package reflection, dynamic attribute discovery, directory scanning, Entity-unit paths, or another consumer-owned registry. Loading Interface creates no Entity instance and performs no network, storage, runtime-configuration, data-creation, or other external side effect.
+**Why:** One explicit discovery path remains portable and predictable for every consumer.
+**Boundary:** Declaration and Foundation remain public through actual Entities and their public Core contracts. Model publishes no consumer behaviour or realization.
 
 <br>
 
@@ -306,7 +315,7 @@ Every Principle below is mandatory and belongs to the Architecture or Layering c
 
 #### Model documentation explains the complete public surface
 
-**Rule:** Root Documentation follows the order selected by Model Preferences. Overview gives one concise Entity example; Interface documents every Entity once in Target order with a complete Field table and separate Entity Metadata; Declaration shows metadata access; Foundation shows each capability and one complete JSON Object round trip; Setup contains selected-technology steps; Use follows the public surface; Verify checks import, construction, Declaration access, and round trip; Troubleshooting covers Model concerns only.
+**Rule:** Root Documentation follows the order selected by Model Preferences. Overview gives one concise Entity example; Interface explains EntityCatalog and EntityEntry and documents every Catalog member once in Target order with a complete Field table and separate Entity Metadata; Declaration shows metadata access through a Catalog Entry; Foundation shows each capability and one complete JSON Object round trip; Setup contains selected-technology steps; Use follows the Catalog public surface; Verify checks Schema conformance, membership, order, actual references, capabilities, immutability, side-effect freedom, construction, Declaration access, and round trip; Troubleshooting covers Model concerns only.
 **Why:** Consumers can understand and verify Model without relying on private implementation.
 **Boundary:** Documentation defines no other Component, exposes no private helper as contract, retains no stale meaning, and contains no real credential or secret.
 
@@ -363,15 +372,20 @@ Every obligation below derives from the Principle with the same title.
 
 ### Interface
 
-**Model publishes every Entity as a reusable public contract**
+**Model Interface follows one stable Schema**
 
-- **Must** — publish every Entity and make its complete Declaration publicly available to any consumer.
-- **Never** — restrict the public contract to one named consumer or prescribe that consumer's usage.
+- **Must** — conform every realization to the versioned Model Interface Schema while allowing Catalog membership to follow Target.
+- **Never** — change Interface structure because Entity membership, language, package, or internal implementation changed.
 
-**Interface publishes only actual Entities and has no side effect**
+**EntityCatalog publishes every actual Entity**
 
-- **Must** — publish exact Entity definitions once in Target order without load side effects.
-- **Never** — export an additional, copied, aliased, helper, internal, or string-named Entity symbol.
+- **Must** — publish one ready immutable Catalog and one exact immutable Entry per Target Entity in Target order with its actual Entity and Declaration.
+- **Never** — copy, wrap, alias, reconstruct, translate, omit, or add an Entity or Declaration.
+
+**Interface is the only Entity discovery path and has no side effect**
+
+- **Must** — require every consumer to discover Entities through EntityCatalog and load it without external side effects.
+- **Never** — publish per-Entity root symbols or require wildcard exports, `__all__`, reflection, attribute discovery, directory scanning, internal paths, or a consumer-owned registry.
 
 <br>
 

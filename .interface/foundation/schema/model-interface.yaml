@@ -1,0 +1,75 @@
+schema:
+  id: "agent-interface-model-interface"
+  version: "1.0"
+  purpose: "The stable, language-independent structure through which consumers discover and use every public Model Entity and Declaration."
+  kind: "Interface structure standard"
+  applies_when: "The Implementation declares a Model Component."
+  generates: "<model component path>/<interface file>"
+
+# <!--------------------------------------------------------------------------------- Structure -->
+structure:
+
+  interface:
+    required: true
+    purpose: "The fixed public entrypoint shape, independent of Entity membership."
+    public_contracts:
+      entity_catalog: "One ready-to-use EntityCatalog value."
+      entity_entry: "The immutable EntityEntry value contract used by the Catalog."
+    per_entity_root_exports: false
+
+  entity_catalog:
+    required: true
+    purpose: "The single stable public collection of all current Model Entities."
+    ordered_by: "Target Entity order"
+    immutable_after_load: true
+    membership: "Exactly one EntityEntry for every current Target Entity and no other entry."
+    entry: "EntityEntry"
+
+  entity_entry:
+    required: true
+    purpose: "One stable public reference to an actual Entity and its actual Declaration."
+    shape:
+      name: "<exact logical Entity name>"
+      entity: "<actual public Entity definition>"
+      declaration: "<the same Entity's actual public Declaration>"
+
+  capabilities:
+    required: true
+    purpose: "The fixed discovery operations supported by EntityCatalog."
+    shape:
+      entries: "Return the ordered immutable EntityEntry collection."
+      get: "Return the EntityEntry whose name exactly matches a logical Entity name, or null when none exists."
+      contains: "Report whether an actual Entity definition is a public member of this Model."
+      declaration_of: "Return the actual public Declaration for a public Entity definition, or null when it is not a public member."
+
+# <!--------------------------------------------------------------------------------- Rules -->
+rules:
+  stable_shape: "Changing Entity membership, Fields, metadata, files, packages, libraries, or implementation language never changes the conceptual Interface structure."
+  membership_change: "Adding or removing an Entity changes only EntityCatalog membership; it is not an Interface-structure change."
+  actual_references: "EntityEntry.entity and EntityEntry.declaration reference the actual public Entity and Declaration; they are never copies, wrappers, aliases, or reconstructed metadata."
+  exact_identity: "EntityEntry.name is the exact case-sensitive logical Entity name and is unique within EntityCatalog."
+  exact_order: "EntityCatalog preserves Target Entity order."
+  single_discovery_path: "Consumers discover Model Entities only through EntityCatalog and never through wildcard exports, __all__, reflection over package attributes, directory scanning, or internal module paths."
+  ready_catalog: "Interface publishes one ready-to-use EntityCatalog value; consumers never construct, populate, or mutate the Catalog."
+  fixed_root_members: "Interface does not publish one root symbol per Entity; Entity membership exists only as EntityCatalog Entries."
+  consumer_independence: "A consumer that iterates EntityCatalog requires no contract edit when Entity membership changes."
+  side_effect_free: "Loading Model Interface creates no Entity instance, data, connection, file, process, or other external effect."
+  immutable_publication: "EntityCatalog and EntityEntry membership and references cannot change after Interface loading."
+  contract_change: "Changing EntityCatalog meaning, EntityEntry shape, capability meaning, or a fixed public symbol requires an explicit Schema version change and consumer review."
+  conformance: "Generation validates exact membership, order, identity, actual-reference equality, capability behavior, immutability, side-effect freedom, and absence of alternate discovery contracts."
+
+# <!--------------------------------------------------------------------------------- Example -->
+example: |
+  entity_catalog:
+    entries:
+      - name: "User"
+        entity: "<actual User Entity>"
+        declaration: "<actual User Declaration>"
+      - name: "Account"
+        entity: "<actual Account Entity>"
+        declaration: "<actual Account Declaration>"
+    capabilities:
+      - "entries"
+      - "get"
+      - "contains"
+      - "declaration_of"

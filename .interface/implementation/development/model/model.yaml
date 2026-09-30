@@ -2,9 +2,9 @@
 meta:
   path: ".interface/implementation/development/model/model.yaml"
   path_note: "The Preferences layer of the Model Component."
-  purpose: "Configurable component, layout, language, technical realization, Entity defaults, and documentation choices for Model."
+  purpose: "Configurable component, stable Interface realization, layout, language, Entity defaults, and documentation choices for Model."
   standard: "Agent Project Interface"
-  version: "14.0"
+  version: "15.0"
   updated: "2026-09-30"
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -16,14 +16,15 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings for Model identity, platform, and defaults; read layout for the configurable names of Interface, Entity, Core, Declaration, and Foundation artifacts; resolve the selected language and its naming, symbols, capabilities, package, and method names from development; then apply documentation preferences. Preserve every explicit Target property, including false and null, and never write resolved values back into this file."
+  consumption: "Read settings for Model identity, platform, and defaults; read interface and its Foundation Schema as the mandatory stable consumer boundary; read layout for physical artifacts; resolve the selected language and its naming, symbols, capabilities, package, and method names from development; then apply documentation preferences. Preserve every explicit Target property, including false and null, and never write resolved values back into this file."
   selection: "Preserve explicit compatible Target choices. Use these Preferences only for choices the Target leaves unstated. Use compatible professional judgment under Model Principles only when neither authority supplies a choice, and record a consequential realization choice with the implementation."
   version_resolution: "Resolve Model-owned versioned technical items from the selected language in development. Resolve latest-compatible to a concrete compatible version and preserve that resolution in dependency or lock metadata."
-  matching: "An explicit compatible Target property always takes priority. Every Entity receives the mandatory id and is_active Fields defined by Model; Preferences complete only their missing properties. Every other Field originates in Target, and a Preference may complete only a missing property of that existing Field. A Preference never creates another Field, removes or renames Target meaning, or overrides an explicit value."
+  matching: "An explicit compatible Target property always takes priority. Every Entity receives the mandatory id and is_active Fields defined by Model; Preferences complete only their missing properties. Every other Field originates in Target. Interface always conforms to the referenced Model Interface Schema: Target Entity changes update EntityCatalog membership only and never replace its fixed structure."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - "settings: identify Model, its platform, and the defaults used only when mandatory or Target-declared Field properties are missing."
+  - "interface: apply the fixed Model Interface Schema, public symbols, EntityEntry shape, and EntityCatalog capabilities."
   - "layout: resolve the configurable physical names of Model's Interface, Entity, Core, Declaration, and Foundation artifacts."
   - "development: resolve the default language and that language's capabilities, naming, symbols, methods, package, and realization."
   - "documentation: apply the required Model documentation structure and examples."
@@ -31,6 +32,7 @@ read_order:
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
   - settings
+  - interface
   - layout
   - development
   - documentation
@@ -60,6 +62,33 @@ content:
         generated_identifier: "uuid4"
         # Alternatives include uuid1 and ulid.
 
+  # <!-------------------------------------------- interface -->
+  interface:
+    schema: ".interface/foundation/schema/model-interface.yaml"
+    contract_version: "1.0"
+    fixed: true
+    publication:
+      catalog:
+        symbol: "Entities"
+        kind: "ready immutable value"
+      entry:
+        symbol: "EntityEntry"
+        kind: "immutable value contract"
+      per_entity_root_exports: false
+    catalog:
+      membership: "Every Target Entity exactly once in Target order"
+      immutable_after_load: true
+      capabilities:
+        entries: "entries"
+        get: "get"
+        contains: "contains"
+        declaration_of: "declaration_of"
+    entry:
+      members:
+        name: "name"
+        entity: "entity"
+        declaration: "declaration"
+
   # <!-------------------------------------------- layout -->
   layout:
     directories:
@@ -86,6 +115,8 @@ content:
         symbols:
           declaration: "Declaration"
           foundation: "Foundation"
+          entity_catalog: "Entities"
+          entity_entry: "EntityEntry"
         foundation:
           methods:
             to_json: "to_json"
@@ -113,7 +144,7 @@ content:
       - troubleshooting
     sections:
       overview: "Give one concise introduction and one simple example using one Entity."
-      interface: "List every public Entity once in Target order, with its description, complete Field table, and Entity Metadata outside that table. Do not put usage examples in this section."
+      interface: "Explain the fixed EntityCatalog and EntityEntry contract, then list every Catalog member once in Target order with its description, complete Field table, and Entity Metadata outside that table. Show consumers using Catalog rather than wildcard exports, __all__, reflection, directory scanning, or internal paths."
       declaration: "Show how a consumer reads one Entity's public Declaration, including Fields, Primary Key, Relations, Uniqueness Constraints, and Indexes."
       foundation: "Give one example for each Foundation capability, then one complete Entity-to-JSON-object-to-Entity round trip."
-      verify: "Verify public import, construction of a representative Entity, access to its Declaration, and a lossless JSON Object round trip."
+      verify: "Verify Schema-conformant Interface shape, exact Catalog membership and order, actual Entity and Declaration references, capability behavior, immutability, side-effect freedom, representative Entity construction, and a lossless JSON Object round trip."
