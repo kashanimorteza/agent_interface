@@ -26,13 +26,9 @@ Model defines and publishes the project's reusable data-model Entities and their
 
 Model defines flat, technology-independent Entities. Every Entity carries its own Fields, Entity Metadata, and public Declaration without nesting another Entity.
 
-<br>
-
 ### Purpose
 
 Model gives every consumer one reusable public representation of the Target's data meaning without prescribing who consumes it or how it is used.
-
-<br>
 
 ### How It Works
 
@@ -75,13 +71,12 @@ Interface follows the fixed Model Interface Schema and publishes one stable Enti
 ## Architecture
 
     Model
-    ├── interface  [Entities: EntityCatalog, EntityEntry]
+    ├── interface
     ├── entity/
     │   └── <entity>
     ├── core/
     │   ├── declaration
-    │   ├── foundation
-    │   └── optional private base and helper units
+    │   └── foundation
     └── README.md
 
 The names shown are defaults selected by Model Preferences. Responsibilities and ownership remain fixed when a selected language changes their physical casing, extension, symbol, or package representation.
@@ -201,8 +196,6 @@ Every Principle below is mandatory and belongs to the Architecture or Layering c
 **Why:** Correct meaning must be delivered as clean, usable source.
 **Boundary:** Language-required technical artifacts do not create Model meaning, and disabled persistent testing prevents a permanent test suite rather than verification.
 
-<br>
-
 ### Interface
 
 #### Model Interface follows one stable Schema
@@ -222,8 +215,6 @@ Every Principle below is mandatory and belongs to the Architecture or Layering c
 **Rule:** Consumers discover Entities only through EntityCatalog. Interface does not publish one root symbol per Entity. Consumers do not use wildcard exports, `__all__`, package reflection, dynamic attribute discovery, directory scanning, Entity-unit paths, or another consumer-owned registry. Loading Interface creates no Entity instance and performs no network, storage, runtime-configuration, data-creation, or other external side effect.
 **Why:** One explicit discovery path remains portable and predictable for every consumer.
 **Boundary:** Declaration and Foundation remain public through actual Entities and their public Core contracts. Model publishes no consumer behaviour or realization.
-
-<br>
 
 ### Entity
 
@@ -287,8 +278,6 @@ Every Principle below is mandatory and belongs to the Architecture or Layering c
 **Why:** Domain names remain understandable without technical context while source follows its language.
 **Boundary:** Language-specific naming belongs to that language's Preferences and never changes names stored in Declaration.
 
-<br>
-
 ### Core
 
 #### Declaration exposes one canonical logical contract
@@ -308,8 +297,6 @@ Every Principle below is mandatory and belongs to the Architecture or Layering c
 **Rule:** Declaration and Foundation are public Core contracts available through their own units and through the capabilities each Entity exposes. Optional base definitions, validation mechanisms, compatibility adapters, and other helpers remain private unless this Definition explicitly promotes them.
 **Why:** Consumers receive complete Model meaning without depending on realization internals.
 **Boundary:** A language may realize these contracts with classes, records, functions, annotations, or another native construct; language-specific symbol and method names belong only to that language's Preferences.
-
-<br>
 
 ### Documentation
 
@@ -368,8 +355,6 @@ Every obligation below derives from the Principle with the same title.
 - **Must** — produce a clean, installable, importable package that passes applicable technology checks.
 - **Never** — emit unnecessary, dead, duplicate, cached, compiled, machine-specific, Agent-identifying, or timestamped output.
 
-<br>
-
 ### Interface
 
 **Model Interface follows one stable Schema**
@@ -386,8 +371,6 @@ Every obligation below derives from the Principle with the same title.
 
 - **Must** — require every consumer to discover Entities through EntityCatalog and load it without external side effects.
 - **Never** — publish per-Entity root symbols or require wildcard exports, `__all__`, reflection, attribute discovery, directory scanning, internal paths, or a consumer-owned registry.
-
-<br>
 
 ### Entity
 
@@ -441,8 +424,6 @@ Every obligation below derives from the Principle with the same title.
 - **Must** — preserve logical Target names and apply language-specific physical naming deterministically.
 - **Never** — silently translate, pluralize, alias, or repair a collision.
 
-<br>
-
 ### Core
 
 **Declaration exposes one canonical logical contract**
@@ -459,8 +440,6 @@ Every obligation below derives from the Principle with the same title.
 
 - **Must** — keep Declaration and Foundation public and realization helpers private.
 - **Never** — force every language to use a class or expose a helper as public contract.
-
-<br>
 
 ### Documentation
 
