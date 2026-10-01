@@ -2,7 +2,7 @@
 
 ## Overview
 
-Storage is Logic's internal gateway to Database. Its one class, `Storage`, takes one Database access when it is created and offers one method for every capability Database Interface publishes, with exactly the same name and parameters. Each method hands the request to Database unchanged and returns Database's answer unchanged; Storage adds no behaviour of its own. Every other Logic Service reaches Database only through it.
+Storage is Logic's internal gateway to Database. Its one class, `Storage`, takes one Database access when it is created and offers one method for every capability Database Interface publishes, with exactly the same name and parameters. Each method hands the request to Database unchanged and returns Database's answer unchanged; Storage adds no behaviour of its own.
 
 ```python
 from logic.services.storage.interface import Storage
@@ -77,15 +77,13 @@ except ConnectionFailureError as error:
 
 ## Use
 
-A Logic Service imports from the Storage Interface directly and never from Database Interface or `logic.interface`:
+A Logic Service imports from the Storage Interface directly:
 
 ```python
 from logic.services.storage.interface import Storage
 
 storage = Storage()
 ```
-
-Storage is not published through `logic.interface` unless its publication setting is enabled.
 
 ## Verify
 

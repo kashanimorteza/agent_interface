@@ -1,6 +1,6 @@
 schema:
   id: "agent-interface-logic-storage-interface"
-  version: "2.1"
+  version: "2.2"
   purpose: "The stable, language-independent structure of the Storage Service Interface inside Logic: Logic's complete and unchanged gateway to every public Database capability."
   kind: "Interface structure standard"
   applies_when: "The Implementation declares a Logic Component, which always contains Storage Service."
@@ -18,7 +18,7 @@ structure:
     purpose: "One gateway structure in the Core layer, its unit and structure named by Storage Service Preferences, that offers exactly one Action for every capability Database Interface actually publishes."
     source: "Database Interface, located through the provider_location rule from Database Preferences. Storage reads only what that Interface publishes, never Database's structure files."
     construction: "Creating the gateway takes one access to Database; every Action uses that same access."
-    membership: "One Action per Entity Operation, Database-wide Operation, and Lifecycle Command that Database Interface publishes, including prepare, in the order Database publishes them. A capability added to or removed from Database Interface adds or removes its Action."
+    membership: "One Action per capability Database Interface publishes, in the order Database publishes them. A capability added to or removed from Database Interface adds or removes its Action."
     naming: "Fixed: each Action has exactly its Database capability's name, with no prefix. No Action is renamed."
     parameters: "Exactly the parameters of the corresponding published Database capability, with the same names, order, and defaults."
     effect: "Forwards every argument unchanged through the held Database access and performs no other work."
@@ -32,9 +32,6 @@ structure:
 
 # <!--------------------------------------------------------------------------------- Rules -->
 rules:
-  complete_mirror: "Storage Service Interface publishes exactly the Core gateway, with one Action per Database capability, and every republished contract above, and nothing else."
-  unchanged: "No Action renames a parameter, changes an order or default, adds a wrapper, converts a value, or catches and replaces an error."
-  same_objects: "Every republished contract is the identical object Database Interface publishes; no alternate type, enum, or error class exists."
   no_behaviour: "No Action adds validation, retry, selection of an Engine or default Instance, or any rule of its own."
   internal_hidden: "Action implementations and Database internals are never published."
   side_effect_free: "Loading the Interface opens no connection and creates no data or file."
