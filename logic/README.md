@@ -398,7 +398,3 @@ True False
 ### A Service identity is invalid or collides
 
 Loading `logic.interface` raises `ConfigurationError` when a configured Service name or location is not a valid identifier, is a reserved word, or equals another Service's name or location after normalization. The message names the value, for example `'Entity Service' is not a valid identifier.`. Logic never repairs, suffixes, or renames an identity: correct the configured value in Logic's Preferences and regenerate.
-
-### Storage does not match Database Interface
-
-Loading Logic raises `ConfigurationError` when the Storage gateway does not publish exactly one Action for every capability Database Interface publishes and every contract it publishes, for example `... missing ['storage_archive'], unexpected [].`. This happens when Database Interface changes after Logic was generated; regenerate Logic so that Storage follows it.

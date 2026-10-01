@@ -1,6 +1,6 @@
 schema:
   id: "agent-interface-logic-storage-interface"
-  version: "1.2"
+  version: "2.1"
   purpose: "The stable, language-independent structure of the Storage Service Interface inside Logic: Logic's complete and unchanged gateway to every public Database capability."
   kind: "Interface structure standard"
   applies_when: "The Implementation declares a Logic Component, which always contains Storage Service."
@@ -11,17 +11,17 @@ structure:
 
   interface:
     required: true
-    purpose: "The Storage Service entrypoint. It publishes exactly the Actions and republished contracts below, each importable by another Logic Service, and nothing else."
+    purpose: "The Storage Service entrypoint. It publishes exactly the Core gateway and the republished contracts below, each importable by another Logic Service, and nothing else."
 
-  actions:
+  core:
     required: true
-    purpose: "Exactly one Action for every capability Database Interface actually publishes."
+    purpose: "One gateway structure in the Core layer, its unit and structure named by Storage Service Preferences, that offers exactly one Action for every capability Database Interface actually publishes."
     source: "Database Interface, located through the provider_location rule from Database Preferences. Storage reads only what that Interface publishes, never Database's structure files."
-    membership: "One Action per Entity Operation, Database-wide Operation, and Lifecycle Command that Database Interface publishes, including prepare. A capability added to or removed from Database Interface adds or removes its Action."
-    naming: "Fixed: <service>_<action> — the configured Service name, one underscore, then the Database capability name, in the selected language's identifier case. No Action is renamed."
-    location: "Every Action lives in one fixed unit named actions inside the Storage Service directory; no Action has a unit of its own."
+    construction: "Creating the gateway takes one access to Database; every Action uses that same access."
+    membership: "One Action per Entity Operation, Database-wide Operation, and Lifecycle Command that Database Interface publishes, including prepare, in the order Database publishes them. A capability added to or removed from Database Interface adds or removes its Action."
+    naming: "Fixed: each Action has exactly its Database capability's name, with no prefix. No Action is renamed."
     parameters: "Exactly the parameters of the corresponding published Database capability, with the same names, order, and defaults."
-    effect: "Forwards every argument unchanged through Database Interface and performs no other work."
+    effect: "Forwards every argument unchanged through the held Database access and performs no other work."
     returns: "Exactly the result of the corresponding Database capability, unchanged."
     errors: "Exactly the errors the Database capability raises, unchanged."
 
@@ -32,7 +32,7 @@ structure:
 
 # <!--------------------------------------------------------------------------------- Rules -->
 rules:
-  complete_mirror: "Storage Service Interface publishes exactly one Action per Database capability and every republished contract above, and nothing else."
+  complete_mirror: "Storage Service Interface publishes exactly the Core gateway, with one Action per Database capability, and every republished contract above, and nothing else."
   unchanged: "No Action renames a parameter, changes an order or default, adds a wrapper, converts a value, or catches and replaces an error."
   same_objects: "Every republished contract is the identical object Database Interface publishes; no alternate type, enum, or error class exists."
   no_behaviour: "No Action adds validation, retry, selection of an Engine or default Instance, or any rule of its own."
@@ -43,15 +43,15 @@ rules:
 # <!--------------------------------------------------------------------------------- Example -->
 example: |
   from logic.services.storage.interface import (
-      storage_add, storage_list, storage_prepare,
-      DatabaseInstance, Filter, FilterOperator, ConnectionFailureError,
+      ConnectionFailureError, DatabaseInstance, Filter, FilterOperator, Storage,
   )
   from model.interface import User
 
-  storage_add(User(name="Admin", ...))
-  storage_list(User, filters=[Filter(User.is_active, FilterOperator.EQUALS, True)],
+  storage = Storage()
+  storage.add(User(name="Admin", ...))
+  storage.list(User, filters=[Filter(User.is_active, FilterOperator.EQUALS, True)],
                instance=DatabaseInstance.SQLITE)
   try:
-      storage_prepare()
+      storage.prepare()
   except ConnectionFailureError:
       ...

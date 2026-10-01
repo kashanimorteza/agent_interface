@@ -2,9 +2,9 @@
 meta:
   path: ".interface/implementation/development/logic/services/storage/storage.yaml"
   path_note: "The Preferences layer of the fixed Storage Role inside the Logic Component."
-  purpose: "Configurable name, publication, Action naming, Interface Schema reference, and layout for Storage Service."
+  purpose: "Name, directory, publication, Interface Schema reference, layout, development, and documentation for Storage Service."
   standard: "Agent Project Interface"
-  version: "5.0"
+  version: "6.0"
   updated: "2026-10-01"
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -16,22 +16,26 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings to preserve the fixed Logic owner and Storage Role and resolve the Service name and publication setting; read interface for the Interface Schema; then read layout. Locate Database Interface through the provider_location rule and derive exactly one Action from every capability it publishes; never read Database's structure files. Resolve the language and shared development conventions from Logic Preferences."
+  consumption: "Read settings, interface, layout, development, and documentation in that order. Locate Database Interface through the provider_location rule and derive exactly one Action from every capability it publishes; never read Database's structure files."
   selection: "Use these defaults when the Target is silent. Preserve an explicit compatible Target choice; raise an unresolved incompatible choice rather than inventing one."
   version_resolution: "Storage Service introduces no independently versioned technology; versions resolve through Logic and Development Preferences."
-  matching: "Name every Action by the naming rule of the Logic Storage Interface Schema; no Action is renamed by hand."
+  matching: "Give every Action exactly its Database capability's name; no Action is renamed by hand."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - settings
   - interface
   - layout
+  - development
+  - documentation
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  settings: "The fixed Logic owner and Storage Role, the configurable Service name, and the publication setting."
-  interface: "The related Definition and the Logic Storage Interface Schema with its version."
-  layout: "The physical names of the Service's directory and Interface file."
+  settings: "The fixed Logic owner and Storage Role, the configurable Service name and directory, and the publication setting."
+  interface: "The Logic Storage Interface Schema and its version."
+  layout: "The physical names of the Interface and Core files."
+  development: "Development capabilities and the selected language with its realization profile."
+  documentation: "The documentation file, its location, its section order, and the content of each section."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
@@ -43,18 +47,48 @@ content:
     service:
       role: "storage"
       name: "Storage"
+      directory: "storage"
       publish_in_logic_interface: false
 
   # <!-------------------------------------------- interface -->
   interface:
-    definition: ".interface/implementation/development/logic/services/storage/storage.md"
     schema: ".interface/foundation/schema/logic-storage-interface.yaml"
-    contract_version: "1.2"
+    contract_version: "2.1"
 
   # <!-------------------------------------------- layout -->
   layout:
-    naming:
-      identifier_case: "snake_case"
-    directory: "storage"
     files:
       interface: "interface"
+      core: "core"
+
+  # <!-------------------------------------------- development -->
+  development:
+    capabilities:
+      testing: false
+      error_handling: false
+      logging: false
+    language:
+      selected: "python"
+      options:
+        python:
+          identifier_case: "snake_case"
+          structure: "class Storage in the core file"
+          constructor: "__init__ creates one Database() and keeps it on the instance"
+          methods: "One method per Database capability, in the order Database Interface publishes them, with the capability's exact name, signature, and docstring; each calls the kept Database's method with every argument, in order."
+          republish: "Every contract is imported directly from Database Interface and republished. The interface file holds only these imports and the published list; it performs no check, because conformance belongs to Review."
+
+  # <!-------------------------------------------- documentation -->
+  documentation:
+    file: "README.md"
+    location: "the Storage Service directory"
+    format: "markdown"
+    order:
+      - overview
+      - interface
+      - use
+      - verify
+    sections:
+      overview: "What Storage is and why it exists, in one paragraph, with one simple example."
+      interface: "Every Action and every republished contract, each with one example."
+      use: "How another Logic Service imports from the Storage Interface."
+      verify: "How to see that Storage matches Database Interface."

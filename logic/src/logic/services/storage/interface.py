@@ -19,25 +19,7 @@ from database.interface import (
     OrderDirection,
 )
 
-from logic.services.storage.actions import (
-    storage_add,
-    storage_count,
-    storage_create_tables,
-    storage_delete,
-    storage_disable,
-    storage_enable,
-    storage_execute_command,
-    storage_get_by_id,
-    storage_insert_initial_data,
-    storage_list,
-    storage_max,
-    storage_min,
-    storage_prepare,
-    storage_sum,
-    storage_truncate,
-    storage_update,
-)
-from logic.services.storage.naming import verify_exports as _verify_exports
+from logic.services.storage.core import Storage
 
 __all__ = [
     "CommandResult",
@@ -56,22 +38,5 @@ __all__ = [
     "LifecycleResult",
     "Order",
     "OrderDirection",
-    "storage_add",
-    "storage_count",
-    "storage_create_tables",
-    "storage_delete",
-    "storage_disable",
-    "storage_enable",
-    "storage_execute_command",
-    "storage_get_by_id",
-    "storage_insert_initial_data",
-    "storage_list",
-    "storage_max",
-    "storage_min",
-    "storage_prepare",
-    "storage_sum",
-    "storage_truncate",
-    "storage_update",
+    "Storage",
 ]
-
-_verify_exports(__all__)

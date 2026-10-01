@@ -263,6 +263,8 @@ One or two paragraphs placing the Component's technical choices outside this fil
 
 A Component still states where its technical choices or declarations belong even when its Implementation Preferences or Agent Preferences contain no entries. Explicit absence is not a reason to omit the layering statement.
 
+Layering may carry one third-level heading per layer, explaining what the layer is and how it is built, as concepts only. It names no language, package, file, or language construct such as a class; those details live in the development section of the Component's Preferences. An obligation about a layer is stated as a Principle, not here.
+
 
 <!--------------------------------------------------------------------------------- Authority --->
 <br>

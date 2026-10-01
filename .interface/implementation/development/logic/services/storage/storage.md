@@ -24,7 +24,7 @@ Storage Service is the fixed internal Logic Service whose Interface gives other 
 
 ### Overview
 
-Storage Service is one of the two fixed internal Services of every Logic Component. It is Logic's complete gateway to Database: for every capability Database Interface publishes — every Entity Operation, Database-wide Operation, and Lifecycle Command — it provides one corresponding Action. Its Interface also republishes the Database contracts those Actions need. Storage does nothing of its own: each Action only hands its request to Database and returns Database's answer. Its implementation remains internal, and its Interface is not published through Logic Interface by default.
+Storage Service is one of the two fixed internal Services of every Logic Component. It is Logic's complete gateway to Database: for every capability Database Interface publishes — every Entity Operation, Database-wide Operation, and Lifecycle Command — its one Storage gateway provides one corresponding Action. Its Interface publishes that gateway and republishes the Database contracts those Actions need. Storage does nothing of its own: each Action only hands its request to Database and returns Database's answer. Its implementation remains internal, and its Interface is not published through Logic Interface by default.
 
 ### Purpose
 
@@ -32,7 +32,7 @@ Logic Services need one controlled route to persistence, so that no Service reac
 
 ### How It Works
 
-For every capability Database Interface publishes, Storage Service creates one Action, named from the Service name and the capability name.
+Storage Service publishes one Storage gateway. When created, the gateway takes one access to Database, and for every capability Database Interface publishes it offers one Action with the same name.
 
 <br>
 
@@ -41,7 +41,8 @@ For every capability Database Interface publishes, Storage Service creates one A
 
 - **Storage Role** — the fixed identity of this Service inside Logic, independent of its configurable name.
 - **Storage Service Interface** — this Service's outward gateway for internal Logic collaboration, exposed unchanged through Logic Interface only when Service Interface Publication is enabled.
-- **Action** — one Storage Service capability corresponding to one capability published by Database Interface.
+- **Core** — the layer holding this Service's one gateway structure, which holds one Database access and offers every Action.
+- **Action** — one operation of the Core gateway, named and shaped exactly like one capability published by Database Interface.
 - **Logic Storage Interface Schema** — the versioned structure that fixes the exact shape of Storage Service Interface.
 
 <br>
@@ -52,7 +53,7 @@ For every capability Database Interface publishes, Storage Service creates one A
 ```text
 Storage Service
 ├── Interface   ← the gateway, in the shape the Logic Storage Interface Schema defines
-└── Actions     ← one unit holding every Action
+└── Core        ← the gateway structure that offers every Action
 ```
 
 <br>
@@ -77,11 +78,11 @@ Storage Service
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-Storage Service Preferences own its configurable name, publication setting, and layout. The shape of its Interface belongs to the Logic Storage Interface Schema.
+Storage Service Preferences own its configurable name, directory, publication setting, layout, language and realization, and documentation. The shape of its Interface belongs to the Logic Storage Interface Schema.
 
 ### Interface
 
-The outward gateway of Storage Service. Internal Logic Services may import it directly; Logic Interface exposes it unchanged under the configured Service name only when Service Interface Publication is enabled. It meets these needs:
+The gateway other Logic Services import from. It publishes the Core gateway and the Database contracts it needs. Internal Logic Services may import it directly; Logic Interface exposes it unchanged under the configured Service name only when Service Interface Publication is enabled. It meets these needs:
 
 1. **Complete** — exactly one Action for every capability Database Interface publishes, changing automatically when Database's capabilities change, so Storage never falls behind Database.
 2. **Unchanged** — every Action passes the Database capability's input, result, and errors through exactly, so Database stays the only authority for storage.
@@ -91,9 +92,9 @@ The outward gateway of Storage Service. Internal Logic Services may import it di
 
 The exact shape of these needs is fixed by the Logic Storage Interface Schema, which is built from them. These needs are the reference: when the two differ, the Schema is corrected to match them.
 
-### Actions
+### Core
 
-One unit that holds every Action.
+The layer that holds the one gateway structure, in one unit, and every Action. When the gateway is created, it takes one access to Database, and every Action uses that same access. For every capability Database Interface publishes, it offers one Action with the same name and the same parameters; the Action hands the request to that capability and returns its answer.
 
 <br>
 
@@ -127,17 +128,27 @@ Every Principle below is mandatory and belongs to the category that owns it.
 **Why:** Every Logic Service depends on one exact gateway instead of reinterpreting each realization.
 **Boundary:** Republishing supporting contracts exposes no Engine, connection, credential, session, mapping, configuration, storage path, or other private Database detail. Changing the structure itself requires a Schema version change.
 
-#### Every Action is named from the Service and the capability
-
-**Rule:** Every Action name is formed only from the configured Service name and the Database capability name, by the fixed naming rule of the Logic Storage Interface Schema, normalized only by the selected language's identifier convention. No Action is renamed by hand.
-**Why:** An Action remains visibly owned by Storage Service and maps to exactly one Database capability.
-**Boundary:** The name identifies the Storage Action; it never renames or alters the Database capability.
-
 #### Storage Interface identifiers are valid and unique
 
-**Rule:** The configured Service name, every final Action name, and every public Interface export are valid for the selected language and unique after declared normalization. An Action name never collides with a republished contract.
+**Rule:** The configured Service name, every Action name, and every public Interface export are valid for the selected language and unique after declared normalization. An Action name never collides with a republished contract.
 **Why:** Two Database capabilities cannot share one callable Action and an invalid identifier cannot be realized safely.
 **Boundary:** An invalid, reserved, or colliding value stops generation with a clear configuration error. The generator never invents a suffix, number, or silent rename.
+
+<br>
+
+### Core
+
+#### Every Action is named exactly as its Database capability
+
+**Rule:** Every Action has exactly the name of its Database capability, with no prefix or change. No Action is renamed by hand.
+**Why:** Storage mirrors Database one to one, so whoever knows Database already knows Storage.
+**Boundary:** The name identifies the Storage Action; it never renames or alters the Database capability.
+
+#### Every Action works only through Database Interface
+
+**Rule:** Every Action handles its Database capability only by calling that capability through Database Interface, using the one Database access the Core gateway took when it was created.
+**Why:** One route keeps every Action a faithful mirror of Database and keeps Database's internals out of Logic.
+**Boundary:** An Action never reaches a Database implementation detail, another Logic Service, or Logic Interface.
 
 <br>
 
@@ -158,8 +169,8 @@ Every Principle below is mandatory and belongs to the category that owns it.
 - Each Action has the same parameter names, order, and defaults as its Database capability.
 - Each Action returns its Database capability's result and raises its errors unchanged.
 - Every republished contract, including every Database error, is the identical object Database Interface publishes.
-- No Action adds validation, retry, or a rule of its own.
-- Every Action name follows the naming rule of the Logic Storage Interface Schema, and every Action lives in the one Actions unit.
+- No Action adds validation, retry, Engine or default-Instance selection, or a rule of its own.
+- Every Action is an operation of the one Core gateway, has exactly its Database capability's name, and uses the one Database access that gateway holds.
 - No other Logic Service reaches Database Interface directly.
 - Logic Interface publishes Storage Service Interface only when Service Interface Publication is enabled.
 - Loading the Interface opens no connection and creates no data or file.
@@ -190,15 +201,24 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — Conform every realization to the Logic Storage Interface Schema.
 - **Never** — Publish anything the Schema does not list or change its structure without a Schema version change.
 
-**Every Action is named from the Service and the capability**
-
-- **Must** — Name every Action from the Service name and the Database capability name by the Schema's naming rule.
-- **Never** — Rename an Action by hand.
-
 **Storage Interface identifiers are valid and unique**
 
 - **Must** — Keep every Service name, Action name, and export valid and unique after normalization.
 - **Never** — Resolve a collision by inventing a suffix, number, or silent rename.
+
+<br>
+
+### Core
+
+**Every Action is named exactly as its Database capability**
+
+- **Must** — Give every Action exactly its Database capability's name.
+- **Never** — Rename an Action by hand.
+
+**Every Action works only through Database Interface**
+
+- **Must** — Handle every Database capability through Database Interface with the one Database access the Core gateway holds.
+- **Never** — Reach a Database implementation detail, another Logic Service, or Logic Interface from an Action.
 
 <br>
 
