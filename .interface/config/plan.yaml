@@ -26,7 +26,7 @@ content_map:
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
-  task_count: 97
+  task_count: 151
   plans:
     P1:
       id: "P1"
@@ -2335,3 +2335,1349 @@ content:
                   log_entry: "006"
                   transition: "claimed -> done"
                   note: "Wrote the Verify and Troubleshooting sections. Verify is one script that checks the public import (exactly the 17 published names), Instance selection (one active member, the default equals the explicit member), the closed query vocabulary, each capability group on a scratch record it removes again, persistent storage (a new gateway sees the record, and the file lives in the Component's db directory), and repeatable Lifecycle Commands. Troubleshooting covers exactly three Database concerns: an inactive Instance, a difference between an existing Table and its Entity, and empty Initial Data values. Observed: all 29 python blocks of the finished README ran in order in a clean prepared copy with no exception and all 27 printed outputs equal the README's, including the Verify script printing OK."
+    P3:
+      id: "P3"
+      title: "Logic"
+      order: 3
+      target: "Logic"
+      does: "Deliver the reusable Logic layer that organizes the application's Behaviour into Services, gives every Model Entity one bound Entity-oriented Child Service over Logic's only route to Database, and publishes the publication-enabled Service Interfaces through one root Interface."
+      constraints: []
+      task_count: 54
+      groups:
+        "P3-G1":
+          id: "P3-G1"
+          title: "Logic library establishment"
+          description: "Makes Logic an independent, consumable unit that holds every later result of this phase and reaches Model and Database only through their published Interfaces."
+          area: "Independent delivery of the Logic layer"
+          does: "A Logic library exists that can be set up reproducibly alongside Model and Database and loaded by a consumer without any other Component."
+          constraints: []
+          task_count: 1
+          tasks:
+            "P3-G1-T01":
+              id: "P3-G1-T01"
+              source_id: "007"
+              title: "Establish the Logic library as an independent consumable unit"
+              description: "Create the unit that will hold the Logic layer so that it can be set up from nothing together with the Model and Database it consumes, resolves its own dependencies reproducibly, starts no process, and relies on no Component other than Model and Database."
+              reason: "Every later result of this phase needs a place to live that other Components can consume without reaching into private resources."
+              inputs: ["The published Model Interface", "The published Database Interface"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "An empty but complete Logic library that a consumer can set up and load, with its own reproducible dependency resolution and access to Model and Database through their published Interfaces."
+              depends_on: ["P1-G4-T02", "P2-G4-T12"]
+              constraints: []
+              acceptance: "The library sets up in a clean environment together with Model and Database and loads successfully, loading starts no process, and it depends on no Component other than Model and Database."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:16:51Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P1-G4-T02 and P2-G4-T12 are done."
+                - at: "2026-10-01T10:17:20Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Created the Component root logic/ (src layout, package logic) with uv; replaced the initializer's sample function, placeholder description, and author entry; declared database and model as runtime dependencies resolved from the sibling Components by path (editable) and ruff and pyright as development dependencies; the type checker's environment and Python 3.14 settings are in the manifest like its siblings; uv.lock holds the concrete versions. Observed: in a clean copy of model, database, and logic with no environment, uv sync installed 14 packages and the package loaded; its only direct requirements are database and model; loading starts no process. Caveat: versions were resolved offline from the local uv cache (pydantic 2.13.5, sqlalchemy 2.0.54, sqlmodel 0.0.47, pyyaml 6.0.3, ruff 0.16.9, pyright 1.1.414) because downloads were unreachable in earlier runs, so they may not be the latest compatible."
+                - at: "2026-10-01T10:32:28Z"
+                  log_entry: "008"
+                  transition: "done -> done"
+                  note: "Quality pass after the later Tasks: the library manifest now also sets one type-checker option (Model's Entity exports are not reported as private imports, because Model's typed package lists them without an export list), recorded in G6-T01. Observed afterwards: formatter, linter, and type checker are clean on all 48 source files, and the library still sets up from nothing in a clean copy and loads."
+        "P3-G2":
+          id: "P3-G2"
+          title: "Core and configuration"
+          description: "The private layer shared across Services and the reserved configuration that holds no value while Logic needs none. Nothing in this area is a consumer-facing Action."
+          area: "Core: shared identity validation and the reserved configuration"
+          does: "Logic holds one private capability that validates identities for every Service and a configuration that requires no runtime value."
+          constraints: []
+          task_count: 2
+          tasks:
+            "P3-G2-T01":
+              id: "P3-G2-T01"
+              source_id: "007"
+              title: "Reserve the Logic configuration with no values"
+              description: "Provide Logic's reserved configuration as an empty record, because no Behaviour in this phase needs a stored or runtime value, and make loading Logic require none."
+              reason: "The configuration's place must exist so that a later value can have its contract declared before it is stored, while Logic stays ready without environment-specific input."
+              inputs: []
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "An empty reserved configuration and a Logic that needs no runtime value."
+              depends_on: ["P3-G1-T01"]
+              constraints: []
+              acceptance: "Logic loads with its configuration empty and requires no value from its environment, and no secret appears in any interface, error, or outcome."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:17:20Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P3-G1-T01 is done."
+                - at: "2026-10-01T10:18:34Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Provided the reserved Logic configuration as a zero-byte record at the Component root; nothing in Logic reads it or the environment, because no Behaviour of this phase needs a value. Observed: the record is 0 bytes; no source line reads configuration or an environment variable; Logic loads with an entirely empty environment (env -i) and with that record empty; no secret exists in any interface, error, or outcome."
+            "P3-G2-T02":
+              id: "P3-G2-T02"
+              source_id: "007"
+              title: "Provide the shared identity validation"
+              description: "Provide one private capability that decides whether a configured name is valid for the selected language, normalizes it only by that language's declared convention, and detects reserved, invalid, and colliding values across a set of identities, reporting each with a clear configuration error and never inventing a suffix, number, or rename."
+              reason: "Logic, Entity Service, and Storage Service each validate identities and must reach the same decision."
+              inputs: []
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "A shared capability that every Service uses to validate its identities and that names the offending value when it rejects one."
+              depends_on: ["P3-G1-T01"]
+              constraints: []
+              acceptance: "A valid, unique set of identities is accepted unchanged, and each of an invalid identifier, a reserved word, and two identities that become equal after normalization is rejected with an error that names the value and produces no replacement."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:17:20Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P3-G1-T01 is done."
+                - at: "2026-10-01T10:18:34Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the private identity validation to Core: it normalizes each identity only by Python's own convention (NFKC), requires a valid identifier, rejects a reserved word, detects two identities equal after normalization, and raises one IdentityError (a ValueError) that names every offending value; it repairs, suffixes, and renames nothing. Observed: a valid unique set was accepted and left unchanged; '1abc' and 'a-b' (invalid identifiers), 'class' (reserved word), 'file' with the ligature spelling (equal after normalization), and a repeated 'x' were each rejected with an error naming the value and no replacement; one call with four problems reported all three distinct ones together."
+                - at: "2026-10-01T10:32:28Z"
+                  log_entry: "008"
+                  transition: "done -> done"
+                  note: "Quality pass after the later Tasks: the identity error now derives from the shared ConfigurationError that every Logic configuration check raises, so one error type reports all of them; its messages are unchanged. Observed afterwards: the same valid set is accepted and the same invalid, reserved, and colliding identities are rejected with errors naming the value, now as ConfigurationError subclasses (full observation scripts re-run clean)."
+        "P3-G3":
+          id: "P3-G3"
+          title: "Storage Service Interface"
+          description: "The outward gateway of Storage Service, used by internal Logic Services. It republishes the supporting contracts of Database and presents every Storage Action, and it is not published through Logic Interface by default."
+          area: "Storage Service: Interface and republished Database contracts"
+          does: "Internal Logic Services can reach every Storage Action and build every request from one gateway that republishes Database's own contracts."
+          constraints: []
+          task_count: 4
+          tasks:
+            "P3-G3-T01":
+              id: "P3-G3-T01"
+              source_id: "007"
+              title: "Republish the active-Instance enumeration"
+              description: "Make the enumeration of active Instances that Database publishes available through the Storage gateway as that same enumeration, without recreating, renaming, converting, or copying it."
+              reason: "A copied enumeration can look identical yet be refused by Database, so every consumer of Storage must receive the original."
+              inputs: ["The active-Instance enumeration published by Database"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "The identical enumeration obtainable through the Storage gateway."
+              depends_on: ["P3-G1-T01"]
+              constraints: []
+              acceptance: "The enumeration obtained through the gateway is the identical object Database publishes, has exactly the same members, and carries no connection value."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:17:20Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P3-G1-T01 is done."
+                - at: "2026-10-01T10:18:34Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Made the Instance enumeration importable through the Storage gateway by importing Database's own enumeration (no copy, rename, or conversion) and listing it in the gateway's published names. Observed: the object obtained through the gateway is the identical object database.interface publishes, its members are the same (SQLITE only, because the other Instance is inactive), and its values are plain member names that carry no connection value."
+            "P3-G3-T02":
+              id: "P3-G3-T02"
+              source_id: "007"
+              title: "Republish the request vocabulary"
+              description: "Make the comparison operators, the ways Filters combine, the ordering directions, and the immutable Filter and Order values that Database publishes available through the Storage gateway as those same contracts."
+              reason: "Conditions and ordering must be built from the contracts Database itself accepts, and a duplicate would be incompatible with them."
+              inputs: ["The query vocabulary and values published by Database"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "The identical five contracts obtainable through the Storage gateway."
+              depends_on: ["P3-G1-T01"]
+              constraints: []
+              acceptance: "Each of the five contracts obtained through the gateway is the identical object Database publishes, and a Filter and an Order built from them are accepted by Database."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:17:20Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P3-G1-T01 is done."
+                - at: "2026-10-01T10:18:34Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Made the five request contracts (FilterOperator, FilterCombination, OrderDirection, Filter, Order) importable through the Storage gateway by importing Database's own objects. Observed: each of the five is the identical object Database publishes, and a Filter and an Order built from the republished objects were accepted by Database (count 1, list ['Admin'] on a prepared disposable copy). Decision: the gateway lists its published names in an __all__ list because the quality tools reject the alias idiom for re-exports; Model's rule against __all__ binds Model only."
+            "P3-G3-T03":
+              id: "P3-G3-T03"
+              source_id: "007"
+              title: "Republish the result contracts"
+              description: "Make the result of a Database-wide Operation and the result of a Lifecycle Command that Database publishes available through the Storage gateway as those same contracts."
+              reason: "Consumers recognize and read a result only through the contract Database returns it as."
+              inputs: ["The result contracts published by Database"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "The identical two result contracts obtainable through the Storage gateway."
+              depends_on: ["P3-G1-T01"]
+              constraints: []
+              acceptance: "Both contracts obtained through the gateway are the identical objects Database publishes, and a result Database returns is an instance of the republished contract."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:17:20Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P3-G1-T01 is done."
+                - at: "2026-10-01T10:18:34Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Made CommandResult and LifecycleResult importable through the Storage gateway by importing Database's own objects. Observed: both are the identical objects Database publishes, and a result returned by Database (an Execute Command and a Create Tables on a prepared disposable copy) is an instance of the republished contract."
+            "P3-G3-T04":
+              id: "P3-G3-T04"
+              source_id: "007"
+              title: "Publish the Storage Service Interface presenting every Action"
+              description: "Provide the outward gateway that presents every Storage Action together with the republished contracts for internal Logic collaboration, keeping the Service implementation and every Database internal out of it."
+              reason: "Entity Service and every other internal Service reach Database only through one discoverable gateway."
+              inputs: ["Every Storage Action", "The republished contracts", "The capability catalogue Database publishes"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "One internal gateway whose Actions correspond one-to-one to the capabilities Database currently publishes."
+              depends_on: ["P3-G3-T01", "P3-G3-T02", "P3-G3-T03", "P3-G4-T01", "P3-G4-T02", "P3-G4-T03", "P3-G4-T04", "P3-G4-T05", "P3-G4-T06", "P3-G4-T07", "P3-G4-T08", "P3-G4-T09", "P3-G4-T10", "P3-G4-T11", "P3-G4-T12", "P3-G4-T13", "P3-G4-T14", "P3-G4-T15", "P3-G4-T16", "P3-G4-T19"]
+              constraints: []
+              acceptance: "The gateway presents exactly one Action for every Entity Operation, Database-wide Operation, and Lifecycle Command Database currently publishes and nothing else apart from the republished contracts, a capability Database newly publishes receives its Action without any override, and no Engine, connection, credential, session, mapping, configuration, or storage location is reachable through it."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:21:57Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G3-T01 to T03, P3-G4-T01 to T16, and P3-G4-T19 are done."
+                - at: "2026-10-01T10:22:46Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the Storage Service Interface: it imports the 16 Action functions and the 8 republished Database contracts explicitly and lists exactly those 24 names, and at load it checks through the Storage naming that the published names are exactly one Action per capability Database currently publishes plus the contracts, stopping with a ConfigurationError otherwise. A first observation found the verification helper reachable as a public name; it is now imported under a private alias. Observed: the public names equal the listed 24 (16 Actions, 8 contracts); each Action is the one its own module defines; none of Database, Engine, connection, session, configuration, or the Service's naming is among them; in a fresh interpreter with connection, socket, and process creation instrumented, loading it made no connection, no process, and created no file; when a stand-in Database newly published a capability the check reported the missing storage_archive (its derived name needs no override) and an extra export was reported as unexpected. Until the Interface is regenerated after a Database change, the load stops rather than silently omitting a capability."
+                - at: "2026-10-01T10:32:28Z"
+                  log_entry: "008"
+                  transition: "done -> done"
+                  note: "Quality pass after the later Tasks: the load-time check the gateway runs now also validates every Storage identity (G4-T20) before it checks membership. Observed afterwards: the gateway still loads with exactly its 24 published names, still reports a missing or an unexpected export, and still creates no connection, process, or file at load (observation script re-run clean against the final source)."
+        "P3-G4":
+          id: "P3-G4"
+          title: "Storage Service Actions"
+          description: "Where each capability Database publishes receives its one corresponding Storage Action: twelve Entity Operations, the Database-wide Operation, and the three Lifecycle Commands. The behaviour all Actions share toward Database, their naming, and their identity validation are separate Tasks that apply to the whole set."
+          area: "Storage Service: Actions"
+          does: "Every capability Database publishes can be requested through exactly one correspondingly named Storage Action."
+          constraints: []
+          task_count: 20
+          tasks:
+            "P3-G4-T01":
+              id: "P3-G4-T01"
+              source_id: "007"
+              title: "Provide the Storage Action for Add"
+              description: "Provide the Action that requests Database's Add Entity Operation for one complete new Entity instance."
+              reason: "Entity Service needs a route to store a new record."
+              inputs: ["Database's contract for the Add Operation"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "An Action that returns the stored Entity, including generated values, as Database returns it."
+              depends_on: ["P3-G3-T01"]
+              constraints: []
+              acceptance: "Calling it with a new Entity instance returns the stored Entity with its generated values, equal to what Database returns for the same request."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:18:34Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P3-G3-T01 is done."
+                - at: "2026-10-01T10:20:38Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the Storage Action for Add: it takes Database's own parameters (entity, instance) and returns what Database's Add returns. Observed on a prepared disposable copy: adding a new Broker returned the stored Entity with its generated id (2), equal to Database's own Get By Id of that record."
+            "P3-G4-T02":
+              id: "P3-G4-T02"
+              source_id: "007"
+              title: "Provide the Storage Action for Update"
+              description: "Provide the Action that requests Database's Update Entity Operation for one complete Entity instance whose identity locates the record."
+              reason: "Entity Service needs a route to replace the mutable Fields of a stored record."
+              inputs: ["Database's contract for the Update Operation"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "An Action that returns the stored Entity, or no value when no record exists, as Database returns it."
+              depends_on: ["P3-G3-T01"]
+              constraints: []
+              acceptance: "Calling it with a changed Entity instance returns the stored Entity with its mutable Fields replaced, and calling it for a record that does not exist returns no value rather than an error."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:18:34Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P3-G3-T01 is done."
+                - at: "2026-10-01T10:20:38Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the Storage Action for Update with Database's own parameters. Observed: changing a stored Broker's description returned the stored Entity with the new description and equal to Database's own read; updating a record that had been deleted returned None rather than an error."
+            "P3-G4-T03":
+              id: "P3-G4-T03"
+              source_id: "007"
+              title: "Provide the Storage Action for List"
+              description: "Provide the Action that requests Database's List Entity Operation for one Entity with optional Filters, an optional combination, optional Orders, and an optional limit."
+              reason: "Entity Service needs a route to read the records that match a condition."
+              inputs: ["Database's contract for the List Operation", "The republished request vocabulary"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "An Action that returns the matching Entity instances as Database returns them."
+              depends_on: ["P3-G3-T01", "P3-G3-T02"]
+              constraints: []
+              acceptance: "Calling it with Filters, a combination, Orders, and a limit returns the same Entity instances in the same order as Database does for that request, and a zero or negative limit returns every match."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:18:34Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G3-T01 and P3-G3-T02 are done."
+                - at: "2026-10-01T10:20:38Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the Storage Action for List with Database's own parameters in order (entity, filters, combination, orders, limit, instance). Observed: a Filter, a combination, descending Orders, and a limit of 1 returned exactly what Database's List returns (FxPro for the limit, ['FxPro', 'Example Broker'] without it), and a limit of 0 and of -5 each returned every record."
+            "P3-G4-T04":
+              id: "P3-G4-T04"
+              source_id: "007"
+              title: "Provide the Storage Action for Get By Id"
+              description: "Provide the Action that requests Database's Get By Id Entity Operation for one Entity and one identity."
+              reason: "Entity Service needs a route to read one record by its identity."
+              inputs: ["Database's contract for the Get By Id Operation"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "An Action that returns the Entity, or no value when no record exists, as Database returns it."
+              depends_on: ["P3-G3-T01"]
+              constraints: []
+              acceptance: "Calling it with the identity of a stored record returns that Entity, and calling it with an identity that matches no record returns no value rather than an error."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:18:34Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P3-G3-T01 is done."
+                - at: "2026-10-01T10:20:38Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the Storage Action for Get By Id. Observed: the identity of a stored Broker returned that Entity (equal to the one added), and an identity that matches no record returned None."
+            "P3-G4-T05":
+              id: "P3-G4-T05"
+              source_id: "007"
+              title: "Provide the Storage Action for Delete"
+              description: "Provide the Action that requests Database's Delete Entity Operation for one Entity and one identity."
+              reason: "Entity Service needs a route to remove one record."
+              inputs: ["Database's contract for the Delete Operation"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "An Action that returns the final deleted Entity, or no value when no record exists, as Database returns it."
+              depends_on: ["P3-G3-T01"]
+              constraints: []
+              acceptance: "Calling it with the identity of a stored record returns the deleted Entity and leaves no such record, and calling it with an identity that matches no record returns no value."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:18:34Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P3-G3-T01 is done."
+                - at: "2026-10-01T10:20:38Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the Storage Action for Delete. Observed: deleting a stored Broker returned it as it was, a following Get By Id returned None, and a second delete of the same identity returned None."
+            "P3-G4-T06":
+              id: "P3-G4-T06"
+              source_id: "007"
+              title: "Provide the Storage Action for Enable"
+              description: "Provide the Action that requests Database's Enable Entity Operation, which marks one record active, for one Entity and one identity."
+              reason: "Entity Service needs a route to activate one record without changing anything else."
+              inputs: ["Database's contract for the Enable Operation"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "An Action that returns the final Entity, including when it was already enabled, or no value when no record exists."
+              depends_on: ["P3-G3-T01"]
+              constraints: []
+              acceptance: "Calling it on a disabled record returns the Entity with only its activity changed to active, calling it on an enabled record returns it unchanged, and calling it for a missing record returns no value."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:18:34Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P3-G3-T01 is done."
+                - at: "2026-10-01T10:20:38Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the Storage Action for Enable. Observed: enabling a disabled Broker returned it active with name and description unchanged, enabling it again returned it unchanged and active, and a missing identity returned None."
+            "P3-G4-T07":
+              id: "P3-G4-T07"
+              source_id: "007"
+              title: "Provide the Storage Action for Disable"
+              description: "Provide the Action that requests Database's Disable Entity Operation, which marks one record inactive, for one Entity and one identity."
+              reason: "Entity Service needs a route to deactivate one record without deleting it."
+              inputs: ["Database's contract for the Disable Operation"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "An Action that returns the final Entity, including when it was already disabled, or no value when no record exists."
+              depends_on: ["P3-G3-T01"]
+              constraints: []
+              acceptance: "Calling it on an enabled record returns the Entity with only its activity changed to inactive, calling it on a disabled record returns it unchanged, and calling it for a missing record returns no value."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:18:34Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P3-G3-T01 is done."
+                - at: "2026-10-01T10:20:38Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the Storage Action for Disable. Observed: disabling an enabled Broker returned it inactive with name and description unchanged, disabling it again returned it unchanged and inactive, and a missing identity returned None."
+            "P3-G4-T08":
+              id: "P3-G4-T08"
+              source_id: "007"
+              title: "Provide the Storage Action for Count"
+              description: "Provide the Action that requests Database's Count Entity Operation for one Entity with optional Filters and an optional combination."
+              reason: "Entity Service needs a route to learn how many records match a condition."
+              inputs: ["Database's contract for the Count Operation", "The republished request vocabulary"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "An Action that returns the matching count as Database returns it."
+              depends_on: ["P3-G3-T01", "P3-G3-T02"]
+              constraints: []
+              acceptance: "Calling it with and without Filters returns the same count Database returns for that request."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:18:34Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G3-T01 and P3-G3-T02 are done."
+                - at: "2026-10-01T10:20:38Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the Storage Action for Count. Observed: the count of all Brokers, of Commodity Assets (2), and of Commodity-or-five-digit Assets with the OR combination (4) each equal Database's own count for the same request."
+            "P3-G4-T09":
+              id: "P3-G4-T09"
+              source_id: "007"
+              title: "Provide the Storage Action for Sum"
+              description: "Provide the Action that requests Database's Sum Entity Operation for one Entity, one numeric Field, and optional Filters and combination."
+              reason: "Entity Service needs a route to total a numeric Field over the records that match."
+              inputs: ["Database's contract for the Sum Operation", "The republished request vocabulary"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "An Action that returns the total, or zero when nothing matches, as Database returns it."
+              depends_on: ["P3-G3-T01", "P3-G3-T02"]
+              constraints: []
+              acceptance: "Calling it returns the total Database returns for the same request, zero when nothing matches, and a null value is ignored in the total."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:18:34Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G3-T01 and P3-G3-T02 are done."
+                - at: "2026-10-01T10:20:38Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the Storage Action for Sum. Observed: over three TrailingRules whose nullable adjustment was 2.5, 4, and null, the total was 6.5 (null ignored) as Database returns it, a filter matching nothing gave 0, and the Asset digits of the Commodity Assets totalled 5."
+            "P3-G4-T10":
+              id: "P3-G4-T10"
+              source_id: "007"
+              title: "Provide the Storage Action for Min"
+              description: "Provide the Action that requests Database's Min Entity Operation for one Entity, one comparable Field, and optional Filters and combination."
+              reason: "Entity Service needs a route to find the smallest value of a Field over the records that match."
+              inputs: ["Database's contract for the Min Operation", "The republished request vocabulary"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "An Action that returns the smallest value, or no value when nothing matches, as Database returns it."
+              depends_on: ["P3-G3-T01", "P3-G3-T02"]
+              constraints: []
+              acceptance: "Calling it returns the smallest value Database returns for the same request, no value when nothing matches, and a null value is ignored."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:18:34Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G3-T01 and P3-G3-T02 are done."
+                - at: "2026-10-01T10:20:38Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the Storage Action for Min. Observed: over the same three TrailingRules the smallest adjustment was 2.5 (null ignored) as Database returns it, and a filter matching nothing returned None."
+            "P3-G4-T11":
+              id: "P3-G4-T11"
+              source_id: "007"
+              title: "Provide the Storage Action for Max"
+              description: "Provide the Action that requests Database's Max Entity Operation for one Entity, one comparable Field, and optional Filters and combination."
+              reason: "Entity Service needs a route to find the largest value of a Field over the records that match."
+              inputs: ["Database's contract for the Max Operation", "The republished request vocabulary"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "An Action that returns the largest value, or no value when nothing matches, as Database returns it."
+              depends_on: ["P3-G3-T01", "P3-G3-T02"]
+              constraints: []
+              acceptance: "Calling it returns the largest value Database returns for the same request, no value when nothing matches, and a null value is ignored."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:18:34Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G3-T01 and P3-G3-T02 are done."
+                - at: "2026-10-01T10:20:38Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the Storage Action for Max. Observed: over the same three TrailingRules the largest adjustment was 4 (null ignored) as Database returns it, and a filter matching nothing returned None."
+            "P3-G4-T12":
+              id: "P3-G4-T12"
+              source_id: "007"
+              title: "Provide the Storage Action for Truncate"
+              description: "Provide the Action that requests Database's Truncate Entity Operation for one Entity."
+              reason: "Entity Service needs a route to remove every record of one Entity while keeping its storage."
+              inputs: ["Database's contract for the Truncate Operation"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "An Action that returns the deleted count as Database returns it."
+              depends_on: ["P3-G3-T01"]
+              constraints: []
+              acceptance: "Calling it for an Entity that holds records returns their count and leaves none, and the Entity's storage still accepts a new record afterwards."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:18:34Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P3-G3-T01 is done."
+                - at: "2026-10-01T10:20:38Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the Storage Action for Truncate. Observed: with three TrailingRules stored it returned 3, none was left, the TrailingGroup and Asset records were untouched, and the Table accepted a new record afterwards."
+            "P3-G4-T13":
+              id: "P3-G4-T13"
+              source_id: "007"
+              title: "Provide the Storage Action for Execute Command"
+              description: "Provide the Action that requests Database's Execute Command Database-wide Operation with a native instruction in the Instance Engine's own query language and its bound parameters."
+              reason: "A Logic Service that needs a capability the Entity Operations do not cover still has to reach Database through Storage."
+              inputs: ["Database's contract for the Execute Command Operation", "The republished result contracts"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "An Action that returns the Command result exactly as Database returns it."
+              depends_on: ["P3-G3-T01", "P3-G3-T03"]
+              constraints: []
+              acceptance: "Calling it with a valid instruction and parameters returns a Command result equal to the one Database returns for the same request, carrying its rows, affected count, columns, success, message, and Instance."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:18:34Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G3-T01 and P3-G3-T03 are done."
+                - at: "2026-10-01T10:20:38Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the Storage Action for Execute Command with Database's own parameters (command, parameters, instance). Observed: a SELECT with a bound parameter returned a Command result equal to Database's own for the same request, with rows [('XAU/USD', 2), ('USOil', 3)], columns ('symbol', 'digits'), success true, and the SQLITE Instance."
+            "P3-G4-T14":
+              id: "P3-G4-T14"
+              source_id: "007"
+              title: "Provide the Storage Action for Create Tables"
+              description: "Provide the Action that requests Database's Create Tables Lifecycle Command."
+              reason: "Preparing storage from the Entities must be reachable through Logic's only route to Database."
+              inputs: ["Database's contract for the Create Tables Command", "The republished result contracts"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "An Action that returns the Lifecycle result of creating the tables exactly as Database returns it."
+              depends_on: ["P3-G3-T01", "P3-G3-T03"]
+              constraints: []
+              acceptance: "Calling it returns a Lifecycle result equal to the one Database returns for the same Instance, naming the command, the Instance, success, and the processed count, and a repeat call leaves matching tables unchanged."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:18:34Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G3-T01 and P3-G3-T03 are done."
+                - at: "2026-10-01T10:20:38Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the Storage Action for Create Tables. Observed on a prepared Instance: it returned a Lifecycle result equal to Database's own (command create_tables, SQLITE, success, 15 processed), and a repeat left the tables and their records unchanged."
+            "P3-G4-T15":
+              id: "P3-G4-T15"
+              source_id: "007"
+              title: "Provide the Storage Action for Insert Initial Data"
+              description: "Provide the Action that requests Database's Insert Initial Data Lifecycle Command."
+              reason: "Inserting the defined Initial Data must be reachable through Logic's only route to Database."
+              inputs: ["Database's contract for the Insert Initial Data Command", "The republished result contracts"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "An Action that returns the Lifecycle result of inserting the Initial Data exactly as Database returns it."
+              depends_on: ["P3-G3-T01", "P3-G3-T03"]
+              constraints: []
+              acceptance: "Calling it returns a Lifecycle result equal to the one Database returns for the same Instance, and a repeat call reports the same processed count while inserting nothing new."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:18:34Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G3-T01 and P3-G3-T03 are done."
+                - at: "2026-10-01T10:20:38Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the Storage Action for Insert Initial Data. Observed on a prepared Instance: it returned a Lifecycle result equal to Database's own with 23 processed (0 inserted, 23 already present skipped), a repeat reported the same count, and the record counts were unchanged."
+            "P3-G4-T16":
+              id: "P3-G4-T16"
+              source_id: "007"
+              title: "Provide the Storage Action for Prepare"
+              description: "Provide the Action that requests Database's Prepare Lifecycle Command, which creates the tables and then inserts the Initial Data."
+              reason: "The complete preparation of storage must be reachable through Logic's only route to Database."
+              inputs: ["Database's contract for the Prepare Command", "The republished result contracts"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "An Action that returns the Lifecycle result of the complete preparation exactly as Database returns it."
+              depends_on: ["P3-G3-T01", "P3-G3-T03"]
+              constraints: []
+              acceptance: "Calling it on an unprepared Instance returns a Lifecycle result equal to the one Database returns for the same Instance and leaves the tables and Initial Data present, and when table creation fails the Initial Data is not inserted."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:18:34Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G3-T01 and P3-G3-T03 are done."
+                - at: "2026-10-01T10:20:38Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the Storage Action for Prepare. Observed on an unprepared disposable copy: it returned a Lifecycle result (command prepare, SQLITE, success, 38 processed: 15 tables and 23 records) and the copy then held 15 tables, 1 User, 1 Broker, and 4 Assets. With a conflicting User table created beforehand, Prepare raised Database's own DeclarationMismatchError, left only that table, and inserted no Initial Data (0 rows in User)."
+            "P3-G4-T17":
+              id: "P3-G4-T17"
+              source_id: "007"
+              title: "Forward every request unchanged and return every outcome unchanged"
+              description: "Make every Action pass its request and the optional Instance member to Database through Database's published Interface, exactly once and without alteration, and hand back Database's declared result or failure as it is, adding no result wrapper, no interpretation, and no repetition of a request."
+              reason: "Database stays the single authority for persistence, and a repeated Execute Command or Lifecycle Command cannot be assumed safe to repeat."
+              inputs: ["Every Storage Action"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "Every Action behaves as a transparent route to the one Database capability it corresponds to."
+              depends_on: ["P3-G4-T01", "P3-G4-T02", "P3-G4-T03", "P3-G4-T04", "P3-G4-T05", "P3-G4-T06", "P3-G4-T07", "P3-G4-T08", "P3-G4-T09", "P3-G4-T10", "P3-G4-T11", "P3-G4-T12", "P3-G4-T13", "P3-G4-T14", "P3-G4-T15", "P3-G4-T16"]
+              constraints: []
+              acceptance: "For each Action, the request and an explicit Instance member reach Database unchanged and exactly once through its published Interface, an omitted Instance leaves Database to choose its default, the value returned or failure raised is Database's own without a wrapper, and a failing Execute Command or Lifecycle Command is not repeated."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:20:38Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G4-T01 to T16 are done."
+                - at: "2026-10-01T10:21:33Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Every Action builds Database's gateway through its published Interface, makes one call with its parameters in Database's own order and the optional Instance last, and returns the result directly: no wrapper, no interpretation, no try or retry. Observed with spies standing in for Database: for all 16 Actions an explicit Instance member and the request reached Database unchanged and exactly once, an omitted Instance arrived as None (Database then chooses its default), the returned value was the identical object, and a raised failure was the identical failure with exactly one attempt, including for Execute Command and the three Lifecycle Commands. A scan of every Logic source import found none reaching Database other than through its published Interface, and none of a Service importing Logic Interface."
+            "P3-G4-T18":
+              id: "P3-G4-T18"
+              source_id: "007"
+              title: "Name every Action after Storage Service"
+              description: "Give every Action the published name formed from the Service's normalized configured name, exactly one underscore, and the capability's derived base name, without changing which Database capability, group, request, or result the Action corresponds to."
+              reason: "An Action stays visibly owned by Storage Service wherever another Service imports or calls it."
+              inputs: ["The Service's configured name"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "Every Action carries a published name that identifies Storage Service and its capability."
+              depends_on: ["P3-G4-T01", "P3-G4-T02", "P3-G4-T03", "P3-G4-T04", "P3-G4-T05", "P3-G4-T06", "P3-G4-T07", "P3-G4-T08", "P3-G4-T09", "P3-G4-T10", "P3-G4-T11", "P3-G4-T12", "P3-G4-T13", "P3-G4-T14", "P3-G4-T15", "P3-G4-T16"]
+              constraints: []
+              acceptance: "Every Action's published name equals the normalized Service name, exactly one underscore, and its capability's base name, and no name changes which Database capability the Action corresponds to."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:20:38Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G4-T01 to T16 are done."
+                - at: "2026-10-01T10:21:33Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Every Action and its module are named storage_<base>, the Service name followed by exactly one underscore and the Database capability's own name (for example storage_get_by_id). Observed: Database publishes 16 capabilities; each has exactly one module and function with that name; the parameter names, order, and defaults of every Action equal those of its Database capability; and there is no Action module beyond the 16. Names change nothing about which capability an Action corresponds to."
+            "P3-G4-T19":
+              id: "P3-G4-T19"
+              source_id: "007"
+              title: "Match Action-name overrides to existing Database capabilities"
+              description: "Apply each configured Action-name override to exactly one existing Database capability identified by its stable identity and group, derive a base name for every capability without one, and reject an override that names an unknown, removed, or regrouped capability."
+              reason: "Overrides must stay deliberate naming choices and never become a stale second catalogue of Database capabilities."
+              inputs: ["The configured Action-name overrides", "The capability catalogue Database publishes"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "Overrides that change only a published name, and no stale override left silently ignored."
+              depends_on: ["P3-G2-T02", "P3-G4-T18"]
+              constraints: []
+              acceptance: "A capability without an override is named from its derived base name, an override changes only the published name, and an override for an unknown, removed, or regrouped capability is rejected with a clear configuration error and publishes nothing."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:21:33Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G2-T02 and P3-G4-T18 are done."
+                - at: "2026-10-01T10:21:57Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the Storage naming: it reads Database's current public capabilities from its published gateway, names every capability from its own name unless a configured override replaces that base name, and raises a ConfigurationError that lists any override naming no current capability instead of ignoring it. The override list holds no entry today because Storage Preferences configure none. Observed: with no override the 16 names are storage_<capability>; an override of add to insert changed only add's published name (storage_insert) while the other 15 names and the capability keys were unchanged; overrides for an unknown capability, and for a mix of known and unknown ones, were each rejected with an error naming them; with a stand-in Database that no longer publishes Prepare, an override for prepare was rejected, and a capability the stand-in newly publishes was named storage_archive without any override. Limit: Database's gateway publishes no group metadata, so an override that targets a capability whose group changed cannot be told apart at run time; matching uses the capability's stable name only."
+            "P3-G4-T20":
+              id: "P3-G4-T20"
+              source_id: "007"
+              title: "Validate every Storage identity"
+              description: "Validate the configured Service name, every Action base name, every final Action name, and every public export of the Storage gateway for the selected language and for uniqueness after normalization, including against the republished contracts."
+              reason: "Two capabilities cannot share one callable Action, and a name the language rejects cannot be realized."
+              inputs: ["The shared identity validation"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "A Storage gateway whose every identity is valid and unique."
+              depends_on: ["P3-G2-T02", "P3-G3-T01", "P3-G3-T02", "P3-G3-T03", "P3-G3-T04", "P3-G4-T18", "P3-G4-T19"]
+              constraints: []
+              acceptance: "A valid configuration publishes every Action under a unique valid name, and an invalid, reserved, or colliding name, including one equal to the Instance enumeration or another export, stops generation with a clear error and publishes nothing."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:22:46Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G2-T02, P3-G3-T01 to T04, and P3-G4-T18 and T19 are done."
+                - at: "2026-10-01T10:23:32Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Made the Storage naming validate its identities through the shared Core capability before it checks membership: the configured Service name, every Action base name, every final Action name, and every published export are each checked for validity (a valid identifier), reservation, and uniqueness after normalization, so the gateway cannot load with a bad identity, and the one error names the value. Observed: the valid configuration (24 names) loads; a Service name 'Stor age' was rejected as not a valid identifier and 'class' as a reserved word; an Action base name 'class' and 'bad-name' were each rejected; an override that gave two capabilities the base name count was rejected as the same identity; an extra export equal to the Instance enumeration, and one that was not a valid identifier (storage-update), were each rejected; nothing was renamed or suffixed, and the valid configuration was accepted again afterwards. Test corrections recorded: 'Class' with a capital letter is a valid identifier (only 'class' is reserved), and the overrides had to be set where the default argument is bound."
+        "P3-G5":
+          id: "P3-G5"
+          title: "Entity Service shared Entity Actions"
+          description: "The one private shared capability from which every Child Service receives its Entity-oriented Actions, each coordinating around exactly one corresponding Storage Action. It is never a consumer dependency."
+          area: "Entity Service: shared Entity Actions"
+          does: "Every Entity-bound Action exists once, ready for every Child Service to receive."
+          constraints: []
+          task_count: 13
+          tasks:
+            "P3-G5-T01":
+              id: "P3-G5-T01"
+              source_id: "007"
+              title: "Provide the shared Add Action"
+              description: "Provide the Entity-oriented Add Action, which accepts one instance of the Entity its Child Service is bound to, rejects an instance of any other Entity before any Storage request is made, and requests the corresponding Storage Action."
+              reason: "Selecting a Child Service must reliably select the Entity that is stored."
+              inputs: ["The Storage Action for Add"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "An Add Action for the bound Entity that returns the stored Entity as Storage returns it."
+              depends_on: ["P3-G4-T01", "P3-G3-T04"]
+              constraints: []
+              acceptance: "For a Child bound to one Entity, an instance of that Entity is stored and the stored Entity is returned as Storage returns it, and an instance of a different Entity is rejected with no Storage request made."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:23:32Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G4-T01 and P3-G3-T04 are done."
+                - at: "2026-10-01T10:24:13Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the shared Add Action to the private Base Entity: it accepts one instance of the Entity its Child Service is bound to, rejects any other instance with a TypeError naming only the two Entity types (no value) before any Storage request, and otherwise requests Storage's Add Action. Observed with a sample Child bound to Broker on a prepared disposable copy: a Broker was stored and the stored Entity equalled Storage's own read of it (id 2); a User instance was rejected with 'BrokerService accepts only Broker instances, not User.' and the User count did not change."
+                - at: "2026-10-01T10:26:02Z"
+                  log_entry: "008"
+                  transition: "done -> done"
+                  note: "Quality pass after the Child Services: the binding attribute was renamed from a public one to a private one, because a callable public attribute on a Child could be mistaken for an Action by API generation. Observed afterwards: the formatter, linter, and type checker are clean, and the same behaviour as recorded above was re-observed for this Action on the prepared disposable copy."
+            "P3-G5-T02":
+              id: "P3-G5-T02"
+              source_id: "007"
+              title: "Provide the shared Update Action"
+              description: "Provide the Entity-oriented Update Action, which accepts one instance of the bound Entity, rejects an instance of any other Entity before any Storage request is made, and requests the corresponding Storage Action."
+              reason: "A change must reach only records of the Entity the consumer selected."
+              inputs: ["The Storage Action for Update"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "An Update Action for the bound Entity that returns the stored Entity, or no value when no record exists."
+              depends_on: ["P3-G4-T02", "P3-G3-T04"]
+              constraints: []
+              acceptance: "An instance of the bound Entity returns the stored Entity as Storage returns it or no value for a missing record, and an instance of a different Entity is rejected with no Storage request made."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:23:32Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G4-T02 and P3-G3-T04 are done."
+                - at: "2026-10-01T10:24:13Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the shared Update Action: same bound-Entity check before any Storage request, then Storage's Update. Observed: a changed Broker returned the stored Entity with the new description and equal to Storage's read; a User instance was rejected; updating a record that had been deleted returned None."
+                - at: "2026-10-01T10:26:02Z"
+                  log_entry: "008"
+                  transition: "done -> done"
+                  note: "Quality pass after the Child Services: the binding attribute was renamed from a public one to a private one, because a callable public attribute on a Child could be mistaken for an Action by API generation. Observed afterwards: the formatter, linter, and type checker are clean, and the same behaviour as recorded above was re-observed for this Action on the prepared disposable copy."
+            "P3-G5-T03":
+              id: "P3-G5-T03"
+              source_id: "007"
+              title: "Provide the shared List Action"
+              description: "Provide the Entity-oriented List Action, which supplies the bound Entity itself to the corresponding Storage Action and accepts optional Filters, a combination, Orders, and a limit."
+              reason: "A consumer who selected an Entity once must not repeat it for every read."
+              inputs: ["The Storage Action for List"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "A List Action that returns the matching instances of the bound Entity as Storage returns them."
+              depends_on: ["P3-G4-T03", "P3-G3-T04"]
+              constraints: []
+              acceptance: "Calling it without naming the Entity returns the matching instances of the bound Entity, equal to what Storage returns for the same request."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:23:32Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G4-T03 and P3-G3-T04 are done."
+                - at: "2026-10-01T10:24:13Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the shared List Action, which supplies the bound Entity itself to Storage's List and accepts the optional Filters, combination, Orders, and limit. Observed: a Child bound to Broker listed only Brokers without the Entity being named, a Filter, a combination, descending Orders, and a limit of 1 equalled Storage's own result, and a limit of 0 returned every record."
+                - at: "2026-10-01T10:26:02Z"
+                  log_entry: "008"
+                  transition: "done -> done"
+                  note: "Quality pass after the Child Services: the binding attribute was renamed from a public one to a private one, because a callable public attribute on a Child could be mistaken for an Action by API generation. Observed afterwards: the formatter, linter, and type checker are clean, and the same behaviour as recorded above was re-observed for this Action on the prepared disposable copy."
+            "P3-G5-T04":
+              id: "P3-G5-T04"
+              source_id: "007"
+              title: "Provide the shared Delete Action"
+              description: "Provide the Entity-oriented Delete Action, which supplies the bound Entity itself to the corresponding Storage Action together with one identity."
+              reason: "Removing a record must operate on the selected Entity without the consumer repeating it."
+              inputs: ["The Storage Action for Delete"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "A Delete Action that returns the final deleted Entity, or no value when no record exists."
+              depends_on: ["P3-G4-T05", "P3-G3-T04"]
+              constraints: []
+              acceptance: "Calling it with only an identity removes that record of the bound Entity and returns it as Storage returns it, and an identity that matches no record returns no value."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:23:32Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G4-T05 and P3-G3-T04 are done."
+                - at: "2026-10-01T10:24:13Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the shared Delete Action, which supplies the bound Entity itself to Storage's Delete. Observed: with only an identity it removed that Broker and returned it as it was, a following Get By Id returned None, and a second delete returned None."
+                - at: "2026-10-01T10:26:02Z"
+                  log_entry: "008"
+                  transition: "done -> done"
+                  note: "Quality pass after the Child Services: the binding attribute was renamed from a public one to a private one, because a callable public attribute on a Child could be mistaken for an Action by API generation. Observed afterwards: the formatter, linter, and type checker are clean, and the same behaviour as recorded above was re-observed for this Action on the prepared disposable copy."
+            "P3-G5-T05":
+              id: "P3-G5-T05"
+              source_id: "007"
+              title: "Provide the shared Enable Action"
+              description: "Provide the Entity-oriented Enable Action, which supplies the bound Entity itself to the corresponding Storage Action together with one identity."
+              reason: "Activating a record must operate on the selected Entity without the consumer repeating it."
+              inputs: ["The Storage Action for Enable"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "An Enable Action that returns the final Entity, or no value when no record exists."
+              depends_on: ["P3-G4-T06", "P3-G3-T04"]
+              constraints: []
+              acceptance: "Calling it with only an identity returns the bound Entity's record as active exactly as Storage returns it, and an identity that matches no record returns no value."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:23:32Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G4-T06 and P3-G3-T04 are done."
+                - at: "2026-10-01T10:24:13Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the shared Enable Action, which supplies the bound Entity itself to Storage's Enable. Observed: with only an identity it returned the Broker active with its name unchanged, and an identity matching no record returned None."
+                - at: "2026-10-01T10:26:02Z"
+                  log_entry: "008"
+                  transition: "done -> done"
+                  note: "Quality pass after the Child Services: the binding attribute was renamed from a public one to a private one, because a callable public attribute on a Child could be mistaken for an Action by API generation. Observed afterwards: the formatter, linter, and type checker are clean, and the same behaviour as recorded above was re-observed for this Action on the prepared disposable copy."
+            "P3-G5-T06":
+              id: "P3-G5-T06"
+              source_id: "007"
+              title: "Provide the shared Disable Action"
+              description: "Provide the Entity-oriented Disable Action, which supplies the bound Entity itself to the corresponding Storage Action together with one identity."
+              reason: "Deactivating a record must operate on the selected Entity without the consumer repeating it."
+              inputs: ["The Storage Action for Disable"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "A Disable Action that returns the final Entity, or no value when no record exists."
+              depends_on: ["P3-G4-T07", "P3-G3-T04"]
+              constraints: []
+              acceptance: "Calling it with only an identity returns the bound Entity's record as inactive exactly as Storage returns it, and an identity that matches no record returns no value."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:23:32Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G4-T07 and P3-G3-T04 are done."
+                - at: "2026-10-01T10:24:13Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the shared Disable Action, which supplies the bound Entity itself to Storage's Disable. Observed: with only an identity it returned the Broker inactive with its name unchanged, and an identity matching no record returned None."
+                - at: "2026-10-01T10:26:02Z"
+                  log_entry: "008"
+                  transition: "done -> done"
+                  note: "Quality pass after the Child Services: the binding attribute was renamed from a public one to a private one, because a callable public attribute on a Child could be mistaken for an Action by API generation. Observed afterwards: the formatter, linter, and type checker are clean, and the same behaviour as recorded above was re-observed for this Action on the prepared disposable copy."
+            "P3-G5-T07":
+              id: "P3-G5-T07"
+              source_id: "007"
+              title: "Provide the shared Get By Id Action"
+              description: "Provide the Entity-oriented Get By Id Action, which supplies the bound Entity itself to the corresponding Storage Action together with one identity."
+              reason: "Reading one record must operate on the selected Entity without the consumer repeating it."
+              inputs: ["The Storage Action for Get By Id"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "A Get By Id Action that returns the Entity, or no value when no record exists."
+              depends_on: ["P3-G4-T04", "P3-G3-T04"]
+              constraints: []
+              acceptance: "Calling it with only an identity returns the stored record of the bound Entity as Storage returns it, and an identity that matches no record returns no value."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:23:32Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G4-T04 and P3-G3-T04 are done."
+                - at: "2026-10-01T10:24:13Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the shared Get By Id Action, which supplies the bound Entity itself to Storage's Get By Id. Observed: with only an identity it returned the stored Broker equal to the one added, and an identity matching no record returned None."
+                - at: "2026-10-01T10:26:02Z"
+                  log_entry: "008"
+                  transition: "done -> done"
+                  note: "Quality pass after the Child Services: the binding attribute was renamed from a public one to a private one, because a callable public attribute on a Child could be mistaken for an Action by API generation. Observed afterwards: the formatter, linter, and type checker are clean, and the same behaviour as recorded above was re-observed for this Action on the prepared disposable copy."
+            "P3-G5-T08":
+              id: "P3-G5-T08"
+              source_id: "007"
+              title: "Provide the shared Count Action"
+              description: "Provide the Entity-oriented Count Action, which supplies the bound Entity itself to the corresponding Storage Action and accepts optional Filters and a combination."
+              reason: "Counting records must operate on the selected Entity without the consumer repeating it."
+              inputs: ["The Storage Action for Count"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "A Count Action that returns the matching count of the bound Entity."
+              depends_on: ["P3-G4-T08", "P3-G3-T04"]
+              constraints: []
+              acceptance: "Calling it without naming the Entity returns the count of matching records of the bound Entity, equal to what Storage returns for the same request."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:23:32Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G4-T08 and P3-G3-T04 are done."
+                - at: "2026-10-01T10:24:13Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the shared Count Action, which supplies the bound Entity itself to Storage's Count and accepts optional Filters and a combination. Observed: a Broker-bound Child counted 1 and an Asset-bound Child counted the 2 Commodity Assets, both equal to Storage's own count."
+                - at: "2026-10-01T10:26:02Z"
+                  log_entry: "008"
+                  transition: "done -> done"
+                  note: "Quality pass after the Child Services: the binding attribute was renamed from a public one to a private one, because a callable public attribute on a Child could be mistaken for an Action by API generation. Observed afterwards: the formatter, linter, and type checker are clean, and the same behaviour as recorded above was re-observed for this Action on the prepared disposable copy."
+            "P3-G5-T09":
+              id: "P3-G5-T09"
+              source_id: "007"
+              title: "Provide the shared Sum Action"
+              description: "Provide the Entity-oriented Sum Action, which supplies the bound Entity itself to the corresponding Storage Action together with one numeric Field and optional Filters and combination."
+              reason: "Totalling a Field must operate on the selected Entity without the consumer repeating it."
+              inputs: ["The Storage Action for Sum"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "A Sum Action that returns the total, or zero when nothing matches."
+              depends_on: ["P3-G4-T09", "P3-G3-T04"]
+              constraints: []
+              acceptance: "Calling it with a Field of the bound Entity returns the total Storage returns for the same request, and zero when nothing matches."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:23:32Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G4-T09 and P3-G3-T04 are done."
+                - at: "2026-10-01T10:24:13Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the shared Sum Action, which supplies the bound Entity itself to Storage's Sum with one numeric Field and optional Filters and combination. Observed: for a TrailingRule-bound Child over adjustments 2.5, 4, and null the total was 6.5, and a filter matching nothing returned 0."
+                - at: "2026-10-01T10:26:02Z"
+                  log_entry: "008"
+                  transition: "done -> done"
+                  note: "Quality pass after the Child Services: the binding attribute was renamed from a public one to a private one, because a callable public attribute on a Child could be mistaken for an Action by API generation. Observed afterwards: the formatter, linter, and type checker are clean, and the same behaviour as recorded above was re-observed for this Action on the prepared disposable copy."
+            "P3-G5-T10":
+              id: "P3-G5-T10"
+              source_id: "007"
+              title: "Provide the shared Min Action"
+              description: "Provide the Entity-oriented Min Action, which supplies the bound Entity itself to the corresponding Storage Action together with one comparable Field and optional Filters and combination."
+              reason: "Finding the smallest value must operate on the selected Entity without the consumer repeating it."
+              inputs: ["The Storage Action for Min"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "A Min Action that returns the smallest value, or no value when nothing matches."
+              depends_on: ["P3-G4-T10", "P3-G3-T04"]
+              constraints: []
+              acceptance: "Calling it with a Field of the bound Entity returns the smallest value Storage returns for the same request, and no value when nothing matches."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:23:32Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G4-T10 and P3-G3-T04 are done."
+                - at: "2026-10-01T10:24:13Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the shared Min Action, which supplies the bound Entity itself to Storage's Min. Observed: over the same adjustments the smallest value was 2.5 (null ignored), and a filter matching nothing returned None."
+                - at: "2026-10-01T10:26:02Z"
+                  log_entry: "008"
+                  transition: "done -> done"
+                  note: "Quality pass after the Child Services: the binding attribute was renamed from a public one to a private one, because a callable public attribute on a Child could be mistaken for an Action by API generation. Observed afterwards: the formatter, linter, and type checker are clean, and the same behaviour as recorded above was re-observed for this Action on the prepared disposable copy."
+            "P3-G5-T11":
+              id: "P3-G5-T11"
+              source_id: "007"
+              title: "Provide the shared Max Action"
+              description: "Provide the Entity-oriented Max Action, which supplies the bound Entity itself to the corresponding Storage Action together with one comparable Field and optional Filters and combination."
+              reason: "Finding the largest value must operate on the selected Entity without the consumer repeating it."
+              inputs: ["The Storage Action for Max"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "A Max Action that returns the largest value, or no value when nothing matches."
+              depends_on: ["P3-G4-T11", "P3-G3-T04"]
+              constraints: []
+              acceptance: "Calling it with a Field of the bound Entity returns the largest value Storage returns for the same request, and no value when nothing matches."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:23:32Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G4-T11 and P3-G3-T04 are done."
+                - at: "2026-10-01T10:24:13Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the shared Max Action, which supplies the bound Entity itself to Storage's Max. Observed: over the same adjustments the largest value was 4 (null ignored), and a filter matching nothing returned None."
+                - at: "2026-10-01T10:26:02Z"
+                  log_entry: "008"
+                  transition: "done -> done"
+                  note: "Quality pass after the Child Services: the binding attribute was renamed from a public one to a private one, because a callable public attribute on a Child could be mistaken for an Action by API generation. Observed afterwards: the formatter, linter, and type checker are clean, and the same behaviour as recorded above was re-observed for this Action on the prepared disposable copy."
+            "P3-G5-T12":
+              id: "P3-G5-T12"
+              source_id: "007"
+              title: "Provide the shared Truncate Action"
+              description: "Provide the Entity-oriented Truncate Action, which supplies the bound Entity itself to the corresponding Storage Action."
+              reason: "Clearing an Entity must operate on the selected Entity without the consumer repeating it."
+              inputs: ["The Storage Action for Truncate"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "A Truncate Action that returns the deleted count."
+              depends_on: ["P3-G4-T12", "P3-G3-T04"]
+              constraints: []
+              acceptance: "Calling it without naming the Entity removes every record of the bound Entity only and returns the count Storage returns."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:23:32Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G4-T12 and P3-G3-T04 are done."
+                - at: "2026-10-01T10:24:13Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the shared Truncate Action, which supplies the bound Entity itself to Storage's Truncate. Observed: it removed the 3 TrailingRules and returned 3 without naming the Entity, leaving the Brokers (1) and Assets (4) untouched. Base Entity holds no persistence: every method only checks the bound Entity where required and calls the corresponding Storage Action."
+                - at: "2026-10-01T10:26:02Z"
+                  log_entry: "008"
+                  transition: "done -> done"
+                  note: "Quality pass after the Child Services: the binding attribute was renamed from a public one to a private one, because a callable public attribute on a Child could be mistaken for an Action by API generation. Observed afterwards: the formatter, linter, and type checker are clean, and the same behaviour as recorded above was re-observed for this Action on the prepared disposable copy."
+            "P3-G5-T13":
+              id: "P3-G5-T13"
+              source_id: "007"
+              title: "Preserve the selected Instance on every Entity Action"
+              description: "Make every shared Entity Action accept an optional member of the exact active-Instance enumeration that Storage republishes and pass it unchanged with the Storage request, leaving default selection to Storage and Database when it is omitted."
+              reason: "A consumer must be able to use the same Entity-oriented Action against any active Instance without bypassing Logic or inventing an incompatible Instance identity."
+              inputs: ["The republished active-Instance enumeration"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "Every Entity Action honours the Instance the consumer selects."
+              depends_on: ["P3-G5-T01", "P3-G5-T02", "P3-G5-T03", "P3-G5-T04", "P3-G5-T05", "P3-G5-T06", "P3-G5-T07", "P3-G5-T08", "P3-G5-T09", "P3-G5-T10", "P3-G5-T11", "P3-G5-T12"]
+              constraints: []
+              acceptance: "For each of the twelve Actions an explicit member reaches Storage unchanged, an omitted member leaves the Instance unspecified for Storage, and no Entity Action creates an Instance identity or selects an Engine, connection, table, or default Instance."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:24:13Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G5-T01 to T12 are done. Each Action's optional Instance parameter was written with its own signature in T01 to T12, so this Task verifies it across the set and changes source only if the verification finds a gap."
+                - at: "2026-10-01T10:24:36Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Verification found no gap, so no source changed in this Task: every shared Action already takes the optional Instance as its last parameter (default None, annotated with the republished enumeration itself) and passes it unchanged as the last argument of its Storage Action. Observed with spies standing in for the 12 Storage Actions: for each of the 12 Actions an explicit member arrived as the identical last argument and an omitted one arrived as None, so Storage delegates the default to Database; the bound Entity or the supplied instance arrived first; Base Entity imports only Storage's Interface (besides standard-library typing), creates no Instance identity, and names no Engine, connection, table, or default Instance."
+                - at: "2026-10-01T10:26:02Z"
+                  log_entry: "008"
+                  transition: "done -> done"
+                  note: "Quality pass after the Child Services: the binding attribute was renamed from a public one to a private one, because a callable public attribute on a Child could be mistaken for an Action by API generation. Observed afterwards: the formatter, linter, and type checker are clean, and the same behaviour as recorded above was re-observed for this Action on the prepared disposable copy."
+        "P3-G6":
+          id: "P3-G6"
+          title: "Entity Child Services"
+          description: "One Child Service for every Entity that Model publishes, in Model's order, each bound to its actual Entity and receiving the shared Entity Actions."
+          area: "Entity Service: Child Services"
+          does: "Every Model Entity has its own bound Child Service, through which a consumer selects the Entity once."
+          constraints: []
+          task_count: 2
+          tasks:
+            "P3-G6-T01":
+              id: "P3-G6-T01"
+              source_id: "007"
+              title: "Provide one bound Child Service for every Model Entity"
+              description: "For every Entity in Model's Entity Collection, in its order, provide one Child Service that binds that actual Entity and receives every shared Entity Action, learning the membership from the Collection alone."
+              reason: "The set of Child Services must stay complete and synchronized with Model, and each request must carry an unambiguous Entity identity."
+              inputs: ["The Entity Collection published by Model", "The shared Entity Actions"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "A Child Service for each Entity, none copying or redefining it."
+              depends_on: ["P1-G4-T02", "P3-G5-T13"]
+              constraints: []
+              acceptance: "There is exactly one Child for each Entity of the Collection and none other, in the Collection's order; each is bound to the identical Entity Model publishes, offers exactly the twelve Entity-bound Actions and no Database-wide or Lifecycle Action, and the set follows the Collection alone when an Entity is added or removed."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:24:36Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P1-G4-T02 and P3-G5-T13 are done."
+                - at: "2026-10-01T10:26:02Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added one Child Service per Model Entity, in Model's Collection order (User first, Position last): each is a module named after the Entity in snake case holding one structure named after the Entity with the configured suffix, bound privately to the identical Entity Model publishes, receiving every shared Action and adding nothing of its own. Added the private membership helper, which takes the Children and returns them in the Entity Collection's order, requiring exactly one per Entity and raising a ConfigurationError that names any missing, unexpected, or repeated Child; it reads the Collection and nothing else. Observed: 15 modules and 15 structures, none other, each bound to the identical Model Entity; every Child offers exactly the 12 Entity-bound Actions and none of Execute Command, Create Tables, Insert Initial Data, or Prepare; the returned order equals the Collection's whatever order the Children are supplied in; a missing Child (Position), an unknown extra Child, and a repeated Child were each rejected naming the item; with a Collection that no longer holds Position, PositionService was reported unexpected with nothing else edited; membership consults no export list, directory scan, reflection, or registry. Two things found and fixed on the way: the binding was first a public callable attribute, which API generation could mistake for an Action, so it is private (quality-pass entries added to the shared Actions); and the type checker reports Model's Entity exports as private because Model's typed package lists them without an export list, so one project-level checker option was set in the library manifest instead of a suppression in each of 15 files. Model itself is unchanged. Limit: the Children are generated from the Collection as it stands, so a changed Collection needs regeneration, and the load-time check turns a stale set into an error instead of a silent gap."
+            "P3-G6-T02":
+              id: "P3-G6-T02"
+              source_id: "007"
+              title: "Validate Entity Service realization identities"
+              description: "Validate the shared capability's configured identity and every Child's derived unit name and public name, formed from the configured patterns and the selected language's conventions, for validity and for uniqueness after normalization."
+              reason: "The shared capability and every Model Entity need an unambiguous realization that is never overwritten, shadowed, or rejected by the language."
+              inputs: ["The shared identity validation", "The configured naming patterns"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "Valid, unique identities for the shared capability and every Child."
+              depends_on: ["P3-G2-T02", "P3-G6-T01"]
+              constraints: []
+              acceptance: "Every Child and the shared capability carry valid, unique identities derived from the configured patterns, and an invalid, reserved, or colliding identity stops generation with a clear error without an invented suffix, number, or rename."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:26:02Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G2-T02 and P3-G6-T01 are done."
+                - at: "2026-10-01T10:26:36Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the Entity Service realization naming: the configured Base Entity unit and structure names, the Child suffix, and the Children's package are held once, a Child's unit name is its Entity name in snake case and its public name is the Entity name plus the suffix, and a check requires the identities to be valid, unique after normalization (through the shared Core capability), and actually followed by the shared capability and by every Child. Observed: Base Entity ('base_entity', 'BaseEntity') and the 15 Children pass; a Child whose structure does not follow the suffix pattern, and one whose unit does not follow the unit pattern, were each rejected naming the realization; the same Child supplied twice was rejected as the same identity; a reserved Base Entity unit name ('class') and an invalid structure name ('Base Entity') were rejected; changing the configured suffix made every existing Child fail the pattern and be reported; and nothing was renamed or suffixed by the check. No invented suffix, number, or rename exists anywhere in it."
+        "P3-G7":
+          id: "P3-G7"
+          title: "Entity Service Interface"
+          description: "The outward gateway of Entity Service. A consumer first selects the Child Service of an Entity and then calls one of its Actions; the gateway is published unchanged through Logic Interface when its publication setting is enabled."
+          area: "Entity Service: Interface and dependency direction"
+          does: "A consumer can select any Entity's Child Service and build every Action request from one gateway."
+          constraints: []
+          task_count: 3
+          tasks:
+            "P3-G7-T01":
+              id: "P3-G7-T01"
+              source_id: "007"
+              title: "Publish the Entity Service Interface"
+              description: "Provide the outward gateway that presents one Child Service for every Entity of Model's Entity Collection, preserving its order, together with the exact active-Instance enumeration and Entity Query Vocabulary that the Actions accept, and nothing else."
+              reason: "A consumer must be able to build every request without importing another Component or learning the mechanism shared among Entities."
+              inputs: ["The Child Services", "The republished active-Instance enumeration and request vocabulary"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "One gateway that presents every Child and the types its Actions accept."
+              depends_on: ["P3-G6-T01", "P3-G3-T01", "P3-G3-T02"]
+              constraints: []
+              acceptance: "A consumer selects any Entity's Child and calls its Action using only what the gateway exposes; the Instance enumeration and the Filter, operator, combination, Order, and direction contracts it exposes are the identical objects Storage republishes; and it exposes neither the shared Entity capability, nor a flat duplicate of Child Actions, nor any Storage Action."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:26:36Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G6-T01, P3-G3-T01, and P3-G3-T02 are done."
+                - at: "2026-10-01T10:27:27Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the Entity Service Interface: it imports the 15 Child Services, publishes them with an ordered children collection built from the Model Entity Collection through the membership helper (the identical Collection order), and republishes the Instance enumeration and the five query contracts as the identical objects Storage and Database publish; at load it also runs the realization-identity check. Observed: 22 public names (15 Child Services, children, and 6 republished types), equal to its listed names; children follow the Entity Collection's order (UserService first, PositionService last); the 6 republished types are the identical objects of Storage's and Database's; no Base Entity, no flat copy of any Child Action, and no Storage Action is among the public names; a consumer used only the gateway to list active Users with a Filter, combination, and Order and an explicit Instance (['Admin']) and to count the Assets (4); in a fresh interpreter with connection, socket, and process creation instrumented, loading it made no connection, no process, no file, and created no Child instance."
+            "P3-G7-T02":
+              id: "P3-G7-T02"
+              source_id: "007"
+              title: "Keep Entity Service independent of Logic Interface"
+              description: "Make Entity Service depend directly on Model's and Storage Service's published Interfaces and never on Logic Interface, learning Model membership only from Model's Entity Collection."
+              reason: "One-way dependencies prevent a cycle between Logic Interface and its internal Services."
+              inputs: []
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "An Entity Service that works while Logic Interface is not loaded."
+              depends_on: ["P3-G7-T01"]
+              constraints: []
+              acceptance: "Loading Entity Service's gateway alone does not load Logic Interface, and its membership equals the Entity Collection without consulting any other registry, export list, or inspection of Model."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:28:06Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P3-G7-T01 is done."
+                - at: "2026-10-01T10:29:03Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "No source changed in this Task: Entity Service already depends directly on Model's and Storage Service's published Interfaces, so this Task verified it now that Logic Interface exists. Observed: in a fresh interpreter, loading Entity Service's gateway alone did not load Logic Interface, while loading Logic Interface loaded the Entity gateway; no module under the Services imports Logic Interface; Child membership comes only from the Model Entity Collection (the membership helper reads the Collection and nothing else, and no Service reads Model's export list, attributes, or any registry)."
+            "P3-G7-T03":
+              id: "P3-G7-T03"
+              source_id: "007"
+              title: "Route every Entity persistence request through Storage Service only"
+              description: "Make every persistence request of Entity Service reach Database solely through the corresponding Storage Action."
+              reason: "One route keeps Storage Service Logic's gateway to Database and keeps Entity Behaviour independent of how Database realizes persistence."
+              inputs: ["The Storage Service Interface"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "Entity Service has no persistence route other than Storage."
+              depends_on: ["P3-G5-T13"]
+              constraints: []
+              acceptance: "Every Entity Action's request reaches Database only through the corresponding Storage Action, and Entity Service neither calls Database's Interface nor any Database implementation directly."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:26:36Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P3-G5-T13 is done."
+                - at: "2026-10-01T10:27:27Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "No source changed in this Task: Base Entity already reaches persistence only through Storage's Interface, so this Task verified it. Observed: a scan of every module of Entity Service finds imports only of Storage's Interface, Model's Interface, Core, the Entity Service's own modules, and the standard library, none of Database and none of Logic Interface; with spies standing in for Database inside each of the 12 Storage Action modules, running the 12 Entity Actions of a Child made exactly 12 Database calls, each made by exactly its own Storage Action in order, and nothing else."
+        "P3-G8":
+          id: "P3-G8"
+          title: "Logic Interface"
+          description: "Logic's single root gateway, through which every external consumer reaches Logic. It publishes Service Interfaces and nothing more; every Action stays defined and implemented by the Service that owns it."
+          area: "Interface: publication of Service Interfaces"
+          does: "A consumer reaches every publication-enabled Service through one root gateway and cannot reach an unpublished Service, an implementation, or a dependency through it."
+          constraints: []
+          task_count: 4
+          tasks:
+            "P3-G8-T01":
+              id: "P3-G8-T01"
+              source_id: "007"
+              title: "Publish exactly the publication-enabled Service Interfaces"
+              description: "Provide the root gateway that presents the Interface of every Service whose publication setting is enabled, unchanged and under that Service's configured name, and leaves out every Service whose setting is disabled. Entity Service is enabled and Storage Service is disabled by default, and both Services and their Interfaces remain available inside Logic whatever their setting."
+              reason: "Consumers discover Logic through one set of Service gateways that never becomes a second implementation of any Service's contract."
+              inputs: ["The Entity Service Interface", "The Storage Service Interface", "Each Service's publication setting"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "A root gateway whose members are exactly the publication-enabled Service Interfaces."
+              depends_on: ["P3-G7-T01", "P3-G3-T04"]
+              constraints: []
+              acceptance: "The gateway presents the Entity Service Interface, identical to Entity Service's own, under its configured name and does not present Storage Service; Storage remains usable by Entity Service while unpublished; and enabling Storage's publication adds exactly its Interface, unchanged, and nothing else."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:27:27Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G7-T01 and P3-G3-T04 are done."
+                - at: "2026-10-01T10:28:06Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the root Logic Interface: it imports Entity Service's Interface under the configured name Entity (the Service Interface module itself, not a wrapper or copy) and lists exactly that name; Storage's Interface is not imported because its publication setting is disabled. Added Core's Service settings (role, configured name, configured location, publication, API generation) with the two fixed Services, and a load-time check that the root Interface publishes exactly the publication-enabled Services. Observed: the gateway's public names are ['Entity'] and the object is the identical Entity Service Interface; Storage is not presented; Storage nevertheless remained fully usable inside Logic (BrokerService counted through Storage's Count Action); with an edited copy of the gateway that publishes Storage and the Storage setting enabled, exactly ['Entity', 'Storage'] were presented, Storage being the identical Storage Service Interface and Entity unchanged; the check rejected publishing Storage while its setting is disabled and omitting the enabled Entity Service, each naming the expected set."
+                - at: "2026-10-01T10:32:28Z"
+                  log_entry: "008"
+                  transition: "done -> done"
+                  note: "Quality pass after the later Tasks: the load-time publication check now also runs the Service validation added for API eligibility and Service identities (G8-T03 and T04). Observed afterwards: the root gateway still presents exactly ['Entity'], the identical Entity Service Interface; the Storage-enabled variant still presents exactly ['Entity', 'Storage']; and publishing an unpublished Service or omitting an enabled one is still rejected (observation script re-run clean against the final source)."
+            "P3-G8-T02":
+              id: "P3-G8-T02"
+              source_id: "007"
+              title: "Keep the root gateway free of Behaviour and dependency symbols"
+              description: "Make the root gateway define no Action, wrapper, Category, Behaviour, dependency construction, result transformation, or duplicate export from Model, Database, Core, or a Service, and expose no Service implementation, connection, session, or storage detail."
+              reason: "A root gateway that only publishes cannot disagree with the Services it publishes."
+              inputs: []
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "A root gateway that carries nothing beyond the published Service Interfaces."
+              depends_on: ["P3-G8-T01"]
+              constraints: []
+              acceptance: "The names the gateway exposes are exactly the configured names of the enabled Services, no other Action, wrapper, or Model or Database contract is reachable through it, and loading it creates no connection, data, or process."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:28:06Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P3-G8-T01 is done."
+                - at: "2026-10-01T10:29:03Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "No further source was needed beyond the root gateway written in G8-T01, so this Task verified its content. Observed: the gateway's module body holds only imports, the list of its published names, and the one publication check, with no function or class; its public names are exactly ['Entity'], the configured names of the enabled Services, and none of Database, DatabaseInstance, Filter, User, Broker, entities, a Storage Action, Base Entity, or a Child is a name of it; in a fresh interpreter with connection, socket, and process creation instrumented, loading it made no connection, no process, and created no file."
+            "P3-G8-T03":
+              id: "P3-G8-T03"
+              source_id: "007"
+              title: "Require publication before API Group eligibility"
+              description: "Validate each Service's API-generation setting independently of its publication setting, and reject a Service that requests API generation while it is not published."
+              reason: "A Service may be useful through the root gateway without being exposed over HTTP, while API membership keeps one authoritative Service-owned source."
+              inputs: ["Each Service's publication and API-generation settings"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "A configuration check that makes API Group eligibility depend on publication."
+              depends_on: ["P3-G8-T01"]
+              constraints: []
+              acceptance: "A Service with both settings enabled is reported eligible for one API Group, a Service with only publication enabled is reported not eligible, a Service that requests API generation while unpublished is rejected with a clear configuration error, and Logic itself defines no route, method, schema, or other API contract."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:28:06Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P3-G8-T01 is done."
+                - at: "2026-10-01T10:29:03Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added to Core's Service settings the API eligibility and its validation: a Service is eligible for one API Group only when publication and API generation are both enabled, and a Service that asks for API generation while unpublished is rejected with a ConfigurationError naming it; the check runs whenever the root Interface's publication is verified at load. The fixed set of exactly the Entity and Storage Services is also checked there. Observed: Entity (both enabled) is the only eligible Service; with API generation off it is not eligible; with both enabled for Storage, Storage becomes eligible; generate_api true while Storage is unpublished was rejected naming Storage; no route, method, schema, or other API contract is defined anywhere in the settings or the gateway."
+            "P3-G8-T04":
+              id: "P3-G8-T04"
+              source_id: "007"
+              title: "Validate published Service identities"
+              description: "Validate every configured Service name and Service location for validity and for uniqueness after normalization, including that published names are unique within the root gateway."
+              reason: "The root gateway cannot publish two Services under one identity, and an identity the language rejects cannot be realized."
+              inputs: ["The shared identity validation", "The configured Service names and locations"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "A set of Services whose published identities are valid and unique."
+              depends_on: ["P3-G2-T02", "P3-G8-T01"]
+              constraints: []
+              acceptance: "Valid, unique names publish, and an invalid, reserved, or colliding Service name or location stops generation with a clear configuration error naming the value, with no suffix, number, or rename invented."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:28:06Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G2-T02 and P3-G8-T01 are done."
+                - at: "2026-10-01T10:29:03Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Added the identity checks for the Services to the same validation: every configured Service name and every Service location goes through the shared Core identity validation (validity, reserved words, uniqueness after normalization), so published names are unique within the root gateway. Observed: the valid names ['Entity', 'Storage'] and locations ['entity', 'storage'] are accepted; 'Entity Service' and 'en-tity' (invalid), 'class' (reserved), two Services under one name or in one location, and a full-width spelling of 'Entity' that normalizes to the same name were each rejected with an error naming the value; no suffix, number, or rename was produced; removing a fixed Service was rejected."
+        "P3-G9":
+          id: "P3-G9"
+          title: "Documentation"
+          description: "The public explanation of Logic's Interface and its published Services so that a consumer can use and verify Logic without reading its source."
+          area: "Documentation of the public surface"
+          does: "A consumer can understand, set up, use, and verify Logic from its documentation alone."
+          constraints: []
+          task_count: 5
+          tasks:
+            "P3-G9-T01":
+              id: "P3-G9-T01"
+              source_id: "007"
+              title: "Document the overview and the Interface"
+              description: "Write the short introduction with one simple example, and explain Logic's root Interface by listing only the Service Interfaces it publishes, exactly as published and under their configured names."
+              reason: "Consumers learn what Logic publishes from its documentation."
+              inputs: ["The published Logic Interface"]
+              skills: []
+              expected_result: "Documentation that states the root Interface accurately."
+              depends_on: ["P3-G8-T02"]
+              constraints: []
+              acceptance: "The introduction has one working example, the Interface section lists exactly the published Service Interfaces under their configured names and no unpublished Service, and it states that the root Interface defines no Actions."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:29:03Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P3-G8-T02 is done."
+                - at: "2026-10-01T10:30:43Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Wrote the introduction with one working example (select the Broker Child Service, add, list, tidy up) and the Interface section: the root gateway publishes exactly the Service Interfaces whose publication is enabled, unchanged and under their configured names (today one, Entity, in a table), defines no Action, wrapper, Category, or dependency, and loading it opens no connection, creates no data, and starts no process; the other internal Service is named only as internal and not described. Observed by running every python block of the README in order in one session in a clean copy of model, database, and logic set up from nothing as the Setup section says: the introduction example printed ['FxPro', 'Example Broker'] and the public-names example printed ['Entity']."
+            "P3-G9-T02":
+              id: "P3-G9-T02"
+              source_id: "007"
+              title: "Document every published Service and each capability it handles"
+              description: "For every publication-enabled Service, explain its published Interface and give every capability it handles one complete example, without copying the Service's contract into Logic's documentation and without presenting an unpublished Service as an external capability."
+              reason: "A consumer reaches Behaviour only through a published Service, so each one must be usable from its documentation."
+              inputs: ["The published Entity Service Interface"]
+              skills: []
+              expected_result: "Documentation that covers Entity Service's Child Services, its twelve Actions, and the types they accept."
+              depends_on: ["P3-G7-T01", "P3-G5-T13", "P3-G8-T01"]
+              constraints: []
+              acceptance: "Every Entity of the Model Entity Collection appears once in the Collection's order, every Entity Action has one complete working example that passes imported values and an Instance member that exists rather than strings, and no unpublished Service is presented as an external capability."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:29:03Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G7-T01, P3-G5-T13, and P3-G8-T01 are done."
+                - at: "2026-10-01T10:30:43Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Wrote the Services section for Entity Service, the only publication-enabled Service: what its Interface presents, the Child Services (printed in Model's Entity Collection order and listed once each in a table of 15 Entities), the Instance enumeration, and the shared rules (the optional last Instance parameter, None for an absent record, Database failures reaching the caller unchanged, a different Entity refused with TypeError); then one complete example for each of the twelve Actions (Add, Update, List, Get By Id, Enable, Disable, Delete, Count, Sum, Min, Max, Truncate) with a one-line contract, without copying the Service's contract. Examples pass Field references, Filters, Orders, and enumeration members only, never strings, and the only Instance member shown is SQLITE. Observed: all 12 Action examples ran in the one session and printed exactly the documented outputs (for example 4 2, 15, 2, 5, and 2 0)."
+            "P3-G9-T03":
+              id: "P3-G9-T03"
+              source_id: "007"
+              title: "Document setup"
+              description: "Explain how to set Logic up together with Model and Database from nothing and how to prepare the storage Logic uses."
+              reason: "A consumer must be able to prepare an environment without reading the source."
+              inputs: ["The setup of Model and Database", "The reserved configuration"]
+              skills: []
+              expected_result: "Documentation that takes a consumer from nothing to a working Logic."
+              depends_on: ["P3-G1-T01", "P3-G2-T01"]
+              constraints: []
+              acceptance: "The documented setup steps succeed in a clean environment, state that Logic needs no runtime value, and expose no credential."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:29:03Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G1-T01 and P3-G2-T01 are done."
+                - at: "2026-10-01T10:30:43Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Wrote the Setup section: Python 3.14 with uv, Model and Database as sibling directories, Database set up and prepared first (uv sync and its prepare entry point), then uv sync in Logic, with the statement that Logic needs no runtime value (its configuration is reserved and empty and nothing is read from the environment) and that no credential is involved. Observed: those exact steps ran offline in a clean copy with no environments and installed everything, Prepare reported 15 tables and 23 records, and the examples then ran; no credential or secret appears in the documentation."
+            "P3-G9-T04":
+              id: "P3-G9-T04"
+              source_id: "007"
+              title: "Document use"
+              description: "Show how a consumer uses Logic only through its Interface: selecting an Entity's Child Service, choosing an Instance, building Filters and Orders, and reading an absent record."
+              reason: "Consumers use Logic through its documentation, and the selection of an Entity once is the part most likely to be misused."
+              inputs: ["The published Logic Interface and Entity Service Interface"]
+              skills: []
+              expected_result: "Documentation that demonstrates real use of Logic."
+              depends_on: ["P3-G7-T01", "P3-G8-T01"]
+              constraints: []
+              acceptance: "Each documented use runs and prints its documented outcome, and none reaches Model, Database, or an unpublished Service directly."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:29:03Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G7-T01 and P3-G8-T01 are done."
+                - at: "2026-10-01T10:30:43Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Wrote the Use section: choosing an Instance (explicit member and omission agree), building Filters, a combination, and Orders from published types and Field references, reading an absent record (Get By Id, Update, and Delete each return None for a record that was removed), the refusal of another Entity's instance, and a Database failure reaching the caller unchanged (ExecutionError for a duplicate name). Observed: each Use example ran in the same session and printed its documented output (1 1, ['Admin'], None None None, the TypeError text, ExecutionError); every example reaches Logic only through its published Interface and calls no Database operation and no unpublished Service; Model is imported only for Entities and their Field references, which Logic never republishes."
+            "P3-G9-T05":
+              id: "P3-G9-T05"
+              source_id: "007"
+              title: "Document verification and troubleshooting"
+              description: "Explain how to verify Logic and how to resolve the problems that belong to Logic alone."
+              reason: "A consumer must be able to confirm that Logic works without inspecting its source."
+              inputs: ["The documented Interface, Services, setup, and use"]
+              skills: []
+              expected_result: "Documentation that proves Logic's public behaviour and covers Logic-specific problems."
+              depends_on: ["P3-G9-T01", "P3-G9-T02", "P3-G9-T03", "P3-G9-T04", "P3-G6-T01", "P3-G6-T02", "P3-G4-T20", "P3-G8-T04"]
+              constraints: []
+              acceptance: "The verification demonstrates public import, that exactly the enabled Services are published, that every Entity has one bound Child Service, that an instance of a different Entity is rejected before any storage request, and that an Action reaches storage through the Instance chosen; troubleshooting covers an unpublished Service, a Service identity that is invalid or collides, and an Action-name override that matches no Database capability, and nothing else."
+              status: "done"
+              log:
+                - at: "2026-10-01T10:30:43Z"
+                  log_entry: "008"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P3-G9-T01 to T04, P3-G6-T01, P3-G6-T02, P3-G4-T20, and P3-G8-T04 are done."
+                - at: "2026-10-01T10:31:46Z"
+                  log_entry: "008"
+                  transition: "claimed -> done"
+                  note: "Wrote the Verify and Troubleshooting sections. Verify is one self-contained script that uses only the public Interface: it checks the public import (the root gateway presents exactly ['Entity']), that every Entity has one bound Child Service in Model's Entity order (names equal and each Child lists only records of its own Entity), that an instance of a different Entity is rejected with nothing stored, and that an Action reaches storage through the chosen Instance and through the default when none is chosen, leaving no record behind; it prints OK. Troubleshooting covers exactly three Logic concerns: a Service that is not published, a Service identity that is invalid or collides, and an Action-name override that matches no Database capability (with the one sentence that the same check stops the load when Database publishes a capability that has no Action yet, which is the same Action-to-capability matching). Observed: all 24 python blocks of the finished README ran in order in one session in a clean copy of model, database, and logic set up from nothing with the documented steps (offline), 23 printed outputs equal the README's, and the Verify script printed OK; the quoted error messages equal the ones observed for G4-T19 and G8-T04."
