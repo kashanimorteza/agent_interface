@@ -1,0 +1,29 @@
+[project]
+name = "database"
+version = "0.1.0"
+description = "Reusable persistence layer of the Trading Assistant: one data-access gateway over every Model Entity."
+requires-python = ">=3.14"
+dependencies = [
+    "model",
+    "pyyaml>=6.0.3",
+    "sqlalchemy>=2.0.54",
+    "sqlmodel>=0.0.47",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.10,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.uv.sources]
+model = { path = "../model", editable = true }
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
+pythonVersion = "3.14"
+
+[dependency-groups]
+dev = [
+    "pyright>=1.1.414",
+    "ruff>=0.16.9",
+]

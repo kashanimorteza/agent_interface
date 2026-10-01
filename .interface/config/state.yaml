@@ -30,10 +30,10 @@ content_map:
 content:
   active:
     mode: "development"
-    phase: "P1"
-    mode_reason: "Developing phase P1 (Model)."
+    phase: "P2"
+    mode_reason: "Developing phase P2 (Database)."
     set_by: "my-interface-develop"
-    set_at: "2026-09-30T22:36:34Z"
+    set_at: "2026-10-01T08:02:34Z"
   phases:
     P1:
       id: "P1"
@@ -43,8 +43,8 @@ content:
       completed_at: null
     P2:
       id: "P2"
-      planning: "not started"
-      development: "not started"
+      planning: "completed"
+      development: "completed"
       review: "not started"
       completed_at: null
     P3:
@@ -247,3 +247,128 @@ content:
           - "Clean copy without an environment: uv sync from the lock file, README verification script OK, nine README examples ran, three rejection examples rejected; copy removed afterwards."
           - "On the 15 real Entities with SQLite: prescribed table, column, foreign key, and unique names; owner-assigned identities; exact 30-digit decimal and +04:00 datetime read back; failed assignment keeps the value; credential values absent from failure text and errors()."
           - "Not evidenced: behaviour on a live PostgreSQL server (only DDL rendering was observed), and the YAML of the Plan and State records was not machine-parsed because scripted checks over .interface paths are denied; the Plan was read back in full and every Task shows status done with claim and completion entries."
+    - id: "005"
+      skill: "my-interface-plan"
+      phase: "P2"
+      event: "Plan phase P2"
+      outcome: "completed"
+      started_at: "2026-10-01T07:45:16Z"
+      completed_at: "2026-10-01T07:53:02Z"
+      duration: "7:46"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used: []
+      open_questions: []
+      blockers: []
+      report: "Planned phase P2 (Database) from nothing: one Plan with 9 Groups and 65 Tasks, all status todo. Groups: library establishment (1), Database Configuration (2), Initial Data collection (12, one per Entity with Target Initial Data), Interface publication (12), Core Data (8), Engine implementation (15), Core lifecycle coordination (6), lifecycle entry points and after-generation preparation (4), Documentation (5). Earlier phase P1 was planned and had no open Blocker; no Blocker or Open Question arose. State: P2 planning set to completed; development and review untouched. Structure was machine-checked read-only: Plan parses, every Group and Plan task_count matches, every depends_on id exists, no dependency cycle, no planning text names a path, file, command, or technology, and no statement repeats across Tasks."
+      data:
+        records:
+          plan: "P2 created; 65 Tasks; file task_count 97"
+          state: "active set to planning/P2, P2 planning completed, this Log Entry"
+          application: "unchanged"
+        phase_selection: "Invocation value 2 resolved to phase P2 (Phase 2, Database), which is enabled and Ready; earlier phase P1 planning is completed with no open Blocker."
+        tasks_created: 65
+        tasks_preserved: 0
+        tasks_replaced: 0
+        tasks_removed: 0
+        task_source_id: "005"
+        decisions:
+          - "Log Entry 005 has no parent_id because Plan was invoked directly by the Human."
+          - "State active was set to mode planning, phase P2, because State records the most recently entered Workflow Mode and this planning occurrence updates P2 planning progress."
+          - "Plan and Group constraints are empty: every restriction found is derivable from the Database Definition, its Preferences, the Database Interface and Configuration Schemas, or the Target."
+          - "Groups follow the Database Architecture: Interface, Core Data, Engine, Core Tables and Initial Data, Entry Points, Documentation, plus library establishment, the configuration, and the Initial Data collection. Interface contract Tasks precede Core and Engine Tasks by dependency; the Interface operation Tasks depend on the Core and Engine Tasks they forward to."
+          - "Engine Tasks cover the Engine used by the one Instance that is active at planning time. An Engine used only by an inactive Instance receives no Task and no unit; replan when active membership changes."
+          - "One Initial Data Task was planned for each of the 12 Entities for which the Target defines Initial Data; Trailing Rule, Partial Rule, and Position have none and no Task."
+          - "Task Skills record sqlmodel, which Database Preferences require when selected for Tables and Engine units, and python-skills:python-guidelines for source-producing Tasks; configuration, Initial Data, and Documentation Tasks record none. No provider Skill was invoked because Planning produces no source."
+          - "No Task was planned for the Application Manifest: no Operation Definition assigns publication of Database public metadata to it, so the Application Config section for database stays empty."
+          - "No Task was planned for Platform, the second Engine, or its driver: the Platform choice is a Preference, and the second Instance is inactive."
+        observations:
+          - "Target Initial Data records carry no identities, yet records of related Entities name each other by identity (for example an Instance's owner and platform). They resolve only when records are inserted into empty storage in Target Entity order, so Develop should keep the collection in that order and Review should observe a run on an Instance that already holds other data."
+          - "Model's JSON reconstruction requires decimal values as JSON text (Log Entry 004), while Target Initial Data states decimals as plain numbers (for example an Action's risk_by_reward). The Initial Data Tasks ask for records that each Entity accepts through its own construction, so Develop must record such values in an accepted form."
+          - "Target Initial Data uses Generate securely for credential values; Database Principles copy a value that is not concrete as an empty string, so those records carry empty credentials until the user fills them."
+          - "Database never hashes or encrypts: Target declares hash and encrypted storage for credential Fields, Model preserves only the markers (Log Entry 003), and Database stores values unchanged. No Component yet applies those requirements; the decision bears on phase P3 (Logic)."
+          - "The Definition says InsertInitialData skips an already-present identical record and fails on a conflicting one, but does not define how a stored record is matched to a collected record. Develop must derive it from the Declaration's Primary Key and Uniqueness Constraints and raise it through State if that is not enough, rather than guess."
+          - "LifecycleResult affected is defined as the processed count, and success with zero is allowed only when the Target declares no Initial Data. A repeat run that skips every record therefore reports the processed count, not zero; Develop must keep that meaning."
+          - "Database Preferences set error_handling to false while the Interface Schema requires published error kinds. Planned Tasks cover only the published errors; Develop must not add handling beyond them and may raise any ambiguity through State."
+          - "The Database Interface Schema example selects a PostgreSQL member that will not exist because that Instance is inactive; documentation examples must use only existing members."
+          - "Dependency downloads were unreachable in Log Entry 004; Database needs no PostgreSQL driver while that Instance is inactive, but its SQLModel dependency, shared with Model, may again have to be resolved offline."
+        evidence:
+          - "Plan Config and State Config were structurally valid before planning."
+          - "Read-only script check after writing: both Plans parse (97 Tasks in total, 65 in P2); every Group and Plan task_count equals its Tasks; every depends_on id exists; no dependency cycle; every Task has all required fields, status todo, and source_id 005; planning text contains no path, file name, command, or technology name; no statement repeats across Tasks. The check found one duplicated acceptance sentence, which was reworded and re-checked."
+          - "git status after the run shows only .interface/config/plan.yaml and .interface/config/state.yaml modified."
+    - id: "006"
+      skill: "my-interface-develop"
+      phase: "P2"
+      event: "Develop phase P2"
+      outcome: "completed"
+      started_at: "2026-10-01T08:02:34Z"
+      completed_at: "2026-10-01T08:32:02Z"
+      duration: "29:28"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used:
+        - name: "sqlmodel"
+          duration: null
+          token_usage:
+            input: null
+            output: null
+            total: null
+          report: "Loaded as a Task Skill required by Database Preferences. Its guidance matched the Preferences and was followed (SQLModel imports, Session with exec and select, get by primary key, create_all after every table model is imported, check_same_thread false for SQLite); SQLAlchemy-only features (events, reflection, dialect type compilation, the connection pool, native driver commands) were used only where SQLModel has no equivalent. No recommendation differed from a project choice."
+        - name: "python-skills:python-guidelines"
+          duration: null
+          token_usage:
+            input: null
+            output: null
+            total: null
+          report: "Loaded as a Task Skill for source-producing Tasks: pathlib, uv, no wrappers for trivial code, no dead or duplicate code, verification by running code. Its try/except minimalism was applied within the explicit error contract Database Principles require. No recommendation differed from a project choice."
+      open_questions: []
+      blockers: []
+      report: "Developed phase P2 (Database): all 65 planned Tasks done, each claimed before work, started only after its dependencies were done, and closed with observed evidence in its Task Log. Created the Component at database/ (library, package database, Python, uv, src layout): the Interface with the 17 published contracts and the gateway with every Operation and Lifecycle Command; Core Data (configuration loading and validation, Instance resolution, query defaults, Field and Filter validation, routing, materialization, normalization), Core Tables, Core Initial Data with Prepare; the SQLite Engine unit; the generated config.yaml with both Engines, both Instances, the runtime settings, and all 23 Target Initial Data records; three manual entry points; and a README whose 29 python examples all ran in order in a clean copy with matching output. Final checks: formatter, linter, and type checker clean; 21 verification scripts pass; setup from nothing works in clean copies; after-generation Prepare ran on the default Instance and left db/application.db with 15 Tables and 23 records (git-ignored). State: P2 development set to completed; review untouched, so completed_at stays null. Caveats: dependency versions resolved offline from the local uv cache; behaviour was observed on SQLite only (the PostgreSQL Instance is inactive, so it has no Engine unit and was not exercised)."
+      data:
+        records:
+          plan: "P2 Tasks: 65 done; every Task Log holds its claim and completion entry, and three Tasks hold a later quality-pass entry; file task_count 97 unchanged"
+          state: "active mode development/P2, P2 development completed, this Log Entry"
+          application: "unchanged"
+          source: "database/ created: library with src layout, package database, config.yaml, scripts (3 entry points), README.md, uv.lock, 8 source files"
+        tasks_done: 65
+        tasks_blocked: 0
+        human_decisions: []
+        decisions:
+          - "Log Entry 006 has no parent_id because Develop was invoked directly by the Human."
+          - "The YAML parser is PyYAML 6.0.3: Database Preferences fix config.yaml as YAML and name no parser, and the standard library has none. Declared as a direct dependency."
+          - "Component root is database/ at the project root, with package database in a src layout beside Model's. config.yaml, db/ (Database-owned storage), and scripts/ sit at the Component root; Interface is database/interface, Core is core (data, tables, initial_data), and the Engine unit is engine/sqlite, all following Database Preferences. The Component root is found from the package's own location and Core refuses to run when it holds no project manifest, so an installed copy never resolves storage."
+          - "The contracts (enumerations, Filter, Order, results, errors, DatabaseInstance) and the Database gateway are defined in the Interface, and Core is imported by three private accessors when a call is made. This avoids an import cycle and keeps loading the Interface free of every side effect and of every other import."
+          - "config.yaml records an Engine's driver as the driver name Preferences give (sqlite3, psycopg) and carries the Engine parameters runtime needs (URL scheme, connect arguments, foreign keys, storage kind, required parameters, default port), because runtime never reads Preferences."
+          - "Model Preferences' 'its own constructor' for row materialization is realized with Model's JSON reconstruction (from_json), the one public path that accepts a storage-assigned identity; values are converted only when their Python kind matches the declared Type, so a wrong-typed stored value is rejected rather than coerced."
+          - "Initial Data decimals are recorded as exact decimal text because Model's reconstruction accepts nothing else; credential values the Target generates securely are recorded as empty strings."
+          - "SQLite stores Decimal Fields as exact text, so any query that filters or orders on a Decimal Field is evaluated by value, and Decimal totals are computed exactly; other queries run in SQL. Text operators are case-sensitive (instr and substr, not LIKE) so results do not depend on the Engine, and a stored null never satisfies a comparison."
+          - "Every changing request is one atomic unit of work on the SQLite unit, DDL included (explicit BEGIN with the driver's own transaction handling off); no connection pool is used. The branch for an Engine that cannot make schema changes atomic was therefore not written."
+          - "A Lifecycle Command that fails raises a published error and never returns success false: a differing Table is DeclarationMismatchError, conflicting Initial Data and an incomplete Prepare are LifecycleError, and each message names the command and the Instance. The result's affected is the processed count (Tables, records, or their sum for Prepare)."
+          - "A stored Initial Data record is identified through the Declaration (each Uniqueness Constraint whose Fields the record fills, or all non-generated Fields when an Entity declares none), because Target Initial Data carries no identities; the same identity with other values is a conflict."
+          - "A boolean Field is refused for Min and Max, and a bool is never accepted as an integer; update given an Entity without an identity reports not found."
+          - "Entry points print the LifecycleResult of their command and hold no logic."
+        observations:
+          - "Definition gap for the Human: the Target and Database Principles say the user fills empty (not-concrete) credential values later, and also say InsertInitialData fails on a conflicting stored record and never overwrites. After a seeded credential is filled, InsertInitialData and Prepare report that record as a conflict, and after-generation Prepare (fail_on_error true) would fail on a regeneration against that Instance. The literal rule was implemented and documented in the README; whether a placeholder empty value should count as matching is a Human decision."
+          - "No Component applies the hash and encrypted at-rest requirements Target declares for credential Fields (Log Entry 003 and 005 observations stand); Database stores values unchanged, so the seeded and any later credentials are stored in clear text. The decision bears on phase P3 (Logic)."
+          - "Target Initial Data records carry no identities and resolve only when inserted into an empty Instance in Target Entity order; on an Instance that already holds other data the records receive other identities and their relation values may point at the wrong records or fail."
+          - "The Database Interface Schema example selects a PostgreSQL member; the README uses only SQLITE. Activating the PostgreSQL Instance needs a Preferences change and a replan, because it adds a DatabaseInstance member, an Engine unit, and the psycopg dependency."
+          - "Model Preferences still await the Human updates recorded in Log Entry 004 (datetime column, Field Declaration member names, Sensitivity Marker mapping); Database relies on the Declaration member names Model published."
+          - "Hook behaviour: one Bash command that both wrote to database/config.yaml and contained the Python module name model.interface was denied by interface-boundary-guard before it ran (the module name contains the text .interface, and neither action touched the protected tree). No workaround for the protected tree was attempted: the write was rerun as its own command with no such text, and the check was run from a script file. Later checks and the Plan and State edits were not denied."
+          - "Dependency downloads from files.pythonhosted.org remain unreachable (the index is reachable), so versions were resolved offline from the local uv cache: pyyaml 6.0.3, sqlmodel 0.0.47, sqlalchemy 2.0.54, pydantic 2.13.5, ruff 0.16.9, pyright 1.1.414."
+          - "Database Preferences set testing and error_handling to false: no test suite is shipped and no handling beyond the published errors was added; conformance evidence is in the Task Logs and in the README Verify script."
+        required_human_actions:
+          - "Run Review for phase P2 (/my-interface-review 2); Review for P1 (/my-interface-review 1) is also still outstanding."
+          - "Decide whether an empty placeholder Initial Data value should count as matching a filled stored value, so that Prepare stays repeatable after credentials are filled (Database Definition, InsertInitialData is repeatable); until then the literal rule holds."
+          - "When the network allows, re-resolve dependencies with uv lock --upgrade inside database/ and model/ and review the result."
+        evidence:
+          - "Formatter, linter, and type checker clean on the delivered source and scripts (last run after the final code change)."
+          - "21 verification scripts pass against the final source, covering vocabulary, values, configuration, resolution, routing, materialization, connection, every Engine capability, Core operations, atomicity, Tables, Initial Data, Prepare, the gateway, the Interface surface, and the real Instance."
+          - "Clean copies of Model and Database set up with uv sync from nothing (offline from the cache): the three entry points print outputs identical to the gateway's, and all 29 python blocks of the README ran in order in one session with all 27 printed outputs equal to the README's."
+          - "Prepare ran on the real default Instance: db/application.db holds 15 Tables and 23 records equal to the Target's, only that one storage file exists, and a second run inserted 0 and skipped 23."
+          - "Read-only check of the Plan: 65 Tasks all done, every Task claimed first and only after all its dependencies were done, counts consistent (P2 65, file 97), P1 unchanged."
+          - "Read-only check of State after the final edit: it parses, Log Entry 006 and the P2 progress hold the recorded values, and every other phase is unchanged. The Plan check above ran the same way."
+          - "Not evidenced: behaviour on PostgreSQL (inactive, no unit); concurrent writers; Review has not been run."

@@ -26,7 +26,7 @@ content_map:
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
-  task_count: 32
+  task_count: 97
   plans:
     P1:
       id: "P1"
@@ -802,3 +802,1536 @@ content:
                   log_entry: "004"
                   transition: "claimed -> done"
                   note: "Wrote the Setup (uv sync), Use (construction, mutation, rejections, enumeration), Verify (a runnable script covering the exact export membership, the collection's membership, order, and identity with the exports, frozen Declarations defined on the Entities themselves, immutability, side-effect freedom, representative construction, and a lossless JSON round trip), and Troubleshooting sections, limited to Model concerns. Observed in a clean copy of the library with no environment: uv sync installed the locked versions; the README verification script printed OK; all nine README examples ran; the three rejection examples were rejected. The verification script first failed because it treated namespace order as a contract; it now compares names as a set and keeps collection order strict. The clean copy was removed afterwards."
+    P2:
+      id: "P2"
+      title: "Database"
+      order: 2
+      target: "Database"
+      does: "Deliver the Database layer that persists every Model Entity through a selected active Instance behind one stable data-access gateway, prepares that storage from the Entities, and inserts the Target's Initial Data."
+      constraints: []
+      task_count: 65
+      groups:
+        "P2-G1":
+          id: "P2-G1"
+          title: "Database library establishment"
+          description: "Makes Database an independent, consumable unit that holds every later result of this phase and reaches Model only through its published Interface."
+          area: "Independent delivery of the Database layer"
+          does: "A Database library exists that can be set up reproducibly alongside Model and loaded by a consumer without any other Component."
+          constraints: []
+          task_count: 1
+          tasks:
+            "P2-G1-T01":
+              id: "P2-G1-T01"
+              source_id: "005"
+              title: "Establish the Database library as an independent consumable unit"
+              description: "Create the unit that will hold the Database layer so that it can be set up from nothing together with the Model it consumes, resolves its own dependencies reproducibly, and relies on no Component other than Model."
+              reason: "Every later result of this phase needs a place to live that other Components can consume without reaching into private resources."
+              inputs: ["The published Model Interface"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "An empty but complete Database library that a consumer can set up and load, with its own reproducible dependency resolution and access to Model through its published Interface."
+              depends_on: ["P1-G4-T02"]
+              constraints: []
+              acceptance: "The library sets up in a clean environment together with Model and loads successfully, and it depends on no Component other than Model."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:06:01Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P1-G4-T02 is done."
+                - at: "2026-10-01T08:06:40Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Created the Component root database/ (src layout, package database) with uv; declared model (resolved from the sibling Model library by path, editable), pyyaml, sqlalchemy, and sqlmodel as runtime dependencies and ruff and pyright as development dependencies; the type checker's environment and Python 3.14 settings are in the manifest; uv.lock holds the concrete versions. Observed: uv sync from nothing installed 13 packages, database and model load in the project environment, the Model Entity Collection imports with 15 Entities, and the library depends on no Component other than Model. Caveat: files.pythonhosted.org is unreachable, so versions were resolved offline from the local uv cache (pyyaml 6.0.3, sqlmodel 0.0.47, sqlalchemy 2.0.54, pydantic 2.13.5, ruff 0.16.9, pyright 1.1.414); the YAML parser is a Database-side choice recorded in Log Entry 006."
+        "P2-G2":
+          id: "P2-G2"
+          title: "Database Configuration"
+          description: "The generated record that is the only runtime source of Engines, Instances, and runtime settings. Its Initial Data collection is planned as its own Group."
+          area: "Configuration: Engines, Instances, and runtime settings"
+          does: "A complete, valid configuration exists from which every other part of Database resolves its Engines, Instances, defaults, and lifecycle behaviour."
+          constraints: []
+          task_count: 2
+          tasks:
+            "P2-G2-T01":
+              id: "P2-G2-T01"
+              source_id: "005"
+              title: "Record every Engine and Instance in the Database Configuration"
+              description: "Record each Engine and each Instance the Database definition declares, giving every Instance its complete definition and tying it to an existing Engine."
+              reason: "Instance selection, active membership, and Engine implementation all derive from these records."
+              inputs: ["The declared Engine and Instance definitions"]
+              skills: []
+              expected_result: "Engines and Instances present in the configuration, every Instance complete, uniquely identified, and tied to an Engine."
+              depends_on: ["P2-G1-T01"]
+              constraints: []
+              acceptance: "Every declared Instance appears with its complete definition under a unique identity, with its declared active state and an existing Engine, and every declared Engine appears once."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:06:40Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G1-T01 is done."
+                - at: "2026-10-01T08:06:57Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Recorded both declared Engines (sqlite, postgresql) and both declared Instances in the Database Configuration with the complete nine-member definition each. Engine parameters carry what runtime needs because runtime never reads Preferences: the URL scheme, connect arguments and foreign-key enforcement for SQLite, the storage kind, the required connection parameters, and the PostgreSQL default port. Observed by parsing the file: every Instance has exactly the nine members, names the existing Engine it uses, and has a unique name; the SQLite Instance is active and the PostgreSQL Instance is inactive. Decision: an Engine's driver is recorded as the driver name Preferences give (sqlite3, psycopg), not as a dialect name."
+            "P2-G2-T02":
+              id: "P2-G2-T02"
+              source_id: "005"
+              title: "Record the default Instance, storage root, query defaults, and lifecycle behaviour"
+              description: "Record the runtime settings that every request resolves when the caller supplies nothing: the default Instance, the Database-owned storage root, the query defaults, and the after-generation preparation behaviour."
+              reason: "Fixed settings make the same call behave the same way on every Instance and every generation."
+              inputs: ["The declared runtime setting definitions", "The recorded Instances"]
+              skills: []
+              expected_result: "Runtime settings present in the configuration and consistent with the recorded Instances."
+              depends_on: ["P2-G2-T01"]
+              constraints: []
+              acceptance: "The default Instance names an active recorded Instance, the storage root and query defaults are present with enumeration defaults written as canonical member names, a zero or negative default limit is recorded as no limit, and the after-generation behaviour matches its definition."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:06:57Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G2-T01 is done."
+                - at: "2026-10-01T08:07:03Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Recorded the runtime settings: default Instance sqlite (active, recorded), storage root db, query defaults (combination AND, default limit -1 meaning no limit, default order by id ascending, both written as canonical member names), and after-generation behaviour (enabled, fail on error, command prepare). Observed by parsing the file: the default Instance names an active recorded Instance and every value equals its declared definition."
+        "P2-G3":
+          id: "P2-G3"
+          title: "Initial Data collection"
+          description: "The single shared, repeatable collection of every Initial Data record the Target defines. One Task per Entity that has any, taken in Target Entity order; an Entity for which the Target defines none has no Task."
+          area: "Configuration: shared Initial Data collection"
+          does: "The configuration holds every Target-defined Initial Data record, grouped by Entity in Target Entity order, ready for insertion into any active Instance."
+          constraints: []
+          task_count: 12
+          tasks:
+            "P2-G3-T01":
+              id: "P2-G3-T01"
+              source_id: "005"
+              title: "Record the Initial Data of User"
+              description: "Record every Initial Data record the Target defines for User in the shared collection, as complete records that User accepts."
+              reason: "Records of owned Entities identify their owner, so the owning User records must be in the collection."
+              inputs: ["The Target's Initial Data records for User"]
+              skills: []
+              expected_result: "The User entry of the collection holds the Target's User records."
+              depends_on: ["P2-G2-T02"]
+              constraints: []
+              acceptance: "The User entry matches the Target's User records one for one, in Target order, and each record is accepted by User's own construction."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:07:03Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G2-T02 is done."
+                - at: "2026-10-01T08:07:48Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Recorded the 1 Target User record(s) in the shared collection, in Target order, as field mappings without an identity. Observed: each record was rebuilt through User's own JSON reconstruction and accepted. Credential values the Target generates securely are recorded as empty strings."
+            "P2-G3-T02":
+              id: "P2-G3-T02"
+              source_id: "005"
+              title: "Record the Initial Data of Trading Platform"
+              description: "Record every Initial Data record the Target defines for Trading Platform in the shared collection, as complete records that Trading Platform accepts."
+              reason: "Instance records identify the platform they use, so the supported platforms must be in the collection."
+              inputs: ["The Target's Initial Data records for Trading Platform"]
+              skills: []
+              expected_result: "The Trading Platform entry of the collection holds the Target's Trading Platform records."
+              depends_on: ["P2-G2-T02"]
+              constraints: []
+              acceptance: "The Trading Platform entry matches the Target's Trading Platform records one for one, in Target order, and each record is accepted by Trading Platform's own construction."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:07:03Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G2-T02 is done."
+                - at: "2026-10-01T08:07:48Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Recorded the 2 Target Trading Platform record(s) in the shared collection, in Target order, as field mappings without an identity. Observed: each record was rebuilt through Trading Platform's own JSON reconstruction and accepted."
+            "P2-G3-T03":
+              id: "P2-G3-T03"
+              source_id: "005"
+              title: "Record the Initial Data of Instance"
+              description: "Record every Initial Data record the Target defines for Instance in the shared collection, as complete records that Instance accepts."
+              reason: "Accounts reach their trading platform through an Instance, so the Target's Instance must be in the collection."
+              inputs: ["The Target's Initial Data records for Instance"]
+              skills: []
+              expected_result: "The Instance entry of the collection holds the Target's Instance records."
+              depends_on: ["P2-G2-T02"]
+              constraints: []
+              acceptance: "The Instance entry matches the Target's Instance records one for one, in Target order, and each record is accepted by Instance's own construction."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:07:03Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G2-T02 is done."
+                - at: "2026-10-01T08:07:48Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Recorded the 1 Target Instance record(s) in the shared collection, in Target order, as field mappings without an identity. Observed: each record was rebuilt through Instance's own JSON reconstruction and accepted. Credential values the Target generates securely are recorded as empty strings."
+            "P2-G3-T04":
+              id: "P2-G3-T04"
+              source_id: "005"
+              title: "Record the Initial Data of Currency"
+              description: "Record every Initial Data record the Target defines for Currency in the shared collection, as complete records that Currency accepts."
+              reason: "Accounts name a base currency, so the supported currencies must be in the collection."
+              inputs: ["The Target's Initial Data records for Currency"]
+              skills: []
+              expected_result: "The Currency entry of the collection holds the Target's Currency records."
+              depends_on: ["P2-G2-T02"]
+              constraints: []
+              acceptance: "The Currency entry matches the Target's Currency records one for one, in Target order, and each record is accepted by Currency's own construction."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:07:03Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G2-T02 is done."
+                - at: "2026-10-01T08:07:48Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Recorded the 8 Target Currency record(s) in the shared collection, in Target order, as field mappings without an identity. Observed: each record was rebuilt through Currency's own JSON reconstruction and accepted."
+            "P2-G3-T05":
+              id: "P2-G3-T05"
+              source_id: "005"
+              title: "Record the Initial Data of Broker"
+              description: "Record every Initial Data record the Target defines for Broker in the shared collection, as complete records that Broker accepts."
+              reason: "Assets and accounts identify their broker, so the Target's Broker must be in the collection."
+              inputs: ["The Target's Initial Data records for Broker"]
+              skills: []
+              expected_result: "The Broker entry of the collection holds the Target's Broker records."
+              depends_on: ["P2-G2-T02"]
+              constraints: []
+              acceptance: "The Broker entry matches the Target's Broker records one for one, in Target order, and each record is accepted by Broker's own construction."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:07:03Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G2-T02 is done."
+                - at: "2026-10-01T08:07:48Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Recorded the 1 Target Broker record(s) in the shared collection, in Target order, as field mappings without an identity. Observed: each record was rebuilt through Broker's own JSON reconstruction and accepted."
+            "P2-G3-T06":
+              id: "P2-G3-T06"
+              source_id: "005"
+              title: "Record the Initial Data of Asset"
+              description: "Record every Initial Data record the Target defines for Asset in the shared collection, as complete records that Asset accepts."
+              reason: "Actions trade an Asset, so the tradable Assets must be in the collection."
+              inputs: ["The Target's Initial Data records for Asset"]
+              skills: []
+              expected_result: "The Asset entry of the collection holds the Target's Asset records."
+              depends_on: ["P2-G2-T02"]
+              constraints: []
+              acceptance: "The Asset entry matches the Target's Asset records one for one, in Target order, and each record is accepted by Asset's own construction."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:07:03Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G2-T02 is done."
+                - at: "2026-10-01T08:07:48Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Recorded the 4 Target Asset record(s) in the shared collection, in Target order, as field mappings without an identity. Observed: each record was rebuilt through Asset's own JSON reconstruction and accepted."
+            "P2-G3-T07":
+              id: "P2-G3-T07"
+              source_id: "005"
+              title: "Record the Initial Data of Account Group"
+              description: "Record every Initial Data record the Target defines for Account Group in the shared collection, as complete records that Account Group accepts."
+              reason: "Accounts belong to a group, so the Target's Account Group must be in the collection."
+              inputs: ["The Target's Initial Data records for Account Group"]
+              skills: []
+              expected_result: "The Account Group entry of the collection holds the Target's Account Group records."
+              depends_on: ["P2-G2-T02"]
+              constraints: []
+              acceptance: "The Account Group entry matches the Target's Account Group records one for one, in Target order, and each record is accepted by Account Group's own construction."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:07:03Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G2-T02 is done."
+                - at: "2026-10-01T08:07:48Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Recorded the 1 Target Account Group record(s) in the shared collection, in Target order, as field mappings without an identity. Observed: each record was rebuilt through Account Group's own JSON reconstruction and accepted."
+            "P2-G3-T08":
+              id: "P2-G3-T08"
+              source_id: "005"
+              title: "Record the Initial Data of Account"
+              description: "Record every Initial Data record the Target defines for Account in the shared collection, as complete records that Account accepts."
+              reason: "Actions execute through an Account, so the Target's Account must be in the collection."
+              inputs: ["The Target's Initial Data records for Account"]
+              skills: []
+              expected_result: "The Account entry of the collection holds the Target's Account records."
+              depends_on: ["P2-G2-T02"]
+              constraints: []
+              acceptance: "The Account entry matches the Target's Account records one for one, in Target order, and each record is accepted by Account's own construction."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:07:03Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G2-T02 is done."
+                - at: "2026-10-01T08:07:48Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Recorded the 1 Target Account record(s) in the shared collection, in Target order, as field mappings without an identity. Observed: each record was rebuilt through Account's own JSON reconstruction and accepted. The credential the Target generates securely is recorded as an empty string."
+            "P2-G3-T09":
+              id: "P2-G3-T09"
+              source_id: "005"
+              title: "Record the Initial Data of Trailing Group"
+              description: "Record every Initial Data record the Target defines for Trailing Group in the shared collection, as complete records that Trailing Group accepts."
+              reason: "Actions apply a trailing group, so the Target's Trailing Group must be in the collection."
+              inputs: ["The Target's Initial Data records for Trailing Group"]
+              skills: []
+              expected_result: "The Trailing Group entry of the collection holds the Target's Trailing Group records."
+              depends_on: ["P2-G2-T02"]
+              constraints: []
+              acceptance: "The Trailing Group entry matches the Target's Trailing Group records one for one, in Target order, and each record is accepted by Trailing Group's own construction."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:07:03Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G2-T02 is done."
+                - at: "2026-10-01T08:07:48Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Recorded the 1 Target Trailing Group record(s) in the shared collection, in Target order, as field mappings without an identity. Observed: each record was rebuilt through Trailing Group's own JSON reconstruction and accepted."
+            "P2-G3-T10":
+              id: "P2-G3-T10"
+              source_id: "005"
+              title: "Record the Initial Data of Partial Group"
+              description: "Record every Initial Data record the Target defines for Partial Group in the shared collection, as complete records that Partial Group accepts."
+              reason: "Actions apply a partial group, so the Target's Partial Group must be in the collection."
+              inputs: ["The Target's Initial Data records for Partial Group"]
+              skills: []
+              expected_result: "The Partial Group entry of the collection holds the Target's Partial Group records."
+              depends_on: ["P2-G2-T02"]
+              constraints: []
+              acceptance: "The Partial Group entry matches the Target's Partial Group records one for one, in Target order, and each record is accepted by Partial Group's own construction."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:07:03Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G2-T02 is done."
+                - at: "2026-10-01T08:07:48Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Recorded the 1 Target Partial Group record(s) in the shared collection, in Target order, as field mappings without an identity. Observed: each record was rebuilt through Partial Group's own JSON reconstruction and accepted."
+            "P2-G3-T11":
+              id: "P2-G3-T11"
+              source_id: "005"
+              title: "Record the Initial Data of Action Group"
+              description: "Record every Initial Data record the Target defines for Action Group in the shared collection, as complete records that Action Group accepts."
+              reason: "Actions belong to an action group, so the Target's Action Group must be in the collection."
+              inputs: ["The Target's Initial Data records for Action Group"]
+              skills: []
+              expected_result: "The Action Group entry of the collection holds the Target's Action Group records."
+              depends_on: ["P2-G2-T02"]
+              constraints: []
+              acceptance: "The Action Group entry matches the Target's Action Group records one for one, in Target order, and each record is accepted by Action Group's own construction."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:07:03Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G2-T02 is done."
+                - at: "2026-10-01T08:07:48Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Recorded the 1 Target Action Group record(s) in the shared collection, in Target order, as field mappings without an identity. Observed: each record was rebuilt through Action Group's own JSON reconstruction and accepted."
+            "P2-G3-T12":
+              id: "P2-G3-T12"
+              source_id: "005"
+              title: "Record the Initial Data of Action"
+              description: "Record every Initial Data record the Target defines for Action in the shared collection, as complete records that Action accepts."
+              reason: "The Target's default Action completes the seeded configuration that every other Initial Data record supports."
+              inputs: ["The Target's Initial Data records for Action"]
+              skills: []
+              expected_result: "The Action entry of the collection holds the Target's Action records."
+              depends_on: ["P2-G2-T02"]
+              constraints: []
+              acceptance: "The Action entry matches the Target's Action records one for one, in Target order, and each record is accepted by Action's own construction."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:07:03Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G2-T02 is done."
+                - at: "2026-10-01T08:07:48Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Recorded the 1 Target Action record(s) in the shared collection, in Target order, as field mappings without an identity. Observed: each record was rebuilt through Action's own JSON reconstruction and accepted. The decimal values are recorded as exact decimal text, the only form Model's reconstruction accepts."
+        "P2-G4":
+          id: "P2-G4"
+          title: "Interface publication"
+          description: "The only public entry point of Database: its vocabulary, values, results, errors, Instance enumeration, and the gateway through which every Operation and Lifecycle Command is called."
+          area: "Interface: public contracts and gateway"
+          does: "A consumer can import every public contract and call every Operation and Lifecycle Command through one stable entry point, passing only imported values."
+          constraints: []
+          task_count: 12
+          tasks:
+            "P2-G4-T01":
+              id: "P2-G4-T01"
+              source_id: "005"
+              title: "Publish the query vocabulary"
+              description: "Make the three closed enumerations of the query vocabulary importable: the comparison operators, the ways Filters combine, and the ordering directions."
+              reason: "Consumers state conditions and ordering as imported values, so the vocabulary must exist before any value or Operation uses it."
+              inputs: []
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "Three enumerations, each holding exactly its closed member set with every member's value equal to its name."
+              depends_on: ["P2-G1-T01"]
+              constraints: []
+              acceptance: "Each enumeration can be imported, holds exactly its defined members and no others, and each member's value equals its name."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:06:40Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G1-T01 is done."
+                - at: "2026-10-01T08:11:14Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added FilterOperator (12 members), FilterCombination (AND, OR), and OrderDirection (ASCENDING, DESCENDING) to the Interface as enum.Enum classes whose member values equal their names. Observed: each enumeration imports, holds exactly the Schema's closed member set and no other, and every member value equals its name."
+            "P2-G4-T02":
+              id: "P2-G4-T02"
+              source_id: "005"
+              title: "Publish the immutable Filter and Order values"
+              description: "Provide an immutable condition value built from a Field reference, an operator member, and a value where the operator needs one, and an immutable ordering value built from a Field reference and a direction."
+              reason: "Conditions and ordering must travel as typed values that can be checked before any storage is touched."
+              inputs: ["The published query vocabulary"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "Filter and Order values that cannot be altered after creation, with an omitted direction resolving to ascending."
+              depends_on: ["P2-G4-T01"]
+              constraints: []
+              acceptance: "A Filter and an Order can be built from imported values and cannot be altered afterwards, an Order built without a direction reports ascending, and a Filter for a null test carries no value."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:11:14Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G4-T01 is done."
+                - at: "2026-10-01T08:11:46Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added Filter (field, operator, value) and Order (field, direction) as frozen dataclasses. Observed: both are built from imported values and refuse attribute assignment (FrozenInstanceError); an Order built without a direction reports ASCENDING; a Filter for IS_NULL or IS_NOT_NULL carries no value and one given a value is refused; a list given to IN is stored as a tuple so the value stays immutable; a string in place of a Field reference, an operator, or a direction is refused as invalid input. Checking a Field against its Entity is Core's job and belongs to P2-G5-T05."
+            "P2-G4-T03":
+              id: "P2-G4-T03"
+              source_id: "005"
+              title: "Publish the Command and Lifecycle results"
+              description: "Provide the immutable result of a Database-wide Operation and the immutable result of a Lifecycle Command, each carrying its stated members in the stated order, including the Instance used."
+              reason: "Operations and commands must report their outcome in one stable shape."
+              inputs: ["The published Instance enumeration"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "Two result values that expose their members in order and cannot be altered after creation."
+              depends_on: ["P2-G4-T05"]
+              constraints: []
+              acceptance: "Each result can be built and read with exactly its stated members in the stated order and cannot be altered afterwards."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:11:14Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G4-T05 is done."
+                - at: "2026-10-01T08:11:46Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added CommandResult (rows, affected, columns, success, message, instance) and LifecycleResult (command, instance, success, affected, message) as frozen dataclasses with the Schema's members in Schema order. Observed: member order matches the Schema exactly and attribute assignment is refused. A Lifecycle Command that fails raises a published error instead of returning success false (decision recorded in Log Entry 006)."
+            "P2-G4-T04":
+              id: "P2-G4-T04"
+              source_id: "005"
+              title: "Publish the base error and one error for each failure kind"
+              description: "Provide one importable base error and one importable error for each failure kind, so a consumer can catch each kind separately or all of them together."
+              reason: "Consumers must distinguish an invalid configuration, an inactive Instance, invalid input, a Declaration incompatibility, a connection failure, an execution failure, and an incomplete Lifecycle execution."
+              inputs: []
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "A base error and one derived error per failure kind, none revealing a credential."
+              depends_on: ["P2-G1-T01"]
+              constraints: []
+              acceptance: "Each error can be imported and caught, each failure kind is distinguishable from the others, catching the base error catches every one of them, and no error message contains a credential."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:06:40Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G1-T01 is done."
+                - at: "2026-10-01T08:11:14Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added DatabaseError and seven derived errors named by the selected language profile (ConfigurationError, InactiveInstanceError, InvalidInputError, DeclarationMismatchError, ConnectionFailureError, ExecutionError, LifecycleError). Observed: each imports and is caught as itself and through DatabaseError, none is a subclass of another kind, so the seven kinds stay distinguishable. The no-credential property is held by the messages Core and Engine raise and is observed in their Tasks."
+            "P2-G4-T05":
+              id: "P2-G4-T05"
+              source_id: "005"
+              title: "Publish the enumeration of active Instances"
+              description: "Provide the enumeration whose members identify exactly the active configured Instances and carry no connection values."
+              reason: "Consumers select an Instance by an imported member, never by a name or a connection."
+              inputs: ["The recorded Instances"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "An enumeration with one member per active Instance and none for an inactive one."
+              depends_on: ["P2-G2-T01"]
+              constraints: []
+              acceptance: "The enumeration has exactly one member for each active configured Instance and none for an inactive one, and no member exposes a connection value."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:10:48Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G2-T01 is done."
+                - at: "2026-10-01T08:11:14Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added DatabaseInstance with one member, SQLITE, for the one active Instance; the inactive PostgreSQL Instance has none, and the member value equals its name and carries no connection value. Observed: the member set equals the active Instance keys of the configuration, upper-cased. Core re-checks this correspondence whenever the configuration loads."
+            "P2-G4-T06":
+              id: "P2-G4-T06"
+              source_id: "005"
+              title: "Publish the Database gateway"
+              description: "Provide the single gateway that a consumer creates once and calls every Operation and Lifecycle Command on, forwarding each call to Core."
+              reason: "One gateway keeps persistence, Instance selection, and Engine integration behind a single boundary."
+              inputs: ["The published Instance enumeration", "Core routing"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "A gateway a consumer can create without arguments, ready to receive the Operations and Lifecycle Commands."
+              depends_on: ["P2-G4-T05", "P2-G5-T06"]
+              constraints: []
+              acceptance: "A consumer can import the gateway and create it without arguments, and creating it opens no connection."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:23:57Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P2-G4-T05 and P2-G5-T06 are done."
+                - at: "2026-10-01T08:24:31Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added the Database gateway class to the Interface, created with Database() and holding no state. Core is reached through three small accessors that import it when a call is made, never when the Interface loads. Observed with open-for-write, network, sqlite3, and subprocess instrumented: importing the Interface and creating two gateways made no such call, and none of database.core, database.engine, model, yaml, sqlalchemy, or sqlmodel had been imported, so loading and creating the gateway opens no connection, creates no file, and has no side effect."
+            "P2-G4-T07":
+              id: "P2-G4-T07"
+              source_id: "005"
+              title: "Publish the Entity write Operations"
+              description: "Declare the Add, Update, Delete, Enable, Disable, and Truncate Operations on the gateway, each receiving the Entity itself and forwarding to Core."
+              reason: "Consumers change stored data only through these published Operations."
+              inputs: ["The published gateway", "Core routing and normalization", "The Engine write capabilities"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "Six Operations callable through the gateway with their stated inputs and results."
+              depends_on: ["P2-G4-T06", "P2-G5-T08", "P2-G6-T02", "P2-G6-T03", "P2-G6-T04", "P2-G6-T05", "P2-G6-T06"]
+              constraints: []
+              acceptance: "Each Operation can be called with exactly its stated inputs in the stated order and returns its stated result, including null where no record exists."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:24:31Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P2-G4-T06 and the Engine write capabilities are done."
+                - at: "2026-10-01T08:25:31Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added Add, Update, Delete, Enable, Disable, and Truncate to the gateway, each forwarding to Core with the Entity itself (an instance for Add and Update, a class otherwise). Their parameters are checked against the Schema by introspection: exact names and order, entity, id, field, and command required and everything else optional, instance last. Observed on a real prepared file: Add returned the stored Entity with generated id 2 and the same call with an explicit DatabaseInstance member id 3; Update returned the replaced Entity and None for an Entity without an identity; Disable and Enable returned the final Entity including when already in that state; Delete returned the removed Entity; an absent identity returned None for every one of them; Truncate returned the deleted count 2, and refused a referenced Entity with ExecutionError leaving all 8 Currencies."
+            "P2-G4-T08":
+              id: "P2-G4-T08"
+              source_id: "005"
+              title: "Publish the Entity read Operations"
+              description: "Declare the List and Get By Id Operations on the gateway, each receiving an Entity class and forwarding to Core."
+              reason: "Consumers read stored data only through these published Operations."
+              inputs: ["The published gateway", "The published Filter and Order values", "Core routing and normalization", "The Engine read capabilities"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "Two Operations callable through the gateway with their stated inputs and results."
+              depends_on: ["P2-G4-T06", "P2-G4-T02", "P2-G5-T03", "P2-G5-T05", "P2-G5-T08", "P2-G6-T07", "P2-G6-T08"]
+              constraints: []
+              acceptance: "List and Get By Id can each be called with exactly their stated inputs in the stated order, List returns the matching Entities, and Get By Id returns the Entity or null when none exists."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:24:31Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P2-G4-T06, P2-G4-T02, and the Core and Engine read capabilities are done."
+                - at: "2026-10-01T08:25:31Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added List and Get By Id to the gateway, forwarding to Core. Observed on a real prepared file: List returned Entities for no argument, for Orders with a limit, for an OR combination with limit 0 (no limit), and for an IN Filter with an Order; Get By Id returned the Entity for an existing identity and None for 5000."
+            "P2-G4-T09":
+              id: "P2-G4-T09"
+              source_id: "005"
+              title: "Publish the Entity aggregate Operations"
+              description: "Declare the Count, Sum, Min, and Max Operations on the gateway, each receiving an Entity class and, where it applies, a Field reference, and forwarding to Core."
+              reason: "Consumers summarize stored data only through these published Operations, and none of them accepts an ordering."
+              inputs: ["The published gateway", "The published Filter value", "Core routing and normalization", "The Engine aggregate capabilities"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "Four Operations callable through the gateway with their stated inputs and results."
+              depends_on: ["P2-G4-T06", "P2-G4-T02", "P2-G5-T05", "P2-G5-T08", "P2-G6-T09", "P2-G6-T10"]
+              constraints: []
+              acceptance: "Each Operation can be called with exactly its stated inputs in the stated order, none accepts an ordering, and each returns its stated result."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:24:31Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P2-G4-T06, P2-G4-T02, and the Core and Engine aggregate capabilities are done."
+                - at: "2026-10-01T08:25:31Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added Count, Sum, Min, and Max to the gateway, forwarding to Core with a Field reference where one applies. Observed: Count with and without Filters, a total of 14 over decimal_digits, text smallest and largest, a Decimal total that is a Decimal zero over an empty Account Table, a smallest value over Filtered records, None over nothing, and an integer zero total; passing orders to Count raises TypeError because no aggregate accepts an ordering."
+            "P2-G4-T10":
+              id: "P2-G4-T10"
+              source_id: "005"
+              title: "Publish the Execute Command Operation"
+              description: "Declare the Database-wide Execute Command Operation on the gateway, accepting a native command and its bound parameters and forwarding to Core."
+              reason: "Some consumers need to run native commands that no Entity Operation covers."
+              inputs: ["The published gateway", "The published Command result", "Core routing and normalization", "The Engine command capability"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "An Operation callable through the gateway that returns a Command result."
+              depends_on: ["P2-G4-T06", "P2-G4-T03", "P2-G5-T08", "P2-G6-T11"]
+              constraints: []
+              acceptance: "The Operation can be called with exactly its stated inputs in the stated order and returns a Command result."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:24:31Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P2-G4-T06, P2-G4-T03, and the Engine command capability are done."
+                - at: "2026-10-01T08:25:31Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added Execute Command to the gateway, forwarding to Core. Observed: a query returned a CommandResult with rows, the DatabaseInstance used, and success; a named-parameter update reported 1 affected; an invalid command returned a CommandResult with success false."
+            "P2-G4-T11":
+              id: "P2-G4-T11"
+              source_id: "005"
+              title: "Publish the Lifecycle Commands"
+              description: "Declare the CreateTables, InsertInitialData, and Prepare Lifecycle Commands on the gateway, separate from every Operation and forwarding to Core."
+              reason: "Preparing storage is a different act from using it, and consumers must be able to run it explicitly."
+              inputs: ["The published gateway", "The published Lifecycle result", "Core lifecycle coordination"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "Three Lifecycle Commands callable through the gateway, each returning a Lifecycle result."
+              depends_on: ["P2-G4-T06", "P2-G4-T03", "P2-G7-T06"]
+              constraints: []
+              acceptance: "Each command can be called with exactly its stated inputs in the stated order and returns a Lifecycle result, and none of them is reachable as an Entity Operation or a Database-wide Operation."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:24:31Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P2-G4-T06, P2-G4-T03, and P2-G7-T06 are done."
+                - at: "2026-10-01T08:25:31Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added CreateTables, InsertInitialData, and Prepare to the gateway as Lifecycle Commands separate from the Operations, each forwarding to Core and returning a LifecycleResult. Observed: each returned a LifecycleResult with its own command name, with and without an explicit DatabaseInstance; they are separate public members of the gateway and none is an Entity Operation (the Entity Operations take an Entity). Observation: a stored record that was changed after seeding is a conflict, so InsertInitialData and Prepare fail on it by design until it is restored."
+            "P2-G4-T12":
+              id: "P2-G4-T12"
+              source_id: "005"
+              title: "Make the Interface the only public entry point"
+              description: "Publish exactly the stated public contracts through the Interface and keep Core, Engine units, configuration, connection values, and storage locations unpublished, with loading the Interface free of side effects."
+              reason: "Consumers depend on one stable surface, and anything else published becomes a second contract."
+              inputs: ["Every published contract, Operation, and Lifecycle Command"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "An Interface that publishes the full public surface and nothing else."
+              depends_on: ["P2-G4-T01", "P2-G4-T02", "P2-G4-T03", "P2-G4-T04", "P2-G4-T05", "P2-G4-T06", "P2-G4-T07", "P2-G4-T08", "P2-G4-T09", "P2-G4-T10", "P2-G4-T11"]
+              constraints: []
+              acceptance: "A consumer can import exactly the stated public contracts and nothing else from the Interface, none of Core, an Engine unit, the configuration, a connection value, or a storage location is reachable through it, and loading it opens no connection and creates no data or file."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:25:31Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P2-G4-T01 to T11 are done."
+                - at: "2026-10-01T08:26:47Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Finalized the Interface as the only public entry point. Observed: its public names are exactly the 17 contracts (Database, DatabaseInstance, Filter, FilterOperator, FilterCombination, Order, OrderDirection, CommandResult, LifecycleResult, DatabaseError, and the seven derived errors) and a star import yields only those; there is no __all__, no module alias or helper is public (standard-library imports are underscore-aliased, so none is exported), and no Core, Engine, configuration, connection value, or storage location is a public name; with open-for-write, network, sqlite3, and subprocess instrumented, loading the Interface made no call, and none of database.core, database.engine, model, yaml, sqlalchemy, or sqlmodel was imported. Note: Core is reached through three private accessor functions that import it per call; they are not public."
+        "P2-G5":
+          id: "P2-G5"
+          title: "Core Data: shared validation and routing"
+          description: "The shared part of Core through which every public request passes: configuration, Instance and default resolution, input validation, routing to the Engine, and result normalization."
+          area: "Core Data: validation, resolution, routing, and normalization"
+          does: "Every public request is validated, resolved against the configuration, routed to the Engine of the selected Instance, and answered in the published form."
+          constraints: []
+          task_count: 8
+          tasks:
+            "P2-G5-T01":
+              id: "P2-G5-T01"
+              source_id: "005"
+              title: "Load and validate the Database Configuration"
+              description: "Load the complete configuration when it is first needed and reject any content that breaks the configuration's rules."
+              reason: "Every later resolution depends on one checked set of Engines, Instances, and defaults."
+              inputs: ["The recorded configuration", "The published query vocabulary", "The published errors"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "A validated configuration available to the rest of Core, and a refusal for any invalid one."
+              depends_on: ["P2-G2-T02", "P2-G4-T01", "P2-G4-T04"]
+              constraints: []
+              acceptance: "A valid configuration loads, and each of an incomplete Instance, a repeated Instance identity, an Instance naming an unknown Engine, a default Instance that is absent or inactive, and an unknown enumeration name is rejected as an invalid configuration without revealing a credential."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:11:14Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P2-G2-T02, P2-G4-T01, and P2-G4-T04 are done."
+                - at: "2026-10-01T08:13:23Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Core Data loads config.yaml once, the first time it is needed (never when the Interface loads), through a YAML loader that refuses a repeated key, and validates it into typed settings. It also refuses to run when the Component root, found from the source location, holds no project manifest, so an installed copy never reads or creates storage. Observed on the real file and on variants: the valid file loads; each of an incomplete Instance, a repeated Instance identity (repeated YAML key), an Instance naming an unknown Engine, an inactive default Instance, an absent default Instance, an unknown FilterCombination name, an unknown OrderDirection name, two Instances with one name or one member name, a storage root that escapes the Component, Initial Data for a non-Entity, and active Instances that differ from the DatabaseInstance members raises ConfigurationError, and a planted secret password value never appears in a message; a zero or negative default limit normalizes to -1. Decision: the YAML parser is PyYAML, because no authority names one and the Schema fixes the file as YAML; recorded in Log Entry 006."
+            "P2-G5-T02":
+              id: "P2-G5-T02"
+              source_id: "005"
+              title: "Resolve the selected Instance"
+              description: "Resolve every request to the active Instance the caller selected, or to the default Instance when none is given, before any storage is touched."
+              reason: "Consumers must always know which Instance a call ran on."
+              inputs: ["The validated configuration", "The published Instance enumeration"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "Each request carries one resolved active Instance, or fails before any storage is touched."
+              depends_on: ["P2-G5-T01", "P2-G4-T05"]
+              constraints: []
+              acceptance: "A call without an Instance runs on the default Instance, a call with an active Instance's member runs on that Instance, and an unknown or inactive Instance fails before any storage is touched with the matching published error."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:13:23Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P2-G5-T01 and P2-G4-T05 are done."
+                - at: "2026-10-01T08:14:43Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added Instance resolution: no Instance resolves to the configured default, a DatabaseInstance member resolves to its configured Instance, and the result is one Connection (a frozen record whose password is excluded from its representation). Observed: the default and the SQLITE member both resolve to the active sqlite Instance with storage under the Component's db directory; a string in place of a member is refused with InvalidInputError; a configuration in which the selected Instance is inactive raises InactiveInstanceError naming it by display name, and one in which it is absent raises ConfigurationError, in both cases before any Engine is imported or storage touched. The same member-to-key rule is used for the member returned in results."
+            "P2-G5-T03":
+              id: "P2-G5-T03"
+              source_id: "005"
+              title: "Resolve query defaults"
+              description: "Resolve an omitted combination, ordering, or limit from the configured defaults, apply supplied Orders in the sequence given, and treat a zero or negative limit as no limit."
+              reason: "Fixed defaults make the same call return the same result on every Instance."
+              inputs: ["The validated configuration", "The published Filter and Order values"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "Every query request carries a resolved combination, ordering, and limit."
+              depends_on: ["P2-G5-T01", "P2-G4-T02"]
+              constraints: []
+              acceptance: "An omitted combination, ordering, or limit resolves to its configured default, supplied Orders replace the default ordering and apply in the sequence given, a positive limit caps the returned count, and a zero or negative limit returns every match."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:13:23Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P2-G5-T01 and P2-G4-T02 are done."
+                - at: "2026-10-01T08:14:43Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added query defaults. Observed: an omitted combination resolves to AND, an omitted Order set resolves to id ascending, an omitted limit resolves to -1; supplied Orders replace the default ordering and keep their sequence; an Order without a direction was already ascending; a positive limit is kept and zero or a negative limit becomes -1 meaning no limit. A default order Field that the Entity lacks raises ConfigurationError."
+            "P2-G5-T04":
+              id: "P2-G5-T04"
+              source_id: "005"
+              title: "Validate the Entity of every request"
+              description: "Accept an Entity only as an actual class or instance from the Model Entity Collection, and refuse a name, another string, or an unknown Entity as invalid input."
+              reason: "Typed Entities are checked before any storage is touched, which a string identity cannot be."
+              inputs: ["The Model Entity Collection", "The published errors"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "Requests carry only genuine Model Entities."
+              depends_on: ["P2-G1-T01", "P2-G4-T04"]
+              constraints: []
+              acceptance: "A class or an instance of any Entity of the Model Entity Collection is accepted, and a string, an Entity name, and any object that is not such an Entity are each rejected as invalid input before any Instance is accessed."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:11:14Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P2-G1-T01 and P2-G4-T04 are done."
+                - at: "2026-10-01T08:13:23Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added Entity validation: a request must name an actual class (or, for add and update, an actual instance) of the Model Entity Collection's own tuple, imported from Model's published entrypoint; no second registry exists. Observed: all 15 Entity classes and a User instance are accepted; a string, an Entity name, a number, None, a foreign object, a look-alike class, a class where an instance is required, and an instance where a class is required are each refused with InvalidInputError before any Instance is touched."
+            "P2-G5-T05":
+              id: "P2-G5-T05"
+              source_id: "005"
+              title: "Validate Fields, Filters, Orders, and aggregate Fields"
+              description: "Check every Field reference in a Filter, an Order, or an aggregate against the given Entity, and check that each operator and value is compatible with its Field."
+              reason: "A mistake in a query must fail clearly and early rather than reach storage."
+              inputs: ["The given Entity and its Declaration", "The published Filter and Order values"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "Only well-formed query input proceeds to routing."
+              depends_on: ["P2-G5-T04", "P2-G4-T02"]
+              constraints: []
+              acceptance: "A Field that does not belong to the given Entity, an operator or value incompatible with its Field, a text-only operator on a non-text Field, a non-numeric Field given to Sum, and a string given in place of an imported value are each rejected as invalid input before any Instance is accessed, and valid input is accepted."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:13:23Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P2-G5-T04 and P2-G4-T02 are done."
+                - at: "2026-10-01T08:14:43Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added validation of Field references, Filters, Orders, aggregate Fields, identities, and commands, run before any Instance is resolved. A Field reference must be the Entity's own class attribute. Observed refused with InvalidInputError: a Field of another Entity, a string in place of a Field, an operator, a combination or a direction, a value of the wrong Type (including a bool for an integer and a naive datetime), a text-only operator on a non-text Field, a non-collection for IN, a non-numeric Field for Sum, a boolean Field for Min or Max, a string identity, and a malformed command or parameter set. Valid input of every kind used was accepted. Decision: a boolean Field is refused for Min and Max because ordering truth values has no stated meaning."
+            "P2-G5-T06":
+              id: "P2-G5-T06"
+              source_id: "005"
+              title: "Route each validated request to the selected Instance's Engine"
+              description: "Forward every validated request to the Engine of the selected Instance together with that Instance's complete connection, and return its raw result to Core."
+              reason: "Core routes once for every Engine, so no Engine repeats shared resolution."
+              inputs: ["The resolved Instance", "The resolved query defaults", "The validated input"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "Each request reaches the right Engine with the right connection and its raw result returns to Core."
+              depends_on: ["P2-G5-T02", "P2-G5-T03", "P2-G5-T05"]
+              constraints: []
+              acceptance: "A validated request reaches the Engine of the selected Instance together with that Instance's connection and its raw result returns through Core, while Core itself performs no driver call and no Instance-specific storage behaviour."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:14:43Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P2-G5-T02, P2-G5-T03, and P2-G5-T05 are done."
+                - at: "2026-10-01T08:15:14Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added routing: a validated request is forwarded to the Engine unit named by the resolved Instance's Engine (imported when first needed, by exact module name, so an Engine nobody uses is never loaded) together with that Instance's Connection, and the Engine's raw result is returned unchanged. Observed with a stand-in Engine unit: the unit received the Connection (storage under the Component's db directory) and the arguments, its result came back untouched, and the real sqlite3 driver was patched to fail on any call and was not called by Core; an Engine with no unit raises ConfigurationError naming the Instance by display name only."
+            "P2-G5-T07":
+              id: "P2-G5-T07"
+              source_id: "005"
+              title: "Materialize Entities from stored results"
+              description: "Turn every stored row an Operation returns into an Entity through that Entity's own construction, and treat a row that does not satisfy the Entity's contract as an error that is never repaired."
+              reason: "Consumers must receive genuine Entities, and a stored value that breaks the contract must be visible rather than corrected."
+              inputs: ["Raw Engine results", "Each Entity's own construction"]
+              skills: ["sqlmodel", "python-skills:python-guidelines"]
+              expected_result: "Operations return Entities built from all of their Field values, or an error."
+              depends_on: ["P2-G5-T06"]
+              constraints: []
+              acceptance: "Every returned Entity is built through its own construction from all of its Field values, a stored row that does not satisfy the Entity's contract produces an error, the row is not repaired, and the error reveals no sensitive value."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:15:14Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G5-T06 is done."
+                - at: "2026-10-01T08:16:33Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added materialization: each raw stored row becomes an Entity through that Entity's own JSON reconstruction (Model's from_json), because direct construction refuses a storage-assigned identity and the reconstruction is the one public path that accepts it; Model Preferences' wording 'its own constructor' is read this way (decision in Log Entry 006). Values are converted to their JSON form only when their Python kind matches the declared Type, so a wrong-typed value is passed on unchanged and rejected, never coerced; a first version coerced a float for a Decimal Field and was corrected after the check caught it. Observed: a row with an identity, exact Decimal text, and an aware datetime survives; rows with a null in a non-null Field, a wrong-typed value, bytes, a naive datetime, a float for a Decimal, NaN, or a missing key each raise DeclarationMismatchError; the error names only the Entity, carries no cause, and a planted secret never appears."
+            "P2-G5-T08":
+              id: "P2-G5-T08"
+              source_id: "005"
+              title: "Normalize results and failures into the published form"
+              description: "Present every outcome in the published form: a missing record as null, an aggregate over nothing as its published empty value, a command outcome as a Command or Lifecycle result, and each failure as its own published error."
+              reason: "Every Engine must answer in the same way, so consumers never interpret Engine-specific outcomes."
+              inputs: ["Raw Engine results", "The materialized Entities", "The published results and errors"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "Uniform results and errors regardless of Engine."
+              depends_on: ["P2-G5-T07", "P2-G4-T03", "P2-G4-T04"]
+              constraints: []
+              acceptance: "A missing record is returned as null and never as an error, an aggregate over nothing is zero for a total and null for a smallest or largest value, a connection failure and an execution failure surface as their own published errors, and no credential appears in any result or error."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:18:59Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P2-G5-T07, P2-G4-T03, and P2-G4-T04 are done."
+                - at: "2026-10-01T08:20:29Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Core operation functions present every outcome in the published form. Observed through Core: add, update, get, delete, enable, disable, list, count, aggregate, truncate, and execute_command return Entities, integers, or a CommandResult carrying the DatabaseInstance used; a missing record is None and never an error (get, delete, update, enable, disable); a total over nothing is a zero of the Field's own Type (int 0, float 0.0, Decimal 0) and a smallest or largest over nothing is None; a failing native command is a CommandResult with success false; a duplicate add raises ExecutionError, an unreachable storage raises ConnectionFailureError, and a stored row over a Field's size limit raises DeclarationMismatchError; no planted secret and no Field value appears in any message."
+        "P2-G6":
+          id: "P2-G6"
+          title: "Engine implementation"
+          description: "The capabilities of the Engine used by the active Instance, one capability per Task. The Engine receives each request from Core with the Instance's connection and returns raw results."
+          area: "Engine: storage behaviour of the Engine in use"
+          does: "The Engine performs every Entity Operation, native command, and storage-preparation capability that Core requests, and preserves the published request, result, error, and atomicity meaning."
+          constraints: []
+          task_count: 15
+          tasks:
+            "P2-G6-T01":
+              id: "P2-G6-T01"
+              source_id: "005"
+              title: "Connect to the Instance within Database-owned storage"
+              description: "Build the connection to the Instance from its complete definition and the Engine's connection requirements, and when the Engine's storage is a file, resolve its location beneath Database-owned storage and refuse any location that would leave it."
+              reason: "Every capability needs a connection, and only Database may create or manage its storage."
+              inputs: ["The Instance's complete connection from Core", "The Engine's connection requirements"]
+              skills: ["sqlmodel", "python-skills:python-guidelines"]
+              expected_result: "A usable connection for the Instance, and a refusal for an invalid or escaping storage location before any connection is made."
+              depends_on: ["P2-G5-T06", "P2-G2-T01"]
+              constraints: []
+              acceptance: "A request for the active Instance reaches its storage through a connection built from its definition, a file location resolves inside Database-owned storage, a location that would escape it fails before any connection is made, and a connection that cannot be made is reported as a connection failure."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:15:14Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P2-G5-T06 and P2-G2-T01 are done."
+                - at: "2026-10-01T08:16:33Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added the SQLite Engine unit's connection layer: required values are checked, the database file is resolved beneath the Instance's Database-owned storage, and any location that would leave it (parent reference, absolute path, nested escape, the storage root itself, a symlink out) fails with ConfigurationError before any directory or file is created. Every unit of work is atomic, DDL included (explicit BEGIN with the driver's own transaction handling off), enforces foreign keys, and uses no connection pool so a removed file is never held. Observed in a temporary storage root: the file is created inside storage; escaping locations create nothing; storage that cannot be created and a file that cannot be opened both raise ConnectionFailureError with no credential in the message."
+            "P2-G6-T02":
+              id: "P2-G6-T02"
+              source_id: "005"
+              title: "Store one new Entity"
+              description: "Store one complete new Entity and report the stored record, including any values the storage generated."
+              reason: "Adding data is the first change every consumer needs."
+              inputs: ["One complete new Entity"]
+              skills: ["sqlmodel", "python-skills:python-guidelines"]
+              expected_result: "The record is stored and reported with its generated values."
+              depends_on: ["P2-G6-T01"]
+              constraints: []
+              acceptance: "A new Entity is stored and reported back with its generated values, a later read finds it, and a record that violates a stored uniqueness or relation constraint is reported as an execution failure."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:16:33Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G6-T01 is done."
+                - at: "2026-10-01T08:18:59Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added the SQLite unit's store capability: it stores a copy of the supplied Entity in one atomic unit of work and returns the stored row including the generated identity; the caller's own Entity is not altered. Observed on a real SQLite file: the first User received identity 1 and the second 2, a later read finds each, the caller's Entity kept id None, and a duplicate username was refused as ExecutionError (message: UNIQUE constraint failed: User.username, no value, no credential) with the stored set unchanged."
+            "P2-G6-T03":
+              id: "P2-G6-T03"
+              source_id: "005"
+              title: "Replace a stored Entity"
+              description: "Replace every mutable Field of the record located by the supplied Entity's identity, never changing that identity or any other immutable Field."
+              reason: "Consumers update a whole record at once and must not be able to alter its identity."
+              inputs: ["One complete Entity whose identity locates the record"]
+              skills: ["sqlmodel", "python-skills:python-guidelines"]
+              expected_result: "The located record holds the supplied mutable values, or it is reported as not found."
+              depends_on: ["P2-G6-T01"]
+              constraints: []
+              acceptance: "Every mutable Field of the located record equals the supplied Entity's, its identity and every other immutable Field are unchanged, and a missing record is reported as not found."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:16:33Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G6-T01 is done."
+                - at: "2026-10-01T08:18:59Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added the replace capability: every mutable Field of the record located by the supplied Entity's identity is replaced, the identity and every other immutable Field are untouched, and a missing record or an Entity without an identity is reported as not found (None). Observed: username, password, description, and is_active changed together while id stayed 1; identity 99 and a new Entity both returned None; a replacement that breaks a uniqueness rule raised ExecutionError and the stored record kept its earlier values."
+            "P2-G6-T04":
+              id: "P2-G6-T04"
+              source_id: "005"
+              title: "Remove a stored Entity"
+              description: "Remove the record located by an identity and report the record as it was when removed."
+              reason: "Consumers delete data and need to know exactly what was removed."
+              inputs: ["An Entity class and an identity"]
+              skills: ["sqlmodel", "python-skills:python-guidelines"]
+              expected_result: "The record is gone and reported, or it is reported as not found."
+              depends_on: ["P2-G6-T01"]
+              constraints: []
+              acceptance: "The located record is removed and reported as it was, a later read finds none, and a missing record is reported as not found."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:16:33Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G6-T01 is done."
+                - at: "2026-10-01T08:18:59Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added the remove capability: it returns the record as it was and removes it. Observed: the removed User was reported with its stored values, a later read found none, a second removal and an absent identity returned None, and removing a User still referenced by a Broker was refused as ExecutionError with the record still present (foreign keys are enforced)."
+            "P2-G6-T05":
+              id: "P2-G6-T05"
+              source_id: "005"
+              title: "Set the active state of a stored Entity"
+              description: "Set only the active state of the record located by an identity to enabled or disabled, and report the final record."
+              reason: "Consumers switch data on and off without rewriting it."
+              inputs: ["An Entity class, an identity, and the requested state"]
+              skills: ["sqlmodel", "python-skills:python-guidelines"]
+              expected_result: "The active state holds the requested value and nothing else changed, or the record is reported as not found."
+              depends_on: ["P2-G6-T01"]
+              constraints: []
+              acceptance: "Enabling sets only the active state to true and disabling sets only it to false, the final record is reported including when it was already in that state, and a missing record is reported as not found."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:16:33Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G6-T01 is done."
+                - at: "2026-10-01T08:18:59Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added the active-state capability, one function for enable and disable: only is_active is set. Observed: disabling then enabling changed nothing but is_active (all other values equal before and after), disabling an already disabled record returned the unchanged final record, and an absent identity returned None."
+            "P2-G6-T06":
+              id: "P2-G6-T06"
+              source_id: "005"
+              title: "Remove every record of one Entity"
+              description: "Remove every record of one Entity while keeping its Table, and report how many records were removed."
+              reason: "Consumers need to empty an Entity without rebuilding its storage."
+              inputs: ["An Entity class"]
+              skills: ["sqlmodel", "python-skills:python-guidelines"]
+              expected_result: "The Entity holds no records, its Table remains, and the removed count is reported."
+              depends_on: ["P2-G6-T01"]
+              constraints: []
+              acceptance: "Every record of the Entity is removed, its Table remains, the records of other Entities are untouched, and the removed count is reported."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:16:33Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G6-T01 is done."
+                - at: "2026-10-01T08:18:59Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added the empty-an-Entity capability: it removes every record of one Entity, keeps the Table, and returns the removed count. Observed: five TrailingRule records were removed and 5 reported, the Table still described afterwards, the five User records untouched, a second run reported 0, and emptying TrailingGroup while a TrailingRule referenced it was refused as ExecutionError with all records kept."
+            "P2-G6-T07":
+              id: "P2-G6-T07"
+              source_id: "005"
+              title: "Return the records that match a query"
+              description: "Return the records of one Entity that match the supplied Filters, combined as requested, ordered by the supplied Orders in their sequence, and limited to the supplied count."
+              reason: "Consumers read collections through one query vocabulary that every Engine must honour."
+              inputs: ["An Entity class", "Resolved Filters, combination, Orders, and limit"]
+              skills: ["sqlmodel", "python-skills:python-guidelines"]
+              expected_result: "The matching records in the requested order and quantity."
+              depends_on: ["P2-G6-T01"]
+              constraints: []
+              acceptance: "Each comparison operator selects exactly the records that satisfy it, Filters combine as all-of or any-of as requested, supplied Orders apply in sequence and direction, a positive limit caps the returned count, and no limit returns every match."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:16:33Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G6-T01 is done."
+                - at: "2026-10-01T08:18:59Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added the query capability. SQL path: every one of the 12 operators selects exactly the matching records, AND and OR combine, Orders apply in the given sequence and direction, a positive limit caps the count and no limit returns all. Text operators are case-sensitive (instr and substr, not LIKE, which SQLite makes case-insensitive) so results do not depend on the Engine; a comparison against a stored null never matches except IS_NULL and IS_NOT_NULL. Decimal Fields are stored as exact text, so a query that touches one is evaluated by value instead: observed order 1.50, 9, 10, 20, 100 (not text order), 9 < 10 holds, 1.5 equals 1.50, IN accepts integers and Decimals, and it mixes with text Filters and a limit applied after ordering. Text ordering follows SQLite's binary collation (capital letters first)."
+            "P2-G6-T08":
+              id: "P2-G6-T08"
+              source_id: "005"
+              title: "Return one record by identity"
+              description: "Return the record of one Entity that has the supplied identity, or report that none exists."
+              reason: "Consumers fetch a single record directly by the identity they hold."
+              inputs: ["An Entity class and an identity"]
+              skills: ["sqlmodel", "python-skills:python-guidelines"]
+              expected_result: "The located record or a not-found report."
+              depends_on: ["P2-G6-T01"]
+              constraints: []
+              acceptance: "The record with the supplied identity is returned, and an identity with no record is reported as not found."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:16:33Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G6-T01 is done."
+                - at: "2026-10-01T08:18:59Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added the get-by-identity capability: it returns the stored row or None. Observed on a real file: an existing identity returned its record and identity 12345 returned None."
+            "P2-G6-T09":
+              id: "P2-G6-T09"
+              source_id: "005"
+              title: "Count the records that match a query"
+              description: "Report how many records of one Entity satisfy the supplied Filters, combined as requested."
+              reason: "Consumers need totals without fetching the records themselves."
+              inputs: ["An Entity class", "Resolved Filters and combination", "The matching semantics of the query Task"]
+              skills: ["sqlmodel", "python-skills:python-guidelines"]
+              expected_result: "The number of matching records."
+              depends_on: ["P2-G6-T07"]
+              constraints: []
+              acceptance: "The reported number equals the number of records that the same Filters and combination select when listing."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:18:59Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G6-T07 is done."
+                - at: "2026-10-01T08:20:29Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added the count capability using the same condition builder as the query capability. Observed through Core on a real file: for four Filter sets crossed with AND and OR (including an empty IN, text operators, and a Decimal comparison) the reported count equals the number of records the same Filters and combination list, on both the SQL and the Decimal path."
+            "P2-G6-T10":
+              id: "P2-G6-T10"
+              source_id: "005"
+              title: "Compute the total, smallest, and largest values of a Field"
+              description: "Compute the total, the smallest value, or the largest value of one Field over the matching records, ignoring null values."
+              reason: "Consumers summarize numeric and comparable data without fetching the records."
+              inputs: ["An Entity class and one Field", "Resolved Filters and combination", "The matching semantics of the query Task"]
+              skills: ["sqlmodel", "python-skills:python-guidelines"]
+              expected_result: "The requested aggregate over the non-null values, or no result when nothing matches."
+              depends_on: ["P2-G6-T07"]
+              constraints: []
+              acceptance: "Over the matching records the total, smallest, and largest are computed from the non-null values only, and no result is reported when no value matches."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:18:59Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G6-T07 is done."
+                - at: "2026-10-01T08:20:29Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added the total, smallest, and largest capability: null values are ignored and None is returned when no value matches. SQL aggregates are used unless a Decimal Field or Decimal Filter is involved; then the values are computed by value with precision high enough to stay exact. Observed: integer total 15 and smallest and largest by id, text smallest and largest, Decimal total 120.50 with the stored text 1.50 kept for the smallest, a total of 3.35 over a nullable Decimal Field with nulls skipped, exact total with a 30-digit Decimal added, a float total 1.75, an integer total over records chosen by a Decimal Filter, and None for smallest or largest over nothing or over only nulls."
+            "P2-G6-T11":
+              id: "P2-G6-T11"
+              source_id: "005"
+              title: "Run a native command"
+              description: "Run a native command in the Instance's Engine with its bound parameters and report any returned rows, the affected count, the column names, and whether it succeeded."
+              reason: "Some needs, including schema changes, are served only by a native command."
+              inputs: ["A native command and its bound parameters"]
+              skills: ["sqlmodel", "python-skills:python-guidelines"]
+              expected_result: "A raw report of the command's outcome."
+              depends_on: ["P2-G6-T01"]
+              constraints: []
+              acceptance: "A valid query command reports its rows and columns, a valid changing command reports its affected count, bound parameters are applied as values, and an invalid command reports failure with a message that contains no credential."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:16:33Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G6-T01 is done."
+                - at: "2026-10-01T08:18:59Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added the native command capability: the command runs in the Instance's Engine with bound parameters (a tuple, a list, or a named mapping) inside one unit of work and reports rows and column names for a query, the affected count for a change, and success. Observed: a select with a tuple and one with a named mapping returned their rows and columns, an update reported 1 affected, a schema change and an insert into the new table worked and committed, and a failing command (unknown table, missing bindings, constraint violation with a planted secret as a bound value) returned success false with the driver's own message only, no credential and no value."
+            "P2-G6-T12":
+              id: "P2-G6-T12"
+              source_id: "005"
+              title: "Create the Tables of the supplied Entities"
+              description: "Create, in the Instance, the Table of every supplied Entity with its Fields, Primary Key, Relations, Uniqueness Constraints, and Indexes, leaving a matching existing Table unchanged."
+              reason: "CreateTables needs the Engine to build storage from the Entities."
+              inputs: ["The Entities and their Declarations"]
+              skills: ["sqlmodel", "python-skills:python-guidelines"]
+              expected_result: "Every supplied Entity has its Table in the Instance."
+              depends_on: ["P2-G6-T01"]
+              constraints: []
+              acceptance: "Tables that are absent from the Instance are created as the Entities' Declarations state, and running the capability again leaves matching Tables unchanged."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:16:33Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G6-T01 is done."
+                - at: "2026-10-01T08:18:59Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added the Table creation capability: it creates, from the supplied Entities' own Tables, every Table that does not exist and leaves existing ones unchanged, in one atomic unit of work. Observed on an empty file: all 15 Entity Tables exist afterwards with their foreign keys ordered correctly, and running it again succeeded and changed nothing."
+            "P2-G6-T13":
+              id: "P2-G6-T13"
+              source_id: "005"
+              title: "Report the stored structure of a Table"
+              description: "Report, for an existing Table, its stored Fields, Primary Key, Relations, Uniqueness Constraints, and Indexes, or that no such Table exists."
+              reason: "CreateTables must compare an existing Table with its Declaration before deciding to leave it or stop."
+              inputs: ["An Entity's Table"]
+              skills: ["sqlmodel", "python-skills:python-guidelines"]
+              expected_result: "The structure of the Table as stored."
+              depends_on: ["P2-G6-T01"]
+              constraints: []
+              acceptance: "For an existing Table the reported structure matches what is stored in the Instance, and for a missing Table it is reported that none exists."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:16:33Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G6-T01 is done."
+                - at: "2026-10-01T08:18:59Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added the structure report: for an existing Table it returns each stored Field with its storage type and nullability, the Primary Key, the foreign-key Relations, the Uniqueness Constraints, and the Indexes, or None when no Table exists; a companion function returns the storage type this Engine gives each Field so Core can compare. Observed: User reported its seven Fields in order, PK id, both unique names, Instance reported both Relations and the combined unique constraint, every stored type equalled the Engine's own type for that Field, and a missing Table returned None."
+            "P2-G6-T14":
+              id: "P2-G6-T14"
+              source_id: "005"
+              title: "Insert an ordered set of records as one change"
+              description: "Apply an ordered set of record insertions to the Instance as one change."
+              reason: "InsertInitialData must never leave part of the collection inserted."
+              inputs: ["An ordered set of complete records"]
+              skills: ["sqlmodel", "python-skills:python-guidelines"]
+              expected_result: "Every record of the set is stored in order, or none is."
+              depends_on: ["P2-G6-T02"]
+              constraints: []
+              acceptance: "All records of the set are stored in the given order, or none is stored when any one of them fails."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:18:59Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G6-T02 is done."
+                - at: "2026-10-01T08:20:29Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added ordered insertion: the Entities are stored one after another in the given order within one unit of work, each flushed so identities follow the order, and the count is returned. Observed: three Brokers were stored with ascending identities in order; a set whose third record repeats the first record's unique name stored none of the set; a set whose second record names a User that does not exist stored none of the set."
+            "P2-G6-T15":
+              id: "P2-G6-T15"
+              source_id: "005"
+              title: "Keep every changing request atomic"
+              description: "Make every changing Operation and insertion complete in full or leave no partial data change, report an incomplete schema preparation as a failure, and share no hidden transaction between separate calls."
+              reason: "A half-applied change leaves data that no contract describes."
+              inputs: ["The changing capabilities of the Engine"]
+              skills: ["sqlmodel", "python-skills:python-guidelines"]
+              expected_result: "Changes are all-or-nothing and calls are independent."
+              depends_on: ["P2-G6-T02", "P2-G6-T03", "P2-G6-T04", "P2-G6-T05", "P2-G6-T06", "P2-G6-T12", "P2-G6-T14"]
+              constraints: []
+              acceptance: "A changing request that fails part-way leaves the Instance's data exactly as it was before the request, a schema preparation that cannot be atomic and stops part-way is reported as a failure that names the incomplete state, and two consecutive calls share no hidden transaction."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:20:29Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P2-G6-T02 to T06, T12, and T14 are done."
+                - at: "2026-10-01T08:21:22Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Atomicity is realized by the unit of work every changing capability runs in (one explicit transaction per call, DDL included, committed in full or rolled back) rather than by extra code per capability. Observed on a real file: an Add that breaks a uniqueness rule, an ordered insert whose second record breaks one, and a Delete of a referenced record each left the data exactly as before; a schema preparation made to stop after three Tables left no Table behind and the next call succeeded; a failed call never rolled back an earlier committed call and held nothing for the next. SQLite supports atomic DDL, so the branch for an Engine that cannot be atomic is not needed here and was not written."
+        "P2-G7":
+          id: "P2-G7"
+          title: "Core lifecycle coordination"
+          description: "Core's Tables and Initial Data coordination and the Prepare composition that make an Instance's storage ready from the Model Entities and the configured Initial Data."
+          area: "Core Tables and Initial Data: storage preparation"
+          does: "An Instance's storage can be prepared repeatably from the Model Entity Collection and the configured Initial Data."
+          constraints: []
+          task_count: 6
+          tasks:
+            "P2-G7-T01":
+              id: "P2-G7-T01"
+              source_id: "005"
+              title: "Coordinate CreateTables from the Model Entities"
+              description: "Coordinate CreateTables so that it builds the Tables, Fields, Primary Keys, Relations, Uniqueness Constraints, and Indexes of exactly the Entities of the Model Entity Collection from their Declarations, using nothing else."
+              reason: "The Entities already carry every structural fact, so storage must follow them exactly."
+              inputs: ["The Model Entity Collection and its Declarations", "The Engine's Table creation capability"]
+              skills: ["sqlmodel", "python-skills:python-guidelines"]
+              expected_result: "One Table per Entity in the selected Instance, created repeatably."
+              depends_on: ["P2-G5-T06", "P2-G6-T12"]
+              constraints: []
+              acceptance: "After CreateTables on an empty Instance exactly one Table exists per Entity of the collection as its Declaration states, and running it again on matching Tables succeeds and changes nothing."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:18:59Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P2-G5-T06 and P2-G6-T12 are done."
+                - at: "2026-10-01T08:21:22Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added Core Tables' CreateTables: it takes exactly the Entities of the Model Entity Collection, imported from Model's published entrypoint, and asks the Engine to create each Table from the Entity's own Declaration-derived Table; it reads no Target. Observed on an empty temporary Instance: 15 Tables, one per Entity with Fields in Declaration order, exist afterwards, the result is a LifecycleResult (command create_tables, the DatabaseInstance used, success, 15 processed), and running it again succeeded and left every stored structure equal to before."
+            "P2-G7-T02":
+              id: "P2-G7-T02"
+              source_id: "005"
+              title: "Stop CreateTables on a difference with an existing Table"
+              description: "Compare each existing Table with its Entity's Declaration and stop the command, reporting the difference, instead of altering the Table."
+              reason: "Changing existing storage by judgment could lose data, so a difference must be surfaced."
+              inputs: ["The stored structure of each existing Table", "Each Entity's Declaration"]
+              skills: ["sqlmodel", "python-skills:python-guidelines"]
+              expected_result: "A difference ends the command with a Declaration incompatibility and no Table changed."
+              depends_on: ["P2-G7-T01", "P2-G6-T13", "P2-G4-T04"]
+              constraints: []
+              acceptance: "When an existing Table differs from its Declaration, CreateTables stops, reports a Declaration incompatibility that names the Entity, and changes no Table."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:21:22Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P2-G7-T01, P2-G6-T13, and P2-G4-T04 are done."
+                - at: "2026-10-01T08:22:18Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added the stop-on-difference check to CreateTables: before anything is created, every existing Table is compared with its Entity's Declaration (Fields, their storage types and nullability, Primary Key, Relations, Uniqueness Constraints, Indexes), with the Declaration read through Model's public Entity and the Engine's own storage types. Any difference raises DeclarationMismatchError naming each differing Entity and what differs, and nothing is created or altered. Observed on temporary Instances holding a hand-built Broker Table: an identical Table passed; an extra Field, a missing Field, another type, another nullability, a missing uniqueness constraint, a missing foreign key, and another primary key each stopped CreateTables with the error naming Broker, and in each case the set of Tables and the stored Broker structure were unchanged afterwards."
+                - at: "2026-10-01T08:31:23Z"
+                  log_entry: "006"
+                  transition: "done -> done"
+                  note: "Quality pass after Prepare was completed: the error message of the stop-on-difference check now also names the Instance (for example: CreateTables on Instance SQLite stopped and changed nothing ...), and the wording of each difference was made grammatical. Observed afterwards: all seven kinds of difference still stop CreateTables with DeclarationMismatchError naming Broker and the Instance, with nothing created or changed."
+            "P2-G7-T03":
+              id: "P2-G7-T03"
+              source_id: "005"
+              title: "Coordinate InsertInitialData from the shared collection"
+              description: "Coordinate InsertInitialData so that it reads the complete shared collection, validates each record through its Entity's own contract, and hands the ordered records to the Engine for insertion into the selected Instance."
+              reason: "Initial Data must pass through the same contract as any other data."
+              inputs: ["The shared Initial Data collection", "Each Entity's own construction", "The Engine's ordered insertion capability"]
+              skills: ["sqlmodel", "python-skills:python-guidelines"]
+              expected_result: "A command that inserts the validated collection in order."
+              depends_on: ["P2-G2-T02", "P2-G5-T06", "P2-G5-T04", "P2-G6-T14"]
+              constraints: []
+              acceptance: "Every collected record is validated by its Entity's own contract before insertion, a record the contract rejects stops the command with nothing inserted, and valid records are inserted in the collection's order."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:22:18Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P2-G2-T02, P2-G5-T06, P2-G5-T04, and P2-G6-T14 are done."
+                - at: "2026-10-01T08:22:47Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added Core Initial Data's InsertInitialData coordination: it reads the complete shared collection from the configuration, rebuilds every record through its Entity's own JSON reconstruction (the one public path that accepts decimals as text), and only then hands the ordered Entities to the Engine's ordered insertion. A defect found by the check and fixed: the configuration's records are read-only mappings, which could not be serialized, so they are converted to plain mappings at the point of use. Observed on an empty temporary Instance: 23 records across 12 Entities were inserted in collection order, relations resolve (the Instance row has user 1 and platform 1, Trading Platform identities 1 and 2 match the order), exact decimal text is stored as given, and Entities without Initial Data stay empty. A record an Entity rejects (a number where exact decimal text is required) and an unknown Field each raised ConfigurationError naming the Entity and index and no value, with every table still empty."
+            "P2-G7-T04":
+              id: "P2-G7-T04"
+              source_id: "005"
+              title: "Make InsertInitialData repeatable"
+              description: "Insert every missing record, skip a record already present in identical form, and fail clearly on a conflicting one, reporting the processed count."
+              reason: "Preparation must be safe to run again on any Instance without duplicating or losing records."
+              inputs: ["The records already stored in the Instance"]
+              skills: ["sqlmodel", "python-skills:python-guidelines"]
+              expected_result: "Repeated runs leave the same records and report what they processed."
+              depends_on: ["P2-G7-T03", "P2-G6-T07"]
+              constraints: []
+              acceptance: "Running the command twice leaves the same records with no duplicate, deletion, or overwrite, a conflicting record fails clearly and changes nothing, and success with zero processed items occurs only when the Target declares no Initial Data."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:22:47Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P2-G7-T03 and P2-G6-T07 are done."
+                - at: "2026-10-01T08:23:35Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Made InsertInitialData repeatable. A collected record is matched to a stored one through the Declaration: by each Uniqueness Constraint whose Fields it fills (a null never matches, as in storage), or, for an Entity that declares none, by all its non-generated Fields; a stored record with the same identity and equal values (compared by value, so Decimal 1.5 equals 1.50) is skipped, one with other values is a conflict. The command reports the processed count (inserted plus skipped), so a repeat reports 23, not zero; zero with success occurs only for an empty collection. A conflict raises LifecycleError (incomplete Lifecycle execution) naming the Entity only, and nothing is inserted because every check precedes the one ordered insertion; a failure of the insertion itself, for example records of the collection that collide with each other, is reported the same way. Observed on temporary Instances: two and three consecutive runs left the snapshot of all tables unchanged; after deleting one Action and two Currencies exactly 3 were inserted and 20 skipped; a changed Currency country and a changed Trading Platform code (single-Field uniqueness) each failed with nothing else inserted; two colliding Broker records failed with every table empty; an empty collection returned success with 0 processed. Decision: a record that is present is identified through the Declaration rather than by a stored identity, because Target Initial Data carries none (Log Entry 005 observation)."
+                - at: "2026-10-01T08:31:23Z"
+                  log_entry: "006"
+                  transition: "done -> done"
+                  note: "Quality pass after Prepare was completed: the conflict and insertion-failure messages of InsertInitialData now also name the Instance (for example: InsertInitialData on Instance SQLite stopped and inserted nothing ...), so a failure identifies the Instance and the command. Observed afterwards: the repeat, partial-presence, single-field and combined uniqueness conflicts, colliding-records, and empty-collection checks all pass again."
+            "P2-G7-T05":
+              id: "P2-G7-T05"
+              source_id: "005"
+              title: "Insert sensitive Initial Data unchanged"
+              description: "Insert a record whose Fields carry a sensitivity marker or an at-rest instruction exactly as supplied, without omitting, postponing, or blocking it."
+              reason: "Database stores values and leaves their protection to their owner."
+              inputs: ["Records that carry sensitivity markers or at-rest instructions"]
+              skills: ["sqlmodel", "python-skills:python-guidelines"]
+              expected_result: "Every collected record is inserted regardless of what its Fields mean."
+              depends_on: ["P2-G7-T03"]
+              constraints: []
+              acceptance: "A record with a marked or at-rest-protected Field is inserted with its values exactly as supplied and is never omitted, postponed, or blocked."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:22:47Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G7-T03 is done."
+                - at: "2026-10-01T08:23:35Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Sensitive Initial Data is inserted unchanged: the command never reads a sensitivity marker or an at-rest instruction and never hashes, encrypts, masks, omits, or postpones a record. Observed on temporary Instances: a User password and api_key, an Instance password, and an Account password supplied as concrete text were stored exactly as supplied and all 23 records were inserted; the empty strings that stand for 'Generate securely' were stored as empty strings."
+            "P2-G7-T06":
+              id: "P2-G7-T06"
+              source_id: "005"
+              title: "Compose Prepare from the two preparation commands"
+              description: "Run CreateTables and then InsertInitialData on the selected Instance, stopping without InsertInitialData when CreateTables fails."
+              reason: "One command must bring any Instance to a ready state in the right order."
+              inputs: ["The CreateTables and InsertInitialData commands"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "A single command that prepares an Instance in order."
+              depends_on: ["P2-G7-T02", "P2-G7-T04"]
+              constraints: []
+              acceptance: "Prepare runs CreateTables and then InsertInitialData, returns a Lifecycle result, and when CreateTables fails it stops without running InsertInitialData."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:23:35Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P2-G7-T02 and P2-G7-T04 are done."
+                - at: "2026-10-01T08:23:57Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added Prepare in Core Initial Data: it runs CreateTables and then InsertInitialData on the selected Instance and returns a LifecycleResult whose processed count is the Tables plus the records; a failure of CreateTables propagates at once so InsertInitialData never runs, and a failure of InsertInitialData after the Tables exist is reported as LifecycleError saying Prepare is incomplete. Observed with the two commands instrumented: the call order is create_tables then insert_initial_data and the result is command prepare, success, 38 processed (15 + 23), with the repeat succeeding and adding nothing; with a hand-built Broker Table that differs from its Entity, Prepare raised DeclarationMismatchError, InsertInitialData was never called, and the Instance held only that one Table; with a conflicting stored Trading Platform it raised the incomplete-Prepare LifecycleError naming no value."
+                - at: "2026-10-01T08:31:23Z"
+                  log_entry: "006"
+                  transition: "done -> done"
+                  note: "Quality pass: Prepare now names the Instance and the command in every failure, as the after-generation requirement needs. A failure of CreateTables is re-raised as the same error kind with the message 'Prepare on Instance SQLite stopped: ...', so its kind (for example DeclarationMismatchError) stays distinguishable; a failure of InsertInitialData is raised as LifecycleError reading 'Prepare on Instance SQLite is incomplete: ...'. Observed afterwards: order of the two commands, the stop when CreateTables fails, the incomplete report, and a repeat run all pass again."
+        "P2-G8":
+          id: "P2-G8"
+          title: "Lifecycle entry points and after-generation preparation"
+          description: "The manual entry points through which a person runs each Lifecycle Command, and the preparation that generation itself runs on the default Instance."
+          area: "Entry points and after-generation preparation"
+          does: "Each Lifecycle Command can be run manually, and a finished generation leaves the default Instance prepared."
+          constraints: []
+          task_count: 4
+          tasks:
+            "P2-G8-T01":
+              id: "P2-G8-T01"
+              source_id: "005"
+              title: "Provide a manual entry point for CreateTables"
+              description: "Provide the entry point through which a person runs CreateTables by hand, invoking the command only through the Interface."
+              reason: "Storage preparation must be runnable without writing code."
+              inputs: ["The published Lifecycle Commands"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "A runnable entry point that executes CreateTables."
+              depends_on: ["P2-G4-T11"]
+              constraints: []
+              acceptance: "Running the entry point executes CreateTables through the Interface and presents the same outcome as calling the command through the gateway."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:25:31Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G4-T11 is done."
+                - at: "2026-10-01T08:26:47Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added the manual entry point for CreateTables: a short script that creates the gateway and prints the result of create_tables, with no logic of its own; failures surface as the published error. Observed in two clean copies of Model and Database set up from nothing with uv sync: the entry point's printed outcome is identical to the gateway's for the same call (LifecycleResult with command create_tables), checked for all three entry points against a script that calls the gateway directly."
+            "P2-G8-T02":
+              id: "P2-G8-T02"
+              source_id: "005"
+              title: "Provide a manual entry point for InsertInitialData"
+              description: "Provide the entry point through which a person runs InsertInitialData by hand, invoking the command only through the Interface."
+              reason: "Seeding must be repeatable by hand on any prepared Instance."
+              inputs: ["The published Lifecycle Commands"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "A runnable entry point that executes InsertInitialData."
+              depends_on: ["P2-G4-T11"]
+              constraints: []
+              acceptance: "Running the entry point executes InsertInitialData through the Interface and presents the same outcome as calling the command through the gateway."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:25:31Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G4-T11 is done."
+                - at: "2026-10-01T08:26:47Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added the manual entry point for InsertInitialData: a short script that creates the gateway and prints the result of insert_initial_data, with no logic of its own; failures surface as the published error. Observed in two clean copies of Model and Database set up from nothing with uv sync: the entry point's printed outcome is identical to the gateway's for the same call (LifecycleResult with command insert_initial_data), checked for all three entry points against a script that calls the gateway directly."
+            "P2-G8-T03":
+              id: "P2-G8-T03"
+              source_id: "005"
+              title: "Provide a manual entry point for Prepare"
+              description: "Provide the entry point through which a person runs Prepare by hand, invoking the command only through the Interface."
+              reason: "One manual step must bring an Instance to a ready state."
+              inputs: ["The published Lifecycle Commands"]
+              skills: ["python-skills:python-guidelines"]
+              expected_result: "A runnable entry point that executes Prepare."
+              depends_on: ["P2-G4-T11"]
+              constraints: []
+              acceptance: "Running the entry point executes Prepare through the Interface and presents the same outcome as calling the command through the gateway."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:25:31Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependency P2-G4-T11 is done."
+                - at: "2026-10-01T08:26:47Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Added the manual entry point for Prepare: a short script that creates the gateway and prints the result of prepare, with no logic of its own; failures surface as the published error. Observed in two clean copies of Model and Database set up from nothing with uv sync: the entry point's printed outcome is identical to the gateway's for the same call (LifecycleResult with command prepare), checked for all three entry points against a script that calls the gateway directly."
+            "P2-G8-T04":
+              id: "P2-G8-T04"
+              source_id: "005"
+              title: "Prepare the default Instance after generation"
+              description: "As the last step of generation, run Prepare on the active default Instance, and fail preparation, identifying the Instance and the command, when Prepare fails."
+              reason: "A finished generation should leave the default Instance ready to use."
+              inputs: ["The Prepare command", "The configured after-generation behaviour", "The shared Initial Data collection"]
+              skills: []
+              expected_result: "The default Instance holds every Table and every Target Initial Data record once generation ends."
+              depends_on: ["P2-G7-T06", "P2-G7-T05", "P2-G2-T02", "P2-G3-T01", "P2-G3-T02", "P2-G3-T03", "P2-G3-T04", "P2-G3-T05", "P2-G3-T06", "P2-G3-T07", "P2-G3-T08", "P2-G3-T09", "P2-G3-T10", "P2-G3-T11", "P2-G3-T12"]
+              constraints: []
+              acceptance: "After generation the default Instance holds one Table per Entity and every Initial Data record the Target defines, no other active Instance is prepared, and a failing Prepare fails preparation with an error that names the Instance and the command."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:26:47Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P2-G7-T06, P2-G7-T05, P2-G2-T02, and P2-G3-T01 to T12 are done."
+                - at: "2026-10-01T08:28:00Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Ran Prepare on the active default Instance as the last generation step through the Prepare entry point. Observed: from no storage, Prepare created db/application.db (git-ignored, Database-owned) with 15 Tables and 23 Initial Data records, matching the Target's records per Entity exactly (User 1, Trading Platform 2, Instance 1, Currency 8, Broker 1, Asset 4, Account Group 1, Account 1, Trailing Group 1, Partial Group 1, Action Group 1, Action 1) with credentials stored as empty strings; only that one storage file exists, so no other Instance was prepared (the only other configured Instance is inactive); a second run succeeded with 0 inserted and 23 skipped. A failing Prepare raises an error that names the Instance and the command: with a differing existing Table it raises DeclarationMismatchError reading 'Prepare on Instance SQLite stopped: CreateTables on Instance SQLite stopped and changed nothing ...', and with a conflicting stored record it raises LifecycleError reading 'Prepare on Instance SQLite is incomplete ...'; Prepare ran with fail_on_error semantics because the error propagates."
+        "P2-G9":
+          id: "P2-G9"
+          title: "Documentation"
+          description: "The public explanation of the Database surface so that a consumer can use and verify it without reading its source."
+          area: "Documentation of the public surface"
+          does: "A consumer can understand, set up, use, and verify Database from its documentation alone."
+          constraints: []
+          task_count: 5
+          tasks:
+            "P2-G9-T01":
+              id: "P2-G9-T01"
+              source_id: "005"
+              title: "Document the overview and every public contract"
+              description: "Write the short introduction with one simple example, and explain every published contract, Operation, and Lifecycle Command with its parameters, enumeration members, defaults, results, and errors, with one example each."
+              reason: "Consumers learn what Database publishes from its documentation."
+              inputs: ["The published Interface"]
+              skills: []
+              expected_result: "Documentation that states the whole public surface accurately."
+              depends_on: ["P2-G4-T12"]
+              constraints: []
+              acceptance: "Every published contract, Operation, and Lifecycle Command is explained with its parameters, defaults, results, errors, and an example, every enumeration member appears, every example passes imported values rather than strings, and no example uses an Instance member that does not exist."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:28:00Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P2-G4-T12 is done."
+                - at: "2026-10-01T08:30:15Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Wrote the overview and the Interface section of the README: one introduction with one create, add, and list example; the 17 public names, each explained with an example (Database, DatabaseInstance, Filter with all 12 FilterOperator members in a table, FilterCombination, Order and OrderDirection, CommandResult, LifecycleResult, and a table of the base error and the seven derived errors with a catching example); and every Entity Operation, the Database-wide Operation, and each Lifecycle Command with a parameter table (name, meaning, optionality), defaults, results, and an example. Observed by extracting every python block of the README and running them in order in one session in a clean copy of Model and Database set up from nothing and prepared: 27 blocks ran with no exception and all 25 printed outputs equal the README's. Every example passes imported values only (the demonstrated InvalidInputError uses a Field of another Entity, not a string) and the only Instance member used is SQLITE."
+            "P2-G9-T02":
+              id: "P2-G9-T02"
+              source_id: "005"
+              title: "Document the Instances and setup"
+              description: "Explain the active Instances, how the default is selected, how Database owns its storage, and the steps that set Database up."
+              reason: "A consumer must be able to choose an Instance and prepare an environment without reading the source."
+              inputs: ["The active Instances and default", "The setup steps of the selected technology"]
+              skills: []
+              expected_result: "Documentation that takes a consumer from nothing to a prepared default Instance."
+              depends_on: ["P2-G4-T05", "P2-G2-T02", "P2-G6-T01"]
+              constraints: []
+              acceptance: "The documentation names exactly the active Instance members and the default, explains Database-owned storage without exposing a credential, states that generation runs Prepare, and its setup steps succeed in a clean environment."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:28:00Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P2-G4-T05, P2-G2-T02, and P2-G6-T01 are done."
+                - at: "2026-10-01T08:30:15Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Wrote the Instances and Setup sections: the active member SQLITE and the default, the inactive PostgreSQL Instance having no member or Engine unit, Database-owned storage in the Component's git-ignored db directory with the refusal of any location outside it, no credentials in members, requests, results, or errors, and the setup steps (uv sync with Model resolved from the sibling directory, then Prepare) with the statement that generation runs Prepare automatically. Observed: the same steps ran in two clean copies set up from nothing (offline from the uv cache) and produced a prepared default Instance."
+            "P2-G9-T03":
+              id: "P2-G9-T03"
+              source_id: "005"
+              title: "Document use and the Lifecycle Commands"
+              description: "Show every capability group used only through the Interface, and explain running CreateTables, InsertInitialData, and Prepare manually."
+              reason: "Consumers use Database through its documentation, and preparation is the part most likely to be misused."
+              inputs: ["The published Interface", "The manual entry points"]
+              skills: []
+              expected_result: "Documentation that demonstrates each capability group and each Lifecycle Command."
+              depends_on: ["P2-G4-T12", "P2-G8-T03"]
+              constraints: []
+              acceptance: "Every Entity Operation group, the Database-wide Operation, and each Lifecycle Command has a working example that uses Field references and enumeration members rather than strings, and the manual use of each command matches its behaviour."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:28:00Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P2-G4-T12 and P2-G8-T03 are done."
+                - at: "2026-10-01T08:30:15Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Wrote the Use and Lifecycle sections: one example for each group (change, read, aggregate, remove, the Database-wide Operation, and the Lifecycle Commands) using Field references and enumeration members only, and the manual use of CreateTables, InsertInitialData, and Prepare with what each does, including the stop on a difference, the conflict rule, the processed count, and that generation runs Prepare on the default Instance only. Observed: the Use examples ran and printed the documented outputs inside the README run above, and the three manual entry points printed outputs identical to the gateway's in clean copies, as documented."
+            "P2-G9-T04":
+              id: "P2-G9-T04"
+              source_id: "005"
+              title: "Document the Initial Data"
+              description: "List every Initial Data record the Target defines and explain how Database inserts each value."
+              reason: "Consumers need to know exactly what a prepared Instance contains."
+              inputs: ["The shared Initial Data collection"]
+              skills: []
+              expected_result: "Documentation of the complete Initial Data."
+              depends_on: ["P2-G3-T01", "P2-G3-T02", "P2-G3-T03", "P2-G3-T04", "P2-G3-T05", "P2-G3-T06", "P2-G3-T07", "P2-G3-T08", "P2-G3-T09", "P2-G3-T10", "P2-G3-T11", "P2-G3-T12"]
+              constraints: []
+              acceptance: "Every Initial Data record of the collection is listed once, the documentation states that values are inserted unchanged without security-based omission, and no credential value appears."
+              status: "done"
+              log:
+                - at: "2026-10-01T08:28:00Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P2-G3-T01 to T12 are done."
+                - at: "2026-10-01T08:30:15Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Wrote the Initial Data section: one table row per Entity listing every Target record once in insertion order, the statement that values are inserted unchanged with no hashing, encryption, masking, or security-based omission, that Target values that are not concrete are empty strings, and the note that a changed seeded record is reported as a conflict instead of overwritten. Observed with a script: every value of all 23 records appears in its Entity's row, the three Entities without Initial Data are named, and no credential value exists or appears."
+            "P2-G9-T05":
+              id: "P2-G9-T05"
+              source_id: "005"
+              title: "Document verification and troubleshooting"
+              description: "Explain how to verify Database and resolve problems that belong to Database alone."
+              reason: "A consumer must be able to confirm that Database works without inspecting its source."
+              inputs: ["The documented use, Instances, Lifecycle Commands, and Initial Data"]
+              skills: []
+              expected_result: "Documentation that proves each public contract and covers Database-specific problems."
+              depends_on: ["P2-G9-T01", "P2-G9-T02", "P2-G9-T03", "P2-G9-T04", "P2-G8-T04"]
+              constraints: []
+              acceptance: "The verification steps demonstrate public import, Instance selection, the query vocabulary, each capability group, persistent storage, and repeatable Lifecycle Commands, and troubleshooting covers an inactive Instance, a difference between an existing Table and its Entity, and empty Initial Data values, and nothing else."
+              status: "done"
+
+              log:
+                - at: "2026-10-01T08:30:15Z"
+                  log_entry: "006"
+                  transition: "todo -> claimed"
+                  note: "Claimed before work began; dependencies P2-G9-T01 to T04 and P2-G8-T04 are done."
+                - at: "2026-10-01T08:30:46Z"
+                  log_entry: "006"
+                  transition: "claimed -> done"
+                  note: "Wrote the Verify and Troubleshooting sections. Verify is one script that checks the public import (exactly the 17 published names), Instance selection (one active member, the default equals the explicit member), the closed query vocabulary, each capability group on a scratch record it removes again, persistent storage (a new gateway sees the record, and the file lives in the Component's db directory), and repeatable Lifecycle Commands. Troubleshooting covers exactly three Database concerns: an inactive Instance, a difference between an existing Table and its Entity, and empty Initial Data values. Observed: all 29 python blocks of the finished README ran in order in a clean prepared copy with no exception and all 27 printed outputs equal the README's, including the Verify script printing OK."
