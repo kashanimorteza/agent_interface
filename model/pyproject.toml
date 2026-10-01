@@ -1,0 +1,25 @@
+[project]
+name = "model"
+version = "0.1.0"
+description = "Reusable data-model Entities of the Trading Assistant and their complete public meaning."
+requires-python = ">=3.14"
+dependencies = [
+    "pydantic>=2.13.5",
+    "sqlalchemy>=2.0.54",
+    "sqlmodel>=0.0.47",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.10,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
+pythonVersion = "3.14"
+
+[dependency-groups]
+dev = [
+    "pyright>=1.1.414",
+    "ruff>=0.16.9",
+]
