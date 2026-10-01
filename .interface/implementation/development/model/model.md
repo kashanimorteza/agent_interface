@@ -26,43 +26,13 @@ Model defines and publishes the project's reusable data-model Entities and their
 
 Model defines flat, technology-independent Entities. Every Entity carries its own Fields, Entity Metadata, and public Declaration without nesting another Entity.
 
-Model owns what each Entity means and how that meaning is published. It does not own how Entities are stored, what the application does with them, or how they travel over a transport.
-
 ### Purpose
 
-Every part of an application ends up carrying an opinion about what its data means — what a User is, which of its Fields may be empty, what makes two of them the same one. When no Component owns that meaning, each forms its own: storage decides a Field's Type from its column, the API from its payload, the interface from its form, and the answers drift until the same record is valid in one place and rejected in another.
-
-Model exists so that meaning is written once, in one technology-independent form, and read by everyone through one published surface. Every other Component reads it instead of inventing its own, which is what makes them agree without coordinating — and a Component behind it can change without the data being renegotiated.
+The meaning of the application's data needs one owner, written once in a technology-independent form and read by everyone through one published surface, so that it never drifts.
 
 ### How It Works
 
-Interface follows the fixed Model Interface Schema. It exports every Entity by its own name, so a consumer that works with one Entity imports that Entity directly, and it publishes one ordered Entity Collection of every Entity, so a consumer that works with all of them enumerates them without knowing their names. Every Entity exposes its own actual Declaration. Foundation supplies shared Entity-to-JSON Object and JSON Object-to-Entity conversion. Consumers use these published exports and never interpret Model files, internal paths, or implementation details.
-
-### Decisions
-
-**Serialization**
-
-1. Foundation's conversion produces JSON text conforming to the JSON standard, with one object at its root whose keys are the Entity's Fields in Declaration order, and accepts that text back. How a language decodes the text afterward is that language's concern. This replaces the earlier decision that conversion produce a decoded structure and leave text encoding to the consumer: a decoded structure is a language concept, and only JSON text is independent of every language.
-
-**Relations**
-
-1. A Relation records its target Entity and target Field by logical name, and one Entity never imports another. This replaces the earlier rule that a Relation carry the referred definition itself. The risk that rule guarded against — a misspelled or renamed target going unnoticed — is covered by Principle "Entity Metadata resolves completely", which resolves every name during generation.
-
-**Interface**
-
-1. Interface exports every Entity by its own explicit name, so a consumer imports the Entity it works with directly, and publishes one ordered Entity Collection of every Entity for a consumer that works with all of them. This replaces EntityCatalog, EntityEntry, and their lookup capabilities: a lookup by name hides an Entity's real type from the consumer, and each Entity already exposes its own Declaration. Removing the Catalog without a collection was rejected, because a consumer working with all Entities would then have no way to enumerate them except scanning Model or reading the Target.
-
-**Activity**
-
-1. is_active is a Model contract on every Entity: any record can be taken out of use and restored without being deleted. It is Model's own contract, imposed by no consumer.
-
-**Generation rules**
-
-1. The general generation rules — writing only inside the Component, determinism, atomic failure, and source standard — are stated once in the Develop Operation, so every Component shares one statement of them. Every check is made by the Review Operation, which reads this file's Review category; Plan and Develop check nothing.
-
-**Sensitive values**
-
-1. Which Component applies a Target-declared hashing or encryption requirement is not yet decided. Until it is, Model preserves only the Sensitivity Marker and the actual value.
+Each Entity lives in its own unit and exposes its Declaration and the shared JSON conversion; Interface publishes every Entity by name and as one ordered Entity Collection.
 
 <br>
 
@@ -85,12 +55,9 @@ Interface follows the fixed Model Interface Schema. It exports every Entity by i
 - **Entity Metadata** — Primary Key, Relations, Uniqueness Constraints, and Indexes owned by an Entity rather than one Field.
 - **Entity Declaration** — the complete structured public record of one Entity's name, description, ordered Fields, and Entity Metadata.
 - **Field Declaration** — the complete structured public record of one Field's name, description, Type, presence meaning, Default Value, sensitivity, immutability, constraints, and Value Generation.
-- **Declaration** — the public Core contract that represents Entity and Field Declarations without defining Entity behaviour.
-- **Foundation** — the public Core contract that supplies shared conversion capabilities without defining domain meaning.
 - **JSON Object** — the representation of one Entity as JSON text conforming to the JSON standard, with one object at its root whose keys are the Entity's Fields.
 - **Entity Export** — the explicit named export through which one actual Entity is imported directly by its own name.
 - **Entity Collection** — the ordered immutable public collection of every actual Entity, in Target order.
-- **Interface** — the standard public entrypoint that realizes the Model Interface Schema and publishes every Entity Export and the Entity Collection.
 
 <br>
 
@@ -99,59 +66,63 @@ Interface follows the fixed Model Interface Schema. It exports every Entity by i
 
 ```text
 Model
-├── Interface       ← the only public entry point: Entity Exports and Entity Collection
+├── Interface       ← every Entity by name and the Entity Collection, in the shape the Model Interface Schema defines
 ├── Entity          ← one unit per Target Entity
-├── Core
-│   ├── Declaration ← the public logical contract
-│   └── Foundation  ← the shared JSON conversion
-└── Documentation   ← the public explanation of the surface above
+└── Core
+    ├── Declaration ← the public logical contract
+    └── Foundation  ← the shared JSON conversion
 ```
-
-**Interface** is the package-root entrypoint through which every Entity is published, in the shape the Model Interface Schema defines.
-
-**Entity** is the public area containing exactly one unit for every Entity. Each Entity exposes its own complete Declaration and the shared Foundation capabilities.
-
-**Core** is the shared area containing public Declaration and Foundation contracts plus any private base definitions and helpers shared across Entities. Core never depends on Interface or one specific Entity.
-
-**Declaration** is the public structured contract for Entity and Field meaning.
-
-**Foundation** is the public shared conversion contract between an Entity and its JSON Object.
-
-**Documentation** is the root documentation explaining Interface, every public Entity, Declaration, Foundation, setup, use, verification, and Model-specific troubleshooting.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Consumes Development** — takes the shared language standards, quality tools, and platform defaults it does not choose for itself, and its place in the Connection graph.
-- **Consumes no other Component** — Model depends on no peer Component; the language and packages its Preferences select are realization dependencies, not Component dependencies.
+- **Consumes Development** — follows its shared rules and Defaults for every choice this Component leaves unstated.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Boundaries --->
 ## Boundaries
 
-- **Tables, queries, migrations, Instances, and storage lifecycle** — are not Model's, because they describe how data is stored, not what it means; Model records an Index or a Uniqueness Constraint as meaning only, never how it is stored.
+- **Queries, migrations, Instances, and storage lifecycle** — are not Model's, because they describe how data is stored and handled, not what it means. A language profile may realize Entities in a table-ready form, but Model never runs storage.
 - **Actions, decisions, workflows, authorization, quotas, and orchestration** — are not Model's, because they depend on an operation and its application context rather than on one Entity's own data.
 - **Endpoints, requests, responses, protocols, and transport schemas** — are not Model's, because they are properties of a transport, not of what the data means.
 - **Encryption, hashing, masking, and secret storage** — are not Model's, because they protect a value rather than define it.
 - **Initial Data and runtime records** — are not Model's, because they are data rather than the meaning of data.
-- **How an Entity is realized or used** — is not Model's, because Model publishes a contract, not a usage.
+- **How an Entity is used** — is not Model's, because Model publishes a contract, not a usage.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-Model Preferences own configurable names, language, package, naming, symbols, method names, layout, technical realization, Field defaults, and documentation choices; these selections realize the responsibilities in Architecture without changing them. The shape of Interface belongs to the Model Interface Schema. Implementation applies both to the current Target.
+Model Preferences own configurable names, language, package, naming, symbols, method names, layout, technical realization, Field defaults, and documentation choices; these selections realize the responsibilities in Architecture without changing them. The shape of Interface belongs to the Model Interface Schema.
+
+### Interface
+
+The package-root entrypoint through which every Entity is published, in the shape the Model Interface Schema defines. It meets these needs:
+
+1. **Complete** — exactly one Entity Export for every Target Entity, and the Entity Collection holding every Target Entity in Target order, changing when the Target changes.
+2. **Actual** — each export and each Collection item is the actual Entity, exposing its own actual Declaration, never a copy.
+3. **Nothing else** — nothing beyond these is published, and loading Interface has no side effect.
+
+The exact shape of these needs is fixed by the Model Interface Schema, which is built from them. These needs are the reference: when the two differ, the Schema is corrected to match them.
+
+### Entity
+
+The public area containing exactly one unit for every Entity. Each Entity exposes its own complete Declaration and the shared Foundation capabilities.
+
+### Core
+
+The shared area containing the public Declaration and Foundation contracts plus any private base definitions and helpers shared across Entities. Declaration is the public structured contract for Entity and Field meaning; Foundation is the public shared conversion contract between an Entity and its JSON Object.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
-Every Principle in this file is mandatory; the claim is about the Principles, not about every sentence in the file. Model Preferences may complete an unstated compatible choice but never override or weaken a Principle, and explicit compatible Target meaning takes precedence over a Preference. A project may only add stricter rules, never looser ones.
+Every Principle in this file is mandatory for Model. Model Preferences provide configurable defaults and conventions but can never weaken a Principle. Explicit Target meaning retains its authority.
 
 <br>
 
@@ -176,7 +147,7 @@ Every Principle below is mandatory and belongs to the Architecture or Layering c
 
 #### Model has one canonical Architecture
 
-**Rule:** Every realization contains the root Interface, Entity directory, Core directory, Declaration, Foundation, one unit per Entity, and root Documentation with the ownership shown in Architecture. Dependencies flow from Interface to Entity units and from Entity units to shared Core contracts; Core depends on neither Interface nor a specific Entity.
+**Rule:** Every realization contains the root Interface, Entity directory, Core directory, Declaration, and Foundation, with the ownership shown in Architecture. Dependencies flow from Interface to Entity units and from Entity units to shared Core contracts; Core depends on neither Interface nor a specific Entity.
 **Why:** Stable ownership makes implementations comparable and prevents cycles.
 **Boundary:** Language-required manifests, package entrypoints, annotations, inheritance from a shared private base, and similar technical files may exist without creating another conceptual layer or moving an owned responsibility.
 
@@ -186,7 +157,7 @@ Every Principle below is mandatory and belongs to the Architecture or Layering c
 
 #### Interface conforms to the Model Interface Schema
 
-**Rule:** Every realization of Interface conforms to the versioned Model Interface Schema, which fixes the Entity Exports, the Entity Collection, each Entity's exposed Declaration, and what Interface never publishes or does. Model's own part is membership: exactly the current Target Entities, in Target order, each the actual public Entity.
+**Rule:** Every realization of Interface conforms to the versioned Model Interface Schema, which fixes the Entity Exports, the Entity Collection, each Entity's exposed Declaration, and what Interface never publishes or does.
 **Why:** Consumers depend on one contract instead of reinterpreting each realization, and can both import one Entity's real type and enumerate all of them.
 **Boundary:** Entity membership and meaning change under Target authority without being an Interface-structure change; changing the structure itself requires a Schema version change.
 
@@ -196,7 +167,7 @@ Every Principle below is mandatory and belongs to the Architecture or Layering c
 
 #### Every Entity follows one complete structural contract
 
-**Rule:** Every Target domain concept produces exactly one uniquely named Entity in Target order. Each Entity preserves its description and ordered Fields, carries complete Entity Metadata, has exactly one Identity, id, named by its Primary Key, and exactly one Activity Field, is_active. id is always non-nullable and immutable once assigned; is_active is always a non-nullable, mutable Boolean. Where the Target leaves their remaining properties unstated, Model Preferences supply them.
+**Rule:** Every Target domain concept produces exactly one uniquely named Entity. Each Entity preserves its description and ordered Fields, carries complete Entity Metadata, has exactly one Identity, id, named by its Primary Key, and exactly one Activity Field, is_active. id is always non-nullable and immutable once assigned; is_active is always a non-nullable, mutable Boolean. Where the Target leaves their remaining properties unstated, Model Preferences supply them.
 **Why:** One structural contract prevents generators from reshaping domain concepts. Every Entity needs id so each instance can be identified, and is_active so any record can be taken out of use and restored without being deleted, keeping its history and every Relation that points to it intact.
 **Boundary:** Model adds no universal Field other than id and is_active.
 
@@ -230,9 +201,9 @@ Every Principle below is mandatory and belongs to the Architecture or Layering c
 **Why:** One runtime contract prevents package-specific construction and mutation semantics from changing data.
 **Boundary:** Construction and mutation perform no storage, network, application, workflow, or orchestration operation.
 
-#### Generated identities follow their declared owner
+#### Generated identities follow their declaration
 
-**Rule:** An omitted Auto Increment Field remains in an explicit pending state without becoming nullable, rejects a caller-supplied value unless Target explicitly permits one, receives its value from the owning persistence realization. A Generated Identifier is produced during Entity creation when declared, using the algorithm Model Preferences select unless the Target names another.
+**Rule:** An omitted Auto Increment Field remains in an explicit pending state without becoming nullable, rejects a caller-supplied value unless Target explicitly permits one, and is never assigned by Model. A Generated Identifier is produced during Entity creation when declared, using the algorithm Model Preferences select unless the Target names another.
 **Why:** Generation ownership prevents callers from choosing values that another realization is responsible for assigning.
 **Boundary:** The pending representation may use JSON null solely to represent not-yet-generated Auto Increment state; it does not change the Field's nullability.
 
@@ -246,7 +217,7 @@ Every Principle below is mandatory and belongs to the Architecture or Layering c
 
 **Rule:** Only the Sensitivity Markers that Model Preferences recognize are accepted. Model preserves the actual value unchanged in Entity state and JSON Object, exposes the marker through Declaration, never encrypts, hashes, masks, redacts, authorizes, inspects, ignores, or remaps a value because of it, and never echoes a sensitive value in validation or generation diagnostics.
 **Why:** Model preserves sensitivity meaning without taking ownership of protection.
-**Boundary:** Generated source, Documentation, fixtures, and examples use no real credential or secret. A new marker requires an explicit addition to Model Preferences.
+**Boundary:** Generated source, fixtures, and examples use no real credential or secret. A new marker requires an explicit addition to Model Preferences.
 
 #### Logical names remain exact and physical names remain deterministic
 
@@ -278,30 +249,21 @@ Every Principle below is mandatory and belongs to the Architecture or Layering c
 
 <br>
 
-### Documentation
-
-#### Model documentation explains the complete public surface
-
-**Rule:** Root documentation explains the complete public surface — Interface, every public Entity with its Fields and Entity Metadata, Declaration, and Foundation — together with setup, use, and verification, so that a consumer can use and verify Model without reading its source. Its order and the content of each section are selected by Model Preferences.
-**Why:** Consumers can understand and verify Model without relying on private implementation.
-**Boundary:** Documentation defines no other Component, exposes no private helper as contract, retains no stale meaning, and contains no real credential or secret.
-
-<br>
-
 ### Review
 
 #### Model conformance covers every Model contract
 
-**Rule:** Model output is conformant only when it shows exact Entity and Field membership and order, every parameter and explicit value, complete Entity Metadata, conformance to the Model Interface Schema — Entity Export membership, Entity Collection membership, order, and correspondence, actual Entity and Declaration references, and immutability — public Declarations, lossless JSON Object round trips, and Documentation.
-**Why:** These are the contracts consumers rely on; a check that omits one lets a broken Model look complete.
-**Boundary:** The Review Operation establishes this; Plan and Develop check nothing. This Principle names only what Model conformance means.
+**Rule:** Model is conformant only when its Interface needs in this Definition, the Model Interface Schema, and its real output all match one another, and every observation below holds.
+**Why:** A gap here lets a broken Model look complete to every consumer.
+**Boundary:** Review reads the Target only to compare; it changes nothing.
 
 #### Review observes Model through a fixed set of checks
 
 **Rule:** Review establishes Model conformance through these observations, every one of them on every review:
 
-- Every Target Entity has exactly one Entity Export, in Target order.
-- The Entity Collection holds exactly the Entities that are exported, in the same order.
+- Every need of the Interface layer in this Definition appears in the Model Interface Schema, and the Schema holds nothing beyond them.
+- Every Target Entity has exactly one Entity Export.
+- The Entity Collection holds exactly the exported Entities, in Target order.
 - Each Entity's Declaration matches the Target — Fields, order, Types, nullability, defaults, and metadata.
 - Every Entity has an immutable id and a Boolean is_active.
 - Each Entity constructs from valid values and rejects an unknown Field, a wrong Type, and a missing required value.
@@ -342,7 +304,7 @@ Every obligation below derives from the Principle with the same title.
 
 **Interface conforms to the Model Interface Schema**
 
-- **Must** — conform every realization to the Model Interface Schema, with membership exactly the current Target Entities in Target order, each the actual Entity.
+- **Must** — Conform every realization to the Model Interface Schema.
 - **Never** — change Interface structure because Entity membership, language, package, or internal implementation changed.
 
 ### Entity
@@ -377,9 +339,9 @@ Every obligation below derives from the Principle with the same title.
 - **Must** — apply identical strict Field rules to direct construction, JSON Object construction, and mutation.
 - **Never** — accept unknown Fields, implicit coercion, invalid mutation, or external Component behaviour.
 
-**Generated identities follow their declared owner**
+**Generated identities follow their declaration**
 
-- **Must** — keep Auto Increment pending until its owner assigns it.
+- **Must** — keep an omitted Auto Increment Field pending and never assign it inside Model.
 - **Never** — accept caller-supplied Auto Increment values unless Target explicitly permits them.
 
 **Entity state adds no undeclared semantics**
@@ -415,18 +377,12 @@ Every obligation below derives from the Principle with the same title.
 - **Must** — keep Declaration and Foundation public and realization helpers private.
 - **Never** — force every language to use a class or expose a helper as public contract.
 
-### Documentation
-
-**Model documentation explains the complete public surface**
-
-- **Must** — document the complete public surface together with setup, use, and verification.
-- **Never** — define another Component, expose private implementation, retain stale meaning, or contain a real secret.
-
 ### Review
 
 **Model conformance covers every Model contract**
 
-- **Must** — show every Model contract — membership, order, values, metadata, Interface Schema conformance, actual references, Declarations, round trips, and Documentation — before Model is conformant.
+- **Must** — show that the Interface needs, the Model Interface Schema, and the real output all match and every observation holds before Model is conformant.
+- **Never** — change anything during review.
 
 **Review observes Model through a fixed set of checks**
 
