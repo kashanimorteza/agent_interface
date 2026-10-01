@@ -133,23 +133,17 @@ Every Principle below is mandatory and belongs to the Architecture or Layering c
 
 ### General
 
-#### Model preserves authoritative meaning
+#### Model meaning comes only from the Target
 
-**Rule:** Model preserves every Target-declared Entity, Field, parameter, explicit false, explicit null, Type, constraint, Default Value, Sensitivity Marker, Value Generation, Primary Key, Relation, Uniqueness Constraint, and Index. It additionally supplies only the mandatory id and is_active contract and compatible Preference defaults approved by this Definition. A Preference completes only an unstated allowed property and never removes, renames, or overrides explicit compatible Target meaning.
-**Why:** One authority prevents generated convenience and package defaults from changing the domain.
-**Boundary:** An explicit Target change may add, modify, rename, or remove Target-owned meaning; Model applies that change without inventing another one. Model's contract changes only under Target authority, never to fit what a consumer can or cannot do.
+**Rule:** Model preserves every Target-declared Entity, Field, parameter, explicit false, explicit null, Type, constraint, Default Value, Sensitivity Marker, Value Generation, Primary Key, Relation, Uniqueness Constraint, and Index, and adds only id, is_active, and compatible Preference defaults for unstated allowed properties. This meaning stays independent of language, package, tool, version, runtime, platform, database, and Engine: technology selects realization only, and a missing native capability is implemented privately only when meaning stays exact.
+**Why:** One authority keeps convenience, package defaults, and technology from changing the domain.
+**Boundary:** Model's contract changes only under Target authority, never to fit a consumer. If the selected technology cannot preserve a contract, generation reports the incompatibility instead of weakening meaning.
 
-#### Technology never redefines Model
+#### Model has one canonical structure
 
-**Rule:** Entity and Field meaning remains understandable independently of language, package, tool, version, runtime, platform, database, and Engine. Preferences select technical realization only. Explicit Model meaning overrides package defaults, and a missing native capability is implemented privately only when meaning remains exact.
-**Why:** Technology can change without redefining the Target's data.
-**Boundary:** If selected technology cannot preserve a contract, generation reports incompatibility instead of weakening or omitting meaning.
-
-#### Model has one canonical Architecture
-
-**Rule:** Every realization contains the root Interface, Entity directory, Core directory, Declaration, and Foundation, with the ownership shown in Architecture. Dependencies flow from Interface to Entity units and from Entity units to shared Core contracts; Core depends on neither Interface nor a specific Entity.
-**Why:** Stable ownership makes implementations comparable and prevents cycles.
-**Boundary:** Language-required manifests, package entrypoints, annotations, inheritance from a shared private base, and similar technical files may exist without creating another conceptual layer or moving an owned responsibility.
+**Rule:** Every realization contains Interface, the Entity directory, and Core with Declaration and Foundation, with the ownership shown in Architecture. Every Entity has exactly one public unit directly inside the Entity directory, holding everything private to that Entity; infrastructure shared across Entities belongs under Core. Declaration and Foundation are public; base definitions, validation mechanisms, adapters, and other helpers stay private. Dependencies flow from Interface to Entity units and from Entity units to Core; Core depends on neither Interface nor a specific Entity.
+**Why:** Stable ownership keeps each Entity independently changeable, prevents cycles, and gives consumers Model's meaning without its internals.
+**Boundary:** Language-required files, entrypoints, annotations, and native constructs may exist without creating another conceptual layer; physical casing, extensions, and symbol and method names belong to the language's Preferences.
 
 <br>
 
@@ -167,51 +161,27 @@ Every Principle below is mandatory and belongs to the Architecture or Layering c
 
 #### Every Entity follows one complete structural contract
 
-**Rule:** Every Target domain concept produces exactly one uniquely named Entity. Each Entity preserves its description and ordered Fields, carries complete Entity Metadata, has exactly one Identity, id, named by its Primary Key, and exactly one Activity Field, is_active. id is always non-nullable and immutable once assigned; is_active is always a non-nullable, mutable Boolean. Where the Target leaves their remaining properties unstated, Model Preferences supply them.
+**Rule:** Every Target domain concept produces exactly one uniquely named Entity. Each Entity preserves its description, has exactly one Identity, id, named by its Primary Key, and exactly one Activity Field, is_active. id is always non-nullable and immutable once assigned; is_active is always a non-nullable, mutable Boolean. Where the Target leaves their remaining properties unstated, Model Preferences supply them.
 **Why:** One structural contract prevents generators from reshaping domain concepts. Every Entity needs id so each instance can be identified, and is_active so any record can be taken out of use and restored without being deleted, keeping its history and every Relation that points to it intact.
 **Boundary:** Model adds no universal Field other than id and is_active.
 
-#### Fields preserve a complete value contract
+#### Entity Metadata is complete and Entities stay flat
 
-**Rule:** Every Field name is unique within its Entity and preserves its description, declared or resolved Type, nullability, explicit Default Value presence and value, sensitivity, immutability, applicable constraints, and optional Value Generation in Target order. Absence of a Default Value differs from explicit null; one Field never has both a Default Value and Value Generation; every default and generated value satisfies the Field contract.
-**Why:** Explicit value semantics prevent languages and packages from interpreting omission, null, defaults, or generation differently.
-**Boundary:** Invalid, incompatible, or internally contradictory values and constraints fail instead of being ignored, coerced, or replaced.
+**Rule:** Primary Key, Relations, Uniqueness Constraints, and Indexes belong to Entity Metadata outside Field Declarations. Every local Field reference resolves within the Entity; every Relation target Entity and Field resolves within Model; Relation endpoint Types are compatible; participating Fields are not repeated; duplicate metadata is invalid. An Entity contains only its own Fields and metadata: cross-Entity meaning is recorded only by Relation names, never by nesting, inheriting, copying, or importing another Entity.
+**Why:** Consumers realize structure only from complete, unambiguous metadata, and flat Entities avoid hidden coupling.
+**Boundary:** A Relation records local Field, target Entity name, and target Field name only, with no cardinality, cascade, deletion, or other undeclared behaviour. An Entity may use a shared private base from Core without inheriting another Entity's meaning.
 
-#### Entity Metadata resolves completely
+#### Entity runtime behaviour enforces Field contracts only
 
-**Rule:** Primary Key, Relations, Uniqueness Constraints, and Indexes belong to Entity Metadata outside Field Declarations. Every local Field reference resolves within the Entity; every Relation target Entity and Field resolves within Model; Relation endpoint Types are compatible; participating Fields are not repeated; and duplicate metadata declarations are invalid.
-**Why:** Consumers can realize structure only from complete, unambiguous metadata.
-**Boundary:** A Relation records local Field, target Entity name, and target Field name only; it adds no target class, cardinality, cascade, deletion, or other undeclared behaviour.
-
-#### Entities remain flat and independent
-
-**Rule:** An Entity contains only its own Fields and metadata. Cross-Entity meaning is recorded by Relation names rather than nesting, inheriting, or copying another Entity, and one Entity never imports another to establish that Relation.
-**Why:** Flat Entities avoid hidden structural coupling.
-**Boundary:** An Entity may use a shared private base or helper from Core without inheriting domain meaning from another Entity.
-
-#### Each Entity owns one public unit
-
-**Rule:** Every Entity has exactly one public unit directly inside the Entity directory. Entity-private content remains in that unit, while infrastructure shared across Entities belongs under Core.
-**Why:** One unit per Entity keeps domain ownership visible and independently changeable.
-**Boundary:** Preferences select physical casing and extension without moving an Entity into Core, Interface, or another Entity's unit.
-
-#### Construction and mutation enforce Field contracts
-
-**Rule:** Direct and JSON Object construction accept only declared Fields and identically enforce required values, nullability, Types, defaults, generation, and constraints without implicit coercion. Explicit false, zero, empty string, and null remain supplied values. Assignment to a mutable Field revalidates atomically; failed assignment preserves the prior value; an immutable Field cannot change.
-**Why:** One runtime contract prevents package-specific construction and mutation semantics from changing data.
-**Boundary:** Construction and mutation perform no storage, network, application, workflow, or orchestration operation.
+**Rule:** Direct and JSON Object construction accept only declared Fields and identically enforce required values, nullability, Types, defaults, generation, and constraints without implicit coercion; explicit false, zero, empty string, and null remain supplied values. Assignment to a mutable Field revalidates atomically, a failed assignment keeps the prior value, and an immutable Field cannot change. Model defines no equality, ordering, hashing, copy, clone, merge, or reconstruction beyond the JSON Object round trip, and mutable Entities are not hashable.
+**Why:** One runtime contract stops package-specific construction, mutation, and object conventions from changing data or inventing behaviour.
+**Boundary:** Construction and mutation perform no storage, network, application, or workflow operation. A language-required diagnostic representation may exist internally but is not a portable contract.
 
 #### Generated identities follow their declaration
 
 **Rule:** An omitted Auto Increment Field remains in an explicit pending state without becoming nullable, rejects a caller-supplied value unless Target explicitly permits one, and is never assigned by Model. A Generated Identifier is produced during Entity creation when declared, using the algorithm Model Preferences select unless the Target names another.
 **Why:** Generation ownership prevents callers from choosing values that another realization is responsible for assigning.
 **Boundary:** The pending representation may use JSON null solely to represent not-yet-generated Auto Increment state; it does not change the Field's nullability.
-
-#### Entity state adds no undeclared semantics
-
-**Rule:** Entity state is mutable except for immutable Fields. Model defines no portable equality, ordering, hashing, copy, clone, merge, or reconstruction mechanism beyond its declared JSON Object round trip, and mutable Entities are not made hashable.
-**Why:** Model must not invent domain behaviour from language object conventions.
-**Boundary:** Language-required diagnostic representation may exist internally but is not a portable Model contract or reconstruction format.
 
 #### Sensitivity remains metadata
 
@@ -229,23 +199,17 @@ Every Principle below is mandatory and belongs to the Architecture or Layering c
 
 ### Core
 
-#### Declaration exposes one canonical logical contract
+#### Fields and Declarations carry one complete value contract
 
-**Rule:** Every Entity Declaration publicly exposes its name, description, ordered Fields, Primary Key, Relations, Uniqueness Constraints, and Indexes. Every Field Declaration exposes name, optional description, Type, nullability, explicit Default Value presence and value, optional Sensitivity Marker, immutability, applicable constraints, and optional Value Generation. Primary Key names one Field; a Relation records its local Field, target Entity, and target Field; Uniqueness Constraints and Indexes preserve ordered participating Field names. The physical member names are selected by Model Preferences.
-**Why:** One complete logical shape makes independent implementations semantically comparable.
-**Boundary:** Declaration contains no runtime behaviour and chooses no technical type, table, query, index implementation, storage-specific generation, transport, or consumer behaviour.
+**Rule:** Every Field name is unique within its Entity and preserves, in Target order, its description, declared or resolved Type, nullability, explicit Default Value presence and value, Sensitivity Marker, immutability, applicable constraints, and optional Value Generation. Absence of a Default Value differs from explicit null; no Field has both a Default Value and Value Generation; every default and generated value satisfies the Field contract. Every Entity Declaration publicly exposes its name, description, ordered Fields, Primary Key, Relations, Uniqueness Constraints, and Indexes, and every Field Declaration exposes exactly the Field properties above; physical member names are selected by Model Preferences.
+**Why:** One complete logical shape stops languages and packages from reading omission, null, defaults, or generation differently, and makes independent implementations comparable.
+**Boundary:** Invalid, incompatible, or contradictory values and constraints fail instead of being ignored, coerced, or replaced. Declaration holds no runtime behaviour and chooses no technical type, table, query, index implementation, transport, or consumer behaviour.
 
 #### Foundation converts Entities through JSON Objects
 
-**Rule:** Foundation converts an Entity to a JSON Object — JSON text conforming to the JSON standard, with one object at its root whose keys are exactly the Entity's Field names in Declaration order — and reconstructs an Entity from that text without loss. Values preserve declared Type semantics and distinguish null, false, zero, and empty string. Reconstruction rejects malformed text and otherwise applies Principle "Construction and mutation enforce Field contracts".
+**Rule:** Foundation converts an Entity to a JSON Object — JSON text conforming to the JSON standard, with one object at its root whose keys are exactly the Entity's Field names in Declaration order — and reconstructs an Entity from that text without loss. Values preserve declared Type semantics and distinguish null, false, zero, and empty string. Reconstruction rejects malformed text and otherwise applies Principle "Entity runtime behaviour enforces Field contracts only".
 **Why:** Consumers need one portable, lossless value representation.
 **Boundary:** Foundation does not add Declaration metadata, nest Entities, add keys, transform sensitive values, or define domain meaning. How a consumer's language represents the decoded text is that consumer's concern.
-
-#### Public Core contracts are separate from private helpers
-
-**Rule:** Declaration and Foundation are public Core contracts available through their own units and through the capabilities each Entity exposes. Optional base definitions, validation mechanisms, compatibility adapters, and other helpers remain private unless this Definition explicitly promotes them.
-**Why:** Consumers receive complete Model meaning without depending on realization internals.
-**Boundary:** A language may realize these contracts with classes, records, functions, annotations, or another native construct; language-specific symbol and method names belong only to that language's Preferences.
 
 <br>
 
@@ -285,20 +249,15 @@ Every obligation below derives from the Principle with the same title.
 
 ### General
 
-**Model preserves authoritative meaning**
+**Model meaning comes only from the Target**
 
-- **Must** — preserve every explicit Target item and add only mandatory Entity Fields and approved compatible defaults.
-- **Never** — remove, rename, override, or invent Target meaning without authority.
+- **Must** — Preserve every explicit Target item, add only id, is_active, and approved defaults, and realize technology without changing meaning.
+- **Never** — Remove, rename, override, or invent Target meaning, or weaken a contract for a technology.
 
-**Technology never redefines Model**
+**Model has one canonical structure**
 
-- **Must** — realize technology only while preserving exact logical meaning.
-- **Never** — weaken or omit a contract because selected technology lacks native support.
-
-**Model has one canonical Architecture**
-
-- **Must** — preserve canonical ownership and one-way dependencies.
-- **Never** — create a dependency cycle or a replacement conceptual layer.
+- **Must** — Keep one public unit per Entity, shared infrastructure and public contracts in Core, helpers private, and dependencies one-way.
+- **Never** — Create a dependency cycle or another conceptual layer, or expose a helper as contract.
 
 ### Interface
 
@@ -314,40 +273,20 @@ Every obligation below derives from the Principle with the same title.
 - **Must** — preserve each Entity and supply exactly one non-nullable immutable id and one non-nullable mutable Boolean is_active, taking their remaining unstated properties from Preferences.
 - **Never** — add another universal Field or reshape a Target concept.
 
-**Fields preserve a complete value contract**
+**Entity Metadata is complete and Entities stay flat**
 
-- **Must** — preserve every Field property, explicit value, constraint, order, and generation rule.
-- **Never** — combine Default Value with Value Generation or silently coerce an incompatible value.
+- **Must** — Keep metadata outside Fields, resolve every reference, and record cross-Entity meaning only by Relation names.
+- **Never** — Accept unresolved or duplicate metadata, invent relationship behaviour, or nest, inherit, copy, or import another Entity.
 
-**Entity Metadata resolves completely**
+**Entity runtime behaviour enforces Field contracts only**
 
-- **Must** — keep structural metadata outside Fields and resolve every local and target reference.
-- **Never** — accept unresolved, incompatible, repeated, or duplicate metadata or invent relationship behaviour.
-
-**Entities remain flat and independent**
-
-- **Must** — represent cross-Entity meaning by explicit Relation metadata.
-- **Never** — nest, inherit, copy, or import another Entity's domain definition.
-
-**Each Entity owns one public unit**
-
-- **Must** — keep one public unit per Entity and shared infrastructure in Core.
-- **Never** — place an Entity in Interface, Core, or another Entity's unit.
-
-**Construction and mutation enforce Field contracts**
-
-- **Must** — apply identical strict Field rules to direct construction, JSON Object construction, and mutation.
-- **Never** — accept unknown Fields, implicit coercion, invalid mutation, or external Component behaviour.
+- **Must** — Apply identical strict Field rules to direct construction, JSON Object construction, and mutation.
+- **Never** — Accept unknown Fields, coerce values, allow invalid mutation, or invent equality, ordering, hashing, copying, or merging.
 
 **Generated identities follow their declaration**
 
 - **Must** — keep an omitted Auto Increment Field pending and never assign it inside Model.
 - **Never** — accept caller-supplied Auto Increment values unless Target explicitly permits them.
-
-**Entity state adds no undeclared semantics**
-
-- **Must** — preserve declared mutability and use JSON Object round trip as the portable reconstruction contract.
-- **Never** — invent equality, ordering, hashing, copying, cloning, or merging.
 
 **Sensitivity remains metadata**
 
@@ -361,21 +300,16 @@ Every obligation below derives from the Principle with the same title.
 
 ### Core
 
-**Declaration exposes one canonical logical contract**
+**Fields and Declarations carry one complete value contract**
 
-- **Must** — expose every canonical Entity, Field, and metadata member as structured public meaning.
-- **Never** — put runtime behaviour or another Component's realization choice in Declaration.
+- **Must** — Preserve and publicly expose every Field and Entity property, explicit value, constraint, order, and generation rule.
+- **Never** — Combine a Default Value with Value Generation, coerce an incompatible value, or put runtime or technical choices in Declaration.
 
 **Foundation converts Entities through JSON Objects**
 
 - **Must** — provide lossless Entity-to-Object and Object-to-Entity conversion with exact keys and values.
 - **Must** — produce and accept JSON text conforming to the JSON standard.
 - **Never** — add keys or metadata, nest Entities, coerce values, or transform sensitive data.
-
-**Public Core contracts are separate from private helpers**
-
-- **Must** — keep Declaration and Foundation public and realization helpers private.
-- **Never** — force every language to use a class or expose a helper as public contract.
 
 ### Review
 
