@@ -59,30 +59,23 @@ Components
 └── Platform
 ```
 
-```text
-Presentation → API → Logic → Database → Model
-                     └──────→ Model
-```
-
-Each direct Connection permits use of the provider Component's public classes and layers.
-
 ### Model
 
-Model defines the reusable data library used by Database and Logic.
+The reusable data library of the application.
 
 → [Definition of Model](model/model.md)<br>
 → [Preferences of Model](model/model.yaml)
 
 ### Database
 
-Database realizes storage and exposes its storage capabilities through its Public Interface.
+Storage, offered through its Public Interface.
 
 → [Definition of Database](database/database.md)<br>
 → [Preferences of Database](database/database.yaml)
 
 ### Logic
 
-Logic implements application behavior using the Components it connects to.
+The application's Behaviour, held in its Services.
 
 → [Definition of Logic](logic/logic.md)<br>
 → [Preferences of Logic](logic/logic.yaml)
@@ -103,7 +96,7 @@ Presentation provides the user-facing application through its Public Interface.
 
 ### Platform
 
-Platform provides the runtime and deployment foundation used by the other Components.
+The runtime and deployment foundation of the application.
 
 → [Definition of Platform](platform/platform.md)<br>
 → [Preferences of Platform](platform/platform.yaml)
@@ -113,10 +106,7 @@ Platform provides the runtime and deployment foundation used by the other Compon
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Components use Development** — receive applicable shared defaults and the Connection graph.
-- **Development uses Components** — derives the Application Manifest from their public composition and declared Connections.
-- **Consumes Platform** — references named Platform definitions without copying their contents.
-- **Application Manifest is stored in Config** — presents the current public application composition without becoming its source of authority.
+- **Consumes every Component** — reads each Component's non-secret public metadata to generate the Application Manifest.
 
 <br>
 
@@ -130,7 +120,7 @@ Development owns only shared coordination: defaults, Connections, and the Applic
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
-Development Definition Principles are mandatory. A Component's explicit Preference takes precedence over a Development Default. When neither supplies a value, the executor's own proposal applies and is recorded as a decision, without overriding Target meaning or an applicable Principle.
+Development Definition Principles are mandatory.
 
 <br>
 
@@ -149,19 +139,9 @@ Every Principle below is mandatory.
 
 <br>
 
-### Development Defaults apply only when a Component is silent
-
-**Rule:** A Component's explicit Preference takes precedence over a Development Default. Development supplies a default only when the Component leaves the shared choice unstated.
-
-**Why:** Components can make an intentional local choice while shared defaults avoid repeated configuration.
-
-**Boundary:** A Default never creates, replaces, or changes a Component-owned decision.
-
-<br>
-
 ### Cross-Component use follows declared Connections
 
-**Rule:** Every cross-Component interaction uses public classes or layers from its provider and requires one declared direct Connection. Each provider defines and documents the public concepts it offers; a Connection records only consumer and provider.
+**Rule:** Every cross-Component interaction uses public classes or layers from its provider and requires one declared direct Connection. Each provider defines and documents the public concepts it offers; a Connection records only consumer and provider. A consumer locates the provider's Interface only from the provider's own Preferences and knows its contracts only through that Interface.
 
 **Why:** Consumers can use the provider's available public surface without creating hidden dependencies.
 
@@ -191,11 +171,11 @@ Every Principle below is mandatory.
 
 ### Unstated shared decisions follow one precedence order
 
-**Rule:** Resolve every unstated choice in this order: explicit Component Preference, Development Default, then the executor's own proposal. The executor never stops or asks for an unstated choice: it proceeds with its own proposal and records the decision in the Task Log of the Task it serves, and the State Log Entry of that run references that Task.
+**Rule:** Resolve every unstated choice in this order: explicit Component Preference, Development Default, then the executor's own proposal. The executor never stops or asks for an unstated choice: it proceeds with its own proposal and records the decision.
 
 **Why:** Work never stalls on a gap, and the Human sees every decision in one place and changes Preferences when needed.
 
-**Boundary:** The executor's own proposal never overrides Target meaning, an applicable Principle, or an explicit Preference.
+**Boundary:** The executor's own proposal never overrides Target meaning, an applicable Principle, or an explicit Preference. A Default never creates, replaces, or changes a Component-owned decision.
 
 <br>
 
@@ -219,11 +199,6 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — Keep Component Definition, Preferences, technical choices, implementation, and Public Interface with its owner.
 - **Never** — Duplicate or redefine Component-owned details in Development.
 
-**Development Defaults apply only when a Component is silent**
-
-- **Must** — Use an explicit Component Preference before a Development Default.
-- **Never** — Let a Default replace a Component-owned decision.
-
 **Cross-Component use follows declared Connections**
 
 - **Must** — Use only public classes or layers from a provider with a declared direct Connection.
@@ -241,5 +216,10 @@ Every obligation in the file, under the Principle it comes from.
 
 **Unstated shared decisions follow one precedence order**
 
-- **Must** — Resolve an unstated choice by Component Preference, Development Default, then own proposal, and record the decision in its Task Log.
+- **Must** — Resolve an unstated choice by Component Preference, Development Default, then own proposal, and record the decision.
 - **Never** — Stop or ask for an unstated choice, or let a proposal override Target meaning, a Principle, or an explicit Preference.
+
+**Public surface changes propagate through direct consumers**
+
+- **Must** — Review and update or regenerate every affected direct consumer when a public surface changes.
+- **Never** — Trigger consumer work for a non-public change or change anything outside the affected dependency path.

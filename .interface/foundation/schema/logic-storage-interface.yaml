@@ -16,7 +16,7 @@ structure:
   core:
     required: true
     purpose: "One gateway structure in the Core layer, its unit and structure named by Storage Service Preferences, that offers exactly one Action for every capability Database Interface actually publishes."
-    source: "Database Interface, located through the provider_location rule from Database Preferences. Storage reads only what that Interface publishes, never Database's structure files."
+    source: "Database Interface, located from Database's own Preferences. Storage reads only what that Interface publishes, never Database's structure files."
     construction: "Creating the gateway takes one access to Database; every Action uses that same access."
     membership: "One Action per capability Database Interface publishes, in the order Database publishes them. A capability added to or removed from Database Interface adds or removes its Action."
     naming: "Fixed: each Action has exactly its Database capability's name, with no prefix. No Action is renamed."

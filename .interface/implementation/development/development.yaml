@@ -4,8 +4,8 @@ meta:
   path_note: "The Preferences layer of the Development Subsystem — shared defaults, development standards, Connections, and the Application Manifest."
   purpose: "Configurable shared coordination for the Development Components."
   standard: "Agent Project Interface"
-  version: "7.1"
-  updated: "2026-09-25"
+  version: "8.0"
+  updated: "2026-10-02"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -18,11 +18,9 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read the consuming Component's Preferences first. When that Component leaves a shared choice unstated, read Development defaults. Read Connections to resolve direct dependencies and Settings for the generated Application Manifest record. Do not write resolved values back into this file."
+  consumption: "Read the content sections in read_order."
   selection: "Resolve an unstated choice by explicit Component Preference, then Development Default, then the executor's own proposal, recorded as a decision in the Task Log it serves."
   version_resolution: "Preserve an explicit concrete version. Resolve an unpinned version only when it belongs to a Development-owned shared default; each Component resolves versions for its own packages and tools."
-  provider_location: "A consumer locates each Connection provider's Interface only from that provider's own Preferences: settings.component.package and layout.files.interface. It knows the provider's Entities and contracts only through that Interface and its Schema."
-  matching: "Match Connections by their exact consumer and provider identifiers. Match a shared default only when the Component has no explicit value for that choice."
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
