@@ -60,6 +60,7 @@ Storage Service
 ## Relationships
 
 - **Consumes Database** — uses every capability and supporting contract Database Interface publishes, only through Database Interface. It finds that Interface from Database's own Preferences and never reads Database's structure files.
+- **Consumes Development** — follows its shared rules and Defaults for every choice this Component leaves unstated.
 
 <br>
 

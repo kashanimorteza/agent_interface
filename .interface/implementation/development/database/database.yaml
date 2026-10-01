@@ -11,13 +11,13 @@ meta:
 policy:
   agent_may_edit: false
   rule: "This file is human-owned. Generation reads it without writing resolved choices back into it."
-  changed_by: "The human, directly. A missing critical Database choice is raised through State."
+  changed_by: "The human, directly."
   precedence: "Every applicable Database Principle and explicit compatible Target value take precedence over a Preference default."
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
   consumption: "Read settings and instances; copy the Target Initial Data; generate config from its Foundation Schema; realize Interface from the Database Interface Schema; realize the fixed layout; then apply development and documentation preferences."
-  selection: "Preserve explicit compatible Target choices. Use these Preferences only for choices the Target leaves unstated, and choose only among the values they list. When neither the Target nor these Preferences supply a choice, Database stops and reports the missing choice through State. It never fills a gap by its own judgment."
+  selection: "Preserve explicit compatible Target choices. Use these Preferences for choices the Target leaves unstated; for anything still unset, follow Development's resolution order."
   version_resolution: "Resolve Database-owned versioned technical items from the selected language profile in development. Resolve latest-compatible to a concrete compatible version and preserve that resolution in dependency or lock metadata."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->

@@ -12,14 +12,14 @@ meta:
 policy:
   agent_may_edit: false
   rule: "This file is human-owned. Operations read it without writing resolved Presentation choices back into it."
-  changed_by: "The human, directly. A missing critical technical choice is raised through State."
+  changed_by: "The human, directly."
   precedence: "An explicit project value and every applicable Presentation Principle take precedence over this file."
 
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
   consumption: "Read component and packages for Presentation's technical selection, then resolve Presentation-owned defaults from this file and the current project definition. Use a Development Default only when this file leaves a shared choice unstated."
-  selection: "Prefer a supported compatible Presentation-owned option. For an unlisted need, select the smallest well-supported compatible option and record the consequential choice; ask only when no safe compatible option can be established."
+  selection: "Preserve explicit compatible Target choices. Use these Preferences for choices the Target leaves unstated; for anything still unset, follow Development's resolution order."
   version_resolution: "This file resolves versions for Presentation-owned packages. Development resolves versions only for its shared Defaults."
   matching: "Match each Presentation-owned selected key to its option entry. An explicit project value takes priority over the selection recorded here."
 

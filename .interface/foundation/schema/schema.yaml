@@ -247,6 +247,6 @@ agent_parameters:
 # <!--------------------------------------------------------------------------------- Conventions -->
 conventions:
   placeholders: "A value that is completed at resolution time is written in angle brackets, such as `<project>` or `<role>`. A key in angle brackets describes the shape of future entries rather than one real entry."
-  unresolved: "A choice that the project must make and this file cannot supply is written as `to be defined`, and the operation that meets it raises an Open Question rather than inventing a value."
+  unresolved: "A choice that the project must make and this file cannot supply is written as `to be defined`, and the executor that meets it proceeds with its own proposal and records the decision."
   read_order: "`read_order` lists the content sections the file carries, in the order the file carries them."
   content_map: "`content_map` carries exactly one line per content section the file carries, naming what that section holds for this file's owner."

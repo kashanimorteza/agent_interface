@@ -11,13 +11,13 @@ meta:
 policy:
   agent_may_edit: false
   rule: "This file is human-owned. Operations read it without writing resolved Model choices back into it."
-  changed_by: "The human, directly. A missing critical Model choice is raised through State."
+  changed_by: "The human, directly."
   precedence: "Explicit compatible Target meaning and every applicable Model Principle take precedence over this file."
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
   consumption: "Read settings for Model's identity and Entity defaults, interface for the published symbols, layout for physical names, development for the selected language and its profile, and documentation last; apply Preferences only where the Target is silent, and never write resolved values back into this file."
-  selection: "Preserve explicit compatible Target choices. Use these Preferences only for choices the Target leaves unstated, and choose only among the values they list. When neither the Target nor these Preferences supply a choice, Model stops and reports the missing choice through State. It never fills a gap by its own judgment."
+  selection: "Preserve explicit compatible Target choices. Use these Preferences for choices the Target leaves unstated; for anything still unset, follow Development's resolution order."
   version_resolution: "Resolve Model-owned versioned technical items from the selected language profile in development. Resolve latest-compatible to a concrete compatible version and preserve that resolution in dependency or lock metadata."
   matching: "An explicit compatible Target property is matched first; a Preference applies only to a property the Target leaves unstated, and only to id, is_active, and properties Model Principles allow Preferences to complete."
 

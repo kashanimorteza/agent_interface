@@ -97,6 +97,7 @@ sections:
             report: {required: false, default: ""}
         open_questions: {required: false, default: [], purpose: "References to Open Questions associated with this recorded execution when applicable."}
         blockers: {required: false, default: [], purpose: "References to Blockers associated with this recorded execution when applicable."}
+        decisions: {required: false, default: [], purpose: "Identifiers of the Tasks whose Task Log records a decision made on the executor's own proposal during this execution."}
         report: {required: false, default: "", purpose: "A concise report of this recorded execution and its outcome."}
         data:
           required: false

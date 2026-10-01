@@ -84,6 +84,7 @@ Database
 ## Relationships
 
 - **Consumes Model** — imports Model Interface and uses its Schema-defined Entity Collection and Entity Exports only. It uses each actual Entity and the Declaration that Entity exposes without interpreting Model internals. Model remains read-only and independently owned.
+- **Consumes Development** — follows its shared rules and Defaults for every choice this Component leaves unstated.
 
 <br>
 
@@ -120,12 +121,6 @@ Every Principle below is mandatory.
 **Rule:** The Component has exactly the parts Architecture shows, each with the responsibility stated there.
 **Why:** A fixed layout lets every generation place each file in the same place, so an Agent never decides structure and consumers always find the same parts.
 **Boundary:** Fixed Architecture members are not renamed or relocated. No additional internal source unit is placed at the Component root, beside an Engine unit, or inside Storage.
-
-#### Database never decides by judgment
-
-**Rule:** Every choice that changes Database's structure, public surface, names, technology, types, or data comes only from the Target, Database Preferences, or this Definition. When none of them supplies it, Database stops and reports the missing choice through State.
-**Why:** When no decision is guessed, every generation yields the same result.
-**Boundary:** Internal details that change none of these are not governed by this Principle.
 
 #### Database consumes Model without owning it
 
@@ -269,11 +264,6 @@ Every Principle below is mandatory.
 
 - **Must** — preserve the canonical root, Core, Engine, Entry Points, storage, configuration, and Documentation ownership.
 - **Never** — place an internal source unit outside Core or its owning Engine unit, or place source code in Storage.
-
-**Database never decides by judgment**
-
-- **Must** — take every structural, public, naming, technology, type, or data choice from the Target, Preferences, or this Definition, and stop and report when none supplies it.
-- **Never** — fill such a choice by judgment.
 
 **Database consumes Model without owning it**
 

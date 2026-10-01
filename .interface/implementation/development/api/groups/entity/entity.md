@@ -76,6 +76,7 @@ Adapter files are placed directly inside the Entity Group directory. There is no
 - **Belongs to API** — is registered and served as one API Group.
 - **Consumes Entity Service through Logic Interface** — obtains every Entity Child Service, its Actions, and every public request type required by those Actions from the published Entity Service boundary and calls those Actions through the same boundary.
 - **Has no direct Model or Database connection** — declares and uses Logic Interface as its only application connection; any dependency used behind Entity Service remains private to Logic and is never an API dependency or resource.
+- **Consumes Development** — follows its shared rules and Defaults for every choice this Component leaves unstated.
 
 <br>
 

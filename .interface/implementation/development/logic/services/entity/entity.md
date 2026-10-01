@@ -64,6 +64,7 @@ Entity Service
 
 - **Consumes Model** — uses the Entity Collection Model Interface publishes to know which Child Services exist, and each Entity it publishes by name to bind one, found from Model's own Preferences.
 - **Consumes Storage** — uses every Storage Action that takes an Entity and every contract Storage Interface publishes, only through Storage Interface, found from Storage's own Preferences.
+- **Consumes Development** — follows its shared rules and Defaults for every choice this Component leaves unstated.
 
 <br>
 

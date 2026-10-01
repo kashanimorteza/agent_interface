@@ -11,13 +11,13 @@ meta:
 policy:
   agent_may_edit: false
   rule: "This file is human-owned. Operations read it without writing resolved Storage Service choices back into it."
-  changed_by: "The human, directly. A missing critical Storage Service choice is raised through State."
+  changed_by: "The human, directly."
   precedence: "Explicit Target meaning and every applicable Storage Service and Logic Principle take precedence over this file."
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
   consumption: "Read the content sections in read_order."
-  selection: "Use these defaults when the Target is silent. Preserve an explicit compatible Target choice; raise an unresolved incompatible choice rather than inventing one."
+  selection: "Preserve explicit compatible Target choices. Use these Preferences for choices the Target leaves unstated; for anything still unset, follow Development's resolution order."
   version_resolution: "This file declares no versioned technology."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->

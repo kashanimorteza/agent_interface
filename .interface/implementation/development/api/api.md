@@ -75,6 +75,8 @@ The names shown are defaults selected by API Preferences. Root API owns Bootstra
 
 API has no direct dependency on another Component. Any connection beyond the API boundary belongs to the Group that owns it and is declared within that Group.
 
+- **Consumes Development** — follows its shared rules and Defaults for every choice this Component leaves unstated.
+
 <br>
 
 <!--------------------------------------------------------------------------------- Boundaries --->

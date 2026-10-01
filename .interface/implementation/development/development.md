@@ -130,7 +130,7 @@ Development owns only shared coordination: defaults, Connections, and the Applic
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
-Development Definition Principles are mandatory. A Component's explicit Preference takes precedence over a Development Default. When neither supplies a value, compatible professional judgment applies without overriding Target meaning or an applicable Principle.
+Development Definition Principles are mandatory. A Component's explicit Preference takes precedence over a Development Default. When neither supplies a value, the executor's own proposal applies and is recorded as a decision, without overriding Target meaning or an applicable Principle.
 
 <br>
 
@@ -191,11 +191,11 @@ Every Principle below is mandatory.
 
 ### Unstated shared decisions follow one precedence order
 
-**Rule:** Resolve an unstated shared choice in this order: explicit Component Preference, Development Default, then compatible professional judgment.
+**Rule:** Resolve every unstated choice in this order: explicit Component Preference, Development Default, then the executor's own proposal. The executor never stops or asks for an unstated choice: it proceeds with its own proposal and records the decision in the Task Log of the Task it serves, and the State Log Entry of that run references that Task.
 
-**Why:** The order preserves Component ownership while supplying shared consistency for genuine gaps.
+**Why:** Work never stalls on a gap, and the Human sees every decision in one place and changes Preferences when needed.
 
-**Boundary:** Professional judgment never overrides Target meaning, an applicable Principle, or an explicit Preference.
+**Boundary:** The executor's own proposal never overrides Target meaning, an applicable Principle, or an explicit Preference.
 
 <br>
 
@@ -238,3 +238,8 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — Generate the Config Manifest from public Component metadata and Connections.
 - **Never** — Put secrets or private implementation detail in the Manifest.
+
+**Unstated shared decisions follow one precedence order**
+
+- **Must** — Resolve an unstated choice by Component Preference, Development Default, then own proposal, and record the decision in its Task Log.
+- **Never** — Stop or ask for an unstated choice, or let a proposal override Target meaning, a Principle, or an explicit Preference.

@@ -11,13 +11,13 @@ meta:
 policy:
   agent_may_edit: false
   rule: "This file is human-owned. Operations read it without writing resolved API choices back into it."
-  changed_by: "The human, directly. A missing critical API choice is raised through State."
+  changed_by: "The human, directly."
   precedence: "Explicit compatible project meaning and every applicable API Principle take precedence over this file."
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
   consumption: "Read settings and layout; resolve the selected language and its packages; resolve every known Group Reference and follow that Group's eligibility rules during generation; derive the Base URL from network values; then apply identity, runtime, and documentation defaults. Generate config.yaml according to the referenced API Configuration Structure. At runtime, Bootstrap reads config.yaml and registers only generated and enabled Group realizations."
-  selection: "Preserve explicit compatible project choices. Use these Preferences for unstated API choices. A package may choose mechanics left unstated here but may not change the responsibilities or URL structure declared by API Definition."
+  selection: "Preserve explicit compatible Target choices. Use these Preferences for choices the Target leaves unstated; for anything still unset, follow Development's resolution order."
   version_resolution: "Resolve latest-compatible to a concrete mutually compatible package version at implementation time and preserve every explicit compatible package version."
   matching: "Match every Group Reference key to the fixed role in its referenced Preferences and resolve exactly one Definition and Preferences file. Register only generated and enabled Groups. Derive a valid unique URL segment from each generated Group's configurable name, and reject missing, stale, invalid, ambiguous, or colliding values without silent repair. Derive url from transport_protocol, host, port, and the optional key instead of resolving it independently."
 
