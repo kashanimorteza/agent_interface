@@ -1,35 +1,40 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/implementation/development/logic/services/entity/entity.yaml"
-  path_note: "The Preferences layer of Entity Service inside the Logic Component."
-  purpose: "Configurable names and realization defaults for the fixed Entity Role."
+  path_note: "The Preferences layer of the fixed Entity Role inside the Logic Component."
+  purpose: "Name, directory, Interface Schema reference, layout, development, and documentation for Entity Service."
   standard: "Agent Project Interface"
-  version: "5.1"
-  updated: "2026-09-30"
+  version: "6.0"
+  updated: "2026-10-01"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
   rule: "This file is human-owned. Operations read it without writing resolved Entity Service choices back into it."
   changed_by: "The human, directly. A missing critical Entity Service choice is raised through State."
-  precedence: "Explicit Target meaning and every applicable Entity Service, Storage Service, Logic, Model, and Database Principle take precedence over this file."
+  precedence: "Explicit Target meaning and every applicable Entity Service and Logic Principle take precedence over this file."
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings first to preserve the fixed Logic owner and Entity Role while resolving the configurable Service name, and root Interface publication; then read layout. Read Model Interface through .interface/foundation/schema/model-interface.yaml and derive Child membership only from its Entity Collection; derive shared Action membership from Database Entity Operations exposed by Storage. Resolve language and shared development conventions from Logic Preferences."
+  consumption: "Read the content sections in read_order."
   selection: "Use these defaults when the Target is silent. Preserve an explicit compatible Target choice; raise an unresolved incompatible choice rather than inventing one."
-  version_resolution: "Entity Service introduces no independently versioned technology; versions resolve through Logic and Development Preferences."
-  matching: "Match every Child Service to one Entity of the Entity Collection in its order, bind that actual Entity, and match every shared Entity Action to one current Entity Operation Action from Storage Service Interface. Never interpret Model package exports or include ExecuteCommand or a Lifecycle Action in Base Entity."
+  version_resolution: "This file declares no versioned technology."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "settings: identify the fixed Logic owner and Entity Role, then resolve the configurable Service name, and publish_in_logic_interface."
-  - "layout: resolve its configurable directory, Interface, Base Entity, Child naming patterns, and language-specific realization names."
+  - settings
+  - interface
+  - layout
+  - development
+  - documentation
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  - settings
-  - layout
+  settings: "The fixed Logic owner and Entity Role, and the configurable Service name and directory."
+  interface: "The Logic Entity Interface Schema and its version."
+  layout: "The physical names of the Interface and Base files, the Entities directory, and the Child naming patterns."
+  development: "Development capabilities and the selected language with its realization profile."
+  documentation: "The documentation file, its location, its section order, and the content of each section."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
@@ -41,19 +46,53 @@ content:
     service:
       role: "entity"
       name: "Entity"
-      publish_in_logic_interface: true
+      directory: "entity"
+
+  # <!-------------------------------------------- interface -->
+  interface:
+    schema: ".interface/foundation/schema/logic-entity-interface.yaml"
+    contract_version: "1.0"
+
   # <!-------------------------------------------- layout -->
   layout:
-    names_configurable: true
-    naming:
-      child_file: "<entity>"
-      child_structure: "<entity><child_suffix>"
-    directory: "entity"
     files:
       interface: "interface"
-      base: "base_entity"
+      base: "base"
     directories:
       entities: "entity"
-    classes:
-      base: "BaseEntity"
-      child_suffix: "Service"
+    naming:
+      child_file: "<entity>"
+      child_structure: "<entity>"
+
+  # <!-------------------------------------------- development -->
+  development:
+    capabilities:
+      testing: false
+      error_handling: false
+      logging: false
+    language:
+      selected: "python"
+      options:
+        python:
+          identifier_case: "snake_case"
+          structure: "One class BaseEntity in the base file"
+          constructor: "__init__ creates one Storage() and keeps it on the instance"
+          methods: "One method per Storage method whose first parameter is entity, in the order Storage publishes them, with the method's exact name and docstring. An entity parameter typed as a class is removed and the bound Entity is passed in its place; an entity parameter typed as an instance stays and is checked against the bound Entity, raising InvalidInputError on a mismatch. Every other argument is passed unchanged, in order."
+          child: "One file per Entity holding class <Entity>(BaseEntity) with _entity = model.<Entity> from `from model import interface as model`, and only what is specific to that Entity."
+          republish: "Every Child class and every contract Storage Interface publishes except Storage are imported and republished. The interface file holds only these imports and the published list; it performs no check, because conformance belongs to Review."
+
+  # <!-------------------------------------------- documentation -->
+  documentation:
+    file: "README.md"
+    location: "the Entity Service directory"
+    format: "markdown"
+    order:
+      - overview
+      - interface
+      - use
+      - verify
+    sections:
+      overview: "What Entity Service is and why it exists, in one paragraph, with one simple example."
+      interface: "Every Child Service, every Action, and every republished contract, each with one example."
+      use: "How a caller imports a Child Service and how a Child Service adds its own Behaviour."
+      verify: "How to see that Entity Service matches Model's Entity Collection and Storage Interface."

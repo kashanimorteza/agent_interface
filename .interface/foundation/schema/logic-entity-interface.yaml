@@ -1,0 +1,60 @@
+schema:
+  id: "agent-interface-logic-entity-interface"
+  version: "1.0"
+  purpose: "The stable, language-independent structure of the Entity Service Interface inside Logic: one Child Service per Model Entity, each a bound mirror of the Storage Actions that take an Entity."
+  kind: "Interface structure standard"
+  applies_when: "The Implementation declares a Logic Component, which always contains Entity Service."
+  generates: "<logic component path>/<services directory>/<entity service directory>/<interface file>"
+
+# <!--------------------------------------------------------------------------------- Structure -->
+structure:
+
+  interface:
+    required: true
+    purpose: "The Entity Service entrypoint. It publishes exactly the Child Services and the republished contracts below, and nothing else."
+
+  base:
+    required: true
+    purpose: "One shared structure in the Base layer, its unit and structure named by Entity Service Preferences, that every Child Service receives."
+    source: "Storage Interface, located from Storage Service's own Preferences. Base reads only what that Interface publishes."
+    construction: "Creating Base takes one access to Storage; every Action uses that same access."
+    membership: "One Action per Storage Action that takes an Entity, in the order Storage publishes them. A Storage Action that takes no Entity never becomes an Action."
+    naming: "Fixed: each Action has exactly its Storage Action's name, with no prefix."
+    parameters: "Exactly the Storage Action's parameters, with the same names, order, and defaults, except that a parameter taking the Entity class is removed; a parameter taking an Entity instance stays."
+    effect: "Supplies the bound Entity class where Storage takes it and forwards every other argument unchanged through the held Storage access."
+    returns: "Exactly the result of the Storage Action, unchanged."
+    errors: "Exactly the errors the Storage Action raises, unchanged; an Entity instance not of the bound Entity is rejected with the republished Invalid Input error before Storage is called."
+
+  entities:
+    required: true
+    purpose: "One unit and one Child Service for every Entity in Model's Entity Collection."
+    source: "Model Interface, located from Model's own Preferences: its Entity Collection decides which Child Services exist, and each Entity it publishes by name is the one a Child Service binds."
+    naming: "Unit and structure names follow the Child patterns in Entity Service Preferences."
+    binding: "Each Child Service receives Base and binds exactly its own Entity."
+    content: "Only Behaviour or Actions specific to its Entity; an override of a Base Action applies to its own Entity only."
+
+  republished_contracts:
+    required: true
+    purpose: "Contracts a caller needs to build requests, read results, and catch errors without importing Storage or Database. Each is the same object Storage Interface publishes, never a copy."
+    contracts: "Every contract Storage Interface publishes except the Storage gateway, read from that Interface each time, never listed by hand."
+
+# <!--------------------------------------------------------------------------------- Rules -->
+rules:
+  internal_hidden: "Base, Child implementations, and Storage internals are never published."
+  side_effect_free: "Loading the Interface opens no connection and creates no data or file."
+  contract_change: "A change to this structure requires a Schema version change; a change in Model's Entity Collection or in what Storage Interface publishes flows through without one."
+
+# <!--------------------------------------------------------------------------------- Example -->
+example: |
+  from logic.services.entity.interface import (
+      Filter, FilterOperator, InvalidInputError, User,
+  )
+  from model import interface as model
+
+  users = User()
+  users.add(model.User(name="Admin", ...))
+  active = users.list(filters=[Filter(model.User.is_active, FilterOperator.EQUALS, True)])
+  try:
+      users.add(model.Account(...))
+  except InvalidInputError:
+      ...

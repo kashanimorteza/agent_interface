@@ -1,11 +1,11 @@
 """Child Service of the Asset Entity."""
 
-from model.interface import Asset
+from model import interface as model
 
 from logic.services.entity.base_entity import BaseEntity
 
 
-class AssetService(BaseEntity):
+class Asset(BaseEntity):
     """The Entity Actions bound to the Asset Entity."""
 
-    _entity = Asset
+    _entity = model.Asset

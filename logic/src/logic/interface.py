@@ -1,8 +1,6 @@
-"""Logic Interface: the single root gateway that publishes the publication-enabled Service Interfaces."""
+"""Logic Interface: one entry for every Service Interface of Logic."""
 
-from logic.core.services import verify_publication as _verify_publication
 from logic.services.entity import interface as Entity
+from logic.services.storage import interface as Storage
 
-__all__ = ["Entity"]
-
-_verify_publication(__all__)
+__all__ = ["Entity", "Storage"]

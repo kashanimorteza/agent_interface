@@ -1,11 +1,11 @@
 """Child Service of the Trailing Rule Entity."""
 
-from model.interface import TrailingRule
+from model import interface as model
 
 from logic.services.entity.base_entity import BaseEntity
 
 
-class TrailingRuleService(BaseEntity):
+class TrailingRule(BaseEntity):
     """The Entity Actions bound to the Trailing Rule Entity."""
 
-    _entity = TrailingRule
+    _entity = model.TrailingRule

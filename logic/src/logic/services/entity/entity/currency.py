@@ -1,11 +1,11 @@
 """Child Service of the Currency Entity."""
 
-from model.interface import Currency
+from model import interface as model
 
 from logic.services.entity.base_entity import BaseEntity
 
 
-class CurrencyService(BaseEntity):
+class Currency(BaseEntity):
     """The Entity Actions bound to the Currency Entity."""
 
-    _entity = Currency
+    _entity = model.Currency

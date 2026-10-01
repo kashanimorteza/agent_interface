@@ -1,11 +1,11 @@
 """Child Service of the Broker Entity."""
 
-from model.interface import Broker
+from model import interface as model
 
 from logic.services.entity.base_entity import BaseEntity
 
 
-class BrokerService(BaseEntity):
+class Broker(BaseEntity):
     """The Entity Actions bound to the Broker Entity."""
 
-    _entity = Broker
+    _entity = model.Broker

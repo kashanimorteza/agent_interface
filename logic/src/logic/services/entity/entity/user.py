@@ -1,11 +1,11 @@
 """Child Service of the User Entity."""
 
-from model.interface import User
+from model import interface as model
 
 from logic.services.entity.base_entity import BaseEntity
 
 
-class UserService(BaseEntity):
+class User(BaseEntity):
     """The Entity Actions bound to the User Entity."""
 
-    _entity = User
+    _entity = model.User
