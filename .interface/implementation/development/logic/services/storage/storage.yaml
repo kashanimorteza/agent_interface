@@ -2,34 +2,36 @@
 meta:
   path: ".interface/implementation/development/logic/services/storage/storage.yaml"
   path_note: "The Preferences layer of the fixed Storage Role inside the Logic Component."
-  purpose: "Configurable names and realization defaults for Storage Service."
+  purpose: "Configurable name, publication, Action naming, Interface Schema reference, and layout for Storage Service."
   standard: "Agent Project Interface"
-  version: "4.0"
-  updated: "2026-09-30"
+  version: "5.0"
+  updated: "2026-10-01"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
   rule: "This file is human-owned. Operations read it without writing resolved Storage Service choices back into it."
   changed_by: "The human, directly. A missing critical Storage Service choice is raised through State."
-  precedence: "Explicit Target meaning and every applicable Storage Service, Logic, and Database Principle take precedence over this file."
+  precedence: "Explicit Target meaning and every applicable Storage Service and Logic Principle take precedence over this file."
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings first to preserve the fixed Logic owner and Storage Role while resolving the configurable Service name, root Interface publication, API Group generation, and Action API-generation settings; then read layout. Read Database Interface and derive exactly one Action from every Entity Operation, Database-wide Operation, and Lifecycle Command together with the exact supporting contracts. Resolve the language and shared development conventions from Logic Preferences."
+  consumption: "Read settings to preserve the fixed Logic owner and Storage Role and resolve the Service name and publication setting; read interface for the Interface Schema; then read layout. Locate Database Interface through the provider_location rule and derive exactly one Action from every capability it publishes; never read Database's structure files. Resolve the language and shared development conventions from Logic Preferences."
   selection: "Use these defaults when the Target is silent. Preserve an explicit compatible Target choice; raise an unresolved incompatible choice rather than inventing one."
   version_resolution: "Storage Service introduces no independently versioned technology; versions resolve through Logic and Development Preferences."
-  matching: "Match each Action-name override to the stable identity and group of an Entity Operation, Database-wide Operation, or Lifecycle Command currently published by Database Interface and each Action API-generation override to one callable Action identity published by Storage Service Interface. Derive a normalized base name when no naming override exists, reject unknown or regrouped overrides, and preserve the responsibilities declared by Storage Service Definition."
+  matching: "Name every Action by the naming rule of the Logic Storage Interface Schema; no Action is renamed by hand."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "settings: identify the fixed Logic owner and Storage Role, then resolve the configurable Service name, publish_in_logic_interface, generate_api, and Action API-generation settings."
-  - "layout: resolve the configurable Service directory, Interface file, Actions directory, identifier convention, and optional Action-name overrides."
+  - settings
+  - interface
+  - layout
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  - settings
-  - layout
+  settings: "The fixed Logic owner and Storage Role, the configurable Service name, and the publication setting."
+  interface: "The related Definition and the Logic Storage Interface Schema with its version."
+  layout: "The physical names of the Service's directory and Interface file."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
@@ -42,19 +44,17 @@ content:
       role: "storage"
       name: "Storage"
       publish_in_logic_interface: false
-      generate_api: false
-    actions:
-      default_generate_api: true
-      overrides: {}
+
+  # <!-------------------------------------------- interface -->
+  interface:
+    definition: ".interface/implementation/development/logic/services/storage/storage.md"
+    schema: ".interface/foundation/schema/logic-storage-interface.yaml"
+    contract_version: "1.2"
 
   # <!-------------------------------------------- layout -->
   layout:
-    names_configurable: true
     naming:
       identifier_case: "snake_case"
     directory: "storage"
     files:
       interface: "interface"
-    directories:
-      actions: "actions"
-    action_name_overrides: {}

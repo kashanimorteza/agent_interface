@@ -24,7 +24,7 @@ Entity Service is the fixed internal Logic Service whose Interface provides one 
 
 ### Overview
 
-Entity Service is one of the two fixed internal Services of every Logic Component. It gives each Entity published by Model one Child Service through which consumers can add, update, retrieve, delete, list, aggregate, enable, disable, or truncate that Entity. The Child Service supplies its own Entity identity and uses the corresponding Actions presented by Storage Service Interface. Entity Service remains internal, while its Interface is published unchanged through Logic Interface by default. API Group generation is also enabled by default, so every published Child Service and all of its Actions can form one Entity API Group.
+Entity Service is one of the two fixed internal Services of every Logic Component. It gives each Entity published by Model one Child Service through which consumers can add, update, retrieve, delete, list, aggregate, enable, disable, or truncate that Entity. The Child Service supplies its own Entity identity and uses the corresponding Actions presented by Storage Service Interface. Entity Service remains internal, while its Interface is published unchanged through Logic Interface by default.
 
 ### Purpose
 
@@ -47,7 +47,6 @@ Entity Service imports Model Interface and Storage Service Interface directly. I
 
 - **Entity Role** — the fixed identity of this Service inside Logic, independent of its configurable public name.
 - **Entity Service Interface** — this Service's outward gateway, published unchanged under the configured Service name by Logic Interface when `publish_in_logic_interface` is enabled.
-- **API Generation Setting** — the Service-level `generate_api` value that requests one Entity API Group containing every published Entity Child Service and all of its Actions when root publication is also enabled.
 - **Base Entity** — the private shared capability that implements Entity Actions through corresponding Storage Service Actions; `BaseEntity` is its default Python class name.
 - **Entity Child Service** — the public Service structure bound to one authoritative Entity published by Model and receiving the shared Base Entity capability.
 - **Entity-bound Action** — Add, Update, List, Delete, Enable, Disable, GetById, Count, Sum, Min, Max, or Truncate as exposed for one bound Entity.
@@ -132,12 +131,6 @@ Every Principle below is mandatory and belongs to the category that owns it.
 **Why:** Entity-oriented access has one stable and discoverable gateway without exposing shared or child implementation files.
 **Boundary:** Disabling root publication never disables Entity Service Interface for internal collaboration. Storage Service becomes a separate root-public persistence route only when its own publication setting is enabled.
 
-#### Entity API generation is enabled by default
-
-**Rule:** Entity Service defaults both `publish_in_logic_interface` and `generate_api` to `true`. When both settings are enabled, every published Entity Child Service and all of its Actions are eligible for the Entity API Group without a per-Entity or per-Action API-generation filter.
-**Why:** One Entity API Group can follow the complete authoritative Entity Service contract without maintaining a second membership catalogue.
-**Boundary:** These settings declare API eligibility only. Entity Service defines no HTTP route, method, schema, or transport Behaviour.
-
 <br>
 
 ### Interface
@@ -215,11 +208,6 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — Include the Entity Role and its Interface internally in every Logic and apply its root-publication setting.
 - **Never** — Expose its private implementation or publish it through Logic Interface when publication is disabled.
-
-**Entity API generation is enabled by default**
-
-- **Must** — Make the published Entity Service eligible for one API Group containing every published Child Service and all of its Actions.
-- **Never** — Define HTTP details inside Entity Service or filter an individual Child Service or Action from an enabled Entity API Group.
 
 <br>
 

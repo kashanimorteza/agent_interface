@@ -16,14 +16,14 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings first to preserve the fixed Logic owner and Entity Role while resolving the configurable Service name, root Interface publication, and Service-level API Group generation; then read layout. Read Model Interface through .interface/foundation/schema/model-interface.yaml and derive Child membership only from its Entity Collection; derive shared Action membership from Database Entity Operations exposed by Storage. Resolve language and shared development conventions from Logic Preferences."
+  consumption: "Read settings first to preserve the fixed Logic owner and Entity Role while resolving the configurable Service name, and root Interface publication; then read layout. Read Model Interface through .interface/foundation/schema/model-interface.yaml and derive Child membership only from its Entity Collection; derive shared Action membership from Database Entity Operations exposed by Storage. Resolve language and shared development conventions from Logic Preferences."
   selection: "Use these defaults when the Target is silent. Preserve an explicit compatible Target choice; raise an unresolved incompatible choice rather than inventing one."
   version_resolution: "Entity Service introduces no independently versioned technology; versions resolve through Logic and Development Preferences."
-  matching: "Match every Child Service to one Entity of the Entity Collection in its order, bind that actual Entity, and match every shared Entity Action to one current Entity Operation Action from Storage Service Interface. Never interpret Model package exports or include ExecuteCommand or a Lifecycle Action in Base Entity. When API generation is enabled, preserve every published Child Service and all Actions as the complete eligible Entity API contract."
+  matching: "Match every Child Service to one Entity of the Entity Collection in its order, bind that actual Entity, and match every shared Entity Action to one current Entity Operation Action from Storage Service Interface. Never interpret Model package exports or include ExecuteCommand or a Lifecycle Action in Base Entity."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "settings: identify the fixed Logic owner and Entity Role, then resolve the configurable Service name, publish_in_logic_interface, and Service-level generate_api setting."
+  - "settings: identify the fixed Logic owner and Entity Role, then resolve the configurable Service name, and publish_in_logic_interface."
   - "layout: resolve its configurable directory, Interface, Base Entity, Child naming patterns, and language-specific realization names."
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
@@ -42,7 +42,6 @@ content:
       role: "entity"
       name: "Entity"
       publish_in_logic_interface: true
-      generate_api: true
   # <!-------------------------------------------- layout -->
   layout:
     names_configurable: true

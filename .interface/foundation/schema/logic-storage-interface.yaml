@@ -1,0 +1,57 @@
+schema:
+  id: "agent-interface-logic-storage-interface"
+  version: "1.2"
+  purpose: "The stable, language-independent structure of the Storage Service Interface inside Logic: Logic's complete and unchanged gateway to every public Database capability."
+  kind: "Interface structure standard"
+  applies_when: "The Implementation declares a Logic Component, which always contains Storage Service."
+  generates: "<logic component path>/<services directory>/<storage service directory>/<interface file>"
+
+# <!--------------------------------------------------------------------------------- Structure -->
+structure:
+
+  interface:
+    required: true
+    purpose: "The Storage Service entrypoint. It publishes exactly the Actions and republished contracts below, each importable by another Logic Service, and nothing else."
+
+  actions:
+    required: true
+    purpose: "Exactly one Action for every capability Database Interface actually publishes."
+    source: "Database Interface, located through the provider_location rule from Database Preferences. Storage reads only what that Interface publishes, never Database's structure files."
+    membership: "One Action per Entity Operation, Database-wide Operation, and Lifecycle Command that Database Interface publishes, including prepare. A capability added to or removed from Database Interface adds or removes its Action."
+    naming: "Fixed: <service>_<action> — the configured Service name, one underscore, then the Database capability name, in the selected language's identifier case. No Action is renamed."
+    location: "Every Action lives in one fixed unit named actions inside the Storage Service directory; no Action has a unit of its own."
+    parameters: "Exactly the parameters of the corresponding published Database capability, with the same names, order, and defaults."
+    effect: "Forwards every argument unchanged through Database Interface and performs no other work."
+    returns: "Exactly the result of the corresponding Database capability, unchanged."
+    errors: "Exactly the errors the Database capability raises, unchanged."
+
+  republished_contracts:
+    required: true
+    purpose: "Database contracts another Logic Service needs to build requests, read results, and catch errors without importing Database Interface. Each is the same object Database Interface publishes, never a copy."
+    contracts: "Every supporting contract Database Interface publishes — its enumerations, values, results, and errors — read from that Interface each time, never listed by hand."
+
+# <!--------------------------------------------------------------------------------- Rules -->
+rules:
+  complete_mirror: "Storage Service Interface publishes exactly one Action per Database capability and every republished contract above, and nothing else."
+  unchanged: "No Action renames a parameter, changes an order or default, adds a wrapper, converts a value, or catches and replaces an error."
+  same_objects: "Every republished contract is the identical object Database Interface publishes; no alternate type, enum, or error class exists."
+  no_behaviour: "No Action adds validation, retry, selection of an Engine or default Instance, or any rule of its own."
+  internal_hidden: "Action implementations and Database internals are never published."
+  side_effect_free: "Loading the Interface opens no connection and creates no data or file."
+  contract_change: "A change to this structure requires a Schema version change; a change in what Database Interface publishes flows through without one."
+
+# <!--------------------------------------------------------------------------------- Example -->
+example: |
+  from logic.services.storage.interface import (
+      storage_add, storage_list, storage_prepare,
+      DatabaseInstance, Filter, FilterOperator, ConnectionFailureError,
+  )
+  from model.interface import User
+
+  storage_add(User(name="Admin", ...))
+  storage_list(User, filters=[Filter(User.is_active, FilterOperator.EQUALS, True)],
+               instance=DatabaseInstance.SQLITE)
+  try:
+      storage_prepare()
+  except ConnectionFailureError:
+      ...

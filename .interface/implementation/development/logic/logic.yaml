@@ -16,16 +16,16 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings for Logic's identity; then resolve the configurable names of the Interface, Core, Services, configuration, and documentation members declared by Logic Definition. Follow every Service reference, read its publish_in_logic_interface and generate_api settings, publish only enabled Service Interfaces, and reject generate_api when publication is disabled. Then read verification, development language and capabilities, and documentation preferences. Read Connections from Development and resolve environment-specific Runtime Bindings from Platform. Use a Development Default only when this file leaves a shared choice unstated."
+  consumption: "Read settings for Logic's identity; then resolve the configurable names of the Interface, Core, Services, configuration, and documentation members declared by Logic Definition. Follow every Service reference, read its publish_in_logic_interface setting, and publish only enabled Service Interfaces. Then read verification, development language and capabilities, and documentation preferences. Read Connections from Development and resolve environment-specific Runtime Bindings from Platform. Use a Development Default only when this file leaves a shared choice unstated."
   selection: "Use a compatible configured Logic default when the Target is silent. For an explicit incompatible need, preserve Target intent under Logic Principles and record the consequential realization choice; ask only when no safe compatible choice can be established."
   version_resolution: "This file resolves versions for Logic-owned packages and tools. Development resolves versions only for its shared Defaults."
-  matching: "Match standards and Logic settings by their exact keys. Resolve each Service through the Definition and Preferences references declared under services. Treat publish_in_logic_interface as controlling root Interface publication and generate_api as requesting API Group generation only when publication is enabled."
+  matching: "Match standards and Logic settings by their exact keys. Resolve each Service through the Definition and Preferences references declared under services. Treat publish_in_logic_interface as controlling root Interface publication."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - "settings: identify Logic."
   - "layout: resolve the configurable names of the Interface, Core, Services, configuration, and documentation members declared by Logic Definition."
-  - "services: read each Service reference and Preferences, preserve every Service Interface for internal use, publish only those with publish_in_logic_interface enabled, and validate API Group eligibility from generate_api."
+  - "services: read each Service reference and Preferences, preserve every Service Interface for internal use, and publish only those with publish_in_logic_interface enabled."
   - "verification: apply Logic verification settings."
   - "development: apply the default language and the currently enabled or disabled component capabilities."
   - "documentation: apply the required Logic documentation structure and examples."
