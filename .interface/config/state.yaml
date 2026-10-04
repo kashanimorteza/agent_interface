@@ -31,11 +31,11 @@ content_map:
 # <!--------------------------------------------------------------------------------- Content -->
 content:
   active:
-    mode: "reviewing"
-    phase: "P3"
-    mode_reason: "Review reviewed phase P3 (selected as 3) and has completed."
-    set_by: "my-interface-review"
-    set_at: "2026-10-04T20:32:37Z"
+    mode: "development"
+    phase: "P4"
+    mode_reason: "Develop is developing phase P4 (selected as 4)."
+    set_by: "my-interface-develop"
+    set_at: "2026-10-04T22:28:13Z"
   phases:
     P1:
       id: "P1"
@@ -55,6 +55,12 @@ content:
       development: "completed"
       review: "satisfied"
       completed_at: "2026-10-04T20:43:16Z"
+    P4:
+      id: "P4"
+      planning: "completed"
+      development: "in progress"
+      review: "not started"
+      completed_at: null
   log:
     - id: "001"
       skill: "my-interface-configure"
@@ -504,3 +510,107 @@ content:
         - .gitignore was modified during this Review (its ignore rules were commented out) by someone other than Review,
           which did not touch it. The Logic environment and caches are therefore no longer ignored by git; Review removed
           only the cache directory its own runs created.
+    - id: '011'
+      skill: my-interface-plan
+      phase: P4
+      event: plan
+      outcome: completed
+      started_at: '2026-10-04T22:22:49Z'
+      completed_at: '2026-10-04T22:25:04Z'
+      duration: '2:15'
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used:
+      - name: fastapi
+        duration: null
+        token_usage:
+          input: null
+          output: null
+          total: null
+        report: Read for relevance because the API Preferences select it for the web framework. Its recommendations
+          (Annotated parameters, plain functions by default, return types, router-level prefixes, one operation per
+          function, the fastapi command line) concern realization and do not differ from any explicit API Preference,
+          which leaves them unstated, so no keep-or-adopt decision is needed. It is named in the Task Skills of the
+          15 Tasks that realize HTTP behaviour.
+      open_questions: []
+      blockers: []
+      decisions: []
+      report: 'Planned phase P4 (API, selected as 4): created its Plan with 10 Groups and 38 Tasks, all todo, from the
+        API Definition and Preferences, the Entity Group Definition and Preferences, the API Interface, API Group Interface,
+        and API Configuration schemas, and the Target''s API phase and Behaviour. Nothing pre-existed for P4, so nothing
+        was preserved, changed, or removed there; the P1, P2, and P3 Plans were left untouched (34, 64, and 37 Tasks,
+        total now 173). Only the first Task is ready (no dependencies); every other Task is ordered by explicit dependencies.
+        The Human committed new API sources after the previous phase was reviewed; the Plan was derived from their current
+        content. No Open Questions or Blockers.'
+      data:
+        plan_changes:
+          added_groups:
+          - P4-G1
+          - P4-G2
+          - P4-G3
+          - P4-G4
+          - P4-G5
+          - P4-G6
+          - P4-G7
+          - P4-G8
+          - P4-G9
+          - P4-G10
+          added_task_count: 38
+          preserved_task_count: 135
+          removed_task_count: 0
+          replaced_task_count: 0
+        planning_decisions:
+        - Group registration, Bootstrap, Endpoint rules, and Entity Group Adapters are separate Groups because each
+          is governed by a different Definition (API's Groups layer, Bootstrap, Endpoint Principles, Entity Group),
+          and Entity Group's Adapter work is separated from the generic Endpoint rules API applies to every Group.
+        - Registration of Groups depends on Endpoints existing, and the Groups-layer observations that need working
+          Handlers (adding nothing of API's own) depend on the Handler Tasks, so no Task depends on a result it cannot
+          yet be observed through.
+        - 'Handler work is split along independently observable results: keeping parameter names and defaults, expressing
+          an Entity, expressing query vocabulary values, expressing the Instance, calling and returning the result,
+          adding nothing around the call, and passing failures through.'
+        - Bootstrap is planned with no runtime check of its own because the API Preferences state that Bootstrap performs
+          no check; the validity of network values is therefore a generation-time Task.
+        - The cross-origin policy is planned as a Task whose acceptance refers to the policy API declares rather than
+          restating its values, because those values are a technical choice owned by the API Preferences.
+        - 'The Application Manifest is not planned here: no earlier phase planned it and no Task in this phase owns
+          public metadata.'
+        observations:
+        - The API Definition says API serves no Endpoint or path of its own, and the API Preferences also give the running
+          API a title and description to present. A framework normally serves documentation routes to present them.
+          Because a Principle takes precedence over a Preference, the Plan states the no-own-address rule as an acceptance
+          and plans the title and description as identity the API carries; Develop will have to choose how the identity
+          is carried without serving an address of its own, and record that choice.
+        - Entity Group imports nothing but Logic's Interface for the application, and no Connection from API to Model
+          is declared, yet add and update take a whole Entity as a request value. Entities reach API only through the
+          Child Services Logic publishes. Develop will have to obtain the Entity type from what Logic publishes and
+          record how.
+        - The sources do not state how a client expresses a Field reference, a condition, an ordering, or an Instance
+          in an HTTP request, since those are language values in the Actions. The Plan states the observable result
+          (the Action receives the equivalent value); Develop chooses and records the representation under the shared
+          precedence for unstated choices.
+        - Endpoint identity follows one method for every operation, including reads and listings, as the Human's Endpoint
+          rules state; the Plan keeps that rule and does not alter it.
+        - Phase P3 (Logic) was reviewed satisfied and P2 (Database) still has not been reviewed; API consumes only Logic's
+          published Interface.
+        - The Target's Non-Technical Definition is still empty, so Target Understanding came from the Technical Definition
+          alone.
+    - id: "012"
+      skill: "my-interface-develop"
+      phase: "P4"
+      event: "develop"
+      outcome: "in progress"
+      started_at: "2026-10-04T22:28:13Z"
+      completed_at: null
+      duration: null
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used: []
+      open_questions: []
+      blockers: []
+      decisions: []
+      report: "Developing phase P4 (API, selected as 4)."
