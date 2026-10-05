@@ -28,7 +28,7 @@ content_map:
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
-  task_count: 173
+  task_count: 180
   plans:
     P1:
       id: P1
@@ -6129,3 +6129,1957 @@ content:
                 chosen: Run it through the package manager's run command inside the Logic directory, without adding type-checker configuration to the project file
                 why: Neither the Component Preferences nor the Development defaults set type-checker paths; running it in the project environment resolves the libraries, and the sibling libraries use no such configuration
                   either.
+    P4:
+      id: P4
+      title: API
+      order: 4
+      target: API
+      does: Implement the separate API executable over the Logic library for operating on the defined models.
+      constraints: []
+      task_count: 45
+      groups:
+        P4-G1:
+          id: P4-G1
+          title: Executable setup
+          description: Establishes API as a standalone executable Component with a reproducible dependency
+            environment and its declared use of Logic.
+          area: API's packaging, dependency resolution, and declared dependence on Logic as an independent
+            library.
+          does: API exists as an installable, runnable executable whose dependencies, including Logic, are
+            resolved to concrete versions and recorded.
+          constraints: []
+          task_count: 2
+          tasks:
+            P4-G1-T1:
+              id: P4-G1-T1
+              source_id: '011'
+              title: Establish API as an independent executable
+              description: Create API as a self-contained executable Component in the selected language with
+                an isolated dependency environment. Resolve every unpinned dependency, including the selected
+                web framework, to a concrete mutually compatible version and record the resolution so the
+                environment is reproducible.
+              reason: Every later Task needs an executable to live in, and API must run without depending
+                on anything else in the application beyond its declared provider.
+              inputs:
+              - API Preferences for Component identity, type, and technology
+              - Development defaults for the selected language and package management
+              skills:
+              - fastapi
+              expected_result: An empty but valid, installable API executable with its dependency set resolved
+                and recorded.
+              depends_on: []
+              constraints: []
+              acceptance: The API can be installed into an isolated environment from its recorded dependency
+                resolution alone, and loading it succeeds.
+              status: done
+              log:
+              - at: '2026-10-05T01:27:08Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:27:31Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'Created API as a standalone executable Component: an installable project with its own isolated environment, the web framework (FastAPI with its standard extras) as its only runtime dependency so
+                  far, and the quality tools (ruff, pyright) as development dependencies per the Development defaults. Every dependency resolved to a concrete version recorded in a lockfile.'
+                evidence: Lock resolved 59 packages (FastAPI 0.142.2 among them); the environment was deleted and rebuilt from the lockfile alone (offline) and loading the package succeeded. uv was already present in
+                  the session scratchpad, fetched earlier from PyPI with a verified checksum; it is not installed into project or user scope.
+              - at: '2026-10-05T01:27:31Z'
+                by: '012'
+                event: decision
+                unset: Python version bound, build backend, and package layout inside the Component directory
+                chosen: requires-python >=3.14, uv_build backend, flat package directory named api inside the Component directory (module root empty), same as Model, Database, and Logic
+                why: API Preferences state the Component directory and package name but not these; Development defaults select uv and latest-compatible Python; mirroring the other libraries keeps all of them uniform.
+            P4-G1-T2:
+              id: P4-G1-T2
+              source_id: '011'
+              title: Make Logic available as API's provider
+              description: Declare Logic as API's direct provider and resolve it to a concrete release in
+                the recorded dependency resolution, so API reaches Entity Service and its contracts through
+                Logic's public Interface only. Logic itself is not changed.
+              reason: Entity Group serves Entity Service through Logic and the declared Connection from API
+                to Logic permits that dependency; without it no Adapter can exist.
+              inputs:
+              - Declared Connection from API to Logic
+              - Logic's public Interface
+              skills: []
+              expected_result: API's environment contains Logic and can obtain its public Interface.
+              depends_on:
+              - P4-G1-T1
+              constraints: []
+              acceptance: From within API's isolated environment, Entity Service and every contract it publishes
+                can be obtained through Logic's public Interface, and the Logic library is unchanged.
+              status: done
+              log:
+              - at: '2026-10-05T01:27:31Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:27:39Z'
+                by: '012'
+                status: done
+                event: completed
+                note: Declared Logic as API's direct provider (local editable source beside API, as Logic does for the Database and the Model) and resolved it with its dependency set to concrete versions in the lockfile.
+                  API reaches Entity Service and its contracts through Logic's public Interface only.
+                evidence: Locked sync succeeded; from within API's environment Logic's public Interface publishes the Entity Service with 31 names (15 Child Services and 16 contracts), obtained through that Interface
+                  alone; source hashes of Logic, Model, and Database were recorded before further work and are verified unchanged at the end of Develop.
+        P4-G2:
+          id: P4-G2
+          title: Runtime Configuration
+          description: The runtime values that identify and run the API, in the shape the API Configuration
+            Structure defines, written after every generation.
+          area: 'API''s runtime Configuration: identity, network address, URL Key, worker count, the derived
+            Base URL, and the interactive documentation addresses.'
+          does: Every value the Configuration Structure defines is in one runtime Configuration, is consistent
+            with the others, and the URL Key is stable across generations.
+          constraints: []
+          task_count: 6
+          tasks:
+            P4-G2-T1:
+              id: P4-G2-T1
+              source_id: '011'
+              title: Provide the runtime Configuration with every Structure value
+              description: 'Write into the runtime Configuration, after every generation and even when a value
+                equals its default, every value the API Configuration Structure defines: title, description,
+                key, host, port, workers, transport protocol, Base URL, and the interactive documentation
+                addresses. Each takes the value API Preferences state, except the key and the derived addresses,
+                which the following Tasks govern.'
+              reason: An operator must find and change the API's address and behaviour in one place, and clients
+                and documentation need one authoritative set of values.
+              inputs:
+              - API Preferences for identity, network, runtime, and documentation values
+              - API Configuration Structure
+              skills: []
+              expected_result: A Configuration that holds every Structure value.
+              depends_on:
+              - P4-G1-T1
+              constraints: []
+              acceptance: After a generation the Configuration holds every value the Structure defines and
+                no other, each set from API Preferences where Preferences state it, including a value that
+                equals its default.
+              status: done
+              log:
+              - at: '2026-10-05T01:28:37Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:29:28Z'
+                by: '012'
+                status: done
+                event: completed
+                note: Generated the runtime Configuration with every value the API Configuration Structure defines (title, description, key, host, port, workers, transport protocol, Base URL, and the interactive documentation
+                  addresses) in the Structure's own order, each taken from the API Preferences, written after generation even where it equals its default. At this stage the key is empty and the Base URL is the protocol,
+                  host, and port; the key and its effect on the Base URL come from later Tasks.
+                evidence: 'A fresh comparison script: the Configuration''s keys equal the Structure''s keys exactly (9 of 9, none extra, same order), and title ''Target API'', empty description, host 127.0.0.1, port
+                  8000, workers 2, and transport protocol HTTP equal the Preferences values; the Base URL is http://127.0.0.1:8000 and the documentation addresses are its /docs and /redoc forms.'
+              - at: '2026-10-05T01:29:28Z'
+                by: '012'
+                event: decision
+                unset: Whether regeneration overwrites a Configuration value an operator edited by hand
+                chosen: Every value the Preferences state is rewritten from the Preferences on each generation, the key being the one value kept; the Base URL and documentation addresses are always re-derived
+                why: The Plan's acceptance and the Definition say every Structure value is written after each generation and state only the key as kept; the Preferences, being human-owned, remain the place to change
+                  the others.
+              - at: '2026-10-05T01:29:28Z'
+                by: '012'
+                event: decision
+                unset: Whether the optional documentation entry is written
+                chosen: It is always written, because the selected web framework offers interactive documentation
+                why: The Structure marks it optional but present whenever the package offers it, and API Preferences select a framework that does.
+            P4-G2-T2:
+              id: P4-G2-T2
+              source_id: '011'
+              title: Derive the Base URL from its parts
+              description: 'Derive the Base URL from the transport protocol, host, port, and key and never
+                resolve it independently: a non-empty key becomes the first address segment after the host
+                and port, and an empty key adds no segment.'
+              reason: A client forms every address from the Base URL, so it must always agree with the values
+                that define it.
+              inputs:
+              - Runtime Configuration values
+              - API Configuration Structure rules for the Base URL and key
+              skills: []
+              expected_result: A Base URL that always follows its parts.
+              depends_on:
+              - P4-G2-T1
+              constraints: []
+              acceptance: The Base URL is the transport protocol, host, and port joined as an address, followed
+                by the key as one segment when it is non-empty and by nothing when it is empty, and changing
+                any part changes the Base URL accordingly.
+              status: done
+              log:
+              - at: '2026-10-05T01:29:37Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:30:17Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'The Base URL is always derived from the transport protocol, host, port, and key and never resolved independently: the protocol in lower case, then ://, the host, a colon and the port, followed
+                  by a slash and the key only when the key is non-empty. No source change was needed beyond the Configuration Task; the derivation was exercised on its own.'
+                evidence: 'Trials on a scratch copy of the Preferences: stated values give http://127.0.0.1:8000; host 0.0.0.0 with port 9001 gives http://0.0.0.0:9001; protocol HTTPS gives https://127.0.0.1:8000; with
+                  a generated key the Base URL is the stated address followed by one segment equal to the key; the project''s own Configuration, which carries a key, has a Base URL ending in exactly that key.'
+              - at: '2026-10-05T01:30:17Z'
+                by: '012'
+                event: decision
+                unset: Whether the Base URL writes the transport protocol as stated ('HTTP') or in lower case
+                chosen: The scheme is written in lower case, so HTTP gives http://
+                why: The Structure shows the Base URL as <transport_protocol>://..., and an address scheme is lower case; the Configuration still keeps the protocol as stated.
+            P4-G2-T3:
+              id: P4-G2-T3
+              source_id: '011'
+              title: Derive the interactive documentation addresses from the Base URL
+              description: Derive the full address of each interactive documentation page from the Base URL
+                and the documentation locations API Preferences state, and never resolve them independently,
+                so they follow the key and every other part of the Base URL.
+              reason: Clients must find the documentation from the same address they use for everything else.
+              inputs:
+              - Runtime Configuration's Base URL
+              - API Preferences for the documentation locations
+              - API Configuration Structure rules for the documentation addresses
+              skills: []
+              expected_result: Documentation addresses that always follow the Base URL.
+              depends_on:
+              - P4-G2-T2
+              constraints: []
+              acceptance: Each documentation address equals the Base URL followed by its documentation location,
+                and changing the key or any other part of the Base URL changes both addresses accordingly.
+              status: done
+              log:
+              - at: '2026-10-05T01:30:30Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:31:03Z'
+                by: '012'
+                status: done
+                event: completed
+                note: The interactive documentation addresses are always derived from the Base URL and the documentation locations the API Preferences state (a Base URL followed by the location) and never resolved independently,
+                  so they follow the key and every other part of the Base URL. No source change was needed beyond the Configuration Task; the derivation was exercised on its own.
+                evidence: 'Trials on a scratch copy of the Preferences: stated values give http://127.0.0.1:8000/docs and /redoc; host 0.0.0.0 with port 9001 and protocol HTTPS each moved both addresses with the Base
+                  URL; with a generated key both addresses are the Base URL with that key followed by /docs and /redoc. The project''s Configuration holds both addresses equal to its Base URL plus the two locations.'
+            P4-G2-T4:
+              id: P4-G2-T4
+              source_id: '011'
+              title: Stop generation on an invalid network value
+              description: When the port is not a valid network port, or the worker count is not a positive
+                integer, stop generation with a clear error naming the value and produce no Configuration;
+                nothing is corrected silently.
+              reason: The Configuration Structure requires valid ports and positive worker counts, and generation
+                never repairs an invalid input by invention.
+              inputs:
+              - Runtime Configuration values
+              - API Configuration Structure rules for port and workers
+              skills: []
+              expected_result: A generation that refuses invalid network values.
+              depends_on:
+              - P4-G2-T1
+              constraints: []
+              acceptance: A port outside the valid range, or a worker count that is zero, negative, or not
+                an integer, stops generation with a clear error and produces no Configuration, while valid
+                values proceed.
+              status: done
+              log:
+              - at: '2026-10-05T01:29:37Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:30:17Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'Generation validates the network values before writing anything: a port that is not an integer between 1 and 65535 (a boolean or text is not an integer here), or a worker count that is not a positive
+                  integer, stops generation with a clear error naming the value, and no Configuration is produced; valid values proceed.'
+                evidence: 'Trials on a scratch copy of the Preferences: ports 0, 65536, the text ''8000'', and true each stopped with a clear error; ports 1 and 65535 generated normally; worker counts 0, -1, 1.5, and
+                  the text ''2'' each stopped; worker count 1 generated normally. The project''s Configuration was not touched by any trial.'
+            P4-G2-T5:
+              id: P4-G2-T5
+              source_id: '011'
+              title: Generate a random URL Key when the key setting is on
+              description: When API Preferences switch the key setting on, generate a random URL-safe key
+                of the configured length and write it into the runtime Configuration as the key; when the
+                setting is off, write an empty key so the Base URL carries no key segment.
+              reason: An Endpoint need not sit at a bare, guessable address.
+              inputs:
+              - API Preferences for the key setting and its length
+              - API Configuration Structure rules for the key
+              skills: []
+              expected_result: A Configuration whose key follows the key setting.
+              depends_on:
+              - P4-G2-T1
+              constraints: []
+              acceptance: With the setting on, the first generation writes a non-empty key of exactly the
+                configured length made only of URL-safe characters, and two independent first generations
+                give different keys; with the setting off, the key is empty.
+              status: done
+              log:
+              - at: '2026-10-05T01:29:37Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:30:17Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'Added generation of the URL Key: when the key setting is on, a random key of exactly the configured length is generated and written as the Configuration''s key; when it is off the key is empty
+                  so the Base URL has no key segment. The documentation addresses follow the Base URL and therefore the key.'
+                evidence: 50 independent first generations all gave a key of exactly 32 characters made only of letters, digits, hyphen, and underscore, and all 50 were different; key lengths 1, 8, and 64 gave keys of
+                  exactly those lengths; with the setting off the key is empty and the Base URL has no key segment. The project's own Configuration now holds a generated 32-character URL-safe key (not recorded here)
+                  and its Base URL and both documentation addresses end or continue with that key.
+              - at: '2026-10-05T01:30:17Z'
+                by: '012'
+                event: decision
+                unset: The alphabet and random source of the URL Key
+                chosen: Letters, digits, hyphen, and underscore, drawn one character at a time from the operating system's cryptographically secure random source
+                why: The Definition asks for a random URL-safe key of the configured length; these characters are valid unescaped in an address, and a secure source makes the key unguessable.
+            P4-G2-T6:
+              id: P4-G2-T6
+              source_id: '011'
+              title: Keep an existing URL Key on every later generation
+              description: Keep the key already in the runtime Configuration when generation runs again while
+                the key setting is on, and never generate a new one over it.
+              reason: A key that moves would break the address under every client that already uses it.
+              inputs:
+              - The existing runtime Configuration
+              skills: []
+              expected_result: A key that is stable across generations.
+              depends_on:
+              - P4-G2-T5
+              constraints: []
+              acceptance: Regenerating API any number of times with the key setting on leaves the key unchanged,
+                and removing the Configuration before generating produces a new key.
+              status: done
+              log:
+              - at: '2026-10-05T01:30:30Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:31:03Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'Added the keep rule: while the key setting is on and the runtime Configuration already holds a non-empty key, every later generation keeps it and derives the Base URL and documentation addresses
+                  from it; a new key is generated only when none exists.'
+                evidence: 'Against the project''s Configuration: the key''s fingerprint (a short hash, the key itself is not recorded) was identical before and after three regenerations, and the Base URL and both documentation
+                  addresses still ended with or continued from it; after removing the Configuration and generating again the fingerprint changed (a new key). In the scratch trials, twenty regenerations with an existing
+                  key kept it and an empty existing key received a new one.'
+        P4-G3:
+          id: P4-G3
+          title: Group registration
+          description: How API references its Groups, derives their URL segments, registers them beneath the
+            Base URL, and serves no Endpoint of its own.
+          area: 'API''s Groups layer: Group References, URL segments, registration, and the closed set of
+            Endpoints it serves.'
+          does: Every listed Group is reachable beneath its own segment after the Base URL, its Endpoints
+            are served exactly as the Group states them, and API serves no Endpoint of its own.
+          constraints: []
+          task_count: 6
+          tasks:
+            P4-G3-T1:
+              id: P4-G3-T1
+              source_id: '011'
+              title: Resolve every Group Reference to its own sources
+              description: Hold in API only a Group Reference for every listed Group, keyed by the fixed role
+                that Group's own Preferences declare, and resolve each Reference to exactly one existing Definition
+                and exactly one existing Preferences. A missing, stale, or ambiguous Reference stops generation
+                with a clear error, and a Group's configurable name never changes its Reference.
+              reason: Each Group needs one authoritative contract that is not copied into API and that survives
+                renaming.
+              inputs:
+              - API Preferences' Group list
+              - Each Group's own Definition and Preferences
+              skills: []
+              expected_result: One resolved Definition and Preferences for every listed Group.
+              depends_on:
+              - P4-G1-T1
+              constraints: []
+              acceptance: Every listed Group resolves to exactly one existing Definition and one existing
+                Preferences; a Reference with no matching source, a stale one, or one matching more than one
+                source stops generation with a clear error, and renaming a Group leaves its Reference resolving.
+              status: done
+              log:
+              - at: '2026-10-05T01:28:37Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:29:28Z'
+                by: '012'
+                status: done
+                event: completed
+                note: Resolved every Group Reference from the API Preferences' Group list (keyed by the fixed role) to exactly one existing Definition and one existing Preferences, and checked that the Group's own Preferences
+                  declare that same role; a missing, stale, or ambiguous Reference stops generation with a clear error naming the Reference, and the Group's configured name is read from its own Preferences so renaming
+                  never touches the Reference.
+                evidence: 'On the real sources role entity resolves to its one Definition and one Preferences (name Entity). Trials on a scratch copy of the Preferences (the Interface never written): a Reference whose
+                  Preferences declare another role, a missing Definition, and a pattern matching several files each stopped generation with a clear error; a second valid Group was accepted; a Group renamed with its role
+                  unchanged still resolved.'
+            P4-G3-T2:
+              id: P4-G3-T2
+              source_id: '011'
+              title: Keep Group sources out of the executable API
+              description: Use each Group's Definition and Preferences as generation sources only, so that
+                none of their content is copied into the executable API.
+              reason: The Group's own sources stay the single authority and change without being duplicated
+                inside API.
+              inputs:
+              - Resolved Group Definitions and Preferences
+              skills: []
+              expected_result: An executable API that carries no copy of any Group source.
+              depends_on:
+              - P4-G3-T1
+              constraints: []
+              acceptance: No text of any Group's Definition or Preferences is present in the executable API.
+              status: done
+              log:
+              - at: '2026-10-05T01:29:37Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:30:17Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'Used each Group''s Definition and Preferences as generation sources only: the generation tool reads them and writes none of their text into the executable; the Group package carries only its own
+                  statement in the Schema''s shape.'
+                evidence: A search of the five executable files now present (package source, Configuration, and project file) for every sentence of 20 or more characters of the Group Definition, Group Preferences, API
+                  Definition, and API Preferences (371 pieces) found no verbatim match.
+            P4-G3-T3:
+              id: P4-G3-T3
+              source_id: '011'
+              title: Derive each Group's URL segment from its configured name
+              description: Derive for every Group one valid URL segment from the Group's configured name in
+                its own Preferences, and keep the segments unique. An invalid or colliding segment stops generation
+                with a clear error; nothing is renamed silently.
+              reason: A client finds a Group from its public name without an ambiguous address.
+              inputs:
+              - Each Group's configured name
+              skills: []
+              expected_result: One valid, unique segment for every listed Group.
+              depends_on:
+              - P4-G3-T1
+              constraints: []
+              acceptance: Each Group has one valid segment derived from its configured name, no two Groups
+                share a segment, and an invalid or colliding name stops generation with a clear error and
+                no rename.
+              status: done
+              log:
+              - at: '2026-10-05T01:29:37Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:30:17Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'Each Group''s URL segment is derived from its configured name in its own Preferences and checked before anything is written: the name in lower case, valid only if it starts with a letter or digit
+                  and holds only lower-case letters, digits, hyphens, and underscores; no two Groups may share a segment; an invalid or colliding name stops generation with a clear error naming the Group, and nothing
+                  is renamed.'
+                evidence: 'On the real sources Entity gives the segment entity. Trials with a second Group on a scratch copy of the Preferences: Other, Records, A, and under_score-ok1 gave valid distinct segments; Entity
+                  and ENTITY collided and stopped; ''Order Book'', ''Bad/Name'', ''Café'', an empty name, and ''-lead'' were rejected as invalid, each with a clear error and no rename.'
+              - at: '2026-10-05T01:30:17Z'
+                by: '012'
+                event: decision
+                unset: How a Group's configured name becomes its URL segment
+                chosen: The name in lower case, valid only when it matches letters, digits, hyphens, and underscores starting with a letter or digit; any other name stops generation
+                why: The Definition requires a valid segment derived from the configured name and a clear error rather than a silent rename, but does not define validity; lower case keeps addresses predictable.
+            P4-G3-T4:
+              id: P4-G3-T4
+              source_id: '011'
+              title: Register every listed Group beneath its segment
+              description: Register every Group in the API Preferences' Group list beneath the Base URL at
+                the segment of its configured name, serving that Group's own Endpoints, so that a Group added
+                to or removed from the list adds or removes its registration and nothing unlisted is registered.
+              reason: Clients need one address for every capability area.
+              inputs:
+              - API Preferences' Group list
+              - Each Group's segment
+              - Each Group's Endpoints
+              skills:
+              - fastapi
+              expected_result: Every listed Group reachable beneath its own segment.
+              depends_on:
+              - P4-G3-T3
+              - P4-G4-T1
+              - P4-G6-T5
+              - P4-G7-T3
+              constraints: []
+              acceptance: Each listed Group's Endpoints are reachable beneath the Base URL and that Group's
+                segment, nothing unlisted is registered, and the registrations change when the Group list
+                changes.
+              status: done
+              log:
+              - at: '2026-10-05T01:33:51Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:34:53Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'Registered every Group in the API Preferences'' Group list beneath the Base URL at the segment of its configured name: each Group package publishes one ordered collection of its Adapters'' routers
+                  and Bootstrap includes every router of every listed Group beneath the key and the Group''s segment, taking the key from the runtime Configuration; nothing unlisted is registered, and the registrations
+                  are generated from the list. The Adapter segment inside each Group is added by the later full-URL Task, so until then the Adapters'' Endpoints share addresses beneath the Group segment.'
+                evidence: The API holds 15 included routers, all beneath one prefix (the key followed by /entity), equal to the Entity Group's collection, and its only other routes are the three documentation addresses.
+                  A request beneath that prefix reached a registered Endpoint (an answer from it, not 404); the same operation without the key, under another Group name, directly under the key, and at the root were all
+                  404. Generated for a scratch copy of the Preferences, adding a second Group added its registration (/other) and removing it removed it again, with no hand edit.
+              - at: '2026-10-05T01:34:53Z'
+                by: '012'
+                event: decision
+                unset: How a Group hands its Endpoints to Bootstrap
+                chosen: Each Group package publishes one ordered collection of its Adapters' routers, and Bootstrap includes every router of every listed Group beneath the key and the Group's segment
+                why: The Preferences ask Bootstrap to include each Group's routers under its segment but not how it finds them without reading a Definition or Preferences at runtime; a generated collection keeps Bootstrap
+                  free of Group detail.
+            P4-G3-T5:
+              id: P4-G3-T5
+              source_id: '011'
+              title: Serve each Group's Endpoints exactly as the Group states them
+              description: 'Add no Endpoint, wrapper, or behaviour of API''s own to what a Group serves: every
+                request beneath a Group''s segment is answered by that Group''s own Endpoint exactly as the
+                Group states it, beyond the shared network policies API declares for every Group.'
+              reason: Every capability has one owner, and API never changes what a Group does with a request.
+              inputs:
+              - Each Group's own Endpoints
+              - API's registrations
+              skills:
+              - fastapi
+              expected_result: Registrations that add nothing to the Groups.
+              depends_on:
+              - P4-G3-T4
+              - P4-G9-T2
+              constraints: []
+              acceptance: A request to a Group's Endpoint through API gets the same answer that Group's Endpoint
+                gives on its own, and API adds no Endpoint, wrapper, or behaviour to it beyond the shared
+                network policies.
+              status: done
+              log:
+              - at: '2026-10-05T01:38:44Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:39:42Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'API adds no Endpoint, wrapper, or behaviour of its own to what a Group serves: Bootstrap only includes the Group''s routers beneath the key and the Group''s segment, and every request beneath that
+                  segment is answered by the Group''s own Endpoint. The shared cross-origin policy is the only thing applied around it.'
+                evidence: 'On a scratch copy of the Database library and its storage, 180 requests (reads, aggregates, a missing record, an unknown operator, a malformed id, limit and body, and an unknown Field, across
+                  all 15 Adapters) were sent both to the Group''s routers mounted alone in a bare app and through API: the status and content were identical for all 180, and a refused method was refused the same way
+                  (405 and 405). The only header API adds is Vary: Origin, set by the shared cross-origin policy, plus the origin permission on requests that carry an Origin; API''s routes beyond the Group''s are exactly
+                  the three documentation addresses.'
+            P4-G3-T6:
+              id: P4-G3-T6
+              source_id: '011'
+              title: Serve no Endpoint of API's own
+              description: 'Serve no Endpoint of API''s own: every address that is neither beneath a registered
+                Group''s segment nor one of the interactive documentation addresses is not served as an Endpoint.'
+              reason: API has no capability of its own, and its Principle forbids one.
+              inputs:
+              - API's registered Groups
+              - The interactive documentation addresses
+              skills: []
+              expected_result: A closed set of served addresses.
+              depends_on:
+              - P4-G3-T4
+              - P4-G5-T3
+              constraints: []
+              acceptance: A request to the Base URL itself, to a made-up address, or to any address outside
+                a registered Group's segment other than the two documentation addresses is not served as an
+                Endpoint, and API defines no Endpoint, wrapper, or behaviour of its own.
+              status: done
+              log:
+              - at: '2026-10-05T01:39:42Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:39:59Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'API serves no Endpoint of its own: the only routes it holds besides the Group''s are the interactive documentation (its two pages and the schema document they load), all beneath the key; every
+                  other address is not served, and API defines no Endpoint, wrapper, or behaviour of its own.'
+                evidence: 'Through the framework''s test client against the real API: GET and POST at the bare Base URL, the unkeyed /docs, /redoc, and /openapi.json, the key alone, the Group segment alone, an Adapter
+                  without an operation, a made-up health address, the OAuth redirect helper, and the root all answered 404 (12 of 12); a Group Endpoint refused GET, PUT, and DELETE with 405; the API''s routes beyond
+                  the Group''s are exactly the three documentation addresses. The documentation''s schema document is a third documentation address beside the two pages the Plan names; it is part of the documentation
+                  (recorded as a decision of the first documentation Task) and is not an Endpoint of any Group.'
+        P4-G4:
+          id: P4-G4
+          title: Bootstrap
+          description: The single runtime entry point that composes and runs API.
+          area: 'API''s Bootstrap: creating, composing, and serving the API from its runtime Configuration.'
+          does: Starting API once reads its Configuration, creates the API, serves every registered Group
+            on the configured address, and nothing more.
+          constraints: []
+          task_count: 5
+          tasks:
+            P4-G4-T1:
+              id: P4-G4-T1
+              source_id: '011'
+              title: Create the API from the runtime Configuration
+              description: 'Provide the single runtime entry point of API: it reads the runtime Configuration
+                and creates the API presenting the Configuration''s title and description. It defines no Group
+                capability and performs no check of its own.'
+              reason: One narrow entry point keeps execution separate from generation sources and from the
+                capabilities it serves.
+              inputs:
+              - Runtime Configuration
+              - API Preferences for the Bootstrap realization
+              skills:
+              - fastapi
+              expected_result: A runnable entry point that creates the API from its Configuration.
+              depends_on:
+              - P4-G2-T2
+              - P4-G1-T2
+              constraints: []
+              acceptance: Starting the entry point reads the runtime Configuration and creates an API carrying
+                the Configuration's title and description, and the entry point defines no Group capability.
+              status: done
+              log:
+              - at: '2026-10-05T01:30:30Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:31:03Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'Provided the single runtime entry point of API: it reads the runtime Configuration (from beside the package) and creates the API presenting the Configuration''s title and description. It defines
+                  no Group capability and performs no check of its own; documentation and Group registration are added by later Tasks. pyyaml is declared as a direct dependency because the Configuration is YAML.'
+                evidence: Loading the entry point created an API whose title is 'Target API' and whose description is the empty description, both equal to the Configuration's values; the API served 0 routes and had no
+                  documentation addresses; the entry point defines two functions (reading the Configuration and creating the API) and no decorated Handler or route.
+              - at: '2026-10-05T01:31:03Z'
+                by: '012'
+                event: decision
+                unset: Where Bootstrap finds the Configuration at runtime
+                chosen: Next to the API package, as config.yaml at the Component root, resolved from the Bootstrap unit's own location
+                why: API Preferences name config.yaml as the Configuration file at the Component root but not how Bootstrap locates it; resolving it from the unit's own location works from any working directory.
+              - at: '2026-10-05T01:31:03Z'
+                by: '012'
+                event: decision
+                unset: Which libraries Bootstrap may import directly
+                chosen: pyyaml is declared as a direct dependency of API (the Configuration is YAML); the web framework is already declared
+                why: A library imported directly must be declared directly; Development defaults leave it unstated.
+            P4-G4-T2:
+              id: P4-G4-T2
+              source_id: '011'
+              title: Serve on the configured address with the configured workers
+              description: Start serving on the Configuration's host and port with the Configuration's number
+                of worker processes.
+              reason: The Configuration is the only place these values are set, so serving must follow it
+                exactly.
+              inputs:
+              - Runtime Configuration host, port, and workers
+              skills:
+              - fastapi
+              expected_result: A running API at the configured address.
+              depends_on:
+              - P4-G4-T1
+              constraints: []
+              acceptance: A request sent to the configured host and port is answered, and the number of worker
+                processes serving equals the configured count.
+              status: done
+              log:
+              - at: '2026-10-05T01:31:19Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:32:03Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'Bootstrap starts serving on the Configuration''s host and port with the Configuration''s number of worker processes: it starts the server through the API''s import string (api.bootstrap:app) with
+                  those three values read from the runtime Configuration, exposed as a main function and a module entry, and uvicorn is declared as a direct dependency.'
+                evidence: 'On a scratch copy of the API (so port 8000 was not used) with the Configuration changed to port 8765 and 3 workers: the server listened on 127.0.0.1:8765, started exactly 3 server processes
+                  under one parent (the fourth child is Python''s resource-tracker helper), answered a request at the configured address (HTTP 404, since no Group was registered yet), nothing answered on port 8000, and
+                  Ctrl+C stopped it cleanly.'
+              - at: '2026-10-05T01:32:03Z'
+                by: '012'
+                event: decision
+                unset: How serving is started with several worker processes
+                chosen: Bootstrap starts the server through its import string (api.bootstrap:app) with the Configuration's host, port, and workers, and exposes a main function and a module entry
+                why: A worker count above one requires an import string, not an app object; the API Preferences give only 'Create one FastAPI app from config.yaml ... and starts serving'.
+            P4-G4-T3:
+              id: P4-G4-T3
+              source_id: '011'
+              title: Permit cross-origin requests as API Preferences declare
+              description: Apply the cross-origin policy API Preferences declare to every request API serves,
+                so browser clients of other origins can use every Group's Endpoints under that policy.
+              reason: Browser clients served from another origin need the declared policy before they can
+                call the API.
+              inputs:
+              - API Preferences for the cross-origin policy
+              skills:
+              - fastapi
+              expected_result: A running API that applies the declared cross-origin policy.
+              depends_on:
+              - P4-G4-T1
+              constraints: []
+              acceptance: A cross-origin request to a Group Endpoint, including its preflight, receives exactly
+                the cross-origin permissions declared for API, no more and no less.
+              status: done
+              log:
+              - at: '2026-10-05T01:31:19Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:32:03Z'
+                by: '012'
+                status: done
+                event: completed
+                note: Applied the cross-origin policy API Preferences declare to every request API serves, through the framework's cross-origin middleware with the declared origins, methods, headers, and no credentials.
+                evidence: 'Through the framework''s test client: a preflight from https://other.example answered 200 with allow-origin ''*'', allow-methods listing every method, and allow-headers echoing the requested
+                  custom header; credentials were not permitted (declared false); an actual cross-origin response carried allow-origin ''*''; a request without an Origin received no cross-origin headers; the declared
+                  policy equals the Preferences (origins, methods, headers all ''*''). No Group Endpoint existed yet, so the observation was made on an arbitrary address and is repeated on Group Endpoints once they exist.'
+            P4-G4-T4:
+              id: P4-G4-T4
+              source_id: '011'
+              title: Read no Definition or Preferences at runtime
+              description: Compose and run API from the runtime Configuration and the generated executable
+                only, reading no API or Group Definition or Preferences while running.
+              reason: Execution must stay separate from generation sources.
+              inputs:
+              - The running API's inputs
+              skills: []
+              expected_result: A running API independent of every Definition and Preferences.
+              depends_on:
+              - P4-G3-T4
+              - P4-G3-T2
+              constraints: []
+              acceptance: With every Definition and Preferences unavailable, API starts and answers every
+                Group Endpoint exactly as before.
+              status: done
+              log:
+              - at: '2026-10-05T01:38:44Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:39:42Z'
+                by: '012'
+                status: done
+                event: completed
+                note: Bootstrap composes and runs API from the runtime Configuration and the generated executable only; it names no Definition or Preferences and reads none at runtime.
+                evidence: 'An audit hook recorded every file opened under the Interface while the API was imported, created, and answered about 200 requests, including the documentation pages: none. Bootstrap''s source
+                  mentions no Definition, Preferences, or Interface location. The generated Group package and Adapters carry only the Group''s own statement, and a search earlier in this run found no verbatim Group or
+                  API source text in the executable.'
+            P4-G4-T5:
+              id: P4-G4-T5
+              source_id: '011'
+              title: Take every runtime value only from the runtime Configuration
+              description: 'Make every value the Configuration Structure defines reach the running API only
+                from the runtime Configuration: the title, description, key, host, port, workers, and documentation
+                addresses. Source holds no runtime value of its own.'
+              reason: An operator finds and changes the API's address and behaviour in one place, never in
+                source.
+              inputs:
+              - Runtime Configuration
+              - API Configuration Structure
+              skills:
+              - fastapi
+              expected_result: A running API whose runtime values all come from the Configuration.
+              depends_on:
+              - P4-G4-T2
+              - P4-G3-T4
+              - P4-G5-T2
+              constraints: []
+              acceptance: Changing each value in the runtime Configuration (title, description, key, host,
+                port, workers, and documentation addresses) changes the running API accordingly with no change
+                to any other source, and no runtime value is held anywhere else.
+              status: done
+              log:
+              - at: '2026-10-05T01:38:44Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:39:42Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'Every value the Configuration Structure defines reaches the running API only from the runtime Configuration: the title and description set the API itself, the key sets every address''s first segment,
+                  the documentation addresses set where the pages are served, and the host, port, and workers set how it is served. Source holds none of these values; it holds only framework conventions (for example
+                  the schema document''s name) that the Structure does not define.'
+                evidence: 'With a scratch Configuration (the project''s untouched): changing the title and description changed the API''s title and description; changing the key made the new key''s Endpoints and both
+                  pages answer (200) and the old key''s answer 404; changing only the documentation addresses moved the two pages (new 200, old 404) while Endpoints stayed; an empty key moved everything to the bare Base
+                  URL (Endpoints and the page 200, keyed address 404). Host, port, and workers were observed to follow the Configuration earlier in this run (a scratch Configuration with port 8765 and 3 workers gave
+                  3 server processes there). Source shows no literal title, address, port, key, or worker count.'
+        P4-G5:
+          id: P4-G5
+          title: Interactive documentation
+          description: The interactive documentation of the served Endpoints, which API always serves when
+            its selected package offers it.
+          area: 'API''s interactive documentation pages: their addresses, their availability, and their content.'
+          does: A client can discover and try every Endpoint from the interactive documentation at the configured
+            addresses, and the documentation shows nothing the Groups do not serve.
+          constraints: []
+          task_count: 3
+          tasks:
+            P4-G5-T1:
+              id: P4-G5-T1
+              source_id: '011'
+              title: Serve the Swagger documentation at its configured address
+              description: Serve the interactive documentation page of the first kind API Preferences name
+                at the full address the runtime Configuration holds for it, so it follows the Base URL and
+                any key.
+              reason: Every client can discover and try every Endpoint without reading source.
+              inputs:
+              - Runtime Configuration's documentation addresses
+              - API Preferences for the documentation locations
+              skills:
+              - fastapi
+              expected_result: The first interactive documentation page, served.
+              depends_on:
+              - P4-G4-T1
+              - P4-G2-T3
+              constraints: []
+              acceptance: A request to the Configuration's first documentation address is answered with an
+                interactive documentation page, and a request to the same location without the key is not
+                answered.
+              status: done
+              log:
+              - at: '2026-10-05T01:31:19Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:32:03Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'Served the first interactive documentation page at the full address the runtime Configuration holds for it: Bootstrap takes the page''s location from that address, so it follows the Base URL and
+                  the key, and the page''s schema document is served beside it under the same key.'
+                evidence: 'Through the framework''s test client: a GET at the Configuration''s first documentation address (under the key) answered 200 with an HTML interactive page; the schema document it loads answered
+                  200 under the key; the same locations without the key (/docs and /openapi.json) answered 404; the second page was not served yet and the framework''s OAuth redirect helper address answered 404.'
+              - at: '2026-10-05T01:32:03Z'
+                by: '012'
+                event: decision
+                unset: Where the documentation's schema document is served, and whether the framework's OAuth redirect helper is kept
+                chosen: The schema document is served as openapi.json directly under the Base URL's key segment, and the OAuth redirect helper is switched off
+                why: The documentation page must load its schema from an address that follows the key, and API authenticates nothing so the helper is an unused address of the API's own.
+            P4-G5-T2:
+              id: P4-G5-T2
+              source_id: '011'
+              title: Serve the ReDoc documentation at its configured address
+              description: Serve the interactive documentation page of the second kind API Preferences name
+                at the full address the runtime Configuration holds for it, so it follows the Base URL and
+                any key.
+              reason: Clients must be able to read the same documentation in both forms the Preferences name.
+              inputs:
+              - Runtime Configuration's documentation addresses
+              - API Preferences for the documentation locations
+              skills:
+              - fastapi
+              expected_result: The second interactive documentation page, served.
+              depends_on:
+              - P4-G5-T1
+              constraints: []
+              acceptance: A request to the Configuration's second documentation address is answered with an
+                interactive documentation page, and changing the Configuration's key moves both pages with
+                the Base URL.
+              status: done
+              log:
+              - at: '2026-10-05T01:32:21Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:32:48Z'
+                by: '012'
+                status: done
+                event: completed
+                note: Served the second interactive documentation page at the full address the runtime Configuration holds for it, taking its location from that address exactly as the first page does, so it follows the
+                  Base URL and the key.
+                evidence: 'Through the framework''s test client: a GET at the Configuration''s second documentation address (under the key) answered 200 with an HTML interactive page; /redoc without the key answered
+                  404. With the key in a scratch Configuration changed to another value, both pages answered 200 at the new key''s addresses and 404 at the old key''s, so changing the key moves both pages with the Base
+                  URL. The project''s Configuration was not changed.'
+            P4-G5-T3:
+              id: P4-G5-T3
+              source_id: '011'
+              title: Show every served Endpoint in the documentation and nothing else
+              description: Make the interactive documentation describe every Endpoint the registered Groups
+                serve, and only those, so that it shows nothing the Groups do not serve and never presents
+                the documentation pages themselves as Endpoints.
+              reason: A client relies on the documentation to know exactly what the Groups serve.
+              inputs:
+              - The registered Groups' Endpoints
+              - The interactive documentation pages
+              skills:
+              - fastapi
+              expected_result: Documentation that matches the served Endpoints one to one.
+              depends_on:
+              - P4-G3-T4
+              - P4-G5-T2
+              constraints: []
+              acceptance: The documentation lists every Endpoint of every registered Group with its method
+                and address, lists nothing else, and changes when a Group's Endpoints change without a hand
+                edit.
+              status: done
+              log:
+              - at: '2026-10-05T01:38:44Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:39:42Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'The interactive documentation describes exactly the Endpoints the registered Groups serve and nothing else: its schema document is built by the framework from the registered Groups'' routes, the
+                  documentation pages and the schema document are not routes of any Group and so are never listed, and it changes with the Groups without a hand edit.'
+                evidence: The schema document under the key lists 180 Endpoint operations, equal to the set derived independently from Logic's published Child Services and Actions (every one POST, at the keyed Group
+                  and Adapter address, with the identifier in the address for the 60 that take one); no documentation address appears among them; the interactive page loads that schema document from the keyed address;
+                  its title is the Configuration's (an empty description is omitted). Adding or removing a Group, Entity, or Action changes the schema document because it is read from the registered routes (observed
+                  for the routes in the earlier trials).
+        P4-G6:
+          id: P4-G6
+          title: Entity Group Adapters
+          description: 'Entity Group turns Entity Service into API Endpoints: one Adapter for every Entity
+            Entity Service presents, bound to that Entity, with one Endpoint for every Action of its Child
+            Service.'
+          area: Entity Group's source, its Adapters, and their binding to Entities.
+          does: Every Entity that Entity Service presents has one Adapter bound to it, holding one Endpoint
+            for every Action of its Child Service.
+          constraints: []
+          task_count: 5
+          tasks:
+            P4-G6-T1:
+              id: P4-G6-T1
+              source_id: '011'
+              title: Reach the application only through Logic's Interface
+              description: Make Entity Group obtain Entities, Actions, and their public contracts only from
+                Entity Service through Logic's public Interface, and call Actions only through that same boundary;
+                it uses no other application Component's interface.
+              reason: One source keeps every Adapter and Endpoint aligned with the authoritative contract.
+              inputs:
+              - Logic's public Interface
+              - Entity Group Preferences
+              skills: []
+              expected_result: An Entity Group whose only view of the application is Entity Service through
+                Logic's Interface.
+              depends_on:
+              - P4-G1-T2
+              constraints: []
+              acceptance: Everything Entity Group knows about Entities, Actions, and contracts comes from
+                Entity Service through Logic's public Interface, and it uses no other application Component's
+                public Interface.
+              status: done
+              log:
+              - at: '2026-10-05T01:28:37Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:29:28Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'Created the Entity Group package and established that it learns about Entities, Actions, and contracts only from Entity Service through Logic''s public Interface: the generation tool reads them
+                  by importing only Logic''s Interface (dynamically) and reads no other application Component, and the Group package imports nothing yet beyond what the following Tasks add through the same Interface.'
+                evidence: A static scan of the generation tool finds one third-party import (the YAML reader, used for the Preferences) and no reference to the Model or Database modules; through Logic's Interface alone
+                  it found 15 Child Services with 12 Actions each (add, update, list, get_by_id, delete, enable, disable, count, sum, min, max, truncate).
+            P4-G6-T2:
+              id: P4-G6-T2
+              source_id: '011'
+              title: State the Entity Group contract
+              description: State Entity Group's source (Entity Service through Logic's Interface and what
+                it takes from it), its Adapters (one per Entity), and its Endpoints (one per Action), in the
+                shape the API Group Interface Schema defines, together with the Group's role and configured
+                name. The statement names no method, address, parameter placement, protocol, or technology.
+              reason: API realizes every Group the same way from this one statement.
+              inputs:
+              - API Group Interface Schema
+              - Entity Group Preferences for its role and name
+              skills: []
+              expected_result: A Group statement in the Schema's shape.
+              depends_on:
+              - P4-G6-T1
+              constraints: []
+              acceptance: The statement has the Schema's parts (group, source, adapters, endpoints, parameters,
+                handler) and names no HTTP method, address, parameter placement, protocol, or technology.
+              status: done
+              log:
+              - at: '2026-10-05T01:29:37Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:30:17Z'
+                by: '012'
+                status: done
+                event: completed
+                note: Stated the Entity Group contract in the Group package's own opening documentation, one labelled line for each part of the API Group Interface Schema (group, source, adapters, endpoints, parameters,
+                  handler), with the Group's role and configured name; it names no method, address, parameter placement, protocol, or technology.
+                evidence: The statement holds all six Schema parts; a search for method, address, placement, protocol, technology, and format words (http, post, method, address, placement, protocol, fastapi, router,
+                  json, body, url) in it finds none.
+              - at: '2026-10-05T01:30:17Z'
+                by: '012'
+                event: decision
+                unset: Where and in what form the Group states its contract (the Group Interface Schema fixes the parts but not a form)
+                chosen: A documented statement in the Entity Group package's opening documentation, one labelled line per part
+                why: The Preferences give no location or form; the package's own opening documentation is the place a reader of the Group finds it, and it adds no executable behaviour.
+            P4-G6-T3:
+              id: P4-G6-T3
+              source_id: '011'
+              title: Provide one Adapter for every Entity Entity Service presents
+              description: Give Entity Group exactly one Adapter for each Entity that Entity Service presents,
+                derived from what Entity Service publishes and named from the Entity by the configured Adapter
+                naming pattern, so an Entity added or removed adds or removes its Adapter. No Entity is filtered
+                out.
+              reason: The API surface must stay a complete representation of Entity Service.
+              inputs:
+              - Entity Service as published through Logic's Interface
+              - Entity Group Preferences for the Adapter naming pattern
+              skills: []
+              expected_result: An Adapter for every Entity.
+              depends_on:
+              - P4-G6-T2
+              constraints: []
+              acceptance: The Adapters correspond one to one with the Entities Entity Service presents, none
+                missing and none extra, each named from its Entity by the pattern, and an Entity added to
+                or removed from Entity Service gains or loses its Adapter without a hand edit.
+              status: done
+              log:
+              - at: '2026-10-05T01:30:30Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:31:03Z'
+                by: '012'
+                status: done
+                event: completed
+                note: Gave Entity Group exactly one Adapter for each Child Service Entity Service publishes, derived by the generation tool from Logic's published Entity Service and named from the Entity (snake case);
+                  each Adapter holds one router. No Entity is filtered out, and an Entity added or removed adds or removes its Adapter, including removing the obsolete unit.
+                evidence: 15 Child Services published and 15 Adapter modules generated, equal as sets with none missing or extra; each holds exactly one router. A trial in scratch space with Entity Service losing Position
+                  and gaining a made-up Entity produced a module for the new Entity, none for Position, and removed a stale module, with no hand edit.
+              - at: '2026-10-05T01:31:03Z'
+                by: '012'
+                event: decision
+                unset: How an Adapter is named from its Entity (the Group's naming pattern is just the Entity)
+                chosen: One module per Adapter named by the Entity's name in snake case (AccountGroup gives account_group), which is also the Adapter's URL segment
+                why: Entity Group Preferences give the pattern <entity> and the language profile selects snake_case identifiers; the same form is a valid unescaped address segment.
+            P4-G6-T4:
+              id: P4-G6-T4
+              source_id: '011'
+              title: Bind every Adapter permanently to its own Entity
+              description: Bind each Adapter to the one Entity it exists for, so that selecting an Adapter
+                selects that Entity once. A caller never supplies the Entity, and an Adapter never accepts
+                another one.
+              reason: Callers must never repeat an Entity's identity, and selecting an Adapter must reliably
+                select the Entity its Actions work on.
+              inputs:
+              - Entity Group's Adapters
+              - Child Services published by Entity Service
+              skills: []
+              expected_result: Adapters that each act on exactly one Entity.
+              depends_on:
+              - P4-G6-T3
+              constraints: []
+              acceptance: Every request to an Adapter operates on that Adapter's Entity only, and no request
+                value can select a different Entity or replace the bound one.
+              status: done
+              log:
+              - at: '2026-10-05T01:31:19Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:32:03Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'Bound each Adapter permanently to the one Child Service of its own Entity: every Adapter module obtains that Child Service through Logic''s Interface as a constant of the module and refers to no
+                  other Entity, so a caller never supplies the Entity and an Adapter cannot act on another one.'
+                evidence: 'All 15 Adapter modules were loaded and read as syntax trees: each module''s bound service is the identical published Child Service of its own Entity and the only Entity name it refers to is
+                  its own (15 of 15). That no request value can select another Entity is observed again when Endpoints exist.'
+            P4-G6-T5:
+              id: P4-G6-T5
+              source_id: '011'
+              title: Provide one Endpoint for every Action of each Adapter's Child Service
+              description: Give each Adapter exactly one Endpoint for each Action its Entity's Child Service
+                offers, derived from the Actions Entity Service publishes, so an Action added or removed adds
+                or removes its Endpoint. No Action is filtered out and no Action outside the Child Service
+                is added.
+              reason: The API surface must stay a complete representation of what Entity Service can do.
+              inputs:
+              - Actions of each Child Service as published through Logic's Interface
+              skills:
+              - fastapi
+              expected_result: An Endpoint for every Action of every Entity.
+              depends_on:
+              - P4-G6-T4
+              constraints: []
+              acceptance: Each Adapter's Endpoints correspond one to one with the Actions of its Child Service,
+                none missing and none extra, and an Action added to or removed from a Child Service gains
+                or loses its Endpoint without a hand edit.
+              status: done
+              log:
+              - at: '2026-10-05T01:32:21Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:32:48Z'
+                by: '012'
+                status: done
+                event: completed
+                note: Gave each Adapter exactly one Endpoint function for each Action its Entity's Child Service offers, derived by the generation tool from the Actions Logic's Entity Service publishes (the 12 Actions
+                  of the shared base, in order); no Action is filtered out and none outside the Child Service is added. At this stage each function only names its operation; address, parameters, and Handler behaviour
+                  come from the following Tasks.
+                evidence: '180 Endpoint functions across 15 Adapters (15 x 12): in every Adapter the set and order of Endpoint names equals the Actions of its Child Service. Trials in scratch space: removing the truncate
+                  Action left 11 Endpoints and no truncate Endpoint; adding an Action named archive gave 13 Endpoints including archive, each with no hand edit.'
+              - at: '2026-10-05T01:32:48Z'
+                by: '012'
+                event: decision
+                unset: How an Endpoint function is named
+                chosen: The Action's name followed by _endpoint, for every Endpoint
+                why: The Preferences ask for one route function per Endpoint without a naming rule; a uniform suffix avoids shadowing names such as list, sum, min, and max inside the Adapter.
+        P4-G7:
+          id: P4-G7
+          title: Endpoint rules
+          description: The common rules every Group's Endpoints follow, applied uniformly by API and never
+            restated by a Group.
+          area: Endpoint identity, parameter placement, uniqueness of public identities, and the full address
+            of every Endpoint.
+          does: Every Endpoint has one predictable method and address, its inputs sit in predictable places,
+            and no two public identities collide.
+          constraints: []
+          task_count: 4
+          tasks:
+            P4-G7-T1:
+              id: P4-G7-T1
+              source_id: '011'
+              title: Derive every Endpoint's method and address from its operation
+              description: Give every Endpoint the one method and address form the Endpoint rules define for
+                its operation, with the identifier placed in the address when the operation takes an id. Derive
+                it from the operation's structure each time API is generated; never list or map an Endpoint
+                by hand and never guess a method from what an operation does.
+              reason: A change in an operation must never leave a stale Endpoint list or an unpredictable
+                address.
+              inputs:
+              - API Preferences' Endpoint rules
+              - The operations of each Child Service
+              skills:
+              - fastapi
+              expected_result: Endpoints whose method and address follow their operations.
+              depends_on:
+              - P4-G6-T5
+              constraints: []
+              acceptance: Every Endpoint answers only the method and address form the Endpoint rules define
+                for its operation, with the identifier in the address exactly when the operation takes an
+                id, and changing an operation changes its Endpoint without a hand edit.
+              status: done
+              log:
+              - at: '2026-10-05T01:33:02Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:33:10Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'Gave every Endpoint the one method and address form the Endpoint rules define: the single method POST and the operation''s name as its address, with the identifier added to the address exactly
+                  when the operation takes an id. The method and address are derived by the generation tool from the Action''s published signature each time API is generated; nothing is listed or mapped by hand and no
+                  method is guessed from what an operation does.'
+                evidence: 'Loading all 15 Adapter routers: 180 routes, every one POST, each at /<action> or /<action>/{id}; the expected set was derived independently from each Child Service''s Action signatures and
+                  equals the registered set in every Adapter; 60 Endpoints (4 per Adapter: get_by_id, delete, enable, disable) carry the identifier. Trials earlier in this run showed a changed Action set changes the
+                  Endpoints with no hand edit.'
+            P4-G7-T2:
+              id: P4-G7-T2
+              source_id: '011'
+              title: Place the identifier in the address and every other parameter in the body
+              description: Accept an operation's id parameter from the address and every other parameter from
+                the request body, for every operation, without changing any parameter's name, requirement,
+                structure, meaning, or default by the placement.
+              reason: Inputs must sit predictably in every request of every Group.
+              inputs:
+              - API Preferences' parameter placement rule
+              - The parameters of each operation
+              skills:
+              - fastapi
+              expected_result: Endpoints that take each input from its rule-defined place.
+              depends_on:
+              - P4-G7-T1
+              constraints: []
+              acceptance: For every Endpoint, id is accepted from the address and every other parameter from
+                the body, and no parameter is accepted from anywhere else.
+              status: done
+              log:
+              - at: '2026-10-05T01:33:11Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:33:46Z'
+                by: '012'
+                status: done
+                event: completed
+                note: Made every Endpoint take an operation's id from the address and every other parameter from the request body, each as a named member of one body object, without changing any parameter's name or requirement
+                  by the placement. At this stage the parameters carry their names and placement; their exact requirements, defaults, and value forms are the following Tasks.
+                evidence: 'Using the framework''s own schema, built from all 15 Adapter routers in a scratch app: for all 180 Endpoints the address parameters are exactly [''id''] for the 60 whose Action takes an id
+                  and empty for the rest, the body members are exactly the Action''s other parameters (for example currency list: combination, filters, instance, limit, orders; currency get_by_id: id in the address and
+                  instance in the body), and nothing is accepted from anywhere else.'
+              - at: '2026-10-05T01:33:46Z'
+                by: '012'
+                event: decision
+                unset: How the request body is shaped when an Endpoint has exactly one non-id parameter (the framework would otherwise accept that value bare)
+                chosen: Every non-id parameter is a named member of one JSON object body, even when it is the only one
+                why: Parameter names must be kept and placement must be one rule for every Endpoint; embedding makes every body an object keyed by parameter name.
+            P4-G7-T3:
+              id: P4-G7-T3
+              source_id: '011'
+              title: Keep Adapter segments and Endpoint identities valid and unique
+              description: Verify that every Adapter segment and every final method-and-address combination
+                is valid and unique across API, alongside the Group segments. A collision or an invalid value
+                stops generation with a clear error; nothing is renamed silently.
+              reason: Two Groups, Adapters, or operations cannot share one public identity.
+              inputs:
+              - Every Group segment
+              - Every Adapter segment
+              - Every Endpoint's method and address
+              skills: []
+              expected_result: A set of public identities with no invalid value or collision.
+              depends_on:
+              - P4-G7-T1
+              - P4-G3-T3
+              constraints: []
+              acceptance: Every Adapter segment is valid and unique within its Group, no two Endpoints anywhere
+                in API share a method and address, and a collision or invalid value stops generation with
+                a clear error and no rename.
+              status: done
+              log:
+              - at: '2026-10-05T01:33:11Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:33:46Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'Generation checks, before anything is written, that every Adapter segment and every final method-and-address combination is valid and unique, together with the Group segments (one Principle): an
+                  invalid or colliding value stops generation with a clear error and nothing is renamed.'
+                evidence: 'Real set: 15 valid distinct Adapter segments, 180 distinct method-and-address identities, and Group segment entity, all accepted. Trials with scratch variants: two Adapters giving one segment,
+                  an Adapter named ''Bad Name'', one named ''Café'', and two Endpoints with the same method and address were each stopped with an error naming the values and no rename; the real set was accepted again
+                  afterwards.'
+            P4-G7-T4:
+              id: P4-G7-T4
+              source_id: '011'
+              title: Form every Endpoint's full URL
+              description: Make every Endpoint reachable at the Base URL, then its Group's segment, then its
+                Adapter's segment, then its Endpoint address.
+              reason: A client must be able to derive any Endpoint's URL from the parts it knows.
+              inputs:
+              - The Base URL
+              - Each Group's segment
+              - Each Adapter's segment
+              - Each Endpoint's address
+              skills:
+              - fastapi
+              expected_result: Endpoints at their full URLs.
+              depends_on:
+              - P4-G7-T3
+              - P4-G3-T4
+              constraints: []
+              acceptance: Each Endpoint is reachable at exactly the Base URL, its Group's segment, its Adapter's
+                segment, and its Endpoint address in that order, and when a key is set it precedes the Group
+                segment.
+              status: done
+              log:
+              - at: '2026-10-05T01:35:11Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:37:09Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'Made every Endpoint reachable at the Base URL, then its Group''s segment, then its Adapter''s segment, then its Endpoint address: each Adapter''s router carries its own segment as a prefix, the
+                  Group registration adds the key and the Group''s segment, and the Endpoint keeps only its own operation address.'
+                evidence: 'Through the framework''s test client against the real API with its generated key: 180 of 180 Endpoints answered at /<key>/entity/<adapter>/<operation>[/id] (an answer from the Endpoint, not
+                  404); the wrong order (/<key>/currency/entity/count) and the unkeyed address both answered 404; the Configuration''s Base URL ends with the key, which is the first segment of every address.'
+              - at: '2026-10-05T01:37:09Z'
+                by: '012'
+                event: decision
+                unset: How an Adapter's segment is applied to its Endpoints
+                chosen: Each Adapter's router carries its segment as the router prefix, so its Endpoints keep only their own operation address and the Group's registration adds the key and the Group segment
+                why: The Preferences ask for one router per Adapter and the Skill guidance prefers router-level prefixes; the Adapter segment is a property of the Adapter, while the key and Group segment belong to API's
+                  registration.
+        P4-G8:
+          id: P4-G8
+          title: Endpoint parameters
+          description: 'What every Endpoint of Entity Group accepts: its Action''s parameters, in forms a
+            client can express.'
+          area: 'Parameter binding for Entity Group''s Endpoints: names, requirements, defaults, and the forms
+            of Entity, selection, and Instance values.'
+          does: A client can supply every parameter of every Action through its Endpoint and the Action receives
+            equivalent values.
+          constraints: []
+          task_count: 4
+          tasks:
+            P4-G8-T1:
+              id: P4-G8-T1
+              source_id: '011'
+              title: Keep every Action parameter's name, requirement, and default
+              description: Make each Endpoint accept exactly the parameters its Action takes, with the Action's
+                names, its required and optional distinction, and its defaults, so an omitted optional value
+                behaves as the Action defines.
+              reason: A client must be able to move between the Action and its Endpoint without relearning
+                any request.
+              inputs:
+              - The parameters of each Action as published through Logic's Interface
+              skills:
+              - fastapi
+              expected_result: Endpoints whose inputs mirror their Actions' parameters.
+              depends_on:
+              - P4-G7-T2
+              constraints: []
+              acceptance: For every Endpoint, the accepted parameters have the Action's names, the same required
+                and optional distinction, and the same defaults when omitted, with none missing and none extra.
+              status: done
+              log:
+              - at: '2026-10-05T01:33:51Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:34:53Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'Made each Endpoint accept exactly the parameters its Action takes with the Action''s names, its required and optional distinction, and its defaults: a parameter with no default is required, one
+                  with a default is optional and omitted means none, as the Actions define. Value forms are still loose at this stage and are refined by the following Tasks.'
+                evidence: 'Using the framework''s own schema built from all 180 Endpoints: the accepted parameters (address and body) equal the Action''s parameters with none missing and none extra, the required set
+                  equals the Action''s required set exactly (for example sum requires field, list requires nothing and its whole body is optional), and every optional parameter defaults to none as the Action''s does.'
+            P4-G8-T2:
+              id: P4-G8-T2
+              source_id: '011'
+              title: Accept an Entity as request content
+              description: Let a request carry an Entity as its content for every Action that takes an Entity
+                instance, in a form from which the Action receives an equal Entity. The caller never names
+                the Entity type, which the Adapter already binds.
+              reason: Adding and updating records is part of the behaviour the Target requires for every Model,
+                and both Actions take a whole Entity.
+              inputs:
+              - Entity instance parameters of the Actions
+              - The bound Entity of each Adapter
+              skills:
+              - fastapi
+              expected_result: Endpoints that accept a complete Entity.
+              depends_on:
+              - P4-G8-T1
+              - P4-G6-T4
+              constraints: []
+              acceptance: For each Entity, a request whose content describes a complete Entity delivers an
+                equal Entity to the Action, and the caller supplies no Entity type.
+              status: done
+              log:
+              - at: '2026-10-05T01:35:11Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:37:09Z'
+                by: '012'
+                status: done
+                event: completed
+                note: Made the Endpoints of the Actions that take an Entity instance (add and update) accept the Entity as one JSON object member whose keys are the Entity's Field names, the form the Model itself writes
+                  (decimals and datetimes as text, null where unset), and bound it to an Entity of the Adapter's own type, read from the Child Service's own generic base; the caller never names an Entity type and API
+                  imports no other application Component. The shared binding unit sits inside the Entity Group package.
+                evidence: 'On a scratch copy of the Database library and its storage: all 25 Entities (every stored kind plus an added Account with the decimal 1234.5600 and a Position with an offset datetime and decimal
+                  fractions) were written out as request content and rebuilt: 25 of 25 equal to the original and of the bound Entity type, with identical JSON. That the Action receives it is observed again when the Handlers
+                  exist.'
+              - at: '2026-10-05T01:37:09Z'
+                by: '012'
+                event: decision
+                unset: How a client expresses a whole Entity in a request, and how API gets the Entity type without importing the Model
+                chosen: The request member is the Entity's own JSON object as the Model defines it, and the Entity type is read from the Child Service's generic base
+                why: Entity Group may import only Logic's Interface; the Model already defines a lossless JSON form with exact decimals and datetimes, and the Child Service publishes which Entity it is bound to.
+              - at: '2026-10-05T01:37:09Z'
+                by: '012'
+                event: decision
+                unset: Where the shared binding code lives and what it is called
+                chosen: One helper unit inside the Entity Group package, named with a leading underscore, used by every Adapter
+                why: Binding is the same for every Entity, so repeating it in 15 Adapters would duplicate it; the leading underscore marks it as no Adapter and no Endpoint.
+            P4-G8-T3:
+              id: P4-G8-T3
+              source_id: '011'
+              title: Accept query vocabulary values
+              description: 'Let a request express every value an Action''s selection parameters take: conditions
+                on the Entity''s Fields, how conditions combine, orderings with their directions, a limit,
+                and the Field an aggregate works on, in a form from which the Action receives equivalent values.'
+              reason: Listing, counting, and aggregating records are part of the behaviour the Target requires,
+                and every selection value must be expressible by a client.
+              inputs:
+              - Selection parameters of the Actions
+              - The Fields of each bound Entity
+              skills:
+              - fastapi
+              expected_result: Endpoints that accept every selection value.
+              depends_on:
+              - P4-G8-T1
+              - P4-G6-T4
+              constraints: []
+              acceptance: Every Field condition, operator, combination, ordering direction, limit, and Field
+                reference a client can express is delivered to the Action as the equivalent value, so the
+                Action answers as it does when called directly with those values.
+              status: done
+              log:
+              - at: '2026-10-05T01:35:11Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:37:09Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'Made the Endpoints express every selection value in a form the Action receives as the equivalent value: a Field is its name as text, bound to the Entity''s own Field reference; a condition is an
+                  object with field, operator (the member''s name), and an optional value (decimals, dates, datetimes, and times given as text are parsed to the Field''s type, a list for IN); an ordering is an object
+                  with field and an optional direction; the combination, limit, and aggregate Field are plain members. A name that is no attribute of the Entity reaches the Action as given, so the Action rejects it with
+                  its own error.'
+                evidence: 'On the scratch database: all 12 operators bound to a Filter equal to a directly built one (Field reference, operator member, value), 12 of 12; a decimal text became Decimal(''1234.56''), a
+                  datetime text an aware datetime, and a list of decimal texts a tuple of Decimals; orderings with and without a direction bound to the equal Orders; the combination named OR bound to the member and the
+                  aggregate Field to the Entity''s Field reference; a name that is no attribute and a non-Field attribute reached the Action unchanged; the Action answered identically (ids 2 and 1) for the bound values
+                  and for directly built ones.'
+              - at: '2026-10-05T01:37:09Z'
+                by: '012'
+                event: decision
+                unset: How a client expresses Field references, conditions, orderings, a combination, a limit, and the aggregate Field in a request
+                chosen: A Field is its name as text; a condition is an object with field, operator (the member name), and an optional value; an ordering is an object with field and an optional direction; the combination
+                  is the member name; the limit is an integer
+                why: These values are language objects in the Action; names that match the Database's own serialized vocabulary are the plainest request form, and the Child Service's Entity resolves the Field.
+            P4-G8-T4:
+              id: P4-G8-T4
+              source_id: '011'
+              title: Accept the Instance selection
+              description: Let a request select one of the configured Instances by its public name, in a form
+                from which the Action receives the matching Instance value, and let an omitted selection reach
+                the Action as omitted so the application makes its own selection.
+              reason: Every Action accepts an optional Instance, and a client must be able to choose it.
+              inputs:
+              - The Instance parameter of the Actions
+              - The configured Instances the application publishes
+              skills:
+              - fastapi
+              expected_result: Endpoints that accept an Instance selection.
+              depends_on:
+              - P4-G8-T1
+              constraints: []
+              acceptance: A request naming a configured Instance delivers the matching Instance value to the
+                Action, and a request that omits it delivers none.
+              status: done
+              log:
+              - at: '2026-10-05T01:35:11Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:37:09Z'
+                by: '012'
+                status: done
+                event: completed
+                note: Made the Endpoints accept the Instance selection by its public name, validated against the Instance enumeration Logic publishes, so the Action receives the matching member; an omitted selection
+                  reaches the Action as none, leaving the application's own choice.
+                evidence: 'The Instance form accepts ''SQLITE'' as the published member itself and none as none; the published enumeration has one member (SQLITE). Through the Endpoints: a request naming SQLITE and a
+                  request omitting the Instance were accepted, while an unknown name (POSTGRESQL) and a value of the wrong kind were refused with 422 by the request form.'
+              - at: '2026-10-05T01:37:09Z'
+                by: '012'
+                event: decision
+                unset: How the Instance enumeration is written in a type annotation (it is built when Logic loads, so the type checker cannot see its members)
+                chosen: The binding unit names it once as an alias that is Any for the type checker and the real enumeration at run time, and every Endpoint annotates its Instance with that alias
+                why: A variable built at load time is not a valid type for the type checker; the alias keeps type checking clean without changing the runtime form.
+        P4-G9:
+          id: P4-G9
+          title: Handlers
+          description: 'What every Handler does: it calls its Action and returns the Action''s result, and
+            nothing else.'
+          area: 'The Handler of every Endpoint of Entity Group: its one call, its result, and its failures.'
+          does: A request makes exactly its Action's call on the bound Child Service and answers with exactly
+            what the Action returns or raises.
+          constraints: []
+          task_count: 3
+          tasks:
+            P4-G9-T1:
+              id: P4-G9-T1
+              source_id: '011'
+              title: Call the bound Child Service's Action and return its result unchanged
+              description: Make each Handler obtain the bound Child Service through Logic's Interface, call
+                the same-named Action with the values the Endpoint bound, and return exactly the Action's
+                result as the response content, including the empty result for a record that does not exist.
+              reason: Entity Service stays the single owner of Behaviour while every Handler stays uniform.
+              inputs:
+              - Bound request values
+              - The bound Child Service and its Actions
+              skills:
+              - fastapi
+              expected_result: Endpoints that perform their Action and answer with its result.
+              depends_on:
+              - P4-G8-T2
+              - P4-G8-T3
+              - P4-G8-T4
+              - P4-G6-T4
+              - P4-G7-T2
+              constraints: []
+              acceptance: For every Action of every Adapter, a request makes that same Action on the bound
+                Child Service, and the response content equals the Action's result for the same inputs, including
+                an empty result for a missing record.
+              status: done
+              log:
+              - at: '2026-10-05T01:37:16Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:38:22Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'Gave every Endpoint a Handler that obtains its Adapter''s bound Child Service through Logic''s Interface, calls the same-named Action with the values the Endpoint bound, and returns exactly the
+                  Action''s result as JSON content: an Entity as the Model''s own JSON object, a list as an array, a number as a number, an exact decimal as its exact text, a date or time as ISO text, and a missing record
+                  as null. A result encoder was added to the shared binding unit for this.'
+                evidence: With a recording stand-in for every Action on every Child Service, 180 requests each made exactly one call of their own Action on their own Child Service with no keyword arguments and exactly
+                  the bound values (Entity equal to the posted one, id, Field references, Filters, Orders, combination, limit, Instance), and answered the Action's result as JSON (7, 3, 12, null); an exact decimal 1234.5600
+                  came back as that text. On two scratch copies of the Database library and its storage, 178 requests over HTTP and the same 178 directly through the Child Services (all 15 Entities, every Action, Filters
+                  of every operator, orderings, aggregates, exact decimals and offset datetimes, writes, a missing record, constraint errors) produced identical output; the project's own storage was not touched.
+              - at: '2026-10-05T01:38:22Z'
+                by: '012'
+                event: decision
+                unset: How a result becomes response content (the Action returns Entities, lists, numbers, exact decimals, and nothing for a missing record)
+                chosen: 'The result is returned as JSON content: an Entity as the Model''s own JSON object, a list as an array, a decimal as its exact text, a date or time as ISO text, and none as null'
+                why: The framework's default encoding would turn decimals into binary floats and lose exactness; the Model already defines the exact JSON form of an Entity, and a result needs no wrapper.
+              - at: '2026-10-05T01:38:22Z'
+                by: '012'
+                event: decision
+                unset: Whether a Handler obtains the Child Service once at load or on every request
+                chosen: 'On every request: it creates the bound Child Service through Logic''s Interface each time it is called'
+                why: A Child Service holds a database access that opens no connection until used; creating one per request avoids sharing state between worker threads.
+              - at: '2026-10-05T01:38:22Z'
+                by: '012'
+                event: decision
+                unset: Whether Handlers are asynchronous or plain functions
+                chosen: Plain functions, which the framework runs in a thread pool
+                why: The Action calls are blocking; the framework guidance is to use plain functions unless every call is non-blocking.
+            P4-G9-T2:
+              id: P4-G9-T2
+              source_id: '011'
+              title: Add nothing around the Action call
+              description: 'Keep each Handler to obtaining the Child Service, the one Action call, and returning:
+                it adds no decision, semantic validation, initialization, result wrapper, other call, retry,
+                or alternate path.'
+              reason: Behaviour belongs to Entity Service, and a Handler that added its own would diverge
+                from it.
+              inputs:
+              - Each Handler's observable effects
+              skills: []
+              expected_result: Handlers that do nothing but call their Action.
+              depends_on:
+              - P4-G9-T1
+              constraints: []
+              acceptance: Each request causes exactly one call of exactly one Action on the bound Child Service,
+                carrying only the bound request values, and the response is exactly the Action's result with
+                nothing added, wrapped, or retried.
+              status: done
+              log:
+              - at: '2026-10-05T01:38:22Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:38:22Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'Kept each Handler to obtaining the Child Service, the one Action call, and returning: nothing else is added around the call. The encoder only converts the Action''s result to JSON content and is
+                  no decision, validation, wrapper, or second call.'
+                evidence: 'All 180 Handler bodies were read as syntax trees: each is exactly two statements (obtain the Child Service; return the encoded result of one call of its own Action) with no branch, loop, try,
+                  raise, assert, or second call on the Child Service. The spy observation found exactly one call per request, with the bound values only, and no retry after a failure (one attempt was made when the Action
+                  raised).'
+            P4-G9-T3:
+              id: P4-G9-T3
+              source_id: '011'
+              title: Let every Action failure reach the client unchanged
+              description: Make a Handler neither catch, translate, nor suppress an error its Action raises,
+                so that the failure is the Action's own and is answered as the serving boundary answers an
+                unhandled failure.
+              reason: Callers must be able to rely on the Action's failures exactly as Entity Service defines
+                them.
+              inputs:
+              - The errors the Actions raise
+              skills: []
+              expected_result: Endpoints that pass every Action failure through.
+              depends_on:
+              - P4-G9-T1
+              constraints: []
+              acceptance: When an Action raises an error, the request is answered as a failure rather than
+                a success, the Handler produces no response content of its own for it, and no second attempt
+                is made.
+              status: done
+              log:
+              - at: '2026-10-05T01:38:22Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:38:22Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'Handlers neither catch, translate, nor suppress an error their Action raises, so the failure is the Action''s own and the request is answered as the serving boundary answers an unhandled failure.
+                  No source change was needed beyond the Handler Task: the Group source contains no error handling.'
+                evidence: No Group source file contains a try or except. With the framework re-raising server errors, an Action's error reached the serving boundary as the very same error object the Action raised; with
+                  the framework answering normally the client received HTTP 500 with the framework's own plain failure text, no content made by the Handler, and the Action was called once. On the scratch database the
+                  same constraint errors (a duplicate add, truncating a referenced table) were raised as the identical error classes with identical messages directly and through the Endpoints, and an unknown Field name
+                  reached the Action and produced its own invalid-input error.
+        P4-G10:
+          id: P4-G10
+          title: Entity Group documentation
+          description: Entity Group's own documentation, written to the sections and order its Preferences
+            define.
+          area: Entity Group documentation of its overview, Endpoints, use, and verification.
+          does: A client can understand, call, and verify every Entity Group Endpoint from its documentation
+            alone.
+          constraints: []
+          task_count: 2
+          tasks:
+            P4-G10-T1:
+              id: P4-G10-T1
+              source_id: '011'
+              title: Document the Entity Group overview and Endpoints
+              description: Write the overview, explaining what Entity Group is in one paragraph with one request
+                example, and the Endpoints section giving every Entity's Endpoints with their address and
+                Parameters, each with one request example.
+              reason: Clients learn what Entity Group serves from its documentation.
+              inputs:
+              - Entity Group Preferences documentation sections
+              - The running API's Endpoints
+              skills: []
+              expected_result: The overview and Endpoints sections of Entity Group's documentation.
+              depends_on:
+              - P4-G7-T4
+              - P4-G9-T3
+              constraints: []
+              acceptance: Every Entity and every Action appears once with its address and Parameters exactly
+                as the running API serves them, the overview is one paragraph with one request example, and
+                each request example works against the running API.
+              status: done
+              log:
+              - at: '2026-10-05T01:39:42Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:41:41Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'Wrote the Entity Group documentation''s overview (one paragraph and one request example) and its Endpoints section: every Entity''s Endpoints in the Models'' order as a table of action, address,
+                  and parameters read from the API''s own served Endpoints, one request example for each of the 180 Endpoints (placeholder values only), the destructive examples last, dependants before the records they
+                  refer to. Addresses are shown beneath the Base URL with a <key> placeholder, so the generated key itself is not written in the documentation. The file is in the Entity Group package directory, in markdown.'
+                evidence: The 180 table rows equal the 180 Endpoints the API serves (same addresses, each once, with the same parameters, placement, and optionality); each Endpoint has exactly one request example in
+                  the Endpoints section; the overview is one paragraph with one request example; all 181 request examples (those plus the overview's) were run in the documented order against a fresh scratch copy of the
+                  API and the Database storage and every one answered 200; the real key does not appear in the file and the only credential-like values are the placeholders example-password and example-api-key.
+              - at: '2026-10-05T01:41:41Z'
+                by: '012'
+                event: decision
+                unset: Where the Entity Group documentation lives and how its Endpoint tables are produced
+                chosen: A README inside the Entity Group package directory; the tables and examples are produced by a session-local builder that reads the API's own served Endpoints
+                why: Entity Group Preferences name README.md in the Entity Group directory; reading the served Endpoints keeps the tables from drifting from what the API serves.
+              - at: '2026-10-05T01:41:41Z'
+                by: '012'
+                event: decision
+                unset: How examples avoid breaking each other (add examples need existing parents; delete and truncate remove records)
+                chosen: Examples follow the Models' order and are meant to run in order on a fresh installation; the delete and truncate examples are collected at the end, dependants first
+                why: Each Endpoint needs one working example, and records refer to one another, so a fixed order is the only way every example can succeed.
+              - at: '2026-10-05T01:41:41Z'
+                by: '012'
+                event: decision
+                unset: How the generated URL key appears in documentation
+                chosen: Addresses show a <key> placeholder and explain that the key is the key in the API's config.yaml
+                why: The key is generated and kept per installation; writing a real value into documentation would publish it.
+            P4-G10-T2:
+              id: P4-G10-T2
+              source_id: '011'
+              title: Document Entity Group use and verification
+              description: Write how a client calls an Endpoint, and how a reader can see that every Entity
+                and Action has its Endpoint and no other exists. The documentation contains no real credential
+                or secret.
+              reason: Clients and reviewers need to be able to use and verify Entity Group.
+              inputs:
+              - Entity Group Preferences documentation sections
+              - The running API's Endpoints
+              skills: []
+              expected_result: The use and verify sections of Entity Group's documentation.
+              depends_on:
+              - P4-G10-T1
+              constraints: []
+              acceptance: The use section's steps work against the running API, the verify section lets a
+                reader observe an Endpoint for every Entity and Action and no others, and the documentation
+                holds no real credential or secret.
+              status: done
+              log:
+              - at: '2026-10-05T01:41:41Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:42:13Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'Wrote the use section (how a client forms an address, sends a request, and reads the answer, with a working example) and the verify section (how a reader sees that every Entity and Action has its
+                  Endpoint and no other exists: the Entities and Actions come from Logic''s Interface, every table address answers, and a made-up Action, a made-up Entity, and GET are not served, with two requests whose
+                  answers are stated). The documentation holds only placeholder values and no real credential or secret.'
+                evidence: Against a fresh scratch copy of the API and the Database storage the use example answered the Broker record as JSON; the two verify requests printed 200 and 404 as stated; a made-up Entity answered
+                  404 and GET on an Endpoint 405 as stated; all 184 request examples in the file (180 Endpoints plus the overview, use, and verify examples) ran in order and answered as documented (183 with 200 and the
+                  one documented negative check with 404). Sections are in the declared order (overview, endpoints, use, verify) and the only credential-like values are the placeholders example-password and example-api-key.
+        P4-G11:
+          id: P4-G11
+          title: API documentation
+          description: API's own documentation, written to the sections and order the API Preferences define.
+          area: API documentation of its overview, Configuration, Groups, setup, use, verification, and troubleshooting.
+          does: A client can set up, start, use, and verify API from its documentation alone.
+          constraints: []
+          task_count: 4
+          tasks:
+            P4-G11-T1:
+              id: P4-G11-T1
+              source_id: '011'
+              title: Document the API overview and Configuration
+              description: Write the overview, explaining what API is in one paragraph with one request example,
+                and the Configuration section giving every runtime Configuration value, including the key
+                and the interactive documentation addresses, and how the Base URL is formed from them.
+              reason: Clients learn what API is and how its address is built from its documentation.
+              inputs:
+              - API Preferences documentation sections
+              - The runtime Configuration
+              skills: []
+              expected_result: The overview and Configuration sections of API's documentation.
+              depends_on:
+              - P4-G4-T2
+              - P4-G2-T6
+              - P4-G5-T2
+              constraints: []
+              acceptance: The overview's request works against the running API, and the Configuration section
+                lists every Configuration value and the Base URL formation exactly as the Configuration holds
+                them, without revealing anything beyond what the Configuration contains.
+              status: done
+              log:
+              - at: '2026-10-05T01:42:13Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:43:11Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'Wrote API''s documentation at the Component root, in markdown: the overview (one paragraph and one request example) and the Configuration section listing every runtime Configuration value (title,
+                  description, key, host, port, workers, transport protocol, Base URL, and both documentation addresses) with its meaning and how the Base URL is formed from the key and the other parts. The generated
+                  key is shown only as a <key> placeholder with a pointer to where to read it, so the documentation reveals nothing beyond what the Configuration contains. The project file now names this documentation
+                  as its readme. Deferred until the Endpoints worked, because its overview example has to answer.'
+                evidence: The overview's request, run against a fresh scratch copy of the API and the Database storage, answered 200 with the first three currencies; the Configuration table lists all 10 values and every
+                  plain value equals config.yaml (title, host, port, workers, transport protocol), with the key, Base URL, and documentation addresses shown with <key>; the real key does not appear in the file. A search
+                  found the Plan lists no dependency of this Task on the Handler Tasks although its example needs them; the Task was therefore claimed only after they were done.
+              - at: '2026-10-05T01:43:11Z'
+                by: '012'
+                event: decision
+                unset: How API's documentation is packaged (the Preferences give a README at the Component root)
+                chosen: A README at the API root, named as the project's readme in its project file, with sections in the declared order; the tables and examples are produced by a session-local builder that reads config.yaml
+                  and the Group Preferences
+                why: The API Preferences name README.md at the Component root with a fixed section order; reading the Configuration keeps its table from drifting from the real values.
+            P4-G11-T2:
+              id: P4-G11-T2
+              source_id: '011'
+              title: Document the Groups
+              description: Write the Groups section naming every Group beneath its URL segment, with a link
+                to that Group's own documentation, and never a copy of its Endpoints.
+              reason: Clients need to find every Group and where it is explained.
+              inputs:
+              - API Preferences documentation sections
+              - Each Group's segment and documentation
+              skills: []
+              expected_result: The Groups section of API's documentation.
+              depends_on:
+              - P4-G3-T4
+              - P4-G10-T2
+              - P4-G11-T1
+              constraints: []
+              acceptance: Every listed Group appears beneath its segment with a working link to its own documentation,
+                and none of its Endpoints is copied.
+              status: done
+              log:
+              - at: '2026-10-05T01:43:11Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:43:20Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'Wrote the Groups section: every listed Group (Entity) beneath its URL segment (/entity, after the key already in the Base URL), with a link to that Group''s own documentation, and no copy of its
+                  Endpoints. The segment and the Group''s name and directory are read from the Group''s own Preferences by the builder.'
+                evidence: The table has one row for the one listed Group, with segment /entity matching the segment Bootstrap registers; its link api/groups/entity/README.md resolves to the existing Entity Group documentation;
+                  a search of the section for the Entity Group's addresses and operation names found none, so no Endpoint is copied.
+            P4-G11-T3:
+              id: P4-G11-T3
+              source_id: '011'
+              title: Document API setup and use
+              description: Write how to install and start API, and how a client reaches a Group.
+              reason: Clients need to be able to install, start, and use API.
+              inputs:
+              - API Preferences documentation sections
+              - Executable setup
+              - The running API
+              skills: []
+              expected_result: The setup and use sections of API's documentation.
+              depends_on:
+              - P4-G11-T2
+              - P4-G4-T2
+              constraints: []
+              acceptance: Following the setup steps in a clean environment installs and starts API, and the
+                use section's request reaches a Group's Endpoint.
+              status: done
+              log:
+              - at: '2026-10-05T01:43:20Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:43:45Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'Wrote the setup section (what API needs beside it: Python 3.14 or newer, uv, and the sibling logic, database, and model directories with a prepared Database; the two commands that install the locked
+                  environment and start API on the configured host, port, and workers; how to stop it) and the use section (how a client forms an address beneath the key and Group segment, the request body, a working
+                  example, and where the interactive documentation is).'
+                evidence: 'Following the setup steps in a clean copy of the application tree with no environment (Logic, Database with its prepared storage, Model, and API): the locked sync installed the dependencies,
+                  starting API through its module entry printed that Uvicorn was running and started its worker, the use section''s request answered the Broker record as JSON, both documentation pages answered 200, and
+                  Ctrl+C stopped it with nothing left listening. The check ran on another port in the copy''s Configuration so the real port was not used.'
+            P4-G11-T4:
+              id: P4-G11-T4
+              source_id: '011'
+              title: Document API verification and troubleshooting
+              description: Write how a reader can see that every listed Group is served beneath its segment
+                and nothing else is, and the real problems a client can meet with API and how to fix them.
+                The documentation contains no real credential or secret.
+              reason: Reviewers and clients need to be able to verify API and resolve its real problems.
+              inputs:
+              - API Preferences documentation sections
+              - The running API
+              skills: []
+              expected_result: The verify and troubleshooting sections of API's documentation.
+              depends_on:
+              - P4-G11-T3
+              - P4-G3-T6
+              - P4-G5-T3
+              constraints: []
+              acceptance: The verify section lets a reader observe that every listed Group is served beneath
+                its segment and that nothing else is served as an Endpoint, the troubleshooting section covers
+                only real client problems with their fixes, and the documentation holds no real credential
+                or secret.
+              status: done
+              log:
+              - at: '2026-10-05T01:43:45Z'
+                by: '012'
+                status: claimed
+                event: claimed
+                note: Dependencies done; claimed before work.
+              - at: '2026-10-05T01:44:33Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'Wrote the verify section (how a reader sees that every listed Group is served beneath its segment and nothing else is served as an Endpoint: one Group request, the two documentation pages, and
+                  requests to the root, a made-up address beneath the key, and the unkeyed documentation locations, each with its stated answer) and the troubleshooting section (real problems a client can meet and their
+                  fixes: 404 from a wrong or missing key or address, 405, 422, the causes of 500 including an unprepared Database, a lost or changed key, cross-origin blocking, address already in use, and connection
+                  refused). The documentation holds no real credential or secret, and the key appears only as a <key> placeholder.'
+                evidence: 'Run on fresh scratch copies of the API and the Database storage: all 9 request examples in the file answered as stated (the first three verify requests 200, the other four 404, plus the overview
+                  and use examples 200); 17 of 17 troubleshooting claims were reproduced (404 for the key left out, misspelled, and a made-up operation and for the documentation pages without the key; a missing record
+                  answering 200 with null; 405 for GET; 422 for a body that is not an object, a missing required parameter, and a wrong-typed value; 500 for a uniqueness break, a missing reference, deleting a referenced
+                  record, and an unprepared Database; a cross-origin preflight answered with every origin and no credentials; ''address already in use'' on a second start; connection refused when stopped). Sections are
+                  in the declared order and a search for the real key found none.'
+        P4-G12:
+          id: P4-G12
+          title: Source quality
+          description: The clean quality state of the finished API source.
+          area: API source quality.
+          does: The source is clean under the project's quality tools.
+          constraints: []
+          task_count: 1
+          tasks:
+            P4-G12-T1:
+              id: P4-G12-T1
+              source_id: '011'
+              title: Bring the API source to a clean quality state
+              description: Apply the project's standard formatter, linter, and type checker to the finished
+                API source, including the code in its documentation and in every Group, and resolve every
+                reported issue without changing API's meaning or any published contract.
+              reason: A consistent, type-sound source is the baseline before API is reviewed.
+              inputs:
+              - Development defaults for the selected language quality tools
+              - Finished API source
+              skills: []
+              expected_result: API source with no formatting, lint, or type issues.
+              depends_on:
+              - P4-G2-T4
+              - P4-G2-T6
+              - P4-G3-T2
+              - P4-G3-T5
+              - P4-G3-T6
+              - P4-G4-T3
+              - P4-G4-T4
+              - P4-G4-T5
+              - P4-G5-T3
+              - P4-G7-T4
+              - P4-G9-T2
+              - P4-G9-T3
+              - P4-G10-T2
+              - P4-G11-T4
+              constraints: []
+              acceptance: The formatter reports no change needed, and the linter and type checker report no
+                issues across the API source.
+              status: done
+
+              log:
+              - at: '2026-10-05T01:45:14Z'
+                by: '012'
+                status: done
+                event: completed
+                note: 'Brought the API source to a clean quality state: applied the standard formatter, linter (with its import-order fix), and type checker to all API source, including the Group package, every Adapter,
+                  Bootstrap, and the shared binding unit, without changing API''s meaning or any published contract. The documentation has no Python code to format.'
+                evidence: 'Formatter: 22 files already formatted (no change needed); linter: all checks passed; type checker (run through the package manager inside the API directory, locked, as a decision of the Develop
+                  run that built the other Components records): 0 errors, 0 warnings, 0 informations; all 20 source files compile; the lockfile check passes; third-party imports are exactly fastapi, logic, uvicorn, and
+                  yaml, all declared. Regeneration: every generated unit (the Group package, 15 Adapters, Bootstrap, and both documentation files) was deleted in a scratch copy of the project and regenerated with the
+                  generation tool and its mechanical post-steps, keeping the existing Configuration so its key was kept: zero difference against the project. A first generation pass earlier in this run enabled Handler
+                  bodies one stage too early and an Adapter prefix before its Task; both were corrected before any dependent Task was finished (the generator''s stage logic was fixed).'
+              - at: '2026-10-05T01:45:14Z'
+                by: '012'
+                event: decision
+                unset: How the type checker finds the project environment
+                chosen: Run it through the package manager's run command inside the API directory (locked), without adding type-checker configuration to the project file
+                why: Neither the API Preferences nor the Development defaults set type-checker paths; running it in the project environment resolves the libraries, and the sibling libraries use no such configuration
+                  either.
+              - at: '2026-10-05T01:45:38Z'
+                by: '012'
+                event: note
+                note: 'Process miss: this Task was completed without a prior claim (the claim step named the wrong Task). Its work changed no file: the formatter, linter, and type checker found nothing to fix, and the
+                  regeneration check ran in a scratch copy of the project. The claim should have been recorded before the checks were run.'
