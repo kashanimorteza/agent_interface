@@ -1,0 +1,39 @@
+[project]
+name = "logic"
+version = "0.1.0"
+description = "Services that give the Trading Assistant Entities their behaviour."
+requires-python = "==3.14.*"
+dependencies = [
+    "database==0.1.0",
+    "model==0.1.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.0,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-root = ""
+module-name = "logic"
+
+[tool.uv.sources]
+model = { path = "../model", editable = true }
+database = { path = "../database", editable = true }
+
+[dependency-groups]
+dev = [
+    "pyright==1.1.414",
+    "ruff==0.16.10",
+]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501"]
+
+[tool.pyright]
+include = ["logic"]
+pythonVersion = "3.14"
+typeCheckingMode = "standard"

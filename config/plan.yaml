@@ -26,7 +26,7 @@ content_map:
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
-  task_count: 74
+  task_count: 95
   plans:
     P1:
       id: "P1"
@@ -2400,3 +2400,636 @@ content:
                     - unset: How verification is shown when persistent tests are disabled for Database
                       chosen: The verification part is one runnable script in the documentation that observes each named condition and removes what it creates, plus a troubleshooting list that covers only Database concerns, including an inactive Instance, a difference between an existing Table and its Entity and empty Initial Data values.
                       why: Database Preferences disable the testing capability but require a verification section that covers public import, Instance selection, vocabulary, each capability group, persistent file location and repeatable Lifecycle Commands.
+    P3:
+      id: "P3"
+      title: "Logic"
+      order: 3
+      target: "Logic"
+      does: "A reusable Logic library of two fixed Services, Storage and Entity, that gives every Model Entity Entity-bound access to the Database through one unchanged gateway and publishes each Service through one Interface."
+      constraints: []
+      task_count: 21
+      groups:
+        P3-G1:
+          id: "P3-G1"
+          title: "Library foundation"
+          description: "Brings the Logic Component into existence as an independent, reusable library that reaches Model and Database only through their published Interfaces."
+          area: "Component setup and dependency resolution"
+          does: "The Logic library exists as a self-contained, loadable unit whose selected technology and quality tooling are ready."
+          constraints: []
+          task_count: 1
+          tasks:
+            P3-G1-T1:
+              id: "P3-G1-T1"
+              source_id: "010"
+              title: "Provide the Logic library as an independent reusable unit"
+              description: "Establish the Logic Component as an independent library whose selected technology and quality tooling are set up, whose dependency versions are resolved and recorded, and which depends on Model and on Database only through the Connections Development declares for it."
+              reason: "Every other Task in the phase builds on a Logic library that sets up on its own and starts no process of its own."
+              inputs:
+                - "Published Model Interface"
+                - "Published Database Interface"
+                - "Resolved technology and tooling selections for the Logic Component"
+              skills: []
+              expected_result: "A Logic library that sets up from a clean state in an isolated environment with its dependencies resolved and recorded, and that a consumer can load together with the Model and Database libraries."
+              depends_on:
+                - "P1-G4-T2"
+                - "P2-G5-T3"
+              constraints: []
+              acceptance: "From a clean state the library sets up in an isolated environment without error, and a consumer can then load it together with the Model and Database libraries."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:42:45Z'
+                  execution: '011'
+                  event: claimed
+                  detail: Dependencies P1-G4-T2 and P2-G5-T3 are done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:43:02Z'
+                  execution: '011'
+                  event: completed
+                  detail: 'Created the Logic Component as a uv project in logic/ with the importable package logic/logic/. Dependencies resolved and recorded in uv.lock with exact pins (model 0.1.0 and database 0.1.0 as editable path dependencies; dev: ruff 0.16.10, pyright 1.1.414); Python constrained to 3.14.*. Observed: the environment was deleted and rebuilt from the lock file, then the package loaded together with the Model Interface (15 Entities) and the Database Interface (17 contracts).'
+                  decisions:
+                    - unset: Physical arrangement of the Component and how Model and Database are consumed
+                      chosen: Component root logic/ holds the project declaration, lock file and documentation; the importable package logic/logic/ holds the Interface and the services directory. Model and Database are declared as editable path dependencies on their sibling Components (the declared logic_to_model and logic_to_database Connections) and pinned to their exact versions.
+                      why: Logic Preferences name directory and package as logic and a services directory; editable path dependencies keep the other Components read-only and independently owned.
+                    - unset: Direct dependencies and tooling
+                      chosen: 'Declared and pinned: model and database only; development: ruff and pyright with the same rule sets as the other Components. Logic imports nothing else directly.'
+                      why: Only what Logic's own source imports is declared; Database brings its own technology dependencies.
+        P3-G2:
+          id: "P3-G2"
+          title: "Storage Service"
+          description: "Logic's gateway to Database: one Action for every capability Database publishes, passing each request and answer through unchanged, with the supporting Database contracts republished."
+          area: "Storage Service: its gateway, Actions, republished contracts and Interface"
+          does: "Every other Logic Service can reach every public Database capability, and the contracts it needs, through the one Storage Service Interface without behaviour of its own."
+          constraints: []
+          task_count: 5
+          tasks:
+            P3-G2-T1:
+              id: "P3-G2-T1"
+              source_id: "010"
+              title: "Give the Storage gateway one Action for every Database capability"
+              description: "Provide the Storage gateway with exactly one Action for every capability that Database's Interface publishes, in the order Database publishes them and with exactly the capability's name. The set of Actions is read from what Database publishes and never listed by hand."
+              reason: "Storage mirrors Database one to one, so whoever knows Database already knows Storage, and Storage never falls behind it."
+              inputs:
+                - "Completed Logic library foundation"
+                - "Published Database Interface"
+              skills: []
+              expected_result: "A Storage gateway whose Actions correspond one to one with Database's published capabilities."
+              depends_on:
+                - "P2-G5-T3"
+                - "P3-G1-T1"
+              constraints: []
+              acceptance: "The gateway has an Action for every capability the Database Interface publishes, in Database's order, each named exactly as its capability, and no other Action; a capability added to or removed from the Database Interface adds or removes exactly its Action without a hand edit."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:43:02Z'
+                  execution: '011'
+                  event: claimed
+                  detail: Dependencies P2-G5-T3, P3-G1-T1 (G2-T1) and P2-G5-T1, P3-G1-T1 (G2-T4) are done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:43:47Z'
+                  execution: '011'
+                  event: completed
+                  detail: "Gave the Storage gateway one Action for every capability of Database's Interface: 16 Actions named exactly as the capabilities (add, update, list, get_by_id, delete, enable, disable, count, sum, min, max, truncate, execute_command, create_tables, insert_initial_data, prepare) in Database's order, derived from what the Database Interface publishes. At this stage each Action only exists; its parameters and pass-through are the next two Tasks. Observed: the Action names and order equal the Database capabilities exactly and there is no other Action."
+                  decisions:
+                    - unset: How the Storage gateway is produced so that it follows Database
+                      chosen: "A generator reads Database's published Interface (the Database object's capabilities in definition order, and every other published contract) and writes the gateway source and the Storage Interface; nothing is listed by hand and a regeneration after a Database change adds or removes exactly the corresponding Actions. The gateway is realized in stages that match the Tasks: the Actions first, then their parameters, then their pass-through."
+                      why: The Definition requires Storage to change automatically with Database; Preferences ask for generated methods and a republishing Interface file.
+            P3-G2-T2:
+              id: "P3-G2-T2"
+              source_id: "010"
+              title: "Give each Storage Action its Database capability's parameters"
+              description: "Make each Storage Action take exactly the parameters of its Database capability, with the same names, the same order and the same defaults, and carry the capability's documentation."
+              reason: "A caller must be able to use an Action exactly as it uses the capability."
+              inputs:
+                - "Storage gateway Actions"
+              skills: []
+              expected_result: "Storage Actions whose calling shape is identical to the capabilities they mirror."
+              depends_on:
+                - "P3-G2-T1"
+              constraints: []
+              acceptance: "For every Action the parameter names, their order and their defaults equal those of the corresponding Database capability, and its documentation equals the capability's."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:43:47Z'
+                  execution: '011'
+                  event: claimed
+                  detail: Dependency P3-G2-T1 is done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:44:01Z'
+                  execution: '011'
+                  event: completed
+                  detail: "Gave each Storage Action its Database capability's parameters: for all 16 Actions the parameter names, their order, their defaults and the annotations equal Database's published ones, with the contracts they name imported from the Database Interface; the Actions carry the capability's documentation, which Database's Interface does not provide (none). Observed with a signature comparison of every Action against its capability: names, order, defaults and documentation equal; ruff and pyright pass."
+                  decisions:
+                    - unset: Whether annotations are part of the signature that is mirrored, and what documentation to carry
+                      chosen: The mirrored signature includes the annotations and defaults exactly as Database publishes them, rendered with the republished contract names; each Action carries the capability's documentation, which for Database's Interface is none, so the Actions carry none.
+                      why: Preferences ask for the capability's exact name, signature and docstring; Database's published methods have no docstring.
+            P3-G2-T3:
+              id: "P3-G2-T3"
+              source_id: "010"
+              title: "Make every Storage Action pass through to Database unchanged"
+              description: "Make the gateway take one access to Database when it is created and make every Action hand its request, argument by argument, to the matching capability through that one access, returning its answer and letting its errors surface unchanged. An Action adds no validation, retry, selection of an Engine or default Instance, or rule of its own."
+              reason: "Database stays the only authority for storage, and behaviour belongs to the Service that calls the gateway."
+              inputs:
+                - "Storage Actions with their parameters"
+              skills: []
+              expected_result: "Storage Actions that are faithful, behaviour-free forwards of the Database capabilities."
+              depends_on:
+                - "P3-G2-T2"
+              constraints: []
+              acceptance: "Calling an Action returns exactly what the corresponding Database capability returns for the same arguments and raises exactly the errors it raises; a record added through an Action is the same record Database holds; every Action runs on the access taken when the gateway was created and none selects an Instance or Engine on its own."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:44:01Z'
+                  execution: '011'
+                  event: claimed
+                  detail: Dependency P3-G2-T2 is done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:44:31Z'
+                  execution: '011'
+                  event: completed
+                  detail: "Made every Storage Action pass through to Database unchanged: the gateway creates one Database access when it is created and every one of the 16 Actions is a single forward of its arguments, in order, to the matching capability on that access, returning the answer and letting errors surface. Observed on a real prepared database in a scratch copy: List, Count, Sum, Min and Get By Id returned the same values as Database for the same arguments; a record added through Storage is the record Database holds; the same errors (execution failure on a duplicate, invalid input for a name given in place of an Entity, a string Instance) were raised as Database raises; update, disable, enable and delete pass through; ExecuteCommand and the Lifecycle Commands return Database's own result types; every Action body is one forward and the source has no validation, retry, loop or Instance selection; a second gateway holds its own access."
+            P3-G2-T4:
+              id: "P3-G2-T4"
+              source_id: "010"
+              title: "Republish the supporting Database contracts as the same objects"
+              description: "Republish, from Storage's Interface, every supporting contract that Database's Interface publishes (its enumerations, values, results and errors, but not the Database object), as the identical objects and never as copies; the set is read from Database's Interface each time and never listed by hand."
+              reason: "Other Logic Services need to build requests, read results and catch errors without importing Database."
+              inputs:
+                - "Published Database Interface"
+                - "Completed Logic library foundation"
+              skills: []
+              expected_result: "Storage Interface republishing every supporting Database contract by identity."
+              depends_on:
+                - "P2-G5-T1"
+                - "P3-G1-T1"
+              constraints: []
+              acceptance: "Every supporting contract the Database Interface publishes can be imported from the Storage Interface and is the identical object, including every Database error; the set follows the Database Interface when it changes."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:43:02Z'
+                  execution: '011'
+                  event: claimed
+                  detail: Dependencies P2-G5-T3, P3-G1-T1 (G2-T1) and P2-G5-T1, P3-G1-T1 (G2-T4) are done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:43:47Z'
+                  execution: '011'
+                  event: completed
+                  detail: "Republished every supporting contract of the Database Interface (16: CommandResult, DatabaseInstance, Filter, FilterCombination, FilterOperator, Order, OrderDirection, LifecycleResult, DatabaseError and the seven failure-kind errors) from the Storage Interface by direct import, and not the Database object itself. Observed: the republished set equals the Database Interface's other public names in the same order, and every one is the identical object (identity comparison true)."
+            P3-G2-T5:
+              id: "P3-G2-T5"
+              source_id: "010"
+              title: "Publish exactly the Storage gateway and the republished contracts"
+              description: "Publish through the Storage Service Interface the Storage gateway under its configured name and the republished contracts, and nothing else, so that Action implementations and Database internals stay hidden; loading the Interface opens no connection and creates no data or file."
+              reason: "Other Logic Services depend on one exact gateway."
+              inputs:
+                - "Storage gateway"
+                - "Republished contracts"
+              skills: []
+              expected_result: "One Storage Service Interface with exactly its two kinds of entry."
+              depends_on:
+                - "P3-G2-T3"
+                - "P3-G2-T4"
+              constraints: []
+              acceptance: "The Interface publishes the gateway and every republished contract and nothing more, in particular no Action implementation and no Database object; importing it opens no connection and creates no data or file."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:44:31Z'
+                  execution: '011'
+                  event: claimed
+                  detail: Dependencies P3-G2-T3 and P3-G2-T4 are done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:44:42Z'
+                  execution: '011'
+                  event: completed
+                  detail: 'Published exactly the Storage gateway and the republished contracts from the Storage Service Interface (an explicit import list and a published list; the Interface file contains nothing else), as written under P3-G2-T4. Observed in a fresh interpreter with audit hooks: the public names are exactly Storage plus the 16 republished contracts and equal the published list; the Database object and the implementation unit are not among them; loading opened no socket or database, wrote no file, started no process and created no engine, connection or storage directory.'
+        P3-G3:
+          id: "P3-G3"
+          title: "Entity Service Base"
+          description: "The one shared structure that offers every Action to every Child Service: a bound mirror of the Storage Actions that take an Entity."
+          area: "Entity Service: Base"
+          does: "Every Storage Action that takes an Entity is available once, bound to an Entity, without passing the Entity class again."
+          constraints: []
+          task_count: 4
+          tasks:
+            P3-G3-T1:
+              id: "P3-G3-T1"
+              source_id: "010"
+              title: "Give Base one Action for every Storage Action that takes an Entity"
+              description: "Provide the Base structure with exactly one Action for every Storage Action that takes an Entity, in the order Storage publishes them and with exactly that Action's name. A Storage Action that takes no Entity never becomes an Action, and no Action is listed by hand."
+              reason: "Base follows Storage one to one, so whoever knows Storage already knows every Child Service."
+              inputs:
+                - "Published Storage Service Interface"
+              skills: []
+              expected_result: "A Base whose Actions are exactly the Entity-taking Storage Actions."
+              depends_on:
+                - "P3-G2-T5"
+              constraints: []
+              acceptance: "Base has an Action for every Storage Action that takes an Entity, in Storage's order and under the same name, and none for an Action that takes no Entity; a change in what Storage publishes changes the set without a hand edit."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:44:42Z'
+                  execution: '011'
+                  event: claimed
+                  detail: Dependency P3-G2-T5 is done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:44:51Z'
+                  execution: '011'
+                  event: completed
+                  detail: "Gave Base one Action for every Storage Action that takes an Entity: 12 Actions (add, update, list, get_by_id, delete, enable, disable, count, sum, min, max, truncate) in Storage's order under Storage's names, derived from what the Storage gateway publishes (an Action is included when its first parameter is the Entity); the four Storage Actions that take no Entity (execute_command, create_tables, insert_initial_data, prepare) have none. At this stage the Actions only exist; parameters and pass-through are the next Tasks. Observed: Base's Actions equal the Entity-taking Storage Actions in order and name and no other Action exists."
+            P3-G3-T2:
+              id: "P3-G3-T2"
+              source_id: "010"
+              title: "Give each Base Action its Storage Action's parameters without the Entity class"
+              description: "Give each Base Action the parameters of its Storage Action with the same names, order and defaults, except that the parameter that takes the Entity class is removed; a parameter that takes an Entity instance stays."
+              reason: "A caller binds the Entity once and then calls Actions without repeating it."
+              inputs:
+                - "Base Actions"
+              skills: []
+              expected_result: "Base Actions whose calling shape is Storage's minus the Entity class."
+              depends_on:
+                - "P3-G3-T1"
+              constraints: []
+              acceptance: "For every Action the remaining parameter names, order and defaults equal those of the Storage Action, no Action takes an Entity class, and an Action whose Storage counterpart takes an Entity instance still takes it."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:44:51Z'
+                  execution: '011'
+                  event: claimed
+                  detail: Dependency P3-G3-T1 is done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:45:01Z'
+                  execution: '011'
+                  event: completed
+                  detail: "Gave each Base Action its Storage Action's parameters without the Entity class: the parameter names, order, defaults and annotations equal Storage's for all 12 Actions, with the entity parameter removed from ten of them (list, get_by_id, delete, enable, disable, count, sum, min, max, truncate); add and update keep the Entity instance parameter. Observed by comparing every Base signature with its Storage Action: all equal apart from the removed Entity class parameter; ruff and pyright pass."
+                  decisions:
+                    - unset: How Base tells a parameter that takes the Entity class from one that takes an Entity instance, when Database's published signatures type every entity parameter the same
+                      chosen: The generator removes the entity parameter from every mirrored Action except the Actions that Database's contract states take a complete Entity instance, which are named in the generator (add and update); everything else is read from Storage's published signatures. If Database's Interface later types the two cases differently, the rule should be read from those types instead.
+                      why: The Definition says the class parameter is removed and the instance parameter stays, judged from Storage's published types; those types carry no difference, so the rule cannot be read from them. Recorded as Open Question OQ-010-1 for the Human.
+            P3-G3-T3:
+              id: "P3-G3-T3"
+              source_id: "010"
+              title: "Make every Base Action work through the one Storage access"
+              description: "Make Base take one access to Storage when it is created and make every Action supply the bound Entity class where Storage takes it, forward every other argument unchanged through that one access, and return Storage's answer and let its errors surface unchanged."
+              reason: "One route keeps every Action a faithful mirror of Storage and keeps persistence out of Entity Service."
+              inputs:
+                - "Base Actions with their parameters"
+                - "Storage gateway"
+              skills: []
+              expected_result: "Base Actions that act on Storage exactly as the caller would, on the bound Entity."
+              depends_on:
+                - "P3-G3-T2"
+              constraints: []
+              acceptance: "An Action called with arguments returns what the matching Storage Action returns for the bound Entity and the same arguments, and raises the errors Storage raises; every Action uses the access Base took when it was created and none reaches Database or a Storage implementation detail."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:45:02Z'
+                  execution: '011'
+                  event: claimed
+                  detail: Dependency P3-G3-T2 is done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:45:28Z'
+                  execution: '011'
+                  event: completed
+                  detail: "Made every Base Action work through the one Storage access: Base creates one Storage access when it is created, and each of the 12 Actions supplies the bound Entity class where Storage takes it, forwards every other argument unchanged and in order through that access, and returns Storage's answer with its errors unchanged. Observed with a recording stand-in for Storage: each Action forwarded exactly the bound class and the other arguments in order and returned the stand-in's answer; a second Child holds its own access; against a real prepared database the Actions returned and changed data as Database does and surfaced Database's errors (execution failure on a duplicate, invalid input for a string id). Base imports only the Storage Interface from Logic's side (no Database or implementation import)."
+            P3-G3-T4:
+              id: "P3-G3-T4"
+              source_id: "010"
+              title: "Reject an instance of another Entity before Storage is called"
+              description: "Make every Action that takes an Entity instance reject an instance that is not of the bound Entity with the Invalid Input error that Storage Interface republishes, before Storage is called, checking Entity identity only and never Field values."
+              reason: "Selecting a Child Service must reliably select the Entity the Action works on."
+              inputs:
+                - "Base Actions working through Storage"
+              skills: []
+              expected_result: "Base Actions that keep to their bound Entity."
+              depends_on:
+                - "P3-G3-T3"
+              constraints: []
+              acceptance: "Passing an instance of another Entity to an Action raises the Invalid Input error and nothing reaches Storage; an instance of the bound Entity is accepted whatever its Field values are."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:45:28Z'
+                  execution: '011'
+                  event: claimed
+                  detail: Dependency P3-G3-T3 is done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:45:43Z'
+                  execution: '011'
+                  event: completed
+                  detail: 'Made every Base Action that takes an Entity instance reject an instance that is not of the bound Entity with the republished Invalid Input error, before Storage is called, checking identity only. Observed with a Child bound to Broker and a recording stand-in for Storage: a User instance passed to add and to update raised the Invalid Input error and Storage received no call; a Broker instance with unusual Field values (empty name, user_id -5, null description) was accepted and forwarded; a string and a bare class were rejected; an Action that takes no instance (count) did no identity check.'
+        P3-G4:
+          id: "P3-G4"
+          title: "Entity Child Services"
+          description: "One Child Service for every Model Entity, each binding its own Entity and receiving Base."
+          area: "Entity Service: Entities"
+          does: "Every Model Entity has its own Child Service that is bound to it and holds only what is specific to it."
+          constraints: []
+          task_count: 3
+          tasks:
+            P3-G4-T1:
+              id: "P3-G4-T1"
+              source_id: "010"
+              title: "Provide one Child Service for every Entity in the Model Entity Collection"
+              description: "Provide exactly one Child Service for every Entity that Model's Entity Collection publishes, each binding exactly its own Entity and receiving Base; the set follows the Collection when it changes."
+              reason: "The Child Services must stay complete and in step with Model."
+              inputs:
+                - "Published Model Interface"
+                - "Completed Base"
+              skills: []
+              expected_result: "A Child Service for each Model Entity, bound to that Entity."
+              depends_on:
+                - "P1-G4-T2"
+                - "P3-G3-T4"
+              constraints: []
+              acceptance: "There is one Child Service for every Entity in the Entity Collection and none for anything else; each is bound to exactly its Entity, offers every Base Action, and a change in the Collection changes the set without a hand edit."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:45:43Z'
+                  execution: '011'
+                  event: claimed
+                  detail: Dependencies P1-G4-T2 and P3-G3-T4 are done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:46:10Z'
+                  execution: '011'
+                  event: completed
+                  detail: "Provided one Child Service for every Entity in Model's Entity Collection (15), each a subclass of Base that binds exactly its own Entity class from Model's Interface and holds nothing else; the set is generated from the Collection. Observed: the 15 Child Services equal the Collection's Entities by name and none else exists; each one's bound Entity is identical to Model's class; each offers all 12 Base Actions; the unit names are the snake_case of the logical Entity names."
+            P3-G4-T2:
+              id: "P3-G4-T2"
+              source_id: "010"
+              title: "Name every Child Service validly and uniquely"
+              description: "Name every Child Service's unit and structure from the configured naming patterns, and make every name valid for the selected language and free of collision with the Service name, the Base name and every republished contract; an invalid or colliding name stops generation with a clear configuration error and is never repaired by a suffix, number or silent rename."
+              reason: "Every Entity needs an unambiguous realization that the language accepts."
+              inputs:
+                - "Child Services"
+                - "Republished contracts"
+              skills: []
+              expected_result: "Child Service names that are valid, unique and derived from the patterns."
+              depends_on:
+                - "P3-G4-T1"
+                - "P3-G2-T4"
+              constraints: []
+              acceptance: "Every Child Service name follows the configured pattern for its Entity, all names are valid and distinct from one another, from the Base name and from every republished contract; a deliberately colliding name is reported as a configuration error and nothing is renamed."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:46:10Z'
+                  execution: '011'
+                  event: claimed
+                  detail: Dependencies P3-G4-T1 and P3-G2-T4 are done (G4-T2); P3-G4-T1 is done (G4-T3). Claimed before changing the Task result.
+                - at: '2026-10-05T11:46:27Z'
+                  execution: '011'
+                  event: completed
+                  detail: "Named every Child Service validly and uniquely: 15 structure names equal the Entity names, 15 unit names are their snake_case forms, all are valid identifiers, none is a keyword, all are distinct, and none equals the Service name Entity, the Base name BaseEntity or any of the 16 republished contracts. Observed on the real Component and by a generation run: asking the generator to treat User as reserved ended with exit status 1 and 'Configuration error: structure name User collides with a reserved or republished name', writing and renaming nothing (a comparison of the Child Services before and after showed no difference); a normal regeneration produced zero difference."
+                  decisions:
+                    - unset: Where the naming check lives and how its failure is shown
+                      chosen: "The check is part of the generation step: it validates every unit and structure name derived from the Entity names (valid identifiers, not keywords, distinct, and different from the Service name, the Base name and every republished contract) and stops with one 'Configuration error' message before writing anything, without suffixes or renames. The generator is a scratch tool outside the Component, so the stopped-generation behaviour is shown by a run, not by shipped code."
+                      why: The Definition requires an invalid or colliding value to stop generation with a clear configuration error; Logic ships generated source only.
+            P3-G4-T3:
+              id: "P3-G4-T3"
+              source_id: "010"
+              title: "Keep each Child Service free of copied Entity meaning"
+              description: "Keep each Child Service limited to Behaviour or Actions specific to its own Entity; everything shared comes from Base. A Child Service may override a Base Action for its own Entity but never detaches itself from Base, and it never copies or redefines its Entity."
+              reason: "Shared Actions are written once and cannot drift between Entities."
+              inputs:
+                - "Child Services"
+                - "Base"
+              skills: []
+              expected_result: "Child Services that hold only what is their own."
+              depends_on:
+                - "P3-G4-T1"
+              constraints: []
+              acceptance: "A Child Service defines no Field, Declaration or Action that Base already provides, still inherits every Base Action, and its bound Entity is Model's own class, not a copy."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:46:10Z'
+                  execution: '011'
+                  event: claimed
+                  detail: Dependencies P3-G4-T1 and P3-G2-T4 are done (G4-T2); P3-G4-T1 is done (G4-T3). Claimed before changing the Task result.
+                - at: '2026-10-05T11:46:27Z'
+                  execution: '011'
+                  event: completed
+                  detail: "Kept each Child Service free of copied Entity meaning: every Child Service defines exactly one thing, its binding to Model's own Entity class (a reference, not a copy), and inherits all 12 Actions from Base; none redefines a Field, Declaration or Base Action. Observed by inspecting the 15 classes' own members."
+        P3-G5:
+          id: "P3-G5"
+          title: "Entity Service Interface"
+          description: "The gateway callers import from: the Child Services and the contracts they need, with nothing internal published."
+          area: "Entity Service: Interface"
+          does: "A caller imports a Child Service and every contract it needs from one place and works on an Entity without touching Storage or Database."
+          constraints: []
+          task_count: 3
+          tasks:
+            P3-G5-T1:
+              id: "P3-G5-T1"
+              source_id: "010"
+              title: "Publish exactly the Child Services"
+              description: "Publish through the Entity Service Interface every Child Service under its own name, and not Base, the Storage gateway or any implementation; loading the Interface opens no connection and creates no data or file."
+              reason: "Callers depend on one exact gateway, and shared or child implementation must stay hidden."
+              inputs:
+                - "Child Services"
+              skills: []
+              expected_result: "An Entity Service Interface that exposes the Child Services only."
+              depends_on:
+                - "P3-G4-T2"
+                - "P3-G4-T3"
+              constraints: []
+              acceptance: "Every Child Service can be imported from the Interface under its name; Base and the Storage gateway cannot be imported from it; importing the Interface opens no connection and creates no data or file."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:46:27Z'
+                  execution: '011'
+                  event: claimed
+                  detail: Dependencies P3-G4-T2 and P3-G4-T3 are done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:46:49Z'
+                  execution: '011'
+                  event: completed
+                  detail: 'Published every Child Service from the Entity Service Interface under its own name (15) and nothing else at this stage; Base, the Storage gateway and Database are not published. Observed in a fresh interpreter with audit hooks: the public names equal the 15 Entity names and the published list; Base, Storage, Database and the implementation units are not importable from the Interface; loading opened no socket or database, wrote no file, started no process and created no engine or connection.'
+            P3-G5-T2:
+              id: "P3-G5-T2"
+              source_id: "010"
+              title: "Republish the Storage contracts as the same objects"
+              description: "Republish from the Entity Service Interface every contract that the Storage Service Interface publishes except the Storage gateway, as the identical objects and never as copies; the set is read from the Storage Interface each time and never listed by hand."
+              reason: "A caller must be able to build requests, read results and catch errors without importing Storage or Database."
+              inputs:
+                - "Published Storage Service Interface"
+                - "Published Entity Service Child Services"
+              skills: []
+              expected_result: "Entity Service Interface republishing every needed contract by identity."
+              depends_on:
+                - "P3-G5-T1"
+                - "P3-G2-T5"
+              constraints: []
+              acceptance: "Every contract the Storage Interface publishes, except the gateway, can be imported from the Entity Service Interface and is the identical object, including every error; the Interface publishes nothing else besides the Child Services."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:46:50Z'
+                  execution: '011'
+                  event: claimed
+                  detail: Dependencies P3-G5-T1 and P3-G2-T5 are done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:47:05Z'
+                  execution: '011'
+                  event: completed
+                  detail: "Republished from the Entity Service Interface every contract the Storage Interface publishes except the Storage gateway (16), by direct import so each is the identical object; the Interface now publishes the 15 Child Services plus these 16 contracts and nothing else. Observed: every republished name is identical (identity true) to the Storage Interface's, the published set equals the Child Services plus the republished contracts exactly, the Storage gateway is not republished and every Database error is among the republished contracts."
+            P3-G5-T3:
+              id: "P3-G5-T3"
+              source_id: "010"
+              title: "Let a caller work on every Entity through its Child Service"
+              description: "Make each Child Service usable end to end: a caller creates it, calls its Actions with Model values and typed query values, and the request reaches Database through Storage and its answer returns unchanged."
+              reason: "This is the purpose of Entity Service: Entity-bound access without passing the Entity again."
+              inputs:
+                - "Entity Service Interface"
+                - "Prepared Database"
+              skills: []
+              expected_result: "Working Entity-bound access to stored data for every Entity."
+              depends_on:
+                - "P3-G5-T2"
+              constraints: []
+              acceptance: "On a prepared Database, a caller creates a Child Service, adds an Entity instance, lists it by a Filter, reads it by id, updates, disables, enables and deletes it, and counts and sums over it, and every answer equals what Database returns for the same request; an Entity of another kind is rejected with the Invalid Input error."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:47:06Z'
+                  execution: '011'
+                  event: claimed
+                  detail: Dependency P3-G5-T2 is done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:47:14Z'
+                  execution: '011'
+                  event: completed
+                  detail: "Child Services now work end to end, as a result of the Base, Child Service and Interface Tasks above (no further code was needed). Observed on a real prepared database in a scratch copy, importing everything from the Entity Service Interface: a Child Service is created without passing the Entity; add, list by a Filter, get by id, update, disable, enable and delete work and return Database's own answers; ordering, limit and an explicit Instance work; count, sum, min and max over exact decimals (3.85, 0.1, 2.25) and truncate (3 removed) work; the list equals Database's for the same request; an instance or class of another Entity is rejected with the Invalid Input error; Database's execution-failure error surfaces unchanged; all 15 Child Services count without error."
+        P3-G6:
+          id: "P3-G6"
+          title: "Logic Interface"
+          description: "Logic's single entrypoint: one entry for every Service Logic lists, each the Service's own Interface."
+          area: "Logic: Interface and Service relationships"
+          does: "A consumer imports every Service from one place under that Service's configured name, and the Services depend on each other only in the permitted direction."
+          constraints: []
+          task_count: 2
+          tasks:
+            P3-G6-T1:
+              id: "P3-G6-T1"
+              source_id: "010"
+              title: "Publish one unchanged entry for every listed Service"
+              description: "Publish through the Logic Interface exactly one entry for every Service the Logic Preferences list, under that Service's configured name, each entry being the Service's own Interface as the identical object, and nothing else; Logic Interface defines no Action, wrapper or rule of its own."
+              reason: "Consumers need one place to find every Service without depending on where a Service lives."
+              inputs:
+                - "Entity Service Interface"
+                - "Storage Service Interface"
+              skills: []
+              expected_result: "A Logic Interface that offers each Service unchanged."
+              depends_on:
+                - "P3-G2-T5"
+                - "P3-G5-T2"
+              constraints: []
+              acceptance: "The Interface publishes exactly the Entity entry and the Storage entry under their configured names and nothing else; each entry is the identical object its Service publishes; through them a consumer reaches a Child Service and the Storage gateway."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:47:14Z'
+                  execution: '011'
+                  event: claimed
+                  detail: Dependencies P3-G2-T5 and P3-G5-T2 are done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:47:30Z'
+                  execution: '011'
+                  event: completed
+                  detail: "Published one unchanged entry for every listed Service from the Logic Interface: the Entity Service and the Storage Service, under their configured names, each the identical Interface object of its Service, through an explicit alias import and a published list, with nothing else in the file. Observed: the public names are exactly Entity and Storage and equal the published list; each entry is identical to its Service's Interface module; through them a consumer reaches a Child Service and the Storage gateway; the Interface defines no Action, wrapper or rule."
+            P3-G6-T2:
+              id: "P3-G6-T2"
+              source_id: "010"
+              title: "Keep Service dependencies pointing the permitted way"
+              description: "Keep Service imports pointing away from Logic Interface, so that no Service imports it, make Storage Service the only Service that obtains Database through Database's Interface, let a Service collaborate with another only through that Service's Interface, and keep Service names and directories unique."
+              reason: "One-way imports keep Logic Interface and its Services free of a dependency cycle, and one gateway keeps Database access consistent and replaceable."
+              inputs:
+                - "Logic Interface"
+                - "Services"
+              skills: []
+              expected_result: "A Logic whose Services are free of cycles and reach Database only through Storage."
+              depends_on:
+                - "P3-G6-T1"
+              constraints: []
+              acceptance: "Loading either Service on its own does not load Logic's own entrypoint; only the Storage Service obtains the Database Interface directly; no two Services share a name or directory."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:47:30Z'
+                  execution: '011'
+                  event: claimed
+                  detail: Dependency P3-G6-T1 is done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:48:04Z'
+                  execution: '011'
+                  event: completed
+                  detail: "Kept Service dependencies pointing the permitted way. Observed by scanning every import in the Component: only the two files of the Storage Service import Database; no Service file imports the Logic entrypoint; the Entity Service's only import of another Service is the Storage Service Interface; loading either Service on its own does not load the Logic entrypoint (checked in fresh interpreters); the two Service directories (entity and storage) are distinct."
+                  decisions:
+                    - unset: How Service dependency direction is kept and shown
+                      chosen: "Services import each other only through Interfaces: the Entity Service imports the Storage Service Interface, only the Storage Service imports Database, and no file imports Logic's own entrypoint. Directory names are the configured Service directories (entity, storage)."
+                      why: The Definitions require one-way imports and Storage as the only route to Database; nothing else is unstated.
+        P3-G7:
+          id: "P3-G7"
+          title: "Component documentation"
+          description: "The documentation of each Service and of Logic itself, which lets a consumer understand, set up, use and verify them through their Interfaces alone."
+          area: "Documentation of Storage Service, Entity Service and Logic"
+          does: "A consumer can understand, use and verify Storage Service, Entity Service and Logic from their documentation alone."
+          constraints: []
+          task_count: 3
+          tasks:
+            P3-G7-T1:
+              id: "P3-G7-T1"
+              source_id: "010"
+              title: "Document Storage Service"
+              description: "Document what Storage Service is and why it exists with one simple example, every Action and every republished contract with one example each, how another Logic Service imports from the Storage Interface, and how to see that Storage matches the Database Interface."
+              reason: "Other Logic Services use Storage through its documentation, and a gap there leads directly to wrong use."
+              inputs:
+                - "Published Storage Service Interface"
+              skills: []
+              expected_result: "Documentation that explains the complete Storage contract through accurate examples."
+              depends_on:
+                - "P3-G2-T5"
+              constraints: []
+              acceptance: "The documentation presents an overview with one simple example, explains every Action and every republished contract with one example each, shows how another Service imports from the Storage Interface and how to see that Storage matches Database; its examples run, and it contains no credential or implementation detail."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:48:04Z'
+                  execution: '011'
+                  event: claimed
+                  detail: Dependency P3-G2-T5 is done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:48:44Z'
+                  execution: '011'
+                  event: completed
+                  detail: "Wrote the Storage Service documentation: an overview with one simple example; the Interface section with every one of the 16 Actions (purpose, signature generated from the live gateway, one example each) and every one of the 16 republished contracts with one example each; how another Logic Service imports from the Storage Interface; and a verification script showing that the gateway's Actions, the republished contract set and their identity match Database's Interface. Observed: all 35 Python blocks of the README execute in order without failure on a freshly prepared database in a scratch copy; the document contains no credential or implementation detail."
+            P3-G7-T2:
+              id: "P3-G7-T2"
+              source_id: "010"
+              title: "Document Entity Service"
+              description: "Document what Entity Service is and why it exists with one simple example, every Child Service, every Action and every republished contract with one example each, how a caller imports a Child Service and how a Child Service adds Behaviour of its own, and how to see that Entity Service matches Model's Entity Collection and the Storage Interface."
+              reason: "Callers use Entity Service through its documentation, and a gap there leads directly to wrong use."
+              inputs:
+                - "Published Entity Service Interface"
+                - "Storage Service documentation"
+              skills: []
+              expected_result: "Documentation that explains the complete Entity Service contract through accurate examples."
+              depends_on:
+                - "P3-G5-T3"
+                - "P3-G7-T1"
+              constraints: []
+              acceptance: "The documentation presents an overview with one simple example, explains every Child Service, Action and republished contract with one example each, shows how a caller imports a Child Service and how a Child Service adds its own Behaviour, and how to see that it matches Model and Storage; its examples run."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:48:45Z'
+                  execution: '011'
+                  event: claimed
+                  detail: Dependencies P3-G5-T3 and P3-G7-T1 are done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:49:07Z'
+                  execution: '011'
+                  event: completed
+                  detail: "Wrote the Entity Service documentation: an overview with one simple example; the Interface section with every one of the 15 Child Services (bound Entity and one example each), every one of the 12 Actions (purpose, signature generated from the live Base, one example each) and every one of the 16 republished contracts with one example each; how a caller imports a Child Service and how a Child Service adds or overrides Behaviour of its own; and a verification script showing that Entity Service matches Model's Entity Collection and the Storage Interface. Observed: all 33 Python blocks execute in order without failure on a freshly prepared database in a scratch copy. A first run failed 10 blocks because the examples confused the Child Service with the Model Entity of the same name; the examples were corrected before completion."
+            P3-G7-T3:
+              id: "P3-G7-T3"
+              source_id: "010"
+              title: "Document Logic"
+              description: "Document what Logic is and why it exists in one paragraph with one simple example, every name the Logic Interface publishes, for every Service its name and links to its documentation, Definition and Preferences without copying its contract, how to set Logic up and what it needs beside it, how a consumer imports from the Logic Interface, how to see that the Interface publishes exactly every listed Service, and the real problems a consumer can meet with their fixes."
+              reason: "Consumers use Logic through its documentation, and a gap there leads directly to wrong use."
+              inputs:
+                - "Published Logic Interface"
+                - "Service documentation"
+              skills: []
+              expected_result: "Documentation that takes a consumer from a clean environment to verified use of every Service."
+              depends_on:
+                - "P3-G6-T2"
+                - "P3-G7-T2"
+              constraints: []
+              acceptance: "The documentation presents the overview example, lists every name the Interface publishes, lists every Service with links and no copied contract, gives setup steps that produce a working library, shows how to import from the Interface, shows how to verify the exact Service set, and covers real consumer problems; its examples run."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:49:07Z'
+                  execution: '011'
+                  event: claimed
+                  detail: Dependencies P3-G6-T2 and P3-G7-T2 are done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:50:05Z'
+                  execution: '011'
+                  event: completed
+                  detail: 'Wrote the Logic documentation: an overview paragraph with one simple example; every name the Logic Interface publishes (Entity and Storage); for each Service its name and links to its README, its Definition and its Preferences without copying its contract; setup steps with what Logic needs beside it (Model and Database next to it, Database prepared once); how a consumer imports from the Logic Interface; a verification script showing that the Interface publishes exactly every listed Service as the identical Interface object; and six real consumer problems with fixes. Observed in a clean copy on a prepared database: the 5 Python blocks of the README run in order, the setup commands work, and the two Service READMEs still run (35 and 33 blocks) after formatting; ruff and pyright pass; regeneration of every generated file gives zero difference.'
+                  decisions:
+                    - unset: Heading structure, how the Services are linked, and how documentation examples are kept correct
+                      chosen: The Logic README follows the order in Logic Preferences, links each Service's README by a path inside the Component and its Definition and Preferences by relative links to their authored files, and shows each capability through Logic Interface only. The two Service READMEs are generated from the live Interfaces (signatures) and formatted by the selected formatter, which also formats their code blocks; every example was executed in order on a prepared database.
+                      why: Preferences fix the sections and content but not heading levels, link targets or how examples are verified.

@@ -30,10 +30,10 @@ content_map:
 content:
   active:
     mode: "reviewing"
-    phase: "P2"
-    mode_reason: "Review is judging the generated Source of phase P2 against its Plan, invoked directly."
+    phase: "P3"
+    mode_reason: "Review is judging the generated Source of phase P3 against its Plan under Implement execution 009."
     set_by: "my-interface-review"
-    set_at: "2026-10-05T11:27:04Z"
+    set_at: "2026-10-05T11:50:49Z"
   phases:
     P1:
       id: "P1"
@@ -47,6 +47,12 @@ content:
       development: "completed"
       review: "satisfied"
       completed_at: "2026-10-05T11:32:59Z"
+    P3:
+      id: "P3"
+      planning: "completed"
+      development: "completed"
+      review: "satisfied"
+      completed_at: "2026-10-05T11:54:27Z"
   log:
     - id: "001"
       skill: "my-interface-configure"
@@ -412,3 +418,182 @@ content:
             question: "Because configuration and storage resolve from the Component root, Database works only as an editable (path) dependency; a built wheel imports with a configuration error. Is that the intended installation model for a consumer such as the API Component?"
             current_choice: "Editable path dependency, documented in the README; the wheel is buildable but not importable."
             where: "Database packaging"
+    - id: "009"
+      skill: "my-interface-implement"
+      event: "implement"
+      outcome: "completed"
+      started_at: "2026-10-05T11:38:38Z"
+      completed_at: "2026-10-05T11:54:57Z"
+      duration: "16:19"
+      report: "Coordinated phase P3 (Logic): Config was already present and valid, so Configure was not run; Plan, Develop and Review ran in order. Plan produced 7 Groups and 21 Tasks; Develop completed all 21; Review judged the result satisfied after one documentation Finding was resolved and rechecked. Three Open Questions are recorded for the Human, one of which concerns a defect found in the Database Component; there are no Blockers. Phase P3 is Planning completed, Development completed, Review satisfied."
+      open_questions:
+        - "OQ-010-1"
+        - "OQ-011-1"
+        - "OQ-012-1"
+      blockers: []
+      data:
+        phases_requested: ["P3"]
+        argument_resolution: "The argument 3 was taken as Target Phase 3, whose stable identifier is P3 (Logic, enabled, ready)."
+        configure: "not run; Plan Config and State Config already existed and were structurally valid"
+        operation_outcomes:
+          P3:
+            plan: {log_entry: "010", outcome: "completed"}
+            develop: {log_entry: "011", outcome: "completed"}
+            review: {log_entry: "012", outcome: "satisfied"}
+        associated_counts:
+          open_questions: 3
+          blockers: 0
+    - id: "010"
+      skill: "my-interface-plan"
+      parent_id: "009"
+      phase: "P3"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-10-05T11:38:50Z"
+      completed_at: "2026-10-05T11:41:09Z"
+      duration: "2:19"
+      report: "Produced the Plan for P3 (Logic): 7 Groups and 21 atomic Tasks, none previously existing. Dependencies resolve and are acyclic; the first Task depends on the completed Model and Database Interface Tasks of P1 and P2. The P1 and P2 Plans were preserved unchanged. One Open Question recorded; no Blockers."
+      open_questions:
+        - "OQ-010-1"
+      blockers: []
+      data:
+        plan_changes:
+          phase: "P3"
+          reconciliation: "No prior P3 Plan existed; created from current Interface and Target Understanding. The P1 and P2 Plans were compared and left unchanged: their Tasks are done and their Reviews are satisfied."
+          groups_added: ["P3-G1", "P3-G2", "P3-G3", "P3-G4", "P3-G5", "P3-G6", "P3-G7"]
+          tasks_added: 21
+          tasks_changed: 0
+          tasks_removed: 0
+          tasks_preserved: 74
+          tasks_replaced: 0
+          task_counts:
+            P3-G1: 1
+            P3-G2: 5
+            P3-G3: 4
+            P3-G4: 3
+            P3-G5: 3
+            P3-G6: 2
+            P3-G7: 3
+          reason: "First planning of P3; every Task is new work required by the phase goal."
+        open_questions:
+          OQ-010-1:
+            question: "Entity Service's Base must remove the parameter that takes the Entity class from each mirrored Action but keep a parameter that takes an Entity instance, and it reads Storage's published types to tell them apart. Database's published signatures type every entity parameter without distinction, so Storage, which mirrors them exactly, cannot carry that difference. How should Base tell a class parameter from an instance parameter: should Database's Interface type the two cases differently, or should Base take the rule from the Database Interface Schema?"
+            current_choice: "Planned as stated by the Definitions; Develop will have to make its own proposal for how Base distinguishes the two cases and record it as a decision."
+            where: "P3-G3-T2"
+        scope_notes:
+          - "Child Services are planned as one Task for the whole Entity Collection rather than one per Entity, because the Definition derives every Child Service uniformly from the Collection and the set follows it."
+          - "Aggregate Planning progress was recorded for P3 only."
+    - id: "011"
+      skill: "my-interface-develop"
+      parent_id: "009"
+      phase: "P3"
+      event: "develop"
+      outcome: "completed"
+      started_at: "2026-10-05T11:42:32Z"
+      completed_at: "2026-10-05T11:50:07Z"
+      duration: "7:35"
+      report: "Developed all 21 Tasks of P3 (Logic) and produced the Logic Component as a uv project: the Storage Service (gateway with 16 Actions mirroring Database, 16 republished contracts, its Interface), the Entity Service (Base with 12 Actions, 15 Child Services, its Interface republishing the Storage contracts), the Logic Interface publishing both Services, and three READMEs. Generated files come from a scratch generator reading the live Database, Storage and Model Interfaces; regeneration gives zero difference. ruff and pyright pass; all 73 Python blocks of the three READMEs ran on a prepared database; an end-to-end run through every Child Service worked. Review has not yet judged acceptance. Two Open Questions; no Blockers."
+      open_questions:
+        - "OQ-010-1"
+        - "OQ-011-1"
+      blockers: []
+      data:
+        tasks:
+          claimed_and_done: 21
+          skipped: 0
+          blocked: 0
+          replaced: 0
+        decisions:
+          - "P3-G1-T1"
+          - "P3-G2-T1"
+          - "P3-G2-T2"
+          - "P3-G3-T2"
+          - "P3-G4-T2"
+          - "P3-G6-T2"
+          - "P3-G7-T3"
+        open_questions:
+          OQ-011-1:
+            question: "Logic Preferences ask each Storage Action to carry the Database capability's docstring, but Database's Interface publishes none, so the Actions (and Base Actions) carry none. Should Database's Interface carry documentation that Storage can mirror?"
+            current_choice: "The Actions carry what Database publishes, which is no documentation; the Logic READMEs document every Action instead."
+            where: "P3-G2-T2"
+        reaffirmed_open_questions:
+          OQ-010-1: "Develop met the class-versus-instance question at P3-G3-T2. Database's signatures type every entity parameter the same, so Base removes the Entity class parameter from every mirrored Action except add and update, which are named in the generator as the Actions that take an Entity instance; recorded as a decision on that Task."
+        scope_notes:
+          - "Generated only inside the Logic Component directory; Model and Database were read only through their Interfaces and were not changed."
+          - "The generator and check scripts stayed in the session scratchpad; the Logic Component ships generated source only. The naming-collision stop was shown by a generator run, not by shipped code."
+          - "Behavioural checks that write data ran in scratch copies of Model, Database and Logic; the real Database storage still holds 15 Tables and 23 records."
+          - "Child Services were generated for all 15 Entities in one step each (one Task per rule, not per Entity)."
+          - "Aggregate Development progress was recorded for P3 only."
+    - id: "012"
+      skill: "my-interface-review"
+      parent_id: "009"
+      phase: "P3"
+      event: "review"
+      outcome: "satisfied"
+      started_at: "2026-10-05T11:50:49Z"
+      completed_at: "2026-10-05T11:54:27Z"
+      duration: "3:38"
+      report: "Reviewed P3 (Logic) against its Plan (21 Tasks) and the Review categories of Logic, Storage Service and Entity Service. One Finding raised (an inaccurate troubleshooting entry in the Logic README), resolved and rechecked. All 6 Logic, 8 Storage Service and 10 Entity Service review observations and all 21 Task acceptance criteria were observed to hold; technical checks pass; regeneration gives zero difference. While reviewing, a defect in the already-reviewed Database Component was observed and is recorded as an Open Question. Outcome satisfied. One Open Question and reaffirmed ones; no Blockers."
+      open_questions:
+        - "OQ-012-1"
+      blockers: []
+      data:
+        findings:
+          - id: "F-012-1"
+            state: "resolved"
+            resolution: "Rewrote the troubleshooting entry of the Logic README to state what actually happens: passing the Entity class again raises InvalidInputError for some Actions (get_by_id(User, 1): the id must be an integer) and TypeError for others (count(User): the class is taken for the filters), an unknown keyword such as entity= raises TypeError, and only add and update take an Entity instance; the fix (call the Action without the class) is unchanged."
+            recheck: "Each symptom named in the new entry was reproduced in a clean prepared copy (InvalidInputError, TypeError, TypeError); the other troubleshooting claim that was unobserved (no such table on an unprepared Database) was reproduced as an execution-failure error; the README's examples and the documentation observations pass again; ruff and pyright pass."
+            kind: "documentation"
+            component: "Logic"
+            expected: "Task P3-G7-T3 and Logic Preferences: the troubleshooting part covers real problems a consumer can meet and how to fix them; each stated symptom is what actually happens."
+            observed: "The Logic README says that passing the Entity class again to a Child Service Action fails with a TypeError about an unexpected argument and gives get_by_id(User, 1) as the example. That call raises InvalidInputError ('An id must be an integer'); other forms of the same mistake raise InvalidInputError or a TypeError about the class not being iterable, and an unexpected keyword raises a TypeError."
+            evidence: "README.md line 125 (the TypeError bullet in Troubleshooting). Observed in a clean prepared copy: get_by_id(User, 1) -> InvalidInputError; sum(User, User.id) -> InvalidInputError; add(User, instance) -> InvalidInputError; count(User) and list(User) -> TypeError: 'SQLModelMetaclass' object is not iterable; get_by_id(entity=User, id=1) -> TypeError (unexpected keyword)."
+        checks_performed:
+          logic_review_observations:
+            - "1. Interface needs in the Logic Definition versus the Logic Interface Schema: aligned by reading (Complete, Unchanged, Nothing else against the entries, no_behaviour and contract_change rules); the Schema holds nothing beyond them."
+            - "2. Logic Interface publishes exactly one entry for every Service listed in Logic Preferences, under its configured name, and nothing else: observed (Entity and Storage; equal to its published list)."
+            - "3. Every entry is the identical Interface object of its Service: observed by identity."
+            - "4. No Service other than the Storage Service imports Database's Interface: observed by scanning every import of every file (only the Storage Service's two files import Database)."
+            - "5. No Service imports Logic Interface: observed by the same scan; loading either Service alone does not load Logic's entrypoint (fresh interpreters)."
+            - "6. No two Services share a name or directory: observed (entity and storage)."
+          storage_service_review_observations:
+            - "Interface needs versus the Logic Storage Interface Schema: aligned by reading."
+            - "Storage Interface publishes exactly one Action for every capability Database publishes (16) and nothing else besides the gateway and the 16 republished contracts: observed."
+            - "Each Action has the same parameter names, order and defaults (and annotations) as its capability: observed for all 16."
+            - "Each Action returns its capability's result and raises its errors unchanged: observed by comparing 16 Actions with Database for the same arguments, and the invalid-input error for all 16."
+            - "Every republished contract, including every Database error, is the identical object: observed by identity (16)."
+            - "No Action adds validation, retry, Engine or default-Instance selection or a rule: observed by parsing the source (every Action body is the single forwarding return)."
+            - "Every Action is an operation of the one gateway class, is named exactly as its capability and uses the one Database access created in its constructor: observed (one construction of Database in the source; a second gateway holds its own access)."
+            - "Loading the Interface opens no connection and creates no data or file: observed with audit hooks."
+          entity_service_review_observations:
+            - "Interface needs versus the Logic Entity Interface Schema: aligned by reading."
+            - "Entity Interface publishes exactly one Child Service for every Entity in the Collection (15) and every Storage contract except the gateway (16), nothing else: observed."
+            - "Every republished contract is the identical object Storage publishes: observed by identity."
+            - "Base has exactly one Action for every Storage Action that takes an Entity (12), in Storage's order, with the same name, and none for the four that take none: observed."
+            - "Each Action has Storage's parameter names, order and defaults without the Entity class parameter, add and update keeping the instance: observed for all 12."
+            - "Each Action returns Storage's result, raises its errors unchanged and rejects an instance of another Entity with the Invalid Input error: observed on all 15 Child Services against the real database (add and update rejection; count, list and get by id equal to Storage's)."
+            - "Every Action uses the one Storage access Base holds: observed with a recording stand-in (10 Actions on each of 15 Children forwarded the bound Entity class through it)."
+            - "Every Child unit and structure name follows the configured patterns and is valid, unique and free of collisions: observed."
+            - "Every Child Service binds exactly its own Entity and receives Base: observed by identity."
+            - "Loading the Interface opens no connection and creates no data or file: observed with audit hooks."
+          plan_acceptance: "All 21 Task acceptance criteria were observed to hold, including the literal end-to-end scenario through the Logic Interface (add, list by Filter, read, update, disable, enable, count, sum over exact decimals, delete, another kind rejected, every answer equal to Database's) and the claim that the gateway follows Database: in a scratch copy a capability and a contract were added to and one capability removed from Database's Interface, and regeneration added or removed exactly those Actions and republished the contract, nothing else."
+          technical:
+            - "ruff format check, ruff check and pyright pass; the lock file is consistent with the declaration; the declared dependencies (model, database) are exactly what the source imports."
+            - "The Component builds to a wheel and source archive; the wheel installs into a fresh environment with the sibling Components and the Logic Interface imports from it."
+            - "All 73 Python examples of the three READMEs execute in order on a freshly prepared database (35, 33 and 5)."
+            - "Regeneration of every generated source file from the live Model, Database and Storage Interfaces, followed by the selected formatter, gives zero difference."
+            - "No machine-specific path, agent-identifying text or timestamp; no framework, process or transport import; Model and Database are unchanged and the real Database storage still holds 15 Tables and 23 records."
+          testing_scope: "Persistent testing is disabled for Logic; every condition was verified transiently with scripts kept outside the Component and with scratch copies for anything that writes data, and no test was added to it."
+        observations_about_the_review:
+          - "The generator is the implementer's own tool and is not part of the Component, so zero-difference regeneration shows consistency with the live Interfaces, not independence; independence comes from the separate observations above, which derive the expected membership and signatures from the live Interfaces themselves. The naming-collision stop (a generation-time configuration error) cannot be observed in the shipped Component and rests on the generator run recorded in the Task Log."
+          - "Whether an Action's Entity parameter is a class or an instance cannot be read from the published types (Database types them all alike); the Task Log records the decision that add and update take the instance, which matches what the Database Interface Schema states. It stays open as OQ-010-1."
+          - "Database publishes no documentation on its capabilities, so Storage and Base Actions carry none (OQ-011-1)."
+          - "Several of my own checks failed on first run because of mistakes in the checks (a link regex that also matched an external link, and a paragraph counter that split a code block); each was verified directly and not treated as a defect of the Component. Two lines of an earlier scratch probe ended in an unconditional pass and are not counted as evidence."
+        open_questions:
+          OQ-012-1:
+            question: "Reviewing Logic showed a defect in the Database Component, whose P2 Review was recorded satisfied: when a non-sequence value is passed as the filters parameter of an Operation (for example count(User) given through a Child Service, so the class lands in filters), Database raises a raw TypeError ('object is not iterable') instead of the invalid-input error its Definition and Schema require for invalid input. Logic passes it through unchanged, as required. Should Database be re-planned or re-developed and re-reviewed?"
+            current_choice: "Not changed: it belongs to the Database Component and Review may change only the reviewed Component; the Logic README documents the observed behaviour."
+            where: "Database core data module, query resolution"
+        reaffirmed_open_questions:
+          OQ-010-1: "Observed again at review; the result matches the Database Interface Schema's statement that add and update take an Entity instance."
+          OQ-011-1: "Observed again at review; Storage and Base Actions carry no documentation because Database publishes none."
