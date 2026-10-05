@@ -1,0 +1,981 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: "config/plan.yaml"
+  path_note: "Mutable Plans, Groups, Tasks, counts and progress."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current Plan Component and the active operation's ownership rules."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read task_count, then the Plan selected by stable Target phase identifier, with its Groups and Tasks in nesting order."
+  selection: "A requested phase resolves to the Plan keyed by that phase identifier; a Task resolves within its containing Group and Plan."
+  absence: "No matching Plan means no current planning record exists for that phase."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "task_count"
+  - "plans"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  task_count: "Total number of stored Tasks."
+  plans: "Current phase Plans and their Groups and Tasks."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  task_count: 28
+  plans:
+    P1:
+      id: "P1"
+      title: "Model"
+      order: 1
+      target: "Model"
+      does: "A reusable, independent Model library that publishes every Target Entity with its complete Declaration and lossless JSON conversion through one stable Interface."
+      constraints: []
+      task_count: 28
+      groups:
+        P1-G1:
+          id: "P1-G1"
+          title: "Library foundation"
+          description: "Brings the Model Component into existence as an independent, reusable library that all remaining work builds on."
+          area: "Component setup and dependency resolution"
+          does: "The Model library exists as a self-contained, loadable unit whose selected technology and quality tooling are ready."
+          constraints: []
+          task_count: 1
+          tasks:
+            P1-G1-T1:
+              id: "P1-G1-T1"
+              source_id: "003"
+              title: "Provide the Model library as an independent reusable unit"
+              description: "Establish the Model Component as an independent library whose selected technology and quality tooling are set up and whose dependency versions are resolved and recorded, so every later Task has a working place to realize its result."
+              reason: "Every other Task in the phase builds on a Component that can be set up and consumed on its own."
+              inputs:
+                - "Resolved technology and tooling selections for the Model Component"
+              skills: []
+              expected_result: "A Model library that sets up from a clean state in an isolated environment with its dependencies resolved and recorded, and that a consumer can load."
+              depends_on: []
+              constraints: []
+              acceptance: "From a clean state the library sets up in an isolated environment without error, and a consumer can then load it successfully."
+              status: "done"
+              log:
+                - at:
+                  execution: '004'
+                  event: claimed
+                  detail: Dependencies satisfied (none). Claimed before changing the Task result.
+                - at:
+                  execution: '004'
+                  event: completed
+                  detail: 'Created the Model Component as a uv project in model/ with the importable package model/model/. Dependencies resolved and recorded in uv.lock; direct dependencies pinned to the resolved versions (sqlmodel 0.0.47, pydantic 2.13.5, sqlalchemy 2.0.54; dev: ruff 0.16.10, pyright 1.1.414); Python constrained to 3.14.*. Observed: virtual environment deleted and rebuilt from the lock file, then the package loaded without error.'
+                  decisions:
+                    - unset: Physical arrangement of the package inside the Component root
+                      chosen: Component root model/ holds the project declaration, lock file and documentation; the importable package model/model/ holds Interface, entity/ and core/. A model/.gitignore excludes the environment and bytecode caches.
+                      why: Model Preferences name the Component directory and package as model but leave the project layout unstated; this keeps the Interface at the package root and the README at the Component root.
+                    - unset: Build backend and version pinning form
+                      chosen: uv_build with an explicit module root, and exact == pins for every direct dependency.
+                      why: Development Preferences select uv and require concrete stabilized versions; the backend choice was unstated.
+                - at:
+                  execution: '004'
+                  event: amended
+                  detail: 'Quality-tool configuration was added to the project declaration after the Task was completed, once the tools Development Preferences select (ruff, pyright) were run on the Component: ruff line length 120 with the pycodestyle, pyflakes, isort, pyupgrade and bugbear rule sets and E501 ignored (descriptions copied from the Target are long lines), pyright in standard mode over the package; the ignore list excludes the environment, bytecode caches and the formatter cache. The final state rebuilds from the lock file and loads.'
+                  decisions:
+                    - unset: Rule sets and strictness of the selected formatter, linter and type checker
+                      chosen: ruff line length 120 with rule sets E, F, I, UP, B and E501 ignored; pyright standard mode.
+                      why: Development Preferences select the tools and the Python typing style but leave rules and strictness unstated.
+        P1-G2:
+          id: "P1-G2"
+          title: "Core contracts"
+          description: "The shared public contracts and shared Entity behaviour that every Entity relies on, kept independent of any single Entity."
+          area: "Core: shared Declaration and Foundation contracts and shared Entity behaviour"
+          does: "The contracts and behaviour every Entity depends on are in place and observable independently of any one Entity."
+          constraints: []
+          task_count: 8
+          tasks:
+            P1-G2-T1:
+              id: "P1-G2-T1"
+              source_id: "003"
+              title: "Publish the Declaration contract for Entities and Fields"
+              description: "Publish the structured, immutable record that expresses the complete meaning of an Entity and of each of its Fields, free of any runtime behaviour."
+              reason: "Entities and their consumers need one shared place that states what an Entity means."
+              inputs:
+                - "Completed Model library foundation"
+              skills: []
+              expected_result: "Any Entity can state its name, description, ordered Fields, Primary Key, Relations, Uniqueness Constraints, and Indexes, and each Field its complete properties, through one uniform public record."
+              depends_on:
+                - "P1-G1-T1"
+              constraints: []
+              acceptance: "A consumer can read every Entity-level and Field-level property through the published Declaration shape; the record cannot be altered after creation; it carries no storage, transport, or workflow information; and an absent default is distinguishable from an explicit null default."
+              status: "done"
+              log:
+                - at:
+                  execution: '004'
+                  event: claimed
+                  detail: Dependency P1-G1-T1 is done. Claimed before changing the Task result.
+                - at:
+                  execution: '004'
+                  event: completed
+                  detail: "Published the Declaration contract: immutable Entity-level and Field-level records with ordered Fields, Primary Key, Relations, Uniqueness Constraints and Indexes. Observed in a scratch run: assignment on a Declaration and mutation of a Field's constraints are refused; an absent default (has_default false) differs from an explicit null default (has_default true, default None); contradictory declarations (default plus generation, bad Relation, duplicate metadata, wrong is_active, unrecognized marker) are rejected. Field member names (name, description, type, nullable, has_default, default, sensitivity, immutable, constraints, value_generation) were not fixed by Model Preferences."
+                  decisions:
+                    - unset: Public member names of the Field Declaration and the names of the Relation, Uniqueness Constraint and Index records
+                      chosen: FieldDeclaration members name, description, type, nullable, has_default, default, sensitivity, immutable, constraints, value_generation; Uniqueness Constraints and Indexes expressed as tuples of Field names; Entity-level and Relation members as listed in Model Preferences.
+                      why: Preferences list only the Entity-level and Relation member names; the remaining names follow the Field properties named by the Model Definition.
+            P1-G2-T2:
+              id: "P1-G2-T2"
+              source_id: "003"
+              title: "Resolve Target Types to realizable value categories and stop on an unknown Type"
+              description: "Provide one interpretation of every Target-declared Type into its realized value category and its JSON representation, and make realization stop with a report, rather than guess, when a Type is not recognized."
+              reason: "Fields cannot be realized or converted faithfully without one agreed interpretation of every Target Type."
+              inputs:
+                - "Completed Model library foundation"
+              skills: []
+              expected_result: "Every Type the Target uses resolves to exactly one value category and JSON representation, and an unknown Type halts realization with an explicit report."
+              depends_on:
+                - "P1-G1-T1"
+              constraints: []
+              acceptance: "Each Target Type is realized as its category requires, keeping decimals exact and datetimes timezone-aware; a Type the Target has not declared before stops realization with a clear report and yields no guessed result."
+              status: "done"
+              log:
+                - at:
+                  execution: '004'
+                  event: claimed
+                  detail: Dependency P1-G1-T1 is done. Claimed before changing the Task result.
+                - at:
+                  execution: '004'
+                  event: completed
+                  detail: "Published one Type table (string, integer, float, decimal, boolean, datetime as timezone-aware, date, time, uuid) from Model Preferences. An unknown Type raises an error naming the Type and the supported set before any declaration exists. Observed in a scratch run: Type 'money' is rejected with a report; a decimal default of integer 0 and an integer default of true are rejected under strict checking."
+            P1-G2-T3:
+              id: "P1-G2-T3"
+              source_id: "003"
+              title: "Enforce the Field contract on construction and mutation"
+              description: "Provide the shared Entity behaviour that accepts only declared Fields and applies the same strict rules, with no coercion, to direct construction and to assignment: required values, nullability, Types, defaults, and constraints. Explicit false, zero, empty string, and null remain supplied values; a rejected assignment keeps the prior value; an immutable Field cannot change."
+              reason: "One strict runtime contract stops construction and mutation from changing data or inventing behaviour."
+              inputs:
+                - "Published Declaration contract"
+                - "Type resolution"
+              skills:
+                - "sqlmodel"
+              expected_result: "A shared Entity behaviour under which invalid values are rejected and valid values are kept exactly as supplied."
+              depends_on:
+                - "P1-G2-T1"
+                - "P1-G2-T2"
+              constraints: []
+              acceptance: "Constructing with an unknown Field, a wrong Type, or a missing required value is rejected; supplied false, zero, empty string, and null are retained as given; a rejected assignment leaves the earlier value intact; an attempt to change an immutable Field is refused."
+              status: "done"
+              log:
+                - at:
+                  execution: '004'
+                  event: claimed
+                  detail: Dependencies P1-G2-T1 and P1-G2-T2 are done. Claim recorded after first drafts of the shared base inputs (naming, column types, Foundation contract) had been written; no Entity or shared base module existed before this claim.
+                - at:
+                  execution: '004'
+                  event: completed
+                  detail: "Shared Entity base realized: every direct construction is first validated strictly (declared Fields only, required values, nullability, Types, constraints, no coercion) and then initialized; assignment to a declared Field is validated strictly and atomically and reports the Field name without the value; immutable Fields refuse change; the base also verifies at class creation that an Entity's realized Fields match its Declaration in name, order, Type and presence. Observed in a scratch run with a throwaway Entity: unknown Field, wrong Type, missing value, over-long value and integer-for-decimal are rejected; false, empty string and null are retained as supplied; a rejected assignment keeps the earlier value; assigning an immutable Field is refused."
+                  decisions:
+                    - unset: How strict validation is applied to a table model, which skips validation on construction
+                      chosen: The base validates the supplied data through the table model's own validation before initializing, detecting SQLModel's internal partial-initialization state through its finish_init flag (a private module of the pinned SQLModel version).
+                      why: Model Preferences require validation before initializing; the flag is the only way to tell internal partial initialization from a direct construction without recursion.
+                    - unset: Whether diagnostics may carry values
+                      chosen: Every Entity hides input values in validation errors.
+                      why: Model forbids echoing sensitive values in diagnostics; hiding for all Fields avoids depending on markers.
+                    - unset: Extra consistency guard
+                      chosen: Class creation fails when an Entity's realized Fields do not match its Declaration.
+                      why: Keeps the Declaration the single source of the Entity's meaning, as Model Preferences require for copied metadata.
+                - at:
+                  execution: '004'
+                  event: corrected
+                  detail: "A defect surfaced while realizing Entities: a float Field accepted an integer at construction and kept it unconverted, an implicit coercion. Direct construction and assignment now refuse an integer for a float Field; JSON text keeps JSON's single number type. Observed: Asset(point_size=1) and assignment of 2 are rejected, 2.5 is accepted, a JSON round trip of a float is unchanged. ruff and pyright pass."
+            P1-G2-T4:
+              id: "P1-G2-T4"
+              source_id: "003"
+              title: "Keep generated values under their declaration's control"
+              description: "Handle Fields with declared Value Generation: an omitted Auto Increment Field stays in an explicit pending state without becoming nullable, a caller-supplied value for it is refused, and a Generated Identifier is produced at Entity creation when one is declared."
+              reason: "Generation ownership must stay with whoever is responsible for assigning the value, never with the caller or with Model."
+              inputs:
+                - "Shared Field-contract enforcement"
+              skills:
+                - "sqlmodel"
+              expected_result: "Auto Increment Fields stay pending until assigned elsewhere, and declared Generated Identifiers are produced when an Entity is created."
+              depends_on:
+                - "P1-G2-T3"
+              constraints: []
+              acceptance: "Creating an Entity without its auto-incremented value yields a valid Entity whose value reads as not yet assigned; supplying such a value is rejected; Model never assigns it."
+              status: "done"
+              log:
+                - at:
+                  execution: '004'
+                  event: claimed
+                  detail: Dependency P1-G2-T3 is done. Claimed before changing the Task result.
+                - at:
+                  execution: '004'
+                  event: completed
+                  detail: 'Generated-value handling added to the shared base: an Auto Increment Field omitted at construction stays pending (None) without becoming nullable; a non-null caller-supplied value is refused at construction and any later assignment of such a Field is refused; the base never assigns it; a declared Generated Identifier is produced with the selected uuid4 algorithm when omitted. Observed in a scratch run against in-memory SQLite: omitted id reads None; id=3 refused; id=None accepted as pending; assignment refused before and after the database assigned id 1; the database-assigned value was readable afterwards.'
+                  decisions:
+                    - unset: Whether an explicit null for an Auto Increment Field counts as a supplied value
+                      chosen: Explicit null is accepted as the pending state; any non-null value is refused.
+                      why: Model Preferences name None as the pending representation and Model forbids supplied values, so null is the one value that carries no caller choice.
+            P1-G2-T5:
+              id: "P1-G2-T5"
+              source_id: "003"
+              title: "Keep Sensitivity Markers metadata-only"
+              description: "Accept only the approved Sensitivity Markers, expose a marker through the Declaration, leave the marked value untouched in the Entity and its JSON Object, and keep sensitive values out of every diagnostic."
+              reason: "Model records the meaning of sensitivity without taking on responsibility for protecting values."
+              inputs:
+                - "Published Declaration contract"
+                - "Shared Field-contract enforcement"
+              skills:
+                - "sqlmodel"
+              expected_result: "Sensitivity is visible in Declarations while values remain exactly as supplied and never appear in failure reports."
+              depends_on:
+                - "P1-G2-T1"
+                - "P1-G2-T3"
+              constraints: []
+              acceptance: "A Field carrying an approved marker exposes it through its Declaration and holds exactly the supplied value; an unapproved marker is rejected; a failure involving such a Field reports no part of its value."
+              status: "done"
+              log:
+                - at:
+                  execution: '004'
+                  event: claimed
+                  detail: Dependencies P1-G2-T1 and P1-G2-T3 are done. Claimed before changing the Task result.
+                - at:
+                  execution: '004'
+                  event: completed
+                  detail: "Sensitivity is metadata only: a Field Declaration accepts only the markers Model Preferences recognize (password, sensitive) and exposes the marker; Entity state and the JSON Object keep the exact supplied value; every Entity hides input values in validation errors; the Entity's diagnostic representation omits Fields that carry a marker. Observed in a scratch run: a failure involving a marked Field's Entity names the Field and Type but not the value; the JSON text carried the exact value; an unrecognized marker was rejected at declaration."
+                  decisions:
+                    - unset: Whether the Entity's own printable representation may show a marked value
+                      chosen: The representation omits Fields carrying a Sensitivity Marker.
+                      why: Representations appear in logs and tracebacks; omitting the Field protects secrets without changing the stored value, the JSON Object or the Declaration.
+            P1-G2-T6:
+              id: "P1-G2-T6"
+              source_id: "003"
+              title: "Map every Entity to its storage-ready table form"
+              description: "Make each Entity realize its Declaration as a storage-ready table form with deterministic table, column, constraint, and index naming, an identity column for auto-increment Fields, and column behaviour that keeps decimals exact and datetimes timezone-aware and stored in UTC."
+              reason: "Consumers of Model rely on one predictable storage mapping that matches the Declaration exactly."
+              inputs:
+                - "Published Declaration contract"
+                - "Type resolution"
+                - "Shared Field-contract enforcement"
+              skills:
+                - "sqlmodel"
+              expected_result: "Any Entity can be consumed as a table form whose names, constraints, indexes, and column behaviour follow one fixed convention."
+              depends_on:
+                - "P1-G2-T1"
+                - "P1-G2-T2"
+                - "P1-G2-T3"
+              constraints: []
+              acceptance: "For any Entity the table name equals the Entity name and each column name equals its Field name; primary key, foreign key, unique, and index names follow one deterministic convention; auto-increment Fields map to an identity column; decimal and datetime values keep their exact value in their columns."
+              status: "done"
+              log:
+                - at:
+                  execution: '004'
+                  event: claimed
+                  detail: Dependencies P1-G2-T1, P1-G2-T2 and P1-G2-T3 are done. Claimed before changing the Task result.
+                - at:
+                  execution: '004'
+                  event: completed
+                  detail: "Storage-ready mapping realized in the shared base and Core column types: constraint names follow one convention set on the shared metadata (pk_<table>, fk_<table>_<field>, uq_<table>_<fields joined by _>, ix_<table>_<fields joined by _>); the exact-decimal column type stores decimal text and returns decimal.Decimal; the datetime column type is built on a timezone-aware datetime column, normalizes to UTC on write and returns UTC-aware values on read; table name, identity construct and SQLite autoincrement are applied per Entity from its Declaration. Observed in a scratch run on in-memory SQLite: table name equals the Entity name, column names equal Field names, constraint names matched the convention, auto-increment id rendered as an identity primary key, Decimal('1.2300') and a +02:00 datetime came back exact and UTC-aware."
+                  decisions:
+                    - unset: Meaning of 'exactly the Entity name' for the table name
+                      chosen: The table name equals the Entity's physical class name (e.g. TradingPlatform), not the spaced logical name.
+                      why: A table named with a space would break the prescribed constraint names; the physical name is the Entity name in its realized form.
+            P1-G2-T7:
+              id: "P1-G2-T7"
+              source_id: "003"
+              title: "Apply deterministic physical naming"
+              description: "Keep logical Entity, Field, and Relation names exactly as the Target spells them, derive physical names deterministically from the selected language's naming rules, and reject unresolvable reserved-word or normalization collisions instead of repairing them."
+              reason: "Domain names must stay understandable without technical context while source still follows its language."
+              inputs:
+                - "Published Declaration contract"
+              skills: []
+              expected_result: "Declarations carry exact Target spellings, and physical names are derived the same way on every generation."
+              depends_on:
+                - "P1-G2-T1"
+              constraints: []
+              acceptance: "Every Declaration exposes names spelled exactly as the Target spells them; physical names follow the selected naming style identically on every generation; a collision that cannot be resolved is reported and rejected, never silently altered."
+              status: "done"
+              log:
+                - at:
+                  execution: '004'
+                  event: claimed
+                  detail: Dependency P1-G2-T1 is done. Claim recorded after the first draft of the naming module had been written.
+                - at:
+                  execution: '004'
+                  event: completed
+                  detail: "Naming rules realized: an Entity's class name is its logical name with spaces removed and each word capitalized; Field attribute names are snake_case; both reject unnormalizable names and names that collide with Python keywords, SQLModel/Pydantic attributes or the Model's own member names; a Declaration rejects Fields whose normalized names collide. Logical names stay exactly as supplied in the Declaration. Observed in a scratch run: 'Trading Platform' maps to TradingPlatform; 'metadata', 'class', 'json', 'declaration' and 'to_json' are rejected; two Fields normalizing to the same name are rejected. Cross-Entity collisions are not decidable inside one Declaration and are left to the Interface Task."
+                  decisions:
+                    - unset: What counts as a reserved word and how logical names become physical names
+                      chosen: Reserved = Python keywords, every attribute of the SQLModel base, and declaration, to_json, from_json. Entity names use PascalCase from space-separated words; Field names use snake_case.
+                      why: Model Preferences select PascalCase for Entities and snake_case for Fields without listing the collisions to reject.
+            P1-G2-T8:
+              id: "P1-G2-T8"
+              source_id: "003"
+              title: "Provide lossless Entity-to-JSON conversion"
+              description: "Provide the shared conversion between an Entity and its JSON Object, meaning JSON text with one root object whose keys are exactly the Field names in Declaration order, and reconstruction of an Entity from that text which rejects malformed text and otherwise follows the construction rules."
+              reason: "Consumers need one portable, lossless value representation of every Entity."
+              inputs:
+                - "Shared Field-contract enforcement"
+                - "Generated-value handling"
+              skills:
+                - "sqlmodel"
+              expected_result: "Every Entity converts to JSON text and back without loss."
+              depends_on:
+                - "P1-G2-T3"
+                - "P1-G2-T4"
+              constraints: []
+              acceptance: "Converting any Entity to JSON text and back yields an equal Entity; keys are exactly the Field names in Declaration order; null, false, zero, and empty string stay distinct; exact decimals and offset-bearing datetimes are preserved; malformed text is rejected; a pending auto-increment value is represented as null."
+              status: "done"
+              log:
+                - at:
+                  execution: '004'
+                  event: claimed
+                  detail: Dependencies P1-G2-T3 and P1-G2-T4 are done. Claimed before changing the Task result; a first draft of the Foundation contract existed from earlier work on this Group.
+                - at:
+                  execution: '004'
+                  event: completed
+                  detail: "Foundation realized as the shared conversion contract: to_json writes JSON text with one root object whose keys are exactly the Field names in Declaration order; from_json parses the text, decodes each value through its own strict Field check (decimals only from strings, datetimes only from offset-bearing strings), rejects malformed text, non-object roots, non-standard constants, unknown keys, wrong Types and missing required values, then constructs through the table model's strict validation. Observed in a scratch run: Entity to JSON text and back gave identical JSON with a 20-digit decimal and a +02:00 datetime preserved; null, false, zero and empty string stayed distinct; pending id is null and restores as pending; a database-loaded Entity round-tripped; every rejection case above raised without echoing a supplied value. A defect found on the way (JSON numbers accepted for decimals; key order following assignment order) was corrected before completion. ruff and pyright pass on the Core."
+                  decisions:
+                    - unset: Whether JSON reconstruction may restore an already-assigned Auto Increment value
+                      chosen: from_json accepts a non-null value for an Auto Increment Field; direct construction and assignment still refuse one.
+                      why: A lossless round trip of a stored Entity requires restoring its assigned id; the refusal in Model's Principle concerns a caller choosing the value.
+                    - unset: How JSON text is decoded into Types
+                      chosen: Each Field is decoded by its own strict adapter after parsing the text with the standard JSON parser, because SQLModel table models skip Pydantic's JSON-mode validation.
+                      why: Validating the whole text through the table model accepted unvalidated strings; explicit per-Field decoding keeps exact decimals and rejects coercion.
+        P1-G3:
+          id: "P1-G3"
+          title: "Entities"
+          description: "One Task per Target Entity. Each Task realizes exactly one Entity as the Target's Models section defines it and holds only that Entity's own meaning."
+          area: "Entity units"
+          does: "Every Target Entity exists as its own Entity whose Declaration matches the Target definition and which behaves according to the shared Core contracts."
+          constraints: []
+          task_count: 15
+          tasks:
+            P1-G3-T1:
+              id: "P1-G3-T1"
+              source_id: "003"
+              title: "Realize the User Entity"
+              description: "Realize the User Entity as the Target defines it."
+              reason: "User is the owning concept most other Entities relate to, so it must exist before its dependents can resolve their Relations."
+              inputs:
+                - "Target definition of the User Entity"
+                - "Completed Core contracts"
+              skills:
+                - "sqlmodel"
+              expected_result: "A User Entity complete per its Target definition and ready for publication."
+              depends_on:
+                - "P1-G2-T5"
+                - "P1-G2-T6"
+                - "P1-G2-T7"
+                - "P1-G2-T8"
+              constraints: []
+              acceptance: "User's Declaration exposes uniqueness of name and of username, and its credential Fields hold exactly the values supplied."
+              status: "done"
+              log:
+                - at:
+                  execution: '004'
+                  event: claimed
+                  detail: Dependencies P1-G2-T5, P1-G2-T6, P1-G2-T7 and P1-G2-T8 are done. Claimed before changing the Task result.
+                - at:
+                  execution: '004'
+                  event: completed
+                  detail: 'Entity module realized from its Target definition by the shared Entity template: Declaration (Fields in Target order with id first, Primary Key, Relations, Uniqueness Constraints) and table-model Fields that match it. Observed: ruff and pyright pass on the Component; a scratch comparison of the Declaration against the realized table found no differences in table name, column order, primary key, nullability, foreign keys versus Relations, unique constraints, constraint names, identity construct or SQLite autoincrement; construction, JSON text round trip and Declaration access worked.'
+                  decisions:
+                    - unset: Whether credential Fields carry a Sensitivity Marker
+                      chosen: No Sensitivity Marker is declared on password or api_key.
+                      why: The Target states credentials as storage Rules (hash at rest), not as a Sensitivity Marker, and Model adds only id, is_active and Preference defaults; storage protection belongs to Database. Recorded as an Open Question for the Human.
+                    - unset: Where the Entity's Declaration description and Field descriptions come from
+                      chosen: The Target Purpose text, verbatim, for the Entity and for each Field; id carries none.
+                      why: Model preserves each Entity's and Field's description from the Target.
+            P1-G3-T2:
+              id: "P1-G3-T2"
+              source_id: "003"
+              title: "Realize the Trading Platform Entity"
+              description: "Realize the Trading Platform Entity as the Target defines it."
+              reason: "Trading Platform is an independent concept that Instances and Positions refer to."
+              inputs:
+                - "Target definition of the Trading Platform Entity"
+                - "Completed Core contracts"
+              skills:
+                - "sqlmodel"
+              expected_result: "A Trading Platform Entity complete per its Target definition and ready for publication."
+              depends_on:
+                - "P1-G2-T5"
+                - "P1-G2-T6"
+                - "P1-G2-T7"
+                - "P1-G2-T8"
+              constraints: []
+              acceptance: "Trading Platform's Declaration exposes uniqueness of name and the platform code Field, and carries no behaviour tied to any particular platform."
+              status: "done"
+              log:
+                - at:
+                  execution: '004'
+                  event: claimed
+                  detail: Dependencies P1-G2-T5, P1-G2-T6, P1-G2-T7 and P1-G2-T8 are done. Claimed before changing the Task result.
+                - at:
+                  execution: '004'
+                  event: completed
+                  detail: 'Entity module realized from its Target definition by the shared Entity template: Declaration (Fields in Target order with id first, Primary Key, Relations, Uniqueness Constraints) and table-model Fields that match it. Observed: ruff and pyright pass on the Component; a scratch comparison of the Declaration against the realized table found no differences in table name, column order, primary key, nullability, foreign keys versus Relations, unique constraints, constraint names, identity construct or SQLite autoincrement; construction, JSON text round trip and Declaration access worked.'
+            P1-G3-T3:
+              id: "P1-G3-T3"
+              source_id: "003"
+              title: "Realize the Instance Entity"
+              description: "Realize the Instance Entity as the Target defines it."
+              reason: "Instance connects a User to a Trading Platform and is referred to by Accounts."
+              inputs:
+                - "Target definition of the Instance Entity"
+                - "Completed Core contracts"
+                - "Completed User and Trading Platform Entities"
+              skills:
+                - "sqlmodel"
+              expected_result: "An Instance Entity complete per its Target definition and ready for publication."
+              depends_on:
+                - "P1-G2-T5"
+                - "P1-G2-T6"
+                - "P1-G2-T7"
+                - "P1-G2-T8"
+                - "P1-G3-T1"
+                - "P1-G3-T2"
+              constraints: []
+              acceptance: "Instance's Declaration exposes its Relations to User and to Trading Platform and the uniqueness of the owner and name combination, and its optional connection Fields accept absence."
+              status: "done"
+              log:
+                - at:
+                  execution: '004'
+                  event: claimed
+                  detail: Dependencies P1-G2-T5, P1-G2-T6, P1-G2-T7 and P1-G2-T8 and P1-G3-T1 and P1-G3-T2 are done. Claimed before changing the Task result.
+                - at:
+                  execution: '004'
+                  event: completed
+                  detail: "Entity module realized from its Target definition by the shared Entity template. Observed: ruff and pyright pass on the Component; the scratch comparison of the Declaration against the realized table found no differences (table name, column order, primary key, nullability, foreign keys versus Relations including endpoint Types, unique constraints, constraint names, identity construct, SQLite autoincrement); construction and Declaration access behaved as the Task's acceptance describes. Optional connection Fields accept absence (read as null); both Relations and the owner-and-name uniqueness are exposed."
+            P1-G3-T4:
+              id: "P1-G3-T4"
+              source_id: "003"
+              title: "Realize the Currency Entity"
+              description: "Realize the Currency Entity as the Target defines it."
+              reason: "Currency is owned by a User and serves as the base currency of Accounts."
+              inputs:
+                - "Target definition of the Currency Entity"
+                - "Completed Core contracts"
+                - "Completed User Entity"
+              skills:
+                - "sqlmodel"
+              expected_result: "A Currency Entity complete per its Target definition and ready for publication."
+              depends_on:
+                - "P1-G2-T5"
+                - "P1-G2-T6"
+                - "P1-G2-T7"
+                - "P1-G2-T8"
+                - "P1-G3-T1"
+              constraints: []
+              acceptance: "Currency's Declaration exposes its Relation to User, the uniqueness of the owner and code combination, the fixed size of the code, and the default number of decimal digits."
+              status: "done"
+              log:
+                - at:
+                  execution: '004'
+                  event: claimed
+                  detail: Dependencies P1-G2-T5, P1-G2-T6, P1-G2-T7 and P1-G2-T8 and P1-G3-T1 are done. Claimed before changing the Task result.
+                - at:
+                  execution: '004'
+                  event: completed
+                  detail: "Entity module realized from its Target definition by the shared Entity template. Observed: ruff and pyright pass on the Component; the scratch comparison of the Declaration against the realized table found no differences (table name, column order, primary key, nullability, foreign keys versus Relations including endpoint Types, unique constraints, constraint names, identity construct, SQLite autoincrement); construction and Declaration access behaved as the Task's acceptance describes. A four-character code is rejected; decimal_digits defaults to 2; the owner-and-code uniqueness is exposed."
+            P1-G3-T5:
+              id: "P1-G3-T5"
+              source_id: "003"
+              title: "Realize the Broker Entity"
+              description: "Realize the Broker Entity as the Target defines it."
+              reason: "Broker is owned by a User and provides Assets and holds Accounts."
+              inputs:
+                - "Target definition of the Broker Entity"
+                - "Completed Core contracts"
+                - "Completed User Entity"
+              skills:
+                - "sqlmodel"
+              expected_result: "A Broker Entity complete per its Target definition and ready for publication."
+              depends_on:
+                - "P1-G2-T5"
+                - "P1-G2-T6"
+                - "P1-G2-T7"
+                - "P1-G2-T8"
+                - "P1-G3-T1"
+              constraints: []
+              acceptance: "Broker's Declaration exposes its Relation to User and the uniqueness of the owner and name combination."
+              status: "done"
+              log:
+                - at:
+                  execution: '004'
+                  event: claimed
+                  detail: Dependencies P1-G2-T5, P1-G2-T6, P1-G2-T7 and P1-G2-T8 and P1-G3-T1 are done. Claimed before changing the Task result.
+                - at:
+                  execution: '004'
+                  event: completed
+                  detail: "Entity module realized from its Target definition by the shared Entity template. Observed: ruff and pyright pass on the Component; the scratch comparison of the Declaration against the realized table found no differences (table name, column order, primary key, nullability, foreign keys versus Relations including endpoint Types, unique constraints, constraint names, identity construct, SQLite autoincrement); construction and Declaration access behaved as the Task's acceptance describes."
+            P1-G3-T6:
+              id: "P1-G3-T6"
+              source_id: "003"
+              title: "Realize the Asset Entity"
+              description: "Realize the Asset Entity as the Target defines it."
+              reason: "Asset identifies what Actions trade and depends on the Broker that provides it."
+              inputs:
+                - "Target definition of the Asset Entity"
+                - "Completed Core contracts"
+                - "Completed Broker Entity"
+              skills:
+                - "sqlmodel"
+              expected_result: "An Asset Entity complete per its Target definition and ready for publication."
+              depends_on:
+                - "P1-G2-T5"
+                - "P1-G2-T6"
+                - "P1-G2-T7"
+                - "P1-G2-T8"
+                - "P1-G3-T5"
+              constraints: []
+              acceptance: "Asset's Declaration exposes its Relation to Broker, the uniqueness of the broker and symbol combination, and the defaults of its point size and digits."
+              status: "done"
+              log:
+                - at:
+                  execution: '004'
+                  event: claimed
+                  detail: Dependencies P1-G2-T5, P1-G2-T6, P1-G2-T7 and P1-G2-T8 and P1-G3-T5 are done. Claimed before changing the Task result.
+                - at:
+                  execution: '004'
+                  event: completed
+                  detail: "Entity module realized from its Target definition by the shared Entity template. Observed: ruff and pyright pass on the Component; the scratch comparison of the Declaration against the realized table found no differences (table name, column order, primary key, nullability, foreign keys versus Relations including endpoint Types, unique constraints, constraint names, identity construct, SQLite autoincrement); construction and Declaration access behaved as the Task's acceptance describes. point_size and digits take their defaults (0.0 and 0); the broker-and-symbol uniqueness is exposed; an integer for the float Field is refused after the correction logged under P1-G2-T3."
+            P1-G3-T7:
+              id: "P1-G3-T7"
+              source_id: "003"
+              title: "Realize the Account Group Entity"
+              description: "Realize the Account Group Entity as the Target defines it."
+              reason: "Account Group organizes the Accounts a User owns."
+              inputs:
+                - "Target definition of the Account Group Entity"
+                - "Completed Core contracts"
+                - "Completed User Entity"
+              skills:
+                - "sqlmodel"
+              expected_result: "An Account Group Entity complete per its Target definition and ready for publication."
+              depends_on:
+                - "P1-G2-T5"
+                - "P1-G2-T6"
+                - "P1-G2-T7"
+                - "P1-G2-T8"
+                - "P1-G3-T1"
+              constraints: []
+              acceptance: "Account Group's Declaration exposes its Relation to User and the uniqueness of the owner and name combination."
+              status: "done"
+              log:
+                - at:
+                  execution: '004'
+                  event: claimed
+                  detail: Dependencies P1-G2-T5, P1-G2-T6, P1-G2-T7 and P1-G2-T8 and P1-G3-T1 are done. Claimed before changing the Task result.
+                - at:
+                  execution: '004'
+                  event: completed
+                  detail: "Entity module realized from its Target definition by the shared Entity template. Observed: ruff and pyright pass on the Component; the scratch comparison of the Declaration against the realized table found no differences (table name, column order, primary key, nullability, foreign keys versus Relations including endpoint Types, unique constraints, constraint names, identity construct, SQLite autoincrement); construction and Declaration access behaved as the Task's acceptance describes."
+            P1-G3-T8:
+              id: "P1-G3-T8"
+              source_id: "003"
+              title: "Realize the Account Entity"
+              description: "Realize the Account Entity as the Target defines it."
+              reason: "Account is the funded trading account that Actions and Positions use, and it relates to four other Entities."
+              inputs:
+                - "Target definition of the Account Entity"
+                - "Completed Core contracts"
+                - "Completed Account Group, Broker, Instance, and Currency Entities"
+              skills:
+                - "sqlmodel"
+              expected_result: "An Account Entity complete per its Target definition and ready for publication."
+              depends_on:
+                - "P1-G2-T5"
+                - "P1-G2-T6"
+                - "P1-G2-T7"
+                - "P1-G2-T8"
+                - "P1-G3-T3"
+                - "P1-G3-T4"
+                - "P1-G3-T5"
+                - "P1-G3-T7"
+              constraints: []
+              acceptance: "Account's Declaration exposes its Relations to Account Group, Broker, Instance, and Currency, the uniqueness of name and of the group, broker, and instance combination, and an exact decimal balance with its default; its credential Field holds exactly the value supplied."
+              status: "done"
+              log:
+                - at:
+                  execution: '004'
+                  event: claimed
+                  detail: Dependencies P1-G2-T5, P1-G2-T6, P1-G2-T7 and P1-G2-T8 and P1-G3-T3, P1-G3-T4, P1-G3-T5 and P1-G3-T7 are done. Claimed before changing the Task result.
+                - at:
+                  execution: '004'
+                  event: completed
+                  detail: "Entity module realized from its Target definition by the shared Entity template. Observed: ruff and pyright pass on the Component; the scratch comparison of the Declaration against the realized table found no differences (table name, column order, primary key, nullability, foreign keys versus Relations including endpoint Types, unique constraints, constraint names, identity construct, SQLite autoincrement); construction and Declaration access behaved as the Task's acceptance describes. Declaration exposes the four Relations and both uniqueness sets; balance defaults to Decimal('0') and rejects a float; password holds and serializes exactly the supplied value."
+            P1-G3-T9:
+              id: "P1-G3-T9"
+              source_id: "003"
+              title: "Realize the Trailing Group Entity"
+              description: "Realize the Trailing Group Entity as the Target defines it."
+              reason: "Trailing Group owns the trailing rules that Actions and Positions apply."
+              inputs:
+                - "Target definition of the Trailing Group Entity"
+                - "Completed Core contracts"
+                - "Completed User Entity"
+              skills:
+                - "sqlmodel"
+              expected_result: "A Trailing Group Entity complete per its Target definition and ready for publication."
+              depends_on:
+                - "P1-G2-T5"
+                - "P1-G2-T6"
+                - "P1-G2-T7"
+                - "P1-G2-T8"
+                - "P1-G3-T1"
+              constraints: []
+              acceptance: "Trailing Group's Declaration exposes its Relation to User and the uniqueness of the owner and name combination."
+              status: "done"
+              log:
+                - at:
+                  execution: '004'
+                  event: claimed
+                  detail: Dependencies P1-G2-T5, P1-G2-T6, P1-G2-T7 and P1-G2-T8 and P1-G3-T1 are done. Claimed before changing the Task result.
+                - at:
+                  execution: '004'
+                  event: completed
+                  detail: "Entity module realized from its Target definition by the shared Entity template. Observed: ruff and pyright pass on the Component; the scratch comparison of the Declaration against the realized table found no differences (table name, column order, primary key, nullability, foreign keys versus Relations including endpoint Types, unique constraints, constraint names, identity construct, SQLite autoincrement); construction and Declaration access behaved as the Task's acceptance describes."
+            P1-G3-T10:
+              id: "P1-G3-T10"
+              source_id: "003"
+              title: "Realize the Trailing Rule Entity"
+              description: "Realize the Trailing Rule Entity as the Target defines it."
+              reason: "Trailing Rule defines the individual adjustments contained in a Trailing Group."
+              inputs:
+                - "Target definition of the Trailing Rule Entity"
+                - "Completed Core contracts"
+                - "Completed Trailing Group Entity"
+              skills:
+                - "sqlmodel"
+              expected_result: "A Trailing Rule Entity complete per its Target definition and ready for publication."
+              depends_on:
+                - "P1-G2-T5"
+                - "P1-G2-T6"
+                - "P1-G2-T7"
+                - "P1-G2-T8"
+                - "P1-G3-T9"
+              constraints: []
+              acceptance: "Trailing Rule's Declaration exposes its Relation to Trailing Group, the uniqueness of name and of the group and trigger percentage combination, and optional exact decimal adjustment Fields that accept absence."
+              status: "done"
+              log:
+                - at:
+                  execution: '004'
+                  event: claimed
+                  detail: Dependencies P1-G2-T5, P1-G2-T6, P1-G2-T7 and P1-G2-T8 and P1-G3-T9 are done. Claimed before changing the Task result.
+                - at:
+                  execution: '004'
+                  event: completed
+                  detail: "Entity module realized from its Target definition by the shared Entity template. Observed: ruff and pyright pass on the Component; the scratch comparison of the Declaration against the realized table found no differences (table name, column order, primary key, nullability, foreign keys versus Relations including endpoint Types, unique constraints, constraint names, identity construct, SQLite autoincrement); construction and Declaration access behaved as the Task's acceptance describes. Both adjustment Fields accept absence (read as null); the name uniqueness and the group-and-trigger-percentage uniqueness are exposed; percentages are exact decimals."
+            P1-G3-T11:
+              id: "P1-G3-T11"
+              source_id: "003"
+              title: "Realize the Partial Group Entity"
+              description: "Realize the Partial Group Entity as the Target defines it."
+              reason: "Partial Group owns the partial-close rules that Actions and Positions apply."
+              inputs:
+                - "Target definition of the Partial Group Entity"
+                - "Completed Core contracts"
+                - "Completed User Entity"
+              skills:
+                - "sqlmodel"
+              expected_result: "A Partial Group Entity complete per its Target definition and ready for publication."
+              depends_on:
+                - "P1-G2-T5"
+                - "P1-G2-T6"
+                - "P1-G2-T7"
+                - "P1-G2-T8"
+                - "P1-G3-T1"
+              constraints: []
+              acceptance: "Partial Group's Declaration exposes its Relation to User and the uniqueness of the owner and name combination."
+              status: "done"
+              log:
+                - at:
+                  execution: '004'
+                  event: claimed
+                  detail: Dependencies P1-G2-T5, P1-G2-T6, P1-G2-T7 and P1-G2-T8 and P1-G3-T1 are done. Claimed before changing the Task result.
+                - at:
+                  execution: '004'
+                  event: completed
+                  detail: "Entity module realized from its Target definition by the shared Entity template. Observed: ruff and pyright pass on the Component; the scratch comparison of the Declaration against the realized table found no differences (table name, column order, primary key, nullability, foreign keys versus Relations including endpoint Types, unique constraints, constraint names, identity construct, SQLite autoincrement); construction and Declaration access behaved as the Task's acceptance describes."
+            P1-G3-T12:
+              id: "P1-G3-T12"
+              source_id: "003"
+              title: "Realize the Partial Rule Entity"
+              description: "Realize the Partial Rule Entity as the Target defines it."
+              reason: "Partial Rule defines the individual partial-close conditions contained in a Partial Group."
+              inputs:
+                - "Target definition of the Partial Rule Entity"
+                - "Completed Core contracts"
+                - "Completed Partial Group Entity"
+              skills:
+                - "sqlmodel"
+              expected_result: "A Partial Rule Entity complete per its Target definition and ready for publication."
+              depends_on:
+                - "P1-G2-T5"
+                - "P1-G2-T6"
+                - "P1-G2-T7"
+                - "P1-G2-T8"
+                - "P1-G3-T11"
+              constraints: []
+              acceptance: "Partial Rule's Declaration exposes its Relation to Partial Group, the uniqueness of name and of the group and profit percentage combination, and exact decimal percentage Fields."
+              status: "done"
+              log:
+                - at:
+                  execution: '004'
+                  event: claimed
+                  detail: Dependencies P1-G2-T5, P1-G2-T6, P1-G2-T7 and P1-G2-T8 and P1-G3-T11 are done. Claimed before changing the Task result.
+                - at:
+                  execution: '004'
+                  event: completed
+                  detail: "Entity module realized from its Target definition by the shared Entity template. Observed: ruff and pyright pass on the Component; the scratch comparison of the Declaration against the realized table found no differences (table name, column order, primary key, nullability, foreign keys versus Relations including endpoint Types, unique constraints, constraint names, identity construct, SQLite autoincrement); construction and Declaration access behaved as the Task's acceptance describes. The name uniqueness and the group-and-profit-percentage uniqueness are exposed; both percentages are exact decimals that survive a JSON round trip."
+            P1-G3-T13:
+              id: "P1-G3-T13"
+              source_id: "003"
+              title: "Realize the Action Group Entity"
+              description: "Realize the Action Group Entity as the Target defines it."
+              reason: "Action Group organizes Actions by risk profile."
+              inputs:
+                - "Target definition of the Action Group Entity"
+                - "Completed Core contracts"
+                - "Completed User Entity"
+              skills:
+                - "sqlmodel"
+              expected_result: "An Action Group Entity complete per its Target definition and ready for publication."
+              depends_on:
+                - "P1-G2-T5"
+                - "P1-G2-T6"
+                - "P1-G2-T7"
+                - "P1-G2-T8"
+                - "P1-G3-T1"
+              constraints: []
+              acceptance: "Action Group's Declaration exposes its Relation to User and the uniqueness of the owner and name combination."
+              status: "done"
+              log:
+                - at:
+                  execution: '004'
+                  event: claimed
+                  detail: Dependencies P1-G2-T5, P1-G2-T6, P1-G2-T7 and P1-G2-T8 and P1-G3-T1 are done. Claimed before changing the Task result.
+                - at:
+                  execution: '004'
+                  event: completed
+                  detail: "Entity module realized from its Target definition by the shared Entity template. Observed: ruff and pyright pass on the Component; the scratch comparison of the Declaration against the realized table found no differences (table name, column order, primary key, nullability, foreign keys versus Relations including endpoint Types, unique constraints, constraint names, identity construct, SQLite autoincrement); construction and Declaration access behaved as the Task's acceptance describes."
+            P1-G3-T14:
+              id: "P1-G3-T14"
+              source_id: "003"
+              title: "Realize the Action Entity"
+              description: "Realize the Action Entity as the Target defines it."
+              reason: "Action defines how a position is opened and relates to five other Entities."
+              inputs:
+                - "Target definition of the Action Entity"
+                - "Completed Core contracts"
+                - "Completed Action Group, Asset, Account, Partial Group, and Trailing Group Entities"
+              skills:
+                - "sqlmodel"
+              expected_result: "An Action Entity complete per its Target definition and ready for publication."
+              depends_on:
+                - "P1-G2-T5"
+                - "P1-G2-T6"
+                - "P1-G2-T7"
+                - "P1-G2-T8"
+                - "P1-G3-T6"
+                - "P1-G3-T8"
+                - "P1-G3-T9"
+                - "P1-G3-T11"
+                - "P1-G3-T13"
+              constraints: []
+              acceptance: "Action's Declaration exposes its Relations to Action Group, Asset, Account, Partial Group, and Trailing Group, the uniqueness of the group and name combination, and exact decimal risk, take-profit, and stop-loss Fields."
+              status: "done"
+              log:
+                - at:
+                  execution: '004'
+                  event: claimed
+                  detail: Dependencies P1-G2-T5, P1-G2-T6, P1-G2-T7, P1-G2-T8, P1-G3-T6, P1-G3-T8, P1-G3-T9, P1-G3-T11 and P1-G3-T13 are done. Claimed before changing the Task result.
+                - at:
+                  execution: '004'
+                  event: completed
+                  detail: 'Entity module realized from its Target definition by the shared Entity template. Observed: ruff and pyright pass on the Component; the scratch comparison of the Declaration against the realized table found no differences (table name, column order, primary key, nullability, foreign keys versus Relations including endpoint Types, unique constraints, constraint names, identity construct, SQLite autoincrement). Declaration exposes the five Relations (Action Group, Asset, Account, Partial Group, Trailing Group) and the group-and-name uniqueness; risk, take-profit and stop-loss are exact decimals that reject an integer or float.'
+            P1-G3-T15:
+              id: "P1-G3-T15"
+              source_id: "003"
+              title: "Realize the Position Entity"
+              description: "Realize the Position Entity as the Target defines it."
+              reason: "Position records every created position and relates to eight other Entities, so it can resolve its Relations only after all of them exist."
+              inputs:
+                - "Target definition of the Position Entity"
+                - "Completed Core contracts"
+                - "Completed User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and Action Entities"
+              skills:
+                - "sqlmodel"
+              expected_result: "A Position Entity complete per its Target definition and ready for publication."
+              depends_on:
+                - "P1-G2-T5"
+                - "P1-G2-T6"
+                - "P1-G2-T7"
+                - "P1-G2-T8"
+                - "P1-G3-T1"
+                - "P1-G3-T2"
+                - "P1-G3-T5"
+                - "P1-G3-T8"
+                - "P1-G3-T9"
+                - "P1-G3-T11"
+                - "P1-G3-T13"
+                - "P1-G3-T14"
+              constraints: []
+              acceptance: "Position's Declaration exposes its Relations to User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and Action, and its date keeps an exact timezone-aware value."
+              status: "done"
+              log:
+                - at:
+                  execution: '004'
+                  event: claimed
+                  detail: Dependencies P1-G2-T5, P1-G2-T6, P1-G2-T7, P1-G2-T8, P1-G3-T1, P1-G3-T2, P1-G3-T5, P1-G3-T8, P1-G3-T9, P1-G3-T11, P1-G3-T13 and P1-G3-T14 are done. Claimed before changing the Task result.
+                - at:
+                  execution: '004'
+                  event: completed
+                  detail: "Entity module realized from its Target definition by the shared Entity template. Observed: ruff and pyright pass on the Component; the scratch comparison of the Declaration against the realized table found no differences (table name, column order, primary key, nullability, foreign keys versus Relations including endpoint Types, unique constraints, constraint names, identity construct, SQLite autoincrement). Declaration exposes the eight Relations (User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, Action); date requires an offset-bearing datetime and keeps its exact value through a JSON round trip (a naive datetime is rejected); profit defaults to Decimal('0') and is_executed to false."
+        P1-G4:
+          id: "P1-G4"
+          title: "Interface"
+          description: "The entrypoint through which a consumer obtains every Entity directly by name or enumerates all of them."
+          area: "Interface: Entity exports and Entity collection"
+          does: "Consumers can import any Target Entity by its own name or enumerate every Entity as one ordered collection."
+          constraints: []
+          task_count: 2
+          tasks:
+            P1-G4-T1:
+              id: "P1-G4-T1"
+              source_id: "003"
+              title: "Publish one explicit export per Target Entity"
+              description: "Publish every Target Entity through its own explicit named export, each export being the actual Entity and exposing its actual Declaration."
+              reason: "A consumer working with a specific Entity needs to import its real type directly."
+              inputs:
+                - "Completed Entities"
+              skills: []
+              expected_result: "Every Target Entity is importable by its own name from the library's entrypoint."
+              depends_on:
+                - "P1-G3-T1"
+                - "P1-G3-T2"
+                - "P1-G3-T3"
+                - "P1-G3-T4"
+                - "P1-G3-T5"
+                - "P1-G3-T6"
+                - "P1-G3-T7"
+                - "P1-G3-T8"
+                - "P1-G3-T9"
+                - "P1-G3-T10"
+                - "P1-G3-T11"
+                - "P1-G3-T12"
+                - "P1-G3-T13"
+                - "P1-G3-T14"
+                - "P1-G3-T15"
+              constraints: []
+              acceptance: "Each Target Entity can be imported directly by its own name and the import is the actual Entity, exposing its actual Declaration; no other Entity is exported; loading the entrypoint creates no instance, data, connection, or other external effect."
+              status: "done"
+              log:
+                - at:
+                  execution: '004'
+                  event: claimed
+                  detail: Dependencies P1-G3-T1 through P1-G3-T15 are all done. Claimed before changing the Task result.
+                - at:
+                  execution: '004'
+                  event: completed
+                  detail: 'Interface file publishes one explicit named import per Target Entity (no wildcard, no dynamic export) and nothing else. Observed in a scratch run: exactly 15 Entity classes are public and their names are the physical names of the 15 Target Entities; each public name is the very class defined in its own Entity unit; each exposes its own class-level Declaration; no other public name exists; loading in a fresh interpreter created no file. ruff and pyright pass.'
+                  decisions:
+                    - unset: How the package root relates to the Interface file
+                      chosen: The Interface file is the only publisher; the package's root file is left empty, so consumers import from the Interface file.
+                      why: Model Preferences name an Interface file and the Schema forbids any other publication of Entities.
+            P1-G4-T2:
+              id: "P1-G4-T2"
+              source_id: "003"
+              title: "Publish the ordered collection of every Entity"
+              description: "Publish one ready-to-use, ordered, immutable collection holding every actual Entity."
+              reason: "A consumer working with all Entities without knowing their names needs one way to enumerate them."
+              inputs:
+                - "Published Entity exports"
+              skills: []
+              expected_result: "A single collection that enumerates every Target Entity in Target order."
+              depends_on:
+                - "P1-G4-T1"
+              constraints: []
+              acceptance: "The collection holds exactly the exported Entities, each once, in Target order, each member being the actual Entity; it cannot be altered after loading; no other registry or discovery mechanism is published."
+              status: "done"
+              log:
+                - at:
+                  execution: '004'
+                  event: claimed
+                  detail: Dependency P1-G4-T1 is done. Claimed before changing the Task result.
+                - at:
+                  execution: '004'
+                  event: completed
+                  detail: 'Interface publishes one immutable tuple named entities holding the 15 actual Entity classes in Target order, each once. Observed in a scratch run: size 15; order equals the Target order; membership equals the explicit exports; each member is the very class the Interface exports; append and item assignment are refused; no other public name exists on the Interface. ruff and pyright pass.'
+        P1-G5:
+          id: "P1-G5"
+          title: "Component documentation"
+          description: "The Model Component's own documentation, which lets a consumer understand, set up, use, and verify the library."
+          area: "Component documentation"
+          does: "A consumer can understand, set up, use, and verify the Model library from its documentation alone."
+          constraints: []
+          task_count: 2
+          tasks:
+            P1-G5-T1:
+              id: "P1-G5-T1"
+              source_id: "003"
+              title: "Document the published meaning of the Model"
+              description: "Document the overview with one simple example, the Entity exports and collection with every Entity listed once in Target order, how a consumer reads a Declaration, and the JSON conversion with a complete round trip."
+              reason: "Consumers learn what the Model publishes and how to read it from its documentation."
+              inputs:
+                - "Published Interface"
+                - "Published Declaration contract"
+                - "Lossless JSON conversion"
+              skills: []
+              expected_result: "Documentation that explains the Model's published surface through accurate examples."
+              depends_on:
+                - "P1-G2-T1"
+                - "P1-G2-T8"
+                - "P1-G4-T2"
+              constraints: []
+              acceptance: "The documentation presents an overview with one simple example; lists every Entity once in Target order with its description, Field table, and Entity Metadata; shows a consumer importing an Entity directly and another enumerating the collection; shows how a Declaration is read through an Entity; shows a full Entity-to-JSON-text-to-Entity round trip; relies only on the published surface and contains no real credential or secret."
+              status: "done"
+              log:
+                - at:
+                  execution: '004'
+                  event: claimed
+                  detail: Dependencies P1-G2-T1, P1-G2-T8 and P1-G4-T2 are done. Claimed before changing the Task result.
+                - at:
+                  execution: '004'
+                  event: completed
+                  detail: 'Component README written with the Overview, Interface, Declaration and Foundation sections. The Entity reference is generated from the live Declarations (every Entity once in Target order with description, complete Field table and Entity Metadata outside the table). Examples cover one consumer importing an Entity directly, one enumerating the collection, reading a Declaration through an Entity, to_json, from_json, and a complete round trip. Observed: all 7 Python code blocks executed without error; the only credential-like values are the placeholders example-password and example-key.'
+                  decisions:
+                    - unset: Heading structure and which Entity to use in the examples
+                      chosen: Sections as ordered in Model Preferences; Entity reference as level-3 with one level-4 heading per Entity; User for the overview, Currency and Instance for the Interface and Declaration, TrailingRule for the Foundation (it carries exact decimals and nullable Fields).
+                      why: Preferences fix the section order and content but not heading levels or example Entities.
+            P1-G5-T2:
+              id: "P1-G5-T2"
+              source_id: "003"
+              title: "Document setup, use, verification, and troubleshooting"
+              description: "Document how to set up the library, use it through its published surface, verify it, and resolve problems that concern the Model."
+              reason: "Consumers need to bring the library up and confirm it works without reading its internals."
+              inputs:
+                - "Documented published meaning"
+                - "Library foundation"
+              skills: []
+              expected_result: "Documentation that takes a consumer from a clean environment to a verified, working library."
+              depends_on:
+                - "P1-G1-T1"
+                - "P1-G5-T1"
+              constraints: []
+              acceptance: "Following the setup instructions from a clean environment yields a working library; the use section follows only the published exports and collection; the verification section covers Interface shape, exact export membership, collection membership and order, actual references, immutability, side-effect freedom, representative construction, Declaration access, and a lossless round trip; troubleshooting addresses Model concerns only."
+              status: "done"
+              log:
+                - at:
+                  execution: '004'
+                  event: claimed
+                  detail: Dependencies P1-G1-T1 and P1-G5-T1 are done. Claimed before changing the Task result.
+                - at:
+                  execution: '004'
+                  event: completed
+                  detail: 'README setup, use, verify and troubleshooting sections written. Observed: all 12 Python code blocks in the README execute without error, including the Verify script, which asserts side-effect-free loading, exact export membership, collection membership and order with correspondence to the exports, actual references, immutability of id, representative construction, Declaration access, rejection of a wrong Type, and a lossless round trip with a 21-digit decimal; the setup commands were exercised (environment deleted and rebuilt from the lock file, then the Interface loaded). Troubleshooting covers Model concerns only.'
+                  decisions:
+                    - unset: How the Verify section proves the listed observations when Model Preferences disable shipping tests
+                      chosen: Verify is one runnable script inside the README, not a shipped test suite.
+                      why: Model Preferences set the testing capability to false, but the Verify section must still let a consumer observe each listed condition.

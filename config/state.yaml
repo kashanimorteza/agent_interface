@@ -1,0 +1,232 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: "config/state.yaml"
+  path_note: "Mutable Workflow position, Phase progress, and execution Log."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current State Component and the active operation's ownership rules."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read active, then the Phase selected by stable Target phase identifier, then the Log Entries by identifier."
+  selection: "A requested phase resolves to the phases entry keyed by that phase identifier; a Log Entry resolves by its identifier."
+  absence: "No matching phases entry means no progress is recorded for that phase."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "active"
+  - "phases"
+  - "log"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  active: "Current Workflow position."
+  phases: "Aggregate progress for each Target phase."
+  log: "Recorded Skill executions and their outcomes."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  active:
+    mode: "reviewing"
+    phase: "P1"
+    mode_reason: "Review is judging the generated Source of phase P1 against its Plan under Implement execution 002."
+    set_by: "my-interface-review"
+    set_at: "2026-10-05T10:28:00Z"
+  phases:
+    P1:
+      id: "P1"
+      planning: "completed"
+      development: "completed"
+      review: "satisfied"
+      completed_at: "2026-10-05T10:34:52Z"
+  log:
+    - id: "001"
+      skill: "my-interface-configure"
+      event: "configure"
+      outcome: "completed"
+      started_at: "2026-10-05T10:05:11Z"
+      completed_at: "2026-10-05T10:05:23Z"
+      duration: "12 seconds"
+      report: "Created Plan Config and State Config from their Schemas composed with the general YAML structure; both records were absent. No Open Questions or Blockers."
+      data:
+        records:
+          - file: "config/plan.yaml"
+            result: "created"
+          - file: "config/state.yaml"
+            result: "created"
+    - id: "002"
+      skill: "my-interface-implement"
+      event: "implement"
+      outcome: "completed"
+      started_at: "2026-10-05T10:06:04Z"
+      completed_at: "2026-10-05T10:35:22Z"
+      duration: "29:18"
+      report: "Coordinated phase P1 (Model): Config was already present and valid, so Configure was not run; Plan, Develop and Review ran in order. Plan produced 5 Groups and 28 Tasks; Develop completed all 28; Review judged the result satisfied after one Finding was resolved and rechecked. Four Open Questions are recorded for the Human; there are no Blockers. Phase P1 is Planning completed, Development completed, Review satisfied."
+      open_questions:
+        - "OQ-004-1"
+        - "OQ-004-2"
+        - "OQ-004-3"
+        - "OQ-005-1"
+      blockers: []
+      data:
+        phases_requested: ["P1"]
+        argument_resolution: "The argument 1 was taken as Target Phase 1, whose stable identifier is P1 (Model, enabled, ready)."
+        configure: "not run; Plan Config and State Config already existed and were structurally valid"
+        operation_outcomes:
+          P1:
+            plan: {log_entry: "003", outcome: "completed"}
+            develop: {log_entry: "004", outcome: "completed"}
+            review: {log_entry: "005", outcome: "satisfied"}
+        associated_counts:
+          open_questions: 4
+          blockers: 0
+    - id: "003"
+      skill: "my-interface-plan"
+      parent_id: "002"
+      phase: "P1"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-10-05T10:06:25Z"
+      completed_at: "2026-10-05T10:09:53Z"
+      duration: "3:28"
+      report: "Produced the Plan for P1 (Model): 5 Groups and 28 atomic Tasks, none previously existing. Dependencies resolve and are acyclic. No Open Questions or Blockers."
+      open_questions: []
+      blockers: []
+      data:
+        plan_changes:
+          phase: "P1"
+          reconciliation: "No prior Plan existed; created from current Interface and Target Understanding."
+          groups_added:
+            - "P1-G1"
+            - "P1-G2"
+            - "P1-G3"
+            - "P1-G4"
+            - "P1-G5"
+          tasks_added: 28
+          tasks_changed: 0
+          tasks_removed: 0
+          tasks_preserved: 0
+          tasks_replaced: 0
+          task_counts:
+            P1-G1: 1
+            P1-G2: 8
+            P1-G3: 15
+            P1-G4: 2
+            P1-G5: 2
+          reason: "First planning of P1; every Task is new work required by the phase goal."
+        scope_notes:
+          - "Target storage-protection rules (hash and encrypted storage at rest) and Initial Data fall outside the Model boundary and are not planned in P1."
+          - "Aggregate Planning progress was recorded for P1 only; other phase identities were not reconciled by this execution."
+    - id: "004"
+      skill: "my-interface-develop"
+      parent_id: "002"
+      phase: "P1"
+      event: "develop"
+      outcome: "completed"
+      started_at: "2026-10-05T10:10:13Z"
+      completed_at: "2026-10-05T10:27:40Z"
+      duration: "17:27"
+      report: "Developed all 28 Tasks of P1 (Model) and produced the Model Component as a uv project: shared Core (Declaration, Foundation, strict Entity base, naming, Types, column types), 15 Entities, the Interface (explicit exports plus the ordered entities tuple) and the README. ruff and pyright pass; every Declaration matched its realized table in a scratch comparison; regeneration of all Entities gave zero diff; the environment rebuilt from the lock file and loaded; all 12 README code blocks ran. Review has not yet judged acceptance. Three Open Questions recorded; no Blockers."
+      open_questions:
+        - "OQ-004-1"
+        - "OQ-004-2"
+        - "OQ-004-3"
+      blockers: []
+      data:
+        tasks:
+          claimed_and_done: 28
+          skipped: 0
+          blocked: 0
+          replaced: 0
+        decisions:
+          - "P1-G1-T1"
+          - "P1-G2-T1"
+          - "P1-G2-T3"
+          - "P1-G2-T4"
+          - "P1-G2-T5"
+          - "P1-G2-T6"
+          - "P1-G2-T7"
+          - "P1-G2-T8"
+          - "P1-G3-T1"
+          - "P1-G4-T1"
+          - "P1-G5-T1"
+          - "P1-G5-T2"
+        open_questions:
+          OQ-004-1:
+            question: "The Target states credentials as storage Rules (hash or encrypted at rest) and declares no Sensitivity Marker, so no Entity Field carries a marker. Should the Target declare markers (the approved ones are password and sensitive) so Model exposes them in Declarations?"
+            current_choice: "No markers declared; Model adds only id, is_active and Preference defaults."
+            where: "P1-G3-T1"
+          OQ-004-2:
+            question: "The sqlmodel Skill recommends SQLModel's built-in UTC datetime column type (SQLModel 0.0.45 and newer) and advises against DateTime(timezone=True) overrides. Model Preferences prescribe DateTime(timezone=True) stored in UTC and read back UTC-aware. Should Preferences adopt the built-in type?"
+            current_choice: "A Core column type built on DateTime(timezone=True) that normalizes to UTC on write and returns UTC-aware values on read."
+            where: "P1-G2-T6"
+          OQ-004-3:
+            question: "Model refuses a caller-supplied Auto Increment value, but a lossless JSON round trip of a stored Entity must restore its assigned id. Is accepting an assigned id in from_json (and only there) the intended reading?"
+            current_choice: "from_json accepts a non-null Auto Increment value; direct construction and assignment refuse one."
+            where: "P1-G2-T8"
+        scope_notes:
+          - "Generated only inside the Model Component directory; the generator and comparison scripts were kept in the session scratchpad and are not part of the output."
+          - "Task Log timestamps written during this execution were not measured individually and were set to null; only this Entry's start and end times are measured."
+          - "The project rule to run graphify update after code changes was not run: no knowledge graph exists in the project and the update would write outside the Component."
+          - "The Model Component imports two names from a private SQLModel module (the construction-state flag and the config type); the dependency is pinned to the exact SQLModel version in the lock file."
+    - id: "005"
+      skill: "my-interface-review"
+      parent_id: "002"
+      phase: "P1"
+      event: "review"
+      outcome: "satisfied"
+      started_at: "2026-10-05T10:28:00Z"
+      completed_at: "2026-10-05T10:34:52Z"
+      duration: "6:52"
+      report: "Reviewed P1 (Model) against its Plan (28 Tasks) and the Model Component's Review category. One Finding raised (an undeclared direct dependency), resolved by removing the import, and rechecked. All 28 Task acceptance criteria and all 11 Model Review observations were observed to hold; technical checks pass; regeneration of generator-produced output gives zero difference. Outcome satisfied. Three observations and one Open Question recorded; no Blockers."
+      open_questions:
+        - "OQ-005-1"
+      blockers: []
+      data:
+        findings:
+          - id: "F-005-1"
+            state: "resolved"
+            resolution: "Removed the direct pydantic_core import: the class-creation guard now compares a declared default with the realized Field's default (skipping Fields that use a default factory) instead of testing for pydantic's undefined marker. No dependency was added."
+            recheck: "Source scan lists pydantic, sqlalchemy and sqlmodel as the only directly imported third-party packages, all declared. ruff check, ruff format check and pyright pass. All 32 behavioural observations and 28 supplementary acceptance observations pass again. The guard still rejects a different declared default and a declared default with no realized default; importing all 15 Entities succeeds."
+            kind: "dependency"
+            component: "Model"
+            expected: "Every third-party package the Component imports directly is declared as a dependency of the Component, so that the dependency set is complete and does not rest on a transitive installation."
+            observed: "The Core base imports PydanticUndefined from the pydantic_core package, while the project declaration lists only pydantic, sqlalchemy and sqlmodel as dependencies."
+            evidence: "model/model/core/_base.py line 6 (from pydantic_core import PydanticUndefined); model/pyproject.toml dependencies list; a scan of every import in the Component shows pydantic_core as the only directly imported third-party package that is not declared."
+        checks_performed:
+          model_review_observations:
+            - "Interface needs in the Model Definition versus the Model Interface Schema: aligned by reading; the Schema's rules add nothing beyond the needs and the Definition's contract-change boundary."
+            - "Exactly one Entity Export per Target Entity: observed (15 exports, names equal the 15 Target Entities)."
+            - "Entity Collection holds exactly the exported Entities in Target order: observed; it is an immutable tuple of the actual classes."
+            - "Each Declaration matches the Target: Fields, order, Types, nullability, defaults, size, Relations, Uniqueness Constraints and absence of Indexes compared by reading against the Target Models section; all 124 Entity and Field descriptions found verbatim in the Target."
+            - "Every Entity has an immutable id and a Boolean is_active: observed on all 15."
+            - "Each Entity constructs from valid values and rejects an unknown Field, a wrong Type for every Field, and a missing required value: observed on all 15."
+            - "Entity-to-JSON-and-back returns an equal Entity: observed on all 15, with keys exactly the Field names in Declaration order."
+            - "Decimal and datetime values keep their exact value through JSON: observed (19 fractional digits; offset -03:00)."
+            - "Loading the Interface has no side effect: observed from outside in a fresh interpreter with audit hooks (no file written, connection opened, or process started; no thread, instance or engine created)."
+            - "An unknown Type stops generation: observed (error names the Type)."
+            - "Storage mapping takes the Preferences' form: observed on a real SQLite database for all 15 tables (table and column names, fk_/uq_ constraint names, no indexes, identity column with AUTOINCREMENT, nullability, exact-decimal text columns, timezone-aware datetime columns); the pk_<table> name was observed on the table metadata."
+          plan_acceptance: "All 28 Task acceptance criteria were observed to hold by the checks above and by 28 supplementary checks (atomic assignment, retained false/zero/empty/null, strict Types, pending id as null, Declaration immutability and content, JSON rejection cases, Generated Identifier and Sensitivity Marker behaviour on a throwaway Entity, Relation resolution with compatible endpoint Types for all 28 Relations). No criterion lacked observable evidence."
+          technical:
+            - "ruff format check, ruff check and pyright pass on the Component."
+            - "The lock file is consistent with the project declaration."
+            - "The Component builds to a wheel and source archive; the wheel installs into a fresh environment and the Interface imports from it."
+            - "A clean copy of the Component sets up from the lock file and loads; the README's setup commands and consumer-side dependency addition work."
+            - "All 12 Python blocks in the README execute without error, including its Verify script."
+            - "Dependency direction holds: Core imports neither the Interface nor any Entity; Entity units import only Core."
+            - "No machine-specific path, agent-identifying text or timestamp appears in the Component's files or lock file."
+            - "Regeneration with the implementer's generators into a scratch directory gives zero difference for all 15 Entity modules and for the README."
+          testing_scope: "Persistent testing is disabled for Model; every condition was verified transiently with scripts kept outside the Component, and no test was added to it."
+        observations_about_the_review:
+          - "Regeneration was observed only for generator-produced output (Entity modules, README); the hand-authored Core, Interface file and project declaration have no generator, so zero-diff regeneration was not independently observable for them. The generators are the implementer's own, so this evidence is weaker than an independent regeneration."
+          - "The Core imports SQLModelConfig and finish_init from a private module of the pinned SQLModel version. No stated Model baseline forbids it, so it is not a Finding; it ties the Component to the exact pinned version."
+          - "SQLite cannot carry a primary-key constraint name when AUTOINCREMENT is used, so pk_<table> is observable on the table metadata but not in the SQLite schema."
+          - "Dead-code detection is not among the technology's selected checks and was not performed beyond the linter's unused-code rules."
+          - "The boundary guard rejected an attempt to parse the Target with a script; the comparison used the Read tool, grep and a manual comparison instead."
+        open_questions:
+          OQ-005-1:
+            question: "Loading the Model Interface registers the Entity tables on, and sets the constraint-naming convention of, SQLModel's shared default metadata. Model Preferences prescribe this mechanism (naming convention on the shared metadata), while the Interface Schema forbids runtime-configuration side effects when loading. Is the shared default metadata intended, or should Model own its metadata?"
+            current_choice: "The shared SQLModel metadata is used; no file, connection, process or other external effect occurs on load."
+            where: "Core base"
