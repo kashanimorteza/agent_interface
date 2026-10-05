@@ -84,7 +84,7 @@ Every Principle below is mandatory.
 
 ### Review examines Source against the current Plan
 
-**Rule:** A Review accepts one or more Target phase identifiers, or considers every phase when none is selected. Once generated Source is available for a phase, it establishes Source Understanding within that phase's scope. It reads the current Plan, then judges the generated Source, Public Interface, implemented result, and evidence against that Plan.
+**Rule:** A Review accepts one or more Target phase identifiers, or considers every phase when none is selected. It starts only when the required Config records are valid. Once generated Source is available for a phase, whether or not Development has completed, it establishes Source Understanding within that phase's scope. It reads the current Plan, then judges the generated Source, Public Interface, implemented result, and evidence against that Plan.
 
 **Why:** A result can only be judged against the work that was planned for it. Judging it against what the implementer intended, or against what a reviewer would have built, measures the wrong thing.
 

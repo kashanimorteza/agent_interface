@@ -17,7 +17,8 @@ Agent Permission is the Agent Component that defines the enforceable boundaries 
 4. **[Layering](#layering)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
-7. **[At a Glance](#at-a-glance)**
+7. **[Review](#review)**
+8. **[At a Glance](#at-a-glance)**
 
 
 
@@ -44,11 +45,11 @@ The Component exists because a boundary that depends on good reasoning is not a 
 
 ### How It Works
 
-Access starts closed. The Interface is read-only to every Agent Instance and Skill, and the only writable exception is an operational record inside the Config boundary. Everything beyond that is granted by contract: each capability receives the minimum its declared work requires, deny always wins over allow, and no delegated Agent Instance or lower layer can widen what it was given.
+Access starts closed. The Interface is read-only to every Agent Instance and Skill; operational Config records live outside it, in `config/` at the project root. Everything beyond that is granted by contract: each capability receives the minimum its declared work requires, deny always wins over allow, and no delegated Agent Instance or lower layer can widen what it was given.
 
 The Agent Module is protected by an explicit Human-only read boundary. Permission enforces that boundary; Agent Sync performs the authorized read and produces the Native realization, while every other consumer uses the synchronized Native artifacts.
 
-Enforced Guarantees cover what authorization alone cannot. A guarantee declares the behavior that must occur and the point at which it occurs; the Agent Native chooses the mechanism — a hook, a deny rule, a sandbox constraint — and that choice is recorded per Native in Preferences. A guarantee is deterministic and bounded, carries no authority beyond what its trigger permits, and when it cannot run it fails visibly and safely rather than quietly passing.
+Enforced Guarantees cover what authorization alone cannot. A guarantee declares the behavior that must occur and the point at which it occurs; the Agent Native chooses the mechanism — a hook, a deny rule, a sandbox constraint — and the Module never records that choice. A guarantee is deterministic and bounded, carries no authority beyond what its trigger permits, and when it cannot run it fails visibly and safely rather than quietly passing.
 
 Secrets are never values in a declaration. A declaration references a credential source; the value stays where the authority that owns it keeps it. Human authorship sits outside all of this: these rules govern Agent execution, not what the Human writes.
 
@@ -73,16 +74,15 @@ Secrets are never values in a declaration. A declaration references a credential
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Consumes Agent authorization and Agent Instance scope** — derives the maximum permitted action boundary.
-- **Consumed by Agent, Skills, Tools, Connections, and other executing Components** — constrains their reads, mutations, execution, connections, and disclosures.
-- **Consumes Rule guidance** — enforces boundaries that Rules can explain but cannot guarantee.
+- **Consumes Agent** — derives the maximum permitted action boundary from Agent Instance scope.
+- **Consumes Rule** — enforces the boundaries that Rules explain but cannot guarantee.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-This Definition carries the portable meaning and mandatory Principles of the Permission Component. Preferences carry current permission selections, technical sandbox and trust settings, credential references, and Native realization hints. Agent Sync reads both and realizes them without changing their scope or authority.
+This Definition carries the portable meaning and mandatory Principles of the Permission Component. Preferences carry current permission selections, technical sandbox and trust settings, and credential references. Agent Sync reads both and realizes them without changing their scope or authority.
 
 
 
@@ -107,13 +107,13 @@ Every Principle below is mandatory.
 
 <br>
 
-### Interface is read-only except for Config records
+### Interface is read-only
 
-**Rule:** The entire Interface is read-only to every Agent Instance and Skill by default. Only operational records inside the Interface Config boundary may be changed. Privileged, irreversible, destructive, external, or materially scope-expanding actions additionally require the authorization applicable to their impact.
+**Rule:** The entire Interface is read-only to every Agent Instance and Skill by default. Privileged, irreversible, destructive, external, or materially scope-expanding actions additionally require the authorization applicable to their impact.
 
-**Why:** New or moved Interface sources remain protected automatically, while operational workflow records remain maintainable.
+**Why:** New or moved Interface sources remain protected automatically, while operational Config records live outside it in `config/` at the project root.
 
-**Boundary:** Human authorship is outside Agent execution. The Config exception grants no write access to any other Interface path, and safe read-only inspection remains available within applicable read restrictions.
+**Boundary:** Human authorship is outside Agent execution. Safe read-only inspection remains available within applicable read restrictions.
 
 <br>
 
@@ -159,7 +159,7 @@ Every Principle below is mandatory.
 
 ### An Enforced Guarantee is deterministic and bounded
 
-**Rule:** Every Enforced Guarantee declares what it guarantees, the Event it binds to, its allowed effects, its failure policy, and whether it may block; the Native adds its own mechanics (matcher, handler type, inputs, timeout, exit behavior) under `native.<agent-native>`. Matching the same unchanged event produces the same policy outcome.
+**Rule:** Every Enforced Guarantee declares what it guarantees, the Event it binds to, its allowed effects, its failure policy, and whether it may block; the Native chooses its own mechanics (matcher, handler type, inputs, timeout, exit behavior) without recording them in the Module. Matching the same unchanged event produces the same policy outcome.
 
 **Why:** Enforced Guarantees are used when behavior must occur reliably rather than at model discretion.
 
@@ -187,14 +187,29 @@ Every Principle below is mandatory.
 
 <br>
 
+<!--------------------------------------------------------------------------------- Review --->
+## Review
+
+### Conformance
+
+- Every Principle above is realized in the Agent Native.
+
+### Checks
+
+- Effective allow, ask, and deny rules match their declarations.
+- Every required Enforced Guarantee is realized, and its probe passes; a failed probe means the guarantee is not realized.
+- No project declaration contains a credential or secret value.
+
+<br>
+
 <!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance
 
 Every obligation in the file, under the Principle it comes from.
 
-**Interface is read-only except for Config records**
+**Interface is read-only**
 
-- **Never** — modify any Interface path outside the operational Config boundary
+- **Never** — modify any Interface path
 - **Must** — obtain applicable authorization for materially consequential actions
 
 **Permission is least-privilege and deny-safe**

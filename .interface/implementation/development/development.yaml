@@ -1,10 +1,10 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/implementation/development/development.yaml"
-  path_note: "The Preferences layer of the Development Subsystem — shared defaults, development standards, Connections, and the Application Manifest."
+  path_note: "The Preferences layer of the Development Subsystem — shared defaults, development standards, and Connections."
   purpose: "Configurable shared coordination for the Development Components."
   standard: "Agent Project Interface"
-  version: "8.0"
+  version: "9.0"
   updated: "2026-10-02"
 
 
@@ -25,7 +25,6 @@ resolution:
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "settings"
   - "defaults"
   - "development"
   - "connections"
@@ -33,7 +32,6 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  settings: "Configuration for the generated Application Manifest."
   defaults: "Shared language and platform defaults used only when a Component makes no explicit selection."
   development: "Reusable language standards and quality-tool defaults."
   connections: "The direct dependency graph between Components."
@@ -41,14 +39,6 @@ content_map:
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
-
-  # <!-------------------------------------------- settings -->
-  settings:
-    application_manifest:
-      file: ".interface/config/application.yaml"
-      sources:
-        - "each Component's non-secret public metadata"
-        - "declared Connections"
 
   # <!-------------------------------------------- defaults -->
   defaults:

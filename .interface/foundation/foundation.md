@@ -65,7 +65,6 @@ The Interface routes an Agent to the relevant Foundation source or Schema. Confi
     ├── workflow.md
     ├── agent-native-sync.md
     └── schema/
-        ├── application.yaml
         ├── yaml.yaml
         ├── <component>.md
         ├── <component>.yaml
@@ -99,7 +98,6 @@ Schemas define the structure followed by authored Interface files and generated 
 ├── <component>.yaml
 ├── personality.md
 ├── database.yaml
-├── application.yaml
 ├── state.yaml
 ├── plan.yaml
 ```
@@ -147,14 +145,6 @@ Responsibility: Defines the conditional shape of the Database Component's runtim
 ### Operational formats
 
 The stored structure and initial template of a generated record.
-
-### Application Manifest Schema
-
-Generates `config/application.yaml`.
-
-Responsibility: Defines the shared Component metadata sections and their empty initial structure for `config/application.yaml`.
-
-→ [Read more about Application Manifest Schema](schema/application.yaml)
 
 ### State Schema
 

@@ -1,6 +1,6 @@
 # Development Definition
 
-Development is the Implementation Subsystem that coordinates the Components of one application through shared defaults, direct Connections, and the Application Manifest.
+Development is the Implementation Subsystem that coordinates the Components of one application through shared defaults and direct Connections.
 
 <br>
 
@@ -23,7 +23,7 @@ Development is the Implementation Subsystem that coordinates the Components of o
 
 ### Overview
 
-Development coordinates independent Components into one application. It owns their shared defaults, direct Connections, and the generated Application Manifest. Each Component owns its own meaning, implementation, technical choices, documentation, and Public Interface.
+Development coordinates independent Components into one application. It owns their shared defaults and direct Connections. Each Component owns its own meaning, implementation, technical choices, documentation, and Public Interface.
 
 ### Purpose
 
@@ -31,7 +31,7 @@ Components need one place for the defaults and relationships they genuinely shar
 
 ### How It Works
 
-Each Component resolves its own Preferences first, then uses a Development Default only when its own Preference leaves a shared choice unstated. A declared Connection permits its consumer to use the provider's public classes and layers. The Application Manifest in Config is generated from those public facts.
+Each Component resolves its own Preferences first, then uses a Development Default only when its own Preference leaves a shared choice unstated. A declared Connection permits its consumer to use the provider's public classes and layers.
 
 <br>
 
@@ -42,7 +42,6 @@ Each Component resolves its own Preferences first, then uses a Development Defau
 - **Development Default** — a shared value a Component may use only when its own Preferences do not select that value.
 - **Public Interface** — the Component-owned surface through which another Component uses it; each Component explains its own public contents.
 - **Connection** — one direct dependency from a consumer Component to a provider Component.
-- **Application Manifest** — the generated Config record that presents the current public composition of the application.
 
 <br>
 
@@ -106,14 +105,14 @@ The runtime and deployment foundation of the application.
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Consumes every Component** — reads each Component's non-secret public metadata to generate the Application Manifest.
+Development consumes no Component.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-Development owns only shared coordination: defaults, Connections, and the Application Manifest. Each Component owns its own content, technical choices, documentation, and Public Interface. Platform owns runtime and launch details.
+Development owns only shared coordination: defaults and Connections. Each Component owns its own content, technical choices, documentation, and Public Interface. Platform owns runtime and launch details.
 
 <br>
 
@@ -159,16 +158,6 @@ Every Principle below is mandatory.
 
 <br>
 
-### Components publish shared application metadata through the Application Manifest
-
-**Rule:** The Application Manifest in Config is generated from the Components' non-secret public metadata and the declared Connections. It presents current public composition without becoming authoritative for Component ownership or Target meaning.
-
-**Why:** Components have one current public view of the application without reading private files.
-
-**Boundary:** The Application Manifest never contains credentials, secret values, private implementation details, internal storage structure, or undeclared dependencies.
-
-<br>
-
 ### Unstated shared decisions follow one precedence order
 
 **Rule:** Resolve every unstated choice in this order: explicit Component Preference, Development Default, then the executor's own proposal. The executor never stops or asks for an unstated choice: it proceeds with its own proposal and records the decision.
@@ -208,11 +197,6 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — Declare every direct dependency once in Development.
 - **Never** — Infer direct access from an indirect path or create a dependency cycle.
-
-**Components publish shared application metadata through the Application Manifest**
-
-- **Must** — Generate the Config Manifest from public Component metadata and Connections.
-- **Never** — Put secrets or private implementation detail in the Manifest.
 
 **Unstated shared decisions follow one precedence order**
 

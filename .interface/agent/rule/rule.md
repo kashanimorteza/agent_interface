@@ -17,7 +17,8 @@ Agent Rule is the Component for persistent behavioral guidance applied across se
 4. **[Layering](#layering)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
-7. **[At a Glance](#at-a-glance)**
+7. **[Review](#review)**
+8. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -44,7 +45,7 @@ The Human declares Rules, each with its scope — applying everywhere, or only w
 
 Loading and precedence are explicit: which Rules apply, in what order, and what happens when two of them conflict. A Rule never silently overrides an owned Interface source; where a Rule and an authority disagree, the authority holds.
 
-Beyond the declared Rules, this Component carries the conduct every Agent Native honours whether or not it has a native mechanism for each: presentation that never alters technical substance, progress that is reported without narrating internals, decisions that are asked for only when they are material, completion claimed only with observed evidence, a controlled vocabulary for health, and session conduct — session state is never authoritative, a resume revalidates before it mutates anything, and an ending exposes what is unfinished.
+Beyond the declared Rules, this Component carries the conduct every Agent Native honours whether or not it has a native mechanism for each: presentation that never alters technical substance, progress that is reported without narrating internals, unstated choices that are decided and recorded rather than asked, completion claimed only with observed evidence, a controlled vocabulary for health, and session conduct — session state is never authoritative, a resume revalidates before it mutates anything, and an ending exposes what is unfinished.
 
 What must be guaranteed rather than followed is not written here: it is declared as an Enforced Guarantee in Permission, and this Component explains the boundary rather than replacing it.
 
@@ -69,7 +70,6 @@ What must be guaranteed rather than followed is not written here: it is declared
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Consumed by Agent** — supplies persistent behavioral guidance to the Agent and its Native realization.
 - **Consumes Permission** — explains enforceable boundaries without replacing Permission's guarantees.
 - **Consumes Context** — relies on current context loading and scope to determine which Rules apply.
 
@@ -78,7 +78,7 @@ What must be guaranteed rather than followed is not written here: it is declared
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-This Definition carries the portable meaning and mandatory Principles of the Rule Component. Preferences carry current Rule selections, declarations, and Native realization hints. Agent Sync reads both and realizes them without changing their scope or authority.
+This Definition carries the portable meaning and mandatory Principles of the Rule Component. Preferences carry current Rule selections, and declarations. Agent Sync reads both and realizes them without changing their scope or authority.
 
 <br>
 
@@ -146,13 +146,13 @@ Every Principle below is mandatory.
 
 <br>
 
-### Interaction requests only material decisions
+### Unstated choices never stop work
 
-**Rule:** An Agent Native or Agent Instance asks the Human only when no safe choice avoids materially changing intent, architecture, security, data integrity, permissions, a declared interface, or an irreversible outcome.
+**Rule:** An Agent Native or Agent Instance never stops or asks the Human for an unstated choice. It resolves the choice under the precedence its owning authority declares and records the decision where that authority keeps it.
 
-**Why:** Excessive questions prevent autonomous execution while omitted material choices violate ownership.
+**Why:** Work never stalls on a gap, and every decision stays visible for the Human to change.
 
-**Boundary:** Ordinary unstated details within current authority are resolved by professional judgment.
+**Boundary:** A conflict with an explicit decision or Principle is not an unstated choice; it is reported as a Blocker.
 
 <br>
 
@@ -216,6 +216,21 @@ Every Principle below is mandatory.
 
 <br>
 
+<!--------------------------------------------------------------------------------- Review --->
+## Review
+
+### Conformance
+
+- Every Principle above is realized in the Agent Native.
+
+### Checks
+
+- Every declared Rule exists in the Agent Native with its declared scope.
+- Every Rule with a contract file carries that file's complete text, adding only the Native's own wrapper.
+- The selected Output Style is present and active.
+
+<br>
+
 <!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance
 
@@ -245,9 +260,10 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — communicate scope, progress, blockers, decisions, and outcomes appropriately
 - **Never** — fabricate certainty or conceal failure
 
-**Interaction requests only material decisions**
+**Unstated choices never stop work**
 
-- **Must** — ask the Human only for materially consequential unresolved choices
+- **Must** — resolve every unstated choice and record the decision
+- **Never** — stop or ask the Human for an unstated choice
 
 **Completion is evidence-backed**
 

@@ -1,6 +1,6 @@
 schema:
   id: "agent-interface-state"
-  version: "13.0"
+  version: "13.1"
   purpose: "Operational State format; State Principles define record meaning and ownership."
 operational_scope:
   stores: "Active Workflow position, aggregate Phase progress, and the project's recorded execution history."
@@ -9,6 +9,21 @@ initialization:
   source: "initial"
   purpose: "Supply initial specialized State content. The generated Config file places this content inside the general YAML file structure. Phase identities are populated during Phase reconciliation."
   preservation: "Reconciliation preserves existing operational records and never replaces them with defaults."
+generation:
+  purpose: "File-specific values Configure supplies while applying the general YAML file structure."
+  path: "config/state.yaml"
+  path_note: "Mutable Workflow position, Phase progress, and execution Log."
+  agent_may_edit: true
+  policy_rule: "Apply the current State Component and the active operation's ownership rules."
+  resolution:
+    consumption: "Read active, then the Phase selected by stable Target phase identifier, then the Log Entries by identifier."
+    selection: "A requested phase resolves to the phases entry keyed by that phase identifier; a Log Entry resolves by its identifier."
+    absence: "No matching phases entry means no progress is recorded for that phase."
+  read_order: ["active", "phases", "log"]
+  content_map:
+    active: "Current Workflow position."
+    phases: "Aggregate progress for each Target phase."
+    log: "Recorded Skill executions and their outcomes."
 structure: ["active", "phases", "log"]
 sections:
   active:

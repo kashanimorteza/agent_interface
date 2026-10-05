@@ -17,7 +17,7 @@ This section defines record ownership and the human-owned boundary of Agent Inte
 <!--------------------------------------------------------------------------------- Overview --->
 ## Overview
 
-Authority identifies which records belong to the Human or to an Interface Component. It also establishes the single editable area inside the otherwise human-owned Interface: generated operational Config files.
+Authority identifies which records belong to the Human or to an Interface Component. Generated operational Config files live outside the Interface, in `config/` at the project root.
 
 <br>
 
@@ -39,9 +39,9 @@ Review: Owns recorded Findings and their state.
 <!----------------------------------------------------------------------------------- Config Files --->
 ## Config Files
 
-Configure creates and reconciles the generated Application Manifest, Plan, and State Config files.
+Configure creates and reconciles the generated Plan and State Config files.
 
-After generation, files inside `.interface/config/` are mutable operational records. Agent and Skills may edit them; Authority does not allocate a separate file-level write permission to each Skill.
+After generation, files inside `config/` at the project root are mutable operational records. Agent and Skills may edit them; Authority does not allocate a separate file-level write permission to each Skill.
 
 <br>
 
@@ -50,4 +50,4 @@ After generation, files inside `.interface/config/` are mutable operational reco
 
 Operational records follow their source authorities and must not redefine them.
 
-Every file and directory in `.interface/` is human-owned and read-only to Agent and Skills, except files inside `.interface/config/`. No other Interface path becomes writable because it is added later, discovered by a Tool, or named by a Plan.
+Every file and directory in `.interface/` is human-owned and read-only to Agent and Skills. No Interface path becomes writable because it is added later, discovered by a Tool, or named by a Plan.

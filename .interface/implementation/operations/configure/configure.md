@@ -22,7 +22,7 @@ Configure is the Operation Component that creates the structural Config records 
 
 ### Overview
 
-Configure creates and reconciles the three declared Config Records from their current Schemas.
+Configure creates and reconciles the two declared Config Records from their current Schemas.
 
 ### Purpose
 
@@ -30,7 +30,7 @@ The Interface needs its Config records to exist with known structures before ope
 
 ### How It Works
 
-Configure reads the three Config Schemas named by Configure Preferences and generates or reconciles the corresponding records in the Config directory, preserving the explanatory comments defined by each Schema. When a record already exists, Configure preserves its valid operational content and changes only what is required to restore Schema conformance.
+Configure reads the two Config Schemas named by Configure Preferences and generates or reconciles the corresponding records in the Config directory, preserving the explanatory comments defined by each Schema. Each Config Schema defines only its own record and file-specific generation parameters; Configure reads the general YAML file structure separately and composes it with the specialized Schema, so a generated file conforms to both layers and a specialized Schema never copies the general YAML structure. When a record already exists, Configure preserves its valid operational content and changes only what is required to restore Schema conformance.
 
 Configure is complete when every generated record conforms to its current Schema. It stops when a required Schema or mapping is invalid or unavailable, or when a Config record cannot be written. Any later operational content belongs to the Operation that owns it.
 
@@ -39,7 +39,7 @@ Configure is complete when every generated record conforms to its current Schema
 <!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
-- **Config Schema** — the structure that defines one of the three Config files.
+- **Config Schema** — the structure that defines one of the two Config files.
 - **Config Record** — a generated Config file that conforms to its Config Schema.
 
 <br>
@@ -76,7 +76,7 @@ Every Principle below is mandatory.
 
 **Why:** A single narrow responsibility gives the Interface a known operational structure without allowing Configure to interpret project meaning or perform another Operation.
 
-**Boundary:** Configure changes only the three declared Config Records.
+**Boundary:** Configure changes only the two declared Config Records.
 
 <br>
 

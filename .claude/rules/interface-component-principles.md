@@ -35,7 +35,7 @@ Every item below is mandatory.
 
 ## Permission Principles
 
-- **Interface is read-only except Config records.** Only operational records inside `.interface/config/` may change (enforced by `interface-boundary-guard`). Privileged, irreversible, destructive, external, or materially scope-expanding actions also need the authorization their impact requires. The Human's own authorship is outside these limits.
+- **Interface is read-only.** No file inside `.interface/` may change (enforced by `interface-boundary-guard`); Config records live in `config/` at the project root. Privileged, irreversible, destructive, external, or materially scope-expanding actions also need the authorization their impact requires. The Human's own authorship is outside these limits.
 - **Least privilege, deny-safe.** Each capability gets only the access its contract needs. Deny rules and stricter authorities win. No lower layer or delegated Agent Instance can broaden them. Only the Human can explicitly authorize broader access for a defined scope and duration.
 - **Agent Module reads belong only to the Human-invoked Agent Native Sync.** This is enforced by `interface-boundary-guard` and `agent-native-read-grant`. A missing Native artifact is reported as Native drift, never resolved from the Agent Module.
 - **Secrets never enter declarations or reports.** Credentials, tokens, private keys, and secret values stay in approved external stores or runtime channels. A non-secret reference naming an approved credential source is allowed.

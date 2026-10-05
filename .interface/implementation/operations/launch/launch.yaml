@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the Launch Component."
   purpose: "Launch defaults used when Platform and Operations authorities are silent."
   standard: "Agent Project Interface"
-  version: "1.0"
+  version: "1.1"
   updated: "2026-09-20"
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -16,10 +16,10 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Apply a Launch default only when Platform and Operations authorities are silent."
-  selection: "Use the safest compatible launch behavior and record a consequential choice when no preference applies."
+  consumption: "Read the content sections in read_order."
+  selection: "Follows Development's resolution order."
   version_resolution: "No entry currently carries a version."
-  matching: "Match launch settings to the selected Platform and launch requirements."
+  matching: "settings.default_scope names one of the scopes Launch accepts."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
@@ -31,10 +31,11 @@ read_order:
 content_map:
   selected: "Empty. Launch selects no shared activation profile."
   options: "Empty. Launch catalogues no shared alternatives."
-  settings: "Empty. Launch defaults remain to be declared when needed."
+  settings: "The default scope used when none is supplied."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
   selected: {}
   options: {}
-  settings: {}
+  settings:
+    default_scope: "complete"

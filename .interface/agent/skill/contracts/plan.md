@@ -6,10 +6,6 @@ The Core Skill for planning.
 
 Required. Stable key: `plan`. Skill name: `my-interface-plan`.
 
-## Personality
-
-No Personality is declared yet.
-
 ## Inputs
 
 An invocation request and an optional phase selection.
@@ -17,14 +13,6 @@ An invocation request and an optional phase selection.
 ## Invocation
 
 This Skill may be invoked directly by a Human or by an Agent.
-
-## Requirements
-
-A successful Configure execution must have established the required Config records before this Skill runs.
-
-## Execution Log
-
-Create one Log Entry in State for every execution, including its ID and Skill. Update that same entry with outcome, report, and any applicable data, Open Questions, or Blockers when work completes, stops, or is blocked.
 
 ## Outputs
 

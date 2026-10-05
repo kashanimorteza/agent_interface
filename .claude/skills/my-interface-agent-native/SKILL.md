@@ -21,7 +21,7 @@ Every invocation is a full synchronization against the current Agent Module and 
   - restore, compare, or recover anything from Git or any past project state;
   - choose or change Implementation decisions;
   - install plugins, packages, or external capabilities;
-  - change application dependencies, project code, `.interface/config/`, credentials, user settings (`~/.claude/`), or machine settings;
+  - change application dependencies, project code, `config/`, credentials, user settings (`~/.claude/`), or machine settings;
   - create new Agent declarations; or
   - remove unrelated Native content.
 - No other Skill, Agent Instance, coordinator, startup routine, Context, or Runtime operation may read, resolve, or depend directly on Agent Module sources. Native artifacts produced here must not instruct anything to read `.interface/agent/`; they carry the synchronized meaning themselves.

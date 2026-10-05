@@ -88,7 +88,7 @@ Every Principle below is mandatory.
 <!--------------------------------------------------------------------------------- Operation Contract --->
 ## Operation Contract
 
-Launch accepts one optional scope: `api`, `presentation`, `logic`, or `complete` (`all` is an alias). With no scope, it asks the Human to choose one. It consumes Target and Platform selections, Platform authorities, State, developed parts, public interfaces, and observable runtime state.
+Launch accepts one optional scope: `api`, `presentation`, `logic`, or `complete` (`all` is an alias). With no scope, it uses the default scope from Launch Preferences and records that decision in its Log. It consumes Target and Platform selections, Platform authorities, State, developed parts, public interfaces, and observable runtime state.
 
 Launch establishes current Interface and Target Understanding, reads Platform Principles and Preferences and operational State, and resolves the Environment and Launch definition from explicit Target decisions before Platform defaults. It never invents a missing definition.
 

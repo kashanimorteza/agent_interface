@@ -2,25 +2,25 @@
 meta:
   path: .interface/agent/connection/connection.yaml
   path_note: The Preferences layer of the Agent Connection Component.
-  purpose: External services (MCP, LSP, channels, application connectors) and installable packages (plugins, marketplaces, capability packages), their trust, and their lifecycle.
+  purpose: Declared plugins, marketplaces, and tools with their trust and lifecycle.
   standard: Agent Project Interface
-  version: '3.0'
-  updated: '2026-09-17'
+  version: '5.0'
+  updated: '2026-10-05'
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
-  rule: This file is human-owned and contains references only, never credential values; discovery never authorizes provisioning.
+  rule: This file is human-owned and contains references only, never credential values.
   changed_by: The human, directly.
   precedence: An explicit project decision and every applicable Principle take precedence over this file.
 
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: Validate declaration, trust, compatibility, authentication, connection, and usability before dependence. Reconcile declared Extensions with runtime installation and activation state.
-  selection: Do not connect, trust, authenticate, or mutate an external system without applicable authorization. Preview provenance, permissions, dependencies, and capability changes before Provisioning.
+  consumption: Read the content sections in read_order.
+  selection: settings declares each plugin's and tool's desired state.
   version_resolution: Protocol and provider versions resolve from compatible declared entries. Unpinned Extensions resolve to the latest compatible provider version at activation time.
-  matching: Match provider-qualified integration identities and exact server or channel keys. Match plugins by full plugin-at-marketplace identity and marketplaces by stable source key.
+  matching: Match plugins by plugin-at-marketplace identity, marketplaces by source key, and tools by package name.
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
@@ -31,27 +31,13 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: Enabled package set per Agent Native; no external service is selected.
-  options: Supported service protocols and declared package marketplaces per Agent Native.
-  settings: Complete service categories (connections, transports, trust, health) and package categories (plugins, manifests, monitors, themes, update policy), each with explicit empty categories.
+  selected: Empty. Package state is declared in settings.
+  options: Supported service protocols and declared package marketplaces.
+  settings: Declared plugins and tools with their desired state; no external service is declared.
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
-  selected:
-    packages:
-      native:
-        claude:
-          enabled_plugins:
-          - claude-code-setup@claude-plugins-official
-          - feature-dev@claude-plugins-official
-          - commit-commands@claude-plugins-official
-          - plugin-dev@claude-plugins-official
-          - frontend-design@claude-plugins-official
-          - example-skills@anthropic-agent-skills
-          - document-skills@anthropic-agent-skills
-          - adhd-output-style@claude-settings
-          - superpowers@claude-plugins-official
-          - andrej-karpathy-skills@karpathy-skills
+  selected: {}
   options:
     protocols:
       MCP:
@@ -63,80 +49,59 @@ content:
       application_connector:
         version: runtime-provided
     packages:
-      native:
-        claude:
-          marketplaces:
-            claude-plugins-official:
-              source: github
-              repository: anthropics/claude-plugins-official
-            anthropic-agent-skills:
-              source: github
-              repository: anthropics/skills
-            claude-settings:
-              source: github
-              repository: fcakyon/claude-codex-settings
-            karpathy-skills:
-              source: github
-              repository: forrestchang/andrej-karpathy-skills
+      marketplaces:
+        claude-plugins-official:
+          source: github
+          repository: anthropics/claude-plugins-official
+        anthropic-agent-skills:
+          source: github
+          repository: anthropics/skills
+        claude-settings:
+          source: github
+          repository: fcakyon/claude-codex-settings
+        karpathy-skills:
+          source: github
+          repository: forrestchang/andrej-karpathy-skills
   settings:
-    services:
-      native:
-        claude:
-          mcp_servers: {}
-          lsp_servers: {}
-          channels: {}
-          application_connectors: {}
-      mcp_resources: {}
-      mcp_prompts: {}
-      http_services: {}
-      external_data_sources: {}
-      transports: {}
-      authentication_references: {}
-      trust_decisions: {}
-      connection_health: {}
-      allowed_servers: {}
-      denied_servers: {}
     packages:
-      native:
-        claude:
-          plugins:
-            claude-code-setup:
-              id: claude-code-setup@claude-plugins-official
-              desired_state: enabled
-            feature-dev:
-              id: feature-dev@claude-plugins-official
-              desired_state: enabled
-            commit-commands:
-              id: commit-commands@claude-plugins-official
-              desired_state: enabled
-            plugin-dev:
-              id: plugin-dev@claude-plugins-official
-              desired_state: enabled
-            frontend-design:
-              id: frontend-design@claude-plugins-official
-              desired_state: enabled
-            example-skills:
-              id: example-skills@anthropic-agent-skills
-              desired_state: enabled
-            document-skills:
-              id: document-skills@anthropic-agent-skills
-              desired_state: enabled
-            adhd-output-style:
-              id: adhd-output-style@claude-settings
-              desired_state: enabled
-            claude-md-management:
-              id: claude-md-management@claude-plugins-official
-              desired_state: disabled
-            superpowers:
-              id: superpowers@claude-plugins-official
-              desired_state: enabled
-            andrej-karpathy-skills:
-              id: andrej-karpathy-skills@karpathy-skills
-              desired_state: enabled
-      plugin_manifests: {}
-      capability_packages: {}
-      monitors: {}
-      themes: {}
-      extension_settings: {}
-      disabled_extensions: {}
-      update_policy: {}
+      plugins:
+        claude-code-setup:
+          id: claude-code-setup@claude-plugins-official
+          desired_state: enabled
+        feature-dev:
+          id: feature-dev@claude-plugins-official
+          desired_state: enabled
+        commit-commands:
+          id: commit-commands@claude-plugins-official
+          desired_state: enabled
+        plugin-dev:
+          id: plugin-dev@claude-plugins-official
+          desired_state: enabled
+        frontend-design:
+          id: frontend-design@claude-plugins-official
+          desired_state: enabled
+        example-skills:
+          id: example-skills@anthropic-agent-skills
+          desired_state: enabled
+        document-skills:
+          id: document-skills@anthropic-agent-skills
+          desired_state: enabled
+        adhd-output-style:
+          id: adhd-output-style@claude-settings
+          desired_state: enabled
+        claude-md-management:
+          id: claude-md-management@claude-plugins-official
+          desired_state: disabled
+        superpowers:
+          id: superpowers@claude-plugins-official
+          desired_state: enabled
+        andrej-karpathy-skills:
+          id: andrej-karpathy-skills@karpathy-skills
+          desired_state: enabled
+    tools:
+      graphify:
+        source: pypi
+        package: graphifyy
+        install: "uv tool install graphifyy"
+        desired_state: enabled
+        provides: ["graphify Provider Skill", "graphify-guard"]

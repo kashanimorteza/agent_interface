@@ -1,6 +1,6 @@
 # Agent Native Sync
 
-This Foundation File instructs an Agent Native to create or update its Agent Native Sync Skill and defines what that Skill does. The Skill is the only reader of the Agent Module and transfers the Human's Agent concepts into the selected Agent Native. The Native's registered Skill name and invocation are authoritative; in this project the invocation is `/my-interface-agent-native`.
+This Foundation File instructs an Agent Native to create or update its Agent Native Sync Skill and defines what that Skill does. The Skill is the only reader of the Agent Module and transfers the Human's Agent concepts into the selected Agent Native. The Native's registered Skill name and invocation are authoritative; in this project the invocation is `/my-interface-agent-native`. The selected Agent Native is the Agent that runs this Skill; the Agent Module never names one.
 
 ## Instruction
 
@@ -44,7 +44,7 @@ For each declared Component or capability, the Skill:
 5. preserves Native metadata and compatible Native content that the Agent Module does not own; and
 6. re-reads the result and reports whether the declaration was realized faithfully.
 
-The Skill must realize every current declaration, including explicit empty categories, and must not silently skip an unfamiliar or newly added Component. If the Native has no equivalent mechanism, it reports the declaration as unsupported or approximated and states the exact difference. It never invents a declaration, narrows its scope, or silently changes its authority.
+The Skill must realize every current declaration and must not silently skip an unfamiliar or newly added Component. If the Native has no equivalent mechanism, it reports the declaration as unsupported or approximated and states the exact difference. It never invents a declaration, narrows its scope, or silently changes its authority.
 
 ## Native Realization
 

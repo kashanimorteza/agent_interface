@@ -12,7 +12,7 @@ initialization:
   preservation: "Initialization does not overwrite an existing Config file or reset its operational data."
 generation:
   purpose: "File-specific values Configure supplies while applying the general YAML file structure."
-  path: ".interface/config/plan.yaml"
+  path: "config/plan.yaml"
   path_note: "Mutable Plans, Groups, Tasks, counts and progress."
   agent_may_edit: true
   policy_rule: "Apply the current Plan Component and the active operation's ownership rules."

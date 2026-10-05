@@ -1,6 +1,6 @@
 # Terms
 
-This section defines the shared vocabulary used to understand Agent Interface, its Modules, its Foundation resources, and its operational Config boundary.
+This section defines the shared vocabulary used to understand Agent Interface, its Modules, its Foundation resources, and its operational Config records.
 
 <br>
 
@@ -25,7 +25,7 @@ This section defines the shared vocabulary used to understand Agent Interface, i
 - **Implementation Preferences** — preferred engineering choices, defaults, packages, implementation conventions, and optional Agent Skill associations used when the Target leaves a choice unspecified.
 - **Schema** — the structure a file follows: either a standard for a Human-authored file or an operational format and initial template for a generated record.
 - **Config** — the separate shared operational boundary for mutable generated records that coordinate the Workflow; Config does not store what the Target means.
-- **Config Record** — one generated operational file inside `.interface/config/`.
+- **Config Record** — one generated operational file inside `config/` at the project root.
 - **Plan** — the high-level organization of work, containing Groups, dependencies, and individual Tasks.
 - **Task** — one bounded, understandable, and verifiable unit of work within a Plan.
 - **Understanding** — the current context an Agent Native or Agent Instance establishes from authoritative sources before performing a Skill's role; it may be Interface Understanding, Target Understanding, or Source Understanding.
@@ -39,7 +39,7 @@ This section defines the shared vocabulary used to understand Agent Interface, i
 - **Runtime** — the execution environment that provides an Agent Native and its available native capabilities.
 - **Agent Native** — the core operational Agent supplied by the selected Agent Runtime and currently responsible for receiving the Human's request, applying synchronized Agent Module behavior, and hosting or coordinating Agent Instances.
 - **Agent Instance** — one primary or specialized executable identity operating within an Agent Native, with an assigned Agent Role and bounded capabilities. One Agent Native may expose several Agent Instances.
-- **Agent Preferences** — the complete portable declaration of Agent Components and their current selections, resources, empty categories, portable realization requirements, and validation expectations; Native-specific paths and formats are resolved by Agent Sync.
+- **Agent Preferences** — the complete portable declaration of Agent Components and their current selections, resources, portable realization requirements, and validation expectations; Native-specific paths and formats are resolved by Agent Sync.
 - **Agent Role** — one bounded execution responsibility within the Agent Preferences, including the primary role and specialized delegated roles.
 - **Capability** — one declared Agent facility, such as a Skill, Rule, Command, Tool, Hook, Integration, or Extension, with an owning Component and bounded contract.
 - **Agent Native Sync** — the Foundation instruction and Agent Skill `/my-interface-agent-native` that reads the Human-owned Agent Module and realizes it in the selected Agent Native; no other operation reads the Agent Module.

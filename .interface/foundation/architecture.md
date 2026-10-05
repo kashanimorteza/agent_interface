@@ -34,10 +34,8 @@ Agent Interface
 │   ├── Connection
 │   └── Context
 ├── Config
-│   ├── Application
 │   ├── State
-│   ├── Plan
-│   └── Review
+│   └── Plan
 └── Foundation
     ├── Introduction
     ├── Terms

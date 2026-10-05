@@ -16,7 +16,8 @@ The Agent Module is the Human-owned, Runtime-independent declaration of how an A
 7. **[Layering](#layering)**
 8. **[Authority](#authority)**
 9. **[Principles](#principles)**
-10. **[At a Glance](#at-a-glance)**
+10. **[Review](#review)**
+11. **[At a Glance](#at-a-glance)**
 
 
 
@@ -35,11 +36,11 @@ The Guide explains the Agent Module and maps every Component's Definition, Prefe
 
 ### Purpose
 
-The Module exists so the Human defines the Agent once instead of creating a separate configuration for Claude, Codex, Copilot, or another Agent Native. The Human's complete view of Agent behavior is organized here through the Module's Components and can then be realized by different Native environments. The Module does not define the Target, the Implementation, or a Native vendor's files, commands, configuration format, or execution mechanism.
+The Module exists so the Human defines the Agent once instead of creating a separate configuration for each Agent Native. The Human's complete view of Agent behavior is organized here through the Module's Components and can then be realized by different Native environments. The Module does not define the Target, the Implementation, or a Native vendor's files, commands, configuration format, or execution mechanism.
 
 ### How It Works
 
-The Agent Module is composed of Components. Each Component has a Definition for its portable meaning and mandatory Principles; Components with current selections have Preferences, while Skill has one Contract per declared Skill. Preferences and Contracts never override Principles.
+The Agent Module is composed of Components. Each Component has a Definition for its portable meaning and mandatory Principles; Every Component except Skill has Preferences; Skill and Rule hold their declarations in Contracts. Preferences and Contracts never override Principles.
 
 Agent Sync is the only reader and bridge from the Module to the selected Agent Native. It reads the complete Module and realizes its meaning in the Native without changing its scope or authority. Other Skills and Agent Instances use the synchronized Native realization and do not read Module sources directly.
 
@@ -67,7 +68,7 @@ The Human invokes synchronization with `/my-interface-agent-native`; no mode or 
 ## Terms
 
 - **Agent Module** — the portable, Human-owned declaration of how an Agent and its capabilities operate.
-- **Agent Native** — the selected Runtime mechanism that realizes the Agent Module.
+- **Agent Native** — the Agent that runs Agent Native Sync and realizes the Agent Module; the Module never names one.
 - **Agent Sync** — the Agent Native Sync Skill that reads the Agent Module and realizes it in the Native.
 - **Component** — one bounded part of the Agent Module with its own Definition and, where applicable, Preferences or Contracts.
 
@@ -110,27 +111,21 @@ Each Agent Component has a Definition for meaning; current declarations are held
 
 ### Runtime
 
-Runtime identity, provider, model, compatibility, and native capability mapping. Absorbs the former Settings Component (2026-09-17): Settings — Configuration sources, scopes, precedence, merge behavior, environment, and reconciliation.
-
-Responsibility: Runtime identity, provider, model, compatibility, and native capability mapping.
+Runtime identity, provider, model, compatibility, and native capability mapping, with configuration sources, scopes, precedence, merge behavior, environment, and reconciliation.
 
 → [Definition of Runtime](runtime/runtime.md)<br>
 → [Preferences of Runtime](runtime/runtime.yaml)
 
 ### Agent
 
-The selected Agent Native and its General and Specialized Agent Instances. Absorbs the former Role, Coordination Components (2026-09-17): Role — Primary and specialized Agent Role contracts. Coordination — Delegation, teams, tasks, messaging, concurrency, and worktree isolation.
-
-Responsibility: The selected Agent Native and its General and Specialized Agent Instances.
+The selected Agent Native and its General and Specialized Agent Instances, their Role contracts, and delegation, teams, tasks, messaging, concurrency, and worktree isolation.
 
 → [Definition of Agent](agent/agent.md)<br>
 → [Preferences of Agent](agent/agent.yaml)
 
 ### Rule
 
-Persistent global and scoped behavioral instructions. Absorbs the former Interaction, Observability, Session Components (2026-09-17): Interaction — Output Styles, progress, prompts, status presentation, artifacts, themes, and UI behavior. Observability — Validation, status, diagnostics, evidence, logs, telemetry, health, and usage. Session — Lifecycle, resume, history, background work, isolation, checkpoints, and termination.
-
-Responsibility: Persistent global and scoped behavioral instructions.
+Persistent global and scoped behavioral instructions, including interaction (Output Styles, progress, prompts, status presentation, artifacts, themes, and UI behavior), observability (validation, status, diagnostics, evidence, logs, telemetry, health, and usage), and session conduct (lifecycle, resume, history, background work, isolation, checkpoints, and termination).
 
 → [Definition of Rule](rule/rule.md)<br>
 → [Preferences of Rule](rule/rule.yaml)<br>
@@ -140,16 +135,12 @@ Responsibility: Persistent global and scoped behavioral instructions.
 
 Reusable knowledge and workflows, including all declared Agent Skills.
 
-Responsibility: Reusable knowledge and workflows, including all declared Agent Skills.
-
 → [Definition of Skill](skill/skill.md)<br>
 → [Contracts of Skill](skill/contracts/)<br>
 
 ### Command
 
 Named and slash invocation entry points, arguments, aliases, and routing.
-
-Responsibility: Named and slash invocation entry points, arguments, aliases, and routing.
 
 → [Definition of Command](command/command.md)<br>
 → [Preferences of Command](command/command.yaml)
@@ -158,25 +149,19 @@ Responsibility: Named and slash invocation entry points, arguments, aliases, and
 
 Atomic built-in and externally provided executable capabilities.
 
-Responsibility: Atomic built-in and externally provided executable capabilities.
-
 → [Definition of Tool](tool/tool.md)<br>
 → [Preferences of Tool](tool/tool.yaml)
 
 ### Permission
 
-Authorization, allow/ask/deny, sandboxing, trust, authentication, and secrets. Absorbs the former Hook Component (2026-09-17): Hook — Deterministic event-driven lifecycle automation.
-
-Responsibility: Authorization, allow/ask/deny, sandboxing, trust, authentication, and secrets.
+Authorization, allow/ask/deny, sandboxing, trust, authentication, secrets, and deterministic event-driven Enforced Guarantees.
 
 → [Definition of Permission](permission/permission.md)<br>
 → [Preferences of Permission](permission/permission.yaml)
 
 ### Connection
 
-External services and installable packages the Agent obtains from outside the project, with their trust boundaries and lifecycle. Absorbs the former Integration, Extension Components (2026-09-17): Integration — MCP, LSP, channels, application connectors, and external services. Extension — Plugins, marketplaces, capability packages, monitors, and extension lifecycle.
-
-Responsibility: External services and installable packages the Agent obtains from outside the project, with their trust boundaries and lifecycle.
+External services (MCP, LSP, channels, application connectors) and installable packages (plugins, marketplaces, capability packages, monitors) the Agent obtains from outside the project, with their trust boundaries and lifecycle.
 
 → [Definition of Connection](connection/connection.md)<br>
 → [Preferences of Connection](connection/connection.yaml)
@@ -185,12 +170,10 @@ Responsibility: External services and installable packages the Agent obtains fro
 
 Persistent instructions, Understanding, Memory, imports, loading, and compaction.
 
-Responsibility: Persistent instructions, Understanding, Memory, imports, loading, and compaction.
-
 → [Definition of Context](context/context.md)<br>
 → [Preferences of Context](context/context.yaml)
 
-Every Agent Component's Principles and Preferences are authoritative for that Component only. A runtime artifact not declared in the owning Preferences are an optional runtime capability; a required declaration not usable by the selected runtime is Agent Preferences gap.
+Every Agent Component's Principles and Preferences are authoritative for that Component only. A runtime artifact not declared in the owning Preferences is an optional runtime capability; a required declaration not usable by the selected runtime is an Agent Preferences gap.
 
 
 
@@ -201,8 +184,7 @@ Every Agent Component's Principles and Preferences are authoritative for that Co
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Consumed by the Foundation Module** — its [Agent Native Sync](../foundation/agent-native-sync.md) instruction is the only authorized reader of the Agent Module and realizes it in the selected Agent Native.
-- **Provides Agent meaning** — the Module's Component Definitions and Preferences provide the portable meaning and current declarations that Agent Sync transfers.
+- **Consumes Foundation** — [Agent Native Sync](../foundation/agent-native-sync.md) is the only reader of the Agent Module and realizes it in the selected Agent Native.
 
 
 
@@ -259,6 +241,20 @@ Agent Sync has succeeded when it has understood the complete Module, transferred
 
 
 
+
+<br>
+
+<!--------------------------------------------------------------------------------- Review --->
+## Review
+
+### Conformance
+
+- The success condition under Principles holds: the Native behaves as the Module declares.
+
+### Checks
+
+- Every Component in Architecture has a section under Components, and every Definition, Preferences, and Contracts link it gives exists.
+- Every Component's own Review passes in the Agent Native.
 
 <br>
 

@@ -6,7 +6,7 @@ Synchronized Native realization of two Permission guarantees:
 - interface-boundary-guard (PreToolUse, fail_closed, blocking): blocks Agent Module
   reads outside the exact prompt created by the Human's direct invocation of
   /my-interface-agent-native, blocks every non-Human attempt to invoke that Skill,
-  and blocks Interface mutations outside the .interface/config/ boundary.
+  and blocks every Interface mutation.
 - agent-native-read-grant (UserPromptExpansion, fail_closed): binds the Agent Module
   read grant to the session and prompt that the Human's direct /my-interface-agent-native
   invocation created. The grant is never transferable to a subagent or a later prompt.
@@ -26,7 +26,6 @@ GRANT_TTL_SECONDS = 24 * 60 * 60
 
 AGENT_RE = re.compile(r"(^|/)\.interface/agent(/|$)")
 INTERFACE_RE = re.compile(r"(^|/)\.interface(/|$)")
-CONFIG_RE = re.compile(r"(^|/)\.interface/config(/|$)")
 
 # Text-level indicators that a command addresses the Agent Module.
 AGENT_TEXT_RE = re.compile(r"interface/+agent\b|\.interface/+(\*|\?|\[|\{|a\*|ag\*|age\*|agen\*)")
@@ -112,7 +111,7 @@ def is_agent(p):
 
 
 def is_protected_interface(p):
-    return bool(INTERFACE_RE.search(p)) and not CONFIG_RE.search(p)
+    return bool(INTERFACE_RE.search(p))
 
 
 def contains_agent(scope, data):
@@ -164,8 +163,8 @@ AGENT_DENY = (
     "/my-interface-agent-native."
 )
 MUTATION_DENY = (
-    "interface-boundary-guard: .interface/ is read-only to every Agent Instance and Skill; only "
-    "operational records inside .interface/config/ may change. Report the needed change for direct "
+    "interface-boundary-guard: .interface/ is read-only to every Agent Instance and Skill. "
+    "Operational records live in config/ at the project root. Report the needed change for direct "
     "Human authorship instead."
 )
 SYNC_INVOKE_DENY = (

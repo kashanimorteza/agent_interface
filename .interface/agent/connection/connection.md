@@ -13,7 +13,8 @@ Agent Connection is the Agent Component that declares the external connections a
 4. **[Layering](#layering)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
-7. **[At a Glance](#at-a-glance)**
+7. **[Review](#review)**
+8. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -24,9 +25,7 @@ Agent Connection is the Agent Component that declares the external connections a
 
 Agent Connection is the Component that declares everything the Agent obtains from outside the project: live connections to external capability providers (MCP and LSP servers, channels, application connectors) and installable packages (plugins, marketplaces, capability bundles). Both kinds of external capability are provisioned or connected by the Agent Native, carry a trust boundary, and may have Native-specific identity or connection details.
 
-It owns connection declarations, trust boundaries, compatibility, and activation state. It does not own external systems, credentials, or the Tools supplied through a connection.
-
-It owns extension identity, provenance, contents, lifecycle, and expected capabilities. It does not own the contracts of the capabilities an extension contains.
+It owns connection declarations, trust boundaries, compatibility, and activation state, and each Extension's identity, provenance, contents, lifecycle, and expected capabilities. It does not own external systems, credentials, the Tools supplied through a connection, or the contracts of the capabilities an Extension contains.
 
 ### Purpose
 
@@ -38,17 +37,16 @@ The Component exists to make that crossing explicit. Something external can read
 
 ### How It Works
 
-Each Connection is declared with its provider, its protocol or source, the data it is exposed to, the actions it enables, its scope, its authentication requirement, and its Trust Boundary. Because the connection and provisioning mechanisms differ by Agent Native, identity and connection details may be declared per Native, so each one can locate what it needs. Credentials are never among the declared values; a declaration references a credential source and nothing more.
+Each Connection is declared with its provider, its protocol or source, the data it is exposed to, the actions it enables, its scope, its authentication requirement, and its Trust Boundary. Each package is declared by its own identity and source; an Agent Native that cannot use it reports it as unsupported. Credentials are never among the declared values; a declaration references a credential source and nothing more.
 
 A declared Connection is not yet a usable one. It becomes available only when it is trusted, compatible, authenticated where required, actually connected, and usable by the Agent Instance that intends to use it. Any condition not met stays visible as unmet, and validating a Connection never doubles as accepting its trust or authorizing a login.
 
 Authorization does not transfer across the boundary. An action with effects in an external system needs that system's own authorization, whatever the Agent's internal permission says.
 
-Packaged capabilities keep their owners. An Extension declares its provenance, its version or source, and the capabilities it is expected to contribute; those capabilities remain governed by the Components that own them — a Skill it brings is still governed by Skill, a Tool by Tool, a guarantee by Permission. Provisioning — installing, enabling, updating, disabling, removing — happens within Permission, and the resulting state is declared rather than discovered.
+Packaged capabilities keep their owners. An Extension declares its identity, source, and desired state, and the capabilities it contributes are read from the package itself; those capabilities remain governed by the Components that own them — a Skill it brings is still governed by Skill, a Tool by Tool, a guarantee by Permission. Provisioning — installing, enabling, updating, disabling, removing — happens within Permission, and the resulting state is declared rather than discovered.
 
 <br>
 
-<!--------------------------------------------------------------------------------- Terms --->
 <!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
@@ -64,19 +62,15 @@ Packaged capabilities keep their owners. An Extension declares its provenance, i
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Consumes Agent Runtime and Permission** — connects through supported mechanisms within security policy.
-- **Consumed by Agent Tool and Permission** — exposes external capabilities and package-provided connections.
-- **Consumed by Agent Rule** — supplies connection health and activation evidence.
-- **Consumes Agent Skill, Agent, Permission, Tool, and Rule** — packages capabilities owned by those Components.
-- **Consumes Agent Permission** — performs Provisioning within authorization.
-- **Consumed by Agent Runtime** — supplies runtime-loadable capability bundles and declarations.
+- **Consumes Permission** — connects and provisions only within authorization and security policy.
+- **Consumes Skill, Tool, and Rule** — packages capabilities whose contracts and ownership stay with those Components.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-This Definition carries the portable meaning and mandatory Principles of the Connection Component. Preferences carry current connection selections, declarations, technical protocol and package choices, and Native realization hints. Agent Sync reads both and realizes them without changing their scope or authority.
+This Definition carries the portable meaning and mandatory Principles of the Connection Component. Preferences carry current connection selections, declarations, and technical protocol and package choices. Agent Sync reads both and realizes them without changing their scope or authority.
 
 <br>
 
@@ -126,7 +120,7 @@ Every Principle below is mandatory.
 
 ### Extension provenance and contents are explicit
 
-**Rule:** Every Extension declares its stable identity, source, version policy, expected capability categories, permissions, dependencies, and trust status. Marketplace presence alone establishes none of these.
+**Rule:** Every Extension declares its stable identity, source, and desired state. Its contents, permissions, and dependencies are read from the package itself at provisioning and reported before activation; an unpinned version resolves to the latest compatible version. Marketplace presence alone establishes none of these.
 
 **Why:** Packages can execute code and introduce capabilities from outside the project.
 
@@ -154,6 +148,21 @@ Every Principle below is mandatory.
 
 <br>
 
+<!--------------------------------------------------------------------------------- Review --->
+## Review
+
+### Conformance
+
+- Every Principle above is realized in the Agent Native.
+
+### Checks
+
+- Every declared package is in its declared state (enabled or disabled) in the Agent Native.
+- Every declared marketplace resolves to its declared source.
+- Every declared Connection reports its Capability Status, and none is treated as available while a condition is unmet.
+
+<br>
+
 <!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance
 
@@ -175,7 +184,7 @@ Every obligation in the file, under the Principle it comes from.
 
 **Extension provenance and contents are explicit**
 
-- **Must** — declare Extension identity, provenance, version, contents, permissions, dependencies, and trust
+- **Must** — declare Extension identity, source, and desired state, and report its contents, permissions, and dependencies before activation
 
 **Extension lifecycle is controlled**
 
