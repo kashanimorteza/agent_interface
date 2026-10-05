@@ -127,21 +127,20 @@ State records aggregate operational position and the execution log.
 
 - **Consumes Target** — uses current phase identity and intent without becoming another Target definition.
 - **Consumes Development** — applies the product architecture and Component authorities relevant to the work being performed.
-- **Consumed by Agent** — provides the operational concepts and records used by the corresponding Core Skills.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-Operations owns workflow concerns. Technical choices and defaults shared by Operations belong to Operations Preferences; choices owned by an Operation belong to that Component's Preferences, and operational record shapes belong to their Schemas. Product meaning belongs to Development, project intent belongs to Target, and runtime realization belongs to Platform.
+Operations owns workflow concerns. Choices owned by an Operation belong to that Component's Preferences, and operational record shapes belong to their Schemas. Product meaning belongs to Development, project intent belongs to Target, and runtime realization belongs to Platform.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
-The Principles in this Definition are mandatory. This Definition explains Operations and its ownership; Operations Preferences supply only defaults and preferences. Target, Development, and the applicable Schemas outrank Operations Preferences where they speak to their own concerns.
+The Principles in this Definition are mandatory. Target, Development, and the applicable Schemas outrank every Operation's Preferences where they speak to their own concerns.
 
 <br>
 

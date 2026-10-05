@@ -22,7 +22,7 @@ Develop is the Operation Component that executes authorized planned Tasks and pr
 
 ### Overview
 
-Develop is the Operation Component that executes planned implementation Tasks and produces the authorized Development results. It does not redefine the Plan or own the product meaning it realizes.
+It does not redefine the Plan or own the product meaning it realizes.
 
 ### Purpose
 
@@ -30,9 +30,7 @@ Planned work needs a bounded operation that turns Tasks into observable implemen
 
 ### How It Works
 
-Develop accepts one or more Target phase identifiers, or considers every active and developable Target phase when none is selected, in Target order. It establishes current Interface and Target Understanding, reads the current Plan for each applicable phase, and performs its authorized unfinished Tasks. A phase is developable only when the required Config records are valid and its current Plan exists. If either condition is absent, Develop stops; it does not run Configure or Plan.
-
-For each eligible Task, Develop considers the Task Skills identified by Planning and may use any other suitable available Skill. It does not invoke another Core Operation. Develop claims the Task before work begins, preserves valid existing work, records evidence and progress in that Task's Task Log, and updates its status. If no eligible Task exists, it completes without changing implementation work. It stops when a dependency or prerequisite is unmet, verification fails, or an unresolved condition other than an unset choice prevents completion.
+Develop reads the current Plan for each selected phase and works through its eligible Tasks, recording evidence and progress in each Task's Task Log.
 
 <br>
 
@@ -77,9 +75,9 @@ Every Principle below is mandatory.
 
 #### Develop executes planned work within its authority
 
-**Rule:** Develop accepts one or more Target phase identifiers, or considers every active and developable Target phase when none is selected, in Target order. It starts only when required Config records are valid and the current Plan for each applicable phase exists. Develop executes only selected eligible Tasks whose authority, scope, inputs, outputs, and completion conditions are understood. It considers each Task's Task Skills, may use any other suitable available Skill, and never invokes another Core Operation.
+**Rule:** Develop accepts one or more Target phase identifiers, or considers every active and developable Target phase when none is selected, in Target order. It establishes current Interface and Target Understanding, and starts only when required Config records are valid and the current Plan for each applicable phase exists. Develop executes only selected eligible Tasks whose authority, scope, inputs, outputs, and completion conditions are understood. It considers each Task's Task Skills, may use any other suitable available Skill, and never invokes another Core Operation.
 
-Before changing a Task's result, Develop claims that eligible Task. It preserves valid existing work, records Task-specific evidence, progress transitions, and any Task-specific Blocker in the Task Log, and updates the Task status accordingly. A choice Develop makes on its own proposal is recorded as a decision in that Task's Task Log, and Develop's State Log Entry lists that Task under `decisions`. When a new Task identifies an earlier developed Task through `replaces`, Develop marks that earlier Task as `replaced` and records the relationship in its Task Log before executing the new Task. If Config or Plan is unavailable, Develop stops; it does not execute Configure or Plan.
+Before changing a Task's result, Develop claims that eligible Task. It preserves valid existing work, records Task-specific evidence, progress transitions, and any Task-specific Blocker in the Task Log, and updates the Task status accordingly. A choice Develop makes on its own proposal is recorded as a decision in that Task's Task Log, and Develop's State Log Entry lists that Task under `decisions`. When a new Task identifies an earlier developed Task through `replaces`, Develop marks that earlier Task as `replaced` and records the relationship in its Task Log before executing the new Task. If Config or Plan is unavailable, Develop stops; it does not execute Configure or Plan. If no eligible Task exists, it completes without changing implementation work. It stops when a dependency or prerequisite is unmet, verification fails, or an unresolved condition other than an unset choice prevents completion.
 **Why:** Bounded execution keeps implementation traceable to the Plan and prevents an execution operation from becoming an unplanned design authority.
 **Boundary:** Develop never changes Target meaning, Plan authority, Development Principles, or another Component's owned record without explicit authority. It does not design or change Tasks, does not run another Core Operation, and stops and reports when another Operation is required.
 

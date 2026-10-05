@@ -10,16 +10,16 @@ meta:
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
-  rule: "This file is human-owned. Implement reads it without writing resolved choices back into it."
-  changed_by: "The human, directly. A missing critical Implement choice is raised through State."
+  rule: "This file is human-owned."
+  changed_by: "The human, directly."
   precedence: "An explicit Target value and every applicable Principle take precedence over this file."
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "The empty content provides no Implement defaults; consumers continue with the other applicable authorities."
-  selection: "There is nothing to select."
-  version_resolution: "No entry currently carries a version."
-  matching: "There is nothing to match. An empty section is an absence of defaults, not a wildcard."
+  consumption: "Read the content sections in read_order."
+  selection: "Follows Development's resolution order."
+  version_resolution: "No entry carries a version."
+  matching: "No entry to match."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:

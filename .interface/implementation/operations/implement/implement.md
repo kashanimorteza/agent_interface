@@ -22,7 +22,7 @@ Implement is the Operation Component that coordinates the authorized Operations 
 
 ### Overview
 
-Implement is the Operation Component that coordinates Configure, Plan, Develop, and Review across the selected phases.
+Implement is the single entry point that runs the full Operations workflow for one or more phases.
 
 ### Purpose
 
@@ -30,7 +30,7 @@ Implementation work needs one accountable workflow that can move through plannin
 
 ### How It Works
 
-Implement accepts one or more Target phase identifiers, or coordinates every Target phase in Target order when none is selected. It checks the required Config records once and coordinates Configure only when they are absent or invalid. If Config remains absent or invalid after that attempt, Implement stops before Plan, Develop, or Review. Otherwise it coordinates Plan, Develop, and Review for each phase in that order. A blocked Develop does not by itself skip Review: when Source is available, Review still examines it. Review continues its own passes until its result is satisfied or a Blocker prevents continuation. Implement carries outcomes forward; unresolved Blockers or Open Questions may make its final outcome blocked, but do not prevent an applicable Review. Implement does not establish Target or Interface Understanding for the work; each participating Operation establishes the Understanding required for its own responsibility.
+Implement runs the Operations for each selected phase in order, starting Configure only when the Config records need it, and carries each Operation's outcome into its own aggregate result.
 
 <br>
 
@@ -44,7 +44,7 @@ Implement accepts one or more Target phase identifiers, or coordinates every Tar
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Coordinates Configure, Plan, Develop, and Review** — invokes each Operation in the required order while each retains responsibility for its own Understanding, work, and outcome.
+- **Consumes Configure, Plan, Develop, and Review** — invokes each in order; each keeps its own work and outcome.
 
 <br>
 
@@ -71,7 +71,7 @@ Every Principle below is mandatory.
 
 ### Implement coordinates the Operations workflow
 
-**Rule:** Implement accepts one or more Target phase identifiers, or coordinates every Target phase in Target order when none is selected. It checks required Config records once and coordinates Configure only when they are absent or invalid. If Config remains absent or invalid after that attempt, Implement stops before Plan, Develop, or Review. Otherwise, for each phase, it coordinates Plan, Develop, and Review in that order. A blocked Develop does not by itself skip Review: when Source is available, Review performs its own passes until its result is satisfied or a Blocker prevents continuation. Implement preserves each Component's scope and outcome and determines the aggregate counts of associated Open Questions and Blockers.
+**Rule:** Implement accepts one or more Target phase identifiers, or coordinates every Target phase in Target order when none is selected. It checks required Config records once and coordinates Configure only when they are absent or invalid. If Config remains absent or invalid after that attempt, Implement stops before Plan, Develop, or Review. Otherwise, for each phase, it coordinates Plan, Develop, and Review in that order. A blocked Develop does not by itself skip Review: when Source is available, Review performs its own passes until its result is satisfied or a Blocker prevents continuation. Implement preserves each Component's scope and outcome and determines the aggregate counts of associated Open Questions and Blockers; unresolved Blockers or Open Questions may make its final outcome blocked, but never prevent an applicable Review. Implement does not establish Target or Interface Understanding; each participating Operation establishes the Understanding its own responsibility requires.
 
 **Why:** One coordinator keeps the required Operations sequence coherent without turning coordination into ownership of the work it coordinates.
 

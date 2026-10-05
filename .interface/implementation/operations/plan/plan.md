@@ -59,7 +59,6 @@ Each Planning invocation produces or reconciles the applicable Plans once agains
 
 - **Consumes Interface and Target** — establishes the current authorities and intended outcome from which phase work is derived.
 - **Consumes State** — Log Entries containing prior Planning results, Blockers, Open Questions, and aggregate phase progress without duplicating Task records.
-- **Consumed by Develop** — the planned outcomes, acceptance criteria, dependencies, and execution conditions used to perform the work.
 
 <br>
 

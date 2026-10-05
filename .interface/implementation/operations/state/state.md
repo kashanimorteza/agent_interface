@@ -2,7 +2,6 @@
 
 State is the Operation Component that records the aggregate operational position of the project.
 
-Responsibility: The current Mode, aggregate Phase progress, and status records needed to show the project's operational position.
 
 <br>
 
@@ -10,13 +9,12 @@ Responsibility: The current Mode, aggregate Phase progress, and status records n
 ## Navigation
 
 1. **[Introduction](#introduction)**
-2. **[Modes](#modes)**
-3. **[Terms](#terms)**
-4. **[Relationships](#relationships)**
-5. **[Layering](#layering)**
-6. **[Authority](#authority)**
-7. **[Principles](#principles)**
-8. **[At a Glance](#at-a-glance)**
+2. **[Terms](#terms)**
+3. **[Relationships](#relationships)**
+4. **[Layering](#layering)**
+5. **[Authority](#authority)**
+6. **[Principles](#principles)**
+7. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -49,13 +47,6 @@ The Log preserves every recorded Entry: in progress, completed, stopped, and blo
 
 <br>
 
-<!---------------------------------------------------------------------------------------- Modes --->
-## Modes
-
-State recognizes `not set`, `configuring`, `planning`, `development`, `reviewing`, and `implementing` as active Modes. A Mode identifies the current or most recently recorded operational position only.
-
-<br>
-
 <!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
@@ -64,14 +55,14 @@ State recognizes `not set`, `configuring`, `planning`, `development`, `reviewing
 - **Log Entry** — one record of a Skill execution. Its project-wide identifier is a sequential, zero-padded number (`001`, `002`, …); it holds known start information while work is in progress, then its completion time, measured and readable duration, outcome, report, and applicable execution data when work ends.
 - **Workflow Mode** — the current or most recently recorded operational position of the project.
 - **Blocker** — a condition that genuinely prevents safe or valid continuation.
-- **Open Question** — a critical decision that cannot safely be made without a human.
+- **Open Question** — a decision recorded for the Human to review later; work continues with the current choice meanwhile.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Uses Target Phase identity** — uses stable Phase identifiers without copying Phase goals or Target meaning.
+- **Consumes Target** — uses stable Phase identifiers without copying Phase goals or Target meaning.
 
 Technical choices and defaults belong to State Preferences, which currently define none. The exact shape and initial values of State Config belong to the State Schema.
 

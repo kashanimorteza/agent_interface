@@ -56,8 +56,7 @@ Review stops when the required result or evidence is unavailable, an authority c
 ## Relationships
 
 - **Consumes Plan and generated Source** — takes the Plan's coverage, acceptance criteria, and verification conditions as the baseline for examining the selected phase's Source and evidence.
-- **Consumes State** — uses current aggregate progress and prior Review Log Entries without treating either as authority.
-- **Supplies State** — provides the phase's aggregate Review outcome and Review-specific Findings and resolutions.
+- **Consumes State** — uses current aggregate progress and prior Review Log Entries without treating either as authority, and records its outcome and Findings through State.
 
 <br>
 

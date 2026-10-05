@@ -2,7 +2,6 @@
 
 Launch is the Operation Component that activates a completed implementation and records the observable runtime result.
 
-Responsibility: The controlled activation of the completed implementation and recording of its runtime result.
 
 <br>
 
@@ -15,8 +14,7 @@ Responsibility: The controlled activation of the completed implementation and re
 4. **[Layering](#layering)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
-7. **[Operation Contract](#operation-contract)**
-8. **[At a Glance](#at-a-glance)**
+7. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -25,7 +23,7 @@ Responsibility: The controlled activation of the completed implementation and re
 
 ### Overview
 
-Launch is the Operation Component that brings a completed implementation online and records the observable runtime result.
+Launch brings the parts of a completed implementation online and keeps already healthy parts running.
 
 ### Purpose
 
@@ -50,7 +48,6 @@ Launch reads the applicable Platform and operational authorities, verifies readi
 
 - **Consumes Development and Platform authorities** — uses the completed product and its launch requirements.
 - **Consumes State** — reads the current operational position and records the launch outcome through its owner.
-- **Consumed by State** — supplies the observable runtime result.
 
 <br>
 
@@ -64,7 +61,7 @@ Launch owns activation and its observable result. Development owns the implement
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
-The Principle and Operation Contract in this Definition govern Launch. Launch Preferences supply only activation defaults where higher authorities are silent.
+The Principles in this Definition govern Launch. Launch Preferences supply only activation defaults where higher authorities are silent.
 
 <br>
 
@@ -85,18 +82,13 @@ Every Principle below is mandatory.
 
 <br>
 
-<!--------------------------------------------------------------------------------- Operation Contract --->
-## Operation Contract
+### Launch is scoped and idempotent
 
-Launch accepts one optional scope: `api`, `presentation`, `logic`, or `complete` (`all` is an alias). With no scope, it uses the default scope from Launch Preferences and records that decision in its Log. It consumes Target and Platform selections, Platform authorities, State, developed parts, public interfaces, and observable runtime state.
+**Rule:** Launch accepts one optional scope: one Development Component that has a runtime, or `complete` (`all` is an alias). With no scope, it uses the default scope from Launch Preferences and records that decision in its Log. It establishes current Interface and Target Understanding, reads Target and Platform selections, Platform Principles and Preferences, operational State, developed parts, public interfaces, and observable runtime state, and resolves the Environment and Launch definition from explicit Target decisions before Platform defaults; it never invents a missing definition. It prepares only declared project-scoped runtime requirements, activates only the selected parts in dependency order, delivers bindings through public boundaries without recording secrets, and records startup or preservation outcomes, readiness evidence, Access Points, and its Log data, including Blockers and Open Questions. A healthy running part is preserved, and only runtime elements that do not satisfy the current scope are changed.
 
-Launch establishes current Interface and Target Understanding, reads Platform Principles and Preferences and operational State, and resolves the Environment and Launch definition from explicit Target decisions before Platform defaults. It never invents a missing definition.
+**Why:** Scoped, repeatable activation lets Launch run again safely without disturbing what already works.
 
-Launch prepares only declared project-scoped runtime requirements, verifies readiness, activates only the selected parts in dependency order, preserves already healthy parts, delivers bindings through public boundaries without recording secrets, and records startup or preservation outcomes, readiness evidence, Access Points, and its Log data, including Blockers and Open Questions.
-
-Launch never repairs product Source, changes Target meaning, redefines Platform authority, or exposes secrets. It stops on unresolved Environment or Launch, missing system preparation, failed preparation or prerequisite startup, incomplete Development, failed readiness, or an unsafe binding.
-
-Launch is idempotent: a healthy running part is preserved and only runtime elements that do not satisfy the current scope are changed.
+**Boundary:** Launch never repairs product Source, changes Target meaning, redefines Platform authority, or exposes secrets. It stops on an unresolved Environment or Launch definition, missing system preparation, failed preparation or prerequisite startup, incomplete Development, failed readiness, or an unsafe binding.
 
 <br>
 
@@ -109,3 +101,8 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — verify readiness and record the observable runtime result.
 - **Never** — alter product or Platform authority to bypass a readiness failure.
+
+**Launch is scoped and idempotent**
+
+- **Must** — activate only the selected scope in dependency order and preserve healthy running parts.
+- **Never** — repair product Source, invent a missing definition, or expose secrets.
