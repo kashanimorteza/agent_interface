@@ -30,10 +30,10 @@ content_map:
 content:
   active:
     mode: "reviewing"
-    phase: "P1"
-    mode_reason: "Review is judging the generated Source of phase P1 against its Plan under Implement execution 002."
+    phase: "P2"
+    mode_reason: "Review is judging the generated Source of phase P2 against its Plan, invoked directly."
     set_by: "my-interface-review"
-    set_at: "2026-10-05T10:28:00Z"
+    set_at: "2026-10-05T11:27:04Z"
   phases:
     P1:
       id: "P1"
@@ -41,6 +41,12 @@ content:
       development: "completed"
       review: "satisfied"
       completed_at: "2026-10-05T10:34:52Z"
+    P2:
+      id: "P2"
+      planning: "completed"
+      development: "completed"
+      review: "satisfied"
+      completed_at: "2026-10-05T11:32:59Z"
   log:
     - id: "001"
       skill: "my-interface-configure"
@@ -230,3 +236,179 @@ content:
             question: "Loading the Model Interface registers the Entity tables on, and sets the constraint-naming convention of, SQLModel's shared default metadata. Model Preferences prescribe this mechanism (naming convention on the shared metadata), while the Interface Schema forbids runtime-configuration side effects when loading. Is the shared default metadata intended, or should Model own its metadata?"
             current_choice: "The shared SQLModel metadata is used; no file, connection, process or other external effect occurs on load."
             where: "Core base"
+    - id: "006"
+      skill: "my-interface-plan"
+      phase: "P2"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-10-05T10:45:45Z"
+      completed_at: "2026-10-05T10:50:39Z"
+      duration: "4:54"
+      report: "Produced the Plan for P2 (Database): 9 Groups and 46 atomic Tasks, none previously existing. Dependencies resolve and are acyclic; the first Task depends on the completed Model Interface Task of P1. The existing P1 Plan was preserved unchanged. No Open Questions or Blockers."
+      open_questions: []
+      blockers: []
+      data:
+        plan_changes:
+          phase: "P2"
+          reconciliation: "No prior P2 Plan existed; created from current Interface and Target Understanding. The P1 Plan was compared and left unchanged: its Tasks are done and its Review is satisfied."
+          groups_added: ["P2-G1", "P2-G2", "P2-G3", "P2-G4", "P2-G5", "P2-G6", "P2-G7", "P2-G8", "P2-G9"]
+          tasks_added: 46
+          tasks_changed: 0
+          tasks_removed: 0
+          tasks_preserved: 28
+          tasks_replaced: 0
+          task_counts:
+            P2-G1: 1
+            P2-G2: 4
+            P2-G3: 5
+            P2-G4: 4
+            P2-G5: 3
+            P2-G6: 15
+            P2-G7: 8
+            P2-G8: 3
+            P2-G9: 3
+          reason: "First planning of P2; every Task is new work required by the phase goal."
+        scope_notes:
+          - "Only the Engine used by the active Instance receives an implementation Task; an Engine that no active Instance uses is planned as having none, as the Database Definition requires."
+          - "Hash and encryption of stored values, and Initial Data values that are not concrete, are outside Database's responsibility; the Initial Data Task copies such values as empty strings as the Definition states."
+          - "Aggregate Planning progress was recorded for P2 only."
+    - id: "007"
+      skill: "my-interface-develop"
+      phase: "P2"
+      event: "develop"
+      outcome: "completed"
+      started_at: "2026-10-05T11:06:44Z"
+      completed_at: "2026-10-05T11:24:05Z"
+      duration: "17:21"
+      report: "Developed all 46 Tasks of P2 (Database) and produced the Database Component as a uv project: Interface (17 published contracts and the Database object), Core (shared data module, Tables, Initial Data), one Engine implementation (SQLite, the only Engine an active Instance uses), three manual entry points, the generated configuration with the Target's 23 Initial Data records, Database-owned storage prepared on the default Instance, and the README. ruff and pyright pass; all 24 README Python blocks and its Verify script ran in a clean copy; the after-generation Prepare ran on empty storage and again as the last step. Review has not yet judged acceptance. Three Open Questions recorded; no Blockers."
+      open_questions:
+        - "OQ-007-1"
+        - "OQ-007-2"
+        - "OQ-007-3"
+      blockers: []
+      data:
+        tasks:
+          claimed_and_done: 46
+          skipped: 0
+          blocked: 0
+          replaced: 0
+        decisions:
+          - "P2-G1-T1"
+          - "P2-G2-T1"
+          - "P2-G2-T2"
+          - "P2-G2-T3"
+          - "P2-G2-T4"
+          - "P2-G3-T1"
+          - "P2-G3-T2"
+          - "P2-G3-T3"
+          - "P2-G3-T5"
+          - "P2-G4-T1"
+          - "P2-G4-T2"
+          - "P2-G4-T4"
+          - "P2-G5-T1"
+          - "P2-G5-T2"
+          - "P2-G6-T2"
+          - "P2-G6-T4"
+          - "P2-G6-T10"
+          - "P2-G6-T15"
+          - "P2-G7-T3"
+          - "P2-G7-T4"
+          - "P2-G7-T5"
+          - "P2-G7-T7"
+          - "P2-G7-T8"
+          - "P2-G9-T1"
+          - "P2-G9-T3"
+        open_questions:
+          OQ-007-1:
+            question: "Database Preferences say a stored row is built with the Entity's own constructor from all Field values, but Model's constructor refuses a supplied Auto Increment id. Database therefore builds each Entity through Model's public JSON reconstruction, which accepts the stored id and enforces the whole contract. Is that the intended reading, or should Model's construction accept a stored id (see OQ-004-3)?"
+            current_choice: "Rows are built through the Entity's public JSON reconstruction; a violating row raises the Declaration-incompatibility error."
+            where: "P2-G4-T4"
+          OQ-007-2:
+            question: "Lifecycle Commands raise a typed error on failure (with the command and Instance in the message), while ExecuteCommand returns a CommandResult with success false for a command the Engine rejects. The Schema's results carry success and message fields, so a failing Lifecycle Command could also return a failed LifecycleResult. Which behaviour is intended?"
+            current_choice: "Lifecycle failures raise; ExecuteCommand engine rejections return success false."
+            where: "P2-G6-T15, P2-G7-T1 to T6"
+          OQ-007-3:
+            question: "The Target's Initial Data relates records by fixed ids (for example user_id 1) and gives decimals as numbers. Database stores decimals as exact strings and relies on an empty database whose ids start at 1; a database that once held and lost rows (ids are never reused) fails with a foreign-key error. Should Initial Data instead relate records by natural keys, or is the empty-database assumption intended?"
+            current_choice: "Records are copied as the Target defines them, decimals as strings, and the empty-database assumption is documented."
+            where: "P2-G2-T2, P2-G7-T4"
+        scope_notes:
+          - "Generated only inside the Database Component directory; the Model Component was read only through its Interface."
+          - "Task Log times were measured with the clock from the start; the generators and check scripts stayed in the session scratchpad."
+          - "Only the SQLite Engine has an implementation and driver, because the PostgreSQL Instance is inactive; activating it needs regeneration."
+          - "The storage file db/application.db is runtime data created by the after-generation Prepare and is excluded from version control by the Component's ignore list."
+          - "Aggregate Development progress was recorded for P2 only."
+    - id: "008"
+      skill: "my-interface-review"
+      phase: "P2"
+      event: "review"
+      outcome: "satisfied"
+      started_at: "2026-10-05T11:27:04Z"
+      completed_at: "2026-10-05T11:32:59Z"
+      duration: "5:55"
+      report: "Reviewed P2 (Database) against its Plan (46 Tasks) and the Database Component's Review category. Three Findings raised (an unused declared dependency, an unknown-Instance lookup raising a raw error, an Engine connection that accepted a missing required value), each resolved and rechecked. All 12 Database Review observations and all 46 Task acceptance criteria were observed to hold; technical checks pass; the Initial Data equals the Target's. Outcome satisfied. Five observations about the review and one Open Question recorded; no Blockers."
+      open_questions:
+        - "OQ-008-1"
+      blockers: []
+      data:
+        findings:
+          - id: "F-008-1"
+            state: "resolved"
+            resolution: "Removed sqlmodel from the project's direct dependencies and refreshed the lock file; Model still brings it in transitively, and Database never imported it."
+            recheck: "The declared dependencies are model, pyyaml and sqlalchemy and each is imported by Database source; uv lock --check, ruff, ruff format check and pyright pass; the Component syncs from the lock and loads; all 97 behavioural observations pass again."
+            kind: "dependency"
+            component: "Database"
+            expected: "Every dependency the Component declares is necessary, that is, used directly by the Component's own source; Database's source reaches the SQLModel tables only through Model and declares no table class."
+            observed: "The project declaration lists sqlmodel 0.0.47 as a direct dependency, but no Database source file imports or mentions sqlmodel."
+            evidence: "database/pyproject.toml dependencies list (model, pyyaml, sqlalchemy, sqlmodel); a scan of every import in database/database/**/*.py lists database, sqlalchemy, model, yaml and the standard library, and a search of the source for sqlmodel finds nothing."
+          - id: "F-008-2"
+            state: "resolved"
+            resolution: "select_instance now looks the Instance up with a default, so a member whose Instance is no longer configured is reported as the invalid-configuration error."
+            recheck: "In the scratch copy the same removal now prints 'explicit member of an unknown Instance -> ConfigurationError' and the storage directory is untouched; the inactive-Instance case still raises the inactive-Instance error."
+            kind: "behaviour"
+            component: "Database"
+            expected: "Task P2-G4-T1: selecting an unknown Instance fails with the invalid-configuration error before any storage is opened."
+            observed: "When a DatabaseInstance member's Instance is no longer present in the loaded configuration, the call raises StopIteration, which is not a Database error."
+            evidence: "In a scratch copy, removing the 'sqlite' Instance from the loaded settings and calling the count Operation with the SQLITE member printed 'unknown -> StopIteration'; the lookup is in select_instance in database/database/core/data.py (a next() over the configured keys without a default)."
+          - id: "F-008-3"
+            state: "resolved"
+            resolution: "The SQLite Engine implementation's connect now checks the Engine's required connection values and raises the connection-failure error naming the missing value names (never a value) before building a connection."
+            recheck: "Calling connect with an empty database value now raises ConnectionFailureError; the shipped Instance still connects; a configured password and user name do not appear in an unreachable-Instance message."
+            kind: "behaviour"
+            component: "Database"
+            expected: "Task P2-G6-T2: a connection that lacks a required value fails with the connection-failure error without exposing a credential."
+            observed: "The Engine implementation's connect accepts an Instance whose database value is empty and builds a connection handle instead of failing; the required-value rule is applied only by configuration loading, as an invalid-configuration error."
+            evidence: "In a scratch copy, calling the SQLite Engine implementation's connect with the sqlite Instance's database set to an empty string returned a handle ('connected without a required value'); connect is in database/database/engine/sqlite.py and never reads the Engine's required_connection parameter."
+        checks_performed:
+          database_review_observations:
+            - "1. Interface publishes exactly the Schema's contracts and nothing else: observed (17 public names: 10 named contracts and the 7 failure kinds under the base error; no Core, Engine, configuration or storage name)."
+            - "2. Every Operation, ExecuteCommand and Lifecycle Command has the Schema's parameters by name and order, required entity/id/field/command, everything else optional, optional DatabaseInstance last: observed from the real signatures of all 16 methods."
+            - "3. Each enumeration holds exactly its Schema members, values equal to names: observed (12, 2, 2; DatabaseInstance too)."
+            - "4. DatabaseInstance holds exactly one member per active Instance and none for an inactive one: observed in four scratch configurations (one active; two active; the default swapped; PostgreSQL activated), without a connection value in any member."
+            - "5. A call without a DatabaseInstance runs on the configured default Instance: observed with a second Instance made default (its own file was created and prepared) and with an explicit member selecting each Instance separately."
+            - "6. No Operation accepts a string in place of an imported value: observed with 27 calls (Entity, Field, id, operator, combination, direction, limit, Instance, parameters), each raising the invalid-input error before any storage was created."
+            - "7. CreateTables uses only the Model Entity Collection's Entities and Declarations and stops on a difference: observed (15 Tables created and equal to the Entities; an extra column and a hand-made weaker Table each stopped it, naming the Entity and the differing aspect, changing nothing); the source reads nothing but the Entity Collection."
+            - "8. Every returned Entity is built through its own construction and a violating row is an error: observed with a stored row that breaks an Entity's size rule (List and Get By Id raised the Declaration-incompatibility error, nothing was repaired)."
+            - "9. Prepare runs CreateTables then InsertInitialData and stops when CreateTables fails: observed (38 changes on an empty Instance; a repeat changed nothing; with a mismatching Table it raised and inserted nothing)."
+            - "10. A non-concrete Initial Data value is copied as an empty string and no value is generated: observed (five 'Generate securely' values are empty strings in the configuration and in storage)."
+            - "11. A missing record returns null: observed for Update, Get By Id, Delete, Enable and Disable."
+            - "12. Loading the Interface opens no connection and creates no data or file: observed in a fresh interpreter with audit hooks and with no storage directory present (no socket, database connection, file write, process or thread; no engine or connection object; the storage directory was not created)."
+          plan_acceptance: "All 46 Task acceptance criteria were observed to hold, including by white-box scratch changes where the public Interface cannot reach the condition (an Instance made inactive or unknown after loading; ten invalid configurations; an unreachable storage path with a configured password; a record that breaks its Entity contract in Initial Data; a CreateTables run that fails part way). 97 observations in five scripts passed after the Findings were resolved. No criterion lacked observable evidence."
+          initial_data: "Every one of the 23 configured Initial Data records was rendered in the Target's own notation and found verbatim, as a whole line, in the Target; the Target defines no Initial Data line that the configuration lacks; the README's Initial Data listing equals the configuration field by field."
+          technical:
+            - "ruff format check, ruff check and pyright pass; the lock file is consistent with the declaration."
+            - "A clean copy of both Components syncs from the lock, loads, and is prepared by the entry point (15 Tables, 23 records)."
+            - "An editable dependency from a separate project uses the Component's own storage and creates none beside the consumer; the Component builds to a wheel and source archive."
+            - "All 24 Python examples of the README execute in order on a prepared database and its Verify script passes, including twice in a row."
+            - "Dependency direction holds (Interface, Core, Engine); the Model Component is unchanged (clean in version control); no machine-specific path, agent-identifying text or timestamp appears in the Component's files or lock file; storage is excluded from version control."
+          testing_scope: "Persistent testing is disabled for Database; every condition was verified transiently with scripts kept outside the Component, and no test was added to it."
+        observations_about_the_review:
+          - "Regeneration was not independently observable: the Component has no generator of its own, the hand-written source and the README prose cannot be regenerated, and the two generated parts (the Initial Data collection and the README listing) were compared with the Target and with each other instead."
+          - "The Plan's acceptance for P2-G2-T3 (a missing required connection value fails loading with the invalid-configuration error) and for P2-G6-T2 (a connection that lacks a required value fails with the connection-failure error) describe the same condition at two layers; both now hold, at configuration loading and at the Engine's connection respectively."
+          - "A built wheel installs but cannot be imported: configuration and storage resolve from the Component root, as the Database Configuration Schema's storage-ownership rule requires; the supported install is the editable one the README states."
+          - "Filters and Orders on decimal Fields load every row of the Entity and evaluate it in Python; this is correct and exact but its cost grows with table size. PostgreSQL has no implementation and was not exercised; the incomplete-Lifecycle error path was not triggered because SQLite rolls schema work back."
+          - "One line in the configuration-observation script ('the other Instance's storage was not touched') was an unconditional pass and is not counted as evidence; two checks failed because of mistakes in my own expectations (range-operator results and a heading pattern), which were verified against independent computation and then corrected."
+        open_questions:
+          OQ-008-1:
+            question: "Because configuration and storage resolve from the Component root, Database works only as an editable (path) dependency; a built wheel imports with a configuration error. Is that the intended installation model for a consumer such as the API Component?"
+            current_choice: "Editable path dependency, documented in the README; the wheel is buildable but not importable."
+            where: "Database packaging"

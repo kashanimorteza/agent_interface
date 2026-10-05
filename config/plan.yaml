@@ -26,7 +26,7 @@ content_map:
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
-  task_count: 28
+  task_count: 74
   plans:
     P1:
       id: "P1"
@@ -979,3 +979,1424 @@ content:
                     - unset: How the Verify section proves the listed observations when Model Preferences disable shipping tests
                       chosen: Verify is one runnable script inside the README, not a shipped test suite.
                       why: Model Preferences set the testing capability to false, but the Verify section must still let a consumer observe each listed condition.
+    P2:
+      id: "P2"
+      title: "Database"
+      order: 2
+      target: "Database"
+      does: "A reusable Database library that persists the Model Entities through one stable, typed gateway on the Instance of the Engine in use, and holds the Target's Initial Data after preparation."
+      constraints: []
+      task_count: 46
+      groups:
+        P2-G1:
+          id: "P2-G1"
+          title: "Library foundation"
+          description: "Brings the Database Component into existence as an independent, reusable library that consumes Model only through its published Interface."
+          area: "Component setup and dependency resolution"
+          does: "The Database library exists as a self-contained, loadable unit whose selected technology, Engine drivers and quality tooling are ready."
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-G1-T1:
+              id: "P2-G1-T1"
+              source_id: "006"
+              title: "Provide the Database library as an independent reusable unit"
+              description: "Establish the Database Component as an independent library whose selected technology, drivers for the Engines in use and quality tooling are set up, whose dependency versions are resolved and recorded, and which reaches Model only through its published Interface."
+              reason: "Every other Task in the phase builds on a Database library that sets up on its own and uses Model through its single declared Connection."
+              inputs:
+                - "Published Model Interface"
+                - "Resolved technology and tooling selections for the Database Component"
+              skills: []
+              expected_result: "A Database library that sets up from a clean state in an isolated environment with its dependencies resolved and recorded, and that a consumer can load together with the Model library."
+              depends_on:
+                - "P1-G4-T2"
+              constraints: []
+              acceptance: "From a clean state the library sets up in an isolated environment without error, and a consumer can then load it together with the Model library."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:07:00Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependency P1-G4-T2 is done (Model Interface published). Claimed before changing the Task result.
+                - at: '2026-10-05T11:07:20Z'
+                  execution: '007'
+                  event: completed
+                  detail: 'Created the Database Component as a uv project in database/ with the importable package database/database/. Dependencies resolved and recorded in uv.lock with exact pins (model 0.1.0 as an editable path dependency, pyyaml 6.0.3, sqlalchemy 2.0.54, sqlmodel 0.0.47; dev: ruff 0.16.10, pyright 1.1.414, types-pyyaml); Python constrained to 3.14.*; ruff and pyright configured as in Model. Observed: environment deleted and rebuilt from the lock file, then the package loaded together with the Model Interface (15 Entities visible).'
+                  decisions:
+                    - unset: Physical arrangement of the Component and how Model is consumed
+                      chosen: Component root database/ holds the project declaration, lock file, documentation, configuration and storage; the importable package database/database/ holds the Interface, Core, Engine and entry points. Model is declared as an editable path dependency on the sibling Model Component (the declared database_to_model Connection), pinned to its exact version.
+                      why: Database Preferences name directory and package as database and require the configuration and storage inside the Component; an editable path dependency keeps Model read-only and independently owned and lets storage resolve from the Component root.
+                    - unset: Direct dependencies and tooling
+                      chosen: 'Declared and pinned: model, pyyaml (to read the configuration), sqlalchemy and sqlmodel; development: ruff, pyright, types-pyyaml. No PostgreSQL driver is declared because no active Instance uses that Engine.'
+                      why: Database Preferences select SQLModel and the driver per Engine in use; reading YAML needs a parser the Preferences leave unstated.
+        P2-G2:
+          id: "P2-G2"
+          title: "Configuration"
+          description: "The runtime Database Configuration and the behaviour that loads, validates and applies it, including the Database-owned storage it points to."
+          area: "Configuration, Initial Data collection and storage ownership"
+          does: "The Database reads one complete, validated configuration and stores its data only inside storage it owns."
+          constraints: []
+          task_count: 4
+          tasks:
+            P2-G2-T1:
+              id: "P2-G2-T1"
+              source_id: "006"
+              title: "Provide the Database Configuration for Engines, Instances and settings"
+              description: "Produce the runtime Database Configuration in the shape its Schema defines, holding every declared Engine, every declared Instance with its complete definition, the default Instance, the storage root, the query defaults and the after-generation behaviour, all taken from the Database Preferences."
+              reason: "Runtime reads only this configuration, so every other behaviour depends on it existing and being complete."
+              inputs:
+                - "Declared Engines, Instances and settings"
+                - "Completed Database library foundation"
+              skills: []
+              expected_result: "A complete configuration in which every Instance names an existing Engine and the default Instance is an active Instance."
+              depends_on:
+                - "P2-G1-T1"
+              constraints: []
+              acceptance: "The configuration holds each declared Engine and every declared Instance with its name, active state, Engine, host, port, database, username, password and options; the default Instance is an active Instance; the query defaults and the after-generation behaviour are present."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:07:21Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependency P2-G1-T1 is done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:07:47Z'
+                  execution: '007'
+                  event: completed
+                  detail: 'Generated the Database Configuration at the Component root with Engines (SQLite, PostgreSQL), both Instances with every field (SQLite active, PostgreSQL inactive), default Instance sqlite, storage root db, query defaults (AND, limit -1, id ascending) and after-generation Prepare enabled with fail_on_error. Observed: the file parses; the default Instance names an existing active Instance; every Instance names a declared Engine; initial_data holds an empty collection pending its own Task.'
+                  decisions:
+                    - unset: Keys of each Engine's parameters mapping and the Instance defaults
+                      chosen: Engine parameters hold url_scheme, storage_kind, required_connection, foreign_keys and connect_arguments (SQLite) or default_port (PostgreSQL), taken from Database Preferences; both Instances are declared exactly as in the Preferences, PostgreSQL inactive.
+                      why: The Configuration Schema leaves the engine-specific mapping open; runtime must read everything from the configuration, so Engine requirements live there.
+            P2-G2-T2:
+              id: "P2-G2-T2"
+              source_id: "006"
+              title: "Copy the Target's Initial Data into the shared configuration collection"
+              description: "Copy every Initial Data record the Target defines, in Target order and grouped by Entity, into one shared collection of the configuration. A Target value that is not concrete is copied as an empty string, and Database produces no value itself."
+              reason: "InsertInitialData can insert only what the configuration holds completely."
+              inputs:
+                - "Target-defined Initial Data records"
+                - "Provided configuration"
+              skills: []
+              expected_result: "One complete shared collection holding every Target-defined Initial Data record."
+              depends_on:
+                - "P2-G2-T1"
+              constraints: []
+              acceptance: "Every Initial Data record the Target defines appears exactly once in the collection with its concrete values unchanged and in Target order; each value that is not concrete appears as an empty string; a record containing a credential or another sensitivity-related value is not omitted."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:07:47Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependency P2-G2-T1 is done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:08:55Z'
+                  execution: '007'
+                  event: completed
+                  detail: "Copied the Target's Initial Data into the shared collection of the configuration: 12 Entities and 23 records in Target order (1 User, 2 Trading Platforms, 1 Instance, 8 Currencies, 1 Broker, 4 Assets, 1 Account Group, 1 Account, 1 each of Trailing Group, Partial Group, Action Group and Action). Concrete values copied unchanged; the five 'Generate securely' values (User password and api_key, Instance password and api_key, Account password) are empty strings. Observed: the collection parses and holds every record once; no record was dropped for a credential or sensitivity-related value."
+                  decisions:
+                    - unset: How a Target value is written into the configuration's Initial Data records
+                      chosen: "Each record is a mapping in Model's JSON Object form: decimal Fields as strings (for example the Action's risk, take-profit and stop-loss values 1 become \"1\"), numbers and text unchanged, Fields the Target does not give are omitted so Model defaults apply, and each 'Generate securely' value is an empty string with a comment naming why. Entities are identified by their logical Model name and listed in Target order; Entities with no Initial Data (the two rule Entities and Position) have no entry."
+                      why: InsertInitialData must validate each record through the Entity's public contract, and Model's contract takes decimals as exact strings and refuses an integer in a decimal Field.
+            P2-G2-T3:
+              id: "P2-G2-T3"
+              source_id: "006"
+              title: "Load and validate the configuration as the sole runtime source"
+              description: "At runtime read the Database Configuration as the only source of Engines, Instances, settings and Initial Data. Validate that Instance keys and public names are unique, every Instance is complete and names an existing Engine, the default Instance is active, and the connection values its Engine requires are present; resolve serialized enumeration names to members and fail on an unknown name."
+              reason: "A configuration fault must surface before any storage is touched."
+              inputs:
+                - "Provided configuration"
+              skills: []
+              expected_result: "A configuration that loads into validated settings, or fails clearly with the invalid-configuration error."
+              depends_on:
+                - "P2-G2-T1"
+              constraints: []
+              acceptance: "A valid configuration loads; a duplicate Instance identity, an Instance naming an unknown Engine, an inactive or unknown default Instance, a missing required connection value and an unknown enumeration name each make loading fail with the invalid-configuration error, and no message exposes a credential."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:07:47Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependency P2-G2-T1 is done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:08:55Z'
+                  execution: '007'
+                  event: completed
+                  detail: "Implemented load_configuration in the Core's shared module: it reads the configuration as the only source, and validates sections, complete Instances, unique keys and public names, existing Engines, an active default Instance, required connection values of active Instances, and enumeration names. Observed in a scratch run with deliberately broken copies: unknown Engine, inactive or unknown default Instance, duplicate key or public name, missing required connection value, incomplete Instance, unknown filter combination or direction name and a missing section each raise the invalid-configuration error naming the fault; the valid file loads; a broken PostgreSQL password produced a message naming the missing values only. ruff and pyright pass."
+                  decisions:
+                    - unset: How strictly the loader validates, and what it accepts as a limit
+                      chosen: The loader requires exactly the four sections and exactly the nine Instance fields, validates identity uniqueness after upper-casing the key, validates required connection values only for active Instances (using the required_connection list in the Engine's parameters), normalizes a zero or negative default limit to -1, and raises one ConfigurationError per fault with the Instance key but never a value.
+                      why: The Configuration Schema states the rules but not the failure granularity; reporting only the first fault with no values keeps messages free of credentials.
+            P2-G2-T4:
+              id: "P2-G2-T4"
+              source_id: "006"
+              title: "Resolve file-backed storage inside the Database's own storage"
+              description: "Resolve a file-backed Instance's database location beneath the configured storage root of the Database Component, reject a location that would escape it, and let only Database create and manage the storage files; the storage holds data only and never source."
+              reason: "Consumers must never decide where data lives, and a location outside the Component's own storage would break ownership."
+              inputs:
+                - "Loaded and validated configuration"
+              skills: []
+              expected_result: "Each file-backed Instance reaches a database file inside the Database-owned storage, created on first use."
+              depends_on:
+                - "P2-G2-T3"
+              constraints: []
+              acceptance: "A file-backed Instance reads and writes a database file under the storage root of the Database Component whatever the consumer's working directory is; a location that escapes the storage root fails before any connection is attempted; the storage contains no source."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:08:55Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependencies are done (P2-G2-T3 for G2-T4, G3-T2 and G6-T1; P2-G3-T1 for G3-T3). Claimed before changing the Task result.
+                - at: '2026-10-05T11:09:53Z'
+                  execution: '007'
+                  event: completed
+                  detail: "Implemented the storage rule in the Core's shared module: a file-backed Instance's database resolves beneath the Component's storage root (db) regardless of the working directory, and an escaping, absolute, empty or root-equal location raises the invalid-configuration error before any connection. Observed in a scratch run: application.db resolves to db/application.db; ../outside.db, an absolute path, an empty name, a/../../x.db and . are all refused; a nested name stays inside. The storage directory holds no source and is not created until first use."
+                  decisions:
+                    - unset: When the storage directory is created and what counts as an escaping location
+                      chosen: "Resolution is pure: it returns the absolute location beneath the Component's storage root and refuses a root outside the Component, an absolute name, an empty name, a name equal to the root, and any resolved location outside the root. The directory and file are created by the Engine when it first connects, not at import."
+                      why: Loading the Interface must create no file; only Database creates storage, and only when a call actually uses an Instance.
+        P2-G3:
+          id: "P2-G3"
+          title: "Interface values and vocabulary"
+          description: "The importable values a consumer passes to and receives from the Database: the closed vocabulary, Instance identities, query values, results and errors."
+          area: "Interface: vocabulary, values, results and errors"
+          does: "Every value a consumer passes or receives exists as an importable, typed contract so that no strings stand in for them."
+          constraints: []
+          task_count: 5
+          tasks:
+            P2-G3-T1:
+              id: "P2-G3-T1"
+              source_id: "006"
+              title: "Publish the closed query vocabulary as enumerations"
+              description: "Publish the three enumerations of the query vocabulary, namely comparison operators, filter combinations and ordering directions, with exactly the members the closed vocabulary defines and each member's value equal to its name."
+              reason: "Consumers pass vocabulary as imported members and never as strings, so the member sets must be fixed and importable."
+              inputs:
+                - "Completed Database library foundation"
+              skills: []
+              expected_result: "Three enumerations whose members are exactly the closed sets."
+              depends_on:
+                - "P2-G1-T1"
+              constraints: []
+              acceptance: "Each enumeration holds exactly the members of its closed set and no other; each member's value equals its name."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:07:21Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependency P2-G1-T1 is done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:07:47Z'
+                  execution: '007'
+                  event: completed
+                  detail: "Defined the three closed enumerations (12 comparison operators, AND and OR, ASCENDING and DESCENDING), each member's value equal to its name, and the base error plus the seven failure-kind errors (configuration, inactive Instance, invalid input, Declaration mismatch, connection failure, execution failure, incomplete Lifecycle). Observed: member counts and names as listed; every value equals its name; all seven errors derive from the base error. Message content free of credentials is a property of the code that raises them."
+                  decisions:
+                    - unset: Where the enumerations and error kinds are defined
+                      chosen: They are defined in the Core's shared module and re-exported by the Interface; error names follow Database Preferences and all derive from DatabaseError.
+                      why: Core and Engine units must raise and compare them, and the Interface may only declare and forward; defining them in Core keeps imports flowing Interface, Core, Engine without cycles.
+            P2-G3-T2:
+              id: "P2-G3-T2"
+              source_id: "006"
+              title: "Publish the enumeration of active Instances"
+              description: "Publish an enumeration whose members identify exactly the active configured Instances and carry no connection values."
+              reason: "Consumers select an Instance by importing a member, so membership must follow the configuration and never reveal a credential."
+              inputs:
+                - "Loaded and validated configuration"
+              skills: []
+              expected_result: "An importable enumeration with one member per active Instance."
+              depends_on:
+                - "P2-G2-T3"
+              constraints: []
+              acceptance: "The enumeration holds exactly one member for each active configured Instance and none for an inactive Instance; member names are unique; no member exposes a host, port, username, password or database identity."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:08:55Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependencies are done (P2-G2-T3 for G2-T4, G3-T2 and G6-T1; P2-G3-T1 for G3-T3). Claimed before changing the Task result.
+                - at: '2026-10-05T11:09:53Z'
+                  execution: '007'
+                  event: completed
+                  detail: 'Built the DatabaseInstance enumeration from the loaded configuration: one member per active Instance (SQLITE) and none for the inactive PostgreSQL Instance; names are unique; members carry only their name. Observed: members listed as [SQLITE], each value equal to its name, no host, port, username, password or database identity reachable from a member.'
+                  decisions:
+                    - unset: How member names are normalized
+                      chosen: Each active Instance key is upper-cased to form the member name, and each member's value equals its name.
+                      why: Database Preferences require every enumeration member's value to equal its name; upper-case follows the closed enumerations.
+            P2-G3-T3:
+              id: "P2-G3-T3"
+              source_id: "006"
+              title: "Provide immutable Filter and Order values"
+              description: "Provide the immutable condition value and the immutable ordering value that queries use: a Filter holds a Field reference, an operator member and a value compatible with the operator, and an Order holds a Field reference and a direction member that is ascending when omitted."
+              reason: "Queries must be built from typed, checked values and never from strings."
+              inputs:
+                - "Published query vocabulary"
+              skills: []
+              expected_result: "Filter and Order values that cannot be altered after creation."
+              depends_on:
+                - "P2-G3-T1"
+              constraints: []
+              acceptance: "A Filter or Order cannot be altered after creation; an Order built without a direction is ascending; a Filter for a null check carries no value; a Filter built with a string in place of a Field reference or an operator is rejected."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:08:55Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependencies are done (P2-G2-T3 for G2-T4, G3-T2 and G6-T1; P2-G3-T1 for G3-T3). Claimed before changing the Task result.
+                - at: '2026-10-05T11:09:53Z'
+                  execution: '007'
+                  event: completed
+                  detail: 'Implemented the immutable Filter and Order values (frozen dataclasses with fields field, operator, value and field, direction). Observed in a scratch run: both reject attribute assignment; an Order built without a direction is ascending; IS_NULL takes no value and rejects one; a string Field or string operator or direction is rejected with the invalid-input error; CONTAINS on a non-textual Field, GREATER_THAN on a boolean, an integer for a float Field, a naive datetime and a scalar for IN are rejected; decimal and datetime Filters with exact Types are accepted. ruff and pyright pass.'
+                  decisions:
+                    - unset: When Filter and Order are validated and which Types are comparable
+                      chosen: "Validation happens when the value is created: a Field reference must be an attribute of a Model Entity class, operators and directions must be enumeration members, null checks take no value, IN takes a non-string collection stored as a tuple, text operators need a string Field, range operators need an ordered Type (integer, float, decimal, string, datetime), and values must match the Field's Type exactly (no integer for a float, no naive datetime)."
+                      why: The Schema requires compatibility checks and no coercion; checking at creation also catches errors before any Entity is known to the Operation.
+            P2-G3-T4:
+              id: "P2-G3-T4"
+              source_id: "006"
+              title: "Provide the CommandResult and LifecycleResult values"
+              description: "Provide the immutable result value of a Database-wide Operation and the immutable result value of a Lifecycle Command, each carrying exactly the fields its Schema defines, in the order the Schema defines."
+              reason: "Consumers need one uniform way to read the outcome of these calls."
+              inputs:
+                - "Published enumeration of active Instances"
+              skills: []
+              expected_result: "Two immutable result values with their defined fields."
+              depends_on:
+                - "P2-G3-T2"
+              constraints: []
+              acceptance: "Each result cannot be altered after creation, exposes exactly its defined fields in the defined order, and reports the DatabaseInstance that was used."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:09:54Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependencies are done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:10:57Z'
+                  execution: '007'
+                  event: completed
+                  detail: "Added the immutable CommandResult (rows, affected, columns, success, message, instance) and LifecycleResult (command, instance, success, affected, message) in the Schema's field order; returned rows are stored as a tuple of read-only mappings and column names as a tuple. Observed: attribute assignment on either result is refused; the dataclass field order matches the Schema; rows cannot be altered; both carry the DatabaseInstance."
+            P2-G3-T5:
+              id: "P2-G3-T5"
+              source_id: "006"
+              title: "Publish one base error and one error per failure kind"
+              description: "Publish a base error and, derived from it, one error for each failure kind: invalid configuration or Instance, inactive Instance selected, invalid input or Field, Declaration incompatibility, connection failure, execution failure, and incomplete Lifecycle execution. No error message exposes a credential."
+              reason: "Consumers must be able to tell failure kinds apart and to catch each one."
+              inputs:
+                - "Completed Database library foundation"
+              skills: []
+              expected_result: "Seven importable failure kinds that share one base error."
+              depends_on:
+                - "P2-G1-T1"
+              constraints: []
+              acceptance: "Each failure kind is importable and can be caught on its own and through the base error; a message produced for a connection or configuration failure contains no password or other credential."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:07:21Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependency P2-G1-T1 is done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:07:47Z'
+                  execution: '007'
+                  event: completed
+                  detail: "Defined the three closed enumerations (12 comparison operators, AND and OR, ASCENDING and DESCENDING), each member's value equal to its name, and the base error plus the seven failure-kind errors (configuration, inactive Instance, invalid input, Declaration mismatch, connection failure, execution failure, incomplete Lifecycle). Observed: member counts and names as listed; every value equals its name; all seven errors derive from the base error. Message content free of credentials is a property of the code that raises them."
+                  decisions:
+                    - unset: Where the enumerations and error kinds are defined
+                      chosen: They are defined in the Core's shared module and re-exported by the Interface; error names follow Database Preferences and all derive from DatabaseError.
+                      why: Core and Engine units must raise and compare them, and the Interface may only declare and forward; defining them in Core keeps imports flowing Interface, Core, Engine without cycles.
+        P2-G4:
+          id: "P2-G4"
+          title: "Core routing"
+          description: "The shared behaviour that checks every public request, resolves its defaults and Instance, and turns stored rows back into Entities, kept free of any Engine-specific behaviour."
+          area: "Core: shared validation, resolution, routing and materialization"
+          does: "Every public request is checked and resolved the same way before an Engine sees it, and every result is built the same way afterwards."
+          constraints: []
+          task_count: 4
+          tasks:
+            P2-G4-T1:
+              id: "P2-G4-T1"
+              source_id: "006"
+              title: "Select the Instance for every call and fail before storage is touched"
+              description: "For every public request resolve the selected DatabaseInstance, falling back to the configured default Instance when none is given, load that Instance's complete configuration, and fail with the proper error when the selection is unknown or inactive."
+              reason: "Every Engine must receive the same checked Instance, and a bad selection must never reach storage."
+              inputs:
+                - "Loaded and validated configuration"
+                - "Published enumeration of active Instances"
+                - "Published failure kinds"
+              skills: []
+              expected_result: "Requests that carry a resolved, active Instance with its connection, or fail early."
+              depends_on:
+                - "P2-G2-T3"
+                - "P2-G3-T2"
+                - "P2-G3-T5"
+              constraints: []
+              acceptance: "A call without a DatabaseInstance runs on the configured default Instance; a call naming an active member runs on that Instance; selecting an inactive Instance fails with the inactive-Instance error and selecting an unknown one fails with the invalid-configuration error, in both cases before any storage is opened."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:09:54Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependencies are done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:10:57Z'
+                  execution: '007'
+                  event: completed
+                  detail: "Implemented Instance selection in the Core's shared module: an omitted selection uses the configured default Instance, a DatabaseInstance member selects its Instance, anything else is refused before any storage is touched. Observed: omitted and explicit SQLITE both resolve to the sqlite Instance with its Engine implementation; a string and a foreign enumeration member raise the invalid-input error."
+                  decisions:
+                    - unset: How a call on an Instance that is configured but inactive can arise, and what a non-member selection raises
+                      chosen: A selection must be a DatabaseInstance member or omitted; any other value, including a string or another enumeration's member, raises the invalid-input error. A key that is no longer configured raises the invalid-configuration error and one that is configured but inactive raises the inactive-Instance error.
+                      why: Because DatabaseInstance contains only active members, an inactive selection can only arise from a stale or foreign value; keeping the three outcomes distinct preserves the failure meanings the Schema lists.
+            P2-G4-T2:
+              id: "P2-G4-T2"
+              source_id: "006"
+              title: "Resolve omitted query settings deterministically"
+              description: "Resolve every omitted query setting from the configuration: the filter combination, the order set and the limit. A supplied order set replaces the default and is applied in the supplied sequence; a zero or negative limit means no limit and a positive limit is the maximum count; aggregate Operations accept no order."
+              reason: "The same call must return the same result on every Instance and every generation."
+              inputs:
+                - "Loaded and validated configuration"
+                - "Published query vocabulary"
+                - "Filter and Order values"
+              skills: []
+              expected_result: "Query defaults that are resolved from the configuration and never guessed."
+              depends_on:
+                - "P2-G2-T3"
+                - "P2-G3-T1"
+                - "P2-G3-T3"
+              constraints: []
+              acceptance: "A query with no combination, orders or limit combines its Filters as the configured combination, orders its results by the configured default order and returns every match; a supplied order set replaces the default and is applied in the supplied sequence; a zero or negative limit returns every match and a positive limit caps the returned count."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:09:54Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependencies are done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:10:58Z'
+                  execution: '007'
+                  event: completed
+                  detail: 'Implemented deterministic query resolution: omitted combination, Orders and limit resolve from the configuration; a supplied Order set replaces the default and keeps its sequence; zero and negative limits normalize to no limit; aggregate queries resolve no Orders and no limit. Observed: List defaults resolve to AND, no limit and id ascending; a supplied OR with Orders name descending then id and limit 5 resolves exactly so; limits 0 and -3 resolve to -1 and 7 stays 7.'
+                  decisions:
+                    - unset: Whether an empty supplied Order set counts as omitted
+                      chosen: An omitted or empty Order set resolves to the configured default order; a non-empty set replaces it and is applied in the supplied sequence. A positive limit is the maximum, zero and negative limits and an omitted limit resolve to no limit (-1).
+                      why: The Definition says an omitted Order set resolves from Preferences; an empty set carries no ordering intent, and returning an unordered result would break determinism.
+            P2-G4-T3:
+              id: "P2-G4-T3"
+              source_id: "006"
+              title: "Validate public input before any storage is accessed"
+              description: "Check every public request before any Instance is accessed: the Entity is an imported Entity class or instance where the Operation states it, every Field in a Filter, Order or aggregate is a Field reference that the given Entity exposes and is compatible with its operator or aggregate, and no string stands in for an Entity, Field, Instance, operator, combination or direction."
+              reason: "Typed values are checked once, centrally, so every Engine receives only valid requests."
+              inputs:
+                - "Filter and Order values"
+                - "Published failure kinds"
+              skills: []
+              expected_result: "Invalid requests rejected with the invalid-input error before any storage is touched."
+              depends_on:
+                - "P2-G3-T3"
+                - "P2-G3-T5"
+              constraints: []
+              acceptance: "A request that names an Entity or Field by string, uses a Field of another Entity, applies a text operator to a Field that is not textual, or carries an incompatible value is rejected with the invalid-input error without any Instance being accessed."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:09:54Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependencies are done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:10:58Z'
+                  execution: '007'
+                  event: completed
+                  detail: 'Implemented public-input validation in the Core: an Entity must be an imported Model Entity class or instance as each Operation states, ids must be integers, Filters, Orders, combinations and limits must be the typed values, and every Field reference in a Filter, Order or aggregate must belong to the given Entity and suit its use (numeric for Sum, comparable for Min and Max). Observed: an Entity given by string, a Field of another Entity, a string combination, string Orders, a string limit and a non-numeric aggregate Field are all rejected with the invalid-input error before any Instance is touched.'
+            P2-G4-T4:
+              id: "P2-G4-T4"
+              source_id: "006"
+              title: "Build every returned Entity through its own construction"
+              description: "Turn each stored row into an Entity through that Entity's own construction from all of its Field values, so that a returned Entity always satisfies its Entity contract; a row that does not satisfy the contract is reported as an error and is never repaired."
+              reason: "Returned data must be as trustworthy as data created through Model."
+              inputs:
+                - "Published failure kinds"
+              skills: []
+              expected_result: "Entities that are always built by their own construction, or an error."
+              depends_on:
+                - "P2-G3-T5"
+              constraints: []
+              acceptance: "Every Entity an Operation returns is an instance of its Entity class with values equal to the stored row; a stored row that violates its Entity contract produces an error instead of a returned or corrected Entity."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:09:54Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependencies are done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:10:58Z'
+                  execution: '007'
+                  event: completed
+                  detail: "Implemented row materialization: each stored row becomes an Entity through that Entity's own public reconstruction, and a row that is missing a column, has an extra one or violates the Entity contract raises the Declaration-incompatibility error and is never repaired. Observed: a valid User row and an Account row with Decimal('10.50') materialize with the stored id and exact values; a null in a non-nullable Field, a missing column and an extra column each raise the error."
+                  decisions:
+                    - unset: How a stored row becomes an Entity when Model refuses a supplied id at direct construction, and which error reports a violating row
+                      chosen: A row is built through the Entity's own public reconstruction from a JSON Object (decimal as exact strings, datetimes as ISO text), which accepts the stored id and enforces the full Entity contract; a row with missing or extra columns, or one that fails the contract, raises the Declaration-incompatibility error.
+                      why: Model Preferences name 'its own constructor' but Model's constructor refuses an assigned id; its JSON reconstruction is the public contract that accepts a stored Entity. Recorded as related to Model Open Question OQ-004-3.
+        P2-G5:
+          id: "P2-G5"
+          title: "Interface publication"
+          description: "The single public boundary through which a consumer reaches the Database: the Database object with every Operation and Lifecycle Command in its published form."
+          area: "Interface: the public entrypoint and the Database object"
+          does: "A consumer imports the Interface, creates one Database object and calls every Operation and Lifecycle Command in its published form."
+          constraints: []
+          task_count: 3
+          tasks:
+            P2-G5-T1:
+              id: "P2-G5-T1"
+              source_id: "006"
+              title: "Publish exactly the public Database contracts and nothing else"
+              description: "Publish through the Interface the Database object, the enumeration of active Instances, Filter, the operator, combination and direction enumerations, Order, CommandResult, LifecycleResult and every error, each importable, and publish nothing more. Loading the Interface opens no connection and creates no data or file."
+              reason: "Consumers depend on one boundary, and anything beyond it would leak Core, Engines, configuration or storage paths."
+              inputs:
+                - "Published vocabulary, values, results and errors"
+              skills: []
+              expected_result: "One Interface that publishes exactly the public contracts."
+              depends_on:
+                - "P2-G3-T1"
+                - "P2-G3-T2"
+                - "P2-G3-T3"
+                - "P2-G3-T4"
+                - "P2-G3-T5"
+              constraints: []
+              acceptance: "Every public contract is importable from the Interface and nothing else is published, in particular no Core, Engine, configuration, connection value or storage path; importing the Interface opens no connection and creates no data or file."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:10:58Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependencies P2-G3-T1 to P2-G3-T5 are done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:11:41Z'
+                  execution: '007'
+                  event: completed
+                  detail: 'Wrote the Interface file publishing exactly the contracts the Schema lists: Database, DatabaseInstance, Filter, FilterOperator, FilterCombination, Order, OrderDirection, CommandResult, LifecycleResult, the base error and the seven failure-kind errors (17 names). The Database class exists and is filled by the next two Tasks. Observed in a fresh interpreter with audit hooks: the public names equal the expected 17, with nothing extra or missing; loading opened no socket or database, wrote no file, started no process or thread, and created no storage directory.'
+                  decisions:
+                    - unset: How the Interface exposes the values, enumerations and errors that the Core defines
+                      chosen: The Interface file re-exports each contract by an explicit one-name import (no wildcard, no all-list), publishes the Database class, and holds nothing else; the base error plus seven kinds are published under the names given in Database Preferences.
+                      why: Core and Engine units must share these types, so they are defined once in Core; the Interface publishes exactly the names the Schema lists.
+                - at: '2026-10-05T11:23:45Z'
+                  execution: '007'
+                  event: amended
+                  detail: 'Corrective change after completion: the Interface file imported four typing names (Mapping, Sequence, Enum, Any) under their public names when the Database methods were added, so it published more than the 17 contracts. They are now imported under private aliases. Observed: the public names of the Interface are exactly the 17 contracts again (ruff and pyright pass); the earlier observation of exactly 17 had been made before those imports existed.'
+            P2-G5-T2:
+              id: "P2-G5-T2"
+              source_id: "006"
+              title: "Publish every Entity Operation with its exact parameters"
+              description: "Publish on the Database object the Entity Operations Add, Update, List, Get By Id, Delete, Enable, Disable, Count, Sum, Min, Max and Truncate, each taking exactly the parameters its Schema lists, by those names and in that order, with every parameter after the Entity, id and Field optional and the optional DatabaseInstance last, and each receiving the Entity itself and never its name."
+              reason: "Consumers rely on one stable calling shape for every Entity Operation."
+              inputs:
+                - "Published Interface"
+                - "Core routing"
+              skills: []
+              expected_result: "Every Entity Operation callable on a Database object in its published form and forwarding to Core."
+              depends_on:
+                - "P2-G5-T1"
+                - "P2-G4-T1"
+                - "P2-G4-T2"
+                - "P2-G4-T3"
+                - "P2-G4-T4"
+              constraints: []
+              acceptance: "Each Entity Operation can be called with exactly its published parameters in the published order, accepts an optional DatabaseInstance as its last parameter, and rejects an Entity given by name."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:11:41Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependencies are done (P2-G5-T1 and P2-G4-T1 to T4 for G5-T2; P2-G5-T1 and P2-G4-T1 for G5-T3; P2-G6-T1, P2-G2-T4 and P2-G4-T1 for G6-T2). Claimed before changing the Task result.
+                - at: '2026-10-05T11:13:28Z'
+                  execution: '007'
+                  event: completed
+                  detail: "Published the Entity Operations on the Database object: Add, Update, List, Get By Id, Delete, Enable, Disable, Count, Sum, Min, Max and Truncate, forwarding to the Core. Observed from the real signatures: the parameter names and their order equal the Schema's for every Operation, the optional Instance is last and every parameter after entity, id and field has a default. Observed in a scratch run: calls that give an Entity or Field by name, a string id, a string Instance, a non-numeric Sum Field, another Entity's Filter Field or a blank command each raise the invalid-input error and no storage directory was created."
+                  decisions:
+                    - unset: Where Core routing for each Operation lives and how a failing request is reported
+                      chosen: "One routing function per Operation sits in the Core's shared module: it validates, selects the Instance, runs the Engine call inside one transaction, and builds the Entities; the Database object only forwards. A database failure becomes the execution-failure error carrying the Instance key and the driver's own message (no parameters or values), a connection failure the connection-failure error. Entity Operations take an Entity instance only for Add and Update and an Entity class for every other Operation."
+                      why: The Schema fixes the call shapes, and the Definition gives Core the routing; driver messages name the broken constraint or statement but never bound values.
+            P2-G5-T3:
+              id: "P2-G5-T3"
+              source_id: "006"
+              title: "Publish ExecuteCommand and the Lifecycle Commands with their exact parameters"
+              description: "Publish on the Database object the Database-wide ExecuteCommand and the Lifecycle Commands CreateTables, InsertInitialData and Prepare, each taking exactly the parameters its Schema lists and accepting the optional DatabaseInstance last, with the Lifecycle Commands kept separate from the Operations."
+              reason: "Preparing storage is a different act from using it, and consumers need both in a stable shape."
+              inputs:
+                - "Published Interface"
+                - "Core routing"
+              skills: []
+              expected_result: "ExecuteCommand and the three Lifecycle Commands callable on a Database object in their published form."
+              depends_on:
+                - "P2-G5-T1"
+                - "P2-G4-T1"
+              constraints: []
+              acceptance: "ExecuteCommand and each Lifecycle Command can be called with exactly its published parameters, accept an optional DatabaseInstance as the last parameter, and are not reachable as Entity Operations."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:11:41Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependencies are done (P2-G5-T1 and P2-G4-T1 to T4 for G5-T2; P2-G5-T1 and P2-G4-T1 for G5-T3; P2-G6-T1, P2-G2-T4 and P2-G4-T1 for G6-T2). Claimed before changing the Task result.
+                - at: '2026-10-05T11:13:28Z'
+                  execution: '007'
+                  event: completed
+                  detail: Published ExecuteCommand and the Lifecycle Commands CreateTables, InsertInitialData and Prepare on the Database object with the Schema's parameter names and order, each with an optional Instance last, as methods separate from the Entity Operations (they forward to the Lifecycle modules of the Core, which later Tasks provide).
+                - at: '2026-10-05T11:23:45Z'
+                  execution: '007'
+                  event: amended
+                  detail: The Lifecycle methods of the Database object now import the Core's Lifecycle modules at the top of the Interface file (they were imported inside the methods until those modules existed); signatures are unchanged.
+        P2-G6:
+          id: "P2-G6"
+          title: "Engine implementation"
+          description: "The single complete implementation for the Engine the active Instance uses, which performs every storage action the Core forwards and returns raw results."
+          area: "Engine unit for each Engine in use"
+          does: "Every Entity Operation and ExecuteCommand works against the Instance through the Engine implementation."
+          constraints: []
+          task_count: 15
+          tasks:
+            P2-G6-T1:
+              id: "P2-G6-T1"
+              source_id: "006"
+              title: "Provide an Engine implementation only for each Engine in use"
+              description: "Provide exactly one complete Engine implementation for every Engine used by at least one active Instance, shared by all Instances of that Engine and differing only in the connection Core passes it, and none for an Engine that no active Instance uses."
+              reason: "An unused Engine must leave nothing behind, and Instances of one Engine must behave alike."
+              inputs:
+                - "Loaded and validated configuration"
+              skills: []
+              expected_result: "The set of Engine implementations equals the set of Engines that active Instances use."
+              depends_on:
+                - "P2-G2-T3"
+              constraints: []
+              acceptance: "There is exactly one Engine implementation for each Engine an active Instance uses and none for any other Engine; two Instances of the same Engine run on the same implementation."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:08:55Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependencies are done (P2-G2-T3 for G2-T4, G3-T2 and G6-T1; P2-G3-T1 for G3-T3). Claimed before changing the Task result.
+                - at: '2026-10-05T11:09:53Z'
+                  execution: '007'
+                  event: completed
+                  detail: 'Added the Engine-in-use rule and loader: the set of Engines used by active Instances is derived from the configuration and an Engine implementation is loaded only for a member of that set. Observed: exactly one implementation exists (SQLite); asking for the PostgreSQL implementation raises a configuration error; no PostgreSQL implementation or driver exists in the Component.'
+            P2-G6-T2:
+              id: "P2-G6-T2"
+              source_id: "006"
+              title: "Connect an Instance through its Engine implementation"
+              description: "Open the connection of the selected Instance from the connection Core passes, applying the Engine's connection requirements, enforcing the Relations between Tables in the connected storage, and failing with the connection-failure error when the connection cannot be made."
+              reason: "Every Operation needs a connection that behaves the same on every call."
+              inputs:
+                - "Provided Engine implementation"
+                - "Database-owned storage"
+                - "Selected Instance"
+              skills:
+                - "sqlmodel"
+              expected_result: "A connected Instance on which Operations can run."
+              depends_on:
+                - "P2-G6-T1"
+                - "P2-G2-T4"
+                - "P2-G4-T1"
+              constraints: []
+              acceptance: "A call on a reachable Instance connects and runs; an unreachable Instance or a connection that lacks a required value fails with the connection-failure error without exposing a credential; a record that points to a missing related record is refused by the connected storage."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:11:41Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependencies are done (P2-G5-T1 and P2-G4-T1 to T4 for G5-T2; P2-G5-T1 and P2-G4-T1 for G5-T3; P2-G6-T1, P2-G2-T4 and P2-G4-T1 for G6-T2). Claimed before changing the Task result.
+                - at: '2026-10-05T11:13:29Z'
+                  execution: '007'
+                  event: completed
+                  detail: 'Implemented Engine connection in the Engine implementation: a call connects through the configured URL scheme and connect arguments with foreign-key enforcement on, inside one explicit transaction, and failures raise the connection-failure error with a fixed message that contains no credential. Observed: select 1 on the default Instance created db/application.db under the Component and returned 1; PRAGMA foreign_keys read 1; the default and an explicit selection ran on the same Engine implementation; a storage parent that is a file and a database path that is a directory each raised the connection-failure error.'
+                  decisions:
+                    - unset: How a connection is opened and what a transaction means on this Engine
+                      chosen: The Engine implementation builds a SQLAlchemy engine from the configured URL scheme and connect arguments, turns on foreign-key enforcement for every connection, and disables the driver's implicit transaction handling so that every call (including schema changes) runs inside one explicit transaction that commits on success and rolls back on any error. Preparing the storage directory happens when the Engine is first connected; an OS error there or a failed connection raises the connection-failure error with a fixed message.
+                      why: Database Preferences require foreign keys on and the Definition requires atomic changes, including schema work where the Engine supports it; the explicit-BEGIN recipe makes SQLite DDL transactional.
+            P2-G6-T3:
+              id: "P2-G6-T3"
+              source_id: "006"
+              title: "Implement Add in the Engine implementation"
+              description: "Implement Add: store one complete new Entity instance in the selected Instance and return the stored Entity, including the values that storage generates."
+              reason: "Records enter the Database only through Add, so it is the first Operation the others can be observed against."
+              inputs:
+                - "Connected Instance"
+                - "Published Entity Operations"
+              skills:
+                - "sqlmodel"
+              expected_result: "Add working on the selected Instance and returning its published result."
+              depends_on:
+                - "P2-G6-T2"
+                - "P2-G5-T2"
+              constraints: []
+              acceptance: "Adding a new Entity returns an Entity with its identifier assigned and its other values equal to those supplied, and the record can then be retrieved; adding a record that breaks a uniqueness or Relation rule fails with the execution-failure error and stores nothing."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:13:29Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependencies are done (P2-G6-T2 and P2-G5-T2 for G6-T3; P2-G6-T2, P2-G5-T3 and P2-G3-T4 for G6-T15 and G7-T1). Claimed before changing the Task result.
+                - at: '2026-10-05T11:14:29Z'
+                  execution: '007'
+                  event: completed
+                  detail: "Implemented Add in the Engine implementation: it inserts the complete new Entity's values (leaving the pending id to storage), reads the stored row back by the assigned key and returns it; the Core builds the Entity from that row. Observed on a real SQLite database: the added User came back with id 1 and the supplied values and defaults; a duplicate unique value raised the execution-failure error naming the broken constraint and left the row count unchanged; a missing related record was refused by the foreign key; an already-stored Entity was refused with the invalid-input error."
+            P2-G6-T4:
+              id: "P2-G6-T4"
+              source_id: "006"
+              title: "Implement Update in the Engine implementation"
+              description: "Implement Update: replace every mutable Field of the stored record that the supplied complete Entity instance identifies by its id, never changing the id or another immutable Field, and return the stored Entity or null when no record exists."
+              reason: "Stored data must be changeable without touching a record's identity."
+              inputs:
+                - "Implemented Add"
+                - "Connected Instance"
+              skills:
+                - "sqlmodel"
+              expected_result: "Update working on the selected Instance and returning its published result."
+              depends_on:
+                - "P2-G6-T3"
+              constraints: []
+              acceptance: "Updating a stored record replaces all mutable values with those of the supplied Entity, leaves its identifier and other immutable values unchanged and returns the stored Entity; updating a record that does not exist returns null and raises no error."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:14:30Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependency P2-G6-T3 is done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:16:06Z'
+                  execution: '007'
+                  event: completed
+                  detail: 'Implemented Update in the Engine implementation. Observed on a real database: updating record 1 replaced name, username, password, api_key, is_active and description and kept id 1; a missing id returned null without error; a pending id raised the invalid-input error; an update that broke a uniqueness rule raised the execution-failure error and left the stored record unchanged.'
+                  decisions:
+                    - unset: How Update picks what to replace, and what missing and pending ids do
+                      chosen: Update replaces every non-immutable Field with the supplied Entity's value and locates the record by id; an Entity whose id is still pending is an invalid-input error, an id with no record returns null.
+                      why: The Schema says its id only locates the record and that a missing record returns null.
+            P2-G6-T5:
+              id: "P2-G6-T5"
+              source_id: "006"
+              title: "Implement Get By Id in the Engine implementation"
+              description: "Implement Get By Id: return the Entity of the given Entity class that has the given id, or null when no record exists."
+              reason: "Consumers need to read one record by its identity."
+              inputs:
+                - "Implemented Add"
+                - "Connected Instance"
+              skills:
+                - "sqlmodel"
+              expected_result: "Get By Id working on the selected Instance and returning its published result."
+              depends_on:
+                - "P2-G6-T3"
+              constraints: []
+              acceptance: "Requesting an existing id returns that Entity with its stored values; requesting an id that does not exist returns null and raises no error."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:14:30Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependency P2-G6-T3 is done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:16:07Z'
+                  execution: '007'
+                  event: completed
+                  detail: 'Implemented Get By Id: an existing id returns the Entity built from the stored row with its stored values; an id with no record returns null and raises nothing. Observed on a real database.'
+            P2-G6-T6:
+              id: "P2-G6-T6"
+              source_id: "006"
+              title: "Implement Delete in the Engine implementation"
+              description: "Implement Delete: remove the record with the given id and return the final deleted Entity, or null when no record exists."
+              reason: "Records must be removable while the caller still learns what was removed."
+              inputs:
+                - "Implemented Add"
+                - "Connected Instance"
+              skills:
+                - "sqlmodel"
+              expected_result: "Delete working on the selected Instance and returning its published result."
+              depends_on:
+                - "P2-G6-T3"
+              constraints: []
+              acceptance: "Deleting an existing record returns its final values and the record is no longer retrievable; deleting an id that does not exist returns null and raises no error."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:14:30Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependency P2-G6-T3 is done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:16:07Z'
+                  execution: '007'
+                  event: completed
+                  detail: 'Implemented Delete: it reads the record, removes it and returns the final deleted Entity; an id with no record returns null. Observed: the deleted User came back with its values, was no longer retrievable, and a second delete of the same id returned null.'
+            P2-G6-T7:
+              id: "P2-G6-T7"
+              source_id: "006"
+              title: "Implement Enable in the Engine implementation"
+              description: "Implement Enable: set only the Activity Field of the record with the given id to true and return the final Entity, including when it was already enabled, or null when no record exists."
+              reason: "A record must be restorable to use without being re-created."
+              inputs:
+                - "Implemented Add"
+                - "Connected Instance"
+              skills:
+                - "sqlmodel"
+              expected_result: "Enable working on the selected Instance and returning its published result."
+              depends_on:
+                - "P2-G6-T3"
+              constraints: []
+              acceptance: "Enabling a record leaves every other value unchanged, returns the Entity with its Activity Field true, also when it already was, and returns null for an id that does not exist."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:14:30Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependency P2-G6-T3 is done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:16:07Z'
+                  execution: '007'
+                  event: completed
+                  detail: 'Implemented Enable: it sets only the Activity Field to true and returns the final Entity, also when it already was true, and null for a missing id. Observed: enabling a disabled User returned is_active true, enabling again returned true, every other value was unchanged, id 999 returned null.'
+            P2-G6-T8:
+              id: "P2-G6-T8"
+              source_id: "006"
+              title: "Implement Disable in the Engine implementation"
+              description: "Implement Disable: set only the Activity Field of the record with the given id to false and return the final Entity, including when it was already disabled, or null when no record exists."
+              reason: "A record must be removable from use without being deleted."
+              inputs:
+                - "Implemented Add"
+                - "Connected Instance"
+              skills:
+                - "sqlmodel"
+              expected_result: "Disable working on the selected Instance and returning its published result."
+              depends_on:
+                - "P2-G6-T3"
+              constraints: []
+              acceptance: "Disabling a record leaves every other value unchanged, returns the Entity with its Activity Field false, also when it already was, and returns null for an id that does not exist."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:14:30Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependency P2-G6-T3 is done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:16:07Z'
+                  execution: '007'
+                  event: completed
+                  detail: 'Implemented Disable: it sets only the Activity Field to false and returns the final Entity, also when it already was false, and null for a missing id. Observed: disabling returned is_active false, disabling again returned false, other values unchanged, id 999 returned null.'
+            P2-G6-T9:
+              id: "P2-G6-T9"
+              source_id: "006"
+              title: "Implement Truncate in the Engine implementation"
+              description: "Implement Truncate: remove every record of the given Entity class while keeping its Table, and return the number of records removed."
+              reason: "Consumers need to empty an Entity's data without losing its structure."
+              inputs:
+                - "Implemented Add"
+                - "Connected Instance"
+              skills:
+                - "sqlmodel"
+              expected_result: "Truncate working on the selected Instance and returning its published result."
+              depends_on:
+                - "P2-G6-T3"
+              constraints: []
+              acceptance: "After truncating, no record of that Entity remains, the Table still accepts new records, the returned count equals the number of records that existed, and the records of every other Entity are untouched."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:14:30Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependency P2-G6-T3 is done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:16:07Z'
+                  execution: '007'
+                  event: completed
+                  detail: 'Implemented Truncate: it removes every record of the Entity class, keeps its Table and returns the removed count. Observed: truncating TrailingRule removed 6 records and returned 6, the Table accepted a new record afterwards, the Trailing Group and User records were untouched; truncating an Entity whose records are still referenced was refused by the foreign key with the execution-failure error and removed nothing; truncating an empty Entity returned 0.'
+            P2-G6-T10:
+              id: "P2-G6-T10"
+              source_id: "006"
+              title: "Implement List in the Engine implementation"
+              description: "Implement List: return the Entities of the given class that match the supplied Filters, combined as supplied, ordered by the supplied Orders and capped by the supplied limit."
+              reason: "Consumers must be able to retrieve many records selectively and in a predictable order."
+              inputs:
+                - "Implemented Add"
+                - "Connected Instance"
+              skills:
+                - "sqlmodel"
+              expected_result: "List working on the selected Instance and returning its published result."
+              depends_on:
+                - "P2-G6-T3"
+              constraints: []
+              acceptance: "List returns the Entities that match the Filters combined as supplied, ordered and limited as supplied, and every operator of the vocabulary selects the records its meaning describes, including null checks, membership and text matching."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:14:30Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependency P2-G6-T3 is done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:16:08Z'
+                  execution: '007'
+                  event: completed
+                  detail: 'Implemented List: it returns the Entities matching the Filters combined as supplied, ordered by the supplied Orders (default id ascending, ties broken by id) and capped by the limit. Observed on a real database: each of the twelve operators selected the records its meaning describes (equality, inequality, range, membership, contains, starts with, ends with, null and non-null); AND and OR combined as expected; name ascending and descending, multi-key ordering, limit 2, and limit 0 and -1 returning every record; on decimals, greater-than 9.5 returned 10 and 100 (numeric, not text), ascending order put 0.1 before 0.10000000000000000001 before 2 before 9.5 before 10 before 100, equality distinguished 0.1 from 0.10000000000000000001.'
+                  decisions:
+                    - unset: How operators behave on text case, NULL and decimal Fields, and how ties and ordering are resolved
+                      chosen: Text operators (contains, starts with, ends with) are case-sensitive and implemented with substring functions so they behave like the exact-text Python evaluation; a comparison against a NULL value never matches (only the two null checks select NULL); a filter on a decimal Field is evaluated with exact Decimal comparison in Python over the stored rows (stored decimal text cannot be compared numerically in SQL), as is an ordering on a decimal Field; every ordering ends with ascending id so the result is deterministic; the limit is applied in SQL when everything is SQL, otherwise after the Python evaluation.
+                      why: Stored decimals are exact text, and the Schema requires exact totals and comparisons; the same call must return the same result on every run.
+            P2-G6-T11:
+              id: "P2-G6-T11"
+              source_id: "006"
+              title: "Implement Count in the Engine implementation"
+              description: "Implement Count: return the number of records of the given Entity class that match the supplied Filters combined as supplied."
+              reason: "Consumers need totals without retrieving the records."
+              inputs:
+                - "Implemented List and its Filter handling"
+                - "Connected Instance"
+              skills:
+                - "sqlmodel"
+              expected_result: "Count working on the selected Instance and returning its published result."
+              depends_on:
+                - "P2-G6-T10"
+              constraints: []
+              acceptance: "Count returns the number of matching records, zero when none match, and agrees with the number of Entities List returns for the same Filters."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:16:08Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependency P2-G6-T10 is done. Claimed before changing the Task result; a first draft of the aggregate functions had been written in the same module as List before this claim was recorded.
+                - at: '2026-10-05T11:16:52Z'
+                  execution: '007'
+                  event: completed
+                  detail: 'Implemented Count in the Engine implementation: it returns the number of matching records, counting in SQL unless a decimal Filter forces exact Python evaluation. Observed on a real database: counts of all, filtered, none and OR-combined records were 3, 2, 0 and 2; a decimal range filter counted 3; the count equals the length of the matching List result.'
+            P2-G6-T12:
+              id: "P2-G6-T12"
+              source_id: "006"
+              title: "Implement Sum in the Engine implementation"
+              description: "Implement Sum: return the total of one numeric Field reference over the records that match the supplied Filters, ignoring null values, or zero when nothing matches."
+              reason: "Consumers need numeric totals computed where the data lives."
+              inputs:
+                - "Implemented List and its Filter handling"
+                - "Connected Instance"
+              skills:
+                - "sqlmodel"
+              expected_result: "Sum working on the selected Instance and returning its published result."
+              depends_on:
+                - "P2-G6-T10"
+              constraints: []
+              acceptance: "Sum returns the exact total of the Field over the matching records, ignoring nulls, and zero when nothing matches; a Field that is not numeric is rejected with the invalid-input error."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:16:08Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependency P2-G6-T10 is done. Claimed before changing the Task result; a first draft of the aggregate functions had been written in the same module as List before this claim was recorded.
+                - at: '2026-10-05T11:16:52Z'
+                  execution: '007'
+                  event: completed
+                  detail: "Implemented Sum: integer Fields sum in SQL, float Fields likewise, decimal Fields are summed as exact Decimal values in Python; nulls are ignored; nothing matching returns zero of the Field's own numeric kind; a non-numeric Field is rejected by the Core with the invalid-input error. Observed: the sum of six stored decimals including 0.10000000000000000001 was exactly 121.70000000000000000001; a nullable decimal Field summed 4.5 ignoring nulls; no match returned Decimal 0, integer 0 and float 0.0 for the three kinds; a text Field and another Entity's Field were rejected."
+            P2-G6-T13:
+              id: "P2-G6-T13"
+              source_id: "006"
+              title: "Implement Min in the Engine implementation"
+              description: "Implement Min: return the smallest value of one comparable Field reference over the records that match the supplied Filters, ignoring null values, or null when nothing matches."
+              reason: "Consumers need the lower bound of a Field without retrieving the records."
+              inputs:
+                - "Implemented List and its Filter handling"
+                - "Connected Instance"
+              skills:
+                - "sqlmodel"
+              expected_result: "Min working on the selected Instance and returning its published result."
+              depends_on:
+                - "P2-G6-T10"
+              constraints: []
+              acceptance: "Min returns the smallest non-null value of the Field over the matching records and null when nothing matches."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:16:08Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependency P2-G6-T10 is done. Claimed before changing the Task result; a first draft of the aggregate functions had been written in the same module as List before this claim was recorded.
+                - at: '2026-10-05T11:16:52Z'
+                  execution: '007'
+                  event: completed
+                  detail: 'Implemented Min: it returns the smallest non-null value of a comparable Field over the matching records, or null when nothing matches; decimals compare exactly. Observed: minimum decimal 0.1 (below 0.10000000000000000001), minimum of a nullable decimal Field ignored nulls (1.5), integer and text minima 1 and Bobby, float minimum 0.25, no match returned null, a boolean Field was rejected.'
+            P2-G6-T14:
+              id: "P2-G6-T14"
+              source_id: "006"
+              title: "Implement Max in the Engine implementation"
+              description: "Implement Max: return the largest value of one comparable Field reference over the records that match the supplied Filters, ignoring null values, or null when nothing matches."
+              reason: "Consumers need the upper bound of a Field without retrieving the records."
+              inputs:
+                - "Implemented List and its Filter handling"
+                - "Connected Instance"
+              skills:
+                - "sqlmodel"
+              expected_result: "Max working on the selected Instance and returning its published result."
+              depends_on:
+                - "P2-G6-T10"
+              constraints: []
+              acceptance: "Max returns the largest non-null value of the Field over the matching records and null when nothing matches."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:16:08Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependency P2-G6-T10 is done. Claimed before changing the Task result; a first draft of the aggregate functions had been written in the same module as List before this claim was recorded.
+                - at: '2026-10-05T11:16:52Z'
+                  execution: '007'
+                  event: completed
+                  detail: 'Implemented Max: it returns the largest non-null value of a comparable Field over the matching records, or null when nothing matches; decimals compare exactly. Observed: maximum decimal 100, nullable decimal maximum 1.5 ignoring nulls, integer and text maxima 3 and alice, float maximum 0.5, no match returned null.'
+            P2-G6-T15:
+              id: "P2-G6-T15"
+              source_id: "006"
+              title: "Implement ExecuteCommand in the Engine implementation"
+              description: "Implement ExecuteCommand: run a native command of the Instance's Engine with its bound parameters, including a command that changes the schema, and return a CommandResult carrying rows, affected count, column names, success, message and the used Instance."
+              reason: "Consumers occasionally need what the typed Operations do not offer, without leaving the Interface."
+              inputs:
+                - "Connected Instance"
+                - "Published ExecuteCommand"
+                - "CommandResult value"
+              skills:
+                - "sqlmodel"
+              expected_result: "ExecuteCommand running valid native commands and reporting their outcome."
+              depends_on:
+                - "P2-G6-T2"
+                - "P2-G5-T3"
+                - "P2-G3-T4"
+              constraints: []
+              acceptance: "Running a valid native query returns a CommandResult that reports success with its rows and ordered column names; running a valid native change reports success with the affected count; bound parameters are applied as values and never as command text; a command the Engine rejects reports failure instead of changing data."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:13:29Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependencies are done (P2-G6-T2 and P2-G5-T2 for G6-T3; P2-G6-T2, P2-G5-T3 and P2-G3-T4 for G6-T15 and G7-T1). Claimed before changing the Task result.
+                - at: '2026-10-05T11:14:30Z'
+                  execution: '007'
+                  event: completed
+                  detail: 'Implemented ExecuteCommand: it runs a native command with bound parameters inside a transaction and returns a CommandResult. Observed on a real SQLite database: a select returned immutable row mappings and the ordered column names; an update with named parameters reported success and affected 1; a schema-changing create and drop of a scratch table succeeded; a syntax error returned success false with the driver message and no rows; a value containing quote characters was bound as a value and matched nothing; a non-sequence parameter and a blank command raised the invalid-input error.'
+                  decisions:
+                    - unset: Whether a rejected native command raises or returns, and what a query result carries for the affected count
+                      chosen: A command the Engine rejects returns a CommandResult with success false and the Engine's own message (no bound values), after rolling back; invalid input and connection failures still raise. A query returns rows and ordered column names with affected null; a change returns the affected count with rows and columns null. Parameters are passed to the driver as bound values (a mapping or a sequence).
+                      why: CommandResult carries success and a public error message, so a failing native command is a normal result; the Schema leaves the choice open.
+        P2-G7:
+          id: "P2-G7"
+          title: "Lifecycle Commands"
+          description: "The explicit preparation commands that create the Tables and insert the Initial Data, with their manual entry points and the preparation that follows generation."
+          area: "Lifecycle: Tables, Initial Data, Prepare and entry points"
+          does: "Storage can be prepared repeatably from the Model Entities and the configured Initial Data, manually or after generation."
+          constraints: []
+          task_count: 8
+          tasks:
+            P2-G7-T1:
+              id: "P2-G7-T1"
+              source_id: "006"
+              title: "Create every Table from the Model Entity Collection"
+              description: "Implement CreateTables: create, in the selected Instance, the Tables, Fields, Primary Keys, Relations, Uniqueness Constraints and Indexes that the actual Entities of the Model Entity Collection and their Declarations require, using nothing else and never reading the Target, and return a LifecycleResult."
+              reason: "The Entities already carry every structural fact, so Tables must follow them exactly."
+              inputs:
+                - "Connected Instance"
+                - "Published Lifecycle Commands"
+                - "LifecycleResult value"
+                - "Model Entity Collection with its Declarations"
+              skills:
+                - "sqlmodel"
+              expected_result: "A selected Instance holding a Table for every Entity of the Entity Collection."
+              depends_on:
+                - "P2-G6-T2"
+                - "P2-G5-T3"
+                - "P2-G3-T4"
+              constraints: []
+              acceptance: "After the command the selected Instance holds one Table for every Entity of the Entity Collection whose columns, keys, Relations, uniqueness constraints and indexes match its Declaration; the LifecycleResult reports success and the number of Tables processed."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:13:29Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependencies are done (P2-G6-T2 and P2-G5-T2 for G6-T3; P2-G6-T2, P2-G5-T3 and P2-G3-T4 for G6-T15 and G7-T1). Claimed before changing the Task result.
+                - at: '2026-10-05T11:14:30Z'
+                  execution: '007'
+                  event: completed
+                  detail: 'Implemented CreateTables: the Core coordinator takes the actual Entities of the Model Entity Collection through their shared table metadata, asks the Engine implementation to create the missing Tables in dependency order inside one transaction, and returns a LifecycleResult naming how many were created. Observed on an empty database: 15 Tables were created, equal to the 15 Entities, with their keys, Relations, uniqueness constraints and names as Model defines; the Target was not read.'
+            P2-G7-T2:
+              id: "P2-G7-T2"
+              source_id: "006"
+              title: "Let CreateTables succeed again on matching Tables"
+              description: "Make re-executing CreateTables on an Instance whose Tables already match their Declarations succeed without changing anything."
+              reason: "Preparation must be repeatable on any Instance."
+              inputs:
+                - "Implemented CreateTables"
+              skills:
+                - "sqlmodel"
+              expected_result: "A CreateTables command that is safe to run again."
+              depends_on:
+                - "P2-G7-T1"
+              constraints: []
+              acceptance: "Running the command again on matching Tables reports success, changes no Table and no record, and reports that nothing was created."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:14:30Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependency P2-G7-T1 is done (and P2-G2-T2 and P2-G6-T3 for G7-T4). Claimed before changing the Task result.
+                - at: '2026-10-05T11:16:53Z'
+                  execution: '007'
+                  event: amended
+                  detail: The Lifecycle Task code in the Core (tables and initial data) was drafted as part of this wave after the claim recorded above; nothing else changed.
+                - at: '2026-10-05T11:17:58Z'
+                  execution: '007'
+                  event: completed
+                  detail: "CreateTables already succeeds again on matching Tables as a result of the implementation recorded under P2-G7-T1 (it creates only the Tables that do not exist, in the same transaction, and only after every existing Table has been compared). Observed on a real database: the second run reported 'Created 0 of 15 Tables; 15 already matched' and success; the schema text of every Table was identical before and after and the stored record was still present."
+            P2-G7-T3:
+              id: "P2-G7-T3"
+              source_id: "006"
+              title: "Stop CreateTables when an existing Table differs from its Declaration"
+              description: "Make CreateTables stop and report, with the Declaration-incompatibility error that identifies the Entity, when an existing Table differs from the Declaration of its Entity, and never resolve the difference by altering the Table."
+              reason: "A silent repair would hide a divergence between stored structure and Model meaning."
+              inputs:
+                - "Implemented CreateTables"
+              skills:
+                - "sqlmodel"
+              expected_result: "A CreateTables command that reports every divergence instead of resolving it."
+              depends_on:
+                - "P2-G7-T1"
+              constraints: []
+              acceptance: "When an existing Table differs from its Declaration the command reports failure with the Declaration-incompatibility error naming the Entity, and the existing Table and its records remain exactly as they were."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:14:30Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependency P2-G7-T1 is done (and P2-G2-T2 and P2-G6-T3 for G7-T4). Claimed before changing the Task result.
+                - at: '2026-10-05T11:17:58Z'
+                  execution: '007'
+                  event: completed
+                  detail: "Implemented the Table difference check in the Core's CreateTables coordinator with an Engine capability that describes existing Tables. Observed on a real database: an added column on Currency stopped the command with the Declaration-incompatibility error 'Currency (differs in columns)'; a hand-made Broker with nullable columns and no keys or relations was reported as 'Broker (differs in columns, unique, foreign_keys)'; after each stop the Tables and the stored record were exactly as before; with the mismatching Table dropped the next run created only that Table and reported 14 already matched."
+                  decisions:
+                    - unset: What aspects of an existing Table are compared with its Declaration and when the comparison runs
+                      chosen: Before anything is created, every existing Table is described by the Engine (column names and order, a type family, nullability, primary key, uniqueness sets, foreign keys, non-unique indexes) and compared with what the Entity's Declaration implies; every differing aspect is listed by name (never a value) in one Declaration-incompatibility error naming the Entity, and nothing is changed. Type families treat strings, decimals and UUIDs as text because they share storage; a missing Table is simply created.
+                      why: The Definition says a difference stops the command, is reported and is never resolved by judgment; collecting every difference in one report is allowed when safe.
+            P2-G7-T4:
+              id: "P2-G7-T4"
+              source_id: "006"
+              title: "Insert the missing Initial Data records"
+              description: "Implement InsertInitialData: read the complete shared Initial Data collection, validate each record through its public Entity contract, and insert every record that is missing from the selected Instance with its values unchanged and without any security-based omission, returning a LifecycleResult."
+              reason: "The Target's Initial Data must reach the Database exactly as defined."
+              inputs:
+                - "Implemented CreateTables"
+                - "Shared Initial Data collection"
+                - "Implemented Add"
+              skills:
+                - "sqlmodel"
+              expected_result: "A selected Instance holding every Initial Data record."
+              depends_on:
+                - "P2-G7-T1"
+                - "P2-G2-T2"
+                - "P2-G6-T3"
+              constraints: []
+              acceptance: "After the command every record of the collection is present in the selected Instance with its values unchanged, including credential values; the LifecycleResult reports success and the number inserted; a record that does not satisfy its Entity contract is reported as an error that names the Entity."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:14:30Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependency P2-G7-T1 is done (and P2-G2-T2 and P2-G6-T3 for G7-T4). Claimed before changing the Task result.
+                - at: '2026-10-05T11:17:58Z'
+                  execution: '007'
+                  event: completed
+                  detail: "Implemented InsertInitialData: it reads the complete shared collection from the configuration, validates each record by building its Entity through the Entity's public reconstruction, and inserts every record that is missing from the selected Instance with its values unchanged, in one transaction, returning a LifecycleResult. Observed on a fresh database: 23 of 23 records were inserted (1 User, 2 Trading Platforms, 1 Instance, 8 Currencies, 1 Broker, 4 Assets, 1 Account Group, 1 Account, 1 each of Trailing Group, Partial Group, Action Group and Action); the User, Account and Instance credential values are the empty strings the Target left; Action decimals read back exactly as 1; Asset point sizes, JPY digits and symbols read back unchanged. A first attempt on a database that had previously held and lost a User failed on a foreign key because storage never reuses ids; that is the Target's empty-database assumption, not a defect."
+                  decisions:
+                    - unset: How a record is matched to an existing one and in what form records enter the Initial Data run
+                      chosen: Each configured record is first built through the Entity's public JSON reconstruction (validating it), then matched to an existing row by any of the Entity's declared uniqueness constraints whose Fields the record supplies; a record with no match is inserted, in the configured order and inside one transaction, with relation ids as the Target gives them. The Target's relation ids assume an empty database whose ids start at 1.
+                      why: Initial Data records carry no id, so their natural keys are the only stable identity; the Target's own ids (for example user_id 1) assume a fresh database.
+            P2-G7-T5:
+              id: "P2-G7-T5"
+              source_id: "006"
+              title: "Make InsertInitialData repeatable"
+              description: "Make InsertInitialData skip a record that is already present and identical, fail clearly on a conflicting record, and never silently update, delete, duplicate or overwrite an existing record."
+              reason: "Running it again must neither duplicate nor lose records."
+              inputs:
+                - "Implemented InsertInitialData"
+              skills:
+                - "sqlmodel"
+              expected_result: "An InsertInitialData command that is safe to run again on any Instance."
+              depends_on:
+                - "P2-G7-T4"
+              constraints: []
+              acceptance: "Running the command again leaves the same records with no duplicate and reports zero inserted; a record that conflicts with an existing one makes the command fail with a clear report and leaves the existing record unchanged."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:17:58Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependency P2-G7-T4 is done (P2-G7-T3 for G8-T3). Claimed before changing the Task result.
+                - at: '2026-10-05T11:18:39Z'
+                  execution: '007'
+                  event: completed
+                  detail: "Made InsertInitialData repeatable: a record already present and identical on the Fields the Target supplies is skipped, a record that differs is a conflict that fails clearly, and nothing is silently updated, deleted, duplicated or overwritten. Observed on a real database: a second run inserted 0 of 23 and reported 23 already present with the record count unchanged at 23; after altering one stored Currency symbol the run failed with 'Currency record 1 differs in symbol' (no value shown) and left that record as it was; after deleting the Action record the next run inserted exactly 1 and skipped 22; a stored value of a Field the Target does not supply (is_active) was not treated as a conflict."
+                  decisions:
+                    - unset: Which error reports a conflicting Initial Data record
+                      chosen: The execution-failure error, with the Entity name, the record's position and the names of the differing Fields (never their values); the whole run is rolled back.
+                      why: The Schema says a conflicting record fails clearly; no dedicated failure kind exists for it and it is a data conflict raised during execution.
+            P2-G7-T6:
+              id: "P2-G7-T6"
+              source_id: "006"
+              title: "Implement Prepare"
+              description: "Implement Prepare: run CreateTables and then InsertInitialData on the selected Instance, and stop without running InsertInitialData when CreateTables fails, returning a LifecycleResult."
+              reason: "One command must take storage from empty to ready in the right order."
+              inputs:
+                - "Implemented CreateTables"
+                - "Repeatable InsertInitialData"
+              skills: []
+              expected_result: "A Prepare command that prepares an Instance in one call."
+              depends_on:
+                - "P2-G7-T3"
+                - "P2-G7-T5"
+              constraints: []
+              acceptance: "On an empty Instance Prepare creates the Tables and then inserts the Initial Data and reports success; when CreateTables fails no Initial Data is inserted and the failure is reported."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:18:40Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependencies are done (P2-G7-T3 and P2-G7-T5 for G7-T6; P2-G6-T3, T4, T6, T7, T8 and T9 for G8-T1; P2-G7-T5 for G8-T2). Claimed before changing the Task result.
+                - at: '2026-10-05T11:19:36Z'
+                  execution: '007'
+                  event: completed
+                  detail: 'Implemented Prepare: it runs CreateTables and then InsertInitialData on the selected Instance, returns one LifecycleResult combining both counts and messages, and does not run InsertInitialData when CreateTables fails. Observed on a real database: on an empty Instance it created 15 Tables and inserted 23 records (affected 38); running it again created and inserted nothing; with a deliberately mismatching Position Table it raised the Declaration-incompatibility error and inserted no Initial Data; once repaired it completed.'
+            P2-G7-T7:
+              id: "P2-G7-T7"
+              source_id: "006"
+              title: "Provide a manual entry point for each Lifecycle Command"
+              description: "Provide one manual entry point for each of CreateTables, InsertInitialData and Prepare that only invokes its command through the Interface, holds no logic of its own, and reports the LifecycleResult."
+              reason: "Preparation must be runnable by hand with exactly the behaviour consumers get through the Interface."
+              inputs:
+                - "Implemented Lifecycle Commands"
+              skills: []
+              expected_result: "Three manual entry points that invoke the public commands."
+              depends_on:
+                - "P2-G7-T6"
+              constraints: []
+              acceptance: "Running a manual entry point has the same effect and result as calling its command through the Interface and reports the outcome; no manual entry point can produce a result the Interface command cannot."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:19:37Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependency P2-G7-T6 is done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:20:04Z'
+                  execution: '007'
+                  event: completed
+                  detail: "Provided one manual entry point per Lifecycle Command (create tables, insert initial data, prepare) as modules of the package; each only calls its command through the Interface and prints the command name and message. Observed by running each from the Component root: create tables reported 15 created then 0 on the second run; insert initial data inserted 23 then 0; prepare reported both; with a deliberately mismatching Table prepare ended with exit status 1 and 'prepare failed on Instance sqlite: create_tables failed on Instance sqlite: ... Position (differs in columns, unique, foreign_keys)'. Each entry point module contains one function that only forwards."
+                  decisions:
+                    - unset: Where failure context is added and how entry points report failure
+                      chosen: The Core adds 'command failed on Instance <key>:' to the message of any failure raised by a Lifecycle Command, keeping the error kind, so the context is the same through the Interface and the entry points; an entry point only calls its command and prints the result, and an uncaught error ends it with a non-zero exit and the contextual message. Entry points run as modules of the package.
+                      why: Entry points must hold no logic of their own, yet a failed preparation must identify the Instance and the command.
+            P2-G7-T8:
+              id: "P2-G7-T8"
+              source_id: "006"
+              title: "Prepare the default Instance after generation"
+              description: "When the configuration enables it, run Prepare on the active default Instance as the last step of generation, and when it fails identify the Instance and the command and fail the preparation; no other active Instance is prepared implicitly."
+              reason: "One predictable target keeps generation from touching Instances nobody asked it to prepare."
+              inputs:
+                - "Provided manual entry points"
+                - "Loaded configuration"
+              skills: []
+              expected_result: "A default Instance that is ready for use when generation ends."
+              depends_on:
+                - "P2-G7-T7"
+              constraints: []
+              acceptance: "After generation the default Instance holds every Table and every Initial Data record; a failure of the preparation names the Instance and the command and fails generation; other active Instances are unchanged."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:20:04Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependency P2-G7-T7 is done. Claimed before changing the Task result. The configuration enables after-generation preparation.
+                - at: '2026-10-05T11:20:25Z'
+                  execution: '007'
+                  event: completed
+                  detail: 'Performed the after-generation preparation: with after-generation preparation enabled and fail_on_error true, the prepare entry point ran against empty storage on the default Instance (sqlite) and exited 0. Observed: db/application.db was created inside the Component with 15 Tables and 23 records (1 Account, 1 Account Group, 1 Action, 1 Action Group, 4 Assets, 1 Broker, 8 Currencies, 1 Instance, 1 Partial Group, 2 Trading Platforms, 1 Trailing Group, 1 User); no other Instance exists that could have been touched. Failure reporting was observed earlier: a failing prepare names the Instance and the command and exits non-zero.'
+                  decisions:
+                    - unset: How after-generation preparation is performed and when
+                      chosen: Develop ran the prepare entry point once the entry points existed, against empty storage, because the configuration enables after-generation preparation with fail_on_error; it prepared only the default Instance (the only active Instance), and a failure would have been reported with the Instance and command and failed the Task.
+                      why: The Definition makes Prepare on the default Instance the final preparation step of generation and forbids implicit preparation of other Instances.
+        P2-G8:
+          id: "P2-G8"
+          title: "Atomic changes"
+          description: "The guarantee that every change to stored data either completes fully in its Instance or leaves no partial result."
+          area: "Atomicity of data and schema changes"
+          does: "No Operation or Lifecycle Command leaves a partial change behind in an Instance."
+          constraints: []
+          task_count: 3
+          tasks:
+            P2-G8-T1:
+              id: "P2-G8-T1"
+              source_id: "006"
+              title: "Make every changing Operation atomic"
+              description: "Make Add, Update, Delete, Enable, Disable and Truncate each complete fully in the selected Instance or leave no partial data change, and make separate calls share no hidden transaction."
+              reason: "A half-applied change leaves data that no contract describes."
+              inputs:
+                - "Implemented changing Operations"
+              skills:
+                - "sqlmodel"
+              expected_result: "Changing Operations that are all-or-nothing and independent of each other."
+              depends_on:
+                - "P2-G6-T3"
+                - "P2-G6-T4"
+                - "P2-G6-T6"
+                - "P2-G6-T7"
+                - "P2-G6-T8"
+                - "P2-G6-T9"
+              constraints: []
+              acceptance: "A changing Operation that fails part way leaves the Instance's data exactly as it was before the call; a later failing call never undoes an earlier successful call."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:18:40Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependencies are done (P2-G7-T3 and P2-G7-T5 for G7-T6; P2-G6-T3, T4, T6, T7, T8 and T9 for G8-T1; P2-G7-T5 for G8-T2). Claimed before changing the Task result.
+                - at: '2026-10-05T11:19:36Z'
+                  execution: '007'
+                  event: completed
+                  detail: 'Verified and recorded that every changing Operation (Add, Update, Delete, Enable, Disable, Truncate) runs in one explicit transaction that commits on success and rolls back on any error, and that separate calls share no transaction. Observed on a real database holding the Initial Data: a duplicate Add, a Delete of a referenced record and a Truncate of a referenced Entity each failed with the execution-failure error and the data of every Entity was exactly as before; a failed call after a successful one did not undo the earlier one; successive calls each committed on their own. No separate code was needed beyond the transaction handling recorded under the Engine connection Task.'
+            P2-G8-T2:
+              id: "P2-G8-T2"
+              source_id: "006"
+              title: "Make InsertInitialData atomic"
+              description: "Make InsertInitialData complete fully or leave no partial data change in the selected Instance."
+              reason: "A partly seeded Instance would be in a state no contract describes."
+              inputs:
+                - "Repeatable InsertInitialData"
+              skills:
+                - "sqlmodel"
+              expected_result: "An InsertInitialData command that is all-or-nothing."
+              depends_on:
+                - "P2-G7-T5"
+              constraints: []
+              acceptance: "When one record of a run fails, no record of that run remains in the Instance."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:18:40Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependencies are done (P2-G7-T3 and P2-G7-T5 for G7-T6; P2-G6-T3, T4, T6, T7, T8 and T9 for G8-T1; P2-G7-T5 for G8-T2). Claimed before changing the Task result.
+                - at: '2026-10-05T11:19:37Z'
+                  execution: '007'
+                  event: completed
+                  detail: 'Verified and recorded that InsertInitialData is all-or-nothing: the whole run is one transaction. Observed on a fresh database with a User and five Currencies already present and one Currency differing: the run raised the conflict error after the Trading Platform and Instance inserts would have been made, the counts of every Entity were identical to before the run and no Trading Platform or Instance existed; after removing the conflict the run inserted 16 and skipped 7.'
+            P2-G8-T3:
+              id: "P2-G8-T3"
+              source_id: "006"
+              title: "Make CreateTables atomic or report an incomplete state"
+              description: "Make CreateTables complete atomically when the Engine supports it, and otherwise report an incomplete schema state explicitly as a failure."
+              reason: "Storage must never be left in a state that looks complete but is not."
+              inputs:
+                - "Implemented CreateTables"
+              skills:
+                - "sqlmodel"
+              expected_result: "A CreateTables command that never leaves an unreported incomplete schema."
+              depends_on:
+                - "P2-G7-T3"
+              constraints: []
+              acceptance: "A CreateTables run that fails part way either leaves no new Table or reports failure with the incomplete-Lifecycle error that states the incomplete state."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:17:58Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependency P2-G7-T4 is done (P2-G7-T3 for G8-T3). Claimed before changing the Task result.
+                - at: '2026-10-05T11:18:40Z'
+                  execution: '007'
+                  event: completed
+                  detail: "Made CreateTables atomic where the Engine supports it and explicit otherwise: the Engine implementation runs schema work inside the same explicit transaction, and, if the run fails, the Core compares the Tables before and after and raises the incomplete-Lifecycle error that states how many Tables were created when any remain. Observed on a real database: with a view named like one Entity's Table, the run failed on the execution-failure error part way through the dependency order and left no Table behind (rolled back); after removing the cause the run created all 15. The incomplete-Lifecycle path itself was not exercised because SQLite rolled back."
+        P2-G9:
+          id: "P2-G9"
+          title: "Component documentation"
+          description: "The Database Component's own documentation, which lets a consumer understand, set up, use, prepare, verify and troubleshoot the Database through its Interface alone."
+          area: "Component documentation"
+          does: "A consumer can use and verify the Database from its documentation alone."
+          constraints: []
+          task_count: 3
+          tasks:
+            P2-G9-T1:
+              id: "P2-G9-T1"
+              source_id: "006"
+              title: "Document the public contracts and the Instances"
+              description: "Document the overview with one simple example that creates a Database and makes one add and one list, every published contract and every Operation and Lifecycle Command with each of its parameters, with one example each and covering every enumeration member, default, result and error, and the active DatabaseInstance members, the default selection and the Database-owned storage without exposing credentials."
+              reason: "Consumers use the Database through its documentation, and a gap there leads directly to wrong use."
+              inputs:
+                - "Published Interface"
+                - "Published enumeration of active Instances"
+                - "Published results and errors"
+              skills: []
+              expected_result: "Documentation that explains the complete public contract and Instance selection through accurate examples."
+              depends_on:
+                - "P2-G5-T2"
+                - "P2-G5-T3"
+                - "P2-G3-T2"
+                - "P2-G3-T4"
+                - "P2-G3-T5"
+              constraints: []
+              acceptance: "The documentation presents the overview example, explains every published contract and every Operation and Lifecycle Command with each parameter and one example each, covers every enumeration member, default, result and error, and explains the active Instances, the default selection and the Database-owned storage; it contains no credential, no Engine internal and no feature that does not exist."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:20:25Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependencies P2-G5-T2, G5-T3, G3-T2, G3-T4 and G3-T5 are done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:21:46Z'
+                  execution: '007'
+                  event: completed
+                  detail: 'Wrote the overview, Interface and Instances sections of the Component README: the overview example creating a Database with one add and one list; every published contract (Database, DatabaseInstance, Filter, FilterOperator with all twelve members, FilterCombination, Order, OrderDirection, CommandResult, LifecycleResult and all eight errors) and every Operation, ExecuteCommand and Lifecycle Command with its parameters, defaults, results, errors and one example each; and the active DatabaseInstance members, default selection and Database-owned storage. Observed: all 18 Python blocks executed in order without failure in a clean copy of both Components on a prepared database; no credential, Engine internal or invented feature appears.'
+                  decisions:
+                    - unset: How the documentation is organized and how examples are made verifiable
+                      chosen: README sections follow the order in Database Preferences; the Interface section gives one subsection and one example per contract, enumeration, Operation and Lifecycle Command; examples use the Initial Data records and unique names so that they run in order on a prepared database.
+                      why: Preferences fix the section order and content but not heading levels, example data or how examples are checked.
+            P2-G9-T2:
+              id: "P2-G9-T2"
+              source_id: "006"
+              title: "Document setup, use, lifecycle and Initial Data"
+              description: "Document the setup steps for the selected technology and the fact that generation runs Prepare automatically, the use of every capability group only through the Interface with Field references and enumeration members and never strings, the manual use of CreateTables, InsertInitialData and Prepare, and every Target-defined Initial Data record with the statement that its values are inserted unchanged and without security-based omission."
+              reason: "Consumers must be able to bring the Database up, use it correctly and know what data it seeds."
+              inputs:
+                - "Documented public contracts"
+                - "Implemented Lifecycle Commands"
+                - "Shared Initial Data collection"
+              skills: []
+              expected_result: "Documentation that takes a consumer from a clean environment to a prepared, used Database."
+              depends_on:
+                - "P2-G9-T1"
+                - "P2-G7-T8"
+                - "P2-G2-T2"
+                - "P2-G6-T3"
+                - "P2-G6-T4"
+                - "P2-G6-T5"
+                - "P2-G6-T6"
+                - "P2-G6-T7"
+                - "P2-G6-T8"
+                - "P2-G6-T9"
+                - "P2-G6-T10"
+                - "P2-G6-T11"
+                - "P2-G6-T12"
+                - "P2-G6-T13"
+                - "P2-G6-T14"
+                - "P2-G6-T15"
+              constraints: []
+              acceptance: "Following the setup steps from a clean environment yields a working library; the use examples call every capability group only through the Interface with imported values; the lifecycle part explains each manual command and the automatic preparation; the Initial Data part lists every record the Target defines."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:21:47Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependencies P2-G9-T1, P2-G7-T8, P2-G2-T2 and P2-G6-T3 to T15 are done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:22:35Z'
+                  execution: '007'
+                  event: completed
+                  detail: "Wrote the setup, use, lifecycle and Initial Data sections of the Component README. Setup states the pinned tools, the sync and prepare commands, that generation runs Prepare automatically, and the editable-dependency requirement; Use shows each capability group (Entity Operations, a Database-wide Operation, Instance selection, Lifecycle Commands) only through the Interface with Field references and enumeration members; Lifecycle explains the three commands, their manual entry points, difference handling, conflict handling and the empty-database assumption; Initial Data lists every record of the 12 Entities (23 records, generated from the configuration) with the five Generate-securely values shown as empty. Observed in a clean copy: all 23 Python blocks of the README execute in order on a freshly prepared database; the setup commands work; adding Database as an editable dependency of a separate project uses the Component's own storage."
+            P2-G9-T3:
+              id: "P2-G9-T3"
+              source_id: "006"
+              title: "Document verification and troubleshooting"
+              description: "Document how to verify the public import, Instance selection, query vocabulary, each capability group, the persistent file location and the repeatable Lifecycle Commands, and how to troubleshoot Database concerns only, including an inactive Instance, a difference between an existing Table and its Entity, and empty Initial Data values."
+              reason: "Consumers need to confirm the Database works and to resolve its typical problems without reading its internals."
+              inputs:
+                - "Documented use"
+                - "Atomic and repeatable behaviour"
+              skills: []
+              expected_result: "Documentation that lets a consumer verify the Database and resolve its typical problems."
+              depends_on:
+                - "P2-G9-T2"
+                - "P2-G8-T1"
+                - "P2-G8-T2"
+                - "P2-G8-T3"
+                - "P2-G7-T2"
+              constraints: []
+              acceptance: "The verification part covers every condition named above and can be followed to a conclusion; the troubleshooting part addresses Database concerns only and covers an inactive Instance, a Table that differs from its Entity and empty Initial Data values."
+              status: "done"
+              log:
+                - at: '2026-10-05T11:22:36Z'
+                  execution: '007'
+                  event: claimed
+                  detail: Dependencies P2-G9-T2, P2-G8-T1, P2-G8-T2, P2-G8-T3 and P2-G7-T2 are done. Claimed before changing the Task result.
+                - at: '2026-10-05T11:23:51Z'
+                  execution: '007'
+                  event: completed
+                  detail: 'Wrote the verification and troubleshooting sections of the Component README. The verification script observes the exact published contract set, the closed vocabulary, Instance selection and refusal of strings, each capability group (Entity Operations, aggregates with exact decimals, truncation, ExecuteCommand), the persistent file location including persistence across processes, and repeatable Lifecycle Commands; it cleans up after itself. Observed in a clean prepared copy: it passed twice in a row on the same database, and all 24 Python blocks of the README execute in order without failure. Running it first exposed a defect in an earlier Task (the Interface exposed four typing names as public), recorded under P2-G5-T1. Troubleshooting covers Database concerns only and includes an inactive Instance, a difference between an existing Table and its Entity, and empty Initial Data values.'
+                  decisions:
+                    - unset: How verification is shown when persistent tests are disabled for Database
+                      chosen: The verification part is one runnable script in the documentation that observes each named condition and removes what it creates, plus a troubleshooting list that covers only Database concerns, including an inactive Instance, a difference between an existing Table and its Entity and empty Initial Data values.
+                      why: Database Preferences disable the testing capability but require a verification section that covers public import, Instance selection, vocabulary, each capability group, persistent file location and repeatable Lifecycle Commands.
