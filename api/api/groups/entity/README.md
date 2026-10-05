@@ -8,9 +8,9 @@ Entity Group is the part of API that serves Entity Service over HTTP: every Enti
 curl -s -X POST http://127.0.0.1:8000/entity/currency/list -H 'Content-Type: application/json' -d '{"orders": [{"field": "id"}], "limit": 5}'
 ```
 
-Every address below is shown beneath the Base URL (`http://127.0.0.1:8000` unless the API's configuration says otherwise; a configured key comes before `/entity`).
-
 ## Endpoints
+
+Every address below is shown beneath the Base URL (`http://127.0.0.1:8000` unless the API's configuration says otherwise; a configured key comes before `/entity`).
 
 Every Endpoint answers `POST`. Its address is `/entity/<entity>/<action>`, or `/entity/<entity>/<action>/{id}` when the Action takes an `id`. `id` is part of the address; every other parameter is a member of one JSON object in the request body. Parameters marked *optional* may be left out and then reach the Action as omitted. Each parameter has one form, shown here once:
 

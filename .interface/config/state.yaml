@@ -31,11 +31,11 @@ content_map:
 # <!--------------------------------------------------------------------------------- Content -->
 content:
   active:
-    mode: "development"
+    mode: "reviewing"
     phase: "P4"
-    mode_reason: "Develop developed phase P4 (selected as 4)."
-    set_by: "my-interface-develop"
-    set_at: "2026-10-04T23:12:56Z"
+    mode_reason: "Review reviewed phase P4 (selected as 4) and has completed."
+    set_by: "my-interface-review"
+    set_at: "2026-10-05T00:26:20Z"
   phases:
     P1:
       id: "P1"
@@ -59,8 +59,8 @@ content:
       id: "P4"
       planning: "completed"
       development: "completed"
-      review: "not started"
-      completed_at: null
+      review: "satisfied"
+      completed_at: "2026-10-05T00:36:54Z"
   log:
     - id: "001"
       skill: "my-interface-configure"
@@ -727,3 +727,136 @@ content:
           - "Truncating an Entity whose records are still referenced fails with the Database's integrity error, which API passes through unchanged; the documentation orders its delete and truncate examples so they succeed."
           - "A request without a Content-Type header is accepted by the installed web framework version; the documentation does not claim otherwise."
           - "Execution 013 (stopped) and Execution 012 (blocked) preceded this run; no execution overlapped it."
+    - id: '015'
+      skill: my-interface-review
+      phase: P4
+      event: review
+      outcome: completed
+      started_at: '2026-10-05T00:26:20Z'
+      completed_at: '2026-10-05T00:36:54Z'
+      duration: '10:34'
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used: []
+      open_questions: []
+      blockers: []
+      decisions: []
+      report: 'Reviewed phase P4 (API): Source judged against the current Plan (38 Tasks, acceptance established for
+        all 38) and the API and Entity Group Review categories (17 observations, all hold) with independently written
+        observations, plus technical and repeatable conformance. One Finding was raised (the Entity Group overview had
+        two paragraphs where its Preferences ask for one) and resolved by Review within its authority and rechecked.
+        Outcome: satisfied. No Open Questions or Blockers.'
+      data:
+        baselines:
+        - Current Plan for P4 (38 Tasks)
+        - API Review category (11 observations)
+        - Entity Group Review category (6 observations)
+        - API Interface Schema 1.2, API Group Interface Schema 1.0, and API Configuration Structure 3.0 against the
+          Definitions and Preferences
+        - API and Entity Group Preferences (settings, interface, layout, groups, endpoints, network, identity, runtime,
+          development, documentation)
+        - Technical conformance (install, import, compile, build, format, lint, type, dependency, runtime, regeneration)
+        findings:
+        - id: F1
+          state: resolved
+          category: documentation (Entity Group Preferences)
+          expected: 'The overview section is one paragraph with one request example (Entity Group Preferences, documentation
+            section ''overview'': ''What Entity Group is, in one paragraph, with one request example'').'
+          observed: 'The overview had two paragraphs of prose around its one example: the opening paragraph, and a second
+            paragraph (''Every address below is shown beneath the Base URL ...'') after the example.'
+          evidence: 'Overview section of the Entity Group documentation: prose paragraph, request example, then a second
+            prose paragraph; a paragraph count gave 2 for Entity Group and 1 for the API documentation.'
+          resolution: Moved the address note out of the overview to the start of the Endpoints section of the Entity
+            Group documentation; no other text changed.
+          recheck: The overview now has 1 paragraph and 1 example for both documents; section order unchanged; the 180
+            Endpoint rows still equal the served Endpoints and each still has exactly one example; all 190 request examples
+            were run again on a fresh installation and answered as documented (186 with 200, and the 4 documented negative
+            checks with 404).
+        plan_acceptance:
+          tasks_examined: 38
+          acceptance_established: 38
+          acceptance_not_established: 0
+          missing_evidence: 0
+          method: 'Observed by Review for itself with fresh scripts derived from the Plan acceptance criteria and the
+            Definitions, not the implementer''s scripts: 32 structure and spy observations (every route, parameter placement
+            and requirement from the API''s own schema, a stand-in for every Action to see exactly one call with the
+            bound values, identical error objects, no address of its own, cross-origin policy, key handling, import
+            and runtime-read audits); the same 178 requests over HTTP and directly through the Child Services on two
+            scratchpad copies of the Database library and its storage, with identical output including exact decimals,
+            datetimes, writes, and errors; 23 documentation observations plus 190 request examples run on a fresh installation;
+            a real server started from a scratch copy on another port; and transient trials of Group References, segments,
+            network values, and Entity Service membership. The project''s own Database storage, the user''s running
+            API on port 8000, and the Interface were never touched.'
+        component_review_categories:
+          api:
+            observations_checked: 11
+            all_hold: true
+          entity_group:
+            observations_checked: 6
+            all_hold: true
+          schema_agreement: Each need in the API and Entity Group Definitions appears in its Schema and each Schema
+            holds nothing beyond them; the Schema versions (1.2 and 1.0) equal the contract versions in the Preferences;
+            the Configuration holds exactly the Structure's values.
+        technical_conformance:
+          install: A fresh environment built offline from the lockfile imports the entry point and registers 180 routes;
+            the lockfile check passes; a wheel builds with no cache entries and carries the four declared dependencies.
+          format_lint_type: 'Formatter: 22 files already formatted; linter: all checks passed; type checker (run through
+            the package manager, as the Develop decision records): 0 errors; strict mode on a clean copy reports 2 informational
+            notes about an unknown loop-variable type in the shared binding unit.'
+          dependencies: Third-party imports are exactly fastapi, logic, uvicorn, and yaml, and all are declared.
+          compile: All 20 source files compile.
+          serving: A scratch copy started from its entry point on a different port listened on the configured host and
+            port with the configured two worker processes, answered Endpoint requests, and served nothing outside the
+            Group segment.
+          regeneration: 'With the Develop execution''s session-local generator and documentation builders redirected
+            to a scratch copy of the project, every generated unit (Configuration, Bootstrap, Group package, 15 Adapters,
+            both READMEs) was deleted and regenerated with zero difference against the project. The shared binding unit
+            and the project file are authored, not generated. Trials: invalid ports and worker counts, an invalid, colliding,
+            stale, missing, or ambiguous Group Reference or segment, and an unknown parameter shape each stopped generation
+            with a clear error; a second Group, a renamed Group, a removed Entity, and a removed Action changed the
+            registrations, Adapters, and Endpoints with no hand edit.'
+          side_effects: Importing the API and answering 190 documented requests opened no file under the Interface;
+            the project's Database storage was unchanged throughout.
+        outcome: satisfied
+        observations_about_the_review:
+        - 'Independence is better than for the previous phase: the Source was produced by a different Develop execution
+          than the one that planned it. Review still wrote every observation fresh from the Plan and the Definitions
+          and judged the implementer''s evidence by repeating the conditions.'
+        - 'Several first-run failures were mistakes in Review''s own scripts, corrected and re-observed: route enumeration
+          assumed a flat route list but this framework version groups included routers (the schema built in memory was
+          used instead), Action signatures included the self parameter, a runtime-read audit counted the script''s own
+          read, and the documentation script flagged the four documented 404 answers and ran a destructive-delete claim
+          after the documented destructive examples. The two lines still printed as failed in the final documentation
+          run are those last two script artifacts; their facts were observed directly (186 answers of 200 plus exactly
+          the 4 documented 404 answers, and the referenced-delete claim on a fresh database copy answering 500 with
+          nothing changed).'
+        - Regeneration was observed with the Develop execution's session-local generator and builders, which live in
+          that execution's scratchpad and are not project artifacts; the documentation fix for F1 means the Entity Group
+          README no longer equals that builder's output, and the builder was not updated.
+        - The shared binding unit sits inside the Entity Group directory beside the Adapters. It is not an Adapter or
+          an Endpoint, so Review judged the 'nothing else' observations to be about Adapters and Endpoints. Its existence
+          and placement were not recorded as a Develop decision.
+        - The comment on the Field-name binding function says a name that is not a Field 'reaches the Action as given',
+          but it passes none; the Action's own invalid-input error still reaches the client, so no requirement is affected.
+        - An Action's failure reaches the client as a generic server-error answer with the detail only in the server's
+          log, so a client cannot tell failure kinds apart. This follows the Plan and the Definition (the Handler adds
+          nothing) and error handling is a declared-off capability.
+        - A browser-style preflight request (an OPTIONS request carrying an Origin) is answered with 200 for any address,
+          including made-up ones, by the cross-origin policy the Preferences require; a plain OPTIONS or GET to those
+          addresses is 404. Review judged this to be the declared shared network policy and not an address of API's
+          own.
+        - A built wheel does not contain the runtime Configuration, which Bootstrap reads from beside the package; the
+          documentation tells users to run from the application's directory layout, so an installed wheel is not a supported
+          way to run API.
+        - Only one Group is listed, so 'no two Groups share a segment' holds trivially; the mechanism was observed by
+          trial.
+        - Only SQLite was available as an Engine, so behaviour was observed on SQLite only.
+        - Another Claude execution (Develop Entry 013) had stopped while this phase was blocked, and the Blocker 012-B1
+          recorded by Entry 012 stays listed there as history; the Task's own blocker reference was cleared when Develop
+          unblocked it.
+        - The interface-boundary-guard hook denied three of Review's command lines because their text contained the
+          Interface path next to a write or a link; nothing in them wrote to a protected path, nothing ran, and the
+          same work was done with script files and the file-editing tool.
+        - Phase P2 (Database) has still not been reviewed.
