@@ -21,9 +21,22 @@
       "Skill(graphify)",
       "Skill(fastapi)",
       "Skill(sqlmodel)",
+      "Skill(my-interface-configure)",
+      "Skill(my-interface-plan)",
+      "Skill(my-interface-develop)",
+      "Skill(my-interface-review)",
+      "Skill(my-interface-implement)",
+      "Skill(my-interface-launch)",
       "Read(.claude/skills/graphify/**)",
       "Read(.claude/skills/fastapi/**)",
-      "Read(.claude/skills/sqlmodel/**)"
+      "Read(.claude/skills/sqlmodel/**)",
+      "Read(.claude/skills/my-interface-configure/**)",
+      "Read(.claude/skills/my-interface-plan/**)",
+      "Read(.claude/skills/my-interface-develop/**)",
+      "Read(.claude/skills/my-interface-review/**)",
+      "Read(.claude/skills/my-interface-implement/**)",
+      "Read(.claude/skills/my-interface-launch/**)",
+      "Read(.claude/skills/my-interface-reset/**)"
     ],
     "deny": [],
     "ask": [
@@ -36,6 +49,73 @@
       "Bash(git clean:*)"
     ],
     "defaultMode": "acceptEdits"
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/interface-guard.sh\" pretooluse",
+            "timeout": 15
+          }
+        ]
+      },
+      {
+        "matcher": "Bash|Grep",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "graphify hook-guard search",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "Read|Glob",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "graphify hook-guard read",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/interface-guard.sh\" grant",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/interface-guard.sh\" revoke",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/interface-guard.sh\" revoke",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
   },
   "enabledPlugins": {
     "claude-code-setup@claude-plugins-official": true,
@@ -76,6 +156,6 @@
       }
     }
   },
-  "outputStyle": "adhd-output-style:ADHD Explanatory",
+  "outputStyle": "Explanatory Structured",
   "autoMemoryEnabled": false
 }
