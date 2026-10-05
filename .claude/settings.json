@@ -77,51 +77,5 @@
     }
   },
   "outputStyle": "adhd-output-style:ADHD Explanatory",
-  "autoMemoryEnabled": false,
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Read|Glob|Grep|Edit|Write|NotebookEdit|Bash|Skill",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/interface_guard.py\" pre-tool-use || { echo 'interface-boundary-guard could not run; failing closed' >&2; exit 2; }",
-            "timeout": 30
-          }
-        ]
-      },
-      {
-        "matcher": "Bash|Grep",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "graphify hook-guard search",
-            "timeout": 10
-          }
-        ]
-      },
-      {
-        "matcher": "Read|Glob",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "graphify hook-guard read",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "UserPromptExpansion": [
-      {
-        "matcher": "my-interface-agent-native",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/interface_guard.py\" grant || { echo 'agent-native-read-grant could not run; failing closed' >&2; exit 2; }",
-            "timeout": 30
-          }
-        ]
-      }
-    ]
-  }
+  "autoMemoryEnabled": false
 }
