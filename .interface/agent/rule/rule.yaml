@@ -62,8 +62,7 @@ content:
       interface-bootstrap:
         contract: .interface/agent/rule/contracts/interface-bootstrap.md
         scope: global
-        responsibility: Enter through the canonical Interface file and the Foundation section files it links (introduction, terms, architecture, understanding, authority, workflow) while reserving Agent Module sources
-          exclusively for explicit Agent Sync.
+        responsibility: Enter through the canonical Interface file and the Foundation section files it links (introduction, terms, architecture, understanding, authority, workflow).
         required: true
       interface-skill-policy:
         contract: .interface/agent/rule/contracts/interface-skill-policy.md

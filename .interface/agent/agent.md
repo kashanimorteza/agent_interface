@@ -18,10 +18,6 @@ The Agent Module is the Human-owned, Runtime-independent declaration of how an A
 9. **[Review](#review)**
 10. **[At a Glance](#at-a-glance)**
 
-
-
-
-
 <br>
 
 <!--------------------------------------------------------------------------------- Introduction --->
@@ -31,7 +27,7 @@ The Agent Module is the Human-owned, Runtime-independent declaration of how an A
 
 The Agent Module is one of the three primary Interface Modules, alongside Target and Implementation. It is the Human-owned, Runtime-independent declaration of how an Agent operates: its behavior, Skills, Rules, limits, responsibilities, capabilities, and boundaries.
 
-The Guide explains the Agent Module and maps every Component's Definition, Preferences, or Contracts. The Module is read only within an explicit Agent Native Sync invocation; only Agent Native Sync enters it, and every other role uses the synchronized Runtime realization.
+The Guide explains the Agent Module and maps every Component's Definition, Preferences, or Contracts.
 
 ### Purpose
 
@@ -57,10 +53,6 @@ Report exactly what was done and whether synchronization completed successfully.
 
 The Human invokes synchronization with `/my-interface-agent-native`; no mode or numeric argument is used.
 
-
-
-
-
 <br>
 
 <!--------------------------------------------------------------------------------- Terms --->
@@ -70,9 +62,6 @@ The Human invokes synchronization with `/my-interface-agent-native`; no mode or 
 - **Agent Native** — the Agent that runs Agent Native Sync and realizes the Agent Module; the Module never names one.
 - **Agent Sync** — the Agent Native Sync Skill that reads the Agent Module and realizes it in the Native.
 - **Component** — one bounded part of the Agent Module with its own Definition and, where applicable, Preferences or Contracts.
-
-
-
 
 <br>
 
@@ -94,12 +83,6 @@ Agent
     ├── Connection
     └── Context
 ```
-
-Agent Sync reads the complete Agent Module through its authorized Foundation instruction and realizes its Components in the selected Agent Native. Other operations use the synchronized Native realization and do not read Module sources directly.
-
-
-
-
 
 <br>
 
@@ -174,10 +157,6 @@ Persistent instructions, Understanding, Memory, imports, loading, and compaction
 
 Every Agent Component's Principles and Preferences are authoritative for that Component only. A runtime artifact not declared in the owning Preferences is an optional runtime capability; a required declaration not usable by the selected runtime is an Agent Preferences gap.
 
-
-
-
-
 <br>
 
 <!--------------------------------------------------------------------------------- Boundaries --->
@@ -188,9 +167,6 @@ Every Agent Component's Principles and Preferences are authoritative for that Co
 - **Generated Config shape** — belongs to the owning Schema or Preferences, because it describes an output artifact rather than Agent meaning.
 - **Agent Native layout, commands, and configuration format** — belongs to Agent Sync, because it describes Native realization rather than the portable Agent Module.
 
-
-
-
 <br>
 
 <!--------------------------------------------------------------------------------- Layering --->
@@ -200,10 +176,6 @@ Every Agent Component's Principles and Preferences are authoritative for that Co
 
 Two conventions keep Preferences ready for synchronization without duplicating the Module's meaning: prose that Agent Sync must carry as written lives in its own Markdown file under the Component, and declarations are grouped by capability kind rather than by Agent Native location. Agent Sync interprets these declarations for the selected Native without changing their scope or meaning.
 
-
-
-
-
 <br>
 
 <!--------------------------------------------------------------------------------- Authority --->
@@ -212,9 +184,6 @@ Two conventions keep Preferences ready for synchronization without duplicating t
 The Human owns the Agent Module and is the only actor allowed to change its files. Agent Sync reads the Module read-only and realizes its declarations in the selected Agent Native. No other Skill, Agent Instance, Runtime, or Context reads or changes the Module.
 
 Every Principle in this Guide is mandatory. Agent Preferences can never override a Principle, and a Native realization may only preserve or strengthen the Module's meaning, never weaken it.
-
-
-
 
 <br>
 
@@ -226,10 +195,6 @@ Every Component's Definition carries its mandatory Principles. The Guide records
 ### What success means
 
 Agent Sync has succeeded when it has understood the complete Module, transferred its meaning to the Agent Native without changing its scope or authority, and the Agent behaves accordingly. Existing files and loaded rules are not sufficient evidence; observed behavior must also conform to the Human's intent.
-
-
-
-
 
 <br>
 
