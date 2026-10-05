@@ -1,6 +1,6 @@
 schema:
   id: "agent-interface-api-interface"
-  version: "1.3"
+  version: "1.4"
   purpose: "The stable, language-independent structure of API's public surface: every listed Group beneath its own URL segment, and nothing of API's own."
   kind: "Interface structure standard"
   applies_when: "The Implementation declares an API Component."
@@ -24,8 +24,8 @@ structure:
   endpoints:
     required: true
     source: "Each Group's own Interface Schema states which Endpoints it needs."
-    identity: "Every Endpoint is derived from its operation's structure at generation: POST /<operation>, or /<operation>/{id} when it takes an id; never listed by hand."
-    placement: "id uses Path; every other Parameter uses Body."
+    identity: "Every Endpoint is derived from its operation at generation: the Method from the operation's leading verb by API's verb table, POST otherwise; the Path /<operation>, or /<operation>/{id} when it takes an id; never listed by hand."
+    placement: "id uses Path; every other simple Parameter uses Query for GET and DELETE, and Body for POST, PUT, and PATCH; a GET or DELETE operation with a Parameter Query cannot carry uses POST."
     url: "<base_url>/<group segment>/<adapter segment><endpoint path>"
 
 # <!--------------------------------------------------------------------------------- Rules -->

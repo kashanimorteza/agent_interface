@@ -44,7 +44,7 @@ Bootstrap reads the runtime Configuration, creates the API, registers every Grou
 - **Bootstrap** — the single runtime entry point of API.
 - **Base URL** — the address formed from transport protocol, host, port, and the optional URL Key, before any Group segment.
 - **Endpoint** — one HTTP Method, Path, Parameters, and Handler that a Group needs for one of its operations.
-- **Parameter** — one operation input placed in Path or Body.
+- **Parameter** — one operation input placed in Path, Query, or Body.
 - **URL Key** — an optional opaque path segment placed before every Group segment; it is not request authentication.
 - **API Interface Schema** — the versioned structure that fixes the exact shape of API's public surface.
 - **API Group Interface Schema** — the versioned contract through which every Group states what it serves.
@@ -138,7 +138,7 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 #### API always serves its interactive documentation
 
-**Rule:** When the selected API package can publish interactive documentation of the served Endpoints, API always enables it.
+**Rule:** When the selected API package can publish interactive documentation of the served Endpoints, API always enables it, with one section per Group and, within it, one section per Adapter holding all of that Adapter's Endpoints.
 **Why:** Every client can discover and try every Endpoint without reading source.
 **Boundary:** The documentation shows only what the Groups serve.
 
@@ -180,15 +180,15 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 ### Endpoints
 
-#### Endpoint identity derives from the operation's structure
+#### Endpoint identity derives from the operation
 
-**Rule:** Every Endpoint uses `POST` and the Path `/<operation>`, or `/<operation>/{id}` when the operation takes an `id`; nothing is listed or mapped by hand.
+**Rule:** Every Endpoint takes its Method from the operation's leading verb by the configured verb table, `POST` otherwise, and the Path `/<operation>`, or `/<operation>/{id}` when the operation takes an `id`; nothing is listed or mapped by hand.
 **Why:** Endpoints follow the operations a Group needs every time API is generated, so a change in them never leaves a stale list.
-**Boundary:** The Method never depends on guessing what an operation does.
+**Boundary:** Only the configured verb table sets a Method; an unlisted verb always uses `POST`, and no Method is chosen any other way.
 
 #### Endpoint Parameters are placed by one rule
 
-**Rule:** `id` uses Path; every other Parameter uses Body.
+**Rule:** `id` uses Path; every other simple Parameter uses Query for `GET` and `DELETE`, and Body for `POST`, `PUT`, and `PATCH`. A `GET` or `DELETE` operation with a Parameter that Query cannot carry uses `POST` instead.
 **Why:** Inputs sit predictably in every request of every Group.
 **Boundary:** Placement never changes a Parameter's name, requirement, structure, meaning, or default.
 
@@ -216,10 +216,10 @@ Every Principle below is mandatory and belongs to the category that owns it.
 - Every Group segment, Adapter segment, and Method-and-Path combination is unique.
 - Every Group conforms to the API Group Interface Schema.
 - API serves no Endpoint of its own.
-- Every Endpoint uses `POST` and `/<operation>`, or `/<operation>/{id}` when it takes an `id`.
-- `id` sits in Path and every other Parameter in Body.
+- Every Endpoint's Method follows the verb table, or `POST` when its verb is unlisted, and its Path is `/<operation>`, or `/<operation>/{id}` when it takes an `id`.
+- Every Parameter sits in Path, Query, or Body as the placement rule requires.
 - When the key setting is on, the Base URL carries a non-empty URL Key.
-- When the package offers interactive documentation, it is served and lists every Endpoint.
+- When the package offers interactive documentation, it is served, lists every Endpoint, and has one section per Group and per Adapter.
 - The runtime Configuration holds every value the API Configuration Structure defines and follows its rules.
 - Bootstrap reads no Definition or Preferences file at runtime.
 **Why:** A fixed set of observations proves the same things on every review, so a result is never judged by a different standard from one run to the next.
@@ -241,7 +241,7 @@ Every obligation in the file, under the Principle it comes from.
 
 **API always serves its interactive documentation**
 
-- **Must** — Enable the package's interactive documentation whenever the package offers it.
+- **Must** — Enable the package's interactive documentation whenever the package offers it, sectioned by Group and Adapter.
 - **Never** — Show anything in it that the Groups do not serve.
 
 **URL Key follows its setting**
@@ -277,14 +277,14 @@ Every obligation in the file, under the Principle it comes from.
 
 ### Endpoints
 
-**Endpoint identity derives from the operation's structure**
+**Endpoint identity derives from the operation**
 
-- **Must** — Give every Endpoint `POST /<operation>`, or `/<operation>/{id}` when it takes an `id`.
+- **Must** — Give every Endpoint its Method from the verb table, `POST` otherwise, and the Path `/<operation>`, or `/<operation>/{id}` when it takes an `id`.
 - **Never** — List or map an Endpoint by hand, or guess a Method.
 
 **Endpoint Parameters are placed by one rule**
 
-- **Must** — Place `id` in Path and every other Parameter in Body.
+- **Must** — Place `id` in Path and every other Parameter in Query or Body by the Method.
 - **Never** — Change a Parameter's name, requirement, structure, meaning, or default.
 
 ### Configuration

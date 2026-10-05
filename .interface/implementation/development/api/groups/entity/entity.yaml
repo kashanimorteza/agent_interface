@@ -66,6 +66,6 @@ content:
       - verify
     sections:
       overview: "What Entity Group is, in one paragraph, with one request example."
-      endpoints: "Every Entity's Endpoints with Path and Parameters, each with one example."
+      endpoints: "Every Entity's Endpoints with Method, Path, and Parameters, each with one example."
       use: "How a client calls an Endpoint."
       verify: "How to see that every Entity and Action has its Endpoint."
