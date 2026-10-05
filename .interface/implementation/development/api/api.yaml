@@ -2,46 +2,49 @@
 meta:
   path: ".interface/implementation/development/api/api.yaml"
   path_note: "The Preferences layer of the API Component."
-  purpose: "Configurable defaults for API identity, layout, Groups, realization, network, runtime, and documentation."
+  purpose: "Identity, Interface Schema reference, layout, Group list, Endpoint rules, network, runtime, development, and documentation for API."
   standard: "Agent Project Interface"
-  version: "9.0"
-  updated: "2026-09-30"
+  version: "12.0"
+  updated: "2026-10-05"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
   agent_may_edit: false
   rule: "This file is human-owned. Operations read it without writing resolved API choices back into it."
   changed_by: "The human, directly."
-  precedence: "Explicit compatible project meaning and every applicable API Principle take precedence over this file."
+  precedence: "Explicit Target meaning and every applicable API Principle take precedence over this file."
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings and layout; resolve the selected language and its packages; resolve every known Group Reference and follow that Group's eligibility rules during generation; derive the Base URL from network values; then apply identity, runtime, and documentation defaults. Generate config.yaml according to the referenced API Configuration Structure. At runtime, Bootstrap reads config.yaml and registers only generated and enabled Group realizations."
+  consumption: "Read the content sections in read_order."
   selection: "Preserve explicit compatible Target choices. Use these Preferences for choices the Target leaves unstated; for anything still unset, follow Development's resolution order."
   version_resolution: "Resolve latest-compatible to a concrete mutually compatible package version at implementation time and preserve every explicit compatible package version."
-  matching: "Match every Group Reference key to the fixed role in its referenced Preferences and resolve exactly one Definition and Preferences file. Register only generated and enabled Groups. Derive a valid unique URL segment from each generated Group's configurable name, and reject missing, stale, invalid, ambiguous, or colliding values without silent repair. Derive url from transport_protocol, host, port, and the optional key instead of resolving it independently."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "settings: identify API and its configuration structure."
-  - "layout: resolve Bootstrap, Groups container, Configuration, and Documentation names."
-  - "development: resolve the default language and its API-owned packages."
-  - "groups: resolve each stable Group role and follow its Definition, Preferences, and eligibility rules during generation."
-  - "network: resolve transport_protocol, host, port, optional key, and derived url."
-  - "identity: resolve title and description."
-  - "runtime: resolve the worker count."
-  - "documentation: apply the required Root API documentation structure without copying Group-owned capability contracts."
-
-# <!--------------------------------------------------------------------------------- Content_Map -->
-content_map:
   - settings
+  - interface
   - layout
-  - development
   - groups
+  - endpoints
   - network
   - identity
   - runtime
+  - development
   - documentation
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  settings: "API's identity and the structure of its runtime Configuration."
+  interface: "The API Interface Schema, its version, and the API Group Interface Schema every Group follows."
+  layout: "The physical names of the Groups directory and the Bootstrap, Configuration, and documentation files."
+  groups: "Every Group of API, with its Definition and Preferences."
+  endpoints: "The Method, Path, and Parameter placement every Endpoint derives from its operation, and the URL shape."
+  network: "Transport protocol, host, port, optional URL Key, and the derived Base URL."
+  identity: "The title and description the running API presents."
+  runtime: "The number of worker processes."
+  development: "Development capabilities and the selected language with its realization profile."
+  documentation: "The documentation file, its location, its section order, and the content of each section."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
@@ -54,7 +57,13 @@ content:
       directory: "api"
       package: "api"
     configuration:
-      structure: ".interface/foundation/schema/api.yaml"
+      structure: ".interface/foundation/schema/api-configuration.yaml"
+
+  # <!-------------------------------------------- interface -->
+  interface:
+    schema: ".interface/foundation/schema/api-interface.yaml"
+    group_schema: ".interface/foundation/schema/api-group-interface.yaml"
+    contract_version: "1.2"
 
   # <!-------------------------------------------- layout -->
   layout:
@@ -65,35 +74,21 @@ content:
       configuration: "config.yaml"
       documentation: "README.md"
 
-  # <!-------------------------------------------- development -->
-  development:
-    languages:
-      default: "Python"
-      python:
-        modeling:
-          package:
-            name: "SQLModel"
-            version: "latest-compatible"
-            skill: "sqlmodel"
-        api:
-          package:
-            name: "FastAPI"
-            package: "fastapi[standard]"
-            version: "latest-compatible"
-            skill: "fastapi"
-            middleware:
-              cors:
-                name: "CORSMiddleware"
-                allow_origins: ["*"]
-                allow_credentials: false
-                allow_methods: ["*"]
-                allow_headers: ["*"]
-
   # <!-------------------------------------------- groups -->
   groups:
     entity:
       definition: "groups/entity/entity.md"
       preferences: "groups/entity/entity.yaml"
+
+  # <!-------------------------------------------- endpoints -->
+  endpoints:
+    method: "POST"
+    path: "/<operation>"
+    path_with_id: "/<operation>/{id}"
+    parameter_placement:
+      path: ["id"]
+      body: "every other Parameter"
+    url: "<base_url>/<group segment>/<adapter segment><endpoint path>"
 
   # <!-------------------------------------------- network -->
   network:
@@ -112,8 +107,38 @@ content:
   runtime:
     workers: 2
 
+  # <!-------------------------------------------- development -->
+  development:
+    capabilities:
+      testing: false
+      error_handling: false
+      logging: false
+    language:
+      selected: "python"
+      options:
+        python:
+          identifier_case: "snake_case"
+          package:
+            name: "FastAPI"
+            package: "fastapi[standard]"
+            version: "latest-compatible"
+            skill: "fastapi"
+          middleware:
+            cors:
+              name: "CORSMiddleware"
+              allow_origins: ["*"]
+              allow_credentials: false
+              allow_methods: ["*"]
+              allow_headers: ["*"]
+          group:
+            adapter: "One module per Adapter holding one APIRouter."
+            endpoint: "One route function per Endpoint, decorated with its method and path; its parameters copy the operation's names, types, and defaults, placed by endpoints.parameter_placement."
+            handler: "Each route calls the operation its Group names and returns the result unchanged."
+          bootstrap: "Create one FastAPI app from config.yaml and include each Group's routers under its segment; Bootstrap performs no check, because conformance belongs to Review."
+
   # <!-------------------------------------------- documentation -->
   documentation:
+    file: "README.md"
     location: "the Component root"
     format: "markdown"
     order:
@@ -125,5 +150,10 @@ content:
       - verify
       - troubleshooting
     sections:
-      configuration: "Explain the runtime Configuration values, their Base URL relationship, and how the generated config.yaml is used without treating it as conceptual Group authority."
-      groups: "List every generated and enabled Group beneath its configured URL segment and explain how it is registered. Do not copy or redefine Group-owned Adapters, Endpoints, Handlers, Parameters, requests, responses, failures, or downstream connections."
+      overview: "What API is, in one paragraph, with one request example."
+      configuration: "Every runtime Configuration value and how the Base URL is formed from it."
+      groups: "Every Group beneath its URL segment, with a link to its own documentation; never a copy of its Endpoints."
+      setup: "How to install and start API."
+      use: "How a client reaches a Group."
+      verify: "How to see that every listed Group is served beneath its segment and nothing else is."
+      troubleshooting: "Real problems a client can meet and how to fix them."

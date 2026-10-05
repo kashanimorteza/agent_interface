@@ -1,6 +1,6 @@
 # Entity Group Definition
 
-Entity Group is the API Group that gives every Entity presented by Entity Service one Adapter containing an Endpoint for every Action of that Entity.
+Entity Group is the API Group that gives every Entity of Entity Service one Adapter holding an Endpoint for every Action of that Entity.
 
 <br>
 
@@ -24,36 +24,25 @@ Entity Group is the API Group that gives every Entity presented by Entity Servic
 
 ### Overview
 
-Entity Group represents Entity Service as an API Group. Every Entity Child Service published through Logic Interface becomes one Adapter. Every Action presented by that Child Service becomes one Endpoint in the Entity's Adapter.
-
-An Endpoint combines an HTTP Method, a Path, Parameters derived from the Action contract, and a Handler. The Handler receives the request, resolves the Adapter's bound Entity Child Service only through Logic Interface, calls the same Action on that Child Service, and returns its result unchanged. Entity Group neither performs the Action nor imports, configures, initializes, or reaches Model, Database, Storage Service, or another system directly.
+Entity Group is the API Group that turns Entity Service into HTTP: one Adapter for every Entity, and one Endpoint for every Action of that Entity.
 
 ### Purpose
 
-Entity Service already supplies the authoritative set of Entities and their Actions. Entity Group turns that contract into a consistent HTTP surface without duplicating Entity declarations, Action signatures, or application Behaviour.
+Entity Service already holds every Entity and its Actions. Entity Group gives them one consistent HTTP surface without repeating their contracts or adding Behaviour.
 
 ### How It Works
 
-Entity Group is created when Entity Service is published through Logic Interface and its Service-level API generation setting is enabled. It creates one Adapter for every Entity Child Service and binds the Adapter to that Child Service's Entity identity.
-
-For every Action presented by a Child Service, the Adapter creates one Endpoint. A known Action uses its configured HTTP Method and Path. An Action without an explicit mapping uses `POST /<action>`. Parameters named by Path placeholders are placed in Path; remaining parameters use Query for `GET` and `DELETE`, and Body for `POST`, `PUT`, and `PATCH`. Parameter names, requirements, structures, meanings, and defaults always come from the Action contract.
-
-The configured Group name forms the Group URL segment, the bound Entity identity forms the Entity segment, and the Action mapping forms the remaining Endpoint Path.
+A request reaches an Endpoint; its Handler calls the same Action on the Entity's Child Service through Logic Interface and returns the result unchanged.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
-- **Entity Group** — the API Group generated from Entity Service.
-- **Entity** — the identity bound to one Entity Child Service and represented as an API resource.
-- **Adapter** — the file for one Entity that contains the Endpoints and Handlers generated from that Entity's Actions.
-- **Entity Service Action** — a callable capability presented by an Entity Child Service.
-- **Action Mapping** — the configurable HTTP Method and Path for a known Entity Service Action.
-- **Endpoint** — the public HTTP Method, Path, Parameters, and Handler generated for one Entity Service Action.
-- **Path** — the relative URL pattern of an Endpoint, such as `/update/{id}`.
-- **Parameter** — an Action input exposed in Path, Query, or Body according to the Entity Group placement rules.
-- **Handler** — the executable part of an Endpoint that receives request values, calls the corresponding Entity Service Action, and returns its result.
+- **Adapter** — the unit for one Entity that holds the Endpoints of that Entity's Actions.
+- **Action** — one operation an Entity Child Service offers.
+- **Handler** — the part of an Endpoint that binds the request, calls its Action, and returns the result.
+- **API Group Interface Schema** — the versioned contract through which every Group states what it serves.
 
 <br>
 
@@ -62,20 +51,16 @@ The configured Group name forms the Group URL segment, the bound Entity identity
 
 ```text
 Entity Group
-├── <entity>  (Adapter)
-└── <entity>  (Adapter)
+├── <entity>   ← Adapter: the Endpoints of one Entity
+└── <entity>   ← Adapter
 ```
-
-Adapter files are placed directly inside the Entity Group directory. There is no intermediate Adapter directory. Every Adapter is bound to one Entity identity presented by Entity Service and contains the Endpoints generated from all Actions of that Entity Child Service.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Belongs to API** — is registered and served as one API Group.
-- **Consumes Entity Service through Logic Interface** — obtains every Entity Child Service, its Actions, and every public request type required by those Actions from the published Entity Service boundary and calls those Actions through the same boundary.
-- **Has no direct Model or Database connection** — declares and uses Logic Interface as its only application connection; any dependency used behind Entity Service remains private to Logic and is never an API dependency or resource.
+- **Consumes Logic** — uses Entity Service and the contracts it publishes only through Logic Interface, found from Logic's own Preferences.
 - **Consumes Development** — follows its shared rules and Defaults for every choice this Component leaves unstated.
 
 <br>
@@ -83,38 +68,36 @@ Adapter files are placed directly inside the Entity Group directory. There is no
 <!--------------------------------------------------------------------------------- Boundaries --->
 ## Boundaries
 
-- **Entity membership, Entity identity, Action membership, and Action contracts** — come from Entity Service through Logic Interface; Entity Group does not redefine them.
-- **Action Behaviour and work performed after an Action call** — remain behind Entity Service; an Adapter never reaches another Component or system directly.
-- **HTTP Method and Path** — come from Entity Group Action Mappings or the declared fallback.
-- **Parameter names, requirements, structures, meanings, and defaults** — come from the Entity Service Action contract; Entity Group only determines their HTTP placement.
-- **Parameter types and Vocabulary** — must be reachable through Entity Service Interface; Entity Group neither defines them nor imports them from another Component.
-- **Database configuration, initialization, Instances, storage paths, schema preparation, and persistence lifecycle** — remain behind Logic Interface; Entity Group neither owns nor performs them, and API generation creates no Database resource or configuration.
+- **Entity and Action membership and Action contracts** — are not Entity Group's, because it represents them without defining them.
+- **Action Behaviour and everything after an Action call** — are not Entity Group's, because a Handler only calls the Action.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-Entity Group has one executable layer: Adapters. Each Adapter owns the API surface of one Entity and its Handlers call only Actions of that Entity Child Service through Logic Interface.
+Entity Group Preferences own its name, directory, Adapter naming pattern, and documentation. The shape in which it states them belongs to the API Group Interface Schema.
 
 ### Adapters
 
-The Entity Group directory contains exactly one Adapter file for every Entity Child Service presented by Entity Service. The Adapter filename and Entity URL segment derive from the bound Entity identity, not from a language-specific Child Service structure name. Selecting an Adapter selects its Entity once; callers do not supply an Entity class or Entity name again.
-
-Every Adapter contains one Endpoint and Handler for every Action presented by its bound Child Service. An Adapter neither removes a presented Action nor adds an Action that Entity Service does not present.
+One unit for every Entity Child Service, placed directly inside the Entity Group directory and named from the bound Entity. Selecting an Adapter selects its Entity once; a caller never supplies the Entity again.
 
 ### Endpoints
 
-Each Endpoint uses the Action Mapping for its Entity Service Action. When no explicit mapping exists, the Endpoint uses `POST /<action>`. Path placeholders select Path Parameters. Remaining Action inputs become Query Parameters for `GET` and `DELETE`, or Body Parameters for `POST`, `PUT`, and `PATCH`.
+The HTTP surface of every Adapter. It meets these needs:
 
-The Handler performs only the structural request binding needed by the Endpoint, resolves the bound Entity Child Service through Logic Interface, calls the corresponding Action on that Child Service, and returns the Action result unchanged. Semantic validation, application decisions, dependency initialization, Database configuration, persistence, retries, and result transformation remain outside Entity Group.
+1. **Complete** — exactly one Adapter for every Entity that Entity Service presents, and exactly one Endpoint for every Action of that Entity, changing when Entity Service changes.
+2. **Unchanged** — every Parameter keeps the Action's name, requirement, structure, and default, and every Endpoint returns the Action's result and errors unchanged.
+3. **Nothing else** — no Endpoint or Behaviour beyond these is added.
+
+These needs are stated in the shape the API Group Interface Schema defines for every Group.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
-Every Principle in this file is mandatory for Entity Group. Entity Group Preferences provide configurable names and Action Mapping defaults but cannot weaken a Principle. Explicit compatible project meaning and applicable API and Entity Service Principles retain their authority.
+Every Principle in this file is mandatory for Entity Group. Entity Group Preferences provide configurable defaults and conventions but can never weaken a Principle. Explicit Target meaning retains its authority.
 
 <br>
 
@@ -125,61 +108,53 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 ### General
 
-#### Entity Group represents Entity Service only
+#### Entity Group reaches the application only through Logic Interface
 
-**Rule:** Entity Group obtains Entities, Actions, and their public request types only from Entity Service through Logic Interface and calls those Actions only through the same boundary. Its generated realization imports and declares no direct dependency on Model, Database, or Storage Service and creates no configuration, initialization, schema, or storage resource for them.
-**Why:** One source keeps every Adapter and Endpoint aligned with the authoritative Entity-facing contract.
-**Boundary:** Entity Group publishes Endpoints but neither performs Entity Service work nor imports, configures, initializes, or contacts Model, Database, Storage Service, or another system directly. A transitive dependency used privately behind Logic never becomes an API connection or API-owned resource.
+**Rule:** Entity Group obtains Entities, Actions, and their public contracts only from Entity Service through Logic Interface, and calls Actions only through that same boundary.
+**Why:** One source keeps every Adapter and Endpoint aligned with the authoritative contract.
+**Boundary:** Entity Group publishes Endpoints but never performs an Action's work.
 
-#### Entity Group generation is controlled at Service level
+### Interface
 
-**Rule:** Entity Group is created only when Entity Service is published through Logic Interface and its Service-level API generation setting is enabled. Once created, the Group includes every Entity and every Action that Entity Service presents.
-**Why:** One decision controls publication of the complete Entity contract without producing a partial and misleading API surface.
-**Boundary:** Entity Group applies no per-Entity or per-Action API-generation filter.
+#### Entity Group conforms to the API Group Interface Schema
 
-<br>
+**Rule:** Entity Group states what it serves through the versioned API Group Interface Schema: Entity Service through Logic Interface as its source, one Adapter per Entity, and one Endpoint per Action.
+**Why:** Every client depends on one exact HTTP surface instead of reinterpreting each realization.
+**Boundary:** Changing the structure itself requires a Schema version change.
 
 ### Adapters
 
-#### Every Entity receives one Adapter
+#### One Adapter per Entity, one Endpoint per Action
 
-**Rule:** Entity Group creates exactly one Adapter file for every Entity Child Service presented by Entity Service and no Adapter for anything else. The Adapter is permanently bound to that Child Service's Entity identity.
-**Why:** Each Entity needs one predictable API surface without requiring callers to repeat its identity in every request.
-**Boundary:** An Adapter never changes its bound Entity and never accepts another Entity identity from a caller.
+**Rule:** Entity Group has exactly one Adapter for every Entity Child Service that Entity Service presents, permanently bound to that Entity, and each Adapter has exactly one Endpoint for every Action of its Child Service.
+**Why:** The HTTP surface stays a complete representation of Entity Service, and callers never repeat an Entity's identity.
+**Boundary:** No Entity or Action is filtered out, no Action outside the Child Service is added, and an Adapter never accepts another Entity from a caller.
 
-#### Every Action receives one Endpoint
+#### Handlers only call their Action
 
-**Rule:** Every Adapter contains exactly one Endpoint for every Action presented by its bound Entity Child Service. An Action outside the Child Service is never added, and a presented Action is never omitted.
-**Why:** The API surface remains a complete representation of the authoritative Entity Service contract.
-**Boundary:** Entity Group defines HTTP exposure only; it does not copy, redefine, or implement an Action.
+**Rule:** A Handler binds the request values its Action needs, obtains the bound Child Service through Logic Interface, calls that Action, and returns the result unchanged.
+**Why:** Entity Service stays the single owner of Behaviour while every Handler stays uniform.
+**Boundary:** A Handler adds no decision, semantic validation, initialization, result wrapper, other call, retry, or alternate path.
 
-#### Handlers only call corresponding Entity Service Actions
+### Review
 
-**Rule:** A Handler binds the request values required by its Action, resolves the Adapter's bound Entity Child Service through Logic Interface, calls that Action on the bound Child Service, and returns the result unchanged.
-**Why:** Entity Service remains the single owner of Behaviour while Adapter code stays uniform and direct.
-**Boundary:** A Handler adds no application decision, semantic validation, dependency initialization, Database configuration, persistence operation, result wrapper, downstream call, retry, or alternate execution path.
+#### Entity Group conformance covers every Entity Group contract
 
-<br>
+**Rule:** Entity Group is conformant only when its Endpoint needs in this Definition and its real Endpoints match, its statement follows the API Group Interface Schema, and every observation below holds.
+**Why:** A gap here silently hides or breaks an Action for every client.
+**Boundary:** Review reads Logic Interface only to compare; it changes nothing outside Entity Group.
 
-### Endpoints
+#### Review observes Entity Group through a fixed set of checks
 
-#### Action Mappings define known HTTP identities
-
-**Rule:** Entity Group Preferences may provide an HTTP Method and Path for a known Entity Service Action. An Action without an explicit mapping uses `POST /<action>`. A compatible Target choice may override a default Method or Path without changing the destination Action or its Behaviour.
-**Why:** Known Actions receive intentional public identities while every future Action remains exposable without inventing application Behaviour.
-**Boundary:** An Action Mapping defines only HTTP Method and Path; the Action contract remains authoritative for every input and result.
-
-#### Endpoint Parameters preserve Action contracts
-
-**Rule:** Every Endpoint derives its Parameters from the corresponding Entity Service Action contract. Parameters named by Path placeholders use Path; remaining parameters use Query for `GET` and `DELETE`, and Body for `POST`, `PUT`, and `PATCH`.
-**Why:** Endpoint generation must not duplicate or drift from Action signatures while still placing inputs predictably in HTTP requests.
-**Boundary:** Every required Parameter type must be published through Entity Service Interface. Entity Group performs structural request binding only, defines no Vocabulary, imports no request type from another Component, and never changes a Parameter's name, requirement, structure, meaning, default, or semantic validation owner.
-
-#### Adapter identities and Endpoints are unique
-
-**Rule:** Every Adapter filename, Entity URL segment, and final Method-and-Path combination is valid and unique after the selected realization's declared normalization. A collision or invalid value stops creation with a clear error.
-**Why:** Two Entities or Actions cannot share one ambiguous public identity.
-**Boundary:** Entity Group never repairs a conflict with an invented suffix, number, or silent rename.
+**Rule:** Review establishes Entity Group conformance through these observations, every one of them on every review:
+- Entity Group states its source, Adapters, and Endpoints in the shape the API Group Interface Schema defines.
+- There is exactly one Adapter for every Entity that Entity Service presents, and nothing else.
+- Every Adapter has exactly one Endpoint for every Action of its Child Service, and nothing else.
+- Every Endpoint's Parameters keep the Action's names, requirements, and defaults.
+- Every Handler calls only its Action through Logic Interface and returns its result and errors unchanged.
+- Entity Group imports nothing but Logic Interface for the application.
+**Why:** A fixed set of observations proves the same things on every review, so a result is never judged by a different standard from one run to the next.
+**Boundary:** Each observation states what is seen, never the command, tool, or code that observes it; how it is realized belongs to the Review Operation.
 
 <br>
 
@@ -190,46 +165,38 @@ Every obligation in the file, under the Principle it comes from.
 
 ### General
 
-**Entity Group represents Entity Service only**
+**Entity Group reaches the application only through Logic Interface**
 
-- **Must** — Obtain Entities, Actions, and public request types from Entity Service through Logic Interface and call Actions through the same boundary.
-- **Never** — Import or declare a direct Model, Database, or Storage Service dependency, or create their configuration, initialization, schema, or storage resources.
+- **Must** — Obtain Entities, Actions, and contracts from Entity Service through Logic Interface and call Actions the same way.
+- **Never** — Perform an Action's work inside Entity Group.
 
-**Entity Group generation is controlled at Service level**
+### Interface
 
-- **Must** — Generate the Group only when Entity Service publication and API generation are enabled, then include its complete presented contract.
-- **Never** — Filter an individual Entity or Action from an enabled Entity Group.
+**Entity Group conforms to the API Group Interface Schema**
+
+- **Must** — Conform every realization to the API Group Interface Schema.
+- **Never** — Add anything the Schema does not list or change its structure without a Schema version change.
 
 ### Adapters
 
-**Every Entity receives one Adapter**
+**One Adapter per Entity, one Endpoint per Action**
 
-- **Must** — Create exactly one Adapter bound to every Entity Child Service.
-- **Never** — Accept another Entity identity or create an Adapter for anything Entity Service does not present.
+- **Must** — Give every Entity one bound Adapter and every Action one Endpoint.
+- **Never** — Filter an Entity or Action, add an unknown Action, or accept another Entity from a caller.
 
-**Every Action receives one Endpoint**
+**Handlers only call their Action**
 
-- **Must** — Generate one Endpoint for every Action of the Adapter's bound Entity Child Service.
-- **Never** — Add an unknown Action or omit a presented Action.
+- **Must** — Bind request values, call the bound Child Service's Action through Logic Interface, and return the result unchanged.
+- **Never** — Add a decision, validation, initialization, wrapper, other call, retry, or alternate path.
 
-**Handlers only call corresponding Entity Service Actions**
+### Review
 
-- **Must** — Bind request values, resolve the bound Child Service through Logic Interface, call its corresponding Action, and return the result unchanged.
-- **Never** — Add Behaviour, semantic validation, dependency initialization, Database configuration, persistence, a result wrapper, a downstream call, a retry, or an alternate path.
+**Entity Group conformance covers every Entity Group contract**
 
-### Endpoints
+- **Must** — show that the Endpoint needs and the real Endpoints match and follow the API Group Interface Schema before Entity Group is conformant.
+- **Never** — change anything outside Entity Group during review.
 
-**Action Mappings define known HTTP identities**
+**Review observes Entity Group through a fixed set of checks**
 
-- **Must** — Use the configured Method and Path or the `POST /<action>` fallback without changing the destination Action.
-- **Never** — Put Action inputs, results, or Behaviour into an Action Mapping.
-
-**Endpoint Parameters preserve Action contracts**
-
-- **Must** — Derive every Parameter from the Action contract and place it according to Method and Path.
-- **Never** — Redefine a Parameter or invent a Group-level default.
-
-**Adapter identities and Endpoints are unique**
-
-- **Must** — Validate Adapter identities, Entity URL segments, and final Method-and-Path combinations.
-- **Never** — Silently rename an invalid or colliding value.
+- **Must** — make every listed observation on every review.
+- **Never** — replace an observation with a command, tool, or code, or judge by a different set.
