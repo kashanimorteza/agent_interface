@@ -9,12 +9,11 @@ Agent Connection is the Agent Component that declares the external connections a
 
 1. **[Introduction](#introduction)**
 2. **[Terms](#terms)**
-3. **[Relationships](#relationships)**
-4. **[Layering](#layering)**
-5. **[Authority](#authority)**
-6. **[Principles](#principles)**
-7. **[Review](#review)**
-8. **[At a Glance](#at-a-glance)**
+3. **[Layering](#layering)**
+4. **[Authority](#authority)**
+5. **[Principles](#principles)**
+6. **[Review](#review)**
+7. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -56,14 +55,6 @@ Packaged capabilities keep their owners. An Extension declares its identity, sou
 - **Extension** — an installable or loadable package that contributes one or more Agent capabilities.
 - **Marketplace** — a catalog or source from which Extensions can be discovered.
 - **Provisioning** — installation, enabling, updating, disabling, or removal of an Extension.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Relationships --->
-## Relationships
-
-- **Consumes Permission** — connects and provisions only within authorization and security policy.
-- **Consumes Skill, Tool, and Rule** — packages capabilities whose contracts and ownership stay with those Components.
 
 <br>
 

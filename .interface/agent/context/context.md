@@ -9,11 +9,10 @@ Agent Context is the Agent Component for the context made available to an Agent 
 
 1. **[Introduction](#introduction)**
 2. **[Terms](#terms)**
-3. **[Relationships](#relationships)**
-4. **[Layering](#layering)**
-5. **[Authority](#authority)**
-6. **[Principles](#principles)**
-7. **[At a Glance](#at-a-glance)**
+3. **[Layering](#layering)**
+4. **[Authority](#authority)**
+5. **[Principles](#principles)**
+6. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -30,11 +29,6 @@ Agent Context is the Agent Component for the context made available to an Agent 
 
 <!--------------------------------------------------------------------------------- Terms --->
 ## Terms
-
-<br>
-
-<!--------------------------------------------------------------------------------- Relationships --->
-## Relationships
 
 <br>
 

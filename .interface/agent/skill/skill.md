@@ -8,14 +8,13 @@ Agent Skill is the Agent Component that defines the shared Skill concept, Core S
 ## Navigation
 
 1. **[Introduction](#introduction)**
-2. **[Components](#components)**
-3. **[Authority](#authority)**
-4. **[Principles](#principles)**
-5. **[Review](#review)**
-6. **[At a Glance](#at-a-glance)**
-
-
-
+2. **[Terms](#terms)**
+3. **[Components](#components)**
+4. **[Layering](#layering)**
+5. **[Authority](#authority)**
+6. **[Principles](#principles)**
+7. **[Review](#review)**
+8. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -29,6 +28,19 @@ Skill is a reusable capability an Agent can activate to perform a defined kind o
 ### Purpose
 
 Skill provides one consistent way to describe a reusable capability without repeating its framework or its Skill-specific content.
+
+### How It Works
+
+Agent Sync builds each Core Skill in the Agent Native from its Contract and every Source the Contract names, and installs each Provider Skill as its declared package supplies it.
+
+<br>
+
+<!--------------------------------------------------------------------------------- Terms --->
+## Terms
+
+- **Core Skill** — a Skill built from a Contract and the Sources it names.
+- **Provider Skill** — a self-contained Skill taken as its declared package supplies it.
+- **Contract** — the declaration of one Core Skill: its identity, inputs, invocation, outputs, and Sources.
 
 <br>
 
@@ -54,31 +66,31 @@ Each Core Skill has one Contract in `contracts/`.
 
 The Contract's `Source` section identifies where the Core Skill's Understanding begins. The Contract and every source it names are read together to establish the Skill's complete Meaning and Content. A Core Skill is implemented from that Understanding rather than by copying its sources verbatim.
 
-### Configure
+#### Configure
 
 → [Contract of Configure](contracts/configure.md)<br>
 
-### Plan
+#### Plan
 
 → [Contract of Plan](contracts/plan.md)<br>
 
-### Develop
+#### Develop
 
 → [Contract of Develop](contracts/develop.md)<br>
 
-### Review
+#### Review
 
 → [Contract of Review](contracts/review.md)<br>
 
-### Implement
+#### Implement
 
 → [Contract of Implement](contracts/implement.md)<br>
 
-### Launch
+#### Launch
 
 → [Contract of Launch](contracts/launch.md)<br>
 
-### Reset
+#### Reset
 
 → [Contract of Reset](contracts/reset.md)<br>
 
@@ -88,15 +100,19 @@ Provider Skills are self-contained: they have no Contract or `Source` section, a
 
 - **graphify** — the knowledge-graph Skill supplied by the graphify package; it turns project files into a queryable graph used for codebase questions.
 
+<br>
 
+<!--------------------------------------------------------------------------------- Layering --->
+## Layering
 
+This Definition carries the portable meaning and mandatory Principles of the Skill Component. Contracts carry each Core Skill's declaration. Agent Sync reads both and realizes them without changing their scope or authority.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
-This Definition is authoritative for the shared Skill concept.
+The Human owns this Definition and its Contracts. Every Principle in this file is mandatory; Contracts can never override a Principle, and Agent Sync is the only reader authorized to realize the Component in an Agent Native.
 
 <br>
 

@@ -11,13 +11,12 @@ The Agent Module is the Human-owned, Runtime-independent declaration of how an A
 2. **[Terms](#terms)**
 3. **[Architecture](#architecture)**
 4. **[Components](#components)**
-5. **[Relationships](#relationships)**
-6. **[Boundaries](#boundaries)**
-7. **[Layering](#layering)**
-8. **[Authority](#authority)**
-9. **[Principles](#principles)**
-10. **[Review](#review)**
-11. **[At a Glance](#at-a-glance)**
+5. **[Boundaries](#boundaries)**
+6. **[Layering](#layering)**
+7. **[Authority](#authority)**
+8. **[Principles](#principles)**
+9. **[Review](#review)**
+10. **[At a Glance](#at-a-glance)**
 
 
 
@@ -40,7 +39,7 @@ The Module exists so the Human defines the Agent once instead of creating a sepa
 
 ### How It Works
 
-The Agent Module is composed of Components. Each Component has a Definition for its portable meaning and mandatory Principles; Every Component except Skill has Preferences; Skill and Rule hold their declarations in Contracts. Preferences and Contracts never override Principles.
+The Agent Module is composed of Components. Each Component has a Definition for its portable meaning and mandatory Principles; every Component except Skill has Preferences; Skill and Rule hold their declarations in Contracts. Preferences and Contracts never override Principles.
 
 Agent Sync is the only reader and bridge from the Module to the selected Agent Native. It reads the complete Module and realizes its meaning in the Native without changing its scope or authority. Other Skills and Agent Instances use the synchronized Native realization and do not read Module sources directly.
 
@@ -80,7 +79,7 @@ The Human invokes synchronization with `/my-interface-agent-native`; no mode or 
 <!--------------------------------------------------------------------------------- Architecture --->
 ## Architecture
 
-The Agent Module is organized into bounded Components. Each Component has its own Definition and, where applicable, Preferences or Contracts. Agent Sync transfers these Components to the selected Agent Native.
+The Agent Module is organized into bounded Components. Agent Sync transfers these Components to the selected Agent Native.
 
 ```text
 Agent
@@ -107,7 +106,7 @@ Agent Sync reads the complete Agent Module through its authorized Foundation ins
 <!--------------------------------------------------------------------------------- Components --->
 ## Components
 
-Each Agent Component has a Definition for meaning; current declarations are held in Preferences, while Skill declarations and bridges are held in Contracts. Agent Native Sync is a Foundation File, not an Agent Component.
+Agent Native Sync is a Foundation File, not an Agent Component.
 
 ### Runtime
 
@@ -181,16 +180,6 @@ Every Agent Component's Principles and Preferences are authoritative for that Co
 
 <br>
 
-<!--------------------------------------------------------------------------------- Relationships --->
-## Relationships
-
-- **Consumes Foundation** — [Agent Native Sync](../foundation/agent-native-sync.md) is the only reader of the Agent Module and realizes it in the selected Agent Native.
-
-
-
-
-<br>
-
 <!--------------------------------------------------------------------------------- Boundaries --->
 ## Boundaries
 
@@ -207,7 +196,7 @@ Every Agent Component's Principles and Preferences are authoritative for that Co
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-Each Agent Component has a Definition and may have Preferences or Contracts. `<component>.md` states the portable view and philosophy; YAML files hold current selections where needed, and Skill Contracts hold each Skill's declaration and bridge. Neither Preferences nor Contracts weaken a Principle. Markdown files carry the portable prose that Agent Sync must preserve.
+`<component>.md` states the portable view and philosophy; YAML files hold current selections where needed, and Skill and Rule Contracts hold their declarations. Neither Preferences nor Contracts weaken a Principle.
 
 Two conventions keep Preferences ready for synchronization without duplicating the Module's meaning: prose that Agent Sync must carry as written lives in its own Markdown file under the Component, and declarations are grouped by capability kind rather than by Agent Native location. Agent Sync interprets these declarations for the selected Native without changing their scope or meaning.
 

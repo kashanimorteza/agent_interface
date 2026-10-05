@@ -13,12 +13,11 @@ Agent Rule is the Component for persistent behavioral guidance applied across se
 
 1. **[Introduction](#introduction)**
 2. **[Terms](#terms)**
-3. **[Relationships](#relationships)**
-4. **[Layering](#layering)**
-5. **[Authority](#authority)**
-6. **[Principles](#principles)**
-7. **[Review](#review)**
-8. **[At a Glance](#at-a-glance)**
+3. **[Layering](#layering)**
+4. **[Authority](#authority)**
+5. **[Principles](#principles)**
+6. **[Review](#review)**
+7. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -67,18 +66,12 @@ What must be guaranteed rather than followed is not written here: it is declared
 - **Resume** — continuation of an existing Session with its available conversation and runtime state.
 - **Background Work** — execution that continues without occupying the active interaction path.
 
-<!--------------------------------------------------------------------------------- Relationships --->
-## Relationships
-
-- **Consumes Permission** — explains enforceable boundaries without replacing Permission's guarantees.
-- **Consumes Context** — relies on current context loading and scope to determine which Rules apply.
-
 <br>
 
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-This Definition carries the portable meaning and mandatory Principles of the Rule Component. Preferences carry current Rule selections, and declarations. Agent Sync reads both and realizes them without changing their scope or authority.
+This Definition carries the portable meaning and mandatory Principles of the Rule Component. Preferences carry current Rule selections and declarations, and Contracts carry each Rule's complete text. Agent Sync reads both and realizes them without changing their scope or authority.
 
 <br>
 

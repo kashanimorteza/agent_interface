@@ -9,11 +9,10 @@ Agent is the Agent Module's central Component for the Agent and its instances.
 
 1. **[Introduction](#introduction)**
 2. **[Terms](#terms)**
-3. **[Relationships](#relationships)**
-4. **[Layering](#layering)**
-5. **[Authority](#authority)**
-6. **[Principles](#principles)**
-7. **[At a Glance](#at-a-glance)**
+3. **[Layering](#layering)**
+4. **[Authority](#authority)**
+5. **[Principles](#principles)**
+6. **[At a Glance](#at-a-glance)**
 
 <!--------------------------------------------------------------------------------- Introduction --->
 ## Introduction
@@ -28,11 +27,6 @@ Agent is the Agent Module's central Component for the Agent and its instances.
 
 <!--------------------------------------------------------------------------------- Terms --->
 ## Terms
-
-<br>
-
-<!--------------------------------------------------------------------------------- Relationships --->
-## Relationships
 
 <br>
 

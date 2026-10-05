@@ -13,12 +13,11 @@ Agent Permission is the Agent Component that defines the enforceable boundaries 
 
 1. **[Introduction](#introduction)**
 2. **[Terms](#terms)**
-3. **[Relationships](#relationships)**
-4. **[Layering](#layering)**
-5. **[Authority](#authority)**
-6. **[Principles](#principles)**
-7. **[Review](#review)**
-8. **[At a Glance](#at-a-glance)**
+3. **[Layering](#layering)**
+4. **[Authority](#authority)**
+5. **[Principles](#principles)**
+6. **[Review](#review)**
+7. **[At a Glance](#at-a-glance)**
 
 
 
@@ -71,18 +70,10 @@ Secrets are never values in a declaration. A declaration references a credential
 
 <br>
 
-<!--------------------------------------------------------------------------------- Relationships --->
-## Relationships
-
-- **Consumes Agent** — derives the maximum permitted action boundary from Agent Instance scope.
-- **Consumes Rule** — enforces the boundaries that Rules explain but cannot guarantee.
-
-<br>
-
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-This Definition carries the portable meaning and mandatory Principles of the Permission Component. Preferences carry current permission selections, technical sandbox and trust settings, and credential references. Agent Sync reads both and realizes them without changing their scope or authority.
+This Definition carries the portable meaning and mandatory Principles of the Permission Component. Preferences carry current permission selections, rules, protected sources, secret handling, and enforced guarantees. Agent Sync reads both and realizes them without changing their scope or authority.
 
 
 
