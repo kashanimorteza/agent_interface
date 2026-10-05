@@ -23,7 +23,7 @@ Operations is the Implementation Subsystem that governs how authorized work is p
 
 ### Overview
 
-Operations is the Implementation Subsystem that defines how work on a Target is configured, planned, developed, reviewed, implemented, launched, reset, and recorded. It contains the Configure, Plan, Develop, Review, Implement, Launch, Reset, and State Components while remaining separate from the Development Subsystem that defines the product being built.
+Operations remains separate from the Development Subsystem that defines the product being built.
 
 ### Purpose
 

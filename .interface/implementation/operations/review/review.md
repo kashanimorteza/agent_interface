@@ -22,21 +22,15 @@ Review is the Operation Component that independently judges selected-phase Plans
 
 ### Overview
 
-Review is the Operation Component that establishes whether a phase Plan and its generated Source satisfy the planned result, and records what it found.
-
 Review owns its Findings and the execution data that records what was reviewed. It does not own Plan or Target.
 
 ### Purpose
 
 Review is the reader who does not hold the producer's intent. It takes the phase Plan as the planned baseline and judges the generated Source and evidence against it.
 
-Review first records what it finds, then resolves the findings it is authorized and able to resolve. After each resolution it reviews the result again. A finding that cannot be resolved remains open.
-
 ### How It Works
 
-Review accepts one or more Target phase identifiers, or considers every phase when none is selected. For each phase, it establishes Source Understanding within that phase's scope. Once generated Source is available, it reads the current Plan and examines the generated Source, Public Interface, implemented result, and evidence against that Plan. It records Findings in its execution data and updates those same Finding records when it resolves them.
-
-Review stops when the required result or evidence is unavailable, an authority cannot be established, or an unresolved condition prevents assurance.
+Review reads the current Plan for each selected phase, judges the generated Source against it, and records and resolves its Findings.
 
 <br>
 
@@ -83,7 +77,7 @@ Every Principle below is mandatory.
 
 ### Review examines Source against the current Plan
 
-**Rule:** A Review accepts one or more Target phase identifiers, or considers every phase when none is selected. It starts only when the required Config records are valid. Once generated Source is available for a phase, whether or not Development has completed, it establishes Source Understanding within that phase's scope. It reads the current Plan, then judges the generated Source, Public Interface, implemented result, and evidence against that Plan.
+**Rule:** A Review accepts one or more Target phase identifiers, or considers every phase when none is selected. It starts only when the required Config records are valid. Once generated Source is available for a phase, whether or not Development has completed, it establishes Source Understanding within that phase's scope. It reads the current Plan, then judges the generated Source, Public Interface, implemented result, and evidence against that Plan. It stops when the required result or evidence is unavailable, an authority cannot be established, or an unresolved condition prevents assurance.
 
 **Why:** A result can only be judged against the work that was planned for it. Judging it against what the implementer intended, or against what a reviewer would have built, measures the wrong thing.
 

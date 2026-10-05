@@ -29,21 +29,11 @@ State never contains Target meaning, implementation instructions, application co
 
 ### Purpose
 
-Work that spans Phases and sessions needs a reliable record of where the project currently stands: which Mode is active, how far each Phase has progressed, and which recorded outcomes still matter.
-
-State exists to answer that question and only that question. It records the active operational position, aggregate progress for each Phase, and the history of recorded outcomes.
-
-It is deliberately thin. State holds no Target meaning, implementation instruction, or Task-level detail. Its Log holds the common metadata and concise reports needed to preserve the project's recorded position; it never replaces the sources.
+Work that spans Phases and sessions needs a reliable record of where the project currently stands: which Mode is active, how far each Phase has progressed, and which recorded outcomes still matter. Its Log holds concise records and never replaces the sources.
 
 ### How It Works
 
-State keeps the active Mode, the relevant Phase when applicable, and aggregate Phase progress for planning, development, and review.
-
-A planning occurrence changes a Phase's planning progress; a development occurrence changes its development progress; and a review occurrence changes its review progress. Task status and history remain in the Plan Config and its Task Logs. Phase records reconcile against stable Target Phase identifiers: a new Phase begins with initial values, and an existing Phase preserves recorded progress.
-
-Every executed Skill has one Log Entry in State. Shared execution metadata belongs in common fields; information specific to that execution belongs under `data`. State is the source of execution history, while Plan remains the source of planned work.
-
-The Log preserves every recorded Entry: in progress, completed, stopped, and blocked. Each Entry may record its parent, Phase, start and completion times, measurable duration, available token usage, Skills used, Open Questions, Blockers, outcome, and a concise report. Execution-specific information is stored in that Entry's `data` mapping or list.
+Each Operation updates its Phase progress and its own Log Entry in State.
 
 <br>
 
@@ -52,7 +42,7 @@ The Log preserves every recorded Entry: in progress, completed, stopped, and blo
 
 - **Active State** — the current or most recently recorded Workflow Mode, its Phase when applicable, and its recorded provenance.
 - **Phase State** — aggregate Planning, Development, and Review progress for one stable Target phase identifier, plus its completion time once Development is completed and Review is satisfied.
-- **Log Entry** — one record of a Skill execution. Its project-wide identifier is a sequential, zero-padded number (`001`, `002`, …); it holds known start information while work is in progress, then its completion time, measured and readable duration, outcome, report, and applicable execution data when work ends.
+- **Log Entry** — one record of a Skill execution.
 - **Workflow Mode** — the current or most recently recorded operational position of the project.
 - **Blocker** — a condition that genuinely prevents safe or valid continuation.
 - **Open Question** — a decision recorded for the Human to review later; work continues with the current choice meanwhile.
@@ -141,7 +131,7 @@ Every Principle below is mandatory.
 
 ### The Log preserves operational evidence
 
-**Rule:** State retains one Log Entry for every Skill execution. Its `id` is the next project-wide sequential number, zero-padded to at least three digits (`001`, `002`, …); the Skill and timestamps remain separate fields. Common fields are optional and include identity, Skill, parent, Phase, event, outcome, timing, token usage, Open Questions, Blockers, and report. Execution-specific values belong under that Entry's `data`, which may be a nested mapping or list.
+**Rule:** State retains one Log Entry for every Skill execution. Its `id` is the next project-wide sequential number, zero-padded to at least three digits (`001`, `002`, …); the Skill and timestamps remain separate fields. Common fields are optional and include identity, Skill, parent, Phase, event, outcome, timing, token usage, Open Questions, Blockers, and report. Execution-specific values belong under that Entry's `data`, which may be a nested mapping or list. The Log preserves every Entry: in progress, completed, stopped, and blocked.
 
 **Why:** Active records show the present while the Log preserves how the project reached it.
 

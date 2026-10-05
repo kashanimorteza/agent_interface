@@ -22,7 +22,7 @@ Plan is the Operation Component that turns a Target phase into bounded, understa
 
 ### Overview
 
-Plan is the Operation Component that turns each selected and plannable project phase into a bounded Plan of Groups and Tasks. It defines how work is organized, understood, ordered, and shown complete.
+It defines how work is organized, understood, ordered, and shown complete.
 
 ### Purpose
 
@@ -30,9 +30,7 @@ Work must be precise enough to execute, order, and verify. Plan provides that st
 
 ### How It Works
 
-A Planning invocation establishes current Interface Understanding and Target Understanding. A selected value is a Target phase identifier. Planning considers selected phases, or every active and plannable Target phase when none is selected, in Target order. It does not proceed to a later phase until Planning of every earlier applicable phase has concluded without an open Blocker. Each applicable phase becomes a Plan, the Plan becomes Groups, and each Group becomes atomic Tasks. Context is stated once at the highest applicable level and inherited downward.
-
-Each Planning invocation produces or reconciles the applicable Plans once against the current Understanding. Planning uses any suitable available Skill, but does not invoke another Core Operation. It stops when required Config records or prerequisites are unavailable, coverage is contradictory, ownership is unresolved, or a required decision remains open.
+Planning turns each selected phase into a Plan, the Plan into Groups, and each Group into atomic Tasks, stating context once at the highest level.
 
 <br>
 
@@ -48,7 +46,6 @@ Each Planning invocation produces or reconciles the applicable Plans once agains
 - **Acceptance** — the observable criterion that determines whether a Task's result is correct.
 - **Task Skills** — the Skills Planning identifies as useful for completing one Task, distinct from that Task's Source ID.
 - **Status** — the current progress value of a Task, updated by Develop and distinct from the aggregate Workflow State.
-- **State Log** — State's ordered record of an Operation execution and its result.
 - **Task Log** — the append-only history of progress, evidence, and verified transitions for one Task, distinct from the State Log.
 - **Task Source ID** — the State Log Entry identifier of the Planning invocation that last created or materially changed a Task.
 
@@ -85,7 +82,7 @@ Every Principle below is mandatory.
 
 ### Every phase has its own Plan
 
-**Rule:** Planning accepts one or more Target phase identifiers, or considers every active and plannable Target phase when none is selected. Once its required Config records are valid, it processes phases in Target order. A Plan represents the work required by one applicable project phase. It preserves the phase's identity, order, target, and intended outcome, then decomposes that outcome into Groups and Tasks. The Plan holds the planning context shared by the whole phase: the Component it targets and work-specific constraints that apply throughout and are not already defined by another source. Language and technology choices are resolved from their owning sources and are not copied into the Plan.
+**Rule:** Planning accepts one or more Target phase identifiers, or considers every active and plannable Target phase when none is selected. Once its required Config records are valid, it processes phases in Target order. A Plan represents the work required by one applicable project phase. It preserves the phase's identity, order, target, and intended outcome, then decomposes that outcome into Groups and Tasks. The Plan holds the planning context shared by the whole phase: the Component it targets and work-specific constraints that apply throughout and are not already defined by another source. Planning uses any suitable available Skill but never invokes another Core Operation, and it stops when required Config records or prerequisites are unavailable, coverage is contradictory, or ownership is unresolved. Language and technology choices are resolved from their owning sources and are not copied into the Plan.
 
 **Why:** Stated once in the Plan, that context is inherited by every Group and Task beneath it, so the phase is described in one place rather than restated by everything it contains.
 
