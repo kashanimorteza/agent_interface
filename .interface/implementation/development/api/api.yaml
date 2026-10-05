@@ -4,7 +4,7 @@ meta:
   path_note: "The Preferences layer of the API Component."
   purpose: "Identity, Interface Schema reference, layout, Group list, Endpoint rules, network, runtime, development, and documentation for API."
   standard: "Agent Project Interface"
-  version: "12.0"
+  version: "13.0"
   updated: "2026-10-05"
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -40,7 +40,7 @@ content_map:
   layout: "The physical names of the Groups directory and the Bootstrap, Configuration, and documentation files."
   groups: "Every Group of API, with its Definition and Preferences."
   endpoints: "The Method, Path, and Parameter placement every Endpoint derives from its operation, and the URL shape."
-  network: "Transport protocol, host, port, optional URL Key, and the derived Base URL."
+  network: "Transport protocol, host, port, whether a URL Key is generated, and the derived Base URL."
   identity: "The title and description the running API presents."
   runtime: "The number of worker processes."
   development: "Development capabilities and the selected language with its realization profile."
@@ -63,7 +63,7 @@ content:
   interface:
     schema: ".interface/foundation/schema/api-interface.yaml"
     group_schema: ".interface/foundation/schema/api-group-interface.yaml"
-    contract_version: "1.2"
+    contract_version: "1.3"
 
   # <!-------------------------------------------- layout -->
   layout:
@@ -95,8 +95,9 @@ content:
     transport_protocol: "HTTP"
     host: "127.0.0.1"
     port: 8000
-    key: ""
-    url: "http://127.0.0.1:8000"
+    key: true
+    key_length: 32
+    url: "http://127.0.0.1:8000/<key>"
 
   # <!-------------------------------------------- identity -->
   identity:
@@ -123,6 +124,9 @@ content:
             package: "fastapi[standard]"
             version: "latest-compatible"
             skill: "fastapi"
+          documentation_ui:
+            swagger: "/docs"
+            redoc: "/redoc"
           middleware:
             cors:
               name: "CORSMiddleware"

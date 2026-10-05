@@ -1,6 +1,6 @@
 schema:
   id: "agent-interface-api-interface"
-  version: "1.2"
+  version: "1.3"
   purpose: "The stable, language-independent structure of API's public surface: every listed Group beneath its own URL segment, and nothing of API's own."
   kind: "Interface structure standard"
   applies_when: "The Implementation declares an API Component."
@@ -30,7 +30,7 @@ structure:
 
 # <!--------------------------------------------------------------------------------- Rules -->
 rules:
-  no_own_surface: "API serves no Endpoint, path, wrapper, or behaviour of its own."
+  no_own_surface: "API serves no Endpoint, wrapper, or behaviour of its own."
   unique: "No two Groups share a segment, and no two Endpoints share a Method and Path."
   contract_change: "A change to this structure requires a Schema version change; a change in the Group list flows through without one."
 

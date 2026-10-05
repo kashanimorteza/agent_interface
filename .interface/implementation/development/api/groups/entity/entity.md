@@ -24,11 +24,11 @@ Entity Group is the API Group that gives every Entity of Entity Service one Adap
 
 ### Overview
 
-Entity Group is the API Group that turns Entity Service into HTTP: one Adapter for every Entity, and one Endpoint for every Action of that Entity.
+Entity Group is the API Group that turns Entity Service into API Endpoints: one Adapter for every Entity, and one Endpoint for every Action of that Entity.
 
 ### Purpose
 
-Entity Service already holds every Entity and its Actions. Entity Group gives them one consistent HTTP surface without repeating their contracts or adding Behaviour.
+Entity Service already holds every Entity and its Actions. Entity Group gives them one consistent API surface without repeating their contracts or adding Behaviour.
 
 ### How It Works
 
@@ -41,7 +41,7 @@ A request reaches an Endpoint; its Handler calls the same Action on the Entity's
 
 - **Adapter** — the unit for one Entity that holds the Endpoints of that Entity's Actions.
 - **Action** — one operation an Entity Child Service offers.
-- **Handler** — the part of an Endpoint that binds the request, calls its Action, and returns the result.
+- **Handler** — the part of an Endpoint that calls its Action and returns the result.
 - **API Group Interface Schema** — the versioned contract through which every Group states what it serves.
 
 <br>
@@ -76,7 +76,7 @@ Entity Group
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-Entity Group Preferences own its name, directory, Adapter naming pattern, and documentation. The shape in which it states them belongs to the API Group Interface Schema.
+Entity Group Preferences own its name, directory, Adapter naming pattern, and documentation. The shape in which it states what it serves belongs to the API Group Interface Schema.
 
 ### Adapters
 
@@ -84,7 +84,7 @@ One unit for every Entity Child Service, placed directly inside the Entity Group
 
 ### Endpoints
 
-The HTTP surface of every Adapter. It meets these needs:
+The API surface of every Adapter. It meets these needs:
 
 1. **Complete** — exactly one Adapter for every Entity that Entity Service presents, and exactly one Endpoint for every Action of that Entity, changing when Entity Service changes.
 2. **Unchanged** — every Parameter keeps the Action's name, requirement, structure, and default, and every Endpoint returns the Action's result and errors unchanged.
@@ -118,8 +118,8 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 #### Entity Group conforms to the API Group Interface Schema
 
-**Rule:** Entity Group states what it serves through the versioned API Group Interface Schema: Entity Service through Logic Interface as its source, one Adapter per Entity, and one Endpoint per Action.
-**Why:** Every client depends on one exact HTTP surface instead of reinterpreting each realization.
+**Rule:** Entity Group states its source, Adapters, and Endpoints in the shape the versioned API Group Interface Schema defines.
+**Why:** Every client depends on one exact API surface instead of reinterpreting each realization.
 **Boundary:** Changing the structure itself requires a Schema version change.
 
 ### Adapters
@@ -127,12 +127,12 @@ Every Principle below is mandatory and belongs to the category that owns it.
 #### One Adapter per Entity, one Endpoint per Action
 
 **Rule:** Entity Group has exactly one Adapter for every Entity Child Service that Entity Service presents, permanently bound to that Entity, and each Adapter has exactly one Endpoint for every Action of its Child Service.
-**Why:** The HTTP surface stays a complete representation of Entity Service, and callers never repeat an Entity's identity.
+**Why:** The API surface stays a complete representation of Entity Service, and callers never repeat an Entity's identity.
 **Boundary:** No Entity or Action is filtered out, no Action outside the Child Service is added, and an Adapter never accepts another Entity from a caller.
 
 #### Handlers only call their Action
 
-**Rule:** A Handler binds the request values its Action needs, obtains the bound Child Service through Logic Interface, calls that Action, and returns the result unchanged.
+**Rule:** A Handler calls only its Action on the bound Child Service and returns its result and errors unchanged.
 **Why:** Entity Service stays the single owner of Behaviour while every Handler stays uniform.
 **Boundary:** A Handler adds no decision, semantic validation, initialization, result wrapper, other call, retry, or alternate path.
 
@@ -186,7 +186,7 @@ Every obligation in the file, under the Principle it comes from.
 
 **Handlers only call their Action**
 
-- **Must** — Bind request values, call the bound Child Service's Action through Logic Interface, and return the result unchanged.
+- **Must** — Call only the bound Child Service's Action and return the result unchanged.
 - **Never** — Add a decision, validation, initialization, wrapper, other call, retry, or alternate path.
 
 ### Review

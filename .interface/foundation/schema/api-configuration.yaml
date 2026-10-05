@@ -1,6 +1,6 @@
 schema:
   id: "agent-interface-api-configuration"
-  version: "3.0"
+  version: "4.2"
   purpose: "The independent structure of API config.yaml: identity, network address, URL Key, and runtime workers."
   kind: "Structure standard"
   applies_when: "The Implementation declares an API Component."
@@ -49,9 +49,17 @@ structure:
     purpose: "The Base URL derived from transport_protocol, host, port, and the optional key."
     value: "<derived Base URL>"
 
+  documentation:
+    required: false
+    purpose: "The full addresses of the interactive documentation, present whenever the API package offers it."
+    value:
+      swagger: "<url>/docs"
+      redoc: "<url>/redoc"
+
 # <!--------------------------------------------------------------------------------- Rules -->
 rules:
   url_integrity: "url is derived from transport_protocol, host, port, and key and is never resolved independently."
+  documentation_integrity: "documentation addresses are derived from url and the documentation paths, never resolved independently."
   key_position: "A non-empty key is the first path segment of url and every Group name follows it; an empty key adds no segment."
   key_scope: "key changes the Base URL path and is not request authentication or capability authorization."
   port_integrity: "port is a valid network port."

@@ -94,7 +94,7 @@ The container of every Group's executable realization. It meets these needs:
 
 1. **Complete** — every Group listed in API Preferences is registered beneath the URL segment of its configured name after the Base URL, changing when the list changes.
 2. **Unchanged** — every Group serves its own Endpoints exactly; API adds no Endpoint, wrapper, or behaviour to them.
-3. **Nothing else** — API has no Endpoint or path of its own.
+3. **Nothing else** — API has no Endpoint of its own.
 4. **One Group contract** — every Group states what it serves through the API Group Interface Schema, and API realizes every Group from it the same way.
 
 The exact shape of these needs is fixed by the API Interface Schema, which is built from them. These needs are the reference: when the two differ, the Schema is corrected to match them.
@@ -136,6 +136,18 @@ Every Principle below is mandatory and belongs to the category that owns it.
 **Why:** Groups need one common address and process, and every capability needs one owner.
 **Boundary:** A Group never creates its own server or process; shared process and network concerns stay with API.
 
+#### API always serves its interactive documentation
+
+**Rule:** When the selected API package can publish interactive documentation of the served Endpoints, API always enables it.
+**Why:** Every client can discover and try every Endpoint without reading source.
+**Boundary:** The documentation shows only what the Groups serve.
+
+#### URL Key follows its setting
+
+**Rule:** When the key setting is on, a random URL-safe key of the configured length is generated once, written into the runtime Configuration, and kept on every later generation. When it is off, the Base URL has no key segment.
+**Why:** An Endpoint need not sit at a bare, guessable address, and a kept key never moves the address under its clients.
+**Boundary:** The URL Key only changes the path; it never authenticates a request or authorizes a capability.
+
 ### Interface
 
 #### API Interface conforms to the API Interface Schema
@@ -144,10 +156,10 @@ Every Principle below is mandatory and belongs to the category that owns it.
 **Why:** Every client depends on one exact address structure instead of reinterpreting each realization.
 **Boundary:** Changing the structure itself requires a Schema version change.
 
-#### Group names determine valid and unique URL segments
+#### Public identities are valid and unique
 
-**Rule:** Every Group is registered beneath one valid URL segment derived from its configured name, and no two Groups share a segment.
-**Why:** A client finds a Group from its public name without an ambiguous address.
+**Rule:** Every Group segment, derived from the Group's configured name, every Adapter segment, and every Method-and-Path combination is valid and unique across API.
+**Why:** A client finds every Group and operation without an ambiguous address.
 **Boundary:** An invalid or colliding segment stops generation with a clear error; nothing is renamed silently.
 
 ### Groups
@@ -180,11 +192,13 @@ Every Principle below is mandatory and belongs to the category that owns it.
 **Why:** Inputs sit predictably in every request of every Group.
 **Boundary:** Placement never changes a Parameter's name, requirement, structure, meaning, or default.
 
-#### Endpoint identities are unique
+### Configuration
 
-**Rule:** Every Adapter segment and every final Method-and-Path combination is valid and unique across API.
-**Why:** Two operations cannot share one public identity.
-**Boundary:** A collision or invalid value stops generation with a clear error; nothing is renamed silently.
+#### Every changeable runtime value lives in the runtime Configuration
+
+**Rule:** Every value the API Configuration Structure defines is always written into the runtime Configuration after generation, even when it equals its default, and Bootstrap reads it only from there.
+**Why:** An operator finds and changes the API's address and behaviour in one file, never in source.
+**Boundary:** Source holds no runtime value of its own.
 
 ### Review
 
@@ -199,14 +213,14 @@ Every Principle below is mandatory and belongs to the category that owns it.
 **Rule:** Review establishes API conformance through these observations, every one of them on every review:
 - Every need of the Groups layer and every Endpoints Principle in this Definition appears in the API Interface Schema, and the Schema holds nothing beyond them.
 - Every listed Group is registered exactly beneath the URL segment of its name, and nothing else is registered.
-- No two Groups share a URL segment.
+- Every Group segment, Adapter segment, and Method-and-Path combination is unique.
 - Every Group conforms to the API Group Interface Schema.
-- API serves no Endpoint or path of its own.
+- API serves no Endpoint of its own.
 - Every Endpoint uses `POST` and `/<operation>`, or `/<operation>/{id}` when it takes an `id`.
 - `id` sits in Path and every other Parameter in Body.
-- No two Endpoints share a Method and Path.
-- The Base URL is formed from transport protocol, host, port, and key.
-- The runtime Configuration matches the API Configuration Structure.
+- When the key setting is on, the Base URL carries a non-empty URL Key.
+- When the package offers interactive documentation, it is served and lists every Endpoint.
+- The runtime Configuration holds every value the API Configuration Structure defines and follows its rules.
 - Bootstrap reads no Definition or Preferences file at runtime.
 **Why:** A fixed set of observations proves the same things on every review, so a result is never judged by a different standard from one run to the next.
 **Boundary:** Each observation states what is seen, never the command, tool, or code that observes it; how it is realized belongs to the Review Operation.
@@ -225,6 +239,16 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — Serve every Group through one running API boundary.
 - **Never** — Define an Endpoint, Handler, Parameter, request, response, or connection in API, or let a Group create its own server.
 
+**API always serves its interactive documentation**
+
+- **Must** — Enable the package's interactive documentation whenever the package offers it.
+- **Never** — Show anything in it that the Groups do not serve.
+
+**URL Key follows its setting**
+
+- **Must** — Generate a random URL Key once when the key setting is on, and keep it afterwards.
+- **Never** — Regenerate an existing key.
+
 ### Interface
 
 **API Interface conforms to the API Interface Schema**
@@ -232,10 +256,10 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — Conform every realization to the API Interface Schema.
 - **Never** — Serve anything the Schema does not list or change its structure without a Schema version change.
 
-**Group names determine valid and unique URL segments**
+**Public identities are valid and unique**
 
-- **Must** — Keep every Group segment valid and unique.
-- **Never** — Silently repair an invalid or colliding segment.
+- **Must** — Keep every Group segment, Adapter segment, and Method-and-Path combination valid and unique.
+- **Never** — Silently repair an invalid or colliding value.
 
 ### Groups
 
@@ -263,10 +287,12 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — Place `id` in Path and every other Parameter in Body.
 - **Never** — Change a Parameter's name, requirement, structure, meaning, or default.
 
-**Endpoint identities are unique**
+### Configuration
 
-- **Must** — Keep every Adapter segment and Method-and-Path combination valid and unique.
-- **Never** — Silently rename an invalid or colliding value.
+**Every changeable runtime value lives in the runtime Configuration**
+
+- **Must** — Write every value the API Configuration Structure defines into the runtime Configuration after generation, and read it only from there.
+- **Never** — Hold a runtime value in source.
 
 ### Review
 
