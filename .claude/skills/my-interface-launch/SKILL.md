@@ -25,6 +25,8 @@ Read completely at the start of every run and follow them; this workflow is the 
 - `.interface/implementation/operations/launch/launch.yaml` — Launch Preferences (including the default scope).
 - Platform Principles and Preferences, located through the Interface.
 
+Every Principle in the Definition is mandatory. Launch Preferences supply only activation defaults where higher authorities are silent.
+
 Apply the project Rules (`.claude/rules/`).
 
 ## Workflow

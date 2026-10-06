@@ -24,12 +24,14 @@ Read completely at the start of every run and follow them; this workflow is the 
 - `.interface/implementation/operations/implement/implement.md` — Implement's mandatory coordination Principle.
 - `.interface/implementation/operations/implement/implement.yaml` — Implement Preferences.
 
+The Principle in the Definition is mandatory. Implement Preferences supply only coordination defaults and never replace an owning Component's authority.
+
 Apply the project Rules (`.claude/rules/`). Implement does not establish Target or Interface Understanding; each coordinated Operation establishes the Understanding its own responsibility requires. Implement only locates the Target phase identifiers and their Target order, through the Interface, when no phase is selected.
 
 ## Workflow
 
-1. Check the required Config records once. If they are absent or invalid, invoke `my-interface-configure`; if Config is still absent or invalid afterwards, stop before Plan, Develop, or Review.
-2. Create this execution's State Log Entry (once State is available).
+1. If the State Config record exists and is structurally valid, create this execution's State Log Entry first, so its `id` can be supplied as `parent_id` to every coordinated Core Skill, including Configure.
+2. Check the required Config records once. If they are absent or invalid, invoke `my-interface-configure` (with this Entry's `id` as `parent_id` when the Entry exists). If State was not available before Configure, create this execution's Log Entry as soon as it is, and record the Configure execution's Log Entry `id` in its `data`. If Config is still absent or invalid afterwards, record the stopped outcome (or report explicitly that the Entry could not be written) and stop before Plan, Develop, or Review.
 3. Resolve phases: the given identifiers, or every Target phase in Target order when none is given.
 4. For each phase, in order: invoke `my-interface-plan`, then `my-interface-develop`, then `my-interface-review`, each scoped to that phase and given this Entry's `id` as `parent_id`. A blocked Develop does not by itself skip Review: when Source is available, Review runs its own passes until satisfied or blocked. Unresolved Blockers or Open Questions may make the final outcome blocked, but never prevent an applicable Review.
 5. Carry each Operation's outcome into the aggregate result; determine the unique counts of associated Open Questions and Blockers.

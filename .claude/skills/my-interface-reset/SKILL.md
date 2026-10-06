@@ -25,6 +25,8 @@ Read completely at the start of every run and follow them; this workflow is the 
 - `.interface/implementation/operations/reset/reset.md` — Reset's mandatory Principles.
 - `.interface/implementation/operations/reset/reset.yaml` — Reset Preferences.
 
+Every Principle in the Definition is mandatory. Reset Preferences can guide only an explicitly authorized scope and can never authorize a destructive scope themselves.
+
 Apply the project Rules (`.claude/rules/`), including Interface protection and preservation of unrelated Human work.
 
 ## Workflow

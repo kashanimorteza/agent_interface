@@ -28,17 +28,20 @@ The Operation Component Definition and Preferences below are the authority for w
 - `.interface/implementation/operations/configure/configure.md` — responsibility, limits, and the mandatory Principle.
 - `.interface/implementation/operations/configure/configure.yaml` — the Config directory, the general YAML structure, and the record-to-Schema mappings.
 
+The Principle in the Definition is mandatory. Configure Preferences supply current mappings but can never expand Configure's scope; the two Config Schemas and every applicable Principle take precedence over them.
+
 Apply the project Rules (`.claude/rules/`), especially the Skill policy: the `.interface/` tree is read-only; Config records live in `.config/` at the project root.
 
 ## Workflow
 
 1. Read the two authority files above. Resolve from the Preferences: the Config directory, the general YAML structure Schema, and each declared record with its file name and Schema.
-2. For each declared record, read its specialized Schema and the general YAML structure Schema. Compose them so the generated record conforms to both; never copy the general structure into the specialized Schema.
-3. Generate the record when it is missing; when it exists, reconcile it with its current Schema, preserving every piece of valid operational content and the Schemas' comments, section order, spacing, and format.
-4. Verify that every generated record conforms to its current Schema (and to the general structure).
-5. Record the Log Entry (see Execution Log) and report.
+2. If the State Config record already exists and is structurally valid, create this execution's Log Entry now (see Execution Log); otherwise create it as soon as the State Config record has been generated.
+3. For each declared record, read its specialized Schema and the general YAML structure Schema. Compose them so the generated record conforms to both; never copy the general structure into the specialized Schema.
+4. Generate the record when it is missing; when it exists, reconcile it with its current Schema, preserving every piece of valid operational content and the Schemas' comments, section order, spacing, and format.
+5. Verify that every generated record conforms to its current Schema (and to the general structure).
+6. Update the Log Entry with the outcome and report.
 
-Stop and report the exact reason when a required Schema or mapping is invalid or unavailable, or when a Config record cannot be written.
+Stop and report the exact reason when a required Schema or mapping is invalid or unavailable, or when a Config record cannot be written. On a stop, update the Log Entry with the stopped outcome and reason when the State Config record is writable; otherwise report explicitly that the Entry could not be written.
 
 ## Boundaries
 

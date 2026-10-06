@@ -25,21 +25,23 @@ Read completely at the start of every run and follow them; this workflow is the 
 - `.interface/implementation/operations/develop/develop.yaml` — Develop Preferences.
 - The Definition and Preferences of every Development Component a Task realizes, located through the Interface.
 
+Every Principle in the Definition is mandatory. Develop Preferences can supply execution defaults only where the Plan and the owning Development authorities are silent; technical choices and defaults belong to the owning Development Component Preferences. Plan's Principles govern the Task progress fields, Blocker reference, and Task Log that Develop updates.
+
 Apply the project Rules (`.claude/rules/`). Establish Interface Understanding and Target Understanding before acting.
 
 ## Workflow
 
-1. Verify required Config records are valid and the current Plan exists for each applicable phase; if Config or Plan is unavailable, stop.
-2. Create this execution's State Log Entry.
+1. If the State Config record exists and is structurally valid, create this execution's State Log Entry first, so that every outcome — including a stop — is recorded in it.
+2. Verify required Config records are valid and the current Plan exists for each applicable phase; if Config or Plan is unavailable, stop. Record the stopped outcome in the Log Entry when State is writable; otherwise report explicitly that the Entry could not be written.
 3. Establish current Interface and Target Understanding.
 4. Select phases: the given identifiers, or every active and developable Target phase when none is given, in Target order.
 5. For each eligible Task whose authority, scope, inputs, outputs, and completion conditions are understood and whose dependencies are complete:
    - if it `replaces` an earlier developed Task, mark that earlier Task `replaced` and record the relationship in its Task Log first;
    - claim the Task before changing its result;
    - generate, change, document, or remove artifacts only inside the Component the Task realizes, under that Component's own authorities;
-   - preserve valid existing work; record Task-specific evidence, progress transitions, and any Task-specific Blocker in the append-only Task Log, and update Task status;
+   - preserve valid existing work; record Task-specific evidence, progress transitions, and any Task-specific Blocker in the append-only Task Log (what was actually done, relevant locations, and the observed outcome — never a secret value, and never a prescription for future implementation), and update Task status;
    - record every choice made on Develop's own proposal as a decision in the Task Log, and list the Task under `decisions` in this execution's State Log Entry;
-   - when a blocking condition is verified resolved, record the evidence and transition, clear the obsolete Blocker reference, return the unfinished Task to pending, and recheck dependencies and remaining conditions before claiming it again; resolution never marks work complete and a missing Blocker record alone is not evidence.
+   - when a blocking condition is verified resolved, record the evidence and transition, clear the obsolete Blocker reference, return the unfinished Task to pending, and recheck dependencies and remaining conditions before claiming it again; if another condition still blocks the Task, its Blocker reference identifies that current condition; coordinate removal of the State Blocker with these updates; resolution never marks work complete and a missing Blocker record alone is not evidence.
 6. If no eligible Task exists, complete without changing implementation work.
 7. Update aggregate Development progress in State, complete the Log Entry, and report.
 
@@ -47,14 +49,14 @@ Stop when a dependency or prerequisite is unmet, verification fails, or an unres
 
 ## Generation obligations
 
-- Deterministic: unchanged Target, Definition, Preferences, and technical selections produce the same ordered output with zero source or documentation difference. Classify authoritative additions, modifications, explicit renames, and removals; update every affected public surface together; remove only the Component's own obsolete output; never infer a rename or removal from name similarity, missing understanding, or generator limitation; own no data migration.
-- Atomic and explicit failure: collect independent actionable failures when safe, identify the affected item without exposing sensitive values, publish only complete output, preserve the last valid output.
+- Deterministic: unchanged Target, Definition, Preferences, and technical selections produce the same ordered output with zero source or documentation difference. Classify authoritative additions, modifications, explicit renames, and removals; update every affected public surface together; remove only the Component's own obsolete output; never infer a rename or removal from name similarity, missing understanding, or generator limitation; own no data migration. Runtime-generated values are not source nondeterminism; compatibility aliases or historical versions exist only when explicit authority requires them.
+- Atomic and explicit failure: collect independent actionable failures when safe, identify the affected item without exposing sensitive values, publish only complete output, preserve the last valid output and publish no partial result. Warnings are limited to meaning-neutral issues; omission, coercion, fallback, invention, or partial publication never hides an error.
 - Technology standard: write to the selected technology's standard with only necessary, version-stabilized dependencies; no dead, duplicate, incomplete, cached, compiled, machine-specific, Agent-identifying, timestamped, or narratively generated artifact.
 - Develop checks nothing beyond completing its own output; conformance is established by Review.
 
 ## Boundaries
 
-Never change Target meaning, Plan authority, Development Principles, or another Component's owned record without explicit authority. Never design or change Tasks or expand Task scope. Never change a Component's contract because another Component lacks a capability.
+Never change Target meaning, Plan authority, Development Principles, or another Component's owned record without explicit authority. Never design or change Tasks or expand Task scope. Never change a Component's contract because another Component lacks a capability; a Component may use the language and packages its own Preferences select — those are realization dependencies, not dependencies on another Component. Language-required technical artifacts do not create meaning.
 
 ## Execution Log
 
