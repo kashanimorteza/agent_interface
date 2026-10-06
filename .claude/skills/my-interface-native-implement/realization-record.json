@@ -1,0 +1,83 @@
+{
+  "managed_by": "/my-interface-native-implement",
+  "note": "Native artifacts owned by Agent Native Implement. Only recorded artifacts whose declaration no longer exists are removed; unrecorded Native content is never removed. Not an authority over the Executor Module.",
+  "realized_at": "2026-10-06",
+  "artifacts": {
+    "skills_core": {
+      ".claude/skills/my-interface-configure/SKILL.md": "Skill Contract configure",
+      ".claude/skills/my-interface-plan/SKILL.md": "Skill Contract plan",
+      ".claude/skills/my-interface-develop/SKILL.md": "Skill Contract develop",
+      ".claude/skills/my-interface-review/SKILL.md": "Skill Contract review",
+      ".claude/skills/my-interface-implement/SKILL.md": "Skill Contract implement",
+      ".claude/skills/my-interface-launch/SKILL.md": "Skill Contract launch",
+      ".claude/skills/my-interface-reset/SKILL.md": "Skill Contract reset"
+    },
+    "skills_provider": {
+      ".claude/skills/fastapi/": {
+        "declaration": "Provider Skill folder fastapi",
+        "files": {
+          "SKILL.md": "989e5136ad015c175cca28669d051bfef2e20dad13a8385383885648607f5eb6",
+          "references/dependencies.md": "8b6b71a03fa14680905a81f53f1883b90c2ab7ac65eefa77c2664c2d038de469",
+          "references/other-tools.md": "a2c91995890274681ecd2f6621fa96e64226086b4eb203d46b8e9277cd47f8fd",
+          "references/path-operations.md": "ed8d2a21123bcf63dd1e9aa61cc8e4e33a878cbbf1d09498a556a420302995ca",
+          "references/pydantic.md": "840ab962739861aed2ea77805dc46979c9a96abd8fc0043f197b3bd5d638e84b",
+          "references/responses.md": "7c921508bbd093697301ca9612038976cfb5b65bdc2dc42a0c02e2809d3652a7",
+          "references/streaming.md": "6c76882a7c1b4e477b4d45509bfbb16a9527025106e2b76f00b57d9280f9ca92"
+        }
+      },
+      ".claude/skills/sqlmodel/": {
+        "declaration": "Provider Skill folder sqlmodel",
+        "files": {
+          "SKILL.md": "9682be3dbc62aadc65b8ffc404a4d65615854ed7be9ba1624d2e749e59f87d06"
+        }
+      }
+    },
+    "rules": {
+      ".claude/rules/interface-bootstrap.md": "Rule interface-bootstrap (contract file, global)",
+      ".claude/rules/interface-skill-policy.md": "Rule interface-skill-policy (contract file, global)",
+      ".claude/rules/git-discipline.md": "Rule git-discipline (contract file, global)",
+      ".claude/rules/interface-agent-capabilities.md": "Rule interface-agent-capabilities (derived, global)",
+      ".claude/rules/interface-conduct.md": "Rule Component Principles and conduct settings",
+      ".claude/rules/interface-output-style.md": "Output Style Component Principles and presentation defaults"
+    },
+    "hooks": {
+      ".claude/hooks/interface_guard.py": "Enforced Guarantees interface-boundary-guard and agent-native-read-grant",
+      ".claude/hooks/.state/": "transient grant state (git-ignored)"
+    },
+    "settings": {
+      "file": ".claude/settings.json",
+      "permissions.allow": [
+        "Bash", "Read", "Glob", "Grep", "Edit", "Write", "NotebookEdit", "Agent",
+        "TaskCreate", "TaskGet", "TaskList", "TaskUpdate", "TodoWrite", "WebFetch", "WebSearch",
+        "Skill(my-interface-configure)", "Skill(my-interface-plan)", "Skill(my-interface-develop)",
+        "Skill(my-interface-review)", "Skill(my-interface-implement)", "Skill(my-interface-launch)",
+        "Skill(fastapi)", "Skill(sqlmodel)",
+        "Skill(claude-code-setup:*)", "Skill(feature-dev:*)", "Skill(commit-commands:*)", "Skill(plugin-dev:*)",
+        "Skill(frontend-design:*)", "Skill(example-skills:*)", "Skill(document-skills:*)",
+        "Skill(adhd-output-style:*)", "Skill(superpowers:*)", "Skill(andrej-karpathy-skills:*)",
+        "Read(/.claude/skills/**)", "Read(~/.claude/plugins/**)"
+      ],
+      "permissions.deny": ["Edit(/.interface/**)"],
+      "permissions.ask": [
+        "Bash(git commit:*)", "Bash(git push:*)", "Bash(git reset:*)", "Bash(git restore:*)",
+        "Bash(git checkout:*)", "Bash(git rebase:*)", "Bash(git clean:*)"
+      ],
+      "permissions.defaultMode": "acceptEdits",
+      "hooks.PreToolUse": "interface_guard.py pre (matcher *)",
+      "hooks.UserPromptSubmit": "interface_guard.py prompt",
+      "hooks.Stop": "interface_guard.py revoke",
+      "hooks.SessionStart": "interface_guard.py revoke",
+      "enabledPlugins": [
+        "claude-code-setup@claude-plugins-official", "feature-dev@claude-plugins-official",
+        "commit-commands@claude-plugins-official", "plugin-dev@claude-plugins-official",
+        "frontend-design@claude-plugins-official", "example-skills@anthropic-agent-skills",
+        "document-skills@anthropic-agent-skills", "adhd-output-style@claude-settings",
+        "claude-md-management@claude-plugins-official", "superpowers@claude-plugins-official",
+        "andrej-karpathy-skills@karpathy-skills"
+      ],
+      "extraKnownMarketplaces": ["claude-plugins-official", "anthropic-agent-skills", "claude-settings", "karpathy-skills"],
+      "outputStyle": "ADHD Explanatory",
+      "unrecorded_preserved": ["permissions.allow: Bash(python3 -)", "permissions.allow: Bash(python3 -c ' *)", "autoMemoryEnabled"]
+    }
+  }
+}

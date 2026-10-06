@@ -17,9 +17,31 @@
       "WebFetch",
       "WebSearch",
       "Bash(python3 -)",
-      "Bash(python3 -c ' *)"
+      "Bash(python3 -c ' *)",
+      "Skill(my-interface-configure)",
+      "Skill(my-interface-plan)",
+      "Skill(my-interface-develop)",
+      "Skill(my-interface-review)",
+      "Skill(my-interface-implement)",
+      "Skill(my-interface-launch)",
+      "Skill(fastapi)",
+      "Skill(sqlmodel)",
+      "Skill(claude-code-setup:*)",
+      "Skill(feature-dev:*)",
+      "Skill(commit-commands:*)",
+      "Skill(plugin-dev:*)",
+      "Skill(frontend-design:*)",
+      "Skill(example-skills:*)",
+      "Skill(document-skills:*)",
+      "Skill(adhd-output-style:*)",
+      "Skill(superpowers:*)",
+      "Skill(andrej-karpathy-skills:*)",
+      "Read(/.claude/skills/**)",
+      "Read(~/.claude/plugins/**)"
     ],
-    "deny": [],
+    "deny": [
+      "Edit(/.interface/**)"
+    ],
     "ask": [
       "Bash(git commit:*)",
       "Bash(git push:*)",
@@ -30,6 +52,53 @@
       "Bash(git clean:*)"
     ],
     "defaultMode": "acceptEdits"
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/interface_guard.py\" pre || exit 2",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/interface_guard.py\" prompt || exit 2",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/interface_guard.py\" revoke",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/interface_guard.py\" revoke",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
   },
   "enabledPlugins": {
     "claude-code-setup@claude-plugins-official": true,
@@ -70,6 +139,6 @@
       }
     }
   },
-  "outputStyle": "Explanatory Structured",
+  "outputStyle": "ADHD Explanatory",
   "autoMemoryEnabled": false
 }
