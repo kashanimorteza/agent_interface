@@ -129,6 +129,14 @@ Every Principle below is mandatory.
 
 **Boundary:** A Contract may add Skill-specific logging; it never removes this record.
 
+### Core Skills never invoke one another
+
+**Rule:** A Core Skill never invokes another Core Skill. Only Implement invokes Core Skills, and only Configure, Plan, Develop, and Review. Every Core Skill may use any Provider Skill or other available Skill.
+
+**Why:** Each Core Skill keeps one responsibility, and the workflow order has a single owner.
+
+**Boundary:** This limits only Core Skills; Provider Skills and other available Skills are unaffected.
+
 <br>
 
 <!--------------------------------------------------------------------------------- Review --->
@@ -152,3 +160,8 @@ Every Principle below is mandatory.
 **Every Core Skill execution is logged in State**
 
 - **Must** — create and complete one State Log Entry per execution.
+
+**Core Skills never invoke one another**
+
+- **Must** — let only Implement invoke Configure, Plan, Develop, and Review.
+- **Never** — invoke one Core Skill from another.

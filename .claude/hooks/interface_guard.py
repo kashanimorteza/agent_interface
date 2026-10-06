@@ -446,7 +446,7 @@ def check_bash(ctx, command):
                 if "/" in tok or tok.startswith((".", "~"))]
 
     # ---- Interface mutation (blocked even within the Agent Native Sync prompt)
-    mentions_iface = bool(re.search(r"\.interface(?![A-Za-z0-9_-])", plain))
+    mentions_iface = bool(re.search(r"(?<![A-Za-z0-9_])\.interface(?![A-Za-z0-9_-])", plain))
     for seg, prog, args in parsed:
         for tok in split_tokens(seg):
             if any(c in tok for c in "*?[{") and glob_enters(ctx.cwd, tok, ctx.iface, dot_rule=True):
@@ -481,7 +481,7 @@ def check_bash(ctx, command):
     if re.search(r"interface/+agent(?![A-Za-z0-9_-])", plain) or \
             (within(ctx.cwd, ctx.iface) and "agent" in plain):
         raise Block("Agent Module access outside the Agent Native Sync prompt.")
-    for match in re.finditer(r"\.interface/+([^\s/;|&<>()]*)", plain):
+    for match in re.finditer(r"(?<![A-Za-z0-9_])\.interface/+([^\s/;|&<>()]*)", plain):
         comp = match.group(1)
         if comp and any(c in comp for c in "*?[{") and glob_enters(ctx.iface, comp, ctx.agent, dot_rule=False):
             raise Block("Agent Module access outside the Agent Native Sync prompt.")
@@ -493,7 +493,8 @@ def check_bash(ctx, command):
         if within(ctx.resolve(target), ctx.iface):
             raise Block("Changing into the Interface directory is blocked; use full paths outside the Agent Module.")
     for seg, prog, args in parsed:
-        if prog in INTERPRETERS and "interface" in seg and "agent" in seg:
+        if prog in INTERPRETERS and "agent" in seg and \
+                re.search(r"(?<![A-Za-z0-9_])\.interface(?![A-Za-z0-9_-])", seg):
             raise Block("Agent Module access outside the Agent Native Sync prompt.")
         check_recursive_read(ctx, prog, args, progs, has_exclusion)
 

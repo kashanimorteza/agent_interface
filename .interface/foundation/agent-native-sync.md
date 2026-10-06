@@ -42,7 +42,7 @@ For each declared Component or capability, the Skill:
 3. compares the declaration with that realization;
 4. creates or updates the Native artifact when it is missing or stale;
 5. preserves Native metadata and compatible Native content that the Agent Module does not own; and
-6. re-reads the result and reports whether the declaration was realized faithfully.
+6. re-reads the result, runs every Component's Review checks in the Native, including each Enforced Guarantee's probe and allow_probe, and reports whether the declaration was realized faithfully.
 
 The Skill must realize every current declaration and must not silently skip an unfamiliar or newly added Component. If the Native has no equivalent mechanism, it reports the declaration as unsupported or approximated and states the exact difference. It never invents a declaration, narrows its scope, or silently changes its authority.
 
@@ -85,6 +85,6 @@ The Skill reports:
 - the Native mechanism and artifact used for each declaration;
 - whether each realization was created, updated, already current, approximated, unsupported, or blocked;
 - the exact difference for every approximation or unsupported declaration; and
-- whether re-reading the Native artifacts confirmed faithful synchronization.
+- whether re-reading the Native artifacts and running every Review check and probe confirmed faithful synchronization.
 
 The overall result is successful only when the complete current Agent Module has been read and every required declaration has been realized and verified. A successful result never claims that a Native artifact is authoritative over the Agent Module.

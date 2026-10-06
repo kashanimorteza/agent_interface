@@ -188,7 +188,7 @@ Every Principle below is mandatory.
 ### Checks
 
 - Effective allow, ask, and deny rules match their declarations.
-- Every required Enforced Guarantee is realized, and its probe passes; a failed probe means the guarantee is not realized.
+- Every required Enforced Guarantee is realized, and its probe and any allow_probe pass; a failed probe means the guarantee is not realized.
 - No project declaration contains a credential or secret value.
 
 <br>

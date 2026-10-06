@@ -21,7 +21,7 @@ resolution:
   selection: selected names one option per category.
   version_resolution: No entry carries a version.
   matching: Rules use portable capability patterns; Agent Sync resolves their Native syntax.
-  probes: Each required enforced guarantee carries one behavioral probe.
+  probes: Each required enforced guarantee carries one behavioral probe; a blocking guarantee may also carry an allow_probe for an action it must not block.
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
@@ -102,6 +102,9 @@ content:
         probe:
           action: From an Agent Instance outside the Agent Native Sync prompt, read a file inside the Agent Module and search inside it; then edit the Interface entry file.
           expect: All three are blocked with the boundary message, and no content is returned.
+        allow_probe:
+          action: From any Agent Instance, run a command that names only paths outside the Interface, including a name that merely contains "interface", such as importing `model.interface`.
+          expect: The command is allowed.
       agent-native-read-grant:
         guarantee: Grant Agent Module read access only to the prompt created by the Human's direct explicit invocation of Agent Native Sync; a model, Agent Native, Agent Instance,
           Skill, coordinator, Hook, lifecycle routine, or automation can never create, inherit, or borrow this grant.

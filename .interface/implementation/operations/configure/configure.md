@@ -72,7 +72,7 @@ Every Principle below is mandatory.
 
 **Rule:** Configure reads only the Config Schemas declared by Configure Preferences, generates only their structurally valid Config Records, preserves the Schemas' comments in the generated records, and preserves valid operational content when reconciling an existing record. It composes each specialized Schema with the general YAML file structure, so a generated record conforms to both and a specialized Schema never copies the general structure. Configure is complete when every generated record conforms to its current Schema; it stops when a required Schema or mapping is invalid or unavailable, or when a Config record cannot be written. Later operational content in a record belongs to the Operation that owns it.
 
-**Why:** A single narrow responsibility gives the Interface a known operational structure without allowing Configure to interpret project meaning or perform another Operation.
+**Why:** A single narrow responsibility gives the Interface a known operational structure without allowing Configure to interpret project meaning.
 
 **Boundary:** Configure changes only the two declared Config Records.
 
@@ -86,4 +86,4 @@ Every obligation in the file, under the Principle it comes from.
 **Configure generates only the declared Config records from their Schemas**
 
 - **Must** — generate each declared Config Record from its current Schema and preserve its comments and valid operational content during reconciliation.
-- **Never** — perform another Operation or change anything outside those Config Records.
+- **Never** — change anything outside those Config Records.

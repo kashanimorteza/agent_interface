@@ -1,2 +1,0 @@
-class EntityValidationError(ValueError):
-    pass

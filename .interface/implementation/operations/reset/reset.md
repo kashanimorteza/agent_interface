@@ -88,7 +88,7 @@ Every Principle below is mandatory.
 
 **Why:** Removal is irreversible, so the Human sees and confirms exactly what will be removed before anything is.
 
-**Boundary:** Reset resolves shared paths conservatively and refuses an ambiguous or unsafe reset; unresolved attribution stops mutation. It never invokes another workflow operation, and repeating an already realized reset removes nothing beyond a newly resolved and confirmed preview.
+**Boundary:** Reset resolves shared paths conservatively and refuses an ambiguous or unsafe reset; unresolved attribution stops mutation. Repeating an already realized reset removes nothing beyond a newly resolved and confirmed preview.
 
 <br>
 
@@ -105,4 +105,4 @@ Every obligation in the file, under the Principle it comes from.
 **Reset previews and confirms before it removes**
 
 - **Must** — preview the complete scope and obtain explicit Human confirmation before any removal.
-- **Never** — remove a target whose attribution is unresolved or invoke another workflow operation.
+- **Never** — remove a target whose attribution is unresolved.
