@@ -18,7 +18,7 @@ policy:
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
   consumption: Read the content sections in read_order.
-  selection: settings declares each plugin's and tool's desired state.
+  selection: settings declares each plugin's desired state.
   version_resolution: Protocol and provider versions resolve from compatible declared entries. Unpinned Extensions resolve to the latest compatible provider version at activation time.
   matching: Match plugins by plugin-at-marketplace identity, and marketplaces by source key.
 

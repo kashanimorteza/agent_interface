@@ -4,10 +4,6 @@ Agent Permission is the Executor Component that defines the enforceable boundari
 
 <br>
 
-
-
-
-
 <!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation
 
@@ -18,10 +14,6 @@ Agent Permission is the Executor Component that defines the enforceable boundari
 5. **[Principles](#principles)**
 6. **[Review](#review)**
 7. **[At a Glance](#at-a-glance)**
-
-
-
-
 
 <br>
 
@@ -64,10 +56,6 @@ Secrets are never values in a declaration. A declaration references a credential
 - **Event** — a named observable point in Agent or Tool execution.
 - **Blocking Guarantee** — an Enforced Guarantee authorized to prevent or reject the triggering action.
 
-
-
-
-
 <br>
 
 <!--------------------------------------------------------------------------------- Layering --->
@@ -75,19 +63,12 @@ Secrets are never values in a declaration. A declaration references a credential
 
 This Definition carries the portable meaning and mandatory Principles of the Permission Component. Preferences carry current permission selections, rules, protected sources, secret handling, and enforced guarantees. Agent Native Implement reads both and realizes them without changing their scope or authority.
 
-
-
-
-
 <br>
 
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
 The Human owns this Definition and its Preferences. Every Principle in this file is mandatory; Preferences can never override a Principle, and Agent Native Implement is the only reader authorized to realize the Component in an Agent Native.
-
-
-
 
 <br>
 

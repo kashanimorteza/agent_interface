@@ -2,10 +2,6 @@
 
 Agent Rule is the Component for persistent behavioral guidance applied across sessions or declared scopes.
 
-
-
-
-
 <br>
 
 <!--------------------------------------------------------------------------------- Navigation --->
@@ -36,7 +32,7 @@ Its scope covers interaction (progress, prompts, status presentation, artifacts,
 
 Some things an Agent must do are not tied to any one task: never commit without being asked, report progress without narrating everything, claim completion only with evidence, re-establish context after a resume. They apply across sessions and across work, and if they are not written down somewhere persistent, they have to be repeated in every conversation — and they will be forgotten in the one that matters.
 
-Rule exists to hold them. A Rule is a standing instruction that adapts the Agent's behavior to stable conventions: how it presents work, what it counts as done, how it begins and ends a session. It is guidance the Agent carries with it, not enforcement.
+Rule exists to hold them. A Rule is a standing instruction that adapts the Agent's behavior to stable conventions: what it counts as done, how it begins and ends a session. It is guidance the Agent carries with it, not enforcement.
 
 The distinction from enforcement is the point. A Rule tells the Agent how to behave; a Permission guarantee makes a behavior impossible. Rules that pretend to enforce create a false sense of safety, and enforcement that pretends to be advice gets argued with. Keeping them in separate Components keeps both honest.
 

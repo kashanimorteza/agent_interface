@@ -27,7 +27,7 @@ The Executor Module is the Human-owned, Runtime-independent declaration of how t
 
 The Executor Module is one of the three primary Interface Modules, alongside Target and Implementation. It covers the Agent's behavior, Skills, Rules, limits, responsibilities, capabilities, and boundaries.
 
-The Guide explains the Executor Module and maps every Component's Definition, Preferences, or Contracts.
+The Guide explains the Executor Module and maps every Component's Definition, Preferences, Contracts, or Provider Skills.
 
 ### Purpose
 
@@ -112,7 +112,6 @@ How the Agent's output is presented.
 
 → [Definition of Output Style](output-style/output-style.md)<br>
 → [Preferences of Output Style](output-style/output-style.yaml)
-
 
 <br>
 
