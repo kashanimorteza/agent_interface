@@ -30,7 +30,7 @@ Agent Rule defines persistent behavioral guidance applied across sessions or wit
 
 It owns Rule scope, loading conditions, precedence, and recurring conduct. It does not own security enforcement, workflow implementation, project definitions, or session records.
 
-Its scope covers interaction (Output Styles, progress, prompts, status presentation, artifacts, themes, and UI behavior), observability (validation, status, diagnostics, evidence, logs, telemetry, health, and usage), and session conduct (lifecycle, resume, history, background work, isolation, checkpoints, and termination).
+Its scope covers interaction (progress, prompts, status presentation, artifacts, themes, and UI behavior), observability (validation, status, diagnostics, evidence, logs, telemetry, health, and usage), and session conduct (lifecycle, resume, history, background work, isolation, checkpoints, and termination).
 
 ### Purpose
 
@@ -46,7 +46,7 @@ The Human declares Rules, each with its scope — applying everywhere, or only w
 
 Loading and precedence are explicit: which Rules apply, in what order, and what happens when two of them conflict. A Rule never silently overrides an owned Interface source; where a Rule and an authority disagree, the authority holds.
 
-Beyond the declared Rules, this Component carries the conduct every Agent Native honours whether or not it has a native mechanism for each: presentation that never alters technical substance, progress that is reported without narrating internals, unstated choices that are decided and recorded rather than asked, completion claimed only with observed evidence, a controlled vocabulary for health, and session conduct — session state is never authoritative, a resume revalidates before it mutates anything, and an ending exposes what is unfinished.
+Beyond the declared Rules, this Component carries the conduct every Agent Native honours whether or not it has a native mechanism for each: progress that is reported without narrating internals, unstated choices that are decided and recorded rather than asked, completion claimed only with observed evidence, a controlled vocabulary for health, and session conduct — session state is never authoritative, a resume revalidates before it mutates anything, and an ending exposes what is unfinished.
 
 What must be guaranteed rather than followed is not written here: it is declared as an Enforced Guarantee in Permission, and this Component explains the boundary rather than replacing it.
 
@@ -58,7 +58,6 @@ What must be guaranteed rather than followed is not written here: it is declared
 - **Agent Rule** — persistent behavioral guidance loaded for all work or a matching scope.
 - **Scoped Rule** — an Agent Rule activated only for declared paths or conditions.
 - **Rule Conflict** — two applicable instructions that cannot both be satisfied.
-- **Output Style** — a presentation contract controlling organization, tone, and response format.
 - **Progress Update** — a concise report of active scope, material movement, or a blocking condition.
 - **Artifact** — a rendered or shareable representation of an Agent Native or Agent Instance result.
 - **Observation** — a current, attributable fact obtained from an inspectable source or check.
@@ -118,16 +117,6 @@ Every Principle below is mandatory.
 **Why:** Instructions influence model behavior but do not constitute deterministic enforcement.
 
 **Boundary:** Rules may explain an enforced boundary and how to work within it.
-
-<br>
-
-### Presentation preserves technical substance
-
-**Rule:** Output Style may change organization, tone, detail, and format while preserving exact technical meaning, identifiers, commands, paths, code, evidence, warnings, uncertainty, and required decisions.
-
-**Why:** Communication may adapt to a Human without changing the work communicated.
-
-**Boundary:** A style may shorten expression only when no required substance is lost.
 
 <br>
 
@@ -222,7 +211,6 @@ Every Principle below is mandatory.
 
 - Every declared Rule exists in the Agent Native with its declared scope.
 - Every Rule with a contract file carries that file's complete text, adding only the Native's own wrapper.
-- The selected Output Style is present and active.
 
 <br>
 
@@ -244,11 +232,6 @@ Every obligation in the file, under the Principle it comes from.
 **Security boundaries use enforcement**
 
 - **Must** — place guaranteed boundaries in enforceable mechanisms
-
-**Presentation preserves technical substance**
-
-- **Must** — preserve exact technical substance under every Output Style
-- **Never** — let presentation hide evidence, warnings, uncertainty, or decisions
 
 **Interaction keeps work legible**
 

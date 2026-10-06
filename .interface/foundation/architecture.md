@@ -23,16 +23,11 @@ Agent Interface
 │       ├── Reset
 │       └── State
 ├── Executor
-│   ├── Runtime
-│   ├── Instance
-│   ├── Personality
 │   ├── Rule
 │   ├── Skill
-│   ├── Command
-│   ├── Tool
 │   ├── Permission
 │   ├── Connection
-│   └── Context
+│   └── Output Style
 ├── Config
 │   ├── State
 │   └── Plan

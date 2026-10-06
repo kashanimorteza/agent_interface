@@ -42,14 +42,14 @@ A declared Connection is not yet a usable one. It becomes available only when it
 
 Authorization does not transfer across the boundary. An action with effects in an external system needs that system's own authorization, whatever the Agent's internal permission says.
 
-Packaged capabilities keep their owners. An Extension declares its identity, source, and desired state, and the capabilities it contributes are read from the package itself; those capabilities remain governed by the Components that own them — a Skill it brings is still governed by Skill, a Tool by Tool, a guarantee by Permission. Provisioning — installing, enabling, updating, disabling, removing — happens within Permission, and the resulting state is declared rather than discovered.
+Packaged capabilities keep their owners. An Extension declares its identity, source, and desired state, and the capabilities it contributes are read from the package itself; those capabilities remain governed by the Components that own them — a Skill it brings is still governed by Skill, a guarantee by Permission. Provisioning — installing, enabling, updating, disabling, removing — happens within Permission, and the resulting state is declared rather than discovered.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
-- **Connection** — a declared connection between the Agent Runtime and an external capability provider.
+- **Connection** — a declared connection between the Agent and an external capability provider.
 - **Trust Boundary** — the point at which data or authority crosses between the project and an external system.
 - **Connection State** — the observed availability, authentication, and health of a Connection.
 - **Extension** — an installable or loadable package that contributes one or more Agent capabilities.

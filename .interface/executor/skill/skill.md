@@ -31,7 +31,7 @@ Skill provides one consistent way to describe a reusable capability without repe
 
 ### How It Works
 
-Agent Native Implement builds each Core Skill in the Agent Native from its Contract and every Source the Contract names, and installs each Provider Skill as its declared package supplies it.
+Agent Native Implement builds each Core Skill in the Agent Native from its Contract and every Source the Contract names, and transfers each Provider Skill folder from `providers/` to the Agent Native unchanged.
 
 <br>
 
@@ -39,8 +39,8 @@ Agent Native Implement builds each Core Skill in the Agent Native from its Contr
 ## Terms
 
 - **Core Skill** — a Skill built from a Contract and the Sources it names.
-- **Provider Skill** — a self-contained Skill taken as its declared package supplies it.
-- **Contract** — the declaration of one Core Skill: its identity, inputs, invocation, outputs, and Sources.
+- **Provider Skill** — a ready-made, self-contained Skill stored as a complete folder in `providers/` and transferred to the Agent Native unchanged.
+- **Contract** — the declaration of one Core Skill: its identity, inputs, invocation, outputs, and Sources, plus an optional Personality and Skill-specific Execution Log when the Skill needs them.
 
 <br>
 
@@ -96,16 +96,18 @@ The Contract's `Source` section identifies where the Core Skill's Understanding 
 
 ### Provider Skills
 
-Provider Skills are self-contained: they have no Contract or `Source` section, and their content is taken as its provider supplies it.
+Provider Skills are self-contained: they have no Contract or `Source` section, and their content is taken as its provider supplies it. Each Provider Skill is one complete folder in `providers/`.
 
-- **graphify** — the knowledge-graph Skill supplied by the graphify package; it turns project files into a queryable graph used for codebase questions.
+→ [Provider Skills](providers/)<br>
+
+Every folder in `providers/` is a declared Provider Skill.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Layering --->
 ## Layering
 
-This Definition carries the portable meaning and mandatory Principles of the Skill Component. Contracts carry each Core Skill's declaration. Agent Native Implement reads both and realizes them without changing their scope or authority.
+This Definition carries the portable meaning and mandatory Principles of the Skill Component. Contracts carry each Core Skill's declaration, and `providers/` carries each Provider Skill's complete folder. Agent Native Implement reads both and realizes them without changing their scope or authority.
 
 <br>
 
@@ -129,13 +131,21 @@ Every Principle below is mandatory.
 
 **Boundary:** A Contract may add Skill-specific logging; it never removes this record.
 
-### Core Skills never invoke one another
+### Only Implement coordinates Core Skills
 
 **Rule:** A Core Skill never invokes another Core Skill. Only Implement invokes Core Skills, and only Configure, Plan, Develop, and Review. Every Core Skill may use any Provider Skill or other available Skill.
 
 **Why:** Each Core Skill keeps one responsibility, and the workflow order has a single owner.
 
 **Boundary:** This limits only Core Skills; Provider Skills and other available Skills are unaffected.
+
+### Provider Skills transfer whole and stay within Permission
+
+**Rule:** Agent Native Implement copies each `providers/` folder unchanged into the Agent Native's Skill location. The activation settings and permissions the Skill requires are read from the folder itself and realized only within Permission: least privilege, never broadening a deny rule, Interface protection, or the git boundary. A requirement that would cross them is reported as a gap, not realized.
+
+**Why:** A ready-made Skill keeps its provider's content, but it must not bring its own authority into the project.
+
+**Boundary:** Each folder is copied byte-for-byte; the Native never edits, wraps, or adds to its files. Registering the Skill, when the Native requires it, happens outside the copied folder.
 
 <br>
 
@@ -151,6 +161,7 @@ Every Principle below is mandatory.
 - Every Core Skill has exactly one Contract, and every Contract's Skill exists in the Agent Native under its declared Skill name.
 - Every Contract's `Source` paths exist.
 - Every Core Skill execution has one State Log Entry.
+- Every `providers/` folder exists in the Agent Native unchanged.
 
 <br>
 
@@ -161,7 +172,12 @@ Every Principle below is mandatory.
 
 - **Must** — create and complete one State Log Entry per execution.
 
-**Core Skills never invoke one another**
+**Only Implement coordinates Core Skills**
 
 - **Must** — let only Implement invoke Configure, Plan, Develop, and Review.
 - **Never** — invoke one Core Skill from another.
+
+**Provider Skills transfer whole and stay within Permission**
+
+- **Must** — transfer each Provider Skill folder byte-for-byte and realize its requirements only within Permission.
+- **Never** — let a Provider Skill broaden a deny rule, Interface protection, or the git boundary.

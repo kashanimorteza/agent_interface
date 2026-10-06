@@ -35,7 +35,7 @@ The Module exists so the Human defines the Agent once instead of creating a sepa
 
 ### How It Works
 
-The Executor Module is composed of Components. Each Component has a Definition for its portable meaning and mandatory Principles; every Component except Skill has Preferences; Skill and Rule hold their declarations in Contracts.
+The Executor Module is composed of Components. Each Component has a Definition for its portable meaning and mandatory Principles; every Component except Skill has Preferences; Skill and Rule hold their declarations in Contracts, and Skill also holds ready-made Provider Skills in `providers/`.
 
 Agent Native Implement reads the complete Module and realizes it in the Agent Native; every other role uses that realization.
 
@@ -62,15 +62,11 @@ The Executor Module is organized into bounded Components.
 ```text
 Executor
 └── Components
-    ├── Runtime
-    ├── Instance
     ├── Rule
     ├── Skill
-    ├── Command
-    ├── Tool
     ├── Permission
     ├── Connection
-    └── Context
+    └── Output Style
 ```
 
 <br>
@@ -79,20 +75,6 @@ Executor
 ## Components
 
 The instructions for Agent Native Implement live in a Foundation File; Agent Native Implement is not an Executor Component.
-
-### Runtime
-
-The runtime in which the Agent operates.
-
-→ [Definition of Runtime](runtime/runtime.md)<br>
-→ [Preferences of Runtime](runtime/runtime.yaml)
-
-### Instance
-
-The Agent Native and its Agent Instances.
-
-→ [Definition of Instance](instance/instance.md)<br>
-→ [Preferences of Instance](instance/instance.yaml)
 
 ### Rule
 
@@ -108,20 +90,7 @@ Reusable knowledge and workflows.
 
 → [Definition of Skill](skill/skill.md)<br>
 → [Contracts of Skill](skill/contracts/)<br>
-
-### Command
-
-Invocation entry points.
-
-→ [Definition of Command](command/command.md)<br>
-→ [Preferences of Command](command/command.yaml)
-
-### Tool
-
-Executable capabilities.
-
-→ [Definition of Tool](tool/tool.md)<br>
-→ [Preferences of Tool](tool/tool.yaml)
+→ [Provider Skills of Skill](skill/providers/)
 
 ### Permission
 
@@ -137,12 +106,12 @@ Services and packages obtained from outside the project.
 → [Definition of Connection](connection/connection.md)<br>
 → [Preferences of Connection](connection/connection.yaml)
 
-### Context
+### Output Style
 
-What the Agent knows and keeps while it works.
+How the Agent's output is presented.
 
-→ [Definition of Context](context/context.md)<br>
-→ [Preferences of Context](context/context.yaml)
+→ [Definition of Output Style](output-style/output-style.md)<br>
+→ [Preferences of Output Style](output-style/output-style.yaml)
 
 
 <br>

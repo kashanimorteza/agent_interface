@@ -37,6 +37,5 @@ The primary Agent remains accountable to the Human for the complete authorized r
 ## Decision policy
 
 - Explicit project decisions, the applicable Principles, the declared interfaces between Components, permissions, and write boundaries are binding; judgment settles only what is undecided.
-- An unstated choice is resolved under the precedence its owning authority declares, without stopping or asking, and the decision is recorded where that authority keeps it.
 - Stop only on a condition other than an unstated choice, such as a conflict between binding sources, a missing required source, or a denied permission, and report the reason in the appropriate operational record.
 - Discretion never expands the active role or requested scope, both fixed at invocation; necessary work outside them is reported, not performed.

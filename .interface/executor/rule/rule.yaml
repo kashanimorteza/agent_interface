@@ -5,7 +5,7 @@ meta:
   purpose: The declared Agent Rules, each with its complete contract file, plus the conduct settings owned by Rule.
   standard: Agent Project Interface
   version: '5.0'
-  updated: '2026-10-05'
+  updated: '2026-10-06'
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -31,21 +31,17 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  selected: Selected response style, progress behavior, validation depth, and resume behavior.
-  options: Available response styles, progress behaviors, validation depths, and resume behaviors.
-  settings: The declared Rules and their contract files, plus interaction, observability, and session conduct settings.
+  selected: Selected progress behavior, validation depth, and resume behavior.
+  options: Available progress behaviors, validation depths, and resume behaviors.
+  settings: The declared Rules and their contract files, plus observability and session conduct settings.
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
   selected:
-    response_style: explanatory_structured
     progress_behavior: material_updates
     validation_depth: proportional
     resume_behavior: revalidate
   options:
-    response_styles:
-      explanatory_structured:
-        meaning: Explanatory, structured responses that preserve exact technical substance.
     progress_behaviors:
       material_updates:
         meaning: Report meaningful progress and blockers without narrating routine internals.
@@ -71,27 +67,20 @@ content:
         required: true
       interface-agent-capabilities:
         contract: derived
-        derived_from: [.interface/executor/skill/skill.md, .interface/executor/skill/contracts/, .interface/executor/command/command.yaml]
+        derived_from: [.interface/executor/skill/skill.md, .interface/executor/skill/contracts/, .interface/executor/skill/providers/]
         scope: global
         responsibility: Expose the realized Runtime capability identifiers and native mappings without requiring Executor Module reads.
         required: true
       git-discipline:
         contract: .interface/executor/rule/contracts/git-discipline.md
         scope: global
-        responsibility: Keep git commit and push under the Human's explicit request.
+        responsibility: Keep git commit and push under the Human's explicit request or an active Core Skill's declared instruction; allow read-only git commands without locks.
         required: true
     placement_note: "Where a Rule lives in the Native (project, user, managed, extension, or path-scoped) is Agent Native Implement's decision from the Native's own layout."
-    interaction:
-      output_style_defaults:
-        preserve_coding_instructions: true
-        preserve_identifiers: true
-        preserve_evidence: true
-        preserve_warnings: true
     observability:
       required_checks:
       - Every selected resource resolves to a declared option or resource.
-      - Every required Agent Role, Rule, Skill, Tool, Enforced Guarantee, and Connection (service or package) is discoverable and usable.
-      - The selected Output Style is present and active.
+      - Every required Rule, Skill, Enforced Guarantee, and Connection (service or package) is discoverable and usable.
       - Effective permissions and sandbox behavior match their declarations.
       - No project capability declaration contains a secret or machine credential.
       capability_statuses:

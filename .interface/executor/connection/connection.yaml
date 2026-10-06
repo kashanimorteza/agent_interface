@@ -2,10 +2,10 @@
 meta:
   path: .interface/executor/connection/connection.yaml
   path_note: The Preferences layer of the Agent Connection Component.
-  purpose: Declared plugins, marketplaces, and tools with their trust and lifecycle.
+  purpose: Declared plugins and marketplaces with their trust and lifecycle.
   standard: Agent Project Interface
   version: '5.0'
-  updated: '2026-10-05'
+  updated: '2026-10-06'
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -20,7 +20,7 @@ resolution:
   consumption: Read the content sections in read_order.
   selection: settings declares each plugin's and tool's desired state.
   version_resolution: Protocol and provider versions resolve from compatible declared entries. Unpinned Extensions resolve to the latest compatible provider version at activation time.
-  matching: Match plugins by plugin-at-marketplace identity, marketplaces by source key, and tools by package name.
+  matching: Match plugins by plugin-at-marketplace identity, and marketplaces by source key.
 
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
@@ -33,7 +33,7 @@ read_order:
 content_map:
   selected: Empty. Package state is declared in settings.
   options: Supported service protocols and declared package marketplaces.
-  settings: Declared plugins and tools with their desired state; no external service is declared.
+  settings: Declared plugins with their desired state; no external service is declared.
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
@@ -98,10 +98,3 @@ content:
         andrej-karpathy-skills:
           id: andrej-karpathy-skills@karpathy-skills
           desired_state: enabled
-    tools:
-      graphify:
-        source: pypi
-        package: graphifyy
-        install: "uv tool install graphifyy"
-        desired_state: enabled
-        provides: ["graphify Provider Skill", "graphify-guard"]

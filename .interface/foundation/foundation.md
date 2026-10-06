@@ -68,7 +68,6 @@ The Interface routes an Agent to the relevant Foundation source or Schema. Confi
         ├── yaml.yaml
         ├── <component>.md
         ├── <component>.yaml
-        ├── personality.md
         ├── state.yaml
         ├── plan.yaml
 ```
@@ -96,7 +95,6 @@ Schemas define the structure followed by authored Interface files and generated 
 ├── yaml.yaml
 ├── <component>.md
 ├── <component>.yaml
-├── personality.md
 ├── database.yaml
 ├── state.yaml
 ├── plan.yaml
@@ -125,14 +123,6 @@ The common structure of every Component `<component>.yaml` file.
 Responsibility: Defines the common Preferences structure followed by every Component `<component>.yaml` file.
 
 → [Read more about Preferences Schema](schema/schema.yaml)
-
-#### Personality Schema
-
-The structure of every Personality Contract file under `executor/personality/contracts/`.
-
-Responsibility: Defines the structure followed by every Personality Contract file under `executor/personality/contracts/`.
-
-→ [Read more about Personality Schema](schema/personality.md)
 
 #### Database Configuration Schema
 

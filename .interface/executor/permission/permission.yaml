@@ -5,7 +5,7 @@ meta:
   purpose: File-edit approval, allow/ask/deny rules, protected sources, secret handling, and enforced guarantees.
   standard: Agent Project Interface
   version: '5.0'
-  updated: '2026-10-05'
+  updated: '2026-10-06'
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -116,10 +116,3 @@ content:
         probe:
           action: Within the prompt created by the Human's direct Agent Native Implement invocation, read a file inside the Executor Module; then attempt the same read from an Agent Instance that prompt delegates to.
           expect: The first read succeeds; the delegated read is blocked, because the grant is non-transferable.
-      graphify-guard:
-        guarantee: Before a search or a read, run the graphify guard so that codebase questions use the knowledge graph when it exists.
-        event: before every search or read action
-        blocking: false
-        effects: Return guidance toward the knowledge graph; never reject an action.
-        failure_policy: fail_open
-        required: false

@@ -1,0 +1,57 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: .interface/executor/output-style/output-style.yaml
+  path_note: The Preferences layer of the Agent Output Style Component.
+  purpose: The selected Output Style, the available Output Styles, and the presentation defaults every Output Style preserves.
+  standard: Agent Project Interface
+  version: '5.0'
+  updated: '2026-10-06'
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: false
+  rule: This file is human-owned.
+  changed_by: The human, directly.
+  precedence: An explicit project decision and every applicable Principle take precedence over this file.
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: Read the content sections in read_order.
+  selection: selected names one option per category.
+  version_resolution: No entry carries a version.
+  matching: Match Output Styles by stable key.
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+- selected
+- options
+- settings
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  selected: Selected response style.
+  options: Available response styles.
+  settings: Output Style precedence, presentation defaults, and required checks.
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  selected:
+    response_style: adhd
+  options:
+    response_styles:
+      adhd:
+        meaning: The Output Style supplied by the adhd-output-style Extension declared in Connection.
+        source: adhd-output-style@claude-settings
+      concise:
+        meaning: Short, direct responses that preserve exact technical substance; further explanation only on request.
+      explanatory_structured:
+        meaning: Explanatory, structured responses that preserve exact technical substance.
+  settings:
+    output_style_precedence: Only the Output Style selected here is active; any other installed Output Style, including one supplied by an Extension, stays installed but inactive.
+    output_style_defaults:
+      preserve_coding_instructions: true
+      preserve_identifiers: true
+      preserve_evidence: true
+      preserve_warnings: true
+    required_checks:
+    - The selected Output Style is present and active.
