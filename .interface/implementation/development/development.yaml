@@ -79,8 +79,8 @@ content:
             package: "ruff"
             version: "latest-compatible"
           type_checker:
-            name: "pyright"
-            package: "pyright"
+            name: "ty"
+            package: "ty"
             version: "latest-compatible"
       TypeScript:
         version: "latest-compatible"

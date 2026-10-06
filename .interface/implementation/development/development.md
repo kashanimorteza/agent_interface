@@ -158,6 +158,16 @@ Every Principle below is mandatory.
 
 <br>
 
+### Component packages are project-internal
+
+**Rule:** Every Component package is used only inside this project. Each declared Connection is realized as a local path dependency on the provider's directory within the repository; no Component package is published, pinned to a package index, or installed outside the project directory.
+
+**Why:** The Components form one application, so their dependencies resolve from the repository itself.
+
+**Boundary:** A built package that names a provider by its plain name is expected and is not an Open Question. Third-party packages still resolve from their package index.
+
+<br>
+
 ### Unstated shared decisions follow one precedence order
 
 **Rule:** Resolve every unstated choice in this order: explicit Component Preference, Development Default, then the executor's own proposal. The executor never stops or asks for an unstated choice: it proceeds with its own proposal and records the decision.
@@ -197,6 +207,11 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — Declare every direct dependency once in Development.
 - **Never** — Infer direct access from an indirect path or create a dependency cycle.
+
+**Component packages are project-internal**
+
+- **Must** — Realize every Connection as a local path dependency within the repository.
+- **Never** — Publish or install a Component package outside the project.
 
 **Unstated shared decisions follow one precedence order**
 

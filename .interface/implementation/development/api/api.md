@@ -192,6 +192,18 @@ Every Principle below is mandatory and belongs to the category that owns it.
 **Why:** Inputs sit predictably in every request of every Group.
 **Boundary:** Placement never changes a Parameter's name, requirement, structure, meaning, or default.
 
+#### Non-simple Parameters travel by one rule
+
+**Rule:** A Parameter whose type is a published class travels as a JSON object of its fields and is built from that class; a reference to a field of the bound class travels as the field's name and resolves to it, an unknown name failing with the Invalid Input error; every Filter travels as `{field, operator, value}` and every Order as `{field, direction}`, in Body; a Database Instance travels as its name.
+**Why:** Every client sends non-simple values the same way in every Group.
+**Boundary:** This conversion is part of serving and happens before the Handler runs; the Handler still only calls its Action, and the value's meaning never changes.
+
+#### Action errors map to HTTP by one table
+
+**Rule:** Every error an Endpoint returns is sent as RFC 9457 Problem Details (`application/problem+json`), with `type` set to the error's class name, and with this status: Invalid Input `422`; Lifecycle `409`; Inactive Instance and Connection Failure `503`; Execution, Declaration Mismatch, Configuration, and every other Database error `500`.
+**Why:** Every client reads every Group's errors the same way, and the error's class reaches it unchanged.
+**Boundary:** This mapping is part of serving every Endpoint; it adds no retry, recovery, or other error-handling Behaviour.
+
 ### Configuration
 
 #### Every changeable runtime value lives in the runtime Configuration
@@ -218,6 +230,8 @@ Every Principle below is mandatory and belongs to the category that owns it.
 - API serves no Endpoint of its own.
 - Every Endpoint's Method follows the verb table, or `POST` when its verb is unlisted, and its Path is `/<operation>`, or `/<operation>/{id}` when it takes an `id`.
 - Every Parameter sits in Path, Query, or Body as the placement rule requires.
+- Every non-simple Parameter travels in the form the non-simple Parameter rule states, and is converted before its Handler runs.
+- Every returned error is RFC 9457 Problem Details with its class name as `type` and the status the error table sets.
 - When the key setting is on, the Base URL carries a non-empty URL Key.
 - When the package offers interactive documentation, it is served, lists every Endpoint, and has one section per Group and per Adapter.
 - The runtime Configuration holds every value the API Configuration Structure defines and follows its rules.
@@ -286,6 +300,16 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — Place `id` in Path and every other Parameter in Query or Body by the Method.
 - **Never** — Change a Parameter's name, requirement, structure, meaning, or default.
+
+**Non-simple Parameters travel by one rule**
+
+- **Must** — Send every non-simple Parameter in its stated form and convert it before the Handler runs.
+- **Never** — Convert a value inside a Handler or change its meaning.
+
+**Action errors map to HTTP by one table**
+
+- **Must** — Return every error as RFC 9457 Problem Details with its class name and the status the table sets.
+- **Never** — Add retry, recovery, or other error-handling Behaviour through this mapping.
 
 ### Configuration
 

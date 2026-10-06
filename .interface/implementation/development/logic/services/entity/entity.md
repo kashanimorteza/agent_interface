@@ -24,7 +24,7 @@ Entity Service is the fixed internal Logic Service whose Interface gives every E
 
 ### Overview
 
-Entity Service is a fixed internal Service of every Logic Component. For every Entity in Model's Entity Collection it provides one Child Service, so a caller selects an Entity once and then calls its Actions without passing the Entity again. Its Interface publishes these Child Services and republishes every contract Storage Interface publishes, except the Storage gateway.
+Entity Service is a fixed internal Service of every Logic Component. For every Entity in Model's Entity Collection it provides one Child Service, so a caller selects an Entity once and then calls its Actions without passing the Entity again. Its Interface publishes these Child Services and the Entity each binds, and republishes every contract Storage Interface publishes, except the Storage gateway.
 
 ### Purpose
 
@@ -85,11 +85,12 @@ Entity Service Preferences own its configurable name, directory, layout, naming 
 
 ### Interface
 
-The gateway callers import from. It publishes the Child Services and every contract Storage Interface publishes, except the Storage gateway. It meets these needs:
+The gateway callers import from. It publishes the Child Services, the Entity each binds, and every contract Storage Interface publishes, except the Storage gateway. It meets these needs:
 
 1. **Complete** — exactly one Child Service for every Entity in Model's Entity Collection, changing when the Collection changes.
 2. **Needed contracts** — every contract Storage Interface publishes, except the Storage gateway, is republished as the original object, never a copy, so no caller has to reach Storage or Database directly.
-3. **Nothing else** — Base, the Storage gateway, and anything beyond these are never published, and loading the Interface has no side effect.
+3. **Bound Entities** — every Child Service publishes the Entity it binds as the original object Model Interface publishes, never a copy, so no caller has to reach Model directly.
+4. **Nothing else** — Base, the Storage gateway, and anything beyond these are never published, and loading the Interface has no side effect.
 
 The exact shape of these needs is fixed by the Logic Entity Interface Schema, which is built from them. These needs are the reference: when the two differ, the Schema is corrected to match them.
 
@@ -127,7 +128,7 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 #### Entity Service Interface conforms to the Logic Entity Interface Schema
 
-**Rule:** Every realization of Entity Service Interface conforms to the versioned Logic Entity Interface Schema, which fixes its Child Services, their Actions, the republished contracts, and what it never publishes.
+**Rule:** Every realization of Entity Service Interface conforms to the versioned Logic Entity Interface Schema, which fixes its Child Services, their Actions, their bound Entities, the republished contracts, and what it never publishes.
 **Why:** Every caller depends on one exact gateway instead of reinterpreting each realization.
 **Boundary:** Changing the structure itself requires a Schema version change.
 
@@ -183,8 +184,9 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 **Rule:** Review establishes Entity conformance through these observations, every one of them on every review:
 - Every need of the Interface, Base, and Entities layers in this Definition appears in the Logic Entity Interface Schema, and the Schema holds nothing beyond them.
-- Entity Service Interface publishes exactly one Child Service for every Entity in Model's Entity Collection, and every contract Storage Interface publishes except the Storage gateway, and nothing else.
+- Entity Service Interface publishes exactly one Child Service for every Entity in Model's Entity Collection, the Entity each Child Service binds, and every contract Storage Interface publishes except the Storage gateway, and nothing else.
 - Every republished contract is the identical object Storage Interface publishes.
+- Every published bound Entity is the identical object Model Interface publishes.
 - Base has exactly one Action for every Storage Action that takes an Entity, in Storage's order, with the same name.
 - Each Action has Storage's parameter names, order, and defaults, without the Entity class parameter.
 - Each Action returns its Storage Action's result and raises its errors unchanged, and rejects an instance of another Entity with the Invalid Input error.
