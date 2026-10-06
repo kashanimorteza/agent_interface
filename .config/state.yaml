@@ -1,0 +1,307 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".config/state.yaml"
+  path_note: "Mutable Workflow position, Phase progress, and execution Log."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current State Component and the active operation's ownership rules."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read active, then the Phase selected by stable Target phase identifier, then the Log Entries by identifier."
+  selection: "A requested phase resolves to the phases entry keyed by that phase identifier; a Log Entry resolves by its identifier."
+  absence: "No matching phases entry means no progress is recorded for that phase."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "active"
+  - "phases"
+  - "log"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  active: "Current Workflow position."
+  phases: "Aggregate progress for each Target phase."
+  log: "Recorded Skill executions and their outcomes."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  active:
+    mode: "reviewing"
+    phase: "P1"
+    mode_reason: "Review is judging the generated Source of phase P1 against its Plan (direct invocation)."
+    set_by: "my-interface-review"
+    set_at: "2026-10-06T13:46:29Z"
+  phases:
+    P1:
+      id: "P1"
+      planning: "completed"
+      development: "completed"
+      review: "satisfied"
+      completed_at: "2026-10-06T13:49:32Z"
+  log:
+    - id: "001"
+      skill: "my-interface-configure"
+      event: "configure"
+      outcome: "completed"
+      started_at: "2026-10-06T13:16:04Z"
+      completed_at: "2026-10-06T13:16:17Z"
+      report: "Generated Plan Config and State Config from their Schemas; both conform to the general YAML structure and their specialized Schema. No parent Entry existed because State was created by this execution."
+      data:
+        records_generated:
+          - ".config/plan.yaml"
+          - ".config/state.yaml"
+        records_reconciled: []
+    - id: "002"
+      skill: "my-interface-implement"
+      event: "implement"
+      outcome: "stopped"
+      started_at: "2026-10-06T13:16:28Z"
+      completed_at: "2026-10-06T13:46:29Z"
+      report: "Coordinated Configure (001), Plan (003), and Develop (004) for P1, then was interrupted by the Human during Review (005). Review was re-run directly by the Human (006), so this execution did not complete its own Review step."
+      data:
+        requested_phases:
+          - "1"
+        resolved_phases:
+          - "P1"
+        resolution_note: "Requested '1' matched Target Phase 1, whose stable identifier is P1."
+        configure_log_id: "001"
+    - id: "003"
+      skill: "my-interface-plan"
+      parent_id: "002"
+      phase: "P1"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-10-06T13:16:41Z"
+      completed_at: "2026-10-06T13:20:06Z"
+      duration: "3:25"
+      open_questions:
+        - "003-OQ1"
+        - "003-OQ2"
+      blockers: []
+      report: "Created the Plan for P1 (Model): 7 Groups and 29 Tasks, all todo, with explicit acyclic dependencies. No prior Plan existed, so nothing was preserved, changed, removed, or replaced. Planning progress for P1 is completed."
+      data:
+        phase: "P1"
+        changes:
+          added:
+            plan: "P1"
+            groups:
+              - "P1-G1"
+              - "P1-G2"
+              - "P1-G3"
+              - "P1-G4"
+              - "P1-G5"
+              - "P1-G6"
+              - "P1-G7"
+            task_count: 29
+            reason: "No Plan existed for P1; the phase's Target outcome was decomposed into packaging, Core Type and Declaration contracts, shared Entity behaviour, JSON conversion, one Entity per Target domain concept, the published Interface, and documentation."
+          changed: []
+          removed: []
+          preserved: []
+          replaced: []
+        open_questions:
+          - id: "003-OQ1"
+            subject: "Sensitivity Markers"
+            question: "The Target describes credential Fields (User password and api_key, Instance password and api_key, Account password) with storage rules but declares no Sensitivity Marker on any Field. Under the Model Principles no marker is invented, so the planned Entities carry none. Should the Target declare markers for these Fields?"
+            current_choice: "Plan and realize the marker capability without applying any marker to a Field."
+          - id: "003-OQ2"
+            subject: "Target rules outside Model"
+            question: "The Target's Model section includes rules the Model Definition places outside Model: hash or encrypted storage of credentials, and the Instance rule that the selected Trading Platform defines which connection Fields are required. They are not planned in P1. Confirm they belong to later phases (Database, Logic)."
+            current_choice: "Omit them from the P1 Plan."
+    - id: "004"
+      skill: "my-interface-develop"
+      parent_id: "002"
+      phase: "P1"
+      event: "develop"
+      outcome: "completed"
+      started_at: "2026-10-06T13:20:21Z"
+      completed_at: "2026-10-06T13:38:41Z"
+      duration: "18:20"
+      skills_used:
+        - name: "sqlmodel"
+          report: "Applied its table-model and Field guidance while realizing every Entity and the shared base; its datetime recommendation differs from the Model Preferences choice and is recorded as an Open Question."
+      open_questions:
+        - "004-OQ1"
+        - "004-OQ2"
+      blockers: []
+      decisions:
+        - "P1-G1-T1"
+        - "P1-G2-T1"
+        - "P1-G2-T2"
+        - "P1-G3-T1"
+        - "P1-G3-T2"
+        - "P1-G3-T3"
+        - "P1-G3-T4"
+        - "P1-G3-T5"
+        - "P1-G3-T6"
+        - "P1-G4-T1"
+        - "P1-G4-T2"
+        - "P1-G5-T1"
+        - "P1-G6-T1"
+        - "P1-G6-T2"
+        - "P1-G7-T1"
+      report: "Executed all 29 planned Tasks of P1 (Model) in dependency order; every Task is done and each claim and completion is recorded in its Task Log. The Model Component now exists as an independent package with its Core, 15 Entity units, Interface, and documentation. Lint and type checks run during generation reported no findings. Conformance is not claimed here; Review establishes it."
+      data:
+        phase: "P1"
+        tasks:
+          developed: 29
+          blocked: 0
+          replaced: 0
+        component: "Model"
+        result_location: "model/"
+        open_questions:
+          - id: "004-OQ1"
+            subject: "Reconstructing an Entity whose Auto Increment Field has been assigned"
+            question: "Direct and JSON construction both reject a caller-supplied Auto Increment value, while the Definition also asks JSON reconstruction to be lossless. An Entity whose id storage has assigned therefore produces JSON that reconstruction refuses (only pending, null ids round-trip). Does the Target permit supplying an Auto Increment value, at least when reconstructing from JSON?"
+            current_choice: "Reject every non-null supplied Auto Increment value, on direct construction and on JSON reconstruction."
+          - id: "004-OQ2"
+            subject: "Timezone-aware datetime column"
+            question: "The sqlmodel Skill recommends SQLModel's own UTCDateTime column (automatically selected for timezone-aware datetimes from SQLModel 0.0.45) and advises against overriding it with a timezone-aware DateTime column, because the override bypasses its UTC handling. Model Preferences explicitly state a timezone-aware DateTime column that is stored in UTC and read back UTC-aware. Should the Preferences move to the Skill's alternative?"
+            current_choice: "Keep the Preferences: a private column type over a timezone-aware DateTime column that normalizes to UTC on write and restores UTC on read."
+        observations_during_generation:
+          quality: "ruff format and lint clean; pyright reported 0 errors."
+          exercised: "Core behaviour, all 15 Entities against the Target transcription, Interface shape, JSON round trips, SQLite persistence, and all 11 documentation samples were exercised in scratch checks kept outside the Component."
+        amendments:
+          - "P1-G2-T1 gained a finite-float annotation during P1-G3-T5."
+          - "P1-G3-T1 and the 15 Entity Tasks gained one targeted type-checker ignore each during finalization."
+    - id: "005"
+      skill: "my-interface-review"
+      parent_id: "002"
+      phase: "P1"
+      event: "review"
+      outcome: "stopped"
+      started_at: "2026-10-06T13:39:06Z"
+      completed_at: "2026-10-06T13:46:29Z"
+      report: "Interrupted by the Human before completion and superseded by a direct Review run (Entry 006). No Finding was recorded and no Outcome was set by this execution; no Source was changed by it."
+    - id: "006"
+      skill: "my-interface-review"
+      phase: "P1"
+      event: "review"
+      outcome: "satisfied"
+      started_at: "2026-10-06T13:46:29Z"
+      completed_at: "2026-10-06T13:49:32Z"
+      duration: "3:03"
+      skills_used:
+        - name: "sqlmodel"
+          report: "Read as a related capability while judging table-model realization; its datetime recommendation was already recorded as 004-OQ2 and is unchanged."
+      open_questions:
+        - "006-OQ1"
+        - "006-OQ2"
+        - "004-OQ1"
+        - "004-OQ2"
+      blockers: []
+      report: "Reviewed phase P1 (Model) against its current Plan and the Model Component's Review category. Three documentation Findings were recorded, resolved in the README, and rechecked; every other observation held. All 29 Task acceptance criteria and all 11 Review-category observations are established by current observation, so the Outcome is satisfied. Two new Open Questions and two carried ones remain for the Human; none prevents the Outcome."
+      data:
+        requested_phases:
+          - "1"
+        resolved_phases:
+          - "P1"
+        resolution_note: "Requested '1' matched Target Phase 1, whose stable identifier is P1."
+        context: "Invoked directly by the Human after the coordinated Review (Entry 005) was interrupted. Prior Entries were used as context only; every observation below was made again by this execution."
+        findings:
+          - id: "006-F1"
+            state: "resolved"
+            category: "documentation accuracy"
+            baseline: "P1-G7-T1 expected result: documentation matches what the Model publishes; Model Preferences documentation rule: retain no stale meaning."
+            expected: "The Troubleshooting entry about generated Fields describes the behaviour exactly: supplying a value for the Auto Increment Field raises 'is generated'."
+            observed: "The entry says an Auto Increment Field 'cannot be supplied or assigned' under the message '<Entity>.id is generated'. Assigning the id actually raises 'User.id is immutable'; only supplying a value raises 'User.id is generated'."
+            evidence: "model/README.md, Troubleshooting, second bullet; observed in a fresh copy: supply id -> ValueError: User.id is generated; assign id -> ValueError: User.id is immutable."
+            resolution: "Reviewed implementation changed: the README Troubleshooting now says the generated-value error applies to supplying an Auto Increment value on construction or in JSON text, and gives assigning id its own entry with the message 'is immutable'."
+            recheck: "Fresh-copy probe confirmed both messages ('User.id is generated' on supply, 'User.id is immutable' on assign); the README text now matches; all 11 README samples ran."
+          - id: "006-F2"
+            state: "resolved"
+            category: "documentation completeness"
+            baseline: "P1-G7-T1 expected result: documentation has the contents Model Preferences define; the Preferences' verify section lists side-effect freedom."
+            expected: "The Verify section checks side-effect freedom of loading the Interface."
+            observed: "The Verify script contains no check of side effects at load; it checks membership, references, immutability, construction, strictness, and the JSON round trip only."
+            evidence: "model/README.md, Verify, the script; no audit, process, file, or connection check appears in it."
+            resolution: "Reviewed implementation changed: the README Verify script now loads the Interface in a separate process under an audit hook and fails on any file write, connection, subprocess, database connection, or created Entity instance."
+            recheck: "The updated script passed; a negative control that wrote a file during load made it fail, so the check can detect a side effect."
+          - id: "006-F3"
+            state: "resolved"
+            category: "documentation completeness"
+            baseline: "P1-G7-T1 expected result: the Preferences' verify section lists Entity Collection membership and order."
+            expected: "The Verify section checks the Entity Collection order against Target order."
+            observed: "The script asserts only that the first Entity is User and the last is Position; the order of the 13 between them is not checked."
+            evidence: "model/README.md, Verify, the assertion on entities[0] and entities[-1]."
+            resolution: "Reviewed implementation changed: the README Verify script now compares the full ordered list of Entity names with the Target order."
+            recheck: "The updated script passed; a negative control with two Entities swapped made it fail, so the check can detect a wrong order."
+        outcome: "satisfied"
+        task_acceptance:
+          established: 29
+          not_established: 0
+          note: "Each Task's acceptance was judged from the observations listed below, not from the Task Log; Task status was not changed by Review."
+          by_group:
+            P1-G1: "Installed from a built package into a clean environment and loaded."
+            P1-G2: "Field Types: strict matrix over 109 valid, 280 wrong, and 109 null values; exact decimals and aware datetimes; unknown Type refused. Declaration: read-only, complete, absent default distinguishable from explicit null (examined in the Declaration contract and in all 15 Declarations)."
+            P1-G3: "Construction, assignment (atomic, immutable id, non-hashable), pending Auto Increment, sensitivity (value preserved, absent from every diagnostic including the formatted traceback and chain, unrecognized marker refused), physical naming and constraint forms on SQLite and PostgreSQL, exact decimal and UTC datetime storage through SQLite."
+            P1-G4: "JSON conversion with exact keys and order, distinct null/false/zero/empty text, exact decimals and datetimes, pending id as null; reconstruction refused 17 kinds of invalid text plus four bad datetime forms."
+            P1-G5: "All 15 Declarations compared with the Target text field by field and description by description; each Entity passed the matrix; relations resolve and the full table set was created with foreign keys enforced."
+            P1-G6: "Exactly 15 explicit exports and one immutable ordered collection in Target order, same objects, actual Declarations, no side effect on load."
+            P1-G7: "README content, order, and samples; Findings 006-F1 to 006-F3 resolved."
+        model_review_category:
+          - observation: "Every Interface need in the Definition appears in the Model Interface Schema and the Schema holds nothing beyond them."
+            result: "holds"
+            evidence: "Completeness, actual references, and nothing-else needs map to entity_exports, entity_collection, entity_declaration and the single_publication, side_effect_free, and actual_references rules; the remaining Schema entries (explicit_exports, naming, immutable_after_load, contract_change) restate Definition terms and principles (Entity Export, immutable Entity Collection, physical naming in Preferences, Schema version change). Read only; no Interface file was changed."
+          - observation: "Every Target Entity has exactly one Entity Export."
+            result: "holds"
+            evidence: "15 Target Entities and 15 public names plus the collection in the Interface namespace."
+          - observation: "The Entity Collection holds exactly the exported Entities, in Target order."
+            result: "holds"
+            evidence: "Ordered names equal the Target's Models list; each member is the export object."
+          - observation: "Each Entity's Declaration matches the Target: Fields, order, Types, nullability, defaults, and metadata."
+            result: "holds"
+            evidence: "Dump of all 15 Declarations and of every description compared with the Target text."
+          - observation: "Every Entity has an immutable id and a Boolean is_active."
+            result: "holds"
+            evidence: "Declarations and runtime assignment refusal for all 15."
+          - observation: "Each Entity constructs from valid values and rejects an unknown Field, a wrong Type, and a missing required value."
+            result: "holds"
+            evidence: "Field-by-field matrix over all 15 Entities."
+          - observation: "Converting any Entity to its JSON Object and back returns an equal Entity."
+            result: "holds"
+            evidence: "15 populated round trips and the persisted-graph reconstruction noted in 006-OQ1."
+          - observation: "Decimal and datetime values keep their exact value through JSON."
+            result: "holds"
+            evidence: "Decimals up to 39 digits and exponents, datetimes with offsets, and the extreme years 1 and 9999, through JSON text and SQLite."
+          - observation: "Loading Interface has no side effect."
+            result: "holds"
+            evidence: "Audit hook during a fresh import: no write-mode open, socket, subprocess, or database connection; no Entity instance alive; environment unchanged."
+          - observation: "An unknown Type in the Target stops generation."
+            result: "holds"
+            evidence: "The closed Type set and the Declaration contract both refuse an unknown Type; the generation inputs were validated for completeness, uniqueness, naming, reference resolution, and endpoint Type compatibility before every write."
+          - observation: "Each Entity's storage mapping takes exactly the form Model Preferences list."
+            result: "holds"
+            evidence: "Table, column, primary key, foreign key, uniqueness constraint names, identity column, sqlite autoincrement, timezone-aware datetime column, and exact-text decimal column checked on all 15 tables; DDL rendered for SQLite and PostgreSQL."
+        technical_conformance:
+          generation_inputs: "15 of 15 Target Entities; names and physical names unique; every relation target and Field resolves with an equal endpoint Type; every Target Type supported."
+          installability: "A built wheel installed into a new environment imported with 15 Entities; the same README setup steps worked in a fresh copy."
+          checks: "ruff format and lint clean; pyright 0 errors; bytecode compilation with warnings as errors clean; lock current; installed packages compatible; declared dependencies equal the imported third-party packages (pydantic, sqlalchemy, sqlmodel); the wheel holds no caches."
+          regeneration: "Regenerating the 15 Entity units and the README from the Target transcription produced no difference, before and after the README resolution."
+          testing_scope: "Persistent testing is disabled for Model, so every check above was transient and no test file was added."
+        open_questions:
+          - id: "006-OQ1"
+            subject: "Auto Increment values supplied from storage or JSON"
+            question: "Observed: an Entity read from storage carries its id, its JSON includes that id, and reconstructing it with from_json is refused ('Position.id is generated'). The Database Preferences materialize rows with the Entity's own constructor from all Field values, which would also refuse the id. Should the Target permit supplying an Auto Increment value (at least when materializing a stored row or reconstructing from JSON)? Carries 004-OQ1."
+            current_choice: "Refuse every non-null supplied Auto Increment value, as the Model Definition states."
+          - id: "006-OQ2"
+            subject: "Integer given for a float Field"
+            question: "Observed: an integer for a float Field is accepted and stored as a float (point_size=1 becomes 1.0), while text, boolean, and other kinds are refused. The Definition says no implicit coercion but does not say whether numeric widening is one. Should an integer be refused for a float Field? JSON numbers carry no integer/float distinction, so refusing it would need a matching rule for JSON text."
+            current_choice: "Keep accepting an integer for a float Field."
+          - id: "004-OQ1"
+            subject: "Carried from Develop (Entry 004)"
+            question: "See 006-OQ1."
+            current_choice: "Unchanged."
+          - id: "004-OQ2"
+            subject: "Carried from Develop (Entry 004)"
+            question: "The sqlmodel Skill's UTCDateTime alternative to the Preferences' timezone-aware DateTime column; see Entry 004."
+            current_choice: "Unchanged: Preferences kept."
+        observations_about_review:
+          - "The review scripts could not read the Target file (the boundary guard refuses interpreters on Interface paths), so the Target comparison was made by reading the Target with the file reader and comparing it with printed Declarations and descriptions; the comparison is manual."
+          - "Regeneration was verified with the generation scripts that produced the Entities and README. They live in the session scratch area, not in the project, so regeneration repeats only while they exist. The zero-diff result shows determinism, not correctness; correctness was observed separately."
+          - "Only the project's Engines were in scope (SQLite and PostgreSQL). PostgreSQL was verified by rendered definitions, not by a running server. A MySQL definition cannot be created because its text column needs a length; MySQL is not a project Engine, so it was not judged."
+          - "Entry 005 (the interrupted coordinated Review) recorded no Finding and no Outcome; this execution repeated every observation."
+          - "Task Logs were not edited by Review; the README is the only reviewed file Review changed."
+
