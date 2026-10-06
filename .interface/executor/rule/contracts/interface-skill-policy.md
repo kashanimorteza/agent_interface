@@ -1,5 +1,3 @@
-> Rule `interface-skill-policy` · Scope: **global** — applies to every session and all work in this project, with no path condition. Native realization; regenerated only by `/my-interface-native-implement`.
-
 # Agent Interface Skill policy Contract
 
 These Rules apply to every Agent Interface Skill and supporting Agent Instance, including one written later. Each reads them at the start of its own Workflow. Agent Native Implement owns reconciliation with the Human-owned Executor Module; ordinary operations treat these Runtime Rules as their Agent-side contract.

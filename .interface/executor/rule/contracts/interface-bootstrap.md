@@ -1,5 +1,3 @@
-> Rule `interface-bootstrap` · Scope: **global** — applies to every session and all work in this project, with no path condition. Native realization; regenerated only by `/my-interface-native-implement`.
-
 # Agent Interface bootstrap Contract
 
 The Interface structure and Agent Instance realizations are independent of a particular Runtime layout. Native Rules, Skills, Agent Instances, settings, and capabilities are the Runtime realization consumed by every other operation.

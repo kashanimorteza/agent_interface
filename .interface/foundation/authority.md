@@ -26,7 +26,7 @@ Authority identifies which records belong to the Human or to an Interface Compon
 
 Ownership answers who a record belongs to, and it belongs to the Human or to a Component:
 
-Human: Owns Interface, Target, Principles, Implementation Preferences, Agent Preferences, and Schema sources.
+Human: Owns Interface, Target, Principles, Implementation Preferences, Executor Preferences, and Schema sources.
 
 Plan: Owns Plans, Groups, Tasks, their status, and their history.
 

@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
-"""Interface boundary guard and Agent Native Sync read grant for Claude Code hooks.
+"""Interface boundary guard and Agent Native Implement read grant for Claude Code hooks.
 
-Synchronized Native realization of the Permission guarantees
+Native realization of the Permission guarantees
 `interface-boundary-guard` (blocking, fail closed) and `agent-native-read-grant`
-(blocking, fail closed). Regenerated only by /my-interface-agent-native.
+(blocking, fail closed). Regenerated only by /my-interface-native-implement.
 
 Modes (run through interface-guard.sh, which turns any crash into a block):
-  pretooluse  PreToolUse: block Agent Module reads and searches without a valid
-              grant, block every non-Human invocation of Agent Native Sync, and
+  pretooluse  PreToolUse: block Executor Module reads and searches without a valid
+              grant, block every non-Human invocation of Agent Native Implement, and
               block every direct Interface mutation. Exit 2 blocks.
   grant       UserPromptSubmit: record a session- and prompt-bound grant when the
-              Human directly invokes /my-interface-agent-native; otherwise revoke.
+              Human directly invokes /my-interface-native-implement; otherwise revoke.
   revoke      Stop / SessionEnd: revoke the session's grant.
 """
 import fnmatch
@@ -22,15 +22,15 @@ import subprocess
 import sys
 import time
 
-SYNC = "my-interface-agent-native"
+SYNC = "my-interface-native-implement"
 SYNC_PROMPT = re.compile(r"^\s*/" + SYNC + r"(?:\s|$)")
 SYNC_EXPANDED = re.compile(r"<command-name>\s*/?" + SYNC + r"\s*</command-name>|"
-                           r"^\s*(?:---\s*\nname:\s*" + SYNC + r"\b|# Agent Native Sync \(Claude Code\))")
+                           r"^\s*(?:---\s*\nname:\s*" + SYNC + r"\b|# Agent Native Implement \(Claude Code\))")
 MESSAGE = (
-    "interface-boundary-guard: {reason} The Agent Module (.interface/agent/) may be read only "
+    "interface-boundary-guard: {reason} The Executor Module (.interface/executor/) may be read only "
     "within the prompt created by the Human's direct /" + SYNC + " invocation, and the "
     ".interface/ tree is read-only to every Agent action. Do not retry through another tool, "
-    "path form, script, or alias. If a synchronized Runtime artifact is missing, report Runtime "
+    "path form, script, or alias. If a realized Runtime artifact is missing, report Runtime "
     "drift and ask the Human to run /" + SYNC + "."
 )
 
@@ -49,7 +49,7 @@ class Ctx:
         self.project = os.path.realpath(project)
         self.cwd = os.path.realpath(data.get("cwd") or self.project)
         self.iface = os.path.join(self.project, ".interface")
-        self.agent = os.path.join(self.iface, "agent")
+        self.agent = os.path.join(self.iface, "executor")
         self.grants = os.path.join(self.project, ".claude", "hooks", ".grants")
         self._granted = None
 
@@ -184,12 +184,12 @@ def check_write_path(ctx, raw):
     if within(path, ctx.iface):
         raise Block("Direct Interface mutation is blocked.")
     if within(path, ctx.grants):
-        raise Block("The Agent Native Sync grant store is written only by its own hook.")
+        raise Block("The Agent Native Implement grant store is written only by its own hook.")
 
 
 def check_read_path(ctx, raw):
     if within(ctx.resolve(raw), ctx.agent) and not ctx.granted:
-        raise Block("Agent Module read outside the Agent Native Sync prompt.")
+        raise Block("Executor Module read outside the Agent Native Implement prompt.")
 
 
 def check_grep(ctx, tool_input):
@@ -197,20 +197,20 @@ def check_grep(ctx, tool_input):
     if ctx.granted or not related(root, ctx.agent):
         return None
     if within(root, ctx.agent):
-        raise Block("Agent Module search outside the Agent Native Sync prompt.")
+        raise Block("Executor Module search outside the Agent Native Implement prompt.")
     glob = str(tool_input.get("glob") or "")
     if not glob:
         updated = dict(tool_input)
-        updated["glob"] = "!**/.interface/agent/**"
+        updated["glob"] = "!**/.interface/executor/**"
         return {"hookSpecificOutput": {
             "hookEventName": "PreToolUse",
             "permissionDecision": "allow",
-            "permissionDecisionReason": "interface-boundary-guard: search scope excludes the Agent Module.",
+            "permissionDecisionReason": "interface-boundary-guard: search scope excludes the Executor Module.",
             "updatedInput": updated}}
     if glob.startswith("!") and exclusion_covers(glob):
         return None
-    raise Block("This search's scope includes the Agent Module. Narrow `path` to a directory "
-                "outside .interface/agent/, or omit `glob` so the guard can exclude it.")
+    raise Block("This search's scope includes the Executor Module. Narrow `path` to a directory "
+                "outside .interface/executor/, or omit `glob` so the guard can exclude it.")
 
 
 def check_glob(ctx, tool_input):
@@ -218,11 +218,11 @@ def check_glob(ctx, tool_input):
     if ctx.granted:
         return
     if within(root, ctx.agent):
-        raise Block("Agent Module search outside the Agent Native Sync prompt.")
+        raise Block("Executor Module search outside the Agent Native Implement prompt.")
     pattern = str(tool_input.get("pattern") or "")
     if pattern and glob_enters(root, pattern, ctx.agent, dot_rule=False) and \
             not pattern.split("/")[0] == "**":
-        raise Block("Agent Module search outside the Agent Native Sync prompt.")
+        raise Block("Executor Module search outside the Agent Native Implement prompt.")
 
 
 # ---------------------------------------------------------------- shell commands
@@ -307,7 +307,7 @@ def split_segments(text):
 
 
 def exclusion_covers(span):
-    """True when an exclusion expression excludes the whole Agent Module or Interface."""
+    """True when an exclusion expression excludes the whole Executor Module or Interface."""
     value = re.sub(r"['\"\\]", "", span).strip()
     value = re.sub(r"\s+-prune$", "", value)
     value = re.split(r"[=\s]", value, maxsplit=1)[-1] if re.match(r"^-", value) else value
@@ -317,7 +317,7 @@ def exclusion_covers(span):
     value = re.sub(r"^\*\*?/", "", value)
     value = re.sub(r"(?:/\*\*?|/\*|/)+$", "", value)
     value = value.rstrip("*")
-    return value in (".interface", ".interface/agent", "agent", "interface/agent")
+    return value in (".interface", ".interface/executor", "executor", "interface/executor")
 
 
 def split_tokens(text):
@@ -426,13 +426,13 @@ def interface_untouched_by(ctx, ref):
 
 
 def agent_has_worktree_changes(ctx):
-    status = git_quiet(ctx, "status", "--porcelain", "--", ".interface/agent")
+    status = git_quiet(ctx, "status", "--porcelain", "--", ".interface/executor")
     return status is None or status.returncode != 0 or bool(status.stdout.strip())
 
 
 def check_bash(ctx, command):
     if re.search(r"hooks/+\.grants", command):
-        raise Block("The Agent Native Sync grant store is written only by its own hook.")
+        raise Block("The Agent Native Implement grant store is written only by its own hook.")
 
     has_exclusion = any(exclusion_covers(m.group(0)) for m in EXCLUSION_RE.finditer(command))
     scrubbed = EXCLUSION_RE.sub(" ", command)
@@ -445,7 +445,7 @@ def check_bash(ctx, command):
     resolved = [ctx.resolve(tok) for _, _, args in parsed for tok in operands(args)
                 if "/" in tok or tok.startswith((".", "~"))]
 
-    # ---- Interface mutation (blocked even within the Agent Native Sync prompt)
+    # ---- Interface mutation (blocked even within the Agent Native Implement prompt)
     mentions_iface = bool(re.search(r"(?<![A-Za-z0-9_])\.interface(?![A-Za-z0-9_-])", plain))
     for seg, prog, args in parsed:
         for tok in split_tokens(seg):
@@ -473,29 +473,29 @@ def check_bash(ctx, command):
     for seg, prog, args in parsed:
         check_bulk_mutation(ctx, seg, prog, args, parsed, has_exclusion)
 
-    # ---- Agent Module reads (allowed only within the Agent Native Sync prompt)
+    # ---- Executor Module reads (allowed only within the Agent Native Implement prompt)
     if ctx.granted:
         return
     if within(ctx.cwd, ctx.agent) or any(within(p, ctx.agent) for p in resolved):
-        raise Block("Agent Module access outside the Agent Native Sync prompt.")
-    if re.search(r"interface/+agent(?![A-Za-z0-9_-])", plain) or \
-            (within(ctx.cwd, ctx.iface) and "agent" in plain):
-        raise Block("Agent Module access outside the Agent Native Sync prompt.")
+        raise Block("Executor Module access outside the Agent Native Implement prompt.")
+    if re.search(r"interface/+executor(?![A-Za-z0-9_-])", plain) or \
+            (within(ctx.cwd, ctx.iface) and "executor" in plain):
+        raise Block("Executor Module access outside the Agent Native Implement prompt.")
     for match in re.finditer(r"(?<![A-Za-z0-9_])\.interface/+([^\s/;|&<>()]*)", plain):
         comp = match.group(1)
         if comp and any(c in comp for c in "*?[{") and glob_enters(ctx.iface, comp, ctx.agent, dot_rule=False):
-            raise Block("Agent Module access outside the Agent Native Sync prompt.")
+            raise Block("Executor Module access outside the Agent Native Implement prompt.")
     for seg, prog, args in parsed:
         for tok in split_tokens(seg):
             if any(c in tok for c in "*?[{") and glob_enters(ctx.cwd, tok, ctx.agent, dot_rule=True):
-                raise Block("Agent Module access outside the Agent Native Sync prompt.")
+                raise Block("Executor Module access outside the Agent Native Implement prompt.")
     for target in CD_RE.findall(scrubbed):
         if within(ctx.resolve(target), ctx.iface):
-            raise Block("Changing into the Interface directory is blocked; use full paths outside the Agent Module.")
+            raise Block("Changing into the Interface directory is blocked; use full paths outside the Executor Module.")
     for seg, prog, args in parsed:
-        if prog in INTERPRETERS and "agent" in seg and \
+        if prog in INTERPRETERS and "executor" in seg and \
                 re.search(r"(?<![A-Za-z0-9_])\.interface(?![A-Za-z0-9_-])", seg):
-            raise Block("Agent Module access outside the Agent Native Sync prompt.")
+            raise Block("Executor Module access outside the Agent Native Implement prompt.")
         check_recursive_read(ctx, prog, args, progs, has_exclusion)
 
 
@@ -660,7 +660,7 @@ def check_recursive_read(ctx, prog, args, progs, has_exclusion):
             ignore = os.path.join(ctx.project, ".graphifyignore")
             try:
                 with open(ignore, encoding="utf-8") as handle:
-                    if re.search(r"(?m)^\s*/?\.interface(?:/agent)?/?\s*$", handle.read()):
+                    if re.search(r"(?m)^\s*/?\.interface(?:/executor)?/?\s*$", handle.read()):
                         return
             except OSError:
                 pass
@@ -687,12 +687,12 @@ def check_recursive_read(ctx, prog, args, progs, has_exclusion):
     if not roots:
         return
     if any(within(r, ctx.agent) for r in roots):
-        raise Block("Agent Module search outside the Agent Native Sync prompt.")
+        raise Block("Executor Module search outside the Agent Native Implement prompt.")
     if any(within(ctx.agent, r) for r in roots) and not has_exclusion:
-        raise Block("This command reads or searches a tree that includes the Agent Module. Narrow it "
-                    "to paths outside .interface/agent/, or exclude it explicitly (for example "
-                    "`rg -g '!.interface/agent'`, `grep -r --exclude-dir=agent`, or "
-                    "`git ... -- . ':!.interface/agent'`).")
+        raise Block("This command reads or searches a tree that includes the Executor Module. Narrow it "
+                    "to paths outside .interface/executor/, or exclude it explicitly (for example "
+                    "`rg -g '!.interface/executor'`, `grep -r --exclude-dir=executor`, or "
+                    "`git ... -- . ':!.interface/executor'`).")
 
 
 # ---------------------------------------------------------------- entry
@@ -709,7 +709,7 @@ def mode_pretooluse(data):
         name = str(tool_input.get("skill") or tool_input.get("command") or tool_input.get("name") or "")
         name = (name.strip().lstrip("/").split() or [""])[0]
         if name == SYNC or name.endswith(":" + SYNC):
-            raise Block("Agent Native Sync can be invoked only directly by the Human.")
+            raise Block("Agent Native Implement can be invoked only directly by the Human.")
         return None
     if tool in WRITE_TOOLS:
         raw = tool_path(tool_input)
@@ -731,8 +731,8 @@ def mode_pretooluse(data):
         return None
     if tool.startswith("mcp__"):
         text = json.dumps(tool_input)
-        if re.search(r"interface/+agent", text) and not ctx.granted:
-            raise Block("Agent Module access outside the Agent Native Sync prompt.")
+        if re.search(r"interface/+executor", text) and not ctx.granted:
+            raise Block("Executor Module access outside the Agent Native Implement prompt.")
     return None
 
 

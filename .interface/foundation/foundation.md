@@ -2,7 +2,7 @@
 
 This guide explains what Foundation Files contain, why they are shared, and who owns them.
 
-Foundation is not one of the three Modules (Target, Implementation, Agent). It is the set of shared resources those Modules and every Skill depend on.
+Foundation is not one of the three Modules (Target, Implementation, Executor). It is the set of shared resources those Modules and every Skill depend on.
 
 <br>
 
@@ -14,7 +14,7 @@ This guide maps Foundation Files to their authoritative sources.
 1. **[Introduction](#introduction)**
 2. **[Terms](#terms)**
 3. **[Architecture](#architecture)**
-4. **[Agent Native Sync](#agent-native-sync)**
+4. **[Agent Native Implement](#agent-native-implement)**
 5. **[Schema](#schema)**
 
 <br>
@@ -32,7 +32,7 @@ Config contains the generated Application, Plan, and State records. It is outsid
 
 ### Purpose
 
-Foundation keeps shared Interface resources separate from the Target, Implementation, and Agent Modules.
+Foundation keeps shared Interface resources separate from the Target, Implementation, and Executor Modules.
 
 ### How It Works
 
@@ -63,7 +63,7 @@ The Interface routes an Agent to the relevant Foundation source or Schema. Confi
     ├── understanding.md
     ├── authority.md
     ├── workflow.md
-    ├── agent-native-sync.md
+    ├── create-agent-native-implement.md
     └── schema/
         ├── yaml.yaml
         ├── <component>.md
@@ -75,14 +75,14 @@ The Interface routes an Agent to the relevant Foundation source or Schema. Confi
 
 <br>
 
-<!--------------------------------------------------------------------------------- Agent Native Sync --->
-## Agent Native Sync
+<!--------------------------------------------------------------------------------- Agent Native Implement --->
+## Agent Native Implement
 
-The Foundation instruction that creates and updates the `/my-interface-agent-native` Skill and uses it to synchronize the complete Agent Module with the selected Agent Native.
+The Foundation instruction that creates and updates the `/my-interface-native-implement` Skill and uses it to realize the complete Executor Module in the Agent Native.
 
-Responsibility: Defines the Agent Native Sync Skill and its read-only Agent Module synchronization procedure.
+Responsibility: Defines the Agent Native Implement Skill and its read-only Executor Module realization procedure.
 
-→ [Read more about Agent Native Sync](agent-native-sync.md)
+→ [Read more about Agent Native Implement](create-agent-native-implement.md)
 
 <br>
 
@@ -112,9 +112,9 @@ Responsibility: Defines the common outer structure followed by Component Prefere
 
 ### Definition Schema
 
-The common Markdown structure of every Implementation and Agent Component `<component>.md`.
+The common Markdown structure of every Implementation and Executor Component `<component>.md`.
 
-Responsibility: Defines the common Markdown structure followed by every Implementation and Agent Component `<component>.md` file.
+Responsibility: Defines the common Markdown structure followed by every Implementation and Executor Component `<component>.md` file.
 
 → [Read more about Definition Schema](schema/schema.md)
 
@@ -128,9 +128,9 @@ Responsibility: Defines the common Preferences structure followed by every Compo
 
 #### Personality Schema
 
-The structure of every Personality Contract file under `agent/personality/contracts/`.
+The structure of every Personality Contract file under `executor/personality/contracts/`.
 
-Responsibility: Defines the structure followed by every Personality Contract file under `agent/personality/contracts/`.
+Responsibility: Defines the structure followed by every Personality Contract file under `executor/personality/contracts/`.
 
 → [Read more about Personality Schema](schema/personality.md)
 

@@ -8,7 +8,7 @@ argument-hint: "[request]"
 
 Required Core Skill. Stable key: `configure`. Skill name: `my-interface-configure`.
 
-Synchronized Native realization. The governing authority is the current Configure Operation Definition and Preferences in the Implementation Module; this Skill realizes their meaning and never overrides them.
+Native realization. The governing authority is the current Configure Operation Definition and Preferences in the Implementation Module; this Skill realizes their meaning and never overrides them.
 
 ## Personality
 
@@ -23,8 +23,8 @@ A simple, precise configurator for bounded installation and file-generation work
 
 1. Apply the loaded Runtime Rules first: `interface-skill-policy`, `interface-bootstrap`, `agent-conduct`, `git-discipline`.
 2. Enter through `.interface/interface.md` and use it as the file map. Do not perform broad analysis beyond what the bootstrap Rule requires.
-3. Locate through the Interface (Implementation Module → Operations → Configure) and read in full the current Configure Definition and Configure Preferences (last synchronized at `.interface/implementation/operations/configure/configure.md` and `configure.yaml`). If they contradict this Skill, follow them and report Runtime drift so the Human can run `/my-interface-agent-native`.
-4. Never read, search, or use `.interface/agent/`.
+3. Locate through the Interface (Implementation Module → Operations → Configure) and read in full the current Configure Definition and Configure Preferences (located, when this Skill was realized, at `.interface/implementation/operations/configure/configure.md` and `configure.yaml`). If they contradict this Skill, follow them and report Runtime drift so the Human can run `/my-interface-native-implement`.
+4. Never read, search, or use `.interface/executor/`.
 
 ## Workflow
 

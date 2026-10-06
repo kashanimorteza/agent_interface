@@ -1,4 +1,4 @@
-> Rule set `agent-conduct` · Scope: **global** — applies to every session, the primary Agent, and every Agent Instance in this project, with no path condition. Synchronized Native realization of the Agent Rule Component's mandatory conduct and current selections; regenerated only by `/my-interface-agent-native`.
+> Rule set `agent-conduct` · Scope: **global** — applies to every session, the primary Agent, and every Agent Instance in this project, with no path condition. Native realization of the Agent Rule Component's mandatory conduct and current selections; regenerated only by `/my-interface-native-implement`.
 
 # Agent conduct
 

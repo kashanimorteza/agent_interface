@@ -1,6 +1,6 @@
 # Introduction
 
-This section introduces Agent Interface as a Human-defined structure that connects Target, Implementation, and Agent through a shared software-development contract.
+This section introduces Agent Interface as a Human-defined structure that connects Target, Implementation, and Executor through a shared software-development contract.
 
 <br>
 
@@ -43,7 +43,7 @@ The primary concern of the Interface is the **conceptual contract** between the 
 
 Agent Interface is an independent interface between **Humans** and **AI Agents** for establishing a common protocol, structure, and standard for software development.
 
-Its purpose is to let a Human define a Target in natural language, provide common Implementation Principles and Preferences for planning and developing it, and define a portable Agent Module that explicit Agent Sync realizes in the active Runtime.
+Its purpose is to let a Human define a Target in natural language, provide common Implementation Principles and Preferences for planning and developing it, and define a portable Executor Module that explicit Agent Native Implement realizes in the active Runtime.
 
 <br>
 
@@ -59,7 +59,7 @@ Config contains only the mutable operational records used to coordinate this wor
 <!--------------------------------------------------------------------------------- Independence --->
 ## Independence
 
-The core Interface Structure is independent of any specific AI model, Agent Native, or external execution capability. Portable Contracts for Interface-owned Skills belong to the Agent Module, while their self-contained native implementations remain outside `.interface/` as synchronized Runtime adapters. External Skills remain provider-owned capabilities declared by the Agent Preferences. Only explicit Agent Sync reads Agent Module sources; every other Runtime operation consumes their last synchronized realization.
+The core Interface Structure is independent of any specific AI model, Agent Native, or external execution capability. Portable Contracts for Interface-owned Skills belong to the Executor Module, while their self-contained native implementations remain outside `.interface/` as realized Runtime adapters. External Skills remain provider-owned capabilities declared by the Executor Preferences. Only explicit Agent Native Implement reads Executor Module sources; every other Runtime operation consumes their last realized realization.
 
 Human project definitions remain flexible, while the Interface gives Agents stable responsibilities, rules, defaults, and operational records. Agent Interface is the communication boundary between those two forms.
 
@@ -82,7 +82,7 @@ Conceptually:
 ```text
 Target ─────┐
 Implementation ──┼── together with Understanding, Modes, and Workflow ──> Execution
-Agent ──────┘
+Executor ───┘
 ```
 
 The resulting software is therefore influenced by all three primary entities:
@@ -92,7 +92,7 @@ Target
    +
 Implementation
    +
-Agent
+Executor
    ↓
 Execution
 ```

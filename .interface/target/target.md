@@ -132,7 +132,7 @@ The Target definitions are the authorities for Target meaning. This Guide explai
 <!--------------------------------------------------------------------------------- Understanding record --->
 ## Understanding record
 
-Not yet recorded. The Human's own explanation of the Target Module — its intent, how the two definitions are meant to be written, and what a good Target definition looks like — will be captured here in a later session, in the same form as the Agent Module Guide.
+Not yet recorded. The Human's own explanation of the Target Module — its intent, how the two definitions are meant to be written, and what a good Target definition looks like — will be captured here in a later session, in the same form as the Executor Module Guide.
 
 <br>
 

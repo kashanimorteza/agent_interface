@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Fail-closed wrapper for interface_guard.py (interface-boundary-guard, agent-native-read-grant).
 # Exit 0 allows, exit 2 blocks; any other outcome (missing python3, crash, bad input) is turned
-# into a visible block. Synchronized Native realization; regenerated only by /my-interface-agent-native.
+# into a visible block. Native realization; regenerated only by /my-interface-native-implement.
 dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if ! command -v python3 >/dev/null 2>&1; then
   echo "interface-guard ($1): python3 is unavailable; failing closed." >&2

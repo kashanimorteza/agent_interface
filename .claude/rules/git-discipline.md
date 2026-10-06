@@ -1,4 +1,4 @@
-> Rule `git-discipline` · Scope: **global** — applies to every session and all work in this project, with no path condition. Synchronized Native realization; regenerated only by `/my-interface-agent-native`.
+> Rule `git-discipline` · Scope: **global** — applies to every session and all work in this project, with no path condition. Native realization; regenerated only by `/my-interface-native-implement`.
 
 # Git discipline Contract
 

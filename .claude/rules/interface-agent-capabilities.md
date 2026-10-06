@@ -1,8 +1,8 @@
-> Rule `interface-agent-capabilities` · Scope: **global** — applies to every session and all work in this project, with no path condition. Synchronized Native realization (derived); regenerated only by `/my-interface-agent-native`.
+> Rule `interface-agent-capabilities` · Scope: **global** — applies to every session and all work in this project, with no path condition. Native realization (derived); regenerated only by `/my-interface-native-implement`.
 
 # Interface Agent capabilities
 
-These are the synchronized Runtime capability identifiers and their Claude Code mappings. Use them as listed. If one is missing or unusable, report Runtime drift with its Capability Status and ask the Human to run `/my-interface-agent-native`; never resolve it from Agent Module sources.
+These are the realized Runtime capability identifiers and their Claude Code mappings. Use them as listed. If one is missing or unusable, report Runtime drift with its Capability Status and ask the Human to run `/my-interface-native-implement`; never resolve it from Executor Module sources.
 
 ## Core Skills
 
@@ -28,7 +28,7 @@ Each Core Skill is a project Skill in `.claude/skills/<skill-name>/` and is invo
 ## Commands
 
 - No separate Agent Commands are declared. Core Skills are the slash entry points listed above.
-- `/my-interface-agent-native` — Agent Native Sync. Invoked **only directly by the Human**. Never invoke, schedule, chain, or simulate it.
+- `/my-interface-native-implement` — Agent Native Implement. Invoked **only directly by the Human**. Never invoke, schedule, chain, or simulate it.
 
 ## Agent Instances
 
@@ -38,8 +38,8 @@ Each Core Skill is a project Skill in `.claude/skills/<skill-name>/` and is invo
 
 | Guarantee | Claude Code mechanism |
 |---|---|
-| `interface-boundary-guard` — blocks Agent Module reads and searches outside the direct-Human Agent Native Sync prompt, blocks every non-Human invocation of Agent Native Sync, and blocks direct Interface mutation; fails closed | `PreToolUse` hook `.claude/hooks/interface-guard.sh pretooluse` |
-| `agent-native-read-grant` — records a session- and prompt-bound, non-transferable read grant only when the Human directly invokes `/my-interface-agent-native`; fails closed | `UserPromptSubmit` hook `interface-guard.sh grant`; revoked by `Stop` / `SessionEnd` hooks `interface-guard.sh revoke` |
+| `interface-boundary-guard` — blocks Executor Module reads and searches outside the direct-Human Agent Native Implement prompt, blocks every non-Human invocation of Agent Native Implement, and blocks direct Interface mutation; fails closed | `PreToolUse` hook `.claude/hooks/interface-guard.sh pretooluse` |
+| `agent-native-read-grant` — records a session- and prompt-bound, non-transferable read grant only when the Human directly invokes `/my-interface-native-implement`; fails closed | `UserPromptSubmit` hook `interface-guard.sh grant`; revoked by `Stop` / `SessionEnd` hooks `interface-guard.sh revoke` |
 | `graphify-guard` — guides searches and reads toward the knowledge graph when it exists; never blocks; fails open | `PreToolUse` hooks `graphify hook-guard search` / `graphify hook-guard read` |
 
 When the boundary guard rejects an action, treat the message as the boundary: do not retry through another tool, path form, script, or alias.

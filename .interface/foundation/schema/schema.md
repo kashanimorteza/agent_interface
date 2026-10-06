@@ -1,8 +1,8 @@
 # Definition File Structure
 
-This document is the common structure every Definition file follows. It defines the shape of a Definition file, not the content of any Implementation or Agent Component. Each owner describes itself inside this shape so that every Definition file is written, read, and reasoned about the same way.
+This document is the common structure every Definition file follows. It defines the shape of a Definition file, not the content of any Implementation or Executor Component. Each owner describes itself inside this shape so that every Definition file is written, read, and reasoned about the same way.
 
-One Definition file exists per Implementation Component at `.interface/implementation/<subsystem>/<component>/<component>.md` — for example `.interface/implementation/development/model/model.md` — and per Agent Component at `.interface/agent/<component>/<component>.md`. Each file is human-owned and never written by an Interface operation. Operational Skills read applicable Implementation Definitions; only explicitly Human-invoked Agent Sync reads Agent Definitions, then realizes them as Runtime artifacts consumed by every other Skill.
+One Definition file exists per Implementation Component at `.interface/implementation/<subsystem>/<component>/<component>.md` — for example `.interface/implementation/development/model/model.md` — and per Executor Component at `.interface/executor/<component>/<component>.md`. Each file is human-owned and never written by an Interface operation. Operational Skills read applicable Implementation Definitions; only explicitly Human-invoked Agent Native Implement reads Agent Definitions, then realizes them as Runtime artifacts consumed by every other Skill.
 
 
 <!--------------------------------------------------------------------------------- Purpose --->
@@ -12,7 +12,7 @@ One Definition file exists per Implementation Component at `.interface/implement
 
 A Definition file exists to raise understanding of the project. It answers what its owning Component or Module is, what responsibility it holds, and under which mandatory rules it operates, so that any reader — human or Agent — can reason about that owner without inspecting an implementation.
 
-An Implementation or Agent Component describes its own responsibilities, boundaries, and relationships with other Components, including what it consumes and provides. What such a file may and may not carry is stated once, in Scope.
+An Implementation or Executor Component describes its own responsibilities, boundaries, and relationships with other Components, including what it consumes and provides. What such a file may and may not carry is stated once, in Scope.
 
 
 <!--------------------------------------------------------------------------------- Scope --->
@@ -24,8 +24,8 @@ A Definition file carries two kinds of content: what a reader must understand ab
 
 A Definition file never contains:
 
-- a specific tool, library, framework, engine, third-party package, or version selection; Implementation choices belong to Implementation Preferences and Agent declarations belong to the owning Agent Preferences, except that Agent Skill Definitions may name a required or conditional Skill and the technology category that activates it without making the technology selection;
-- a technical default or resolved technical choice, which belongs to Implementation Preferences or the owning Agent Preferences;
+- a specific tool, library, framework, engine, third-party package, or version selection; Implementation choices belong to Implementation Preferences and Agent declarations belong to the owning Executor Preferences, except that Agent Skill Definitions may name a required or conditional Skill and the technology category that activates it without making the technology selection;
+- a technical default or resolved technical choice, which belongs to Implementation Preferences or the owning Executor Preferences;
 - the shape of any generated file, including a documentation file, which belongs to the Component's Schema when one exists or to the Preferences that own that file; or
 - instructions assigning roles to Skills or Agents, prescribing their Workflows, or deciding which Skill reads the Component and when.
 
@@ -257,11 +257,11 @@ It is not a restatement of the Component's boundary sentence in Introduction or 
 
 One or two paragraphs placing the Component's technical choices outside this file, and naming what holds them:
 
-- an Implementation Component's technical choices and defaults belong to its Implementation Preferences, and an Agent Component's declarations and native mappings belong to its Agent Preferences;
+- an Implementation Component's technical choices and defaults belong to its Implementation Preferences, and an Executor Component's declarations and native mappings belong to its Executor Preferences;
 - implementation applies those choices to the current project definition; and
 - when the Component owns a generated file, the shape of that file belongs to its Schema.
 
-A Component still states where its technical choices or declarations belong even when its Implementation Preferences or Agent Preferences contain no entries. Explicit absence is not a reason to omit the layering statement.
+A Component still states where its technical choices or declarations belong even when its Implementation Preferences or Executor Preferences contain no entries. Explicit absence is not a reason to omit the layering statement.
 
 Layering may carry one third-level heading per layer, explaining what the layer is and how it is built, as concepts only. It names no language, package, file, or language construct such as a class; those details live in the development section of the Component's Preferences. An obligation about a layer is stated as a Principle, not here.
 
@@ -274,7 +274,7 @@ Layering may carry one third-level heading per layer, explaining what the layer 
 One or two paragraphs, stating all three of:
 
 - every Principle in the file is mandatory — the claim is about the Principles, not about every sentence in the file, since Introduction, Terms, Architecture, Relationships, Boundaries, and other explanatory sections explain rather than oblige;
-- an Implementation Preference or Agent Preferences can never override a Principle; and
+- an Implementation Preference or Executor Preferences can never override a Principle; and
 - a project may only add stricter rules, never looser ones.
 
 No Definition file omits or weakens any of the three.
@@ -444,7 +444,7 @@ declarations and mappings belong to <Component> Preferences; implementation real
 
 ## Authority
 
-Every Principle in this file is mandatory. An Implementation Preference or Agent Preferences can never override
+Every Principle in this file is mandatory. An Implementation Preference or Executor Preferences can never override
 a Principle, and a project may only add stricter rules, never looser ones.
 
 <br>

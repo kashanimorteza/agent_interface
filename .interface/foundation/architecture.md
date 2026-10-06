@@ -22,9 +22,9 @@ Agent Interface
 │       ├── Launch
 │       ├── Reset
 │       └── State
-├── Agent
+├── Executor
 │   ├── Runtime
-│   ├── Agent
+│   ├── Instance
 │   ├── Personality
 │   ├── Rule
 │   ├── Skill
@@ -43,6 +43,6 @@ Agent Interface
     ├── Understanding
     ├── Authority and Ownership
     ├── Workflow
-    ├── Agent Native Sync
+    ├── Agent Native Implement
     └── Schemas
 ```

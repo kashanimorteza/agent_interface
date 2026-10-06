@@ -1,6 +1,6 @@
 # Agent Interface
 
-Agent Interface is the Human-defined structure that coordinates Target, Implementation, Agent, Config, and the shared operational workflow.
+Agent Interface is the Human-defined structure that coordinates Target, Implementation, Executor, Config, and the shared operational workflow.
 
 <br>
 
@@ -68,11 +68,11 @@ Implementation defines how a Target is built and how that work is controlled.
 
 → [Read more about the Implementation Module](implementation/implementation.md)
 
-### Agent
+### Executor
 
-Agent defines how the selected Agent Native operates.
+Executor defines how the Agent Native operates.
 
-→ [Read more about the Agent Module](agent/agent.md)
+→ [Read more about the Executor Module](executor/executor.md)
 
 
 

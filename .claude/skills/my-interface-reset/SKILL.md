@@ -9,7 +9,7 @@ disable-model-invocation: true
 
 Required Core Skill. Stable key: `reset`. Skill name: `my-interface-reset`.
 
-Synchronized Native realization. The governing authority is the current Reset Operation Definition and Preferences in the Implementation Module; this Skill realizes their meaning and never overrides them.
+Native realization. The governing authority is the current Reset Operation Definition and Preferences in the Implementation Module; this Skill realizes their meaning and never overrides them.
 
 ## Invocation and inputs
 
@@ -24,8 +24,8 @@ Synchronized Native realization. The governing authority is the current Reset Op
 ## Start
 
 1. Apply the loaded Runtime Rules first: `interface-skill-policy`, `interface-bootstrap`, `agent-conduct`, `git-discipline`.
-2. Locate through `.interface/interface.md` (Implementation Module → Operations → Reset) and read in full the current Reset Definition and Reset Preferences (last synchronized at `.interface/implementation/operations/reset/reset.md` and `reset.yaml`), plus the State Definition and Schema needed to write records. If they contradict this Skill, follow them and report Runtime drift so the Human can run `/my-interface-agent-native`.
-3. Never read, search, or use `.interface/agent/`.
+2. Locate through `.interface/interface.md` (Implementation Module → Operations → Reset) and read in full the current Reset Definition and Reset Preferences (located, when this Skill was realized, at `.interface/implementation/operations/reset/reset.md` and `reset.yaml`), plus the State Definition and Schema needed to write records. If they contradict this Skill, follow them and report Runtime drift so the Human can run `/my-interface-native-implement`.
+3. Never read, search, or use `.interface/executor/`.
 
 ## Workflow
 

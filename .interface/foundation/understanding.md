@@ -16,7 +16,7 @@ This section defines how an Agent establishes Interface Understanding, Target Un
 <!--------------------------------------------------------------------------------- Interface Understanding --->
 ## Interface Understanding
 
-Interface Understanding is the understanding of Agent Interface that an Agent establishes before performing an ordinary Skill's role. It starts from `.interface/interface.md` and follows only the routes provided for the active role. Agent Native Sync is the sole explicit exception: it reads the Agent Module directly after explicit Human invocation and does not require Target Understanding.
+Interface Understanding is the understanding of Agent Interface that an Agent establishes before performing an ordinary Skill's role. It starts from `.interface/interface.md` and follows only the routes provided for the active role. Agent Native Implement is the sole explicit exception: it reads the Executor Module directly after explicit Human invocation and does not require Target Understanding.
 
 → [Read more about Interface](../interface.md)
 

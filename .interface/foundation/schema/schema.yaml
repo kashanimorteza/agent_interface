@@ -8,7 +8,7 @@ frame:
   source: ".interface/foundation/schema/yaml.yaml"
   inherited: "A Preferences file is a YAML Interface file, so it already has the common YAML frame: meta, policy, resolution, read_order, content_map, content. This schema does not redefine that frame and never repeats it."
   scope: "This schema defines the structure of Preferences content and states the additional expectations placed on the inherited meta and policy sections."
-  path: ".interface/implementation/<subsystem>/<component>/<component>.yaml for each Implementation Component, and .interface/agent/<component>/<component>.yaml for each Agent Component."
+  path: ".interface/implementation/<subsystem>/<component>/<component>.yaml for each Implementation Component, and .interface/executor/<component>/<component>.yaml for each Executor Component."
   ownership: "The file is human-owned. Operations read it and never write resolved choices back into it."
 
 # <!--------------------------------------------------------------------------------- Purpose -->
@@ -238,11 +238,11 @@ agent_parameters:
             required: true
             purpose: "The bounded guidance this Skill contributes while work on the selected item is performed."
       rules:
-        association_only: "An association neither defines nor installs a Skill and never proves Activation. A declared Skill reaches the Runtime through Agent Sync or through its own ecosystem's provisioning mechanism, and current Runtime evidence proves whether it is usable."
+        association_only: "An association neither defines nor installs a Skill and never proves Activation. A declared Skill reaches the Runtime through Agent Native Implement or through its own ecosystem's provisioning mechanism, and current Runtime evidence proves whether it is usable."
         order: "When more than one Skill is associated, list order expresses the Human's preference order. Order never makes a later Skill optional or an earlier one required; each entry keeps its own declared requirement."
         authority: "An associated Skill supplies guidance only. It never selects this option, expands Target scope, or overrides Target, Principles, Preferences, Plan, Role, Permission, or another owning authority."
         optional: "Use an optional associated Skill when it is declared, discoverable, and usable. If it is unavailable, continue without it and report the unavailable aid when consequential."
-        required: "A required associated Skill is a completion gate on conformance, not on availability. When it is usable, it is invoked through its synchronized Runtime mechanism and its complete applicable guidance is applied and verified under the owning Component's Principles before affected work is complete. When it is not usable, the work continues and the unavailability is reported, so provisioning can be retried by preparing the project again or through the Agent capability lifecycle."
+        required: "A required associated Skill is a completion gate on conformance, not on availability. When it is usable, it is invoked through its realized Runtime mechanism and its complete applicable guidance is applied and verified under the owning Component's Principles before affected work is complete. When it is not usable, the work continues and the unavailability is reported, so provisioning can be retried by preparing the project again or through the Agent capability lifecycle."
 
 # <!--------------------------------------------------------------------------------- Conventions -->
 conventions:
