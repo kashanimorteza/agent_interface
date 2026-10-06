@@ -30,10 +30,10 @@ content_map:
 content:
   active:
     mode: "reviewing"
-    phase: "P1"
-    mode_reason: "Review is judging the generated Source of phase P1 against its Plan (direct invocation)."
+    phase: "P2"
+    mode_reason: "Review is judging the generated Source of phase P2 against its Plan."
     set_by: "my-interface-review"
-    set_at: "2026-10-06T13:46:29Z"
+    set_at: "2026-10-06T14:41:21Z"
   phases:
     P1:
       id: "P1"
@@ -41,6 +41,12 @@ content:
       development: "completed"
       review: "satisfied"
       completed_at: "2026-10-06T13:49:32Z"
+    P2:
+      id: "P2"
+      planning: "completed"
+      development: "completed"
+      review: "satisfied"
+      completed_at: "2026-10-06T14:45:44Z"
   log:
     - id: "001"
       skill: "my-interface-configure"
@@ -304,4 +310,360 @@ content:
           - "Only the project's Engines were in scope (SQLite and PostgreSQL). PostgreSQL was verified by rendered definitions, not by a running server. A MySQL definition cannot be created because its text column needs a length; MySQL is not a project Engine, so it was not judged."
           - "Entry 005 (the interrupted coordinated Review) recorded no Finding and no Outcome; this execution repeated every observation."
           - "Task Logs were not edited by Review; the README is the only reviewed file Review changed."
+    - id: "007"
+      skill: "my-interface-implement"
+      event: "implement"
+      outcome: "completed"
+      started_at: "2026-10-06T14:15:40Z"
+      completed_at: "2026-10-06T14:45:44Z"
+      duration: "30:04"
+      open_questions:
+        - "008-OQ1"
+        - "011-OQ1"
+        - "011-OQ2"
+        - "011-OQ3"
+        - "012-OQ1"
+        - "012-OQ2"
+      blockers: []
+      report: "Coordinated Plan, Develop, and Review for phase P2 (Database). Plan created the P2 Plan (Entry 008). Develop stopped before claiming any Task because it found a defect in one planned Task that it may not change (Entry 009, Blocker 009-B1); Plan reconciled that one Task (Entry 010); Develop then completed all 42 Tasks (Entry 011); Review recorded four Findings, resolved and rechecked them, and set the Outcome satisfied (Entry 012). Phase P2 now has Planning completed, Development completed, and Review satisfied. Six Open Questions are associated with this execution and no Blocker remains open."
+      data:
+        requested_phases:
+          - "2"
+        resolved_phases:
+          - "P2"
+        resolution_note: "Requested '2' matched Target Phase 2, whose stable identifier is P2 (enabled, ready)."
+        config_check: "Plan Config and State Config exist and are structurally valid; Configure not needed."
+    - id: "008"
+      skill: "my-interface-plan"
+      parent_id: "007"
+      phase: "P2"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-10-06T14:15:50Z"
+      completed_at: "2026-10-06T14:19:36Z"
+      duration: "3:46"
+      open_questions:
+        - "008-OQ1"
+      blockers: []
+      report: "Created the Plan for P2 (Database): 8 Groups and 42 Tasks, all todo, with explicit acyclic dependencies; the existing P1 Plan was preserved unchanged. Planning progress for P2 is completed."
+      data:
+        phase: "P2"
+        changes:
+          added:
+            plan: "P2"
+            groups:
+              - "P2-G1"
+              - "P2-G2"
+              - "P2-G3"
+              - "P2-G4"
+              - "P2-G5"
+              - "P2-G6"
+              - "P2-G7"
+              - "P2-G8"
+            task_count: 42
+            reason: "No Plan existed for P2; the phase's Target outcome was decomposed into the package, the generated configuration with its Initial Data, the public contracts, shared Core Data, the Engine unit for the one Engine the active Instance uses, the Lifecycle Commands with their entry points and after-generation preparation, the Interface, and documentation."
+          changed: []
+          removed: []
+          preserved:
+            - plan: "P1"
+              reason: "Its 29 Tasks are developed and reviewed; Planning never rewrites developed work. Only the total Task count changed."
+          replaced: []
+        open_questions:
+          - id: "008-OQ1"
+            subject: "Building stored rows into Entities"
+            question: "The Database Definition requires each stored row to become an Entity through that Entity's own construction, and the Database Preferences name the Entity's own constructor with all Field values. The Model refuses a supplied value for its generated identity (open question 006-OQ1), so a row carrying its stored identity cannot be built that way. The Plan keeps the Database contract as written (the stored identity must be retained). Develop must realize it without changing Model, and the Human may want to settle 006-OQ1 first. Should the Target permit supplying a generated identity when a stored row is materialized?"
+            current_choice: "Plan the materialization Task as written; leave the realization to Develop under the Database and Model authorities."
+        notes:
+          - "Only one Instance is active (the other is inactive), so exactly one Engine unit is planned; no unit and no driver dependency are planned for the inactive Engine."
+          - "Initial Data values that are not concrete are planned as empty strings, per the Database Principles; the Model accepts empty text for text Fields."
+    - id: "009"
+      skill: "my-interface-develop"
+      parent_id: "007"
+      phase: "P2"
+      event: "develop"
+      outcome: "stopped"
+      started_at: "2026-10-06T14:22:01Z"
+      completed_at: "2026-10-06T14:22:01Z"
+      duration: "0 seconds"
+      blockers:
+        - "009-B1"
+      report: "Stopped before claiming any Task: a defect in the P2 Plan was found while establishing understanding. Planning must reconcile Task P2-G2-T1, which Develop may not change. No Source was written."
+      data:
+        phase: "P2"
+        tasks:
+          claimed: 0
+          developed: 0
+        blockers:
+          - id: "009-B1"
+            task: "P2-G2-T1"
+            condition: "The Task and its acceptance require the Database Configuration to hold exactly the Engines used by active Instances, but the Database Configuration Schema requires every Instance, including the inactive one the Database Preferences define, to name an existing Engine, and its own example lists both Engines with an inactive Instance. Both cannot hold. The Schema outranks the derived Plan; the Task must be reconciled by Planning. Only the Engine units, not the configuration's Engine list, are limited to the Engines active Instances use."
+            required_operation: "Plan (replace the not-yet-begun Task P2-G2-T1, keeping every other Task)"
+            state: "open"
+    - id: "010"
+      skill: "my-interface-plan"
+      parent_id: "007"
+      phase: "P2"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-10-06T14:22:21Z"
+      completed_at: "2026-10-06T14:22:42Z"
+      duration: "21 seconds"
+      open_questions: []
+      blockers: []
+      report: "Reconciled the P2 Plan against current understanding after Develop reported Blocker 009-B1. One Task, P2-G2-T1, was replaced in place because Develop had not begun it; the other 41 P2 Tasks and the whole P1 Plan were preserved unchanged. Planning progress for P2 stays completed."
+      data:
+        phase: "P2"
+        addresses_blocker: "009-B1"
+        changes:
+          added: []
+          changed:
+            - task: "P2-G2-T1"
+              kind: "replaced in place (not begun)"
+              reason: "It required the Database Configuration to hold exactly the Engines used by active Instances. The Database Configuration Schema requires every Instance, active or not, to name an existing Engine and its own example lists both Engines with an inactive Instance, so the configuration lists every declared Engine; only the Engine units are limited to the Engines active Instances use, which the Engine unit Group already states. The description, expected result, and acceptance now say that every Instance names an existing Engine."
+              source_id: "010"
+          removed: []
+          preserved:
+            - "The other 41 P2 Tasks and their dependencies."
+            - "The P1 Plan (29 developed Tasks)."
+          replaced: []
+        open_questions_carried:
+          - "008-OQ1"
+    - id: "011"
+      skill: "my-interface-develop"
+      parent_id: "007"
+      phase: "P2"
+      event: "develop"
+      outcome: "completed"
+      started_at: "2026-10-06T14:25:06Z"
+      completed_at: "2026-10-06T14:40:26Z"
+      duration: "15:20"
+      skills_used:
+        - name: "sqlmodel"
+          report: "Read as a Task Skill for the Engine, materialization, and Table tasks; used its SQLModel table models and engine; its guidance to prefer the SQLModel session and select API over SQLAlchemy statements differs from the statements used, recorded as 011-OQ2."
+      open_questions:
+        - "011-OQ1"
+        - "011-OQ2"
+        - "011-OQ3"
+        - "008-OQ1"
+      blockers: []
+      decisions:
+        - "P2-G1-T1"
+        - "P2-G2-T1"
+        - "P2-G2-T2"
+        - "P2-G3-T2"
+        - "P2-G3-T3"
+        - "P2-G3-T7"
+        - "P2-G4-T1"
+        - "P2-G4-T3"
+        - "P2-G4-T5"
+        - "P2-G4-T6"
+        - "P2-G5-T2"
+        - "P2-G5-T3"
+        - "P2-G5-T5"
+        - "P2-G5-T16"
+        - "P2-G5-T17"
+        - "P2-G6-T1"
+        - "P2-G6-T2"
+        - "P2-G6-T3"
+        - "P2-G6-T4"
+        - "P2-G6-T5"
+        - "P2-G7-T1"
+        - "P2-G8-T1"
+      report: "Executed all 42 planned Tasks of P2 (Database) in dependency order; every Task is done and each claim and completion is recorded in its Task Log. The Database Component now exists as an independent package depending on Model, with its generated configuration (23 Initial Data records), Core, one Engine unit for the one active Engine, three entry points, the Interface, and documentation. The default Instance was prepared after generation (15 Tables, 23 records). Lint, type, and lock checks run during generation reported no findings. Conformance is not claimed here; Review establishes it. Blocker 009-B1 from the earlier stopped run was verified resolved by Entry 010."
+      data:
+        resumes: "009"
+        blocker_check:
+          - blocker: "009-B1"
+            verified: "Task P2-G2-T1 was reconciled by Entry 010; its text no longer contradicts the Database Configuration Schema, so the condition is resolved. Resolution does not mark any Task complete."
+        tasks:
+          developed: 42
+          blocked: 0
+          replaced: 0
+        component: "Database"
+        result_location: "database/"
+        open_questions:
+          - id: "011-OQ1"
+            subject: "Applying a stored identity to an Entity"
+            question: "The Database Preferences ask for each row to be built with the Entity's own constructor from all Field values, but the Model refuses a supplied generated identity (open question 006-OQ1). The Database builds the Entity with its own constructor from every other Field and applies the stored identity with the storage layer's own committed-value mechanism, leaving Model untouched. Should the Target permit supplying a generated identity so rows can be built with a single constructor call? Carries 008-OQ1."
+            current_choice: "Construct without the generated identity, then apply it through the storage layer's committed-value mechanism."
+          - id: "011-OQ2"
+            subject: "SQLModel Skill recommendation"
+            question: "The sqlmodel Skill recommends SQLModel's session and select API first, and not SQLAlchemy statements. The Engine unit uses SQLModel's engine and the Model's table models but runs SQLAlchemy core insert, update, delete, and select statements, because it needs raw row mappings, explicit atomic transactions including schema changes, and exact-value handling. Should the Engine use the SQLModel session API instead?"
+            current_choice: "Keep the core statements."
+          - id: "011-OQ3"
+            subject: "Exact-decimal storage and query cost"
+            question: "Model stores decimals as exact text, so storage cannot compare or add them correctly. The Engine unit therefore evaluates decimal comparisons, ordering, and aggregates in memory on the matching records, which is exact but reads whole tables for decimal queries. Should Model store decimals in a form that storage can compare exactly?"
+            current_choice: "Keep Model's text form and decide decimal conditions in the Engine unit."
+        resolved_blockers:
+          - id: "009-B1"
+            resolution: "Reconciled by Planning in Entry 010; verified at the start of this execution."
+        amendments:
+          - "P2-G4-T6 received a progress note while its Engine unit was being written; no status change."
+    - id: "012"
+      skill: "my-interface-review"
+      parent_id: "007"
+      phase: "P2"
+      event: "review"
+      outcome: "satisfied"
+      started_at: "2026-10-06T14:41:21Z"
+      completed_at: "2026-10-06T14:45:44Z"
+      duration: "4:23"
+      skills_used:
+        - name: "sqlmodel"
+          report: "Read as a related capability while judging table-model use; its recommendation about the session API was already recorded as 011-OQ2 and is unchanged."
+      open_questions:
+        - "012-OQ1"
+        - "012-OQ2"
+        - "011-OQ1"
+        - "011-OQ2"
+        - "011-OQ3"
+        - "008-OQ1"
+      blockers: []
+      report: "Reviewed phase P2 (Database) against its current Plan and the Database Component's Review category. Four Findings (an undeclared direct dependency, stored values that could not be converted escaping as raw errors, a stored non-boolean read back as true, and an inaccurate README entry) were recorded, resolved in the Database, and rechecked; every other observation held. All 42 Task acceptance criteria and all 12 Review-category observations are established by current observation, so the Outcome is satisfied. Two new Open Questions and four carried ones remain for the Human; none prevents the Outcome."
+      data:
+        phase: "P2"
+        findings:
+          - id: "012-F1"
+            state: "resolved"
+            category: "dependency declaration"
+            baseline: "Database Development default: declare only necessary dependencies; the dependency check requires what the source imports directly to be declared."
+            expected: "Every third-party library the Database imports directly is declared in its project metadata."
+            observed: "The Database imports pydantic in two units but declares only model, pyyaml, sqlalchemy, and sqlmodel; pydantic arrives only through Model and SQLModel."
+            evidence: "database/database/core/data.py and database/database/core/initial_data.py import pydantic; database/pyproject.toml dependencies list has no pydantic; comparison of imports with declared dependencies printed: imported but not declared: pydantic."
+            resolution: "Reviewed implementation changed: pydantic was added to the Database's declared dependencies and the lock was refreshed."
+            recheck: "The comparison of imports with declared dependencies now reports none missing; the lock is current and installed packages are compatible."
+          - id: "012-F2"
+            state: "resolved"
+            category: "row contract error"
+            baseline: "P2-G4-T5 acceptance and the Database Review observation: a row that breaks the Entity contract is an error that identifies the Entity; failures never expose a value."
+            expected: "A stored value that cannot be turned into its Field's Type fails with the Declaration-incompatibility error naming the Entity and never showing the stored value."
+            observed: "A stored decimal text 'not-a-number' escaped the Database as a raw decimal.InvalidOperation, and a stored datetime text 'garbage' escaped as a raw ValueError whose message echoes the stored text; neither is a Database error."
+            evidence: "Observed on temporary storage after altering one stored value with a direct statement: listing Accounts raised InvalidOperation; listing Positions raised ValueError mentioning the stored text."
+            resolution: "Reviewed implementation changed: the Engine unit now turns a conversion failure of a stored value into the Declaration-incompatibility error that names the Entity, with the original error and the stored value hidden."
+            recheck: "On temporary storage a stored decimal text and a stored datetime text each now raise the Declaration-incompatibility error naming the Entity and not showing the stored text; every existing Operation observation still holds."
+          - id: "012-F3"
+            state: "resolved"
+            category: "row contract error"
+            baseline: "P2-G4-T5 acceptance: a row with a value of the wrong Type fails with an error and is neither changed nor skipped; Database Principle: a row that does not satisfy the Entity contract is never repaired."
+            expected: "A stored non-boolean value in a Boolean Field is an error."
+            observed: "A stored text 'maybe' in the activity Field was read back as true, because the storage type layer converts any stored value to a boolean before the Entity is built; the row was accepted."
+            evidence: "Observed on temporary storage after altering the activity value of one User with a direct statement; getting that User returned an active Entity instead of an error."
+            resolution: "Reviewed implementation changed: every read of Entity rows now also checks that each stored Boolean value is the integer 0 or 1 and reports any other value as a Declaration-incompatibility error naming the Entity and the Field."
+            recheck: "A stored 'maybe' in the activity Field is now refused with the error naming the Entity and the Field and not showing the value; valid rows read as before in the full Operation, Lifecycle, and README observations."
+          - id: "012-F4"
+            state: "resolved"
+            category: "documentation accuracy"
+            baseline: "P2-G8-T1 expected result: the documentation matches what the Database publishes; the Database Interface Schema assigns an unknown Instance to the invalid configuration or Instance error."
+            expected: "The Troubleshooting entry names the error actually raised when an Instance is passed as text."
+            observed: "The entry lists an Instance among the causes of InvalidInputError; passing the Instance as text raises ConfigurationError, which the Errors table of the same document correctly describes."
+            evidence: "database/README.md, Troubleshooting, the InvalidInputError bullet; observed: db.count(User, instance='SQLITE') raised ConfigurationError."
+            resolution: "Reviewed implementation changed: the README now lists an Instance that is not a DatabaseInstance member under ConfigurationError, removes it from the InvalidInputError entry, and describes the Declaration-incompatibility error with the Entity named and the value hidden."
+            recheck: "The README was regenerated, the text matches the observed errors, regeneration from the configuration produced no difference, and all README samples and the Verify script passed in a fresh copy."
+        outcome: "satisfied"
+        task_acceptance:
+          established: 42
+          not_established: 0
+          note: "Each acceptance was judged from the observations below, not from the Task Logs; Task status was not changed by Review."
+          by_group:
+            P2-G1: "Installed with Model from the project metadata into a fresh environment (uv sync in a fresh copy of both projects) and loaded; a built wheel holds no caches, storage, or configuration (see 012-OQ1 for the wheel's dependency on Model)."
+            P2-G2: "The configuration was checked against the Configuration Schema's rules independently of the project's loader (sections, complete Instances, existing Engines, active default, canonical names, lifecycle defaults, storage root, one Engine unit for the active Instance); its Initial Data and the prepared storage were compared with values typed from the Target text for every Entity."
+            P2-G3: "Exactly the Schema's contracts are published; enumerations hold exactly their members; DatabaseInstance holds the one active Instance; Filter, Order, and the results are immutable; the seven errors derive from the base."
+            P2-G4: "Instance selection, input validation (35 kinds of text, wrong-Entity, and wrong-Type input refused), query defaults, row materialization (a broken stored value is a Database error naming the Entity), and routing observed through the Interface."
+            P2-G5: "Every Operation, ExecuteCommand, Table creation, and Table comparison observed on a real file, including exact-decimal paths, datetimes compared as instants across offsets, wildcard-literal text matching, null semantics, atomic failure, and refusal of storage escapes."
+            P2-G6: "CreateTables (including an atomic failure that leaves nothing behind), InsertInitialData (repeatable, conflict-safe, atomic), Prepare, the entry points, and the after-generation preparation on the real default Instance."
+            P2-G7: "Signatures of all 16 methods match the Schema; the namespace is exact; loading and creating a Database open nothing."
+            P2-G8: "README structure and content against the Preferences; all 17 samples and the Verify script run in a fresh copy and repeat cleanly; Findings 012-F4 resolved."
+        database_review_category:
+          - observation: "Interface publishes exactly the public contracts of the Database Interface Schema and nothing else."
+            result: "holds"
+            evidence: "Namespace equals the nine contracts plus the base error and seven failure-kind errors."
+          - observation: "Every Entity Operation, Database-wide Operation, and Lifecycle Command has the signature and result the Schema states, including the optional DatabaseInstance."
+            result: "holds"
+            evidence: "16 methods, parameter names and order equal to the Schema, only entity, id, field, and command required, instance last and optional; each returned its Schema result."
+          - observation: "Each enumeration holds exactly its Schema members."
+            result: "holds"
+            evidence: "12 operators, 2 combinations, 2 directions, by name and order."
+          - observation: "DatabaseInstance holds exactly one member per active configured Instance and none for an inactive one."
+            result: "holds"
+            evidence: "Members equal the active Instance keys; configuration loading refuses a mismatch in either direction."
+          - observation: "A call without a DatabaseInstance runs on the configured default Instance."
+            result: "holds"
+            evidence: "Default and named calls reached the same storage file; an inactive or missing default is refused when the configuration loads."
+          - observation: "No Operation accepts an Entity name, a Field name, or any other string in place of an imported value."
+            result: "holds"
+            evidence: "31 inputs written as text or of the wrong kind were refused (Entity, Field, id, filters, combination, orders, limit, command, parameters; Instance text is refused with the invalid-Instance error)."
+          - observation: "CreateTables uses only the Entities of the Model Entity Collection and their Declarations, and stops on a difference with an existing Table."
+            result: "holds"
+            evidence: "Tables created for exactly the 15 Entities from their table definitions; seven kinds of difference were reported by the comparison and stopped the command with storage unchanged; the Target was never read."
+          - observation: "Every returned Entity is built through its own construction, and a row that breaks the Entity contract is an error."
+            result: "holds after resolution"
+            evidence: "Entities are built with their own constructor from every Field except the generated identity, which is applied the way storage assigns it (see 011-OQ1); wrong-Type, missing, and null values, a stored non-boolean, a stored decimal that is not a number, and a stored datetime that is not a datetime each fail with the Declaration-incompatibility error naming the Entity (Findings 012-F2 and 012-F3)."
+          - observation: "Prepare runs CreateTables and then InsertInitialData, and stops when CreateTables fails."
+            result: "holds"
+            evidence: "Both ran in order on a new Instance; with a differing Table present nothing was inserted and no other Table was created."
+          - observation: "A Target Initial Data value that is not concrete is copied as an empty string, and no value is generated."
+            result: "holds"
+            evidence: "The Target gives Generate securely for User password and api key, Instance password and api key, and Account password; the configuration and the prepared storage hold empty strings for exactly those values."
+          - observation: "A missing record returns null, never an error."
+            result: "holds"
+            evidence: "Get-by-id, Update, Delete, Enable, and Disable on a missing id returned null."
+          - observation: "Loading Interface opens no connection and creates no data or file."
+            result: "holds"
+            evidence: "Audit hook during import and creation of a Database in a fresh copy: no write-mode open, connection, or process; the storage directory was not created."
+        database_conformance_contracts:
+          architecture: "Interface, Core (Data, Tables, Initial Data and further internal units), one Engine unit, three entry points, storage holding data only, configuration, documentation; nothing placed at the Component root beyond those parts, beside the Engine unit, or inside storage."
+          engine_units: "Exactly one unit, for the one Engine the active Instance uses; none for the inactive Instance's Engine."
+          configuration: "Conforms to the Configuration Schema; the default Instance is active."
+          storage: "Resolved beneath the Database-owned storage root; parent-directory, nested, absolute, and symbolic-link escapes are refused before connecting."
+          zero_diff_regeneration: "Regenerating the configuration and the README from the Target transcription and the Preferences produced no difference, before and after the README resolution."
+        technical_conformance:
+          generation_inputs: "All 12 Target Initial Data groups copied (23 records); every Initial Data Entity exists in Model; every Entity Field value validates through Model; no generated Engine unit beyond the active Engine."
+          installability: "uv sync in a fresh copy of both projects installed and loaded the Database; the README setup steps worked."
+          checks: "ruff format and lint clean; pyright 0 errors; bytecode compilation with warnings as errors clean; lock current; installed packages compatible; declared dependencies now equal the imported third-party packages."
+          testing_scope: "Persistent testing is disabled for Database, so every check was transient and no test file was added."
+        open_questions:
+          - id: "012-OQ1"
+            subject: "The Database wheel's dependency on Model"
+            question: "Model is a sibling project declared through a path source, which only the project tooling understands. A built wheel of the Database lists a plain dependency on a package named model with no source, so installing that wheel anywhere else would look for a package of that name in a package index, possibly an unrelated one. The Database also cannot run from an installed copy by design (its configuration and storage belong to its project directory). Is the project-directory install the only intended way to use the Database, or should Model's source be pinned or published?"
+            current_choice: "Keep the editable path dependency and the project-directory install."
+          - id: "012-OQ2"
+            subject: "Internal units inside Core"
+            question: "Database Preferences name the Core files data, tables, and initial_data. The Database has further internal Core units (errors, values, configuration loading, query forms, and Prepare's coordinator) because the Definition forbids extra units only at the Component root, beside an Engine unit, or inside storage and says nothing about Core. Is that the intended reading?"
+            current_choice: "Keep the further units inside Core."
+        carried_open_questions: ["011-OQ1", "011-OQ2", "011-OQ3", "008-OQ1"]
+        observations_about_review:
+          - "The review scripts could not read the Target file (the boundary guard refuses interpreters on Interface paths); the expected Initial Data values were typed from the Target text read with the file reader, so that comparison is manual."
+          - "Only one Engine is implemented and observed, so the claim that the shared routing works unchanged across Engines was not observed with a second Engine; the PostgreSQL Instance is inactive by configuration."
+          - "Failure to open storage was observed with a blocked storage location; an unwritable directory could not be observed because the sandbox runs with full file rights."
+          - "Regeneration was verified with the generation scripts that produced the configuration and README; they live in the session scratch area, not in the project, so regeneration repeats only while they exist. It shows determinism, not correctness, which was observed separately."
+          - "The real prepared storage was read only (no write) and every behavioural observation used temporary storage; Review changed only the Database's Engine unit, its project metadata and lock, and its README."
+        operations:
+          - operation: "plan"
+            entry: "008"
+            outcome: "completed"
+          - operation: "develop"
+            entry: "009"
+            outcome: "stopped"
+            reason: "Plan defect in Task P2-G2-T1 (Blocker 009-B1); no Task was claimed."
+          - operation: "plan"
+            entry: "010"
+            outcome: "completed"
+            reason: "Replaced the one not-begun Task; 41 other Tasks and the P1 Plan preserved."
+          - operation: "develop"
+            entry: "011"
+            outcome: "completed"
+          - operation: "review"
+            entry: "012"
+            outcome: "satisfied"
+        aggregate:
+          open_questions: 6
+          open_question_ids: ["008-OQ1", "011-OQ1", "011-OQ2", "011-OQ3", "012-OQ1", "012-OQ2"]
+          blockers_open: 0
+          blockers_resolved: ["009-B1"]
+          earlier_open_questions_still_relevant: ["003-OQ1", "003-OQ2", "004-OQ1", "004-OQ2", "006-OQ1", "006-OQ2"]
+        phase_state:
+          P2:
+            planning: "completed"
+            development: "completed"
+            review: "satisfied"
 
