@@ -4,8 +4,8 @@ meta:
   path_note: "The Preferences layer of the fixed Entity Role inside the Logic Component."
   purpose: "Name, directory, Interface Schema reference, layout, development, and documentation for Entity Service."
   standard: "Agent Project Interface"
-  version: "6.0"
-  updated: "2026-10-01"
+  version: "7.0"
+  updated: "2026-10-07"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -51,7 +51,7 @@ content:
   # <!-------------------------------------------- interface -->
   interface:
     schema: ".interface/foundation/schema/logic-entity-interface.yaml"
-    contract_version: "1.0"
+    contract_version: "2.0"
 
   # <!-------------------------------------------- layout -->
   layout:
@@ -63,6 +63,11 @@ content:
     naming:
       child_file: "<entity>"
       child_structure: "<entity>"
+      groups:
+        service: "Service"
+        model: "Model"
+        parameter: "Parameter"
+        error: "Error"
 
   # <!-------------------------------------------- development -->
   development:
@@ -79,7 +84,7 @@ content:
           constructor: "__init__ creates one Storage() and keeps it on the instance"
           methods: "One method per Storage method whose first parameter is entity, in the order Storage publishes them, with the method's exact name and docstring. An entity parameter typed as a class is removed and the bound Entity is passed in its place; an entity parameter typed as an instance stays and is checked against the bound Entity, raising InvalidInputError on a mismatch. Every other argument is passed unchanged, in order."
           child: "One file per Entity holding class <Entity>(BaseEntity) with _entity = model.<Entity> from `from model import interface as model`, and only what is specific to that Entity."
-          republish: "Every Child class and every contract Storage Interface publishes except Storage are imported and republished. The interface file holds only these imports and the published list; it performs no check, because conformance belongs to Review."
+          republish: "The interface file publishes four namespace classes named by layout.naming.groups: Service holds every Child class; Model holds the Entity each Child binds, under the Child's name; Parameter holds every non-error contract Storage Interface publishes except Storage; Error holds every error Storage Interface publishes. The interface file holds only these imports, the four namespace classes, and the published list; it performs no check, because conformance belongs to Review."
 
   # <!-------------------------------------------- documentation -->
   documentation:
@@ -93,6 +98,6 @@ content:
       - verify
     sections:
       overview: "What Entity Service is and why it exists, in one paragraph, with one simple example."
-      interface: "Every Child Service, every Action, and every republished contract, each with one example."
+      interface: "Every group with its members — every Child Service and its Actions, every Model, every Parameter, and every Error — each with one example."
       use: "How a caller imports a Child Service and how a Child Service adds its own Behaviour."
       verify: "How to see that Entity Service matches Model's Entity Collection and Storage Interface."

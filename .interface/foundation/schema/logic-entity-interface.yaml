@@ -1,7 +1,7 @@
 schema:
   id: "agent-interface-logic-entity-interface"
-  version: "1.0"
-  purpose: "The stable, language-independent structure of the Entity Service Interface inside Logic: one Child Service per Model Entity, each a bound mirror of the Storage Actions that take an Entity."
+  version: "2.0"
+  purpose: "The stable, language-independent structure of the Entity Service Interface inside Logic: one Child Service per Model Entity, each a bound mirror of the Storage Actions that take an Entity, published with the Entities they bind and the Storage contracts in four groups."
   kind: "Interface structure standard"
   applies_when: "The Implementation declares a Logic Component, which always contains Entity Service."
   generates: "<logic component path>/<services directory>/<entity service directory>/<interface file>"
@@ -11,7 +11,7 @@ structure:
 
   interface:
     required: true
-    purpose: "The Entity Service entrypoint. It publishes exactly the Child Services and the republished contracts below, and nothing else."
+    purpose: "The Entity Service entrypoint. It publishes exactly four groups — service, model, parameter, and error — and nothing else."
 
   base:
     required: true
@@ -33,10 +33,14 @@ structure:
     binding: "Each Child Service receives Base and binds exactly its own Entity."
     content: "Only Behaviour or Actions specific to its Entity; an override of a Base Action applies to its own Entity only."
 
-  republished_contracts:
+  groups:
     required: true
-    purpose: "Contracts a caller needs to build requests, read results, and catch errors without importing Storage or Database. Each is the same object Storage Interface publishes, never a copy."
-    contracts: "Every contract Storage Interface publishes except the Storage gateway, read from that Interface each time, never listed by hand."
+    purpose: "Everything a caller needs to call Actions, build requests, read results, and catch errors without importing Model, Storage, or Database."
+    naming: "Group names follow Entity Service Preferences."
+    service: "One Child Service for every Entity, as the entities section defines."
+    model: "The Entity each Child Service binds, under the same name as its Child Service; the original object Model Interface publishes, never a copy."
+    parameter: "Every contract Storage Interface publishes that is not an error, except the Storage gateway; each the original object, read from that Interface each time, never listed by hand."
+    error: "Every error Storage Interface publishes; each the original object, read from that Interface each time, never listed by hand."
 
 # <!--------------------------------------------------------------------------------- Rules -->
 rules:
@@ -46,15 +50,12 @@ rules:
 
 # <!--------------------------------------------------------------------------------- Example -->
 example: |
-  from logic.services.entity.interface import (
-      Filter, FilterOperator, InvalidInputError, User,
-  )
-  from model import interface as model
+  from logic.services.entity.interface import Service, Model, Parameter, Error
 
-  users = User()
-  users.add(model.User(name="Admin", ...))
-  active = users.list(filters=[Filter(model.User.is_active, FilterOperator.EQUALS, True)])
+  users = Service.User()
+  users.add(Model.User(name="Admin", ...))
+  active = users.list(filters=[Parameter.Filter(Model.User.is_active, Parameter.FilterOperator.EQUALS, True)])
   try:
-      users.add(model.Account(...))
-  except InvalidInputError:
+      users.add(Model.Account(...))
+  except Error.InvalidInputError:
       ...
