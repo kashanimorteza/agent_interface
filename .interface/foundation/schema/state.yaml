@@ -11,7 +11,7 @@ initialization:
   preservation: "Reconciliation preserves existing operational records and never replaces them with defaults."
 generation:
   purpose: "File-specific values Configure supplies while applying the general YAML file structure."
-  path: "config/state.yaml"
+  path: ".config/state.yaml"
   path_note: "Mutable Workflow position, Phase progress, and execution Log."
   agent_may_edit: true
   policy_rule: "Apply the current State Component and the active operation's ownership rules."

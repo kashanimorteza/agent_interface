@@ -39,7 +39,7 @@ content:
   options: {}
   settings:
     config_directory:
-      path: "config/"
+      path: ".config/"
     general_structure: ".interface/foundation/schema/yaml.yaml"
     records:
       - name: "Plan Config"

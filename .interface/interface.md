@@ -83,8 +83,8 @@ Agent defines how the selected Agent Native operates.
 
 Config is the shared operational boundary for generated Workflow records.
 
-- **State Config** — current Workflow position, phase progress, outcomes, and History containing Operation and Skill records. [Read more about State Config](../config/state.yaml)
-- **Plan Config** — Plans, Groups, Tasks, dependencies, completion conditions, and planning progress. [Read more about Plan Config](../config/plan.yaml)
+- **State Config** — current Workflow position, phase progress, outcomes, and History containing Operation and Skill records. [Read more about State Config](../.config/state.yaml)
+- **Plan Config** — Plans, Groups, Tasks, dependencies, completion conditions, and planning progress. [Read more about Plan Config](../.config/plan.yaml)
 
 <br>
 

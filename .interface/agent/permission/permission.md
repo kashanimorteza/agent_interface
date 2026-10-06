@@ -44,7 +44,7 @@ The Component exists because a boundary that depends on good reasoning is not a 
 
 ### How It Works
 
-Access starts closed. The Interface is read-only to every Agent Instance and Skill; operational Config records live outside it, in `config/` at the project root. Everything beyond that is granted by contract: each capability receives the minimum its declared work requires, deny always wins over allow, and no delegated Agent Instance or lower layer can widen what it was given.
+Access starts closed. The Interface is read-only to every Agent Instance and Skill; operational Config records live outside it, in `.config/` at the project root. Everything beyond that is granted by contract: each capability receives the minimum its declared work requires, deny always wins over allow, and no delegated Agent Instance or lower layer can widen what it was given.
 
 The Agent Module is protected by an explicit Human-only read boundary. Permission enforces that boundary; Agent Sync performs the authorized read and produces the Native realization, while every other consumer uses the synchronized Native artifacts.
 
@@ -102,7 +102,7 @@ Every Principle below is mandatory.
 
 **Rule:** The entire Interface is read-only to every Agent Instance and Skill by default. Privileged, irreversible, destructive, external, or materially scope-expanding actions additionally require the authorization applicable to their impact.
 
-**Why:** New or moved Interface sources remain protected automatically, while operational Config records live outside it in `config/` at the project root.
+**Why:** New or moved Interface sources remain protected automatically, while operational Config records live outside it in `.config/` at the project root.
 
 **Boundary:** Human authorship is outside Agent execution. Safe read-only inspection remains available within applicable read restrictions.
 

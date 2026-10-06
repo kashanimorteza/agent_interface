@@ -48,7 +48,7 @@ Every execution creates exactly one Log Entry in the State Config and completes 
 
 ## Boundaries
 
-- Changes only the declared Config Records in the Config directory (`config/`, outside `.interface/`). Never changes anything else.
+- Changes only the declared Config Records in the Config directory (`.config/`, outside `.interface/`). Never changes anything else.
 - Never performs another Operation (Plan, Develop, Review, Launch, Reset, Implement) and never writes later operational content that belongs to another Operation.
 - Never interprets project meaning. Never edits `.interface/`.
 - Never commits or pushes.

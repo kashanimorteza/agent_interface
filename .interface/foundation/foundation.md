@@ -148,16 +148,16 @@ The stored structure and initial template of a generated record.
 
 ### State Schema
 
-Generates `config/state.yaml`.
+Generates `.config/state.yaml`.
 
-Responsibility: Defines the stored structure and initial values of State Config for `config/state.yaml`.
+Responsibility: Defines the stored structure and initial values of State Config for `.config/state.yaml`.
 
 → [Read more about State Schema](schema/state.yaml)
 
 ### Plan Schema
 
-Generates `config/plan.yaml`.
+Generates `.config/plan.yaml`.
 
-Responsibility: Defines the stored structure and initial values of Plan Config for `config/plan.yaml`.
+Responsibility: Defines the stored structure and initial values of Plan Config for `.config/plan.yaml`.
 
 → [Read more about Plan Schema](schema/plan.yaml)
