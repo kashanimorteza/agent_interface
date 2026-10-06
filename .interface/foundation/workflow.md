@@ -7,10 +7,34 @@ This section defines the Workflow paths used to run Agent Interface.
 <!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation
 
-1. **[Define the Project](#define-the-project)**
-2. **[Default](#default)**
-3. **[Normal](#normal)**
-4. **[Detailed](#detailed)**
+1. **[Prepare the Agent Native](#prepare-the-agent-native)**
+2. **[Define the Project](#define-the-project)**
+3. **[Default](#default)**
+4. **[Normal](#normal)**
+5. **[Detailed](#detailed)**
+
+<br>
+
+<!--------------------------------------------------------------------------------- Prepare the Agent Native --->
+## Prepare the Agent Native
+
+Before any other step, prepare the Agent Native. Step 1 is needed only once, or when the Skill is missing; repeat step 2 whenever the Executor Module changes:
+
+1. Give the Agent this text to create the Agent Native Implement Skill:
+
+   ```text
+   Read `.interface/foundation/create-agent-native-implement.md` completely and execute every instruction in it.
+
+   Create or update the Agent Native Implement Skill according to the selected Agent Native's Skill-creation policy, so that it is invoked as `/my-interface-native-implement`. Do not invoke it and do not begin realization. Preserve the authority and boundaries defined there. Do not read Target sources and do not modify `.interface/executor/`.
+
+   Report exactly what was created or updated.
+   ```
+
+2. In a separate message, run:
+
+   ```text
+   /my-interface-native-implement
+   ```
 
 <br>
 
