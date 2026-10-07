@@ -29,11 +29,11 @@ content_map:
 # <!--------------------------------------------------------------------------------- Content -->
 content:
   active:
-    mode: "reviewing"
-    phase: "P4"
-    mode_reason: "Review judged phase P4 (API) against its Plan and the Review categories of API and Entity Group; not satisfied, blocked by 020-B1 (the Human-owned API Interface Schema lacks two Endpoints Principles the Definition states)."
-    set_by: "my-interface-review"
-    set_at: "2026-10-06T22:14:10Z"
+    mode: "development"
+    phase: "P2"
+    mode_reason: "Development executed all 61 Tasks of phase P2 (Database); Review has not run."
+    set_by: "my-interface-develop"
+    set_at: "2026-10-07T09:25:08Z"
   phases:
     P1:
       id: "P1"
@@ -41,6 +41,12 @@ content:
       development: "completed"
       review: "satisfied"
       completed_at: "2026-10-06T13:49:32Z"
+    P2:
+      id: "P2"
+      planning: "completed"
+      development: "completed"
+      review: "not started"
+      completed_at: null
   log:
     - id: "001"
       skill: "my-interface-configure"
@@ -304,3 +310,209 @@ content:
           - "Only the project's Engines were in scope (SQLite and PostgreSQL). PostgreSQL was verified by rendered definitions, not by a running server. A MySQL definition cannot be created because its text column needs a length; MySQL is not a project Engine, so it was not judged."
           - "Entry 005 (the interrupted coordinated Review) recorded no Finding and no Outcome; this execution repeated every observation."
           - "Task Logs were not edited by Review; the README is the only reviewed file Review changed."
+    - id: "007"
+      skill: "my-interface-plan"
+      phase: "P2"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-10-07T08:45:28Z"
+      completed_at: "2026-10-07T08:53:32Z"
+      duration: "8:04"
+      skills_used:
+        - name: "sqlmodel"
+          report: "Read as a related capability while planning the Tables, Engine, and row-materialization work; it recommends nothing that differs from the project's current Database choices, and is recorded as Task Skills where useful."
+      open_questions:
+        - "007-OQ1"
+        - "007-OQ2"
+        - "007-OQ3"
+        - "006-OQ1"
+      blockers: []
+      report: "Created the Plan for P2 (Database): 10 Groups and 61 Tasks, all todo, with explicit acyclic dependencies on each other and on completed P1 Tasks. No prior P2 Plan existed, so nothing was preserved, changed, removed, or replaced; P1 was not touched. Planning progress for P2 is completed. Three new Open Questions are recorded and 006-OQ1 is carried; none is a Blocker."
+      data:
+        phase: "P2"
+        requested_phases:
+          - "2"
+        resolved_phases:
+          - "P2"
+        resolution_note: "Requested '2' matched Target Phase 2, whose stable identifier is P2; it is enabled and Ready, and no earlier applicable phase has an open Blocker."
+        changes:
+          added:
+            plan: "P2"
+            groups:
+              - "P2-G1"
+              - "P2-G2"
+              - "P2-G3"
+              - "P2-G4"
+              - "P2-G5"
+              - "P2-G6"
+              - "P2-G7"
+              - "P2-G8"
+              - "P2-G9"
+              - "P2-G10"
+            task_count: 61
+            reason: "No Plan existed for P2; the phase's Target outcome was decomposed into packaging and the use of Model, the Database Configuration, the public values, Core, one Engine unit per Engine in use, the published Interface, the manual entry points, the Initial Data collection, preparation of the default Instance, and documentation."
+          changed: []
+          removed: []
+          preserved:
+            - plan: "P1"
+              reason: "A different phase's completed work; untouched. Only the project-wide Task count was recalculated from 29 to 90."
+          replaced: []
+        group_task_counts:
+          P2-G1: 2
+          P2-G2: 2
+          P2-G3: 5
+          P2-G4: 15
+          P2-G5: 14
+          P2-G6: 4
+          P2-G7: 3
+          P2-G8: 12
+          P2-G9: 1
+          P2-G10: 3
+        task_count_total: 90
+        state_observations:
+          - "Before this execution the active position recorded a Review of P4 and a Blocker 020-B1 from Log Entry 020, but the Log ends at Entry 006 and only P1 has a phase record. The stale active position was replaced by this execution's planning position; no P4 Blocker was found in the Log, so none applies to P2."
+        open_questions:
+          - id: "007-OQ1"
+            subject: "Database Interface Schema disagrees with the Database Definition and Preferences"
+            question: "The Database Interface Schema (version 2.0) describes the preparation commands as Lifecycle commands held by the single Database class and returned as a lifecycle result, with no separate group. The Database Definition and Preferences (version 15.0, updated 2026-10-07) describe them as Setup Operations held by a separate Setup group and returned as a Setup Result, and say that no other wrapper is added to the Database. The Schema states it is built from the Definition and Preferences and is rebuilt, with its version raised, when either changes a public contract; it appears not to have been rebuilt, and the Preferences still reference contract version 2.0. Should the Schema be rebuilt and its version raised?"
+            current_choice: "Plan the Interface from the Definition and Preferences (Setup group, Setup Result), because the Schema is derived from them. Review may judge conformance to the Schema as written; a Blocker could arise there. The Schema is Human-owned and was not changed."
+          - id: "007-OQ2"
+            subject: "Materializing stored rows as Entities versus the Model's refusal of supplied Auto Increment values"
+            question: "The Database Definition and Preferences require every returned row to be built through the Entity's own construction from all stored Field values, including the id. The Model refuses a caller-supplied Auto Increment value on construction (the carried questions 004-OQ1 and 006-OQ1). Adding a record, retrieving by id, and listing therefore cannot build an Entity with its stored id by construction alone. Should the Target permit supplying an Auto Increment value when materializing a stored row, or should the Database be allowed another Model-sanctioned way to carry a stored id?"
+            current_choice: "Plan the materialization Task as the Definition states it and leave the method to Develop, which records its decision. If no way conforms to the Model's Principles, Develop records a Blocker."
+          - id: "007-OQ3"
+            subject: "Declared default password for an inactive Instance"
+            question: "The Database Preferences declare a non-empty default password for the inactive server Instance, and the Database Configuration copies every Instance definition completely. Whether a declared default of that kind counts as a credential that must not be copied into a project declaration is not stated."
+            current_choice: "Plan the Instances as declared. Develop must not print or log the value, and the documentation Tasks require that no credential appears."
+          - id: "006-OQ1"
+            subject: "Carried from Review (Entry 006)"
+            question: "See 007-OQ2, which records the effect of 006-OQ1 on Database row materialization."
+            current_choice: "Unchanged."
+        related_capabilities:
+          - "sqlmodel: read; no recommendation differs from the project's current Database choices (its datetime guidance concerns Model and is already recorded as 004-OQ2)."
+        decisions:
+          - "The Initial Data collection is planned as one Task per Target Entity that defines Initial Data (12 Entities); Trailing Rule, Partial Rule, and Position define none and have no Task."
+          - "Engine unit work is planned per capability and stated for every Engine in use, so the Plan stays valid if the set of active Instances changes."
+          - "Preparation of the default Instance is its own Group and Task so that the Target's request to insert the defined initial data has one observable result."
+    - id: "008"
+      skill: "my-interface-develop"
+      phase: "P2"
+      event: "develop"
+      outcome: "completed"
+      started_at: "2026-10-07T08:55:07Z"
+      completed_at: "2026-10-07T09:25:08Z"
+      duration: "30:01"
+      skills_used:
+        - name: "sqlmodel"
+          report: "Applied its model, metadata, and datetime guidance while realizing Table creation and the Engine unit; its Session and select pattern for loading Entities differs from the Definition (Engine units return raw results and Core materializes Entities) and is recorded as an Open Question."
+      open_questions:
+        - "008-OQ1"
+        - "008-OQ2"
+        - "008-OQ3"
+        - "008-OQ4"
+        - "008-OQ5"
+        - "007-OQ1"
+        - "007-OQ2"
+        - "007-OQ3"
+        - "006-OQ1"
+      blockers: []
+      decisions:
+        - "P2-G1-T1"
+        - "P2-G1-T2"
+        - "P2-G2-T1"
+        - "P2-G2-T2"
+        - "P2-G3-T1"
+        - "P2-G3-T2"
+        - "P2-G3-T3"
+        - "P2-G3-T4"
+        - "P2-G3-T5"
+        - "P2-G4-T1"
+        - "P2-G4-T2"
+        - "P2-G4-T3"
+        - "P2-G4-T4"
+        - "P2-G4-T5"
+        - "P2-G4-T6"
+        - "P2-G4-T8"
+        - "P2-G4-T9"
+        - "P2-G4-T10"
+        - "P2-G4-T11"
+        - "P2-G4-T12"
+        - "P2-G4-T13"
+        - "P2-G4-T14"
+        - "P2-G4-T15"
+        - "P2-G5-T1"
+        - "P2-G5-T2"
+        - "P2-G5-T5"
+        - "P2-G5-T7"
+        - "P2-G5-T9"
+        - "P2-G5-T10"
+        - "P2-G5-T12"
+        - "P2-G5-T13"
+        - "P2-G5-T14"
+        - "P2-G6-T1"
+        - "P2-G6-T3"
+        - "P2-G6-T4"
+        - "P2-G7-T1"
+        - "P2-G8-T1"
+        - "P2-G9-T1"
+        - "P2-G10-T1"
+        - "P2-G10-T2"
+        - "P2-G10-T3"
+      report: "Executed all 61 planned Tasks of P2 (Database) in dependency order; every Task is done and each claim and completion is recorded in its Task Log. The Database Component now exists as an independent package with its Interface, Core, one Engine unit, Configuration with the 23 Target Initial Data records, three manual entry points, and documentation, and the default Instance has been prepared (15 Tables, 23 records). Lint, format, and type checks reported no findings on the finished Component; Task evidence is scratch checks kept outside the Component and the documentation examples, all run. Conformance is not claimed here; Review establishes it."
+      data:
+        phase: "P2"
+        tasks:
+          developed: 61
+          blocked: 0
+          replaced: 0
+        component: "Database"
+        result_location: "database/"
+        resolved_phases:
+          - "P2"
+        observations_during_generation:
+          quality: "ruff check and format and ty reported no findings."
+          exercised: "Configuration validation, Instance selection and connection resolution, Entity argument and query checks, every Engine capability, the whole request pipeline, atomicity, table creation, Initial Data insertion, combined preparation, the Interface surface and load behaviour, the three entry points, and all 24 documentation examples were exercised in scratch checks kept outside the Component, mostly against temporary storage; the documented Verify script also ran against the real default Instance."
+          environment: "The package index was unreachable from the sandbox, so every dependency resolved from the local uv cache with --offline; versions are concrete in the lock (sqlmodel 0.0.48, sqlalchemy 2.1.3)."
+          boundary: "The Model was not changed (no file under the Model differs); the Database consumes it only through its Interface."
+        amendments:
+          - "tables, query, data, initial-data, and Engine-unit outputs gained type annotations for the Model's dynamic Entity types during finalization (annotation-only; one Task Log amendment per affected Task)."
+          - "The documentation examples were reformatted to the quality tool's style (line wrapping only)."
+          - "P2-G4-T13 was amended so a Setup Result's affected count is the processed count, consistent with the Initial Data insertion."
+        open_questions:
+          - id: "008-OQ1"
+            subject: "Carrying a stored Auto Increment value into an Entity (follows 007-OQ2, 006-OQ1)"
+            question: "The Database builds each returned Entity through its own construction from every Field except the generated one, which validates the row, and then attaches the stored identity with the ORM's public committed-value operation, because the Model refuses a supplied Auto Increment value. Should the Target instead permit supplying an Auto Increment value when materializing a stored row?"
+            current_choice: "Keep the committed-value approach; the Entity stays instrumented and its identity stays immutable."
+          - id: "008-OQ2"
+            subject: "sqlmodel Skill recommends Session and select for loading Entities"
+            question: "The Skill recommends SQLModel Sessions and select(Model) so rows load directly as table-model instances. The Database Definition has Engine units return raw results and Core materialize each Entity through its own construction, so the Engine unit runs SQLAlchemy Core statements on the Entities' tables instead. Should the Definition allow Session-loaded Entities?"
+            current_choice: "Keep the Definition: raw rows from the Engine unit, materialization in Core."
+          - id: "008-OQ3"
+            subject: "Precision of decimal comparisons in the storage engine"
+            question: "Decimal Fields are stored as exact text, so Filters and Orders on them compare after a cast to a floating-point number in the storage engine, which limits comparison precision to about 15 significant digits; stored and returned values stay exact, and sums, smallest, and largest values are computed exactly. Is that acceptable, or must comparisons also be exact?"
+            current_choice: "Numeric cast for comparison and ordering; exact values everywhere else."
+          - id: "008-OQ4"
+            subject: "Query semantics the Definition leaves open"
+            question: "The Definition does not say how the text-matching operators treat letter case, or whether a not-equal condition matches records whose Field is null. The file-backed storage engine matches ASCII letters without regard to case, and a null Field never matches not-equal; the documentation states the null rule and tells readers to use the null tests. Should case-sensitive matching and null-inclusive not-equal be required?"
+            current_choice: "Storage-engine behaviour, with wildcard characters in the supplied text matched literally."
+          - id: "008-OQ5"
+            subject: "The Configuration and Storage sit outside the importable package"
+            question: "As the Definition places them at the Component root, the configuration file and the storage directory are not part of the importable package, so a non-editable install of the Database cannot load its Configuration, while the project-internal editable path dependency works. Is a non-editable install expected to work?"
+            current_choice: "Support the project-internal editable path dependency, as Development Principles require."
+          - id: "007-OQ1"
+            subject: "Carried from Plan (Entry 007)"
+            question: "The Interface follows the Database Definition and Preferences (Setup group, Setup Result), which differ from the Database Interface Schema version 2.0 (Lifecycle commands on the Database class). The Schema is Human-owned and was not changed; Review may judge conformance to it."
+            current_choice: "Unchanged."
+          - id: "007-OQ2"
+            subject: "Carried from Plan (Entry 007)"
+            question: "See 008-OQ1, which records how row materialization was resolved."
+            current_choice: "Unchanged."
+          - id: "007-OQ3"
+            subject: "Carried from Plan (Entry 007)"
+            question: "The inactive server Instance's declared default password is copied into the Database Configuration as declared (not printed or logged, and not shown in the documentation). Whether a declared default of that kind counts as a credential is unresolved."
+            current_choice: "Unchanged."
+          - id: "006-OQ1"
+            subject: "Carried from Review (Entry 006)"
+            question: "See 008-OQ1."
+            current_choice: "Unchanged."
+        decisions_note: "The 41 Tasks listed under decisions each record, in their Task Log, the choices Develop made on its own proposal."
