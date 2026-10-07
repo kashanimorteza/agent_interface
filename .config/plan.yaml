@@ -1,0 +1,827 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".config/plan.yaml"
+  path_note: "Mutable Plans, Groups, Tasks, counts and progress."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current Plan Component and the active operation's ownership rules."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read task_count, then the Plan selected by stable Target phase identifier, with its Groups and Tasks in nesting order."
+  selection: "A requested phase resolves to the Plan keyed by that phase identifier; a Task resolves within its containing Group and Plan."
+  absence: "No matching Plan means no current planning record exists for that phase."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "task_count"
+  - "plans"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  task_count: "Total number of stored Tasks."
+  plans: "Current phase Plans and their Groups and Tasks."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  task_count: 34
+  plans:
+    P1:
+      id: "P1"
+      title: "Model"
+      order: 1
+      target: "Model"
+      does: "The Model Component exists as an independent, reusable data-model layer that publishes every Target Entity with its complete Declaration, strict validation, lossless JSON conversion, and table-ready storage mapping, together with its own documentation."
+      constraints: []
+      task_count: 34
+      groups:
+        P1-G1:
+          id: "P1-G1"
+          title: "Shared Entity infrastructure"
+          description: "Everything that serves all Entities rather than one: establishing the Component, the public Declaration and Foundation contracts, and the private validation, Field Type representation, and storage behaviour behind them. Every Entity depends on this work and this work depends on no Entity."
+          area: "Shared Entity infrastructure"
+          does: "Every Entity can be built on one shared set of contracts and behaviours for declaration, validation, conversion, and storage."
+          constraints: []
+          task_count: 12
+          tasks:
+            P1-G1-T1:
+              id: "P1-G1-T1"
+              source_id: "002"
+              title: "Establish the Model Component as a self-contained reusable package"
+              description: "Create the Model Component as an independent reusable library whose language, package management, modeling package, and quality tooling are resolved from their owning sources, with its dependencies recorded so its environment is reproducible."
+              reason: "Every other Task in the phase builds inside this Component, and later Components consume it as a project-internal dependency."
+              inputs:
+                - "Model Component Preferences"
+                - "Development shared defaults for language and package management"
+              skills:
+                - "sqlmodel"
+              expected_result: "A Model Component that can be set up in an isolated environment from its recorded dependencies and loaded without error, containing no Entity yet."
+              depends_on: []
+              constraints: []
+              acceptance: "Setting up the Component from a clean state reproduces its environment from the recorded dependencies, and the Component loads without error and without side effect."
+              status: "blocked"
+              blocker: "B-003-1"
+              log:
+                - at: "2026-10-07T18:42:44Z"
+                  status: "blocked"
+                  event: "blocked"
+                  note: "Cannot establish the reproducible environment: the package distribution host cannot be reached, so no dependency can be resolved, locked, or installed. No Component packaging was created."
+                  evidence:
+                    - "The package index host resolves and answers, but the distribution host files.pythonhosted.org does not resolve (name lookup fails with a temporary-failure result) on repeated attempts across several minutes."
+                    - "Resolving the modeling library through the selected package manager fails while fetching pydantic wheel metadata from that host after three retries (observed at 18:32 and again at 18:42 UTC)."
+                    - "No lock or environment could be produced; nothing for this Task was written."
+            P1-G1-T2:
+              id: "P1-G1-T2"
+              source_id: "002"
+              title: "Realize the Field Declaration contract"
+              description: "Provide the public, immutable Field Declaration record with the closed set of Field Types, the Value Generation kinds, the recognized Sensitivity Markers, and Field constraints, enforcing its structural rules at creation so contradictory input fails instead of being repaired."
+              reason: "Entity Declarations and every Entity Field are built from this record, so Field meaning is written once."
+              inputs:
+                - "Model Definition's Field Declaration contract"
+                - "Sensitivity markers and Field defaults in Model Preferences"
+              skills:
+                - "sqlmodel"
+              expected_result: "A Field Declaration that records a Field's name, description, Type, presence meaning, Default Value, sensitivity, immutability, constraints, and Value Generation, and distinguishes an absent Default Value from an explicit null default."
+              depends_on: []
+              constraints: []
+              acceptance: "A Field Declaration is created for each valid combination and cannot be changed afterwards; an unknown Type, a Default Value combined with Value Generation, a default that mismatches the Field's Type or nullability, a size constraint on a non-string Field, Auto Increment on a non-integer Field, and a Generated Identifier on a Field that is neither uuid nor string are each refused at creation."
+              status: "done"
+              log:
+                - at: "2026-10-07T18:39:49Z"
+                  status: "claimed"
+                  event: "claimed"
+                  note: "Claimed before changing its result; no dependencies."
+                - at: "2026-10-07T18:40:34Z"
+                  status: "done"
+                  event: "completed"
+                  note: "Field Declaration contract generated as an immutable record with the closed Field Type, Value Generation, and Sensitivity sets, Field constraints, an explicit marker for an absent Default Value, and creation-time structural checks."
+                  evidence:
+                    - "Generated the public Declaration contract (Field part) under the Core area of the Model Component, plus the language-required package marker for Core."
+                    - "Observed with a throwaway script kept outside the Component: valid combinations are created and are immutable; absent default and explicit null default are distinct values; an unknown Type, a default with Value Generation, a default mismatching Type or nullability (including bool for integer, naive datetime, non-finite float, over-long string), a size constraint on a non-string, Auto Increment on a non-integer, and a Generated Identifier on a Field that is neither uuid nor string are each refused at creation."
+                  decisions:
+                    - unset: "Public names for the Field Declaration record, the closed Field Type, Value Generation and Sensitivity sets, the constraints record, the absent-default marker, and the creation error; Model Preferences name only the Declaration and Foundation symbols."
+                      chosen: "FieldDeclaration, FieldType, ValueGeneration, Sensitivity, FieldConstraints, NO_DEFAULT, DeclarationError, following the selected language's naming rules (PascalCase classes, snake_case members)."
+                      why: "Development precedence: no Component Preference or Development Default exists, so the executor's own proposal applies."
+                    - unset: "How a Field Declaration represents an absent Default Value as distinct from an explicit null default."
+                      chosen: "A dedicated singleton marker, NO_DEFAULT, as the default of the default member."
+                      why: "None must remain available as the explicit null default."
+                    - unset: "Whether a Field description may be absent when the Target states no purpose for it (the identity Field has none)."
+                      chosen: "The description member accepts a string or None; None means the Target states none."
+                      why: "Model must not invent Target meaning, and Model Preferences supply no description default."
+            P1-G1-T3:
+              id: "P1-G1-T3"
+              source_id: "002"
+              title: "Realize the Entity Declaration contract"
+              description: "Provide the public, immutable Entity Declaration record holding an Entity's name, description, ordered Fields, Primary Key, Relations, Uniqueness Constraints, and Indexes, with ordered immutable collections and structural checks at creation."
+              reason: "Entity Metadata lives outside the Fields, and each Entity publishes one complete Declaration."
+              inputs:
+                - "Field Declaration contract"
+                - "Model Definition's Entity Declaration contract"
+              skills:
+                - "sqlmodel"
+              expected_result: "An Entity Declaration that exposes the Entity's name, description, ordered Fields, Primary Key, Relations, Uniqueness Constraints, and Indexes."
+              depends_on:
+                - "P1-G1-T2"
+              constraints: []
+              acceptance: "An Entity Declaration is created from valid input and exposes every listed property in order; duplicate Field names, a Primary Key other than the identity Field, a Relation or constraint naming an unknown Field, a Field with more than one Relation, and empty or duplicated Uniqueness Constraints or Indexes are each refused at creation."
+              status: "done"
+              log:
+                - at: "2026-10-07T18:40:34Z"
+                  status: "claimed"
+                  event: "claimed"
+                  note: "Claimed before changing its result; its dependency P1-G1-T2 is done."
+                - at: "2026-10-07T18:42:44Z"
+                  status: "done"
+                  event: "completed"
+                  note: "Entity Declaration contract generated in the same public Declaration contract: an immutable Entity record with ordered immutable Fields, Primary Key, Relations, Uniqueness Constraints, and Indexes, and creation-time structural checks."
+                  evidence:
+                    - "Extended the public Declaration contract under the Core area of the Model Component; Relation and Declaration records added, with the physical member names Model Preferences select (including unique_constraints for the Uniqueness Constraints)."
+                    - "Observed with a throwaway script kept outside the Component: a valid Declaration exposes every property in order with tuple collections and cannot be changed; duplicate Field names, a Primary Key other than id, a missing, nullable, or mutable id, a missing or non-boolean or immutable is_active, a Relation naming an unknown Field, two Relations on one Field, and empty, unknown, repeated, or duplicated Uniqueness Constraints and Indexes are each refused at creation. The Field Declaration observations were repeated after the change and still hold."
+                    - "Source wrapped by hand to the formatter's default width because the formatter is not installed in this environment; it was not run."
+                  decisions:
+                    - unset: "Public names for the Entity Declaration record and the Relation record; Model Preferences name only the Declaration symbol and the member names."
+                      chosen: "Declaration (the symbol Model Preferences set) and Relation, with members exactly as Model Preferences list them."
+                      why: "Development precedence: Component Preference first, then the executor's own proposal for the unset Relation record name."
+                    - unset: "The representation of a Uniqueness Constraint or Index entry and how a Declaration reports a structural failure."
+                      chosen: "Each entry is an ordered tuple of Field names (a bare string is refused so a name is never split into characters); the first structural failure raises the Declaration error naming the Entity and the offending item."
+                      why: "Model Definition fixes the rules but not the representation; one error type keeps failures explicit and non-partial."
+                    - unset: "Whether an Entity description may be empty."
+                      chosen: "An Entity description must be a non-empty string."
+                      why: "Model Definition requires every Entity to preserve its description, and the Target gives one for each."
+            P1-G1-T4:
+              id: "P1-G1-T4"
+              source_id: "002"
+              title: "Realize the Field Type representation"
+              description: "Provide the private mapping from each Field Type in the closed set to its in-language value category and its JSON representation, requiring floats to be finite and datetimes to be timezone-aware, and stopping on an unknown Type instead of guessing."
+              reason: "Validation, conversion, and storage all need one agreed meaning for each Field Type."
+              inputs:
+                - "Field Type table of the selected language profile in Model Preferences"
+                - "Field Declaration contract"
+              skills:
+                - "sqlmodel"
+              expected_result: "Every Field Type in the closed set resolves to exactly one in-language category and one JSON form."
+              depends_on:
+                - "P1-G1-T1"
+                - "P1-G1-T2"
+              constraints: []
+              acceptance: "Each Field Type resolves to exactly one in-language category and one JSON form; a non-finite float and a timezone-naive datetime are rejected; an unknown Type stops with a report and no guessed substitute."
+              status: "todo"
+            P1-G1-T5:
+              id: "P1-G1-T5"
+              source_id: "002"
+              title: "Realize strict Entity construction"
+              description: "Provide the private shared behaviour by which direct construction accepts only declared Fields, applies no implicit coercion, validates every default and the whole Entity before any value is set, treats explicit false, zero, empty string, and null as supplied values, keeps an omitted Auto Increment Field pending without making it nullable, and refuses a caller-supplied Auto Increment value."
+              reason: "Every Entity must enforce its Field contracts identically at construction so that no package convention changes data."
+              inputs:
+                - "Entity Declaration contract"
+                - "Field Type representation"
+              skills:
+                - "sqlmodel"
+              expected_result: "Constructing an Entity validates the whole Entity first and yields it only when every Field satisfies its contract."
+              depends_on:
+                - "P1-G1-T3"
+                - "P1-G1-T4"
+              constraints: []
+              acceptance: "Valid values construct an Entity; an undeclared Field, a value of the wrong Type, a missing Required Field, a violated constraint, and a caller-supplied Auto Increment value each refuse construction; a permitted explicit false, zero, empty string, or null is kept as supplied; an omitted Auto Increment Field stays pending."
+              status: "todo"
+            P1-G1-T6:
+              id: "P1-G1-T6"
+              source_id: "002"
+              title: "Realize Entity assignment and identity rules"
+              description: "Provide the private shared behaviour by which assignment to a mutable Field revalidates the whole Entity with the new value before applying it, assignment to an immutable Field or a caller assignment of an Auto Increment Field is refused, and a mutable Entity is not hashable."
+              reason: "Mutation must obey the same Field contracts as construction, and a failed change must never leave an Entity half-updated."
+              inputs:
+                - "Strict Entity construction"
+              skills:
+                - "sqlmodel"
+              expected_result: "Assignment either fully succeeds or leaves the Entity unchanged."
+              depends_on:
+                - "P1-G1-T5"
+              constraints: []
+              acceptance: "A valid assignment to a mutable Field takes effect; an invalid assignment is refused and the prior value remains; assigning an immutable Field is refused; hashing an Entity is refused."
+              status: "todo"
+            P1-G1-T7:
+              id: "P1-G1-T7"
+              source_id: "002"
+              title: "Keep Sensitivity-marked values out of diagnostics"
+              description: "Provide the private shared behaviour by which the input of any Sensitivity-marked Field is replaced in every validation message and the original message holding the value is never chained or exposed, while the actual value stays unchanged in Entity state."
+              reason: "A marker records what a value means, and its only effect is that the value never leaks through diagnostics."
+              inputs:
+                - "Field Declaration contract's recognized Sensitivity Markers"
+                - "Strict Entity construction"
+              skills:
+                - "sqlmodel"
+              expected_result: "Validation failures on a marked Field reveal nothing about the offending value."
+              depends_on:
+                - "P1-G1-T2"
+                - "P1-G1-T5"
+              constraints: []
+              acceptance: "When a marked Field receives an invalid value, no validation message and no chained cause contains that value; a valid marked value is stored and read back unchanged."
+              status: "todo"
+            P1-G1-T8:
+              id: "P1-G1-T8"
+              source_id: "002"
+              title: "Refuse Entity definitions that diverge from their Declaration"
+              description: "Provide the private shared behaviour that, when an Entity is defined, checks that its type name and table name equal the Entity's physical name and that its Fields are exactly the Declaration's Fields in the same order, failing loading on any mismatch."
+              reason: "A single check at definition time keeps each Entity and its Declaration from drifting apart."
+              inputs:
+                - "Entity Declaration contract"
+                - "Strict Entity construction"
+              skills:
+                - "sqlmodel"
+              expected_result: "An Entity that does not match its Declaration cannot be loaded."
+              depends_on:
+                - "P1-G1-T3"
+                - "P1-G1-T5"
+              constraints: []
+              acceptance: "An Entity defined with a different name, a missing Field, an extra Field, or reordered Fields fails to load; an Entity that matches its Declaration loads."
+              status: "todo"
+            P1-G1-T9:
+              id: "P1-G1-T9"
+              source_id: "002"
+              title: "Realize the shared table metadata and constraint naming"
+              description: "Provide the private shared table metadata in which the table form of every Entity is registered, and the single deterministic convention by which every primary key, foreign key, uniqueness constraint, and index is named."
+              reason: "Storage consumers must reach exactly the Entities' tables through the Entities themselves, and constraint names must be stable and predictable."
+              inputs:
+                - "Constraint naming convention in Model Preferences"
+              skills:
+                - "sqlmodel"
+              expected_result: "One shared table metadata that registers Entity tables and names every constraint and index by the Preference convention."
+              depends_on:
+                - "P1-G1-T1"
+              constraints: []
+              acceptance: "Every registered Entity table appears in the shared metadata and no other table does; each primary key, foreign key, uniqueness constraint, and index receives its name from the Preference convention, and the same inputs always produce the same names."
+              status: "todo"
+            P1-G1-T10:
+              id: "P1-G1-T10"
+              source_id: "002"
+              title: "Realize exact-value column storage"
+              description: "Provide the private shared storage behaviour by which a decimal value is stored as its exact text and read back as a decimal, and a datetime value is stored in UTC and read back timezone-aware."
+              reason: "Decimal precision and datetime offsets must survive storage exactly."
+              inputs:
+                - "Field Type representation"
+                - "Shared table metadata"
+              skills:
+                - "sqlmodel"
+              expected_result: "Decimal and datetime Fields keep their exact value through storage."
+              depends_on:
+                - "P1-G1-T4"
+                - "P1-G1-T9"
+              constraints: []
+              acceptance: "A decimal value written to storage is read back as an equal decimal with every digit intact, and a datetime value is read back timezone-aware and equal to the value written."
+              status: "todo"
+            P1-G1-T11:
+              id: "P1-G1-T11"
+              source_id: "002"
+              title: "Realize Entity-to-JSON conversion"
+              description: "Provide the public shared Foundation capability that converts any Entity to JSON text with one root object whose keys are exactly the Entity's Field names in Declaration order, preserving declared Type semantics and distinguishing null, false, zero, and empty string."
+              reason: "Consumers need one portable value representation of an Entity."
+              inputs:
+                - "Field Type representation"
+                - "Strict Entity construction"
+              skills:
+                - "sqlmodel"
+              expected_result: "Every Entity converts to standard-conformant JSON text with exact keys and values."
+              depends_on:
+                - "P1-G1-T4"
+                - "P1-G1-T5"
+              constraints: []
+              acceptance: "The JSON text of an Entity parses as standard JSON with a single root object; its keys equal the Field names in Declaration order; decimal, datetime, date, time, and uuid values appear in their declared text forms; no key or nested Entity is added."
+              status: "todo"
+            P1-G1-T12:
+              id: "P1-G1-T12"
+              source_id: "002"
+              title: "Realize Entity-from-JSON reconstruction"
+              description: "Provide the public shared Foundation capability that reconstructs an Entity from JSON text, rejecting malformed text, a repeated key, a non-standard constant, and a root that is not one object, decoding the text forms of decimal, datetime, date, time, and uuid by each Field's Type, and then applying the same rules as direct construction."
+              reason: "Lossless reconstruction completes the portable representation that conversion to JSON begins."
+              inputs:
+                - "Entity-to-JSON conversion"
+                - "Field Type representation"
+                - "Strict Entity construction"
+              skills:
+                - "sqlmodel"
+              expected_result: "Every valid JSON text of an Entity rebuilds an equal Entity, and every invalid text is refused."
+              depends_on:
+                - "P1-G1-T4"
+                - "P1-G1-T5"
+                - "P1-G1-T11"
+              constraints: []
+              acceptance: "Text produced by the conversion rebuilds an equal Entity; malformed text, a repeated key, a non-standard constant, a non-object root, an undeclared key, a wrong value Type, and a missing required value are each refused."
+              status: "todo"
+        P1-G2:
+          id: "P1-G2"
+          title: "Target Entities"
+          description: "One Task per Target domain concept, in Target order. Each Task realizes its concept as its own Entity unit with its Declaration, strict validation, JSON conversion, and table-ready storage mapping, preserving everything the Target declares for it and adding only the mandatory identity and activity Fields with their Preference defaults. A Task depends on the Entities its Relations point to."
+          area: "Entity"
+          does: "Every Target domain concept exists as exactly one complete, independently changeable Entity ready to be published."
+          constraints: []
+          task_count: 15
+          tasks:
+            P1-G2-T1:
+              id: "P1-G2-T1"
+              source_id: "002"
+              title: "Realize the User Entity"
+              description: "Realize the Entity for the Target's User concept."
+              reason: "The Target declares User as a persistent concept, so the Model must publish it as an Entity."
+              inputs:
+                - "Target definition of the User concept"
+              skills:
+                - "sqlmodel"
+              expected_result: "A complete User Entity unit exposing its Declaration and the shared Foundation capabilities."
+              depends_on:
+                - "P1-G1-T6"
+                - "P1-G1-T7"
+                - "P1-G1-T8"
+                - "P1-G1-T9"
+                - "P1-G1-T10"
+                - "P1-G1-T12"
+              constraints: []
+              acceptance: "The published Declaration of the User Entity matches the Target's definition of User in Fields, order, Types, nullability, defaults, and metadata; the Entity constructs from valid values, rejects an unknown Field, a wrong Type, and a missing required value, and returns an equal Entity after conversion to JSON text and back."
+              status: "todo"
+            P1-G2-T2:
+              id: "P1-G2-T2"
+              source_id: "002"
+              title: "Realize the Trading Platform Entity"
+              description: "Realize the Entity for the Target's Trading Platform concept."
+              reason: "The Target declares Trading Platform as a persistent concept, so the Model must publish it as an Entity."
+              inputs:
+                - "Target definition of the Trading Platform concept"
+              skills:
+                - "sqlmodel"
+              expected_result: "A complete Trading Platform Entity unit exposing its Declaration and the shared Foundation capabilities."
+              depends_on:
+                - "P1-G1-T6"
+                - "P1-G1-T7"
+                - "P1-G1-T8"
+                - "P1-G1-T9"
+                - "P1-G1-T10"
+                - "P1-G1-T12"
+              constraints: []
+              acceptance: "The published Declaration of the Trading Platform Entity matches the Target's definition of Trading Platform in Fields, order, Types, nullability, defaults, and metadata; the Entity constructs from valid values, rejects an unknown Field, a wrong Type, and a missing required value, and returns an equal Entity after conversion to JSON text and back."
+              status: "todo"
+            P1-G2-T3:
+              id: "P1-G2-T3"
+              source_id: "002"
+              title: "Realize the Instance Entity"
+              description: "Realize the Entity for the Target's Instance concept. Its Relations point to the User and Trading Platform Entities, which must already exist so that every Relation resolves within the Model."
+              reason: "The Target declares Instance as a persistent concept, so the Model must publish it as an Entity."
+              inputs:
+                - "Target definition of the Instance concept"
+                - "Completed User and Trading Platform Entities that its Relations target"
+              skills:
+                - "sqlmodel"
+              expected_result: "A complete Instance Entity unit exposing its Declaration and the shared Foundation capabilities."
+              depends_on:
+                - "P1-G1-T6"
+                - "P1-G1-T7"
+                - "P1-G1-T8"
+                - "P1-G1-T9"
+                - "P1-G1-T10"
+                - "P1-G1-T12"
+                - "P1-G2-T1"
+                - "P1-G2-T2"
+              constraints: []
+              acceptance: "The published Declaration of the Instance Entity matches the Target's definition of Instance in Fields, order, Types, nullability, defaults, and metadata; the Entity constructs from valid values, rejects an unknown Field, a wrong Type, and a missing required value, and returns an equal Entity after conversion to JSON text and back."
+              status: "todo"
+            P1-G2-T4:
+              id: "P1-G2-T4"
+              source_id: "002"
+              title: "Realize the Currency Entity"
+              description: "Realize the Entity for the Target's Currency concept. Its Relations point to the User Entity, which must already exist so that every Relation resolves within the Model."
+              reason: "The Target declares Currency as a persistent concept, so the Model must publish it as an Entity."
+              inputs:
+                - "Target definition of the Currency concept"
+                - "Completed User Entity that its Relations target"
+              skills:
+                - "sqlmodel"
+              expected_result: "A complete Currency Entity unit exposing its Declaration and the shared Foundation capabilities."
+              depends_on:
+                - "P1-G1-T6"
+                - "P1-G1-T7"
+                - "P1-G1-T8"
+                - "P1-G1-T9"
+                - "P1-G1-T10"
+                - "P1-G1-T12"
+                - "P1-G2-T1"
+              constraints: []
+              acceptance: "The published Declaration of the Currency Entity matches the Target's definition of Currency in Fields, order, Types, nullability, defaults, and metadata; the Entity constructs from valid values, rejects an unknown Field, a wrong Type, and a missing required value, and returns an equal Entity after conversion to JSON text and back."
+              status: "todo"
+            P1-G2-T5:
+              id: "P1-G2-T5"
+              source_id: "002"
+              title: "Realize the Broker Entity"
+              description: "Realize the Entity for the Target's Broker concept. Its Relations point to the User Entity, which must already exist so that every Relation resolves within the Model."
+              reason: "The Target declares Broker as a persistent concept, so the Model must publish it as an Entity."
+              inputs:
+                - "Target definition of the Broker concept"
+                - "Completed User Entity that its Relations target"
+              skills:
+                - "sqlmodel"
+              expected_result: "A complete Broker Entity unit exposing its Declaration and the shared Foundation capabilities."
+              depends_on:
+                - "P1-G1-T6"
+                - "P1-G1-T7"
+                - "P1-G1-T8"
+                - "P1-G1-T9"
+                - "P1-G1-T10"
+                - "P1-G1-T12"
+                - "P1-G2-T1"
+              constraints: []
+              acceptance: "The published Declaration of the Broker Entity matches the Target's definition of Broker in Fields, order, Types, nullability, defaults, and metadata; the Entity constructs from valid values, rejects an unknown Field, a wrong Type, and a missing required value, and returns an equal Entity after conversion to JSON text and back."
+              status: "todo"
+            P1-G2-T6:
+              id: "P1-G2-T6"
+              source_id: "002"
+              title: "Realize the Asset Entity"
+              description: "Realize the Entity for the Target's Asset concept. Its Relations point to the Broker Entity, which must already exist so that every Relation resolves within the Model."
+              reason: "The Target declares Asset as a persistent concept, so the Model must publish it as an Entity."
+              inputs:
+                - "Target definition of the Asset concept"
+                - "Completed Broker Entity that its Relations target"
+              skills:
+                - "sqlmodel"
+              expected_result: "A complete Asset Entity unit exposing its Declaration and the shared Foundation capabilities."
+              depends_on:
+                - "P1-G1-T6"
+                - "P1-G1-T7"
+                - "P1-G1-T8"
+                - "P1-G1-T9"
+                - "P1-G1-T10"
+                - "P1-G1-T12"
+                - "P1-G2-T5"
+              constraints: []
+              acceptance: "The published Declaration of the Asset Entity matches the Target's definition of Asset in Fields, order, Types, nullability, defaults, and metadata; the Entity constructs from valid values, rejects an unknown Field, a wrong Type, and a missing required value, and returns an equal Entity after conversion to JSON text and back."
+              status: "todo"
+            P1-G2-T7:
+              id: "P1-G2-T7"
+              source_id: "002"
+              title: "Realize the Account Group Entity"
+              description: "Realize the Entity for the Target's Account Group concept. Its Relations point to the User Entity, which must already exist so that every Relation resolves within the Model."
+              reason: "The Target declares Account Group as a persistent concept, so the Model must publish it as an Entity."
+              inputs:
+                - "Target definition of the Account Group concept"
+                - "Completed User Entity that its Relations target"
+              skills:
+                - "sqlmodel"
+              expected_result: "A complete Account Group Entity unit exposing its Declaration and the shared Foundation capabilities."
+              depends_on:
+                - "P1-G1-T6"
+                - "P1-G1-T7"
+                - "P1-G1-T8"
+                - "P1-G1-T9"
+                - "P1-G1-T10"
+                - "P1-G1-T12"
+                - "P1-G2-T1"
+              constraints: []
+              acceptance: "The published Declaration of the Account Group Entity matches the Target's definition of Account Group in Fields, order, Types, nullability, defaults, and metadata; the Entity constructs from valid values, rejects an unknown Field, a wrong Type, and a missing required value, and returns an equal Entity after conversion to JSON text and back."
+              status: "todo"
+            P1-G2-T8:
+              id: "P1-G2-T8"
+              source_id: "002"
+              title: "Realize the Account Entity"
+              description: "Realize the Entity for the Target's Account concept. Its Relations point to the Account Group, Broker, Instance and Currency Entities, which must already exist so that every Relation resolves within the Model."
+              reason: "The Target declares Account as a persistent concept, so the Model must publish it as an Entity."
+              inputs:
+                - "Target definition of the Account concept"
+                - "Completed Account Group, Broker, Instance and Currency Entities that its Relations target"
+              skills:
+                - "sqlmodel"
+              expected_result: "A complete Account Entity unit exposing its Declaration and the shared Foundation capabilities."
+              depends_on:
+                - "P1-G1-T6"
+                - "P1-G1-T7"
+                - "P1-G1-T8"
+                - "P1-G1-T9"
+                - "P1-G1-T10"
+                - "P1-G1-T12"
+                - "P1-G2-T7"
+                - "P1-G2-T5"
+                - "P1-G2-T3"
+                - "P1-G2-T4"
+              constraints: []
+              acceptance: "The published Declaration of the Account Entity matches the Target's definition of Account in Fields, order, Types, nullability, defaults, and metadata; the Entity constructs from valid values, rejects an unknown Field, a wrong Type, and a missing required value, and returns an equal Entity after conversion to JSON text and back."
+              status: "todo"
+            P1-G2-T9:
+              id: "P1-G2-T9"
+              source_id: "002"
+              title: "Realize the Trailing Group Entity"
+              description: "Realize the Entity for the Target's Trailing Group concept. Its Relations point to the User Entity, which must already exist so that every Relation resolves within the Model."
+              reason: "The Target declares Trailing Group as a persistent concept, so the Model must publish it as an Entity."
+              inputs:
+                - "Target definition of the Trailing Group concept"
+                - "Completed User Entity that its Relations target"
+              skills:
+                - "sqlmodel"
+              expected_result: "A complete Trailing Group Entity unit exposing its Declaration and the shared Foundation capabilities."
+              depends_on:
+                - "P1-G1-T6"
+                - "P1-G1-T7"
+                - "P1-G1-T8"
+                - "P1-G1-T9"
+                - "P1-G1-T10"
+                - "P1-G1-T12"
+                - "P1-G2-T1"
+              constraints: []
+              acceptance: "The published Declaration of the Trailing Group Entity matches the Target's definition of Trailing Group in Fields, order, Types, nullability, defaults, and metadata; the Entity constructs from valid values, rejects an unknown Field, a wrong Type, and a missing required value, and returns an equal Entity after conversion to JSON text and back."
+              status: "todo"
+            P1-G2-T10:
+              id: "P1-G2-T10"
+              source_id: "002"
+              title: "Realize the Trailing Rule Entity"
+              description: "Realize the Entity for the Target's Trailing Rule concept. Its Relations point to the Trailing Group Entity, which must already exist so that every Relation resolves within the Model."
+              reason: "The Target declares Trailing Rule as a persistent concept, so the Model must publish it as an Entity."
+              inputs:
+                - "Target definition of the Trailing Rule concept"
+                - "Completed Trailing Group Entity that its Relations target"
+              skills:
+                - "sqlmodel"
+              expected_result: "A complete Trailing Rule Entity unit exposing its Declaration and the shared Foundation capabilities."
+              depends_on:
+                - "P1-G1-T6"
+                - "P1-G1-T7"
+                - "P1-G1-T8"
+                - "P1-G1-T9"
+                - "P1-G1-T10"
+                - "P1-G1-T12"
+                - "P1-G2-T9"
+              constraints: []
+              acceptance: "The published Declaration of the Trailing Rule Entity matches the Target's definition of Trailing Rule in Fields, order, Types, nullability, defaults, and metadata; the Entity constructs from valid values, rejects an unknown Field, a wrong Type, and a missing required value, and returns an equal Entity after conversion to JSON text and back."
+              status: "todo"
+            P1-G2-T11:
+              id: "P1-G2-T11"
+              source_id: "002"
+              title: "Realize the Partial Group Entity"
+              description: "Realize the Entity for the Target's Partial Group concept. Its Relations point to the User Entity, which must already exist so that every Relation resolves within the Model."
+              reason: "The Target declares Partial Group as a persistent concept, so the Model must publish it as an Entity."
+              inputs:
+                - "Target definition of the Partial Group concept"
+                - "Completed User Entity that its Relations target"
+              skills:
+                - "sqlmodel"
+              expected_result: "A complete Partial Group Entity unit exposing its Declaration and the shared Foundation capabilities."
+              depends_on:
+                - "P1-G1-T6"
+                - "P1-G1-T7"
+                - "P1-G1-T8"
+                - "P1-G1-T9"
+                - "P1-G1-T10"
+                - "P1-G1-T12"
+                - "P1-G2-T1"
+              constraints: []
+              acceptance: "The published Declaration of the Partial Group Entity matches the Target's definition of Partial Group in Fields, order, Types, nullability, defaults, and metadata; the Entity constructs from valid values, rejects an unknown Field, a wrong Type, and a missing required value, and returns an equal Entity after conversion to JSON text and back."
+              status: "todo"
+            P1-G2-T12:
+              id: "P1-G2-T12"
+              source_id: "002"
+              title: "Realize the Partial Rule Entity"
+              description: "Realize the Entity for the Target's Partial Rule concept. Its Relations point to the Partial Group Entity, which must already exist so that every Relation resolves within the Model."
+              reason: "The Target declares Partial Rule as a persistent concept, so the Model must publish it as an Entity."
+              inputs:
+                - "Target definition of the Partial Rule concept"
+                - "Completed Partial Group Entity that its Relations target"
+              skills:
+                - "sqlmodel"
+              expected_result: "A complete Partial Rule Entity unit exposing its Declaration and the shared Foundation capabilities."
+              depends_on:
+                - "P1-G1-T6"
+                - "P1-G1-T7"
+                - "P1-G1-T8"
+                - "P1-G1-T9"
+                - "P1-G1-T10"
+                - "P1-G1-T12"
+                - "P1-G2-T11"
+              constraints: []
+              acceptance: "The published Declaration of the Partial Rule Entity matches the Target's definition of Partial Rule in Fields, order, Types, nullability, defaults, and metadata; the Entity constructs from valid values, rejects an unknown Field, a wrong Type, and a missing required value, and returns an equal Entity after conversion to JSON text and back."
+              status: "todo"
+            P1-G2-T13:
+              id: "P1-G2-T13"
+              source_id: "002"
+              title: "Realize the Action Group Entity"
+              description: "Realize the Entity for the Target's Action Group concept. Its Relations point to the User Entity, which must already exist so that every Relation resolves within the Model."
+              reason: "The Target declares Action Group as a persistent concept, so the Model must publish it as an Entity."
+              inputs:
+                - "Target definition of the Action Group concept"
+                - "Completed User Entity that its Relations target"
+              skills:
+                - "sqlmodel"
+              expected_result: "A complete Action Group Entity unit exposing its Declaration and the shared Foundation capabilities."
+              depends_on:
+                - "P1-G1-T6"
+                - "P1-G1-T7"
+                - "P1-G1-T8"
+                - "P1-G1-T9"
+                - "P1-G1-T10"
+                - "P1-G1-T12"
+                - "P1-G2-T1"
+              constraints: []
+              acceptance: "The published Declaration of the Action Group Entity matches the Target's definition of Action Group in Fields, order, Types, nullability, defaults, and metadata; the Entity constructs from valid values, rejects an unknown Field, a wrong Type, and a missing required value, and returns an equal Entity after conversion to JSON text and back."
+              status: "todo"
+            P1-G2-T14:
+              id: "P1-G2-T14"
+              source_id: "002"
+              title: "Realize the Action Entity"
+              description: "Realize the Entity for the Target's Action concept. Its Relations point to the Action Group, Asset, Account, Partial Group and Trailing Group Entities, which must already exist so that every Relation resolves within the Model."
+              reason: "The Target declares Action as a persistent concept, so the Model must publish it as an Entity."
+              inputs:
+                - "Target definition of the Action concept"
+                - "Completed Action Group, Asset, Account, Partial Group and Trailing Group Entities that its Relations target"
+              skills:
+                - "sqlmodel"
+              expected_result: "A complete Action Entity unit exposing its Declaration and the shared Foundation capabilities."
+              depends_on:
+                - "P1-G1-T6"
+                - "P1-G1-T7"
+                - "P1-G1-T8"
+                - "P1-G1-T9"
+                - "P1-G1-T10"
+                - "P1-G1-T12"
+                - "P1-G2-T13"
+                - "P1-G2-T6"
+                - "P1-G2-T8"
+                - "P1-G2-T11"
+                - "P1-G2-T9"
+              constraints: []
+              acceptance: "The published Declaration of the Action Entity matches the Target's definition of Action in Fields, order, Types, nullability, defaults, and metadata; the Entity constructs from valid values, rejects an unknown Field, a wrong Type, and a missing required value, and returns an equal Entity after conversion to JSON text and back."
+              status: "todo"
+            P1-G2-T15:
+              id: "P1-G2-T15"
+              source_id: "002"
+              title: "Realize the Position Entity"
+              description: "Realize the Entity for the Target's Position concept. Its Relations point to the User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group and Action Entities, which must already exist so that every Relation resolves within the Model."
+              reason: "The Target declares Position as a persistent concept, so the Model must publish it as an Entity."
+              inputs:
+                - "Target definition of the Position concept"
+                - "Completed User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group and Action Entities that its Relations target"
+              skills:
+                - "sqlmodel"
+              expected_result: "A complete Position Entity unit exposing its Declaration and the shared Foundation capabilities."
+              depends_on:
+                - "P1-G1-T6"
+                - "P1-G1-T7"
+                - "P1-G1-T8"
+                - "P1-G1-T9"
+                - "P1-G1-T10"
+                - "P1-G1-T12"
+                - "P1-G2-T1"
+                - "P1-G2-T2"
+                - "P1-G2-T5"
+                - "P1-G2-T8"
+                - "P1-G2-T9"
+                - "P1-G2-T11"
+                - "P1-G2-T13"
+                - "P1-G2-T14"
+              constraints: []
+              acceptance: "The published Declaration of the Position Entity matches the Target's definition of Position in Fields, order, Types, nullability, defaults, and metadata; the Entity constructs from valid values, rejects an unknown Field, a wrong Type, and a missing required value, and returns an equal Entity after conversion to JSON text and back."
+              status: "todo"
+        P1-G3:
+          id: "P1-G3"
+          title: "Published Interface"
+          description: "The single entrypoint through which the Model publishes every Entity by name and as one ordered collection, and publishes nothing else."
+          area: "Interface"
+          does: "A consumer can import any one Entity directly or enumerate all of them, and the Model creates nothing when it is loaded."
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G3-T1:
+              id: "P1-G3-T1"
+              source_id: "002"
+              title: "Publish every Entity by its own name"
+              description: "Publish through the Model's entrypoint one explicit named export for every Target Entity, each being the actual Entity exposing its actual Declaration rather than a copy, wrapper, or alias, with no wildcard or dynamically generated export."
+              reason: "A consumer that works with one specific Entity must import that Entity's real type by name."
+              inputs:
+                - "All completed Target Entities"
+              skills: []
+              expected_result: "Each Target Entity is importable directly by its own name."
+              depends_on:
+                - "P1-G2-T1"
+                - "P1-G2-T2"
+                - "P1-G2-T3"
+                - "P1-G2-T4"
+                - "P1-G2-T5"
+                - "P1-G2-T6"
+                - "P1-G2-T7"
+                - "P1-G2-T8"
+                - "P1-G2-T9"
+                - "P1-G2-T10"
+                - "P1-G2-T11"
+                - "P1-G2-T12"
+                - "P1-G2-T13"
+                - "P1-G2-T14"
+                - "P1-G2-T15"
+              constraints: []
+              acceptance: "Importing each Target Entity by its own name succeeds and yields the actual Entity with its actual Declaration; the set of Entity exports equals exactly the Target's Entity set."
+              status: "todo"
+            P1-G3-T2:
+              id: "P1-G3-T2"
+              source_id: "002"
+              title: "Publish the ordered Entity Collection"
+              description: "Publish one immutable collection holding every actual Entity exactly once, in Target order, under the symbol name Model Preferences set."
+              reason: "A consumer that works with all Entities without knowing their names must be able to enumerate them."
+              inputs:
+                - "Entity exports"
+              skills: []
+              expected_result: "A single ordered collection of every Entity that corresponds one-to-one with the Entity exports."
+              depends_on:
+                - "P1-G3-T1"
+              constraints: []
+              acceptance: "Enumerating the collection yields exactly the exported Entities, each once, in Target order, and each item is the same Entity that its export yields; the collection cannot be modified."
+              status: "todo"
+            P1-G3-T3:
+              id: "P1-G3-T3"
+              source_id: "002"
+              title: "Keep the Interface free of side effects and extra surface"
+              description: "Ensure that loading the Model's entrypoint creates nothing and performs no external action, and that nothing beyond the Entity exports and the Entity Collection is published."
+              reason: "Consumers rely on the Interface contract's guarantees of no side effect and no additional registry or discovery mechanism."
+              inputs:
+                - "Entity exports"
+                - "Entity Collection"
+              skills: []
+              expected_result: "An entrypoint that publishes exactly the contracted surface and does nothing on load."
+              depends_on:
+                - "P1-G3-T2"
+              constraints: []
+              acceptance: "Loading the entrypoint creates no Entity instance, data, connection, file, or process and performs no network, storage, or runtime-configuration action; no registry, lookup table, or discovery mechanism other than the exports and the collection is published."
+              status: "todo"
+        P1-G4:
+          id: "P1-G4"
+          title: "Component documentation"
+          description: "The root documentation of the Model, in the form, location, and format Model Preferences name, with its sections in the order the Model Definition fixes. It defines no other Component, exposes no private helper as contract, retains no stale meaning, and contains no real credential or secret."
+          area: "Documentation"
+          does: "A consumer can learn, set up, use, and verify the Model from its documentation alone."
+          constraints: []
+          task_count: 4
+          tasks:
+            P1-G4-T1:
+              id: "P1-G4-T1"
+              source_id: "002"
+              title: "Document the Overview and Interface sections"
+              description: "Write the Overview section as one concise introduction with one simple example using one Entity, and the Interface section explaining the Entity exports and the Entity Collection, listing every Entity once in Target order with its description, complete Field table, and Entity Metadata outside that table, and showing one consumer importing an Entity directly and one enumerating the collection without wildcard exports, reflection, directory scanning, or internal paths."
+              reason: "Consumers learn what the Model publishes and how to reach it from its documentation."
+              inputs:
+                - "Entity exports"
+                - "Entity Collection"
+                - "Model Documentation preferences"
+              skills: []
+              expected_result: "Overview and Interface sections in the form, location, and format Model Preferences name, in the order the Model Definition fixes."
+              depends_on:
+                - "P1-G3-T1"
+                - "P1-G3-T2"
+              constraints: []
+              acceptance: "Every Target Entity appears exactly once in Target order with its description, complete Field table, and Entity Metadata; the direct-import and enumeration examples reflect the published exports and collection; the sections name no real credential or secret."
+              status: "todo"
+            P1-G4-T2:
+              id: "P1-G4-T2"
+              source_id: "002"
+              title: "Document the Declaration and Foundation sections"
+              description: "Write the Declaration section showing how a consumer reads one Entity's public Declaration, including Fields, Primary Key, Relations, Uniqueness Constraints, and Indexes, through the Entity itself, and the Foundation section giving one example for each Foundation capability and one complete Entity-to-JSON-text-to-Entity round trip."
+              reason: "Consumers rely on the public Declaration and Foundation contracts and need correct usage shown."
+              inputs:
+                - "Entity Declaration contract"
+                - "Entity-to-JSON conversion"
+                - "Entity-from-JSON reconstruction"
+                - "Entity exports"
+              skills: []
+              expected_result: "Declaration and Foundation sections that follow the Overview and Interface sections."
+              depends_on:
+                - "P1-G1-T12"
+                - "P1-G3-T1"
+              constraints: []
+              acceptance: "The Declaration section reads each listed Declaration property through an Entity and the Foundation section's examples and round trip behave as documented; the sections expose no private helper as contract and name no real credential or secret."
+              status: "todo"
+            P1-G4-T3:
+              id: "P1-G4-T3"
+              source_id: "002"
+              title: "Document the Setup and Use sections"
+              description: "Write the Setup section giving the setup steps for the selected technology and the Use section showing use that follows the Entity exports and the Entity Collection."
+              reason: "Consumers must be able to prepare and use the Model from its documentation alone."
+              inputs:
+                - "Established Model Component"
+                - "Entity exports"
+                - "Entity Collection"
+              skills: []
+              expected_result: "Setup and Use sections that follow the Foundation section."
+              depends_on:
+                - "P1-G1-T1"
+                - "P1-G3-T2"
+              constraints: []
+              acceptance: "Following the Setup steps on a clean machine yields a working environment, and the Use examples run as documented using only the published exports and collection."
+              status: "todo"
+            P1-G4-T4:
+              id: "P1-G4-T4"
+              source_id: "002"
+              title: "Document the Verify and Troubleshooting sections"
+              description: "Write the Verify section describing how to verify Interface-contract-conformant shape, exact Entity export membership, collection membership and order and its correspondence with the exports, actual Entity and Declaration references, immutability, side-effect freedom, representative Entity construction, Declaration access, and a lossless JSON text round trip, and the Troubleshooting section covering Model concerns only."
+              reason: "Consumers and reviewers need documented ways to confirm the Model is conformant and to resolve Model-specific problems."
+              inputs:
+                - "Interface contract guarantees"
+                - "Entity-from-JSON reconstruction"
+              skills: []
+              expected_result: "Verify and Troubleshooting sections that complete the documentation."
+              depends_on:
+                - "P1-G1-T12"
+                - "P1-G3-T3"
+              constraints: []
+              acceptance: "Every listed Verify observation is covered and can be carried out as written; Troubleshooting addresses only Model concerns and defines no other Component."
+              status: "todo"

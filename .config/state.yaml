@@ -1,0 +1,156 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".config/state.yaml"
+  path_note: "Mutable Workflow position, Phase progress, and execution Log."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current State Component and the active operation's ownership rules."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read active, then the Phase selected by stable Target phase identifier, then the Log Entries by identifier."
+  selection: "A requested phase resolves to the phases entry keyed by that phase identifier; a Log Entry resolves by its identifier."
+  absence: "No matching phases entry means no progress is recorded for that phase."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "active"
+  - "phases"
+  - "log"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  active: "Current Workflow position."
+  phases: "Aggregate progress for each Target phase."
+  log: "Recorded Skill executions and their outcomes."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  active:
+    mode: "development"
+    phase: "P1"
+    mode_reason: "Develop executed eligible Tasks of phase P1 and stopped on a Blocker."
+    set_by: "my-interface-develop"
+    set_at: "2026-10-07T18:32:43Z"
+  phases:
+    P1:
+      id: "P1"
+      planning: "completed"
+      development: "blocked"
+      review: "not started"
+      completed_at: null
+  log:
+    - id: "001"
+      skill: "my-interface-configure"
+      parent_id: ""
+      phase: null
+      event: "Generate Config records"
+      outcome: "completed"
+      started_at: "2026-10-07T18:26:33Z"
+      completed_at: "2026-10-07T18:26:56Z"
+      duration: "23 seconds"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used: []
+      open_questions: []
+      blockers: []
+      decisions: []
+      report: "Generated Plan Config and State Config from their current Schemas; both were missing. Both conform to the general YAML structure and their specialized Schemas."
+      data:
+        records:
+          - file: "plan.yaml"
+            action: "generated"
+          - file: "state.yaml"
+            action: "generated"
+    - id: "002"
+      skill: "my-interface-plan"
+      parent_id: ""
+      phase: "P1"
+      event: "Plan phase"
+      outcome: "completed"
+      started_at: "2026-10-07T18:27:29Z"
+      completed_at: "2026-10-07T18:31:27Z"
+      duration: "3:58"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used: []
+      open_questions:
+        - "OQ-002-1"
+      blockers: []
+      decisions: []
+      report: "Planned phase P1 (Model): created its one Plan with 4 Groups and 34 Tasks. Phase argument 1 resolved to P1, the enabled and ready first Target phase. No prior Plan existed, so nothing was preserved, changed, removed, or replaced. One Open Question recorded; no Blockers."
+      data:
+        phase_resolution:
+          requested: "1"
+          resolved: "P1"
+        plan_changes:
+          - action: "added"
+            record: "Plan P1"
+            reason: "No Plan existed for the phase."
+          - action: "added"
+            record: "Group P1-G1 (12 Tasks)"
+            reason: "Work shared by every Entity (Component setup, Declaration and Foundation contracts, validation, Field Type representation, storage behaviour) must precede and be separate from any one Entity."
+          - action: "added"
+            record: "Group P1-G2 (15 Tasks)"
+            reason: "The Model Definition requires exactly one Entity per Target domain concept; one Task each, ordered by Relation dependencies."
+          - action: "added"
+            record: "Group P1-G3 (3 Tasks)"
+            reason: "The Model Definition requires an Interface publishing every Entity by name and as one ordered collection, with no side effect and no extra surface."
+          - action: "added"
+            record: "Group P1-G4 (4 Tasks)"
+            reason: "The Model Definition requires root documentation with eight ordered sections."
+        task_skills: "sqlmodel is listed for Component, shared-infrastructure, and Entity Tasks because Model Preferences select it as a required Skill; Interface and documentation Tasks list none."
+        open_questions:
+          - id: "OQ-002-1"
+            skill: "none"
+            question: "The Target states at-rest protection rules (hash, encrypted) for credential Fields but declares no Sensitivity Marker on any Field."
+            current_choice: "Plan carries no marker and no at-rest protection into this phase: Model preserves only Target-declared markers and does not own hashing or encryption."
+            decision_needed: "Whether the Human wants the Target to declare Sensitivity Markers for credential Fields, which would add marker preservation to the affected Entity Tasks."
+    - id: "003"
+      skill: "my-interface-develop"
+      parent_id: ""
+      phase: "P1"
+      event: "Develop phase"
+      outcome: "blocked"
+      started_at: "2026-10-07T18:32:43Z"
+      completed_at: "2026-10-07T18:42:27Z"
+      duration: "9:44"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used:
+        - name: "sqlmodel"
+          duration: null
+          token_usage:
+            input: null
+            output: null
+            total: null
+          report: "Loaded and read for guidance; no SQLModel code could be generated yet because the library could not be installed."
+      open_questions: []
+      blockers:
+        - "B-003-1"
+      decisions:
+        - "P1-G1-T2"
+        - "P1-G1-T3"
+      report: "Developed 2 of 34 Tasks of phase P1 (P1-G1-T2 and P1-G1-T3, the Field and Entity Declaration contracts, standard library only). Stopped on Blocker B-003-1: the package distribution host cannot be reached, so P1-G1-T1 (reproducible environment) cannot be established, and every other remaining Task depends on it directly or transitively. 31 Tasks remain todo, 1 blocked."
+      data:
+        tasks_done:
+          - "P1-G1-T2"
+          - "P1-G1-T3"
+        tasks_blocked:
+          - "P1-G1-T1"
+        tasks_waiting_on_blocked_chain: 31
+        blockers:
+          - id: "B-003-1"
+            task: "P1-G1-T1"
+            condition: "The package distribution host files.pythonhosted.org does not resolve from this environment, so the selected package manager cannot fetch metadata or wheels for the modeling library and its dependencies; the package index host itself is reachable."
+            needed: "Network access to the distribution host (or the Human providing the dependencies another way). The selected package manager's lock and sync, run in the Component directory, would then establish the environment; Develop must be re-run to verify and record resolution."
+            not_attempted: "Alternative indexes, mirrors, or disabling the sandbox were not used; none is authorized by the Preferences."
+        files_generated: "Public Declaration contract and the Core package marker, inside the Model Component only."
