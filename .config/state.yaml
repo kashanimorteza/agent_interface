@@ -1,0 +1,142 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".config/state.yaml"
+  path_note: "Mutable Workflow position, Phase progress, and execution Log."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current State Component and the active operation's ownership rules."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read active, then the Phase selected by stable Target phase identifier, then the Log Entries by identifier."
+  selection: "A requested phase resolves to the phases entry keyed by that phase identifier; a Log Entry resolves by its identifier."
+  absence: "No matching phases entry means no progress is recorded for that phase."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order: ["active", "phases", "log"]
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  active: "Current Workflow position."
+  phases: "Aggregate progress for each Target phase."
+  log: "Recorded Skill executions and their outcomes."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  active:
+    mode: "not set"
+    phase: null
+    mode_reason: "No Workflow operation has been recorded."
+    set_by: "initialization"
+    set_at: null
+  phases:
+    P1:
+      id: P1
+      planning: completed
+      development: completed
+      review: satisfied
+      completed_at: "2026-10-07T23:38:24Z"
+  log:
+    - id: "001"
+      skill: "my-interface-configure"
+      phase: null
+      event: "configure"
+      outcome: "completed"
+      started_at: "2026-10-07T23:02:07Z"
+      completed_at: "2026-10-07T23:02:20Z"
+      duration: "13 seconds"
+      report: "Generated Plan Config (.config/plan.yaml) and State Config (.config/state.yaml) from their current Schemas; both were missing. Verified frame sections, read order, content map, and initial content against the Schemas. No other file changed."
+    - id: "002"
+      skill: "my-interface-plan"
+      phase: "P1"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-10-07T23:04:30Z"
+      completed_at: "2026-10-07T23:08:44Z"
+      duration: "4:14"
+      open_questions: ["OQ-002-1"]
+      blockers: []
+      report: "Planned phase P1 (Model; requested as 1): created its Plan with 8 Groups and 47 Tasks, all todo. No prior Plan existed. Planning progress for P1 set to completed. Active Workflow position left unchanged."
+      data:
+        changes:
+          - kind: "addition"
+            scope: "Plan P1"
+            reason: "No Plan existed for the phase."
+            groups: ["P1-G1", "P1-G2", "P1-G3", "P1-G4", "P1-G5", "P1-G6", "P1-G7", "P1-G8"]
+            tasks_added: 47
+        preserved: []
+        removed: []
+        replaced: []
+        open_questions:
+          - id: "OQ-002-1"
+            question: "The Target gives credential Fields (User password and api_key, Instance password and api_key, Account password) at-rest protection rules but declares no Sensitivity Marker for them. Model adds markers only when the Target declares them, so none are planned. Should the Target declare a marker for these Fields?"
+            current_choice: "Plan no Sensitivity Markers; at-rest protection stays outside Model."
+        notes:
+          - "Generated Identifier support is planned because the Model Value Generation contract offers it, although no current Target Entity declares one."
+    - id: "003"
+      skill: "my-interface-develop"
+      phase: "P1"
+      event: "develop"
+      outcome: "completed"
+      started_at: "2026-10-07T23:09:30Z"
+      completed_at: "2026-10-07T23:27:26Z"
+      duration: "17:56"
+      open_questions: ["OQ-003-1", "OQ-003-2", "OQ-003-3"]
+      blockers: []
+      decisions: ["P1-G1-T01", "P1-G1-T02", "P1-G2-T01", "P1-G2-T02", "P1-G2-T03", "P1-G3-T01", "P1-G3-T02", "P1-G3-T04", "P1-G3-T05", "P1-G3-T06", "P1-G3-T07", "P1-G4-T02", "P1-G5-T01", "P1-G5-T03", "P1-G5-T04", "P1-G5-T06", "P1-G5-T07", "P1-G6-T01", "P1-G7-T01", "P1-G8-T01"]
+      report: "Developed all 47 Tasks of phase P1 (Model) to done: the Model Component library with Declaration contract, Field Types, strict Entity validation, JSON conversion, Storage Mapping, fifteen Entities, Interface publication and README. Formatter, linter and type checker report nothing; Review has not run. Development progress for P1 set to completed."
+      data:
+        tasks_developed: 47
+        component: "Model"
+        open_questions:
+          - id: "OQ-003-1"
+            question: "Foundation reconstruction follows direct construction, which refuses a caller-supplied Auto Increment value, so JSON text of an Entity whose id storage has already assigned cannot be rebuilt (only a pending id round-trips). Should the Target permit supplying Auto Increment values for reconstruction?"
+            current_choice: "Refuse a non-null Auto Increment value in JSON text."
+          - id: "OQ-003-2"
+            question: "The sqlmodel Skill recommends the modeling package's own UTC datetime column type for datetime Fields and warns against an explicit timezone-aware column override. Model Preferences select the timezone-aware datetime column stored in UTC with UTC-aware reads. Should Model Preferences adopt the Skill's alternative?"
+            current_choice: "Keep the Preferences choice, realized as a column type that normalizes to UTC on write and re-attaches UTC on read."
+          - id: "OQ-003-3"
+            question: "The sqlmodel Skill recommends keeping related table models in one file to simplify relationship annotations. Model requires one unit per Entity. Should the structure change?"
+            current_choice: "Keep one unit per Entity; Relations are metadata only and no relationship attributes are used, so the Skill's concern does not arise."
+        notes:
+          - "Entity units were emitted deterministically from the Target definition by a throwaway generator kept outside the repository; regeneration produced no difference."
+          - "Plan open question OQ-002-1 (Sensitivity Markers for credential Fields) is unchanged: no markers were applied."
+          - "Develop checked its own output with smoke checks (construction, assignment, round trip, storage, interface surface, README examples, quality tools); conformance is for Review."
+    - id: "004"
+      skill: "my-interface-review"
+      phase: "P1"
+      event: "review"
+      outcome: "satisfied"
+      started_at: "2026-10-07T23:30:43Z"
+      completed_at: "2026-10-07T23:38:24Z"
+      duration: "7:41"
+      open_questions: []
+      blockers: []
+      report: "Reviewed phase P1 (Model) against its Plan and the Model Review category: two Findings (datetime Python form; undeclared direct dependencies) were recorded, resolved and rechecked. Every Task acceptance and every Model Review observation now holds on current evidence observed in this Review; outcome satisfied. Open Questions OQ-002-1 and OQ-003-1..3 remain with the Human."
+      data:
+        findings:
+          - id: "F-004-1"
+            state: "resolved"
+            resolution: "The datetime Field Type now resolves to the timezone-aware datetime type (pydantic.AwareDatetime) in the Field Type realization (model/model/core/_types.py, PYTHON_TYPES and the python_type return type); no other behaviour changed."
+            recheck: "Re-ran the Field Type comparison with the Preferences table: all nine Python forms and all nine JSON forms match. Re-ran formatter, linter, type checker, every Entity and Core observation and the README examples: no problems."
+            task: "P1-G2-T01"
+            expected: "Each Field Type resolves to its defined language form. Model Preferences define the datetime Python form as the timezone-aware datetime type (pydantic.AwareDatetime)."
+            observed: "The Field Type realization maps the datetime Field Type to the plain datetime.datetime class; python_type('datetime') returns datetime.datetime. Timezone awareness is enforced separately, but the resolved form differs from the defined one."
+            evidence: "model/model/core/_types.py line 19 (PYTHON_TYPES['datetime']); observation: a script comparing python_type() of every Field Type with the Preferences types table reported 'datetime: Python form <class datetime.datetime> vs pydantic.AwareDatetime'; all other eight Field Types and all nine JSON forms matched."
+          - id: "F-004-2"
+            state: "resolved"
+            resolution: "pydantic and sqlalchemy are now declared as direct dependencies with lower bounds at the versions the lock already held (2.14.0 and 2.1.4); the lock file was regenerated and resolves to the same concrete versions (pydantic 2.14.0, sqlalchemy 2.1.4, sqlmodel 0.0.48). Changed files: model/pyproject.toml and model/uv.lock."
+            recheck: "The dependency checker reports no dependency issues; the lock check passes; a clean copy installs with a locked sync, imports with warnings treated as errors and builds a wheel."
+            task: "P1-G1-T01"
+            expected: "The package declares the third-party packages its source needs, with concrete versions stabilized (Plan acceptance: dependencies resolve reproducibly; Review dependency check)."
+            observed: "pydantic and sqlalchemy are imported directly by the Model source but are not declared in the project's dependencies; only sqlmodel is declared, so the two resolve only as transitive dependencies of sqlmodel."
+            evidence: "model/model/core/_base.py line 7, model/model/core/_storage.py lines 9-12, model/model/core/_types.py line 11, model/model/entity/position.py line 6; project dependencies list in model/pyproject.toml; a dependency checker reported 7 'imported but missing from the dependency definitions' issues (pydantic, sqlalchemy)."
+        observations:
+          - "Testing is disabled for Model, so all runtime verification was transient: scripts written for this Review (not the implementer's checks) compared every Entity Declaration with the Target definition (15 models, all Fields, order, Types, nullability, defaults, sizes, descriptions, Relations, uniqueness; 0 differences), exercised construction, assignment, JSON round trip and storage for every Entity (0 problems), exercised every Core acceptance criterion on synthetic Entities, and checked Interface shape, import graph, hygiene and the README against the Documentation contract."
+          - "Technical checks passed: formatter, linter and type checker report nothing; compilation, lock check, wheel build (31 files, no cached or environment artifacts), clean wheel install and import with warnings as errors, and a locked sync of a clean copy all succeeded."
+          - "Zero-diff regeneration: re-running the Entity generator and the README composer into temporary folders and formatting reproduced all 15 Entity units and the README identically. The Develop Log Entry 003 states that regeneration produced no difference, but no diff result was recorded at the time; this Review established it independently. The generator is not part of the repository, so a future regeneration relies on Develop reproducing the same output from unchanged authorities."
+          - "Model Preferences describe construction validation as running model_validate before initializing; the source validates through the validator on a probe instance for recursion reasons recorded in the Task Log of P1-G3-T01. The behaviour required by the Plan and the Model Review category was observed to hold; the mechanism is outside the review baseline."
+          - "Ignored local artifacts (.venv, __pycache__, .ruff_cache) exist in the Component directory; they are excluded by the Component's ignore file and are not part of its tracked output."
+          - "Primary key constraint names exist on the shared metadata (pk_<table>); SQLite does not persist a name for an autoincrement primary key, so that name is observed on the metadata rather than on the engine."

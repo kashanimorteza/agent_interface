@@ -1,0 +1,1545 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".config/plan.yaml"
+  path_note: "Mutable Plans, Groups, Tasks, counts and progress."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current Plan Component and the active operation's ownership rules."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read task_count, then the Plan selected by stable Target phase identifier, with its Groups and Tasks in nesting order."
+  selection: "A requested phase resolves to the Plan keyed by that phase identifier; a Task resolves within its containing Group and Plan."
+  absence: "No matching Plan means no current planning record exists for that phase."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order: ["task_count", "plans"]
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  task_count: "Total number of stored Tasks."
+  plans: "Current phase Plans and their Groups and Tasks."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  task_count: 47
+  plans:
+    P1:
+      id: P1
+      title: Model
+      order: 1
+      target: Model
+      does: Deliver the independent, reusable Model Component whose Entities realize every Target-defined model with its Fields, Relations, and rules.
+      constraints: []
+      task_count: 47
+      groups:
+        P1-G1:
+          id: P1-G1
+          title: Component package
+          description: Makes the Model Component an independently usable library and holds the standards its finished source must satisfy.
+          area: Component packaging and source quality
+          does: The Model Component is a reusable library package whose finished source meets the project's quality standards.
+          constraints: []
+          task_count: 2
+          tasks:
+            P1-G1-T01:
+              id: P1-G1-T01
+              source_id: '002'
+              title: Establish the Model library package
+              description: Create the Model Component as a self-contained, reusable library whose dependencies resolve to concrete compatible versions recorded in lock metadata.
+              reason: Every other Task in this phase places its result in a package that later Components depend on.
+              inputs:
+              - Model Component packaging choices
+              - Development shared defaults and package-dependency rules
+              skills: []
+              expected_result: The Model Component exists as a library package that a consumer inside the repository can depend on, with reproducible dependency resolution.
+              depends_on: []
+              constraints: []
+              acceptance: A consumer elsewhere in the repository can declare a local dependency on the Model Component and load it successfully, and its dependencies resolve to the same concrete versions on every installation.
+              status: done
+              log:
+              - at: '2026-10-07T23:14:02Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:14:31Z'
+                transition: claimed -> done
+                note: Created the Model library package with a lock file; a throwaway consumer project declared it as a local path dependency and imported it.
+                evidence:
+                  locations:
+                  - model/pyproject.toml
+                  - model/uv.lock
+                  - model/README.md
+                  - model/.gitignore
+                  - model/model/__init__.py
+                  - model/model/core/__init__.py
+                  - model/model/entity/__init__.py
+                  observed: uv lock resolved 10 packages (sqlmodel 0.0.48, pydantic 2.14.0, sqlalchemy 2.1.4; dev tools ruff 0.16.10, ty 0.0.85); uv sync built and installed the package; a separate project with a path dependency on the Component imported it.
+                decisions:
+                - unset: Dependency version specifiers
+                  chosen: Lower bounds at the resolved versions, exact versions recorded in the lock file
+                  why: Keeps the library compatible with a consumer's own resolution while the lock stabilizes concrete versions.
+                - unset: Python requirement and build backend
+                  chosen: Python 3.14 or newer; uv's build backend with the package at the Component root
+                  why: Development default language is Python with uv; the Component directory and package share the name model.
+                - unset: Ignoring generated environment artifacts
+                  chosen: A Component-local ignore file for the virtual environment and caches
+                  why: Keeps cached and compiled artifacts out of the Component's tracked output without touching files outside it.
+            P1-G1-T02:
+              id: P1-G1-T02
+              source_id: '002'
+              title: Bring the finished source to the quality standards
+              description: Once all Model source exists, make it conform to the selected language's formatting, lint, and static type-checking standards without changing Model meaning.
+              reason: Quality standards are a Development obligation, and failing checks would block downstream Components.
+              inputs:
+              - Completed Model source
+              - Development language quality standards
+              skills: []
+              expected_result: The complete Model source passes the formatting, lint, and static type-checking standards.
+              depends_on:
+              - P1-G7-T03
+              constraints: []
+              acceptance: Formatting, lint, and static type checks over the complete Model source report no violations.
+              status: done
+              log:
+              - at: '2026-10-07T23:24:31Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:25:44Z'
+                transition: claimed -> done
+                note: 'Brought all Model source to the selected quality standards: formatter, linter and type checker now report nothing for the complete Component. Fixes were limited to ordering of exported names, quoted annotations, exception kinds for wrong input types, a verbose decimal literal in two generated Entities, and type-narrowing changes; no Model meaning changed.'
+                evidence:
+                  locations:
+                  - model/pyproject.toml
+                  - model/model/
+                  observed: 'ruff format: 25 files unchanged; ruff check: all checks passed; ty check: all checks passed. Earlier behaviour checks (construction, assignment, definition checks, JSON round trip, storage mapping, interface surface, side-effect freedom, one row per Entity) were rerun afterwards and still passed.'
+                decisions:
+                - unset: Exception kind for a wrongly typed JSON root or text form
+                  chosen: TypeError (wrapped by the Field-level conversion error where a Field is involved)
+                  why: The linter's rule asks for TypeError on invalid type and it is the more accurate kind.
+        P1-G2:
+          id: P1-G2
+          title: Declaration and Field Types
+          description: 'The shared public vocabulary every Entity is described in: the closed set of Field Types and the immutable Declaration records for Entities and their Fields.'
+          area: Declaration contract and Field Type set
+          does: Every Entity can be described by a complete, structurally valid, immutable Declaration over a closed set of Field Types.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G2-T01:
+              id: P1-G2-T01
+              source_id: '002'
+              title: Realize the closed Field Type set
+              description: Provide the closed set of Field Types with each Type's language and JSON realization from the selected language profile, and refuse any Type outside the set.
+              reason: Declarations, validation, conversion, and storage all depend on one agreed set of Types.
+              inputs:
+              - Model Field Type set
+              - Selected language's Type realizations
+              skills: []
+              expected_result: Each Field Type has a defined value form in the language and in a JSON Object, and an unknown Type is refused instead of guessed.
+              depends_on:
+              - P1-G1-T01
+              constraints: []
+              acceptance: Each Field Type resolves to its defined language and JSON forms, a float rejects non-finite values, a datetime rejects a value without timezone information, and a Type outside the set is refused.
+              status: done
+              log:
+              - at: '2026-10-07T23:14:31Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:15:38Z'
+                transition: claimed -> done
+                note: 'Created the private Field Type realization: the closed set of nine Field Types with their Python and JSON forms, strict exact-type matching, JSON encode/decode for decimal, datetime, date, time and uuid, and refusal of any unknown Type.'
+                evidence:
+                  locations:
+                  - model/model/core/_types.py
+                  observed: 'Smoke run: integer rejects bool, float rejects int and NaN, datetime rejects naive values, date rejects datetime, and an unknown Type name raises UnknownFieldTypeError.'
+                decisions:
+                - unset: How a float Field is kept free of implicit int coercion
+                  chosen: A before-validator annotation that accepts only float values
+                  why: The validation library otherwise accepts integers for float Fields, which Model forbids as implicit coercion.
+              - at: '2026-10-07T23:17:06Z'
+                transition: done (unchanged)
+                note: Amended the float annotation so it also rejects non-finite values, because the modeling package's Field has no finite-number option.
+                evidence:
+                  locations:
+                  - model/model/core/_types.py
+            P1-G2-T02:
+              id: P1-G2-T02
+              source_id: '002'
+              title: Realize the immutable Declaration records
+              description: Provide the public Entity Declaration, Field Declaration, Relation, Uniqueness Constraint, and Index records as immutable records with ordered immutable collections and no runtime behaviour.
+              reason: Entity meaning must be written once and read by every consumer through one structured public record.
+              inputs:
+              - Model Declaration contract
+              - Closed Field Type set
+              skills: []
+              expected_result: A Declaration can be created for any Entity and exposes every property of the Model Declaration contract.
+              depends_on:
+              - P1-G2-T01
+              constraints: []
+              acceptance: A created Declaration exposes every property of its Entity and Field contract, distinguishes an absent Default Value from an explicit null, and refuses every attempt to change it.
+              status: done
+              log:
+              - at: '2026-10-07T23:15:38Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:15:54Z'
+                transition: claimed -> done
+                note: 'Created the public Declaration contract: FieldType, ValueGeneration and Sensitivity vocabularies, an ABSENT marker distinct from an explicit null default, and frozen records for field constraints, Field Declaration, Relation, Uniqueness Constraint, Index and Entity Declaration with ordered tuple collections and no behaviour.'
+                evidence:
+                  locations:
+                  - model/model/core/declaration.py
+                  observed: 'Smoke run: a Declaration built from the records exposes its members, ABSENT survives copy, deepcopy and pickle as the same marker, and assigning to a Declaration or Field Declaration raises FrozenInstanceError.'
+                decisions:
+                - unset: Shape of the Uniqueness Constraint, Index and Primary Key members
+                  chosen: Uniqueness Constraint and Index each hold an ordered tuple of Field names; the Primary Key holds the single Field name
+                  why: The Model contract names ordered Field combinations and a Primary Key that names the Identity Field, and Preferences fix only the member names of the Entity Declaration and Relation.
+                - unset: How a Field without a stated description is recorded
+                  chosen: The description is None
+                  why: The Target gives no purpose for the Identity Field, and Model preserves only what the Target declares.
+            P1-G2-T03:
+              id: P1-G2-T03
+              source_id: '002'
+              title: Enforce Declaration structural rules at creation
+              description: Check each structural rule of the Declaration contract when a Declaration is created, and fail on an invalid or contradictory Declaration instead of repairing it.
+              reason: Entities must never be built from a Declaration that contradicts itself.
+              inputs:
+              - Declaration structural rules
+              - Immutable Declaration records
+              skills: []
+              expected_result: Only structurally valid Declarations can be created.
+              depends_on:
+              - P1-G2-T02
+              constraints: []
+              acceptance: Creating a Declaration that breaks any structural rule of the Declaration contract is refused, and creating a valid Declaration succeeds.
+              status: done
+              log:
+              - at: '2026-10-07T23:15:54Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:16:43Z'
+                transition: claimed -> done
+                note: 'Added creation-time structural checks to the Declaration records: Type, Sensitivity Marker and Value Generation membership, positive size on string Fields only, Default Value matching Type and nullability and never coexisting with Value Generation, unique Field names, Primary Key naming id, id non-nullable and immutable, is_active a non-nullable mutable boolean, known and non-repeated Relation, Uniqueness Constraint and Index Fields, no duplicate entries. Violations raise DeclarationError without echoing values.'
+                evidence:
+                  locations:
+                  - model/model/core/declaration.py
+                  observed: 'Smoke run: a valid Declaration was accepted and 19 distinct invalid constructions were each refused with DeclarationError.'
+                decisions:
+                - unset: Whether a size limits a string to a maximum or an exact length
+                  chosen: A maximum length
+                  why: The Target gives only a size for a code string and Model says a size is a positive length; a maximum is the usual meaning of a string size.
+                - unset: How structural violations are reported
+                  chosen: A dedicated DeclarationError (a ValueError) that names the Entity or Field but never a value
+                  why: Failures must be explicit and must not expose values that may be sensitive.
+        P1-G3:
+          id: P1-G3
+          title: Entity runtime behaviour
+          description: 'The private shared behaviour every Entity inherits: strict validation, assignment rules, identity handling, generated values, and protection of sensitive values in diagnostics.'
+          area: Entity validation and Value Generation
+          does: Every Entity enforces its Field contracts identically on construction and mutation and supplies its generated values as declared.
+          constraints: []
+          task_count: 7
+          tasks:
+            P1-G3-T01:
+              id: P1-G3-T01
+              source_id: '002'
+              title: Validate every construction strictly
+              description: 'Validate the whole Entity on direct construction before any value is set: no implicit coercion, no undeclared Field, Required Fields enforced, and every default validated against its Field.'
+              reason: One strict construction contract stops the data from being changed or invented on the way in.
+              inputs:
+              - Entity Declaration
+              - Closed Field Type set
+              skills: &id001
+              - sqlmodel
+              expected_result: Construction accepts only values that satisfy the Field contracts.
+              depends_on:
+              - P1-G2-T03
+              constraints: []
+              acceptance: Constructing an Entity with a wrongly typed value, an undeclared Field, or a missing Required Field is refused, while valid values construct it and supplied false, zero, empty string, and null stay as supplied.
+              status: done
+              log:
+              - at: '2026-10-07T23:16:43Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:17:05Z'
+                transition: claimed -> done
+                note: 'Created the private Base for every Entity: strict configuration (no coercion, undeclared Fields forbidden, defaults validated) and a construction path that validates the whole Entity before any value is set, then hands the validated values to the modeling package.'
+                evidence:
+                  locations:
+                  - model/model/core/_base.py
+                  observed: 'With a throwaway table model: wrong types, an undeclared Field, a missing Required Field, an over-size string, bool for integer, text for integer, int and infinity for float, float for decimal and a naive datetime were each refused (10 cases); valid construction succeeded and false, 0, empty string and null stayed as supplied.'
+                decisions:
+                - unset: How validation of a table model runs on construction
+                  chosen: Validate through the modeling package's validator on a blank probe instance, then pass the validated values to the normal initializer; the blank instances the package itself creates skip this
+                  why: Table models skip validation on construction, and re-entering model_validate from the initializer would recurse.
+            P1-G3-T02:
+              id: P1-G3-T02
+              source_id: '002'
+              title: Validate assignment atomically
+              description: Refuse assignment to an immutable Field, and validate the whole Entity with the new value before applying any other assignment, keeping the previous value when validation fails.
+              reason: Mutation must obey the same Field contracts as construction without ever leaving an Entity half-changed.
+              inputs:
+              - Strict construction validation
+              skills: *id001
+              expected_result: Assignment to a mutable Field is validated atomically and an immutable Field cannot change.
+              depends_on:
+              - P1-G3-T01
+              constraints: []
+              acceptance: Assigning to an immutable Field is refused, a valid assignment to a mutable Field takes effect, and an invalid assignment is refused and leaves the previous value unchanged.
+              status: done
+              log:
+              - at: '2026-10-07T23:17:06Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:19:15Z'
+                transition: claimed -> done
+                note: Assignment to a declared Field now refuses an immutable Field, and otherwise validates the whole Entity with the new value before applying it, so a failed assignment keeps the previous value.
+                evidence:
+                  locations:
+                  - model/model/core/_base.py
+                  - model/model/core/_types.py
+                  observed: 'Throwaway table model: assigning the immutable id was refused; a valid name assignment took effect; an over-size and a wrong-typed assignment were refused and the earlier value remained; an undeclared attribute was refused.'
+                decisions:
+                - unset: Where assignment validation applies
+                  chosen: Assignment to declared Fields only; the modeling package's own internal attributes pass through
+                  why: Persistence internals must keep working while every Field assignment obeys its Field contract.
+            P1-G3-T03:
+              id: P1-G3-T03
+              source_id: '002'
+              title: Refuse hashing of mutable Entities
+              description: Make a mutable Entity not hashable.
+              reason: A mutable Entity must not be usable as a stable key.
+              inputs:
+              - Strict construction validation
+              skills: *id001
+              expected_result: Attempting to hash a mutable Entity fails.
+              depends_on:
+              - P1-G3-T01
+              constraints: []
+              acceptance: Attempting to hash a mutable Entity is refused.
+              status: done
+              log:
+              - at: '2026-10-07T23:17:06Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:19:15Z'
+                transition: claimed -> done
+                note: Declared the shared Base unhashable so no mutable Entity can be hashed.
+                evidence:
+                  locations:
+                  - model/model/core/_base.py
+                  - model/model/core/_types.py
+                  observed: 'Throwaway table model: hash() raised TypeError; the table model was still usable with a session in an earlier probe.'
+            P1-G3-T04:
+              id: P1-G3-T04
+              source_id: '002'
+              title: Verify an Entity against its Declaration when it is defined
+              description: When an Entity type is defined, check that its type name and table name equal the Entity's physical name and that its Fields are exactly those of its Declaration in the same order, and fail loading on a mismatch.
+              reason: The Declaration is the only source of Entity meaning, so a type that drifts from it must never load.
+              inputs:
+              - Entity Declaration
+              - Strict construction validation
+              skills: *id001
+              expected_result: An Entity type that disagrees with its Declaration cannot load.
+              depends_on:
+              - P1-G3-T01
+              - P1-G2-T03
+              constraints: []
+              acceptance: Defining an Entity type whose name, table name, or Field set or order differs from its Declaration fails loading, while a matching type loads.
+              status: done
+              log:
+              - at: '2026-10-07T23:17:06Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:19:16Z'
+                transition: claimed -> done
+                note: When a table Entity type is defined, Base checks that a Declaration exists, that the type name and table name equal the Entity's physical name, and that the type's Fields equal the Declaration's Fields in the same order; a mismatch raises DefinitionError and the type does not load. The Declaration is also read-only on the type.
+                evidence:
+                  locations:
+                  - model/model/core/_base.py
+                  - model/model/core/_types.py
+                  observed: Five throwaway definitions (wrong type name, wrong table name, wrong Field order, missing Field, no Declaration) each raised DefinitionError before any table was built; a matching definition loaded; replacing the Declaration with a different one was refused.
+                decisions:
+                - unset: Where the definition-time check runs
+                  chosen: In the metaclass initializer, before the table is built
+                  why: The modeling package records the table setting only after the class is created, and the check must stop loading before any table exists.
+                - unset: How an Entity's physical name is derived
+                  chosen: PascalCase of the alphanumeric words of the logical name
+                  why: Model Preferences select PascalCase for Entity names and the Target's logical names are spaced words.
+            P1-G3-T05:
+              id: P1-G3-T05
+              source_id: '002'
+              title: Keep Auto Increment values pending
+              description: Leave an omitted Auto Increment Field in an explicit pending state without making it nullable, and refuse a caller-supplied value for it at construction and at assignment unless the Target permits one; Model never assigns the value.
+              reason: Value assignment belongs to storage, so callers must not choose these values.
+              inputs:
+              - Strict construction validation
+              - Atomic assignment validation
+              skills: *id001
+              expected_result: An Auto Increment Field is pending until storage assigns it and cannot be set by a caller.
+              depends_on:
+              - P1-G3-T02
+              constraints: []
+              acceptance: An Entity built without its Auto Increment value holds a pending value while the Field stays non-nullable, and supplying a value for that Field at construction or assignment is refused.
+              status: done
+              log:
+              - at: '2026-10-07T23:19:16Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:19:41Z'
+                transition: claimed -> done
+                note: Base now leaves an omitted Auto Increment Field in its pending state (None, with the Declaration still non-nullable) and refuses any caller-supplied value for it, including null, at construction and at assignment; Model never assigns it.
+                evidence:
+                  locations:
+                  - model/model/core/_base.py
+                  observed: 'Throwaway table model: an Entity built without id kept id as None; constructing with id=3, constructing with id=None, and assigning id=5 were each refused with a ValueError naming the Field.'
+                decisions:
+                - unset: Whether an explicit null for an Auto Increment Field counts as supplying a value
+                  chosen: Yes, any supplied key is refused
+                  why: Model says a caller-supplied value is refused; omission is the only way to leave the value pending.
+            P1-G3-T06:
+              id: P1-G3-T06
+              source_id: '002'
+              title: Produce Generated Identifiers at creation
+              description: Supply a fresh identifier at Entity creation for a Field declared with a Generated Identifier, using the algorithm Model Preferences select, and leave every other Field unaffected.
+              reason: The Value Generation contract offers this form to any Entity that declares it.
+              inputs:
+              - Strict construction validation
+              - Model Preferences Generated Identifier selection
+              skills: []
+              expected_result: An Entity that declares a Generated Identifier receives one when it is created.
+              depends_on:
+              - P1-G3-T01
+              constraints: []
+              acceptance: An Entity declaring a Generated Identifier receives a distinct identifier of the Field's Type at creation, and a Field without that declaration receives none.
+              status: done
+              log:
+              - at: '2026-10-07T23:17:06Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:19:16Z'
+                transition: claimed -> done
+                note: Base supplies a fresh Generated Identifier at creation for every declared Generated Identifier Field the caller left out (a uuid for uuid Fields, its text for string Fields) using the selected uuid4 algorithm; Fields without that declaration are untouched and a caller-supplied identifier is kept.
+                evidence:
+                  locations:
+                  - model/model/core/_base.py
+                  - model/model/core/_types.py
+                  observed: 'Throwaway table model with a Generated Identifier id: two creations received distinct UUIDs and a supplied id was kept.'
+                decisions:
+                - unset: Whether a caller may supply a Generated Identifier
+                  chosen: A supplied value is accepted and validated; only an omitted one is generated
+                  why: Model refuses caller values only for Auto Increment, and JSON reconstruction must be able to supply an existing identifier.
+            P1-G3-T07:
+              id: P1-G3-T07
+              source_id: '002'
+              title: Protect sensitive values in diagnostics
+              description: Replace the input of a Field that carries a Sensitivity Marker in every validation message, never chain or expose the original message holding the value, and keep the actual value unchanged in Entity state.
+              reason: A marker records what a value means and its only effect is keeping the value out of diagnostics.
+              inputs:
+              - Strict construction validation
+              - Recognized Sensitivity Markers
+              skills: []
+              expected_result: Validation messages never reveal the value of a marked Field.
+              depends_on:
+              - P1-G3-T01
+              constraints: []
+              acceptance: A validation failure on a marked Field reports no part of the supplied value, and a valid marked value is stored and read back unchanged.
+              status: done
+              log:
+              - at: '2026-10-07T23:17:06Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:19:16Z'
+                transition: claimed -> done
+                note: Validation failures that involve a Field carrying a Sensitivity Marker report the redacted marker instead of the supplied value and are raised without chaining the original error; failures on other Fields are unchanged and the actual value stays unchanged in Entity state.
+                evidence:
+                  locations:
+                  - model/model/core/_base.py
+                  - model/model/core/_types.py
+                  observed: 'Throwaway Entity with a password-marked Field: an over-size value produced a ValidationError containing no part of the value and a redaction marker, with no chained cause; an error on an unmarked Field kept its normal text; a valid marked value was stored unchanged.'
+                decisions:
+                - unset: What replaces a sensitive input in a diagnostic
+                  chosen: The text [redacted], keeping the error type and location
+                  why: Diagnostics stay actionable without exposing the value.
+        P1-G4:
+          id: P1-G4
+          title: JSON conversion
+          description: The shared public Foundation contract converting any Entity to and from JSON text.
+          area: Foundation Conversion
+          does: Every Entity round-trips through JSON text without loss.
+          constraints: []
+          task_count: 2
+          tasks:
+            P1-G4-T01:
+              id: P1-G4-T01
+              source_id: '002'
+              title: Convert an Entity to JSON text
+              description: Give every Entity a conversion that produces JSON text with one root object whose keys are exactly its Field names in Declaration order, with values following their Types and a pending Auto Increment value written as null.
+              reason: Consumers need one portable, lossless representation of an Entity.
+              inputs:
+              - Field Type JSON forms
+              - Strict construction validation
+              skills: *id001
+              expected_result: Any Entity can be written as standard JSON text.
+              depends_on:
+              - P1-G3-T01
+              constraints: []
+              acceptance: The produced text is standard JSON with one root object whose keys equal the Field names in Declaration order, decimal and datetime values keep their exact value in their text forms, and null, false, zero, and empty string remain distinct.
+              status: done
+              log:
+              - at: '2026-10-07T23:19:42Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:20:04Z'
+                transition: claimed -> done
+                note: 'Created Foundation, the public shared contract every Entity extends, with a to_json conversion producing standard JSON text: one root object, keys exactly the Field names in Declaration order, decimal as exact text, datetime/date/time as ISO 8601 text (datetime with offset), uuid as text, a pending Auto Increment value as null, and null, false, zero and empty string kept distinct.'
+                evidence:
+                  locations:
+                  - model/model/core/foundation.py
+                  observed: 'Throwaway table model with one Field of every Field Type: the text parsed as one object with keys in Declaration order, the 29-digit decimal kept its exact text, the +03:30 offset and microseconds were kept, false/0/empty string/null stayed distinct, and the pending id was null.'
+            P1-G4-T02:
+              id: P1-G4-T02
+              source_id: '002'
+              title: Build an Entity from JSON text
+              description: Give every Entity a conversion that rejects malformed text, a repeated key, a non-standard constant, and a root that is not one object, decodes decimal, datetime, date, time, and uuid values by each Field's Type, and then builds the Entity under the same rules as direct construction.
+              reason: A lossless round trip requires reconstruction to be as strict as construction.
+              inputs:
+              - JSON text conversion
+              - Strict construction validation
+              skills: *id001
+              expected_result: An Entity can be rebuilt from the JSON text it produced, and invalid text is refused.
+              depends_on:
+              - P1-G4-T01
+              constraints: []
+              acceptance: Malformed text, a repeated key, a non-standard constant, and a root that is not one object are each refused, and converting any Entity to JSON text and back yields an Entity with identical Field values.
+              status: done
+              log:
+              - at: '2026-10-07T23:20:04Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:20:33Z'
+                transition: claimed -> done
+                note: 'Added from_json to Foundation: it rejects malformed text, repeated keys, non-standard constants, numbers outside the finite range and a root that is not one object, decodes decimal, datetime, date, time and uuid text by each Field''s Type, treats null for an Auto Increment Field as pending, and builds the Entity through normal construction so every construction rule applies.'
+                evidence:
+                  locations:
+                  - model/model/core/foundation.py
+                  observed: 'Throwaway table model with every Field Type: converting to JSON text and back produced identical Field values, the same offset and an identical second text; 14 invalid inputs (malformed, repeated key, NaN, Infinity, 1e999, array root, number root, undeclared key, bad decimal text, decimal as number, naive datetime, wrong type, assigned Auto Increment id, int for float) and non-string input were refused.'
+                decisions:
+                - unset: Treatment of a non-null Auto Increment value in JSON text
+                  chosen: Refused, like any caller-supplied value; only null (pending) is accepted
+                  why: Foundation reconstruction follows direct construction rules and Model refuses caller-supplied Auto Increment values unless the Target permits them. This means JSON text of an Entity whose id storage has already assigned cannot be rebuilt (recorded as an Open Question).
+        P1-G5:
+          id: P1-G5
+          title: Storage Mapping
+          description: The private table-ready form every Entity carries, derived only from its Declaration; Model declares it and never runs storage.
+          area: Storage Mapping
+          does: Every Entity has a deterministic table-ready form that exactly reflects its Declaration.
+          constraints: []
+          task_count: 7
+          tasks:
+            P1-G5-T01:
+              id: P1-G5-T01
+              source_id: '002'
+              title: Register all table forms in one shared table metadata
+              description: Register the table forms of all Entities in one shared table metadata reachable through the Entities themselves, and name every constraint and index by the single convention Model Preferences select.
+              reason: A consumer must create exactly the Entities' tables and no others, with predictable constraint names.
+              inputs:
+              - Model Preferences constraint naming convention
+              - Entity definition conformance
+              skills: *id001
+              expected_result: All Entity table forms live in one shared table metadata with consistently named constraints and indexes.
+              depends_on:
+              - P1-G3-T04
+              constraints: []
+              acceptance: Creating tables from the shared metadata yields exactly the tables of the defined Entities and no others, and every constraint and index name follows the selected convention.
+              status: done
+              log:
+              - at: '2026-10-07T23:20:33Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:21:04Z'
+                transition: claimed -> done
+                note: Created the shared table metadata (its own registry) with the naming convention pk_<table>, fk_<table>_<field>, uq_<table>_<fields joined by _> and ix_<table>_<fields joined by _>, and made Base register every Entity table in it; the metadata is reachable through the Entities themselves.
+                evidence:
+                  locations:
+                  - model/model/core/_storage.py
+                  - model/model/core/_base.py
+                  observed: 'Throwaway Entity: its metadata is the shared one and differs from the modeling package''s global metadata; an unrelated table model stayed out of it; create_all created only the Entity''s table; the primary key constraint was named pk_Owner.'
+                decisions:
+                - unset: How the shared table metadata is kept separate
+                  chosen: A dedicated registry with its own metadata and the naming convention, passed to the shared Base
+                  why: Keeps Model's tables apart from any other table model in the process so a consumer creates exactly Model's tables.
+            P1-G5-T02:
+              id: P1-G5-T02
+              source_id: '002'
+              title: Name tables and columns from the Declaration
+              description: Name each table by the Entity's physical name and each column by its Field name, and fail generation when a name cannot be resolved.
+              reason: Physical names must follow deterministically from the Declaration.
+              inputs:
+              - Entity Declaration
+              - Selected language naming rules
+              skills: *id001
+              expected_result: Every table and column carries the name its Declaration determines.
+              depends_on:
+              - P1-G5-T01
+              constraints: []
+              acceptance: Each table and column carries exactly the physical name and Field name from its Declaration, and an unresolvable name fails generation.
+              status: done
+              log:
+              - at: '2026-10-07T23:21:04Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:21:33Z'
+                transition: claimed -> done
+                note: Added table_name (an Entity's physical name) and column_name (the Field name, validated as a snake_case, non-keyword name); an unresolvable name raises ValueError.
+                evidence:
+                  locations:
+                  - model/model/core/_storage.py
+                  observed: Throwaway Entity named from its Declaration got the table MoneyThing and the column amount; four invalid Field names and an unresolvable Entity name were refused.
+            P1-G5-T03:
+              id: P1-G5-T03
+              source_id: '002'
+              title: Map the Primary Key and Relations to keys
+              description: Map each Entity's Primary Key to its primary key column and each Relation to a foreign key to the target Entity's table and Field.
+              reason: Stored data must preserve the identity and cross-Entity links the Declaration states.
+              inputs:
+              - Entity Metadata
+              - Table and column names
+              skills: *id001
+              expected_result: Each table has the primary key and foreign keys its Declaration states.
+              depends_on:
+              - P1-G5-T02
+              constraints: []
+              acceptance: Each Entity's table has the primary key its Declaration names and one foreign key for every Relation, referencing the Relation's target table and Field.
+              status: done
+              log:
+              - at: '2026-10-07T23:21:33Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:22:14Z'
+                transition: claimed -> done
+                note: Added Field realization that maps the Primary Key to the primary key column and each Relation to a foreign key to the target Entity's physical table and Field.
+                evidence:
+                  locations:
+                  - model/model/core/_storage.py
+                  observed: 'Throwaway child Entity: the primary key was named pk_<table> and one foreign key fk_ChildItem_parent_id referenced the Parent table''s id column.'
+                decisions:
+                - unset: Where table-ready Field options are produced
+                  chosen: One function that builds each table-ready Field entirely from the Declaration (value rules and storage options together)
+                  why: Value rules are written once in the Declaration and never repeated beside it.
+            P1-G5-T04:
+              id: P1-G5-T04
+              source_id: '002'
+              title: Map Uniqueness Constraints and Indexes
+              description: Map each Uniqueness Constraint and Index to the table, placing a single-Field entry on its column and a combination at table level.
+              reason: Stored data must enforce the uniqueness and access intentions the Declaration states.
+              inputs:
+              - Entity Metadata
+              - Table and column names
+              skills: *id001
+              expected_result: Each table carries exactly the uniqueness and index entries its Declaration states.
+              depends_on:
+              - P1-G5-T02
+              constraints: []
+              acceptance: Every Uniqueness Constraint and Index in a Declaration appears in its table, on the column for a single Field and at table level for a combination, and no others appear.
+              status: done
+              log:
+              - at: '2026-10-07T23:21:33Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:22:14Z'
+                transition: claimed -> done
+                note: 'Added mapping of Uniqueness Constraints and Indexes: a single-Field entry becomes a flag on its column, a combination becomes a table-level constraint or index, and a Field carrying both a single uniqueness and a single index entry gets both at table level so the two are not conflated into a unique index.'
+                evidence:
+                  locations:
+                  - model/model/core/_storage.py
+                  observed: 'Throwaway child Entity: three uniqueness constraints (single, combined, shared) and three indexes (single, combined, shared) appeared in the table exactly once each with convention names uq_/ix_<table>_<fields> and none beyond them.'
+                decisions:
+                - unset: How a Field with both a single uniqueness and a single index entry is stored
+                  chosen: Both entries at table level
+                  why: A column-level flag pair would silently become one unique index, which loses the separate meaning of the two entries.
+            P1-G5-T05:
+              id: P1-G5-T05
+              source_id: '002'
+              title: Map Auto Increment to a generated identity column
+              description: Store an Auto Increment Field as a generated identity column.
+              reason: Storage, not Model, assigns Auto Increment values.
+              inputs:
+              - Auto Increment pending state
+              - Table and column names
+              skills: *id001
+              expected_result: An Auto Increment Field receives its value from storage on insertion.
+              depends_on:
+              - P1-G5-T02
+              - P1-G3-T05
+              constraints: []
+              acceptance: An Auto Increment Field is stored as a generated identity column that assigns a distinct value on insertion.
+              status: done
+              log:
+              - at: '2026-10-07T23:21:33Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:22:14Z'
+                transition: claimed -> done
+                note: 'Mapped an Auto Increment Field to a generated identity column: the Field carries an identity construct with a pending default and its table sets the autoincrement option.'
+                evidence:
+                  locations:
+                  - model/model/core/_storage.py
+                  observed: 'Throwaway child Entity on SQLite: the table was created with an autoincrement primary key and two insertions received ids 1 and 2.'
+            P1-G5-T06:
+              id: P1-G5-T06
+              source_id: '002'
+              title: Store decimal values exactly
+              description: Store a decimal Field as its exact decimal text and read it back as a decimal.
+              reason: Monetary and ratio values must not lose precision in storage.
+              inputs:
+              - Decimal Field Type
+              - Shared table metadata
+              skills: *id001
+              expected_result: A decimal value survives storage unchanged.
+              depends_on:
+              - P1-G5-T01
+              constraints: []
+              acceptance: A decimal Field stored and read back returns the identical decimal value on every supported Engine.
+              status: done
+              log:
+              - at: '2026-10-07T23:21:04Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:21:33Z'
+                transition: claimed -> done
+                note: Added ExactDecimal, a column type that stores a decimal as its exact text and returns a decimal.Decimal on every Engine.
+                evidence:
+                  locations:
+                  - model/model/core/_storage.py
+                  observed: On SQLite a 38-digit decimal was stored as its exact text and read back as an identical Decimal.
+                decisions:
+                - unset: Which fixed column type holds decimal text
+                  chosen: A variable-length text column
+                  why: Model Preferences require one fixed column type storing the exact decimal text on every Engine.
+            P1-G5-T07:
+              id: P1-G5-T07
+              source_id: '002'
+              title: Store datetime values in UTC
+              description: Store a datetime Field in UTC and read it back timezone-aware, including on an Engine that drops the offset.
+              reason: Datetime values must denote the same instant after storage.
+              inputs:
+              - Datetime Field Type
+              - Shared table metadata
+              skills: *id001
+              expected_result: A datetime value survives storage as the same instant.
+              depends_on:
+              - P1-G5-T01
+              constraints: []
+              acceptance: A stored datetime is held in UTC and read back as a timezone-aware value representing the same instant.
+              status: done
+              log:
+              - at: '2026-10-07T23:21:04Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:21:33Z'
+                transition: claimed -> done
+                note: Added UtcDateTime, a timezone-aware datetime column type that refuses naive values, stores UTC and returns a UTC-aware datetime even where the Engine drops the offset.
+                evidence:
+                  locations:
+                  - model/model/core/_storage.py
+                  observed: On SQLite a +05:00 datetime was stored as the UTC text 2024-05-06 02:08:09 and read back timezone-aware, equal to the original instant.
+                decisions:
+                - unset: How a datetime column is realized
+                  chosen: A column type wrapping the timezone-aware datetime type with UTC normalization on write and UTC re-attachment on read
+                  why: Model Preferences select the timezone-aware datetime column stored in UTC and require UTC-aware reads where an Engine drops the offset. The sqlmodel Skill instead recommends the modeling package's own UTC datetime type (recorded as an Open Question).
+        P1-G6:
+          id: P1-G6
+          title: Entities
+          description: One Entity per Target model, each realized on the shared Core and preserving its Target definition, with only the Identity and Activity Field Model adds.
+          area: Entity units
+          does: Every Target model exists as exactly one Entity that preserves its definition.
+          constraints:
+          - A Task in this Group realizes its own Entity only and does not publish it; publication belongs to the Interface publication Group.
+          task_count: 15
+          tasks:
+            P1-G6-T01:
+              id: P1-G6-T01
+              source_id: '002'
+              title: Realize the User Entity
+              description: Realize the User Entity from its Target definition. It has no Relations to other Entities.
+              reason: Every other owned Entity belongs to a user, so multi-user ownership starts here.
+              inputs:
+              - Target definition of the User model
+              skills: *id001
+              expected_result: 'The User Entity is complete: it exposes its Declaration, constructs strictly, converts to and from JSON text, and has its table-ready form.'
+              depends_on:
+              - P1-G3-T03
+              - P1-G3-T04
+              - P1-G3-T05
+              - P1-G3-T06
+              - P1-G3-T07
+              - P1-G4-T02
+              - P1-G5-T03
+              - P1-G5-T04
+              - P1-G5-T05
+              - P1-G5-T06
+              - P1-G5-T07
+              constraints: []
+              acceptance: The User Entity's Declaration matches its Target definition in Fields, order, Types, nullability, defaults, and Entity Metadata, and the Entity constructs from valid values and rejects an unknown Field, a wrong Type, and a missing Required Field.
+              status: done
+              log:
+              - at: '2026-10-07T23:22:14Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:23:11Z'
+                transition: claimed -> done
+                note: 'Created the User Entity unit: its Declaration (Fields in Target order, Primary Key, two Uniqueness Constraints) and a table model realized from that Declaration through the shared Foundation.'
+                evidence:
+                  locations:
+                  - model/model/entity/user.py
+                  observed: Generated from the Target definition and formatted; constructed from valid values with id pending and is_active true, converted to JSON text and back with an identical second text; its table registered in the shared metadata.
+                decisions:
+                - unset: How Entity units are produced
+                  chosen: Emitted deterministically from the Target definition by a throwaway generator kept outside the repository, then formatted
+                  why: Fifteen Entities share one structure; a generator keeps Declaration, Field list and table form consistent with the Target.
+            P1-G6-T02:
+              id: P1-G6-T02
+              source_id: '002'
+              title: Realize the Trading Platform Entity
+              description: Realize the Trading Platform Entity from its Target definition. It has no Relations to other Entities.
+              reason: Instances and Positions refer to a supported trading platform standard.
+              inputs:
+              - Target definition of the Trading Platform model
+              skills: *id001
+              expected_result: 'The Trading Platform Entity is complete: it exposes its Declaration, constructs strictly, converts to and from JSON text, and has its table-ready form.'
+              depends_on:
+              - P1-G3-T03
+              - P1-G3-T04
+              - P1-G3-T05
+              - P1-G3-T06
+              - P1-G3-T07
+              - P1-G4-T02
+              - P1-G5-T03
+              - P1-G5-T04
+              - P1-G5-T05
+              - P1-G5-T06
+              - P1-G5-T07
+              constraints: []
+              acceptance: The Trading Platform Entity's Declaration matches its Target definition in Fields, order, Types, nullability, defaults, and Entity Metadata, and the Entity constructs from valid values and rejects an unknown Field, a wrong Type, and a missing Required Field.
+              status: done
+              log:
+              - at: '2026-10-07T23:22:14Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:23:11Z'
+                transition: claimed -> done
+                note: Created the Trading Platform Entity unit with its Declaration and table model; it has no Relations.
+                evidence:
+                  locations:
+                  - model/model/entity/trading_platform.py
+                  observed: Constructed from valid values, converted to JSON text and back identically; physical and table name TradingPlatform.
+            P1-G6-T03:
+              id: P1-G6-T03
+              source_id: '002'
+              title: Realize the Instance Entity
+              description: Realize the Instance Entity from its Target definition. Its Relations reach Fields of the User and Trading Platform Entities.
+              reason: Accounts connect to a trading platform through a user-owned instance.
+              inputs:
+              - Target definition of the Instance model
+              - Completed User Entity
+              - Completed Trading Platform Entity
+              skills: *id001
+              expected_result: 'The Instance Entity is complete: it exposes its Declaration, constructs strictly, converts to and from JSON text, and has its table-ready form.'
+              depends_on:
+              - P1-G6-T01
+              - P1-G6-T02
+              constraints: []
+              acceptance: The Instance Entity's Declaration matches its Target definition in Fields, order, Types, nullability, defaults, and Entity Metadata, each Relation reaches a Field of the User and Trading Platform Entities, and the Entity constructs from valid values and rejects an unknown Field, a wrong Type, and a missing Required Field.
+              status: done
+              log:
+              - at: '2026-10-07T23:23:11Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:23:17Z'
+                transition: claimed -> done
+                note: Created the Instance Entity unit with its Declaration (Fields in Target order, Primary Key, Relations to User and Trading Platform, Uniqueness Constraints) and table model.
+                evidence:
+                  locations:
+                  - model/model/entity/instance.py
+                  observed: Generated from the Target definition and formatted; constructed from valid values, converted to JSON text and back identically; its table registered in the shared metadata.
+            P1-G6-T04:
+              id: P1-G6-T04
+              source_id: '002'
+              title: Realize the Currency Entity
+              description: Realize the Currency Entity from its Target definition. Its Relations reach Fields of the User Entity.
+              reason: Accounts need a base currency.
+              inputs:
+              - Target definition of the Currency model
+              - Completed User Entity
+              skills: *id001
+              expected_result: 'The Currency Entity is complete: it exposes its Declaration, constructs strictly, converts to and from JSON text, and has its table-ready form.'
+              depends_on:
+              - P1-G6-T01
+              constraints: []
+              acceptance: The Currency Entity's Declaration matches its Target definition in Fields, order, Types, nullability, defaults, and Entity Metadata, each Relation reaches a Field of the User Entity, and the Entity constructs from valid values and rejects an unknown Field, a wrong Type, and a missing Required Field.
+              status: done
+              log:
+              - at: '2026-10-07T23:23:11Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:23:17Z'
+                transition: claimed -> done
+                note: Created the Currency Entity unit with its Declaration (Fields in Target order, Primary Key, Relations to User, Uniqueness Constraints) and table model.
+                evidence:
+                  locations:
+                  - model/model/entity/currency.py
+                  observed: Generated from the Target definition and formatted; constructed from valid values, converted to JSON text and back identically; its table registered in the shared metadata.
+            P1-G6-T05:
+              id: P1-G6-T05
+              source_id: '002'
+              title: Realize the Broker Entity
+              description: Realize the Broker Entity from its Target definition. Its Relations reach Fields of the User Entity.
+              reason: Assets, Accounts, and Positions refer to a broker.
+              inputs:
+              - Target definition of the Broker model
+              - Completed User Entity
+              skills: *id001
+              expected_result: 'The Broker Entity is complete: it exposes its Declaration, constructs strictly, converts to and from JSON text, and has its table-ready form.'
+              depends_on:
+              - P1-G6-T01
+              constraints: []
+              acceptance: The Broker Entity's Declaration matches its Target definition in Fields, order, Types, nullability, defaults, and Entity Metadata, each Relation reaches a Field of the User Entity, and the Entity constructs from valid values and rejects an unknown Field, a wrong Type, and a missing Required Field.
+              status: done
+              log:
+              - at: '2026-10-07T23:23:11Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:23:18Z'
+                transition: claimed -> done
+                note: Created the Broker Entity unit with its Declaration (Fields in Target order, Primary Key, Relations to User, Uniqueness Constraints) and table model.
+                evidence:
+                  locations:
+                  - model/model/entity/broker.py
+                  observed: Generated from the Target definition and formatted; constructed from valid values, converted to JSON text and back identically; its table registered in the shared metadata.
+            P1-G6-T06:
+              id: P1-G6-T06
+              source_id: '002'
+              title: Realize the Asset Entity
+              description: Realize the Asset Entity from its Target definition. Its Relations reach Fields of the Broker Entity.
+              reason: Actions select a tradable asset.
+              inputs:
+              - Target definition of the Asset model
+              - Completed Broker Entity
+              skills: *id001
+              expected_result: 'The Asset Entity is complete: it exposes its Declaration, constructs strictly, converts to and from JSON text, and has its table-ready form.'
+              depends_on:
+              - P1-G6-T05
+              constraints: []
+              acceptance: The Asset Entity's Declaration matches its Target definition in Fields, order, Types, nullability, defaults, and Entity Metadata, each Relation reaches a Field of the Broker Entity, and the Entity constructs from valid values and rejects an unknown Field, a wrong Type, and a missing Required Field.
+              status: done
+              log:
+              - at: '2026-10-07T23:23:18Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:23:24Z'
+                transition: claimed -> done
+                note: Created the Asset Entity unit with its Declaration (Fields in Target order, Primary Key, Relations to Broker, Uniqueness Constraints) and table model.
+                evidence:
+                  locations:
+                  - model/model/entity/asset.py
+                  observed: Generated from the Target definition and formatted; constructed from valid values, converted to JSON text and back identically; its table registered in the shared metadata.
+            P1-G6-T07:
+              id: P1-G6-T07
+              source_id: '002'
+              title: Realize the Account Group Entity
+              description: Realize the Account Group Entity from its Target definition. Its Relations reach Fields of the User Entity.
+              reason: Accounts are organized into groups.
+              inputs:
+              - Target definition of the Account Group model
+              - Completed User Entity
+              skills: *id001
+              expected_result: 'The Account Group Entity is complete: it exposes its Declaration, constructs strictly, converts to and from JSON text, and has its table-ready form.'
+              depends_on:
+              - P1-G6-T01
+              constraints: []
+              acceptance: The Account Group Entity's Declaration matches its Target definition in Fields, order, Types, nullability, defaults, and Entity Metadata, each Relation reaches a Field of the User Entity, and the Entity constructs from valid values and rejects an unknown Field, a wrong Type, and a missing Required Field.
+              status: done
+              log:
+              - at: '2026-10-07T23:23:11Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:23:18Z'
+                transition: claimed -> done
+                note: Created the Account Group Entity unit with its Declaration (Fields in Target order, Primary Key, Relations to User, Uniqueness Constraints) and table model.
+                evidence:
+                  locations:
+                  - model/model/entity/account_group.py
+                  observed: Generated from the Target definition and formatted; constructed from valid values, converted to JSON text and back identically; its table registered in the shared metadata.
+            P1-G6-T08:
+              id: P1-G6-T08
+              source_id: '002'
+              title: Realize the Account Entity
+              description: Realize the Account Entity from its Target definition. Its Relations reach Fields of the Account Group, Broker, Instance, and Currency Entities.
+              reason: Actions and Positions execute through a trading account.
+              inputs:
+              - Target definition of the Account model
+              - Completed Account Group Entity
+              - Completed Broker Entity
+              - Completed Instance Entity
+              - Completed Currency Entity
+              skills: *id001
+              expected_result: 'The Account Entity is complete: it exposes its Declaration, constructs strictly, converts to and from JSON text, and has its table-ready form.'
+              depends_on:
+              - P1-G6-T07
+              - P1-G6-T05
+              - P1-G6-T03
+              - P1-G6-T04
+              constraints: []
+              acceptance: The Account Entity's Declaration matches its Target definition in Fields, order, Types, nullability, defaults, and Entity Metadata, each Relation reaches a Field of the Account Group, Broker, Instance, and Currency Entities, and the Entity constructs from valid values and rejects an unknown Field, a wrong Type, and a missing Required Field.
+              status: done
+              log:
+              - at: '2026-10-07T23:23:18Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:23:24Z'
+                transition: claimed -> done
+                note: Created the Account Entity unit with its Declaration (Fields in Target order, Primary Key, Relations to Account Group, Broker, Instance and Currency, Uniqueness Constraints) and table model.
+                evidence:
+                  locations:
+                  - model/model/entity/account.py
+                  observed: Generated from the Target definition and formatted; constructed from valid values, converted to JSON text and back identically; its table registered in the shared metadata.
+            P1-G6-T09:
+              id: P1-G6-T09
+              source_id: '002'
+              title: Realize the Trailing Group Entity
+              description: Realize the Trailing Group Entity from its Target definition. Its Relations reach Fields of the User Entity.
+              reason: Trailing rules, Actions, and Positions refer to a trailing group.
+              inputs:
+              - Target definition of the Trailing Group model
+              - Completed User Entity
+              skills: *id001
+              expected_result: 'The Trailing Group Entity is complete: it exposes its Declaration, constructs strictly, converts to and from JSON text, and has its table-ready form.'
+              depends_on:
+              - P1-G6-T01
+              constraints: []
+              acceptance: The Trailing Group Entity's Declaration matches its Target definition in Fields, order, Types, nullability, defaults, and Entity Metadata, each Relation reaches a Field of the User Entity, and the Entity constructs from valid values and rejects an unknown Field, a wrong Type, and a missing Required Field.
+              status: done
+              log:
+              - at: '2026-10-07T23:23:11Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:23:18Z'
+                transition: claimed -> done
+                note: Created the Trailing Group Entity unit with its Declaration (Fields in Target order, Primary Key, Relations to User, Uniqueness Constraints) and table model.
+                evidence:
+                  locations:
+                  - model/model/entity/trailing_group.py
+                  observed: Generated from the Target definition and formatted; constructed from valid values, converted to JSON text and back identically; its table registered in the shared metadata.
+            P1-G6-T10:
+              id: P1-G6-T10
+              source_id: '002'
+              title: Realize the Trailing Rule Entity
+              description: Realize the Trailing Rule Entity from its Target definition. Its Relations reach Fields of the Trailing Group Entity.
+              reason: A trailing group is defined by its rules.
+              inputs:
+              - Target definition of the Trailing Rule model
+              - Completed Trailing Group Entity
+              skills: *id001
+              expected_result: 'The Trailing Rule Entity is complete: it exposes its Declaration, constructs strictly, converts to and from JSON text, and has its table-ready form.'
+              depends_on:
+              - P1-G6-T09
+              constraints: []
+              acceptance: The Trailing Rule Entity's Declaration matches its Target definition in Fields, order, Types, nullability, defaults, and Entity Metadata, each Relation reaches a Field of the Trailing Group Entity, and the Entity constructs from valid values and rejects an unknown Field, a wrong Type, and a missing Required Field.
+              status: done
+              log:
+              - at: '2026-10-07T23:23:18Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:23:24Z'
+                transition: claimed -> done
+                note: Created the Trailing Rule Entity unit with its Declaration (Fields in Target order, Primary Key, Relations to Trailing Group, Uniqueness Constraints) and table model.
+                evidence:
+                  locations:
+                  - model/model/entity/trailing_rule.py
+                  observed: Generated from the Target definition and formatted; constructed from valid values, converted to JSON text and back identically; its table registered in the shared metadata.
+            P1-G6-T11:
+              id: P1-G6-T11
+              source_id: '002'
+              title: Realize the Partial Group Entity
+              description: Realize the Partial Group Entity from its Target definition. Its Relations reach Fields of the User Entity.
+              reason: Partial rules, Actions, and Positions refer to a partial group.
+              inputs:
+              - Target definition of the Partial Group model
+              - Completed User Entity
+              skills: *id001
+              expected_result: 'The Partial Group Entity is complete: it exposes its Declaration, constructs strictly, converts to and from JSON text, and has its table-ready form.'
+              depends_on:
+              - P1-G6-T01
+              constraints: []
+              acceptance: The Partial Group Entity's Declaration matches its Target definition in Fields, order, Types, nullability, defaults, and Entity Metadata, each Relation reaches a Field of the User Entity, and the Entity constructs from valid values and rejects an unknown Field, a wrong Type, and a missing Required Field.
+              status: done
+              log:
+              - at: '2026-10-07T23:23:11Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:23:18Z'
+                transition: claimed -> done
+                note: Created the Partial Group Entity unit with its Declaration (Fields in Target order, Primary Key, Relations to User, Uniqueness Constraints) and table model.
+                evidence:
+                  locations:
+                  - model/model/entity/partial_group.py
+                  observed: Generated from the Target definition and formatted; constructed from valid values, converted to JSON text and back identically; its table registered in the shared metadata.
+            P1-G6-T12:
+              id: P1-G6-T12
+              source_id: '002'
+              title: Realize the Partial Rule Entity
+              description: Realize the Partial Rule Entity from its Target definition. Its Relations reach Fields of the Partial Group Entity.
+              reason: A partial group is defined by its rules.
+              inputs:
+              - Target definition of the Partial Rule model
+              - Completed Partial Group Entity
+              skills: *id001
+              expected_result: 'The Partial Rule Entity is complete: it exposes its Declaration, constructs strictly, converts to and from JSON text, and has its table-ready form.'
+              depends_on:
+              - P1-G6-T11
+              constraints: []
+              acceptance: The Partial Rule Entity's Declaration matches its Target definition in Fields, order, Types, nullability, defaults, and Entity Metadata, each Relation reaches a Field of the Partial Group Entity, and the Entity constructs from valid values and rejects an unknown Field, a wrong Type, and a missing Required Field.
+              status: done
+              log:
+              - at: '2026-10-07T23:23:18Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:23:24Z'
+                transition: claimed -> done
+                note: Created the Partial Rule Entity unit with its Declaration (Fields in Target order, Primary Key, Relations to Partial Group, Uniqueness Constraints) and table model.
+                evidence:
+                  locations:
+                  - model/model/entity/partial_rule.py
+                  observed: Generated from the Target definition and formatted; constructed from valid values, converted to JSON text and back identically; its table registered in the shared metadata.
+            P1-G6-T13:
+              id: P1-G6-T13
+              source_id: '002'
+              title: Realize the Action Group Entity
+              description: Realize the Action Group Entity from its Target definition. Its Relations reach Fields of the User Entity.
+              reason: Actions and Positions are organized by action group.
+              inputs:
+              - Target definition of the Action Group model
+              - Completed User Entity
+              skills: *id001
+              expected_result: 'The Action Group Entity is complete: it exposes its Declaration, constructs strictly, converts to and from JSON text, and has its table-ready form.'
+              depends_on:
+              - P1-G6-T01
+              constraints: []
+              acceptance: The Action Group Entity's Declaration matches its Target definition in Fields, order, Types, nullability, defaults, and Entity Metadata, each Relation reaches a Field of the User Entity, and the Entity constructs from valid values and rejects an unknown Field, a wrong Type, and a missing Required Field.
+              status: done
+              log:
+              - at: '2026-10-07T23:23:11Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:23:18Z'
+                transition: claimed -> done
+                note: Created the Action Group Entity unit with its Declaration (Fields in Target order, Primary Key, Relations to User, Uniqueness Constraints) and table model.
+                evidence:
+                  locations:
+                  - model/model/entity/action_group.py
+                  observed: Generated from the Target definition and formatted; constructed from valid values, converted to JSON text and back identically; its table registered in the shared metadata.
+            P1-G6-T14:
+              id: P1-G6-T14
+              source_id: '002'
+              title: Realize the Action Entity
+              description: Realize the Action Entity from its Target definition. Its Relations reach Fields of the Action Group, Asset, Account, Partial Group, and Trailing Group Entities.
+              reason: Positions are opened from actions.
+              inputs:
+              - Target definition of the Action model
+              - Completed Action Group Entity
+              - Completed Asset Entity
+              - Completed Account Entity
+              - Completed Partial Group Entity
+              - Completed Trailing Group Entity
+              skills: *id001
+              expected_result: 'The Action Entity is complete: it exposes its Declaration, constructs strictly, converts to and from JSON text, and has its table-ready form.'
+              depends_on:
+              - P1-G6-T13
+              - P1-G6-T06
+              - P1-G6-T08
+              - P1-G6-T11
+              - P1-G6-T09
+              constraints: []
+              acceptance: The Action Entity's Declaration matches its Target definition in Fields, order, Types, nullability, defaults, and Entity Metadata, each Relation reaches a Field of the Action Group, Asset, Account, Partial Group, and Trailing Group Entities, and the Entity constructs from valid values and rejects an unknown Field, a wrong Type, and a missing Required Field.
+              status: done
+              log:
+              - at: '2026-10-07T23:23:25Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:23:25Z'
+                transition: claimed -> done
+                note: Created the Action Entity unit with its Declaration (Fields in Target order, Primary Key, Relations to Action Group, Asset, Account, Partial Group and Trailing Group, a Uniqueness Constraint) and table model.
+                evidence:
+                  locations:
+                  - model/model/entity/action.py
+                  observed: Generated from the Target definition and formatted.
+            P1-G6-T15:
+              id: P1-G6-T15
+              source_id: '002'
+              title: Realize the Position Entity
+              description: Realize the Position Entity from its Target definition. Its Relations reach Fields of the User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and Action Entities.
+              reason: The system must store every position it creates.
+              inputs:
+              - Target definition of the Position model
+              - Completed User Entity
+              - Completed Trading Platform Entity
+              - Completed Broker Entity
+              - Completed Account Entity
+              - Completed Trailing Group Entity
+              - Completed Partial Group Entity
+              - Completed Action Group Entity
+              - Completed Action Entity
+              skills: *id001
+              expected_result: 'The Position Entity is complete: it exposes its Declaration, constructs strictly, converts to and from JSON text, and has its table-ready form.'
+              depends_on:
+              - P1-G6-T01
+              - P1-G6-T02
+              - P1-G6-T05
+              - P1-G6-T08
+              - P1-G6-T09
+              - P1-G6-T11
+              - P1-G6-T13
+              - P1-G6-T14
+              constraints: []
+              acceptance: The Position Entity's Declaration matches its Target definition in Fields, order, Types, nullability, defaults, and Entity Metadata, each Relation reaches a Field of the User, Trading Platform, Broker, Account, Trailing Group, Partial Group, Action Group, and Action Entities, and the Entity constructs from valid values and rejects an unknown Field, a wrong Type, and a missing Required Field.
+              status: done
+              log:
+              - at: '2026-10-07T23:23:25Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:23:34Z'
+                transition: claimed -> done
+                note: Created the Position Entity unit with its Declaration (Fields in Target order including the datetime date Field, Primary Key, eight Relations, a Uniqueness Constraint) and table model.
+                evidence:
+                  locations:
+                  - model/model/entity/position.py
+                  observed: Generated from the Target definition and formatted; with the other fourteen Entities, one row each was inserted in Target order into an in-memory database with foreign keys enforced and read back (decimal and UTC datetime values intact); 15 tables exist in the shared metadata.
+        P1-G7:
+          id: P1-G7
+          title: Interface publication
+          description: The package entrypoint that publishes every Entity by name and as one ordered collection.
+          area: Interface
+          does: Consumers can import any Entity directly or enumerate all Entities, through nothing else.
+          constraints: []
+          task_count: 3
+          tasks:
+            P1-G7-T01:
+              id: P1-G7-T01
+              source_id: '002'
+              title: Publish each Entity by its own name
+              description: Publish every Target Entity through an explicit named export, each export being the actual Entity exposing its own actual Declaration.
+              reason: Consumers working with one specific Entity depend on one published surface for it.
+              inputs:
+              - Completed Entities
+              - Model Interface contract
+              skills: []
+              expected_result: Every Target Entity is importable directly by its own name.
+              depends_on:
+              - P1-G6-T15
+              - P1-G6-T10
+              - P1-G6-T12
+              constraints: []
+              acceptance: Every Target Entity can be imported directly by its own name and exposes its own Declaration, and no Entity is published by a wildcard or generated export.
+              status: done
+              log:
+              - at: '2026-10-07T23:23:37Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:23:52Z'
+                transition: claimed -> done
+                note: Created the Interface unit with one explicit named import and export per Target Entity, and made the package root re-export the same fifteen names explicitly (no wildcard or generated export).
+                evidence:
+                  locations:
+                  - model/model/interface.py
+                  - model/model/__init__.py
+                  observed: After import, each of the fifteen names resolved from the package root to the actual Entity class carrying its own Declaration.
+                decisions:
+                - unset: How the package-root entrypoint relates to the Interface unit
+                  chosen: The Interface unit holds the imports, exports and (next) the collection; the package root only re-exports its names explicitly
+                  why: The Model directory structure names an Interface unit, while the language requires a package-root entrypoint to import from.
+            P1-G7-T02:
+              id: P1-G7-T02
+              source_id: '002'
+              title: Publish the ordered Entity Collection
+              description: Publish one immutable collection holding every Entity once, in Target order, each item being the same actual Entity as its named export.
+              reason: Consumers working with all Entities without knowing their names need one enumerable surface.
+              inputs:
+              - Entity exports
+              - Target Entity order
+              skills: []
+              expected_result: All Entities can be enumerated in Target order.
+              depends_on:
+              - P1-G7-T01
+              constraints: []
+              acceptance: The collection holds exactly the exported Entities, once each, in Target order, and each item is identical to its named export.
+              status: done
+              log:
+              - at: '2026-10-07T23:23:52Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:24:14Z'
+                transition: claimed -> done
+                note: 'Added the Entity Collection to the Interface unit and package root under the selected symbol name: one immutable tuple holding the fifteen actual Entity classes once each in Target order.'
+                evidence:
+                  locations:
+                  - model/model/interface.py
+                  - model/model/__init__.py
+                  observed: The collection is a tuple of 15 classes whose Declaration names match Target order, each item is the same object as its named export, and it cannot be appended to.
+            P1-G7-T03:
+              id: P1-G7-T03
+              source_id: '002'
+              title: Keep Interface free of side effects and extras
+              description: Ensure that loading Interface performs no external side effect and that nothing beyond the Entity exports and the Entity Collection is published.
+              reason: Consumers must be able to load Model anywhere without effects, relying on a surface that holds nothing else.
+              inputs:
+              - Entity exports
+              - Entity Collection
+              skills: []
+              expected_result: Loading Interface has no side effect and publishes only the Entity exports and the Entity Collection.
+              depends_on:
+              - P1-G7-T02
+              constraints: []
+              acceptance: Loading Interface creates no Entity instance, data, connection, file, or process, and its published surface contains exactly the Entity exports and the Entity Collection.
+              status: done
+              log:
+              - at: '2026-10-07T23:24:14Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:24:31Z'
+                transition: claimed -> done
+                note: Confirmed the Interface unit holds only the Entity imports, the fifteen named exports and the Entity Collection, and that loading it performs no external effect; no further change was needed.
+                evidence:
+                  locations:
+                  - model/model/interface.py
+                  - model/model/__init__.py
+                  observed: Importing the package in a fresh process with connections, process creation and file writes made to fail created no Entity instance, file, connection, process or thread, and the public surface was exactly the 15 Entity names plus the collection.
+        P1-G8:
+          id: P1-G8
+          title: Documentation
+          description: The root documentation of the Model Component, one independently readable section per Task.
+          area: Model documentation
+          does: A reader can understand, set up, use, and verify the Model Component from its documentation alone.
+          constraints: []
+          task_count: 8
+          tasks:
+            P1-G8-T01:
+              id: P1-G8-T01
+              source_id: '002'
+              title: Write the Overview section
+              description: Write one concise introduction to the Model Component and one simple example using one Entity.
+              reason: A newcomer needs a first orientation before the details.
+              inputs:
+              - Published Model surface
+              skills: []
+              expected_result: The Overview section exists.
+              depends_on:
+              - P1-G7-T02
+              constraints: []
+              acceptance: The Overview presents a concise introduction and one example using one Entity that matches the published surface.
+              status: done
+              log:
+              - at: '2026-10-07T23:25:44Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:26:45Z'
+                transition: claimed -> done
+                note: 'Wrote the Overview section: a concise introduction and one example using the User Entity.'
+                evidence:
+                  locations:
+                  - model/README.md
+                  observed: Every Python example in the README (13 blocks) was executed against the package and ran without error.
+                decisions:
+                - unset: Structure of the Component documentation file
+                  chosen: One markdown file with the eight sections in the Model Documentation order, the Interface listing generated from the Declarations
+                  why: Keeps the Field tables identical to the published Declarations.
+            P1-G8-T02:
+              id: P1-G8-T02
+              source_id: '002'
+              title: Write the Interface section
+              description: Explain the Entity exports and the Entity Collection, list every Entity once in Target order with its description, complete Field table, and Entity Metadata outside the table, and show one direct import and one enumeration of the collection.
+              reason: Consumers learn what Model publishes and what each Entity means from one place.
+              inputs:
+              - Published Model surface
+              - Entity Declarations
+              skills: []
+              expected_result: The Interface section exists.
+              depends_on:
+              - P1-G7-T02
+              constraints: []
+              acceptance: Every Target Entity appears once in Target order with its description, complete Field table, and Entity Metadata, and the section shows a direct import and an enumeration that match the published surface.
+              status: done
+              log:
+              - at: '2026-10-07T23:25:44Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:26:45Z'
+                transition: claimed -> done
+                note: 'Wrote the Interface section: the two published forms, contract version, one direct import and one enumeration, and for each of the fifteen Entities in Target order its description, complete Field table (every Field Declaration property) and Entity Metadata outside the table.'
+                evidence:
+                  locations:
+                  - model/README.md
+                  observed: Every Python example in the README (13 blocks) was executed against the package and ran without error. The listing is generated from the Entities' own Declarations.
+            P1-G8-T03:
+              id: P1-G8-T03
+              source_id: '002'
+              title: Write the Declaration section
+              description: Show how a consumer reads one Entity's public Declaration, including Fields, Primary Key, Relations, Uniqueness Constraints, and Indexes, through the Entity itself.
+              reason: Consumers need to read Entity meaning without internal knowledge.
+              inputs:
+              - Published Declaration records
+              skills: []
+              expected_result: The Declaration section exists.
+              depends_on:
+              - P1-G7-T02
+              - P1-G2-T02
+              constraints: []
+              acceptance: The section demonstrates reading each of Fields, Primary Key, Relations, Uniqueness Constraints, and Indexes from one Entity's Declaration, and the demonstration matches the published surface.
+              status: done
+              log:
+              - at: '2026-10-07T23:25:44Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:26:45Z'
+                transition: claimed -> done
+                note: 'Wrote the Declaration section: reading the Entity Declaration (name, description, Fields, Primary Key, Relations, Uniqueness Constraints, Indexes) and a Field Declaration''s properties through the Entity, and the ABSENT marker for a missing Default Value.'
+                evidence:
+                  locations:
+                  - model/README.md
+                  observed: Every Python example in the README (13 blocks) was executed against the package and ran without error.
+            P1-G8-T04:
+              id: P1-G8-T04
+              source_id: '002'
+              title: Write the Foundation section
+              description: Give one example for each Foundation capability, then one complete Entity-to-JSON-text-to-Entity round trip.
+              reason: Consumers need to see the conversion contract in use.
+              inputs:
+              - Foundation conversions
+              skills: []
+              expected_result: The Foundation section exists.
+              depends_on:
+              - P1-G4-T02
+              - P1-G7-T01
+              constraints: []
+              acceptance: The section contains one example per Foundation capability and one complete round trip whose outcome matches the real behaviour.
+              status: done
+              log:
+              - at: '2026-10-07T23:25:44Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:26:45Z'
+                transition: claimed -> done
+                note: 'Wrote the Foundation section: one example each for to_json and from_json and a complete Entity-to-JSON-text-to-Entity round trip with an exact decimal.'
+                evidence:
+                  locations:
+                  - model/README.md
+                  observed: Every Python example in the README (13 blocks) was executed against the package and ran without error.
+            P1-G8-T05:
+              id: P1-G8-T05
+              source_id: '002'
+              title: Write the Setup section
+              description: Give the setup steps for the selected technology.
+              reason: A consumer must be able to install and load the Model Component.
+              inputs:
+              - Model library package
+              skills: []
+              expected_result: The Setup section exists.
+              depends_on:
+              - P1-G1-T01
+              - P1-G7-T02
+              constraints: []
+              acceptance: Following the steps from a clean environment results in a working installation of the Model Component.
+              status: done
+              log:
+              - at: '2026-10-07T23:25:44Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:26:45Z'
+                transition: claimed -> done
+                note: 'Wrote the Setup section: requirements, installing the Component, declaring it as a local path dependency from another Component, and a confirmation command.'
+                evidence:
+                  locations:
+                  - model/README.md
+                  observed: In a clean copy of the Component (without caches or virtual environment) uv sync installed it and the confirmation command printed 15.
+            P1-G8-T06:
+              id: P1-G8-T06
+              source_id: '002'
+              title: Write the Use section
+              description: Show use of the Model Component that follows the Entity exports and the Entity Collection.
+              reason: Consumers need correct usage patterns that avoid internal paths.
+              inputs:
+              - Published Model surface
+              skills: []
+              expected_result: The Use section exists.
+              depends_on:
+              - P1-G7-T02
+              constraints: []
+              acceptance: Every usage shown works against the published surface and relies only on the Entity exports and the Entity Collection.
+              status: done
+              log:
+              - at: '2026-10-07T23:25:44Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:26:46Z'
+                transition: claimed -> done
+                note: 'Wrote the Use section: strict construction and defaults, assignment rules, the Entity Collection, and reaching the shared table metadata through an Entity.'
+                evidence:
+                  locations:
+                  - model/README.md
+                  observed: Every Python example in the README (13 blocks) was executed against the package and ran without error.
+            P1-G8-T07:
+              id: P1-G8-T07
+              source_id: '002'
+              title: Write the Verify section
+              description: 'Describe how to verify the Model Component: Interface-contract-conformant shape, exact Entity export membership, collection membership and order and its correspondence with the exports, actual Entity and Declaration references, immutability, side-effect freedom, representative Entity construction, Declaration access, and a lossless JSON text round trip.'
+              reason: A reader needs to confirm that an installation conforms to the contract.
+              inputs:
+              - Published Model surface
+              - Model Interface contract
+              skills: []
+              expected_result: The Verify section exists.
+              depends_on:
+              - P1-G7-T03
+              - P1-G4-T02
+              constraints: []
+              acceptance: The section covers every one of the listed verification areas, and each described verification holds for the real Model Component.
+              status: done
+              log:
+              - at: '2026-10-07T23:25:44Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:26:46Z'
+                transition: claimed -> done
+                note: 'Wrote the Verify section: one runnable check covering the shape of the published surface, exact export membership, collection membership, order and correspondence with the exports, actual Entity and Declaration references, immutability, side-effect freedom of loading, representative construction, Declaration access and a lossless JSON text round trip.'
+                evidence:
+                  locations:
+                  - model/README.md
+                  observed: Every Python example in the README (13 blocks) was executed against the package and ran without error. The verification block prints 'Model verified'.
+            P1-G8-T08:
+              id: P1-G8-T08
+              source_id: '002'
+              title: Write the Troubleshooting section
+              description: Cover the problems that concern the Model Component only, with their causes and remedies.
+              reason: Readers need help with failures specific to Model.
+              inputs:
+              - Setup and Use sections
+              skills: []
+              expected_result: The Troubleshooting section exists.
+              depends_on:
+              - P1-G8-T05
+              - P1-G8-T06
+              constraints: []
+              acceptance: Each listed problem concerns the Model Component alone and its remedy resolves it.
+              status: done
+              log:
+              - at: '2026-10-07T23:26:46Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 003) before changing the result.
+              - at: '2026-10-07T23:27:12Z'
+                transition: claimed -> done
+                note: 'Wrote the Troubleshooting section: eleven symptoms with cause and remedy, all concerning the Model Component only.'
+                evidence:
+                  locations:
+                  - model/README.md
+                  observed: Each symptom was reproduced against the package (supplied Auto Increment value, non-null id in JSON text, coercion refusals, naive datetime, undeclared Field, immutable assignment, unhashable Entity, declaration structural error, shared metadata); the definition-mismatch and redaction rows were reproduced in earlier checks. All 13 README examples still run.
