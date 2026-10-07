@@ -1,0 +1,254 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".config/state.yaml"
+  path_note: "Mutable Workflow position, Phase progress, and execution Log. Operational Config record at the project root, outside .interface/."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current State Component and the active operation's ownership rules."
+  changed_by: "Skills and supporting Agent Instances, each within the records its own Operation owns."
+  precedence: "The State Schema and every applicable Principle take precedence over this file."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read active, then the Phase selected by stable Target phase identifier, then the Log Entries by identifier."
+  selection: "A requested phase resolves to the phases entry keyed by that phase identifier; a Log Entry resolves by its identifier."
+  absence: "No matching phases entry means no progress is recorded for that phase."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "active"
+  - "phases"
+  - "log"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  active: "Current Workflow position."
+  phases: "Aggregate progress for each Target phase."
+  log: "Recorded Skill executions and their outcomes."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  active:
+    mode: "reviewing"
+    phase: "P1"
+    mode_reason: "Review judged the generated Source for phase P1 against its Plan."
+    set_by: "my-interface-review"
+    set_at: "2026-10-07T19:35:12Z"
+  phases:
+    P1:
+      id: "P1"
+      planning: "completed"
+      development: "completed"
+      review: "satisfied"
+      completed_at: "2026-10-07T19:35:12Z"
+  log:
+    - id: "001"
+      skill: "my-interface-configure"
+      event: "configure"
+      outcome: "completed"
+      started_at: "2026-10-07T18:49:52Z"
+      completed_at: "2026-10-07T18:50:05Z"
+      duration: "13 seconds"
+      open_questions: []
+      blockers: []
+      report: "Generated Plan Config and State Config from their Schemas (both were missing). Both conform to the general YAML structure and their specialized Schema."
+      data:
+        records:
+          - name: "Plan Config"
+            file: ".config/plan.yaml"
+            action: "generated"
+          - name: "State Config"
+            file: ".config/state.yaml"
+            action: "generated"
+    - id: "002"
+      skill: "my-interface-plan"
+      phase: "P1"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-10-07T18:51:27Z"
+      completed_at: "2026-10-07T18:55:10Z"
+      duration: "3:43"
+      skills_used: []
+      open_questions: []
+      blockers: []
+      decisions: []
+      report: "Created the Plan for phase P1 (Model): 7 Groups and 40 Tasks, all todo, from an empty Plan Config. Planning progress for P1 set to completed."
+      data:
+        requested_phases: ["1"]
+        resolved_phases: ["P1"]
+        skipped_phases: []
+        plan:
+          P1:
+            groups: 7
+            tasks: 40
+            added:
+              - group: "P1-G1"
+                tasks: 1
+                reason: "Component scaffold: the Model library must exist before any contract is realized in it."
+              - group: "P1-G2"
+                tasks: 4
+                reason: "Declaration contract: public Field and Entity meaning records with structural rules."
+              - group: "P1-G3"
+                tasks: 10
+                reason: "Entity runtime behaviour: shared validation, identity handling, and JSON conversion."
+              - group: "P1-G4"
+                tasks: 5
+                reason: "Storage mapping: deterministic table-ready form registered in one shared metadata."
+              - group: "P1-G5"
+                tasks: 15
+                reason: "Entity units: one Task per Target Entity, ordered by Relation dependencies."
+              - group: "P1-G6"
+                tasks: 2
+                reason: "Interface publication: explicit Entity exports and the ordered Entity Collection."
+              - group: "P1-G7"
+                tasks: 3
+                reason: "Root documentation: sections required by the Model contract."
+            changed: []
+            removed: []
+            preserved: []
+            replaced: []
+        notes:
+          - "Initial Data, credential protection at rest, and querying are outside Model and were not planned."
+          - "Target declares no Sensitivity Marker for credential Fields; Develop resolves it from the Model contract and records any decision it makes on its own proposal in the Task Log."
+    - id: "003"
+      skill: "my-interface-develop"
+      phase: "P1"
+      event: "develop"
+      outcome: "completed"
+      started_at: "2026-10-07T18:57:00Z"
+      completed_at: "2026-10-07T19:20:07Z"
+      duration: "23:07"
+      skills_used:
+        - name: "sqlmodel"
+          report: "Applied its guidance while realizing Entities: table models with Field, library-selected UTC datetime column, no override of the datetime column type."
+      open_questions: ["003-Q1"]
+      blockers: []
+      decisions:
+        - "P1-G1-T01"
+        - "P1-G3-T01"
+        - "P1-G3-T02"
+        - "P1-G3-T06"
+        - "P1-G4-T04"
+        - "P1-G5-T01"
+        - "P1-G5-T03"
+        - "P1-G5-T08"
+        - "P1-G6-T02"
+        - "P1-G7-T01"
+      report: "Executed all 40 Tasks of the P1 (Model) Plan in dependency order, each claimed before work and logged with evidence; generated the Model Component (shared Core, 15 Entity units, Interface with the ordered Entity Collection, root documentation). Development progress for P1 set to completed; Review has not run."
+      data:
+        requested_phases: ["1"]
+        resolved_phases: ["P1"]
+        tasks:
+          executed: 40
+          done: 40
+          blocked: 0
+          replaced: 0
+        generated:
+          component: "Model"
+          entity_units: 15
+          groups_completed: ["P1-G1", "P1-G2", "P1-G3", "P1-G4", "P1-G5", "P1-G6", "P1-G7"]
+        evidence_summary:
+          - "Each Task's Task Log holds its claim, observed evidence, and any decision; nine Tasks also carry a disclosed post-completion correction."
+          - "Final-state checks held: foundation behaviours, all 15 Declarations compared with the Target by parsing it, exports and collection, SQLite integration run with foreign keys, every documentation example, the documented verification snippet, and the Component's lint and type tooling with no reported issues."
+        open_question_details:
+          - id: "003-Q1"
+            about: "Construction from JSON text refuses a value for an Auto Increment Field, as the Model contract requires, so an Entity read back from storage (assigned id) does not round trip through JSON text into an Entity; only an Entity with a pending id does."
+            current_choice: "Followed the contract: caller-supplied Auto Increment values are refused unless the Target explicitly permits them, and the Target does not."
+            decision_for_human: "Whether the Target should explicitly permit an Auto Increment value on JSON construction, so that stored Entities round trip."
+        notes:
+          - "A hook blocked three shell commands as recursive searches near the Interface. None touched .interface/ or the Executor Module; the work continued with file tools and non-recursive commands."
+          - "Not committed: Component files and Config changes remain uncommitted in the working tree."
+    - id: "004"
+      skill: "my-interface-review"
+      phase: "P1"
+      event: "review"
+      outcome: "completed"
+      started_at: "2026-10-07T19:22:43Z"
+      completed_at: "2026-10-07T19:35:12Z"
+      duration: "12:29"
+      skills_used: []
+      open_questions: ["004-Q1", "004-Q2"]
+      blockers: []
+      report: "Reviewed phase P1 (Model) against its Plan (40 Tasks), the Target, and the Model Review category. Five Findings were recorded, resolved in the Model Component, and rechecked; the final state satisfies every Task acceptance and every observation of the Model Review category. Two Open Questions remain for the Human (004-Q1, 004-Q2), and the earlier 003-Q1 is still open. Zero-diff regeneration could not be observed (see 004-Q2). Outcome: satisfied."
+      data:
+        requested_phases: ["1"]
+        resolved_phases: ["P1"]
+        outcome:
+          P1: "satisfied"
+          basis: "Every Task acceptance and every observation of the Model Review category holds in the final state, observed independently against a wheel built from the Component and installed in a clean environment; technical checks pass (format, lint, static type, lockfile, compile, build, install, import, warnings as errors, side-effect audit of loading, documented setup from a fresh copy). The one required obligation that could not be observed is zero-diff regeneration, recorded as 004-Q2."
+        changed_by_review:
+          - "model/pyproject.toml: declared the four directly imported third-party packages (004-F1)."
+          - "model/README.md: Python examples put in the formatter's style; one comment moved above its call (004-F2)."
+          - "model/model/core/_base.py: float Fields refuse non-floats (004-F3); Entities provide model_validate with the rules of direct construction (004-F4, 004-F5); formatter applied."
+          - "model/uv.lock: re-resolved after the dependency declaration; same packages and versions."
+        not_changed: "No Plan content, Task status, Task Log, Target, or Interface source was changed."
+        open_question_details:
+          - id: "004-Q1"
+            about: "Model Preferences (table_model.construction) say the Core base runs model_validate on every direct construction. The Component validates through a separate plain validator derived from each Declaration (recorded as a Develop decision on P1-G3-T02, where it was described as unset although the Preference exists). Behaviour is equivalent and the table type's own model_validate now follows the same rules."
+            current_choice: "Kept the derived validator; Entities provide model_validate with the rules of direct construction."
+            decision_for_human: "Accept the derived validator, or require the Preference's literal mechanism (the library's own model_validate on the table type as the construction check)?"
+          - id: "004-Q2"
+            about: "The Review contract requires verifying that regeneration from unchanged authorities produces no source or documentation difference. Generation is performed by the Agent each run and the project holds no generation procedure that Review can re-run; a full regeneration would mean reopening Tasks, which Review may not do."
+            current_choice: "Recorded as an observation that could not be made; the Entity units and README tables were observed to agree with the Target and the Declarations."
+            decision_for_human: "How zero-diff regeneration should be demonstrated for this project (for example a recorded generation procedure, or a Develop re-run in a clean tree compared with the current Component)."
+        carried_open_questions: ["003-Q1"]
+        method:
+          - "Read the Plan, the Target, and the Model Definition and Preferences; read all generated Source fresh."
+          - "Wrote new observation harnesses (not the implementer's scripts) and ran them against a wheel built from the Component and installed into a clean environment, from a different working directory."
+          - "Persistent testing is disabled for Model, so every verification was transient; nothing was added to the Component to hold it."
+        findings:
+          - id: "004-F1"
+            category: "dependency"
+            state: "resolved"
+            expected: "Every third-party package the Component imports directly is declared as a dependency."
+            observed: "Source imports pydantic (core/_base.py, core/_types.py, entity/position.py), pydantic_core (core/_base.py), and sqlalchemy (core/_storage.py), but pyproject.toml declares only sqlmodel; the built wheel's metadata requires only sqlmodel."
+            evidence: "Syntax-tree scan of every module under model/ against the dependencies table; METADATA of the built wheel."
+            location: "model/pyproject.toml, [project] dependencies"
+            resolution: "Declared pydantic, pydantic-core, and sqlalchemy as dependencies with lower bounds beside sqlmodel and re-resolved the lockfile (same 10 packages and versions)."
+            recheck: "The wheel rebuilt from the Component lists exactly the four requirements; the lockfile check passes; a fresh copy of the Component syncs from the lockfile with the locked option and loads (prints 15)."
+          - id: "004-F2"
+            category: "format"
+            state: "resolved"
+            expected: "The selected technology's format check passes for the Component."
+            observed: "ruff format --check from the Component root reports 'unformatted: File would be reformatted' for README.md: its Python examples (e.g. the Overview constructor call, the relations print, the TrailingRule construction) are not in the formatter's style. Lint and type checks pass."
+            evidence: "ruff format --check --no-cache . and ruff format --diff on the Component root."
+            location: "model/README.md, Python code blocks"
+            resolution: "Moved the long comment in the Declaration example above its call and ran the Component's formatter over the README so its Python examples are in the formatter's style; prose outside code blocks is unchanged (compared before and after)."
+            recheck: "ruff format --check on the Component root reports all 25 files formatted; every README example still runs and the verification snippet still prints 'Model verified'."
+          - id: "004-F3"
+            category: "plan-acceptance"
+            state: "resolved"
+            task: "P1-G3-T02"
+            expected: "Construction and assignment enforce each Field's Type without coercion (an integer is not a float), and an Entity that constructs can be converted to JSON text."
+            observed: "Asset(broker_id=1, symbol='X', category='Currency', point_size=1) is accepted and point_size is stored as the integer 1; to_json() then raises ValueError 'A float must be finite.'; assigning point_size = 2 behaves the same."
+            evidence: "Run against the installed wheel: repr(a.point_size) is 1 with type int; to_json() raises."
+            location: "model/model/core/_base.py, _validation_field (float Fields); observable on Asset.point_size"
+            resolution: "Float Fields now refuse every value that is not a float (an integer, a boolean) at construction and assignment with a clear 'float_type' error; JSON integer text is still decoded to a float by the conversion."
+            recheck: "Asset(point_size=1) and an assignment of 2 are refused and leave the prior value; a float is accepted and stays a float; to_json() and from_json() round trip; NaN and infinity and a boolean are still refused; the earlier full harness (including the adversarial list) reports no problems."
+          - id: "004-F4"
+            category: "plan-acceptance"
+            state: "resolved"
+            task: "P1-G3-T02"
+            expected: "Construction from valid values succeeds, and invalid values are refused with their own cause."
+            observed: "User.model_validate({'name', 'username', 'password', 'api_key'}) raises AssignmentError 'Field id is immutable.' for every input, valid or not, and still does when an unknown key is added, hiding the real cause; User.model_validate_json with the same values succeeds."
+            evidence: "Run against the installed wheel on User; same result for model_validate with id None, id 5, and an unknown key."
+            location: "model/model/core/_base.py, Base.__setattr__ reached through the library's model_validate"
+            resolution: "Entities now provide their own model_validate: it builds an Entity from a mapping or a model with exactly the rules of direct construction (an Entity instance is returned as is; the library's update option is honoured; other validation options are ignored because Entities are always strict)."
+            recheck: "model_validate with a valid payload builds an Entity with pending id and active true; id 5, an unknown key, a wrong type, and a missing value are each refused with their own cause; it builds from a non-table model and with update; the JSON text equals that of direct construction; select, get, update, sqlmodel_update, and delete flows through a session still work."
+          - id: "004-F5"
+            category: "plan-acceptance"
+            state: "resolved"
+            task: "P1-G3-T06"
+            expected: "A validation failure on a Field carrying a Sensitivity Marker produces a message without the offending value."
+            observed: "User.model_validate({... 'password': 424242 ...}) raises a ValidationError whose message contains input_value=424242; the same input through direct construction shows no value."
+            evidence: "Run against the installed wheel: '424242' in str(error) is True for model_validate and False for direct construction."
+            location: "model/model/core/_base.py, Base (validation reached through model_validate is not sanitized)"
+            resolution: "The same model_validate change routes validation through the sanitizing validation, so inputs of marked Fields and of undeclared or missing values are replaced in messages."
+            recheck: "A wrong-typed password through model_validate, an undeclared key carrying the same text, a payload missing most Fields, direct construction, model_validate_json, and from_json: none of their messages or error lists contains the value."
+        observations_about_the_review:
+          - "Zero-diff regeneration from unchanged authorities could not be observed: generation is performed by the Agent and no generation procedure is recorded in the project, so a regeneration run is not available to Review. The Entity units and the README tables were observed to match the Target and the Declarations, which is evidence of consistency, not of repeatable regeneration."
+          - "The contract version 2.1 is available to consumers only in the root documentation (Develop decision on P1-G6-T02); the Interface contract also says the Interface publishes exports and the Collection only. Review judged the acceptance held through the documentation."
+          - "The Model Definition says an Entity unit holds its Declaration as a read-only member; assigning the class attribute (setattr(User, 'declaration', ...)) succeeds, while assigning it on an instance is refused. This is not named in the Model Review category or in a Task acceptance, so it is not recorded as a Finding."
+          - "Review ran in the same session as Develop. Independence was sought by new harnesses, a different Target parser, and the installed wheel as the subject, not by a separate reviewer."
