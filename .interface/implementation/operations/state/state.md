@@ -2,7 +2,6 @@
 
 State is the Operation Component that records the aggregate operational position of the project.
 
-
 <br>
 
 <!--------------------------------------------------------------------------------- Navigation --->
@@ -10,8 +9,8 @@ State is the Operation Component that records the aggregate operational position
 
 1. **[Introduction](#introduction)**
 2. **[Terms](#terms)**
-3. **[Relationships](#relationships)**
-4. **[Layering](#layering)**
+3. **[Architecture](#architecture)**
+4. **[Relationships](#relationships)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
 7. **[At a Glance](#at-a-glance)**
@@ -49,19 +48,19 @@ Each Operation updates its Phase progress and its own Log Entry in State.
 
 <br>
 
+<!--------------------------------------------------------------------------------- Architecture --->
+## Architecture
+
+State owns aggregate operational records. Target and Development remain the authorities for project and product meaning, and Plan remains the authority for individual Task records.
+
+<br>
+
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
 - **Consumes Target** — uses stable Phase identifiers without copying Phase goals or Target meaning.
 
 Technical choices and defaults belong to State Preferences, which currently define none. The exact shape and initial values of State Config belong to the State Schema.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Layering --->
-## Layering
-
-State owns aggregate operational records. Target and Development remain the authorities for project and product meaning, and Plan remains the authority for individual Task records.
 
 <br>
 

@@ -2,7 +2,7 @@
 meta:
   path: ".interface/implementation/development/logic/services/storage/storage.yaml"
   path_note: "The Preferences layer of the fixed Storage Role inside the Logic Component."
-  purpose: "Name, directory, Interface Schema reference, layout, development, and documentation for Storage Service."
+  purpose: "Name, directory, Interface Schema reference, architecture, development, and documentation for Storage Service."
   standard: "Agent Project Interface"
   version: "6.1"
   updated: "2026-10-01"
@@ -24,7 +24,7 @@ resolution:
 read_order:
   - settings
   - interface
-  - layout
+  - architecture
   - development
   - documentation
 
@@ -32,7 +32,7 @@ read_order:
 content_map:
   settings: "The fixed Logic owner and Storage Role, and the configurable Service name and directory."
   interface: "The Logic Storage Interface Schema and its version."
-  layout: "The physical names of the Interface and Core files."
+  architecture: "The physical names of the Interface and Core files."
   development: "Development capabilities and the selected language with its realization profile."
   documentation: "The documentation file, its location, its section order, and the content of each section."
 
@@ -53,8 +53,8 @@ content:
     schema: ".interface/foundation/schema/logic-storage-interface.yaml"
     contract_version: "2.2"
 
-  # <!-------------------------------------------- layout -->
-  layout:
+  # <!-------------------------------------------- architecture -->
+  architecture:
     files:
       interface: "interface"
       core: "core"

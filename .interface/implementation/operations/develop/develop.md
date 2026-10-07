@@ -9,8 +9,8 @@ Develop is the Operation Component that executes authorized planned Tasks and pr
 
 1. **[Introduction](#introduction)**
 2. **[Terms](#terms)**
-3. **[Relationships](#relationships)**
-4. **[Layering](#layering)**
+3. **[Architecture](#architecture)**
+4. **[Relationships](#relationships)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
 7. **[At a Glance](#at-a-glance)**
@@ -43,19 +43,19 @@ Develop reads the current Plan for each selected phase and works through its eli
 
 <br>
 
+<!--------------------------------------------------------------------------------- Architecture --->
+## Architecture
+
+Develop owns Task execution. Technical choices and defaults belong to the owning Development Component Preferences; Plan owns the work definition, Development owns product meaning, Task Logs own Task evidence and progress, and State owns Operation Logs and aggregate progress.
+
+<br>
+
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
 - **Consumes Plan** — takes the selected Groups, Tasks, context, dependencies, and completion conditions.
 - **Consumes Interface and Target** — applies their current authorities while performing the selected Tasks.
 - **Consumes Development authorities** — realizes the product under the Development Components' Definitions and Preferences.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Layering --->
-## Layering
-
-Develop owns Task execution. Technical choices and defaults belong to the owning Development Component Preferences; Plan owns the work definition, Development owns product meaning, Task Logs own Task evidence and progress, and State owns Operation Logs and aggregate progress.
 
 <br>
 

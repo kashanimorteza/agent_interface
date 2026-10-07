@@ -12,10 +12,9 @@ Model defines and publishes the project's reusable data-model Entities and their
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
 5. **[Boundaries](#boundaries)**
-6. **[Layering](#layering)**
-7. **[Authority](#authority)**
-8. **[Principles](#principles)**
-9. **[At a Glance](#at-a-glance)**
+6. **[Authority](#authority)**
+7. **[Principles](#principles)**
+8. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -73,31 +72,7 @@ Model
     └── Foundation  ← the shared JSON conversion
 ```
 
-<br>
-
-<!--------------------------------------------------------------------------------- Relationships --->
-## Relationships
-
-- **Consumes Development** — follows its shared rules and Defaults for every choice this Component leaves unstated.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Boundaries --->
-## Boundaries
-
-- **Queries, migrations, Instances, and storage lifecycle** — are not Model's, because they describe how data is stored and handled, not what it means. A language profile may realize Entities in a table-ready form, but Model never runs storage.
-- **Actions, decisions, workflows, authorization, quotas, and orchestration** — are not Model's, because they depend on an operation and its application context rather than on one Entity's own data.
-- **Endpoints, requests, responses, protocols, and transport schemas** — are not Model's, because they are properties of a transport, not of what the data means.
-- **Encryption, hashing, masking, and secret storage** — are not Model's, because they protect a value rather than define it.
-- **Initial Data and runtime records** — are not Model's, because they are data rather than the meaning of data.
-- **How an Entity is used** — is not Model's, because Model publishes a contract, not a usage.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Layering --->
-## Layering
-
-Model Preferences own configurable names, language, package, naming, symbols, method names, layout, technical realization, Field defaults, and documentation choices; these selections realize the responsibilities in Architecture without changing them. The shape of Interface belongs to the Model Interface Schema.
+Model Preferences own configurable names, language, package, naming, symbols, method names, architecture, technical realization, Field defaults, and documentation choices; these selections realize the responsibilities in Architecture without changing them. The shape of Interface belongs to the Model Interface Schema.
 
 ### Interface
 
@@ -119,6 +94,25 @@ The shared area containing the public Declaration and Foundation contracts plus 
 
 <br>
 
+<!--------------------------------------------------------------------------------- Relationships --->
+## Relationships
+
+- **Consumes Development** — follows its shared rules and Defaults for every choice this Component leaves unstated.
+
+<br>
+
+<!--------------------------------------------------------------------------------- Boundaries --->
+## Boundaries
+
+- **Queries, migrations, Instances, and storage lifecycle** — are not Model's, because they describe how data is stored and handled, not what it means. A language profile may realize Entities in a table-ready form, but Model never runs storage.
+- **Actions, decisions, workflows, authorization, quotas, and orchestration** — are not Model's, because they depend on an operation and its application context rather than on one Entity's own data.
+- **Endpoints, requests, responses, protocols, and transport schemas** — are not Model's, because they are properties of a transport, not of what the data means.
+- **Encryption, hashing, masking, and secret storage** — are not Model's, because they protect a value rather than define it.
+- **Initial Data and runtime records** — are not Model's, because they are data rather than the meaning of data.
+- **How an Entity is used** — is not Model's, because Model publishes a contract, not a usage.
+
+<br>
+
 <!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
@@ -129,7 +123,7 @@ Every Principle in this file is mandatory for Model. Model Preferences provide c
 <!--------------------------------------------------------------------------------- Principles --->
 ## Principles
 
-Every Principle below is mandatory and belongs to the Architecture or Layering category that owns it.
+Every Principle below is mandatory and belongs to the Architecture category that owns it.
 
 ### General
 

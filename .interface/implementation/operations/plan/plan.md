@@ -9,8 +9,8 @@ Plan is the Operation Component that turns a Target phase into bounded, understa
 
 1. **[Introduction](#introduction)**
 2. **[Terms](#terms)**
-3. **[Relationships](#relationships)**
-4. **[Layering](#layering)**
+3. **[Architecture](#architecture)**
+4. **[Relationships](#relationships)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
 7. **[At a Glance](#at-a-glance)**
@@ -51,18 +51,18 @@ Planning turns each selected phase into a Plan, the Plan into Groups, and each G
 
 <br>
 
+<!--------------------------------------------------------------------------------- Architecture --->
+## Architecture
+
+Plan owns decomposition and completion conditions. Its generated record follows the Plan Schema. Target owns intent, Development owns realization, Develop owns execution, and State owns aggregate progress.
+
+<br>
+
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
 - **Consumes Interface and Target** — establishes the current authorities and intended outcome from which phase work is derived.
 - **Consumes State** — Log Entries containing prior Planning results, Blockers, Open Questions, and aggregate phase progress without duplicating Task records.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Layering --->
-## Layering
-
-Plan owns decomposition and completion conditions. Its generated record follows the Plan Schema. Target owns intent, Development owns realization, Develop owns execution, and State owns aggregate progress.
 
 <br>
 

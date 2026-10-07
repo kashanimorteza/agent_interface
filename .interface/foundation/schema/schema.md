@@ -33,7 +33,7 @@ Operation-backed Skill behavior belongs to its owning Implementation Operation C
 
 Relationships between Components are permitted and belong in Relationships. They describe what each Component consumes or provides without directing a Skill's execution.
 
-Three rules follow from this Scope and hold in every part of the file, so no part restates them. **No tool, package, version, file, directory, or layout is ever named**, except where Scope's own exception for Agent Skill Definitions applies; a part that would need one describes the concept instead. **Only a Principle states an obligation**: every other part explains, records, or maps, and a sentence a reader would have to obey belongs in a Principle's Rule wherever it was written. **A Definition describes only its own Component**: it never states how another Component uses it, and never states what another Component owns or does. A Component that consumes another describes that use in its own Definition, so each Component keeps its own identity and stays general.
+Three rules follow from this Scope and hold in every part of the file, so no part restates them. **No tool, package, or version is ever named, and a file or directory is named only in Architecture's tree and its headings**, except where Scope's own exception for Agent Skill Definitions applies; a part that would need one describes the concept instead. **Only a Principle states an obligation**: every other part explains, records, or maps, and a sentence a reader would have to obey belongs in a Principle's Rule wherever it was written. **A Definition describes only its own Component**: it never states how another Component uses it, and never states what another Component owns or does. A Component that consumes another describes that use in its own Definition, so each Component keeps its own identity and stays general.
 
 A Principle is portable: the same file can be handed unchanged to another project or another Agent.
 
@@ -54,18 +54,17 @@ A Definition file carries these parts, in this order. A part marked *optional* i
    - **How It Works** — how it does that work, told as a flow rather than as rules.
    - **Decisions** — how the Human explained the Component and the decisions that followed, once that explanation is folded into the three parts above. *(optional)*
 5. **Terms** — the vocabulary the Component owns.
-6. **Architecture** — the named parts the Component is formed from. *(optional)*
+6. **Architecture** — the parts the Component is formed from, in one tree, with what each part holds and where its technical choices live.
 7. **Relationships** — what it consumes and what consumes it.
 8. **Boundaries** — the work that looks like this Component's but belongs elsewhere. *(optional)*
-9. **Layering** — where the Component's technical choices live instead.
-10. **Authority** — the binding force of the file and its precedence.
-11. **Principles** — the mandatory rules.
-12. **Operation Contract** — the operational contract of an Operation Component, when the Component is an executable Operation. *(optional)*
-13. **At a Glance** — the derived list of every obligation in the file.
+9. **Authority** — the binding force of the file and its precedence.
+10. **Principles** — the mandatory rules.
+11. **Operation Contract** — the operational contract of an Operation Component, when the Component is an executable Operation. *(optional)*
+12. **At a Glance** — the derived list of every obligation in the file.
 
 The Opening Summary is the file's one-line orientation: it names what the owner is and where it belongs, without explaining the file's structure or stating a Principle. Navigation follows it so the reader sees the whole shape before entering the content. Introduction is everything a reader has to take in before the rules mean anything, so it comes first, and its own Decisions part closes it, because how the Human arrived here is still context for the rules rather than one of them. What follows it is reference: the vocabulary, the parts, the edges, and the rules themselves.
 
-Overview, Purpose, and How It Works are always carried; Decisions is carried only by a Component whose recorded decisions need to be preserved; Operation Contract is carried only by an executable Operation Component whose operational contract needs to remain explicit for its Skill. The Opening Summary is unheaded and carries no Navigation entry. Navigation, Introduction, Terms, Architecture, Relationships, Boundaries, Layering, Authority, Principles, Operation Contract, and At a Glance carry their own second-level heading. Introduction's four parts and each Principle category carry third-level headings; each Principle carries a fourth-level heading under its category. A second-level heading therefore always names a section, a third-level heading names one member or category of that section, and a fourth-level heading names one Principle. No `<br>` appears between Introduction's parts; a `<br>` separates each Principle category from the next. No `<br>` appears between sibling Principles within the same category, and no blank line or `<br>` separates a Principle's Rule, Why, and Boundary.
+Overview, Purpose, and How It Works are always carried; Decisions is carried only by a Component whose recorded decisions need to be preserved; Operation Contract is carried only by an executable Operation Component whose operational contract needs to remain explicit for its Skill. The Opening Summary is unheaded and carries no Navigation entry. Navigation, Introduction, Terms, Architecture, Relationships, Boundaries, Authority, Principles, Operation Contract, and At a Glance carry their own second-level heading. Introduction's four parts, each Principle category, and each top-level Architecture part carry third-level headings, and the parts beneath an Architecture part carry fourth-level headings; each Principle carries a fourth-level heading under its category. A second-level heading therefore always names a section, a third-level heading names one member or category of that section, and a fourth-level heading names one Principle. No `<br>` appears between Introduction's parts; a `<br>` separates each Principle category from the next. No `<br>` appears between sibling Principles within the same category, and no blank line or `<br>` separates a Principle's Rule, Why, and Boundary.
 
 
 <!--------------------------------------------------------------------------------- Title --->
@@ -107,11 +106,10 @@ A numbered list, one line per section the file actually carries, each linking to
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
 5. **[Boundaries](#boundaries)**
-6. **[Layering](#layering)**
-7. **[Authority](#authority)**
-8. **[Principles](#principles)**
-9. **[Operation Contract](#operation-contract)**
-10. **[At a Glance](#at-a-glance)**
+6. **[Authority](#authority)**
+7. **[Principles](#principles)**
+8. **[Operation Contract](#operation-contract)**
+9. **[At a Glance](#at-a-glance)**
 ```
 
 Navigation is rewritten whenever a section is added, removed, or renamed, like At a Glance.
@@ -191,27 +189,36 @@ A term is listed only when this Principles owner owns it. A term owned by anothe
 
 ## Architecture
 
-The named parts the Component is formed from, and how they stand in relation to one another. It answers, in one view, what is inside this Component — before Relationships answers what is outside it.
+The parts the Component is formed from, what each part holds, and where its technical choices live. It answers, in one view, what is inside this Component — before Relationships answers what is outside it.
 
-The section opens with a tree naming the parts, followed by a short paragraph or two per part stating what it owns and, where it matters, what it never does:
+The section opens with one tree. A Component that generates directories and files names them in the tree without a language extension; a Component that generates none names its conceptual parts. One third-level heading follows for every top-level part and one fourth-level heading for every part beneath it, in tree order, each stating what the part holds and, where it matters, what it never does:
 
 ```markdown
 ## Architecture
 
 ```text
-<Component>
-├── <Part>
-│   └── <Sub-part>
-└── <Part>
-    └── <Sub-part>
+<component>/
+├── <part>/
+│   └── <file>
+└── <file>
 ```
 
-<A paragraph or two per part: what it owns, and the limit that keeps it distinct from the others.>
+### <Part> — `<part>/`
+
+<What the part holds, and the limit that keeps it distinct.>
+
+#### `<file>`
+
+<What the file holds.>
 ```
 
-The tree names concepts the Component owns: a repository layout belongs to the Component's Preferences. A part named here is governed by a Principle, and it is defined in Terms when this Component owns the term; a part whose term another Component owns — a Public Interface, for example — is used as that owner defines it and is not redefined in Terms. Architecture shows how the parts fit together.
+**Schemas.** A part whose shape is fixed by a Schema names that Schema and is not described again; a part with no Schema is described here.
 
-A Component formed from named parts — internal layers, services, foundations, a public boundary — carries it. One with no internal structure worth naming omits the section entirely rather than carrying an empty one.
+**Technical choices.** An Implementation Component's technical choices, defaults, and physical names belong to its Implementation Preferences, and an Executor Component's declarations and native mappings belong to its Executor Preferences; implementation applies them to the current project definition. A Component states where its technical choices belong even when its Preferences contain no entries.
+
+**Limits.** Architecture names no language construct such as a class; language details live in the development section of the Component's Preferences. An obligation about a part is stated as a Principle, not here. A part named here is defined in Terms when this Component owns the term; a part whose term another Component owns is used as that owner defines it and is not redefined in Terms.
+
+Every Component carries Architecture.
 
 
 <!--------------------------------------------------------------------------------- Relationships --->
@@ -250,22 +257,6 @@ Each entry is a case that has actually caused confusion or plausibly would: a ru
 It is not a restatement of the Component's boundary sentence in Introduction or of a Principle's own **Boundary**. A Component carries it when its edges are genuinely easy to cross and omits the section when they are not.
 
 
-<!--------------------------------------------------------------------------------- Layering --->
-<br>
-
-## Layering
-
-One or two paragraphs placing the Component's technical choices outside this file, and naming what holds them:
-
-- an Implementation Component's technical choices and defaults belong to its Implementation Preferences, and an Executor Component's declarations and native mappings belong to its Executor Preferences;
-- implementation applies those choices to the current project definition; and
-- when the Component owns a generated file, the shape of that file belongs to its Schema.
-
-A Component still states where its technical choices or declarations belong even when its Implementation Preferences or Executor Preferences contain no entries. Explicit absence is not a reason to omit the layering statement.
-
-Layering may carry one third-level heading per layer, explaining what the layer is and how it is built, as concepts only. It names no language, package, file, or language construct such as a class; those details live in the development section of the Component's Preferences. An obligation about a layer is stated as a Principle, not here.
-
-
 <!--------------------------------------------------------------------------------- Authority --->
 <br>
 
@@ -285,7 +276,7 @@ No Definition file omits or weakens any of the three.
 
 ## Principles
 
-The section that carries the file's mandatory rules. It opens with one or two short sentences stating that each rule below is mandatory, then groups the Principles by the Component parts named in Architecture and Layering. Cross-cutting Principles that belong to the Component as a whole are grouped under `General`; a Component with no Architecture groups them by coherent domain area instead. No Principle remains uncategorized.
+The section that carries the file's mandatory rules. It opens with one or two short sentences stating that each rule below is mandatory, then groups the Principles by the Component parts named in Architecture. Cross-cutting Principles that belong to the Component as a whole are grouped under `General`; a Component with no Architecture groups them by coherent domain area instead. No Principle remains uncategorized.
 
 Every Development Component also carries a `Review` category, placed last. It holds everything the Review Operation checks to establish that the Component was realized as its Principles and Introduction describe: what conformance means for this Component, and the fixed observations that prove it. Every checking or verification rule of the Component lives there and nowhere else in the file, and it states what is observed, never the command, tool, or code that observes it. The Plan and Develop Operations check nothing; Review reads this category.
 
@@ -309,7 +300,7 @@ Adjacent Principles in the same category follow one another without a `<br>`. Ea
 
 ### Title
 
-The category title names the owning Architecture or Layering part exactly, or names the coherent domain area when no such part exists. The Principle title states the rule as a claim, not as a topic: `Data Access is the only Logic route to Database`, not `Data Access`. It is read alone in a list of Principles and still communicates the rule, and it is how the Principle is cited — a Principle carries no number, so its title is its identity and is written to stay accurate if the rule is reworded.
+The category title names the owning Architecture part exactly, or names the coherent domain area when no such part exists. The Principle title states the rule as a claim, not as a topic: `Data Access is the only Logic route to Database`, not `Data Access`. It is read alone in a list of Principles and still communicates the rule, and it is how the Principle is cited — a Principle carries no number, so its title is its identity and is written to stay accurate if the rule is reworded.
 
 ### Rule
 
@@ -331,7 +322,7 @@ Every Principle has one, because a rule with no stated limit is read as unlimite
 
 Categories and Principles carry no number. A Principle is identified and cited by its title, so it can be reordered, reworded, or removed without breaking a citation anywhere else.
 
-Categories follow the reading order established by Architecture and Layering, with `General` first when present. Within a category, Principles are ordered so that the ones establishing the part's own shape come before the ones governing its relationships, following the reading path a newcomer needs rather than importance. A new Principle is placed in its owning category where it reads best rather than appended, and Navigation and At a Glance are rewritten to match.
+Categories follow the reading order established by Architecture, with `General` first when present. Within a category, Principles are ordered so that the ones establishing the part's own shape come before the ones governing its relationships, following the reading path a newcomer needs rather than importance. A new Principle is placed in its owning category where it reads best rather than appended, and Navigation and At a Glance are rewritten to match.
 
 
 
@@ -381,10 +372,9 @@ This section is derived, never authoritative, and it is rewritten whenever a Pri
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
 5. **[Boundaries](#boundaries)**
-6. **[Layering](#layering)**
-7. **[Authority](#authority)**
-8. **[Principles](#principles)**
-9. **[At a Glance](#at-a-glance)**
+6. **[Authority](#authority)**
+7. **[Principles](#principles)**
+8. **[At a Glance](#at-a-glance)**
 
 ## Introduction
 
@@ -419,13 +409,19 @@ what it hands on, and what comes back.>
 ## Architecture
 
 ```text
-<Component>
-├── <Part>
-└── <Part>
+<component>/
+├── <part>/
+│   └── <file>
+└── <file>
 ```
 
-<A paragraph or two per part: what it owns and the limit that keeps it distinct. Omit this
-whole section when the Component has no internal structure worth naming.>
+### <Part> — `<part>/`
+
+<What the part holds, and the limit that keeps it distinct.>
+
+#### `<file>`
+
+<What the file holds.>
 
 ## Relationships
 
@@ -436,11 +432,6 @@ whole section when the Component has no internal structure worth naming.>
 - **<work that looks like this Component's>** — is not this Component's, because <the reason>.
 
 <Omit this whole section when this Component's edges are not easy to cross.>
-
-## Layering
-
-<Implementation technical choices and defaults belong to <Component> Preferences; Agent
-declarations and mappings belong to <Component> Preferences; implementation realizes them.>
 
 ## Authority
 
@@ -453,7 +444,7 @@ a Principle, and a project may only add stricter rules, never looser ones.
 
 <Every Principle below is mandatory.>
 
-### <Category named from Architecture or Layering>
+### <Category named from Architecture>
 
 #### <Title stating the rule as a claim>
 

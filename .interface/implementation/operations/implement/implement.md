@@ -9,8 +9,8 @@ Implement is the Operation Component that coordinates the authorized Operations 
 
 1. **[Introduction](#introduction)**
 2. **[Terms](#terms)**
-3. **[Relationships](#relationships)**
-4. **[Layering](#layering)**
+3. **[Architecture](#architecture)**
+4. **[Relationships](#relationships)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
 7. **[At a Glance](#at-a-glance)**
@@ -41,17 +41,17 @@ Implement runs the Operations for each selected phase in order, starting Configu
 
 <br>
 
+<!--------------------------------------------------------------------------------- Architecture --->
+## Architecture
+
+Implement owns coordination, not the work performed by Configure, Plan, Develop, Review, or State. Each participating Component retains its own authority and records.
+
+<br>
+
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
 - **Consumes Configure, Plan, Develop, and Review** — invokes each in order; each keeps its own work and outcome.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Layering --->
-## Layering
-
-Implement owns coordination, not the work performed by Configure, Plan, Develop, Review, or State. Each participating Component retains its own authority and records.
 
 <br>
 

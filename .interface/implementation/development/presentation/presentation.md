@@ -11,10 +11,9 @@ Presentation is the Development Component that renders the user experience and c
 2. **[Terms](#terms)**
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
-5. **[Layering](#layering)**
-6. **[Authority](#authority)**
-7. **[Principles](#principles)**
-8. **[At a Glance](#at-a-glance)**
+5. **[Authority](#authority)**
+6. **[Principles](#principles)**
+7. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -69,6 +68,8 @@ Presentation
 
 The dependency direction is View Layer → Interaction Logic → API Access → API Component. No layer bypasses the layer responsible for the next boundary.
 
+Presentation owns rendering, user interaction, API access, and the visual system. Development supplies its technical selections; Presentation Preferences carry its component-owned defaults and conventions. API owns the external contract.
+
 <br>
 
 <!--------------------------------------------------------------------------------- Relationships --->
@@ -76,13 +77,6 @@ The dependency direction is View Layer → Interaction Logic → API Access → 
 
 - **Consumes API** — the public API through which all application data and application capabilities are reached.
 - **Consumes Development** — the common package standard and the cross-cutting capabilities selected for the project.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Layering --->
-## Layering
-
-Presentation owns rendering, user interaction, API access, and the visual system. Development supplies its technical selections; Presentation Preferences carry its component-owned defaults and conventions. API owns the external contract.
 
 <br>
 

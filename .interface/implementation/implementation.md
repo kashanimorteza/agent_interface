@@ -9,10 +9,10 @@ Implementation is the Module that defines how a Target is built and how that wor
 
 1. **[Introduction](#introduction)**
 2. **[Terms](#terms)**
-3. **[Subsystems](#subsystems)**
-4. **[Relationships](#relationships)**
-5. **[Boundaries](#boundaries)**
-6. **[Layering](#layering)**
+3. **[Architecture](#architecture)**
+4. **[Subsystems](#subsystems)**
+5. **[Relationships](#relationships)**
+6. **[Boundaries](#boundaries)**
 7. **[Authority](#authority)**
 8. **[Principles](#principles)**
 9. **[At a Glance](#at-a-glance)**
@@ -49,6 +49,15 @@ Development supplies the product authorities, and Operations applies them throug
 - **Definition** — the authoritative description of a Subsystem or Component's Understanding, relationships, boundaries, and mandatory Principles.
 - **Preference** — a human-owned choice or default used where a higher authority is silent; it never overrides a Principle.
 - **Subject** — any Implementation Subsystem or Component described by a Definition and, when it has choices, a Preferences file.
+
+<br>
+
+<!--------------------------------------------------------------------------------- Architecture --->
+## Architecture
+
+Technical choices and defaults belong to the Preferences file of the subject that owns them. The shape of a generated operational record belongs to its Schema, while State owns the common Operation Log shape.
+
+Development and Operations subjects own their specific choices. Subject Preferences remain human-owned and are read in `selected`, `options`, `settings` order.
 
 <br>
 
@@ -96,15 +105,6 @@ Responsibility: The configuration, planning, development, review, implementation
 ## Boundaries
 
 Development owns product responsibilities. Operations owns configuration, planning, development, review, implementation, launch, reset, coordination, and operational records. Neither Subsystem replaces the other.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Layering --->
-## Layering
-
-Technical choices and defaults belong to the Preferences file of the subject that owns them. The shape of a generated operational record belongs to its Schema, while State owns the common Operation Log shape.
-
-Development and Operations subjects own their specific choices. Subject Preferences remain human-owned and are read in `selected`, `options`, `settings` order.
 
 <br>
 

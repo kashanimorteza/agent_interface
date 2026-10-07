@@ -12,12 +12,11 @@ This Guide explains the Target Module and its authoritative definitions.
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
 5. **[Boundaries](#boundaries)**
-6. **[Layering](#layering)**
-7. **[Authority](#authority)**
-8. **[Principles](#principles)**
-9. **[At a Glance](#at-a-glance)**
-10. **[Understanding record](#understanding-record)**
-11. **[Open decisions](#open-decisions)**
+6. **[Authority](#authority)**
+7. **[Principles](#principles)**
+8. **[At a Glance](#at-a-glance)**
+9. **[Understanding record](#understanding-record)**
+10. **[Open decisions](#open-decisions)**
 
 <br>
 
@@ -81,6 +80,8 @@ Responsibility: The Human's technical translation of the Non-Technical Definitio
 
 → [Read more about Technical Definition](technical.md)
 
+The Non-Technical Definition provides intent and context. The Technical Definition provides the technical translation and takes precedence wherever the two conflict.
+
 <br>
 
 <!--------------------------------------------------------------------------------- Relationships --->
@@ -96,13 +97,6 @@ Responsibility: The Human's technical translation of the Non-Technical Definitio
 ## Boundaries
 
 Target definitions do not contain Implementation philosophy, Agent behavior, generated Config, or runtime state. Target definitions are intentionally not Foundation Files: they belong to the Target concept itself.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Layering --->
-## Layering
-
-The Non-Technical Definition provides intent and context. The Technical Definition provides the technical translation and takes precedence wherever the two conflict.
 
 <br>
 

@@ -2,7 +2,6 @@
 
 Reset is the Operation Component that reconciles authorized operational records and outputs with a selected reset scope.
 
-
 <br>
 
 <!--------------------------------------------------------------------------------- Navigation --->
@@ -10,8 +9,8 @@ Reset is the Operation Component that reconciles authorized operational records 
 
 1. **[Introduction](#introduction)**
 2. **[Terms](#terms)**
-3. **[Relationships](#relationships)**
-4. **[Layering](#layering)**
+3. **[Architecture](#architecture)**
+4. **[Relationships](#relationships)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
 7. **[At a Glance](#at-a-glance)**
@@ -43,18 +42,18 @@ Reset reads the selected scope and current authorities, identifies affected reco
 
 <br>
 
+<!--------------------------------------------------------------------------------- Architecture --->
+## Architecture
+
+Reset owns reconciliation of its authorized scope. It does not redefine Target, repair product implementation, or take ownership of another Operation Component's records.
+
+<br>
+
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
 - **Consumes State and Config** — identifies the current operational position and records to reconcile.
 - **Consumes the selected authorities** — determines what may be reset and what must remain.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Layering --->
-## Layering
-
-Reset owns reconciliation of its authorized scope. It does not redefine Target, repair product implementation, or take ownership of another Operation Component's records.
 
 <br>
 

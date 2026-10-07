@@ -2,7 +2,7 @@
 meta:
   path: ".interface/implementation/development/logic/services/entity/entity.yaml"
   path_note: "The Preferences layer of the fixed Entity Role inside the Logic Component."
-  purpose: "Name, directory, Interface Schema reference, layout, development, and documentation for Entity Service."
+  purpose: "Name, directory, Interface Schema reference, architecture, development, and documentation for Entity Service."
   standard: "Agent Project Interface"
   version: "7.0"
   updated: "2026-10-07"
@@ -24,7 +24,7 @@ resolution:
 read_order:
   - settings
   - interface
-  - layout
+  - architecture
   - development
   - documentation
 
@@ -32,7 +32,7 @@ read_order:
 content_map:
   settings: "The fixed Logic owner and Entity Role, and the configurable Service name and directory."
   interface: "The Logic Entity Interface Schema and its version."
-  layout: "The physical names of the Interface and Base files, the Entities directory, and the Child naming patterns."
+  architecture: "The physical names of the Interface and Base files, the Entities directory, and the Child naming patterns."
   development: "Development capabilities and the selected language with its realization profile."
   documentation: "The documentation file, its location, its section order, and the content of each section."
 
@@ -53,8 +53,8 @@ content:
     schema: ".interface/foundation/schema/logic-entity-interface.yaml"
     contract_version: "2.0"
 
-  # <!-------------------------------------------- layout -->
-  layout:
+  # <!-------------------------------------------- architecture -->
+  architecture:
     files:
       interface: "interface"
       base: "base"
@@ -84,7 +84,7 @@ content:
           constructor: "__init__ creates one Storage() and keeps it on the instance"
           methods: "One method per Storage method whose first parameter is entity, in the order Storage publishes them, with the method's exact name and docstring. An entity parameter typed as a class is removed and the bound Entity is passed in its place; an entity parameter typed as an instance stays and is checked against the bound Entity, raising InvalidInputError on a mismatch. Every other argument is passed unchanged, in order."
           child: "One file per Entity holding class <Entity>(BaseEntity) with _entity = model.<Entity> from `from model import interface as model`, and only what is specific to that Entity."
-          republish: "The interface file publishes four namespace classes named by layout.naming.groups: Service holds every Child class; Model holds the Entity each Child binds, under the Child's name; Parameter holds every non-error contract Storage Interface publishes except Storage; Error holds every error Storage Interface publishes. The interface file holds only these imports, the four namespace classes, and the published list; it performs no check, because conformance belongs to Review."
+          republish: "The interface file publishes four namespace classes named by architecture.naming.groups: Service holds every Child class; Model holds the Entity each Child binds, under the Child's name; Parameter holds every non-error contract Storage Interface publishes except Storage; Error holds every error Storage Interface publishes. The interface file holds only these imports, the four namespace classes, and the published list; it performs no check, because conformance belongs to Review."
 
   # <!-------------------------------------------- documentation -->
   documentation:

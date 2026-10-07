@@ -2,7 +2,7 @@
 meta:
   path: ".interface/implementation/development/api/groups/entity/entity.yaml"
   path_note: "The Preferences layer of Entity Group inside the API Component."
-  purpose: "Name, Interface Schema reference, layout, and documentation for Entity Group."
+  purpose: "Name, Interface Schema reference, architecture, and documentation for Entity Group."
   standard: "Agent Project Interface"
   version: "7.0"
   updated: "2026-10-05"
@@ -24,14 +24,14 @@ resolution:
 read_order:
   - settings
   - interface
-  - layout
+  - architecture
   - documentation
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
   settings: "Entity Group's role and configurable name."
   interface: "The API Group Interface Schema this Group follows, and its version."
-  layout: "The Group directory and the Adapter naming pattern."
+  architecture: "The Group directory and the Adapter naming pattern."
   documentation: "The documentation file, its location, its section order, and the content of each section."
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -48,8 +48,8 @@ content:
     schema: ".interface/foundation/schema/api-group-interface.yaml"
     contract_version: "1.0"
 
-  # <!-------------------------------------------- layout -->
-  layout:
+  # <!-------------------------------------------- architecture -->
+  architecture:
     directory: "entity"
     patterns:
       adapter: "<entity>"

@@ -12,11 +12,10 @@ The Executor Module is the Human-owned, Runtime-independent declaration of how t
 3. **[Architecture](#architecture)**
 4. **[Components](#components)**
 5. **[Boundaries](#boundaries)**
-6. **[Layering](#layering)**
-7. **[Authority](#authority)**
-8. **[Principles](#principles)**
-9. **[Review](#review)**
-10. **[At a Glance](#at-a-glance)**
+6. **[Authority](#authority)**
+7. **[Principles](#principles)**
+8. **[Review](#review)**
+9. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -68,6 +67,8 @@ Executor
     ├── Connection
     └── Output Style
 ```
+
+`<component>.md` states the portable view and philosophy; YAML files hold current selections where needed, and Skill and Rule Contracts hold their declarations.
 
 <br>
 
@@ -121,13 +122,6 @@ How the Agent's output is presented.
 - **Target meaning** — belongs to Target, because it describes the project being built rather than how the Agent operates.
 - **Implementation engineering philosophy** — belongs to Implementation, because it describes how the project is built rather than how the Agent operates.
 - **Agent Native layout, commands, and configuration format** — belongs to Agent Native Implement, because it describes Native realization rather than the portable Executor Module.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Layering --->
-## Layering
-
-`<component>.md` states the portable view and philosophy; YAML files hold current selections where needed, and Skill and Rule Contracts hold their declarations.
 
 <br>
 

@@ -2,7 +2,7 @@
 meta:
   path: ".interface/implementation/development/model/model.yaml"
   path_note: "The Preferences layer of the Model Component."
-  purpose: "Configurable component, stable Interface realization, layout, language, Entity defaults, and documentation choices for Model."
+  purpose: "Configurable component, stable Interface realization, architecture, language, Entity defaults, and documentation choices for Model."
   standard: "Agent Project Interface"
   version: "23.0"
   updated: "2026-10-02"
@@ -24,7 +24,7 @@ resolution:
 read_order:
   - settings
   - interface
-  - layout
+  - architecture
   - development
   - documentation
 
@@ -32,7 +32,7 @@ read_order:
 content_map:
   settings: "Model's identity, the default properties of id and is_active, and the recognized Sensitivity Markers."
   interface: "The Model Interface Schema version and the names of the published symbols."
-  layout: "The physical names of Model's directories and files."
+  architecture: "The physical names of Model's directories and files."
   development: "Development capabilities, the selected language and its realization profile, and the selected generated-identifier algorithm with its alternatives."
   documentation: "The documentation file, its section order, the content of each section, and the rules every section follows."
 
@@ -69,8 +69,8 @@ content:
       entity_collection: entities
       entity_declaration: declaration
 
-  # <!-------------------------------------------- layout -->
-  layout:
+  # <!-------------------------------------------- architecture -->
+  architecture:
     directories:
       entity: entity
       core: core

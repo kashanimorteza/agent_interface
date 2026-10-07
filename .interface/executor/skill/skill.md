@@ -9,12 +9,11 @@ Agent Skill is the Executor Component that defines the shared Skill concept, Cor
 
 1. **[Introduction](#introduction)**
 2. **[Terms](#terms)**
-3. **[Components](#components)**
-4. **[Layering](#layering)**
-5. **[Authority](#authority)**
-6. **[Principles](#principles)**
-7. **[Review](#review)**
-8. **[At a Glance](#at-a-glance)**
+3. **[Architecture](#architecture)**
+4. **[Authority](#authority)**
+5. **[Principles](#principles)**
+6. **[Review](#review)**
+7. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -44,8 +43,8 @@ Agent Native Implement builds each Core Skill in the Agent Native from its Contr
 
 <br>
 
-<!--------------------------------------------------------------------------------- Components --->
-## Components
+<!--------------------------------------------------------------------------------- Architecture --->
+## Architecture
 
 ```text
 Components
@@ -101,11 +100,6 @@ Provider Skills are self-contained: they have no Contract or `Source` section, a
 → [Provider Skills](providers/)<br>
 
 Every folder in `providers/` is a declared Provider Skill.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Layering --->
-## Layering
 
 This Definition carries the portable meaning and mandatory Principles of the Skill Component. Contracts carry each Core Skill's declaration, and `providers/` carries each Provider Skill's complete folder. Agent Native Implement reads both and realizes them without changing their scope or authority.
 

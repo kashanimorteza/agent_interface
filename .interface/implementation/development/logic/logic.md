@@ -12,10 +12,9 @@ Logic is the Development Component that holds the application's Behaviour in mod
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
 5. **[Boundaries](#boundaries)**
-6. **[Layering](#layering)**
-7. **[Authority](#authority)**
-8. **[Principles](#principles)**
-9. **[At a Glance](#at-a-glance)**
+6. **[Authority](#authority)**
+7. **[Principles](#principles)**
+8. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -54,27 +53,7 @@ Logic
 └── Services        ← one directory per Service
 ```
 
-<br>
-
-<!--------------------------------------------------------------------------------- Relationships --->
-## Relationships
-
-- **Consumes Development** — takes its identity, its technology, and the Connections it is permitted to make.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Boundaries --->
-## Boundaries
-
-- **Behaviour and Actions** — are not Logic's, because every Action is defined and implemented by the Service that owns it.
-- **A Service's own contract** — is not Logic's, because that Service's Definition and Preferences decide it.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Layering --->
-## Layering
-
-Logic Preferences own its identity, layout, Service list, language and realization, and documentation. The shape of its Interface belongs to the Logic Interface Schema.
+Logic Preferences own its identity, architecture, Service list, language and realization, and documentation. The shape of its Interface belongs to the Logic Interface Schema.
 
 ### Interface
 
@@ -103,6 +82,21 @@ Logic's gateway to Database.
 
 → [Definition of Storage Service](services/storage/storage.md)<br>
 → [Preferences of Storage Service](services/storage/storage.yaml)
+
+<br>
+
+<!--------------------------------------------------------------------------------- Relationships --->
+## Relationships
+
+- **Consumes Development** — takes its identity, its technology, and the Connections it is permitted to make.
+
+<br>
+
+<!--------------------------------------------------------------------------------- Boundaries --->
+## Boundaries
+
+- **Behaviour and Actions** — are not Logic's, because every Action is defined and implemented by the Service that owns it.
+- **A Service's own contract** — is not Logic's, because that Service's Definition and Preferences decide it.
 
 <br>
 

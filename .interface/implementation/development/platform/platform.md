@@ -11,10 +11,9 @@ Platform is the Development Component that defines how a completed Target is pre
 2. **[Terms](#terms)**
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
-5. **[Layering](#layering)**
-6. **[Authority](#authority)**
-7. **[Principles](#principles)**
-8. **[At a Glance](#at-a-glance)**
+5. **[Authority](#authority)**
+6. **[Principles](#principles)**
+7. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -69,19 +68,14 @@ Platform
 
 A Launch Item is the complete selectable definition. Its Component Runtime Requirements state what each applicable Component needs, and its Verified Access Points state what the running Target exposes after verification.
 
+Platform owns runtime preparation, Bindings, Component Runtime Requirements, and verified Access Points. Named Launch Items and their runtime defaults belong to Platform Preferences; developed Components retain their own implementation and runtime contracts.
+
 <br>
 
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
 - **Consumes Development** — uses the declared Components, Connections, and public boundaries of the composed application.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Layering --->
-## Layering
-
-Platform owns runtime preparation, Bindings, Component Runtime Requirements, and verified Access Points. Named Launch Items and their runtime defaults belong to Platform Preferences; developed Components retain their own implementation and runtime contracts.
 
 <br>
 

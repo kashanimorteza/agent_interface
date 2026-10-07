@@ -4,6 +4,7 @@ Database is the structured Development Component that persists public Entity dat
 
 <br>
 
+<!--------------------------------------------------------------------------------- Navigation --->
 ## Navigation
 
 1. **[Introduction](#introduction)**
@@ -11,29 +12,33 @@ Database is the structured Development Component that persists public Entity dat
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
 5. **[Boundaries](#boundaries)**
-6. **[Layering](#layering)**
-7. **[Authority](#authority)**
-8. **[Principles](#principles)**
-9. **[At a Glance](#at-a-glance)**
+6. **[Authority](#authority)**
+7. **[Principles](#principles)**
+8. **[At a Glance](#at-a-glance)**
 
 <br>
 
+<!--------------------------------------------------------------------------------- Introduction --->
 ## Introduction
 
+<!-------------------------- Overview -->
 ### Overview
 
 Database enumerates every Entity through the Entity Collection published by Model Interface, derives storage structure from each actual Entity and the Declaration it exposes, and persists Entity instances through a selected active DatabaseInstance. Interface is its only public boundary. Core routes every request, and one isolated Engine unit implements the contract for each Engine used by at least one active Instance.
 
+<!-------------------------- Purpose -->
 ### Purpose
 
 Database keeps persistence, Instance selection, and Engine integration behind one reusable boundary. Consumers select an Instance and use the published contracts without accessing configuration, Core, Engine units, connection details, or storage paths.
 
+<!-------------------------- How It Works -->
 ### How It Works
 
 A consumer imports Interface, selects a DatabaseInstance or accepts the default, and calls an Entity Operation, Database-wide Operation, or Lifecycle Command. Core resolves the complete Instance configuration and forwards the request, with that Instance's connection, to its Engine's unit. The result returns through Core and Interface in the published form.
 
 <br>
 
+<!--------------------------------------------------------------------------------- Terms --->
 ## Terms
 
 - **Engine** — a declared database technology used by one or more Instances.
@@ -49,38 +54,142 @@ A consumer imports Interface, selects a DatabaseInstance or accepts the default,
 
 <br>
 
+<!--------------------------------------------------------------------------------- Architecture --->
 ## Architecture
 
 ```text
-Database
-├── Interface         ← the only public entry point, in the shape the Database Interface Schema defines
-├── Core
-│   ├── Data          ← shared validation, resolution, routing, and normalization
-│   ├── Tables        ← coordinates CreateTables
-│   └── Initial Data  ← coordinates InsertInitialData
-├── Engine            ← one unit per Engine in use
-├── Entry Points      ← one manual entry point per Lifecycle Command
-├── Storage           ← Database-owned persistent data, no source
-├── Configuration     ← the generated Database Configuration
-└── Documentation     ← the public explanation of the surface above
+database/
+├── database/
+│   ├── interface
+│   ├── core/
+│   │   ├── data
+│   │   ├── tables
+│   │   ├── initial_data
+│   │   ├── lifecycle
+│   │   ├── configuration
+│   │   ├── values
+│   │   ├── query
+│   │   └── errors
+│   └── engine/
+│       └── <engine>
+├── scripts/
+│   ├── create_tables
+│   ├── insert_initial_data
+│   └── prepare
+├── db/
+│   └── <database>
+├── config
+└── README
 ```
 
-**Interface** — the only public entry point, in the shape the Database Interface Schema defines. It declares and forwards behavior and implements no Engine work.
+The Package holds only importable source. Configuration, Storage, Entry Points, and Documentation sit beside it at the Component root, because configuration changes with the environment, stored data changes at runtime, and entry points are run by hand rather than imported. Physical names come from `architecture` in Database Preferences.
 
-**Core** — Data owns shared validation, default resolution, Instance selection, routing, and result normalization for all public requests. Tables coordinates CreateTables. Initial Data coordinates InsertInitialData. Core contains no Instance-specific connection or storage implementation.
+Database Preferences own configurable names, language, packages, Engines, Instance defaults, query defaults, architecture, technical realization, and documentation choices; these selections realize the responsibilities below without changing them. The shape of Interface belongs to the Database Interface Schema, and the shape of the Database Configuration belongs to the Database Configuration Schema. Implementation applies them to the current Target.
 
-**Engine** — Engine contains exactly one unit for every Engine used by at least one active Instance, named from that Engine. Each unit implements all Entity Operations, ExecuteCommand, and the Engine capabilities required by the Lifecycle Commands, and returns raw results. Instances that use the same Engine share its unit and differ only in their connection.
+<!-------------------------- Interface -->
+### Interface
 
-**Entry Points** — one manual entry point for each Lifecycle Command. Each only invokes its command through Interface and holds no logic of its own.
+#### `interface`
 
-**Storage** — Database-owned persistent data, with no source code.
+The only public entry point, in the shape the Database Interface Schema that Database Preferences reference defines. It declares and forwards behavior and implements no Engine work.
 
-**Configuration** — the generated Database Configuration.
+<!-------------------------- Core -->
+### Core — `core/`
 
-**Documentation** — the root documentation explaining every public contract, Instance selection, the Lifecycle Commands, Initial Data, setup, use, verification, and Database-specific troubleshooting.
+Core contains no Instance-specific connection or storage implementation.
+
+#### `data`
+
+Data owns shared validation, default resolution, Instance selection, routing, and result normalization for all public requests.
+
+#### `tables`
+
+Tables coordinates CreateTables.
+
+#### `initial_data`
+
+Initial Data coordinates InsertInitialData.
+
+#### `lifecycle`
+
+Lifecycle coordinates Prepare, which runs CreateTables and then InsertInitialData on the selected Instance and stops when CreateTables fails.
+
+#### `configuration`
+
+Configuration loads and validates the Database Configuration, the sole runtime source, and resolves each Instance's connection for Core. An invalid Configuration or an unresolved Instance selection fails loading before any connection is opened.
+
+#### `values`
+
+Values holds the public vocabulary, values, and results a consumer imports and passes in place of strings: Database, DatabaseInstance, Filter, FilterOperator, FilterCombination, Order, OrderDirection, CommandResult, and LifecycleResult.
+
+#### `query`
+
+Query holds the validated, normalized request forms Core hands to an Engine unit. It is internal and never published.
+
+#### `errors`
+
+Errors holds the failure kinds of the Database: one base error, and one error each for an invalid Configuration or Instance, an inactive Instance, invalid input or an unknown Field, a Declaration mismatch, a connection failure, an execution failure, and an incomplete Lifecycle Command. No error carries a connection value.
+
+<!-------------------------- Engine -->
+### Engine — `engine/`
+
+Engine contains exactly one unit for every Engine used by at least one active Instance, named from that Engine. Instances that use the same Engine share its unit and differ only in their connection.
+
+#### `<engine>`
+
+Each unit implements all Entity Operations, ExecuteCommand, and the Engine capabilities required by the Lifecycle Commands, and returns raw results. Its driver, connection arguments, and storage kind come from the Engine's entry in Database Preferences.
+
+<!-------------------------- Entry Points -->
+### Entry Points — `scripts/`
+
+One manual entry point for each Lifecycle Command. Each only invokes its command through Interface and holds no logic of its own.
+
+#### `create_tables`
+
+Runs CreateTables through Interface on the default Instance and reports its LifecycleResult.
+
+#### `insert_initial_data`
+
+Runs InsertInitialData through Interface on the default Instance and reports its LifecycleResult.
+
+#### `prepare`
+
+Runs Prepare through Interface on the default Instance and reports its LifecycleResult. When after-generation preparation is enabled in Database Preferences, generation runs this same command.
+
+<!-------------------------- Storage -->
+### Storage — `db/`
+
+The place where a file-backed database keeps its files.
+
+#### `<database>`
+
+The database file of one file-backed Instance, named by that Instance's database value.
+
+<!-------------------------- Configuration -->
+### Configuration — `config`
+
+The generated Database Configuration, the sole runtime source for Engines, Instances, Settings, and Initial Data. Its structure is fixed by the Database Configuration Schema that Database Preferences reference.
+
+<!-------------------------- Documentation -->
+### Documentation — `README`
+
+The root documentation explaining every public contract, Instance selection, the Lifecycle Commands, Initial Data, setup, use, verification, and Database-specific troubleshooting.
+
+Its sections, in this order:
+
+1. **Overview** — Give one short introduction and one simple example: create Database, then one add and one list.
+2. **Interface** — For every published contract (Database, DatabaseInstance, Filter, FilterOperator, FilterCombination, Order, OrderDirection, CommandResult, LifecycleResult, and every error) and for every Operation and Lifecycle Command with each of its parameters, explain what it is for and how to use it, with one example each. Cover every enumeration member, defaults, results, and errors.
+3. **Instances** — Explain active DatabaseInstance members, default selection, and Database-owned storage without exposing credentials.
+4. **Setup** — Give the setup steps for the selected technology and state that generation runs Prepare automatically.
+5. **Use** — Show every capability group used only through Interface, with Field references and enumeration members and never strings.
+6. **Lifecycle** — Explain manual CreateTables, InsertInitialData, and Prepare use, and that generation runs Prepare.
+7. **Initial Data** — List every Target-defined Initial Data record and state that Database inserts its values unchanged without security-based omission.
+8. **Verify** — Verify public import, Instance selection, query vocabulary, each capability group, persistent file location, and repeatable Lifecycle Commands.
+9. **Troubleshooting** — Cover Database concerns only, including an inactive Instance, a difference between an existing Table and its Entity, and empty Initial Data values.
 
 <br>
 
+<!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
 - **Consumes Model** — imports Model Interface and uses its Schema-defined Entity Collection and Entity Exports only. It uses each actual Entity and the Declaration that Entity exposes without interpreting Model internals. Model remains read-only and independently owned.
@@ -88,6 +197,7 @@ Database
 
 <br>
 
+<!--------------------------------------------------------------------------------- Boundaries --->
 ## Boundaries
 
 - **The meaning of data — Entities, Fields, Types, and constraints** — is not Database's, because Database stores data rather than defining what it means.
@@ -98,22 +208,19 @@ Database
 
 <br>
 
-## Layering
-
-Database Preferences own configurable names, language, packages, Engines, Instance defaults, query defaults, layout, technical realization, and documentation choices; these selections realize the responsibilities in Architecture without changing them. The shape of Interface belongs to the Database Interface Schema, and the shape of the Database Configuration belongs to the Database Configuration Schema. Implementation applies them to the current Target.
-
-<br>
-
+<!--------------------------------------------------------------------------------- Authority --->
 ## Authority
 
 Every Database Principle is mandatory. Database Preferences may complete unstated realization choices but never weaken or replace a Principle. Explicit compatible Target values take precedence over defaults.
 
 <br>
 
+<!--------------------------------------------------------------------------------- Principles --->
 ## Principles
 
 Every Principle below is mandatory.
 
+<!-------------------------- General -->
 ### General
 
 #### Database owns one canonical Architecture
@@ -136,6 +243,7 @@ Every Principle below is mandatory.
 
 <br>
 
+<!-------------------------- Interface -->
 ### Interface
 
 #### Interface conforms to the Database Interface Schema
@@ -152,6 +260,7 @@ Every Principle below is mandatory.
 
 <br>
 
+<!-------------------------- Lifecycle Commands -->
 ### Lifecycle Commands
 
 #### Lifecycle Commands are separate from Operations
@@ -180,6 +289,7 @@ Every Principle below is mandatory.
 
 <br>
 
+<!-------------------------- Core -->
 ### Core
 
 #### Core owns shared routing
@@ -196,6 +306,7 @@ Every Principle below is mandatory.
 
 <br>
 
+<!-------------------------- Engine -->
 ### Engine
 
 #### Every Engine in use owns one complete implementation
@@ -206,6 +317,7 @@ Every Principle below is mandatory.
 
 <br>
 
+<!-------------------------- Configuration -->
 ### Configuration
 
 #### Configuration conforms to the Database Configuration Schema
@@ -216,16 +328,18 @@ Every Principle below is mandatory.
 
 <br>
 
+<!-------------------------- Documentation -->
 ### Documentation
 
 #### Documentation explains the complete public contract
 
-**Rule:** Documentation explains every public contract and how to use it, with examples, in the sections Database Preferences list.
+**Rule:** Documentation explains every public contract and how to use it, with examples, in the sections Architecture lists for Documentation.
 **Why:** Consumers use Database through its documentation; a gap or an invented feature there leads directly to wrong use.
 **Boundary:** Documentation does not create behavior absent from this Definition and does not expose credentials or Engine internals.
 
 <br>
 
+<!-------------------------- Review -->
 ### Review
 
 #### Database conformance covers every Database contract
@@ -256,8 +370,10 @@ Every Principle below is mandatory.
 
 <br>
 
+<!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance
 
+<!-------------------------- General -->
 ### General
 
 **Database owns one canonical Architecture**
@@ -279,6 +395,7 @@ Every Principle below is mandatory.
 
 <br>
 
+<!-------------------------- Interface -->
 ### Interface
 
 **Interface conforms to the Database Interface Schema**
@@ -293,6 +410,7 @@ Every Principle below is mandatory.
 
 <br>
 
+<!-------------------------- Lifecycle Commands -->
 ### Lifecycle Commands
 
 **Lifecycle Commands are separate from Operations**
@@ -318,6 +436,7 @@ Every Principle below is mandatory.
 
 <br>
 
+<!-------------------------- Core -->
 ### Core
 
 **Core owns shared routing**
@@ -334,6 +453,7 @@ Every Principle below is mandatory.
 
 <br>
 
+<!-------------------------- Engine -->
 ### Engine
 
 **Every Engine in use owns one complete implementation**
@@ -343,6 +463,7 @@ Every Principle below is mandatory.
 
 <br>
 
+<!-------------------------- Configuration -->
 ### Configuration
 
 **Configuration conforms to the Database Configuration Schema**
@@ -352,15 +473,17 @@ Every Principle below is mandatory.
 
 <br>
 
+<!-------------------------- Documentation -->
 ### Documentation
 
 **Documentation explains the complete public contract**
 
-- **Must** — explain every public contract and how to use it, with examples, in the sections Preferences list.
+- **Must** — explain every public contract and how to use it, with examples, in the sections Architecture lists.
 - **Never** — define new behavior or expose secrets and Engine internals.
 
 <br>
 
+<!-------------------------- Review -->
 ### Review
 
 **Database conformance covers every Database contract**

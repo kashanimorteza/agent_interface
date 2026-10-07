@@ -98,7 +98,7 @@ structure:
   common:
     - "settings"
     - "interface"
-    - "layout"
+    - "architecture"
     - "development"
     - "documentation"
   rule: "Every Component carries the common sections that apply to it, in this order, under exactly these names. A Component adds sections of its own for subjects the common ones do not hold — Instances, Services, Groups — placed after settings and before documentation. A common section a Component has nothing for is omitted rather than left empty, except settings, which is always present."
@@ -109,7 +109,7 @@ sections:
   settings:
     required: true
     default: {}
-    purpose: "The Component's identity — type, directory, package — and the defaults and conventions that belong to the Component as a whole rather than to its interface, layout, development, or documentation."
+    purpose: "The Component's identity — type, directory, package — and the defaults and conventions that belong to the Component as a whole rather than to its interface, architecture, development, or documentation."
     grouping: "By the parts the owner's Principles name in its Architecture, using exactly those names, when a setting belongs to one of them; otherwise one group per coherent subject."
     rules:
       no_repetition: "A setting never repeats a value stated in another section. It refers to it instead."
@@ -123,9 +123,9 @@ sections:
     required: false
     purpose: "The names and versions through which the Component's public boundary is realized: the Schema it conforms to and its version, and the names of its published symbols. The shape of that boundary belongs to the Component's Definition or its Schema; this section only names it."
 
-  layout:
+  architecture:
     required: false
-    purpose: "The physical names of the Component's directories and files. The parts they realize are named in the Component's Architecture."
+    purpose: "The physical names of the directories and files the Component's Architecture tree shows."
 
   development:
     required: false

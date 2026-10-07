@@ -9,7 +9,7 @@ Agent Rule is the Component for persistent behavioral guidance applied across se
 
 1. **[Introduction](#introduction)**
 2. **[Terms](#terms)**
-3. **[Layering](#layering)**
+3. **[Architecture](#architecture)**
 4. **[Authority](#authority)**
 5. **[Principles](#principles)**
 6. **[Review](#review)**
@@ -65,8 +65,8 @@ What must be guaranteed rather than followed is not written here: it is declared
 
 <br>
 
-<!--------------------------------------------------------------------------------- Layering --->
-## Layering
+<!--------------------------------------------------------------------------------- Architecture --->
+## Architecture
 
 This Definition carries the portable meaning and mandatory Principles of the Rule Component. Preferences carry current Rule selections and declarations, and Contracts carry each Rule's complete text. Agent Native Implement reads both and realizes them without changing their scope or authority.
 

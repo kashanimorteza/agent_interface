@@ -2,7 +2,6 @@
 
 Launch is the Operation Component that activates a completed implementation and records the observable runtime result.
 
-
 <br>
 
 <!--------------------------------------------------------------------------------- Navigation --->
@@ -10,8 +9,8 @@ Launch is the Operation Component that activates a completed implementation and 
 
 1. **[Introduction](#introduction)**
 2. **[Terms](#terms)**
-3. **[Relationships](#relationships)**
-4. **[Layering](#layering)**
+3. **[Architecture](#architecture)**
+4. **[Relationships](#relationships)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
 7. **[At a Glance](#at-a-glance)**
@@ -43,18 +42,18 @@ Launch reads the applicable Platform and operational authorities, verifies readi
 
 <br>
 
+<!--------------------------------------------------------------------------------- Architecture --->
+## Architecture
+
+Launch owns activation and its observable result. Development owns the implementation, Platform owns runtime capability, and State owns the recorded Launch Log data.
+
+<br>
+
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
 - **Consumes Development and Platform authorities** — uses the completed product and its launch requirements.
 - **Consumes State** — reads the current operational position and records the launch outcome through its owner.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Layering --->
-## Layering
-
-Launch owns activation and its observable result. Development owns the implementation, Platform owns runtime capability, and State owns the recorded Launch Log data.
 
 <br>
 

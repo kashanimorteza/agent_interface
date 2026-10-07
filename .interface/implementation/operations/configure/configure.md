@@ -9,8 +9,8 @@ Configure is the Operation Component that creates the structural Config records 
 
 1. **[Introduction](#introduction)**
 2. **[Terms](#terms)**
-3. **[Relationships](#relationships)**
-4. **[Layering](#layering)**
+3. **[Architecture](#architecture)**
+4. **[Relationships](#relationships)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
 7. **[At a Glance](#at-a-glance)**
@@ -42,17 +42,17 @@ Configure reads each declared Config Schema and writes or reconciles its record 
 
 <br>
 
+<!--------------------------------------------------------------------------------- Architecture --->
+## Architecture
+
+Configure owns structural creation of Config records. The Config Schemas own their shapes, while later Operation Components own the operational content written into those records.
+
+<br>
+
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
 - **Consumes Config Schemas** — reads the structures named by Configure Preferences from which Config Records are generated.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Layering --->
-## Layering
-
-Configure owns structural creation of Config records. The Config Schemas own their shapes, while later Operation Components own the operational content written into those records.
 
 <br>
 

@@ -9,9 +9,9 @@ Development is the Implementation Subsystem that coordinates the Components of o
 
 1. **[Introduction](#introduction)**
 2. **[Terms](#terms)**
-3. **[Components](#components)**
-4. **[Relationships](#relationships)**
-5. **[Layering](#layering)**
+3. **[Architecture](#architecture)**
+4. **[Components](#components)**
+5. **[Relationships](#relationships)**
 6. **[Authority](#authority)**
 7. **[Principles](#principles)**
 8. **[At a Glance](#at-a-glance)**
@@ -42,6 +42,13 @@ Each Component resolves its own Preferences first, then uses a Development Defau
 - **Development Default** — a shared value a Component may use only when its own Preferences do not select that value.
 - **Public Interface** — the Component-owned surface through which another Component uses it; each Component explains its own public contents.
 - **Connection** — one direct dependency from a consumer Component to a provider Component.
+
+<br>
+
+<!--------------------------------------------------------------------------------- Architecture --->
+## Architecture
+
+Development owns only shared coordination: defaults and Connections. Each Component owns its own content, technical choices, documentation, and Public Interface. Platform owns runtime and launch details.
 
 <br>
 
@@ -106,13 +113,6 @@ The runtime and deployment foundation of the application.
 ## Relationships
 
 Development consumes no Component.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Layering --->
-## Layering
-
-Development owns only shared coordination: defaults and Connections. Each Component owns its own content, technical choices, documentation, and Public Interface. Platform owns runtime and launch details.
 
 <br>
 

@@ -9,8 +9,8 @@ Review is the Operation Component that independently judges selected-phase Plans
 
 1. **[Introduction](#introduction)**
 2. **[Terms](#terms)**
-3. **[Relationships](#relationships)**
-4. **[Layering](#layering)**
+3. **[Architecture](#architecture)**
+4. **[Relationships](#relationships)**
 5. **[Authority](#authority)**
 6. **[Principles](#principles)**
 7. **[At a Glance](#at-a-glance)**
@@ -46,18 +46,18 @@ Review reads the current Plan for each selected phase, judges the generated Sour
 
 <br>
 
+<!--------------------------------------------------------------------------------- Architecture --->
+## Architecture
+
+Review owns its Findings, review data, and the resolutions it can perform. Plan owns planned work and Develop owns implementation work outside Review's resolution scope.
+
+<br>
+
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
 - **Consumes Plan and generated Source** — takes the Plan's coverage, acceptance criteria, and verification conditions as the baseline for examining the selected phase's Source and evidence.
 - **Consumes State** — uses current aggregate progress and prior Review Log Entries without treating either as authority, and records its outcome and Findings through State.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Layering --->
-## Layering
-
-Review owns its Findings, review data, and the resolutions it can perform. Plan owns planned work and Develop owns implementation work outside Review's resolution scope.
 
 <br>
 

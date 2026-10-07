@@ -12,10 +12,9 @@ Entity Service is the fixed internal Logic Service whose Interface gives every E
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
 5. **[Boundaries](#boundaries)**
-6. **[Layering](#layering)**
-7. **[Authority](#authority)**
-8. **[Principles](#principles)**
-9. **[At a Glance](#at-a-glance)**
+6. **[Authority](#authority)**
+7. **[Principles](#principles)**
+8. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -57,31 +56,7 @@ Entity Service
 └── Entities    ← one Child Service per Entity
 ```
 
-<br>
-
-<!--------------------------------------------------------------------------------- Relationships --->
-## Relationships
-
-- **Consumes Model** — uses the Entity Collection Model Interface publishes to know which Child Services exist, and each Entity it publishes by name to bind one, found from Model's own Preferences.
-- **Consumes Storage** — uses every Storage Action that takes an Entity and every contract Storage Interface publishes, only through Storage Interface, found from Storage's own Preferences.
-- **Consumes Development** — follows its shared rules and Defaults for every choice this Component leaves unstated.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Boundaries --->
-## Boundaries
-
-- **Entity meaning and declarations** — are not Entity Service's, because it binds Entities without defining them.
-- **Persistence and Instance selection** — are not Entity Service's, because it only requests Storage Actions.
-- **Actions that take no Entity** — are not Entity Service's, because a Child Service is bound to one Entity.
-- **Publishing Services from Logic's root** — is not Entity Service's, because it owns only its own Interface.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Layering --->
-## Layering
-
-Entity Service Preferences own its configurable name, directory, layout, naming patterns, language and realization, and documentation. The shape of its Interface belongs to the Logic Entity Interface Schema.
+Entity Service Preferences own its configurable name, directory, architecture, naming patterns, language and realization, and documentation. The shape of its Interface belongs to the Logic Entity Interface Schema.
 
 ### Interface
 
@@ -102,6 +77,25 @@ The layer that holds the one shared structure, in one unit, and every Action. Wh
 ### Entities
 
 The layer that holds one unit and one Child Service for every Entity in Model's Entity Collection. Each Child Service receives Base, binds its own Entity, and holds only Behaviour or Actions specific to that Entity.
+
+<br>
+
+<!--------------------------------------------------------------------------------- Relationships --->
+## Relationships
+
+- **Consumes Model** — uses the Entity Collection Model Interface publishes to know which Child Services exist, and each Entity it publishes by name to bind one, found from Model's own Preferences.
+- **Consumes Storage** — uses every Storage Action that takes an Entity and every contract Storage Interface publishes, only through Storage Interface, found from Storage's own Preferences.
+- **Consumes Development** — follows its shared rules and Defaults for every choice this Component leaves unstated.
+
+<br>
+
+<!--------------------------------------------------------------------------------- Boundaries --->
+## Boundaries
+
+- **Entity meaning and declarations** — are not Entity Service's, because it binds Entities without defining them.
+- **Persistence and Instance selection** — are not Entity Service's, because it only requests Storage Actions.
+- **Actions that take no Entity** — are not Entity Service's, because a Child Service is bound to one Entity.
+- **Publishing Services from Logic's root** — is not Entity Service's, because it owns only its own Interface.
 
 <br>
 

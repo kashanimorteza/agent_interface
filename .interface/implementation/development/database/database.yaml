@@ -2,7 +2,7 @@
 meta:
   path: ".interface/implementation/development/database/database.yaml"
   path_note: "The Preferences layer of the Database Component."
-  purpose: "Database identity, Instances, Interface Schema reference, layout, language profile, Engines, and documentation choices."
+  purpose: "Database identity, Instances, Interface Schema reference, architecture, language profile, Engines, and documentation choices."
   standard: "Agent Project Interface"
   version: "14.0"
   updated: "2026-10-01"
@@ -16,7 +16,7 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings and instances; copy the Target Initial Data; generate config from its Foundation Schema; realize Interface from the Database Interface Schema; realize the fixed layout; then apply development and documentation preferences."
+  consumption: "Read settings and instances; copy the Target Initial Data; generate config from its Foundation Schema; realize Interface from the Database Interface Schema; realize the fixed Architecture; then apply development and documentation preferences."
   selection: "Preserve explicit compatible Target choices. Use these Preferences for choices the Target leaves unstated; for anything still unset, follow Development's resolution order."
   version_resolution: "Resolve Database-owned versioned technical items from the selected language profile in development. Resolve latest-compatible to a concrete compatible version and preserve that resolution in dependency or lock metadata."
 
@@ -25,18 +25,20 @@ read_order:
   - settings
   - instances
   - interface
-  - layout
+  - architecture
   - development
+  - configuration
   - documentation
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  settings: "Database's identity, the Model Interface Schema it consumes, the configuration file, the default Instance, the Storage root, and the query defaults."
+  settings: "Database's identity, the Model Interface Schema it consumes, the default Instance, the Storage root, and the query defaults."
   instances: "The default definition of every Instance."
   interface: "The Database Interface Schema and its version."
-  layout: "The physical names of Database's directories and files."
+  architecture: "The physical names of Database's directories and files."
   development: "Development capabilities, the selected language and its profile, after-generation behavior, and Engine technology."
-  documentation: "The documentation file, its section order, and the content of each section."
+  configuration: "The configuration file, its location, and its format, and the Database Configuration Schema it follows."
+  documentation: "The documentation file, its location, and its format; its sections are described in the Database Definition."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
@@ -50,9 +52,6 @@ content:
       package: "database"
     model_dependency:
       schema: ".interface/foundation/schema/model-interface.yaml"
-    configuration:
-      file: "config.yaml"
-      structure: ".interface/foundation/schema/database-configuration.yaml"
     default_instance: "sqlite"
     storage_root: "db"
     query:
@@ -82,16 +81,11 @@ content:
       port: 5432
       database: "application"
       username: "postgres"
-      password: ""
+      password: "123456"
       options: {}
 
-  # <!-------------------------------------------- interface -->
-  interface:
-    schema: ".interface/foundation/schema/database-interface.yaml"
-    contract_version: "1.3"
-
-  # <!-------------------------------------------- layout -->
-  layout:
+  # <!-------------------------------------------- architecture -->
+  architecture:
     directories:
       core: "core"
       engine: "engine"
@@ -102,12 +96,33 @@ content:
       data: "data"
       tables: "tables"
       initial_data: "initial_data"
+      lifecycle: "lifecycle"
+      configuration_loader: "configuration"
+      values: "values"
+      query: "query"
+      errors: "errors"
       engine: "<engine-in-use>"
       lifecycle_entry_points: "<lifecycle-command>"
-      configuration: "config.yaml"
-      documentation: "README.md"
 
-  # <!-------------------------------------------- development -->
+  # <!-------------------------------------------- interface -->
+  interface:
+    schema: ".interface/foundation/schema/database-interface.yaml"
+    contract_version: "1.3"
+
+  # <!-------------------------------------------- configuration -->
+  configuration:
+    file: "config.yaml"
+    location: "the Component root"
+    format: "yaml"
+    schema: ".interface/foundation/schema/database-configuration.yaml"
+
+  # <!-------------------------------------------- documentation -->
+  documentation:
+    file: "README.md"
+    location: "the Component root"
+    format: "markdown"
+
+ # <!-------------------------------------------- development -->
   development:
     capabilities:
       testing: false
@@ -184,29 +199,3 @@ content:
         connection:
           default_port: 5432
           required_parameters: ["host", "port", "database", "username", "password"]
-
-  # <!-------------------------------------------- documentation -->
-  documentation:
-    file: "README.md"
-    location: "the Component root"
-    format: "markdown"
-    order:
-      - overview
-      - interface
-      - instances
-      - setup
-      - use
-      - lifecycle
-      - initial_data
-      - verify
-      - troubleshooting
-    sections:
-      overview: "Give one short introduction and one simple example: create Database, then one add and one list."
-      interface: "For every published contract (Database, DatabaseInstance, Filter, FilterOperator, FilterCombination, Order, OrderDirection, CommandResult, LifecycleResult, and every error) and for every Operation and Lifecycle Command with each of its parameters, explain what it is for and how to use it, with one example each. Cover every enumeration member, defaults, results, and errors."
-      setup: "Give the setup steps for the selected technology and state that generation runs Prepare automatically."
-      use: "Show every capability group used only through Interface, with Field references and enumeration members and never strings."
-      troubleshooting: "Cover Database concerns only, including an inactive Instance, a difference between an existing Table and its Entity, and empty Initial Data values."
-      instances: "Explain active DatabaseInstance members, default selection, and Database-owned storage without exposing credentials."
-      lifecycle: "Explain manual CreateTables, InsertInitialData, and Prepare use, and that generation runs Prepare."
-      initial_data: "List every Target-defined Initial Data record and state that Database inserts its values unchanged without security-based omission."
-      verify: "Verify public import, Instance selection, query vocabulary, each capability group, persistent file location, and repeatable Lifecycle Commands."

@@ -12,10 +12,9 @@ Entity Group is the API Group that gives every Entity of Entity Service one Adap
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
 5. **[Boundaries](#boundaries)**
-6. **[Layering](#layering)**
-7. **[Authority](#authority)**
-8. **[Principles](#principles)**
-9. **[At a Glance](#at-a-glance)**
+6. **[Authority](#authority)**
+7. **[Principles](#principles)**
+8. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -55,27 +54,6 @@ Entity Group
 └── <entity>   ← Adapter
 ```
 
-<br>
-
-<!--------------------------------------------------------------------------------- Relationships --->
-## Relationships
-
-- **Consumes Logic** — uses Entity Service and the contracts it publishes only through Logic Interface, found from Logic's own Preferences.
-- **Consumes Development** — follows its shared rules and Defaults for every choice this Component leaves unstated.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Boundaries --->
-## Boundaries
-
-- **Entity and Action membership and Action contracts** — are not Entity Group's, because it represents them without defining them.
-- **Action Behaviour and everything after an Action call** — are not Entity Group's, because a Handler only calls the Action.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Layering --->
-## Layering
-
 Entity Group Preferences own its name, directory, Adapter naming pattern, and documentation. The shape in which it states what it serves belongs to the API Group Interface Schema.
 
 ### Adapters
@@ -91,6 +69,22 @@ The API surface of every Adapter. It meets these needs:
 3. **Nothing else** — no Endpoint or Behaviour beyond these is added.
 
 These needs are stated in the shape the API Group Interface Schema defines for every Group.
+
+<br>
+
+<!--------------------------------------------------------------------------------- Relationships --->
+## Relationships
+
+- **Consumes Logic** — uses Entity Service and the contracts it publishes only through Logic Interface, found from Logic's own Preferences.
+- **Consumes Development** — follows its shared rules and Defaults for every choice this Component leaves unstated.
+
+<br>
+
+<!--------------------------------------------------------------------------------- Boundaries --->
+## Boundaries
+
+- **Entity and Action membership and Action contracts** — are not Entity Group's, because it represents them without defining them.
+- **Action Behaviour and everything after an Action call** — are not Entity Group's, because a Handler only calls the Action.
 
 <br>
 

@@ -1,10 +1,9 @@
 schema:
   id: "agent-interface-database-configuration"
   version: "3.0"
-  purpose: "The independent structure of Database config.yaml: Engines, complete Instances, runtime Settings, query defaults, Lifecycle behavior, and shared Initial Data."
+  purpose: "The independent structure of the Database Configuration file: Engines, complete Instances, runtime Settings, query defaults, Lifecycle behavior, and shared Initial Data."
   kind: "Structure standard"
   applies_when: "The Implementation declares a Database Component."
-  generates: "<database component path>/config.yaml"
 
 # <!--------------------------------------------------------------------------------- Structure -->
 structure:
@@ -60,7 +59,7 @@ structure:
 
 # <!--------------------------------------------------------------------------------- Rules -->
 rules:
-  sole_runtime_source: "Generated config.yaml is the sole runtime source. Runtime does not read Database Preferences."
+  sole_runtime_source: "The generated Database Configuration file is the sole runtime source. Runtime does not read Database Preferences."
   no_write_back: "Runtime never writes back to Database Preferences."
   regeneration: "Regeneration rebuilds config from the current Target and Preferences; no hidden merge or second runtime source exists."
   credential_scope: "Connection values and credentials never appear in DatabaseInstance or in any Operation request; Core resolves them from config."

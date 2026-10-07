@@ -2,7 +2,7 @@
 meta:
   path: ".interface/implementation/development/api/api.yaml"
   path_note: "The Preferences layer of the API Component."
-  purpose: "Identity, Interface Schema reference, layout, Group list, Endpoint rules, network, runtime, development, and documentation for API."
+  purpose: "Identity, Interface Schema reference, architecture, Group list, Endpoint rules, network, runtime, development, and documentation for API."
   standard: "Agent Project Interface"
   version: "14.0"
   updated: "2026-10-05"
@@ -24,7 +24,7 @@ resolution:
 read_order:
   - settings
   - interface
-  - layout
+  - architecture
   - groups
   - endpoints
   - network
@@ -37,7 +37,7 @@ read_order:
 content_map:
   settings: "API's identity and the structure of its runtime Configuration."
   interface: "The API Interface Schema, its version, and the API Group Interface Schema every Group follows."
-  layout: "The physical names of the Groups directory and the Bootstrap, Configuration, and documentation files."
+  architecture: "The physical names of the Groups directory and the Bootstrap, Configuration, and documentation files."
   groups: "Every Group of API, with its Definition and Preferences."
   endpoints: "The verb-to-Method table, the Path and Parameter placement every Endpoint derives from its operation, and the URL shape."
   network: "Transport protocol, host, port, whether a URL Key is generated, and the derived Base URL."
@@ -65,8 +65,8 @@ content:
     group_schema: ".interface/foundation/schema/api-group-interface.yaml"
     contract_version: "1.4"
 
-  # <!-------------------------------------------- layout -->
-  layout:
+  # <!-------------------------------------------- architecture -->
+  architecture:
     directories:
       groups: "groups"
     files:

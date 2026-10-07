@@ -9,9 +9,9 @@ Operations is the Implementation Subsystem that governs how authorized work is p
 
 1. **[Introduction](#introduction)**
 2. **[Terms](#terms)**
-3. **[Components](#components)**
-4. **[Relationships](#relationships)**
-5. **[Layering](#layering)**
+3. **[Architecture](#architecture)**
+4. **[Components](#components)**
+5. **[Relationships](#relationships)**
 6. **[Authority](#authority)**
 7. **[Principles](#principles)**
 8. **[At a Glance](#at-a-glance)**
@@ -43,6 +43,13 @@ Configuration prepares and reconciles the operational records. Plan turns a sele
 
 <br>
 
+<!--------------------------------------------------------------------------------- Architecture --->
+## Architecture
+
+Operations owns workflow concerns. Choices owned by an Operation belong to that Component's Preferences, and operational record shapes belong to their Schemas. Product meaning belongs to Development, project intent belongs to Target, and runtime realization belongs to Platform.
+
+<br>
+
 <!--------------------------------------------------------------------------------- Components --->
 ## Components
 
@@ -65,14 +72,12 @@ Configure creates Schema-derived Config records.
 → [Definition of Configure](configure/configure.md)<br>
 → [Preferences of Configure](configure/configure.yaml)
 
-
 ### Plan
 
 Plan turns Target phases into verifiable work.
 
 → [Definition of Plan](plan/plan.md)<br>
 → [Preferences of Plan](plan/plan.yaml)
-
 
 ### Develop
 
@@ -88,14 +93,12 @@ Review checks selected-phase Source and evidence against the phase Plan.
 → [Definition of Review](review/review.md)<br>
 → [Preferences of Review](review/review.yaml)
 
-
 ### Implement
 
 Implement coordinates the Operations workflow.
 
 → [Definition of Implement](implement/implement.md)<br>
 → [Preferences of Implement](implement/implement.yaml)
-
 
 ### Launch
 
@@ -104,14 +107,12 @@ Launch activates the completed implementation.
 → [Definition of Launch](launch/launch.md)<br>
 → [Preferences of Launch](launch/launch.yaml)
 
-
 ### Reset
 
 Reset reconciles authorized records and outputs within its scope.
 
 → [Definition of Reset](reset/reset.md)<br>
 → [Preferences of Reset](reset/reset.yaml)
-
 
 ### State
 
@@ -127,13 +128,6 @@ State records aggregate operational position and the execution log.
 
 - **Consumes Target** — uses current phase identity and intent without becoming another Target definition.
 - **Consumes Development** — applies the product architecture and Component authorities relevant to the work being performed.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Layering --->
-## Layering
-
-Operations owns workflow concerns. Choices owned by an Operation belong to that Component's Preferences, and operational record shapes belong to their Schemas. Product meaning belongs to Development, project intent belongs to Target, and runtime realization belongs to Platform.
 
 <br>
 

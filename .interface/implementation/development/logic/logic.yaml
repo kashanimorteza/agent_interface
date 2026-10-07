@@ -2,7 +2,7 @@
 meta:
   path: ".interface/implementation/development/logic/logic.yaml"
   path_note: "The Preferences layer of the Logic Component."
-  purpose: "Identity, Interface Schema reference, layout, Service list, development, and documentation for Logic."
+  purpose: "Identity, Interface Schema reference, architecture, Service list, development, and documentation for Logic."
   standard: "Agent Project Interface"
   version: "18.0"
   updated: "2026-10-01"
@@ -24,7 +24,7 @@ resolution:
 read_order:
   - settings
   - interface
-  - layout
+  - architecture
   - services
   - development
   - documentation
@@ -33,7 +33,7 @@ read_order:
 content_map:
   settings: "Logic's identity: type, platform, directory, and package."
   interface: "The Logic Interface Schema and its version."
-  layout: "The physical names of the Services directory and the Interface and documentation files."
+  architecture: "The physical names of the Services directory and the Interface and documentation files."
   services: "Every Service of Logic, with its Definition and Preferences."
   development: "Development capabilities and the selected language with its realization profile."
   documentation: "The documentation file, its location, its section order, and the content of each section."
@@ -54,8 +54,8 @@ content:
     schema: ".interface/foundation/schema/logic-interface.yaml"
     contract_version: "1.1"
 
-  # <!-------------------------------------------- layout -->
-  layout:
+  # <!-------------------------------------------- architecture -->
+  architecture:
     directories:
       services: "services"
     files:

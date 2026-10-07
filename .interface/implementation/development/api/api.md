@@ -12,10 +12,9 @@ API is the executable Development Component that serves every Group through one 
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
 5. **[Boundaries](#boundaries)**
-6. **[Layering](#layering)**
-7. **[Authority](#authority)**
-8. **[Principles](#principles)**
-9. **[At a Glance](#at-a-glance)**
+6. **[Authority](#authority)**
+7. **[Principles](#principles)**
+8. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -62,27 +61,7 @@ API
 └── Configuration   ← the runtime values, in the shape the API Configuration Structure defines
 ```
 
-<br>
-
-<!--------------------------------------------------------------------------------- Relationships --->
-## Relationships
-
-- **Consumes Development** — follows its shared rules and Defaults for every choice this Component leaves unstated.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Boundaries --->
-## Boundaries
-
-- **Everything inside a Group and beneath its URL segment** — is not API's, because that Group's own Definition and Preferences govern it.
-- **Request authentication and capability authorization** — are not API's, because the URL Key only changes the path.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Layering --->
-## Layering
-
-API Preferences own its identity, layout, Group list, Endpoint rules, network, runtime, language and realization, and documentation. The shape of its public surface belongs to the API Interface Schema.
+API Preferences own its identity, architecture, Group list, Endpoint rules, network, runtime, language and realization, and documentation. The shape of its public surface belongs to the API Interface Schema.
 
 ### Bootstrap
 
@@ -113,6 +92,21 @@ The common HTTP rules every Group's Endpoints follow. A Group states which Endpo
 ### Configuration
 
 The runtime values that identify and run the API, in the shape the [API Configuration Structure](../../../foundation/schema/api-configuration.yaml) defines.
+
+<br>
+
+<!--------------------------------------------------------------------------------- Relationships --->
+## Relationships
+
+- **Consumes Development** — follows its shared rules and Defaults for every choice this Component leaves unstated.
+
+<br>
+
+<!--------------------------------------------------------------------------------- Boundaries --->
+## Boundaries
+
+- **Everything inside a Group and beneath its URL segment** — is not API's, because that Group's own Definition and Preferences govern it.
+- **Request authentication and capability authorization** — are not API's, because the URL Key only changes the path.
 
 <br>
 

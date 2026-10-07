@@ -12,10 +12,9 @@ Storage Service is the fixed internal Logic Service whose Interface gives other 
 3. **[Architecture](#architecture)**
 4. **[Relationships](#relationships)**
 5. **[Boundaries](#boundaries)**
-6. **[Layering](#layering)**
-7. **[Authority](#authority)**
-8. **[Principles](#principles)**
-9. **[At a Glance](#at-a-glance)**
+6. **[Authority](#authority)**
+7. **[Principles](#principles)**
+8. **[At a Glance](#at-a-glance)**
 
 <br>
 
@@ -54,6 +53,24 @@ Storage Service
 └── Core        ← the gateway structure that offers every Action
 ```
 
+Storage Service Preferences own its configurable name, directory, architecture, language and realization, and documentation. The shape of its Interface belongs to the Logic Storage Interface Schema.
+
+### Interface
+
+The gateway other Logic Services import from. It publishes the Core gateway and the Database contracts it needs. It meets these needs:
+
+1. **Complete** — exactly one Action for every capability Database Interface publishes, changing automatically when Database's capabilities change, so Storage never falls behind Database.
+2. **Unchanged** — every Action passes the Database capability's input, result, and errors through exactly, so Database stays the only authority for storage.
+3. **Needed contracts** — everything a Service needs to build a request, read a result, and catch an error is republished as the original object, never a copy, so no Service has to reach Database directly.
+4. **No behaviour** — no Action adds validation, retry, Engine or default-Instance selection, or a rule of its own, because behaviour belongs to the calling Service.
+5. **Nothing else** — nothing beyond these is published, and loading the Interface has no side effect.
+
+The exact shape of these needs is fixed by the Logic Storage Interface Schema, which is built from them. These needs are the reference: when the two differ, the Schema is corrected to match them.
+
+### Core
+
+The layer that holds the one gateway structure, in one unit, and every Action. When the gateway is created, it takes one access to Database, and every Action uses that same access. For every capability Database Interface publishes, in the order Database publishes them, it offers one Action with the same name and the same parameters; the Action hands the request to that capability and returns its answer.
+
 <br>
 
 <!--------------------------------------------------------------------------------- Relationships --->
@@ -71,29 +88,6 @@ Storage Service
 - **Operation execution, Engine selection, connections, transactions, and result production** — are not Storage's, because Storage only requests published capabilities.
 - **Capability meaning, membership, and validity** — are not Storage's, because Storage mirrors capabilities without defining them.
 - **Publishing Services from Logic's root** — is not Storage's, because Storage owns only its own Interface.
-
-<br>
-
-<!--------------------------------------------------------------------------------- Layering --->
-## Layering
-
-Storage Service Preferences own its configurable name, directory, layout, language and realization, and documentation. The shape of its Interface belongs to the Logic Storage Interface Schema.
-
-### Interface
-
-The gateway other Logic Services import from. It publishes the Core gateway and the Database contracts it needs. It meets these needs:
-
-1. **Complete** — exactly one Action for every capability Database Interface publishes, changing automatically when Database's capabilities change, so Storage never falls behind Database.
-2. **Unchanged** — every Action passes the Database capability's input, result, and errors through exactly, so Database stays the only authority for storage.
-3. **Needed contracts** — everything a Service needs to build a request, read a result, and catch an error is republished as the original object, never a copy, so no Service has to reach Database directly.
-4. **No behaviour** — no Action adds validation, retry, Engine or default-Instance selection, or a rule of its own, because behaviour belongs to the calling Service.
-5. **Nothing else** — nothing beyond these is published, and loading the Interface has no side effect.
-
-The exact shape of these needs is fixed by the Logic Storage Interface Schema, which is built from them. These needs are the reference: when the two differ, the Schema is corrected to match them.
-
-### Core
-
-The layer that holds the one gateway structure, in one unit, and every Action. When the gateway is created, it takes one access to Database, and every Action uses that same access. For every capability Database Interface publishes, in the order Database publishes them, it offers one Action with the same name and the same parameters; the Action hands the request to that capability and returns its answer.
 
 <br>
 

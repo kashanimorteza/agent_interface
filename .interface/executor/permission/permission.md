@@ -9,7 +9,7 @@ Agent Permission is the Executor Component that defines the enforceable boundari
 
 1. **[Introduction](#introduction)**
 2. **[Terms](#terms)**
-3. **[Layering](#layering)**
+3. **[Architecture](#architecture)**
 4. **[Authority](#authority)**
 5. **[Principles](#principles)**
 6. **[Review](#review)**
@@ -58,8 +58,8 @@ Secrets are never values in a declaration. A declaration references a credential
 
 <br>
 
-<!--------------------------------------------------------------------------------- Layering --->
-## Layering
+<!--------------------------------------------------------------------------------- Architecture --->
+## Architecture
 
 This Definition carries the portable meaning and mandatory Principles of the Permission Component. Preferences carry current permission selections, rules, protected sources, secret handling, and enforced guarantees. Agent Native Implement reads both and realizes them without changing their scope or authority.
 
