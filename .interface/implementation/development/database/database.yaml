@@ -2,10 +2,10 @@
 meta:
   path: ".interface/implementation/development/database/database.yaml"
   path_note: "The Preferences layer of the Database Component."
-  purpose: "Database identity, Instances, Interface Schema reference, architecture, language profile, Engines, and documentation choices."
+  purpose: "Database identity, Instances, Interface Schema reference, architecture, language profile, Engines, configuration, and documentation choices."
   standard: "Agent Project Interface"
-  version: "14.0"
-  updated: "2026-10-01"
+  version: "15.0"
+  updated: "2026-10-07"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -53,7 +53,7 @@ content:
     model_dependency:
       schema: ".interface/foundation/schema/model-interface.yaml"
     default_instance: "sqlite"
-    storage_root: "db"
+    storage_root: "the Storage directory named in architecture"
     query:
       filter_combination: "AND"
       default_limit: -1
@@ -84,13 +84,18 @@ content:
       password: "123456"
       options: {}
 
+  # <!-------------------------------------------- interface -->
+  interface:
+    schema: ".interface/foundation/schema/database-interface.yaml"
+    contract_version: "1.3"
+
   # <!-------------------------------------------- architecture -->
   architecture:
     directories:
       core: "core"
       engine: "engine"
       entry_points: "scripts"
-      database: "db"
+      storage: "db"
     files:
       interface: "interface"
       data: "data"
@@ -104,25 +109,7 @@ content:
       engine: "<engine-in-use>"
       lifecycle_entry_points: "<lifecycle-command>"
 
-  # <!-------------------------------------------- interface -->
-  interface:
-    schema: ".interface/foundation/schema/database-interface.yaml"
-    contract_version: "1.3"
-
-  # <!-------------------------------------------- configuration -->
-  configuration:
-    file: "config.yaml"
-    location: "the Component root"
-    format: "yaml"
-    schema: ".interface/foundation/schema/database-configuration.yaml"
-
-  # <!-------------------------------------------- documentation -->
-  documentation:
-    file: "README.md"
-    location: "the Component root"
-    format: "markdown"
-
- # <!-------------------------------------------- development -->
+  # <!-------------------------------------------- development -->
   development:
     capabilities:
       testing: false
@@ -186,7 +173,7 @@ content:
         version: "runtime-provided"
         storage:
           kind: "file"
-          relative_to: "<database-component>/db"
+          relative_to: "the Storage directory named in architecture"
           location: "<database>"
           reject_escape: true
         connection:
@@ -199,3 +186,16 @@ content:
         connection:
           default_port: 5432
           required_parameters: ["host", "port", "database", "username", "password"]
+
+  # <!-------------------------------------------- configuration -->
+  configuration:
+    file: "config.yaml"
+    location: "the Component root"
+    format: "yaml"
+    schema: ".interface/foundation/schema/database-configuration.yaml"
+
+  # <!-------------------------------------------- documentation -->
+  documentation:
+    file: "README.md"
+    location: "the Component root"
+    format: "markdown"

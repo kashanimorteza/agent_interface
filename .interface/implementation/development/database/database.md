@@ -82,16 +82,14 @@ database/
 └── README
 ```
 
-The Package holds only importable source. Configuration, Storage, Entry Points, and Documentation sit beside it at the Component root, because configuration changes with the environment, stored data changes at runtime, and entry points are run by hand rather than imported. Physical names come from `architecture` in Database Preferences.
+The Package holds only importable source. Configuration, Storage, Entry Points, and Documentation sit beside it at the Component root, because configuration changes with the environment, stored data changes at runtime, and entry points are run by hand rather than imported.
 
-Database Preferences own configurable names, language, packages, Engines, Instance defaults, query defaults, architecture, technical realization, and documentation choices; these selections realize the responsibilities below without changing them. The shape of Interface belongs to the Database Interface Schema, and the shape of the Database Configuration belongs to the Database Configuration Schema. Implementation applies them to the current Target.
+Database Preferences own the physical names in `architecture`, and the language, packages, Engines, Instance defaults, query defaults, technical realization, and documentation choices; these selections realize the responsibilities below without changing them, and implementation applies them to the current Target.
 
 <!-------------------------- Interface -->
-### Interface
+### Interface — `interface`
 
-#### `interface`
-
-The only public entry point, in the shape the Database Interface Schema that Database Preferences reference defines. It declares and forwards behavior and implements no Engine work.
+The only public entry point, in the shape the Database Interface Schema that Database Preferences reference defines. It publishes Database, the class a consumer creates to call every Operation and Lifecycle Command. It declares and forwards behavior and implements no Engine work.
 
 <!-------------------------- Core -->
 ### Core — `core/`
@@ -120,7 +118,7 @@ Configuration loads and validates the Database Configuration, the sole runtime s
 
 #### `values`
 
-Values holds the public vocabulary, values, and results a consumer imports and passes in place of strings: Database, DatabaseInstance, Filter, FilterOperator, FilterCombination, Order, OrderDirection, CommandResult, and LifecycleResult.
+Values holds the public vocabulary, values, and results a consumer imports and passes in place of strings: DatabaseInstance, Filter, FilterOperator, FilterCombination, Order, OrderDirection, CommandResult, and LifecycleResult.
 
 #### `query`
 
@@ -192,7 +190,7 @@ Its sections, in this order:
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Consumes Model** — imports Model Interface and uses its Schema-defined Entity Collection and Entity Exports only. It uses each actual Entity and the Declaration that Entity exposes without interpreting Model internals. Model remains read-only and independently owned.
+- **Consumes Model** — uses the Entity Collection and Entity Exports Model Interface publishes, found from Model's own Preferences.
 - **Consumes Development** — follows its shared rules and Defaults for every choice this Component leaves unstated.
 
 <br>
@@ -227,7 +225,7 @@ Every Principle below is mandatory.
 
 **Rule:** The Component has exactly the parts Architecture shows, each with the responsibility stated there.
 **Why:** A fixed layout lets every generation place each file in the same place, so an Agent never decides structure and consumers always find the same parts.
-**Boundary:** Fixed Architecture members are not renamed or relocated. No additional internal source unit is placed at the Component root, beside an Engine unit, or inside Storage.
+**Boundary:** Fixed Architecture members are renamed only through `architecture` in Database Preferences and never relocated. No additional internal source unit is placed at the Component root, beside an Engine unit, or inside Storage.
 
 #### Database consumes Model without owning it
 
@@ -378,7 +376,7 @@ Every Principle below is mandatory.
 
 **Database owns one canonical Architecture**
 
-- **Must** — preserve the canonical root, Core, Engine, Entry Points, storage, configuration, and Documentation ownership.
+- **Must** — preserve the canonical Interface, Core, Engine, Entry Points, Storage, Configuration, and Documentation, and rename a member only through `architecture` in Preferences.
 - **Never** — place an internal source unit outside Core or its owning Engine unit, or place source code in Storage.
 
 **Database consumes Model without owning it**
