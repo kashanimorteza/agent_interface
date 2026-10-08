@@ -189,7 +189,7 @@ Validation
 └── Identity
 ```
 
-The shared private behavior every Entity inherits: direct construction, JSON Object construction, and assignment accept only declared Fields and enforce each Field's contract, and a sensitive value never appears in a validation message.
+The shared private behavior Base runs for every Entity:
 
 - **Strict** — no implicit coercion, no undeclared Field, and every default is itself validated against its Field.
 - **Construction** — direct construction validates the whole Entity before any value is set.
@@ -219,7 +219,7 @@ Storage Mapping
 └── Exact values
 ```
 
-The private, table-ready realization every Entity always has when the selected language profile defines one: physical table and column names, column types, and the constraints and indexes its Declaration states. The table forms of all Entities are registered in one shared table metadata, which a consumer such as Database reaches through the Entities themselves, so that it creates exactly their Tables and no other. Model only declares this form; it never runs storage.
+The private, table-ready realization every Entity always has when the selected language profile defines one: physical table and column names, column types, and the constraints and indexes its Declaration states. The table forms of all Entities are registered in one shared table metadata, which a consumer reaches through the Entities themselves, so that it creates exactly their Tables and no other. Model only declares this form; it never runs storage.
 
 Every storage option is derived only from the Declaration:
 
@@ -272,7 +272,7 @@ Documentation
 The root documentation, in the file, location, and format Model Preferences name. Its sections, in this order:
 
 1. **Overview** — Give one concise introduction and one simple example using one Entity.
-2. **Interface** — Explain the Entity Exports and the Entity Collection, then list every Entity once in Target order with its description, complete Field table, and Entity Metadata outside that table. Show one consumer importing an Entity directly and one enumerating the Entity Collection, rather than using wildcard exports, __all__, reflection, directory scanning, or internal paths.
+2. **Interface** — Explain the Entity Exports and the Entity Collection, then list every Entity once in Target order with its description, complete Field table, and Entity Metadata outside that table. Show one consumer importing an Entity directly and one enumerating the Entity Collection, rather than using wildcard exports, a published-name list, reflection, directory scanning, or internal paths.
 3. **Declaration** — Show how a consumer reads one Entity's public Declaration, including Fields, Primary Key, Relations, Uniqueness Constraints, and Indexes, through the Entity itself.
 4. **Foundation** — Give one example for each Foundation capability, then one complete Entity-to-JSON-text-to-Entity round trip.
 5. **Setup** — Give the setup steps for the selected technology.
@@ -303,7 +303,7 @@ Entity holds one unit per Entity, named by the Entity's name under the selected 
 
 #### Core
 
-The shared area holding every file that serves all Entities rather than one: the public Declaration and Foundation contracts, plus the private system files behind them: the base definitions, Field Type realization, and Storage Mapping. The two public contracts are the files `declaration` and `foundation`; the private files are `base` for Validation, `types` for Field Type realization, and `storage` for Storage Mapping, each marked private in the selected language's own way. No other file is placed in Core. Declaration is the public structured contract for Entity and Field meaning; Foundation is the public shared conversion contract between an Entity and its JSON Object.
+The shared area holding every file that serves all Entities rather than one: the public Declaration and Foundation contracts, plus the private system files behind them: the base definitions, Field Type realization, and Storage Mapping. The two public contracts are the files `declaration` and `foundation`; the private files are `base` for Validation, `types` for Field Type realization, and `storage` for Storage Mapping, each marked private in the selected language's own way. No other file is placed in Core.
 
 <br>
 
@@ -348,7 +348,7 @@ Every Principle below is mandatory and belongs to the Architecture category that
 
 #### Model has one canonical structure
 
-**Rule:** Every realization contains Interface, the Entity directory, and Core with Declaration and Foundation, with the ownership shown in Architecture. Every Entity has exactly one public unit directly inside the Entity directory, holding everything private to that Entity; infrastructure shared across Entities belongs under Core. Declaration and Foundation are public; `base`, `types`, and `storage` stay private. Dependencies flow from Interface to Entity units and from Entity units to Core; Core depends on neither Interface nor a specific Entity.
+**Rule:** Every realization has exactly the Directory Structure in Architecture, with each unit owning what Architecture gives it and everything private to one Entity kept in that Entity's unit. Dependencies flow from Interface to Entity units and from Entity units to Core; Core depends on neither Interface nor a specific Entity.
 **Why:** Stable ownership keeps each Entity independently changeable, prevents cycles, and gives consumers Model's meaning without its internals.
 **Boundary:** Language-required files, entrypoints, annotations, and native constructs may exist without creating another conceptual layer; physical casing, extensions, and symbol and method names belong to the language's Preferences.
 
@@ -376,11 +376,11 @@ Every Principle below is mandatory and belongs to the Architecture category that
 
 **Rule:** Primary Key, Relations, Uniqueness Constraints, and Indexes belong to Entity Metadata outside Field Declarations. Every local Field reference resolves within the Entity; every Relation target Entity and Field resolves within Model; Relation endpoint Types are compatible; participating Fields are not repeated; duplicate metadata is invalid. An Entity contains only its own Fields and metadata: cross-Entity meaning is recorded only by Relation names, never by nesting, inheriting, copying, or importing another Entity.
 **Why:** Consumers realize structure only from complete, unambiguous metadata, and flat Entities avoid hidden coupling.
-**Boundary:** A Relation records local Field, target Entity name, and target Field name only, with no cardinality, cascade, deletion, or other undeclared behaviour. An Entity may use a shared private base from Core without inheriting another Entity's meaning. These rules are met at generation and observed by Review; no runtime check is generated for them.
+**Boundary:** A Relation records local Field, target Entity name, and target Field name only, with no cardinality, cascade, deletion, or other undeclared behaviour. An Entity may use a shared private base from Core without inheriting another Entity's meaning. These rules are met at generation and observed by Review; no runtime check across Entities is generated for them. Checks one Entity runs on itself — its Declaration's structural rules when created and Base's match of type, table, and Fields when loaded — remain.
 
 #### Entity runtime behaviour enforces Field contracts only
 
-**Rule:** Direct and JSON Object construction accept only declared Fields and identically enforce required values, nullability, Types, defaults, generation, and constraints without implicit coercion; explicit false, zero, empty string, and null remain supplied values. Assignment to a mutable Field revalidates atomically, a failed assignment keeps the prior value, and an immutable Field cannot change. Model defines no equality, ordering, hashing, copy, clone, merge, or reconstruction beyond the JSON Object round trip, and mutable Entities are not hashable.
+**Rule:** Direct and JSON Object construction accept only declared Fields and identically enforce Required Fields, nullability, Types, defaults, generation, and constraints without implicit coercion; explicit false, zero, empty string, and null remain supplied values. Assignment to a mutable Field revalidates atomically, a failed assignment keeps the prior value, and an immutable Field cannot change. Model defines no equality, ordering, hashing, copy, clone, merge, or reconstruction beyond the JSON Object round trip, and mutable Entities are not hashable.
 **Why:** One runtime contract stops package-specific construction, mutation, and object conventions from changing data or inventing behaviour.
 **Boundary:** Construction and mutation perform no storage, network, application, or workflow operation. A language-required diagnostic representation may exist internally but is not a portable contract.
 
@@ -432,10 +432,9 @@ Every Principle below is mandatory and belongs to the Architecture category that
 - Every Target Entity has exactly one Entity Export.
 - The Entity Collection holds exactly the exported Entities, in Target order.
 - Every Relation reaches a Field of an Entity in Model with a compatible Type, and no two Entities collide in name, before or after physical naming.
-- Interface runs no check.
 - Each Entity's Declaration matches the Target — Fields, order, Types, nullability, defaults, and metadata.
 - Every Entity has an immutable id and a Boolean is_active.
-- Each Entity constructs from valid values and rejects an unknown Field, a wrong Type, and a missing required value.
+- Each Entity constructs from valid values and rejects an unknown Field, a wrong Type, and a missing Required Field.
 - Converting any Entity to its JSON Object and back returns an equal Entity.
 - Decimal and datetime values keep their exact value through JSON.
 - Loading Interface has no side effect.
@@ -447,7 +446,7 @@ Every Principle below is mandatory and belongs to the Architecture category that
 
 <br>
 
-<!--------------------------------------------------------------------------------- At_a_Glance --->
+<!--------------------------------------------------------------------------------- At a Glance --->
 ## At a Glance
 
 Every obligation below derives from the Principle with the same title.
@@ -461,7 +460,7 @@ Every obligation below derives from the Principle with the same title.
 
 **Model has one canonical structure**
 
-- **Must** — Keep one public unit per Entity, shared infrastructure and public contracts in Core, helpers private, and dependencies one-way.
+- **Must** — Keep exactly the Directory Structure, everything private to one Entity in that Entity's unit, and dependencies one-way.
 - **Never** — Create a dependency cycle or another conceptual layer, or expose a helper as contract.
 
 ### Interface

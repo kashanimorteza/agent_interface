@@ -113,7 +113,7 @@ content:
           field_realization: Realize every Field with Field. Value rules (default, nullable, description, value constraints) come from the Field; primary_key, unique, index, and foreign_key are copied from the Entity's Declaration, which stays their only source.
           table_model:
             declaration: Every Entity class is declared with table=True.
-            table_name: exactly the Entity name, set through __tablename__
+            table_name: exactly the Entity's physical name, set through __tablename__
             column_name: exactly the Field name
             construction: The Core base runs model_validate on every direct construction before initializing, because a table model skips validation on construction.
             field_reference: Each Field's class attribute is its public Field reference.
