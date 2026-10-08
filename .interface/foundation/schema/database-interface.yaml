@@ -1,10 +1,10 @@
 schema:
   id: "agent-interface-database-interface"
-  version: "1.3"
+  version: "2.0"
+  source: "Built from the Architecture and Interface sections of Database Preferences and the Database Definition; rebuilt, with its version raised, whenever either changes a public contract."
   purpose: "The stable, language-independent structure through which consumers use every Database Operation and Lifecycle Command."
   kind: "Interface structure standard"
   applies_when: "The Implementation declares a Database Component."
-  generates: "<database component path>/<interface file>"
 
 # <!--------------------------------------------------------------------------------- Structure -->
 structure:
@@ -142,31 +142,34 @@ structure:
   results:
     required: true
     command_result:
-      rows: "returned row mappings, or null"
-      affected: "affected row count, or null"
-      columns: "ordered column names, or null"
-      success: "whether the command succeeded"
-      message: "a public result or error message"
-      instance: "the DatabaseInstance used"
+      immutable: true
+      fields:
+        rows: "returned row mappings, or null"
+        affected: "affected row count, or null"
+        columns: "ordered column names, or null"
+        success: "whether the command succeeded"
+        message: "a public result or error message"
+        instance: "the DatabaseInstance used"
     lifecycle_result:
-      command: "the Lifecycle Command name"
-      instance: "the DatabaseInstance used"
-      success: "whether the command succeeded"
-      affected: "the processed Table or record count, or null"
-      message: "a public result or error message"
+      immutable: true
+      fields:
+        command: "the Lifecycle Command name"
+        instance: "the DatabaseInstance used"
+        success: "whether the command succeeded"
+        affected: "the processed Table or record count, or null"
+        message: "a public result or error message"
 
   errors:
     required: true
     purpose: "Failure meanings every realization keeps distinguishable, through the language's own error mechanism, without exposing credentials. Each kind is published as its own error, derived from one base error; their names belong to the selected language profile."
     kinds:
-      - "invalid configuration or Instance"
-      - "inactive Instance selected"
-      - "invalid input or Field"
-      - "Declaration incompatibility"
-      - "connection failure"
-      - "execution failure"
-      - "incomplete Lifecycle execution"
-
+      invalid_configuration_or_instance: "invalid configuration or Instance"
+      inactive_instance: "inactive Instance selected"
+      invalid_input_or_field: "invalid input or Field"
+      declaration_incompatibility: "Declaration incompatibility"
+      connection_failure: "connection failure"
+      execution_failure: "execution failure"
+      incomplete_lifecycle: "incomplete Lifecycle execution"
 # <!--------------------------------------------------------------------------------- Rules -->
 rules:
   stable_shape: "Changing Entities, Instances, Engines, languages, packages, or internal implementation never changes this structure. An incompatible technology fails generation rather than changing Database meaning."
@@ -181,18 +184,3 @@ rules:
   internal_hidden: "Core, Engine implementations, configuration, connection values, and storage paths are never published."
   side_effect_free: "Loading Interface opens no connection and creates no data or file."
   contract_change: "Changing any public contract, its members, or its meaning requires an explicit Schema version change and consumer review."
-
-# <!--------------------------------------------------------------------------------- Example -->
-example: |
-  from database.interface import Database, DatabaseInstance, Filter, FilterOperator, Order, OrderDirection
-  from model.interface import User
-
-  db = Database()
-  user = db.add(User(name="Admin", ...))                        # default Instance
-  db.add(User(name="Test", ...), DatabaseInstance.POSTGRESQL)   # chosen Instance
-  users = db.list(User,
-                  filters=[Filter(User.is_active, FilterOperator.EQUALS, True)],
-                  orders=[Order(User.name, OrderDirection.ASCENDING)],
-                  limit=10)
-  db.disable(User, user.id)
-  db.prepare()                                                   # create_tables, then insert_initial_data

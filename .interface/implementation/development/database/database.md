@@ -34,7 +34,7 @@ Database keeps persistence, Instance selection, and Engine integration behind on
 <!-------------------------- How It Works -->
 ### How It Works
 
-A consumer imports Interface, selects a DatabaseInstance or accepts the default, and calls an Entity Operation, Database-wide Operation, or Lifecycle Command. Core resolves the complete Instance configuration and forwards the request, with that Instance's connection, to its Engine's unit. The result returns through Core and Interface in the published form.
+A consumer imports Interface, selects a DatabaseInstance or accepts the default, and calls an Entity Operation, Command Operation, or Setup Operation. Core resolves the complete Instance configuration and forwards the request, with that Instance's connection, to its Engine's unit. The result returns through Core and Interface in the published form.
 
 <br>
 
@@ -45,11 +45,11 @@ A consumer imports Interface, selects a DatabaseInstance or accepts the default,
 - **Instance** — one named database connection and storage identity, including its Engine, active state, database identity, connection values, and options.
 - **DatabaseInstance** — the public enumeration whose members identify exactly the active configured Instances; it contains no connection credentials.
 - **Database Configuration** — the generated runtime configuration, the sole runtime source for Engines, Instances, Settings, and Initial Data.
-- **Database Interface Schema** — the versioned structure that fixes every public Database contract: the Operations and Lifecycle Commands with their inputs, effects, and results, the query vocabulary, values, results, and error meanings.
+- **Database Interface Schema** — the versioned structure that fixes every public Database contract: the Operations and Setup Operations with their inputs, effects, and results, the query vocabulary, values, results, and error meanings.
 - **Database Configuration Schema** — the versioned structure that fixes the shape of the Database Configuration.
 - **Entity Operation** — an Operation scoped to one Entity.
-- **Database-wide Operation** — an Operation scoped to the selected Instance rather than one Entity.
-- **Lifecycle Command** — an explicit preparation command with a generated manual entry point: CreateTables, InsertInitialData, or Prepare, which runs the first two in order.
+- **Command Operation** — an Operation scoped to the selected Instance rather than one Entity.
+- **Setup Operation** — an explicit preparation command with a generated manual entry point: `create_tables`, `insert_initial_data`, or `prepare`, which runs the first two in order.
 - **Filter** and **Order** — immutable condition and ordering values built from the public query vocabulary.
 
 <br>
@@ -58,28 +58,16 @@ A consumer imports Interface, selects a DatabaseInstance or accepts the default,
 ## Architecture
 
 ```text
-database/
-├── database/
-│   ├── interface
-│   ├── core/
-│   │   ├── data
-│   │   ├── tables
-│   │   ├── initial_data
-│   │   ├── lifecycle
-│   │   ├── configuration
-│   │   ├── values
-│   │   ├── query
-│   │   └── errors
-│   └── engine/
-│       └── <engine>
-├── scripts/
-│   ├── create_tables
-│   ├── insert_initial_data
-│   └── prepare
-├── db/
-│   └── <database>
-├── config
-└── README
+Directory Structure
+└── database/
+    ├── database/
+    │   ├── interface
+    │   ├── core/
+    │   └── engine/
+    ├── scripts/
+    ├── db/
+    ├── config
+    └── README
 ```
 
 The Package holds only importable source. Configuration, Storage, Entry Points, and Documentation sit beside it at the Component root, because configuration changes with the environment, stored data changes at runtime, and entry points are run by hand rather than imported.
@@ -89,79 +77,37 @@ Database Preferences own the physical names in `architecture`, and the language,
 <!-------------------------- Interface -->
 ### Interface — `interface`
 
-The only public entry point, in the shape the Database Interface Schema that Database Preferences reference defines. It publishes Database, the class a consumer creates to call every Operation and Lifecycle Command. It declares and forwards behavior and implements no Engine work.
+The only public entry point, in the shape the Database Interface Schema that Database Preferences reference defines. It publishes exactly five groups, declared in the Interface section of Database Preferences, each importable by a consumer, and nothing else:
+
+- **Database** — the class a consumer creates once to call every Entity Operation and Command Operation.
+- **Setup** — the class a consumer creates to call every Setup Operation.
+- **Value** — what a consumer passes to an Operation: the values of Condition, Sort, and Instance.
+- **Result** — what a consumer reads back: every Result.
+- **Error** — every Error, so a consumer can catch it.
+
+It declares and forwards behavior and implements no Engine work.
 
 <!-------------------------- Core -->
 ### Core — `core/`
 
-Core contains no Instance-specific connection or storage implementation.
-
-#### `data`
-
-Data owns shared validation, default resolution, Instance selection, routing, and result normalization for all public requests.
-
-#### `tables`
-
-Tables coordinates CreateTables.
-
-#### `initial_data`
-
-Initial Data coordinates InsertInitialData.
-
-#### `lifecycle`
-
-Lifecycle coordinates Prepare, which runs CreateTables and then InsertInitialData on the selected Instance and stops when CreateTables fails.
-
-#### `configuration`
-
-Configuration loads and validates the Database Configuration, the sole runtime source, and resolves each Instance's connection for Core. An invalid Configuration or an unresolved Instance selection fails loading before any connection is opened.
-
-#### `values`
-
-Values holds the public vocabulary, values, and results a consumer imports and passes in place of strings: DatabaseInstance, Filter, FilterOperator, FilterCombination, Order, OrderDirection, CommandResult, and LifecycleResult.
-
-#### `query`
-
-Query holds the validated, normalized request forms Core hands to an Engine unit. It is internal and never published.
-
-#### `errors`
-
-Errors holds the failure kinds of the Database: one base error, and one error each for an invalid Configuration or Instance, an inactive Instance, invalid input or an unknown Field, a Declaration mismatch, a connection failure, an execution failure, and an incomplete Lifecycle Command. No error carries a connection value.
+Core owns shared validation, default resolution, Instance selection, routing, and result normalization for all public requests, and holds the entities of the Conceptual Structure. It loads and validates the Database Configuration and resolves each Instance's connection from it; an invalid Configuration or an unresolved Instance selection fails loading before any connection is opened. It contains no Instance-specific connection or storage implementation.
 
 <!-------------------------- Engine -->
 ### Engine — `engine/`
 
 Engine contains exactly one unit for every Engine used by at least one active Instance, named from that Engine. Instances that use the same Engine share its unit and differ only in their connection.
 
-#### `<engine>`
-
-Each unit implements all Entity Operations, ExecuteCommand, and the Engine capabilities required by the Lifecycle Commands, and returns raw results. Its driver, connection arguments, and storage kind come from the Engine's entry in Database Preferences.
+Each unit implements every Entity Operation and Command Operation, and the Engine capabilities the Setup Operations require, and returns raw results. Its driver, connection arguments, and storage kind come from the Engine's entry in Database Preferences.
 
 <!-------------------------- Entry Points -->
 ### Entry Points — `scripts/`
 
-One manual entry point for each Lifecycle Command. Each only invokes its command through Interface and holds no logic of its own.
-
-#### `create_tables`
-
-Runs CreateTables through Interface on the default Instance and reports its LifecycleResult.
-
-#### `insert_initial_data`
-
-Runs InsertInitialData through Interface on the default Instance and reports its LifecycleResult.
-
-#### `prepare`
-
-Runs Prepare through Interface on the default Instance and reports its LifecycleResult. When after-generation preparation is enabled in Database Preferences, generation runs this same command.
+Entry Points holds exactly three scripts, one for each Setup Operation — `create_tables`, `insert_initial_data`, and `prepare` — so a person can prepare storage by hand. Each runs its Setup Operation through Interface on the default Instance, reports its result, and holds no logic of its own. When after-generation preparation is enabled in Database Preferences, generation runs `prepare` the same way.
 
 <!-------------------------- Storage -->
 ### Storage — `db/`
 
-The place where a file-backed database keeps its files.
-
-#### `<database>`
-
-The database file of one file-backed Instance, named by that Instance's database value.
+The place where a file-backed database keeps its files. The database file of one file-backed Instance is named by that Instance's database value.
 
 <!-------------------------- Configuration -->
 ### Configuration — `config`
@@ -171,19 +117,102 @@ The generated Database Configuration, the sole runtime source for Engines, Insta
 <!-------------------------- Documentation -->
 ### Documentation — `README`
 
-The root documentation explaining every public contract, Instance selection, the Lifecycle Commands, Initial Data, setup, use, verification, and Database-specific troubleshooting.
+The root documentation explaining every public contract, Instance selection, the Setup Operations, Initial Data, setup, use, verification, and Database-specific troubleshooting.
 
 Its sections, in this order:
 
 1. **Overview** — Give one short introduction and one simple example: create Database, then one add and one list.
-2. **Interface** — For every published contract (Database, DatabaseInstance, Filter, FilterOperator, FilterCombination, Order, OrderDirection, CommandResult, LifecycleResult, and every error) and for every Operation and Lifecycle Command with each of its parameters, explain what it is for and how to use it, with one example each. Cover every enumeration member, defaults, results, and errors.
+2. **Interface** — For each of the five groups Interface publishes, and every member and Operation in it with each of its parameters, explain what it is for and how to use it, with one example each. Cover every enumeration member, defaults, results, and errors.
 3. **Instances** — Explain active DatabaseInstance members, default selection, and Database-owned storage without exposing credentials.
-4. **Setup** — Give the setup steps for the selected technology and state that generation runs Prepare automatically.
+4. **Setup** — Give the setup steps for the selected technology.
 5. **Use** — Show every capability group used only through Interface, with Field references and enumeration members and never strings.
-6. **Lifecycle** — Explain manual CreateTables, InsertInitialData, and Prepare use, and that generation runs Prepare.
+6. **Setup Operations** — Explain manual `create_tables`, `insert_initial_data`, and `prepare` use, and that generation runs `prepare` automatically.
 7. **Initial Data** — List every Target-defined Initial Data record and state that Database inserts its values unchanged without security-based omission.
-8. **Verify** — Verify public import, Instance selection, query vocabulary, each capability group, persistent file location, and repeatable Lifecycle Commands.
+8. **Verify** — Verify public import, Instance selection, query vocabulary, each capability group, persistent file location, and repeatable Setup Operations.
 9. **Troubleshooting** — Cover Database concerns only, including an inactive Instance, a difference between an existing Table and its Entity, and empty Initial Data values.
+
+
+<br>
+
+```text
+Conceptual Structure
+├── Operation
+│   ├── Entity Operation
+│   │   ├── add
+│   │   ├── update
+│   │   ├── list
+│   │   ├── get_by_id
+│   │   ├── delete
+│   │   ├── enable
+│   │   ├── disable
+│   │   ├── count
+│   │   ├── sum
+│   │   ├── min
+│   │   ├── max
+│   │   └── truncate
+│   ├── Setup Operation
+│   │   ├── create_tables
+│   │   ├── insert_initial_data
+│   │   └── prepare
+│   └── Command Operation
+│       └── execute_command
+├── Query
+│   ├── Condition
+│   ├── Sort
+│   └── Limit
+├── Instance
+├── Result
+└── Error
+```
+
+Every entity below is declared in `architecture` in Database Preferences.
+
+<!-------------------------- Operation -->
+### Operation
+
+#### Entity Operation
+
+Operations scoped to one Entity. Each receives the Entity itself — an Entity instance or the Entity class imported from Model — never an Entity name or other string identity.
+
+#### Setup Operation
+
+Explicit preparation operations, callable through the Setup group of Interface and through the Entry Points. Core coordinates each of them: `create_tables` creates every Table, `insert_initial_data` inserts the Initial Data, and `prepare` does both, in that order.
+
+#### Command Operation
+
+Operations scoped to an Instance rather than one Entity.
+
+<!-------------------------- Query -->
+### Query
+
+Query is how a consumer narrows, orders, and bounds what an Operation reads: a Condition, a Sort, and a Limit. Its enumerations are closed member sets; a consumer imports and passes their members and values, and a string is never accepted in their place. A Field's declared Type is the Type its Field Declaration in Model carries, such as integer, string, or datetime. No checked form is published.
+
+#### Condition
+
+The immutable Filter a consumer builds, with its operator and its combination. Core checks each Filter into a checked Filter: the Field's name and declared Type, its operator, and its normalized value.
+
+#### Sort
+
+The immutable Order a consumer builds, with its direction. Core checks each Order into a checked Order: the Field's name and declared Type, and whether it descends.
+
+#### Limit
+
+A positive limit is the maximum returned count; zero or a negative limit means no limit.
+
+<!-------------------------- Instance -->
+### Instance
+
+Which Instance a call runs on. Every Operation accepts an optional DatabaseInstance; when none is given, the call runs on the configured default Instance. DatabaseInstance has one member for every active configured Instance and none for an inactive one.
+
+<!-------------------------- Result -->
+### Result
+
+The immutable results a consumer reads, each with its fields.
+
+<!-------------------------- Error -->
+### Error
+
+The failure kinds declared in `architecture` in Database Preferences. Every realization keeps each kind distinguishable through the language's own error mechanism: each is published as its own error, derived from one base error, and its name belongs to the selected language profile. No error carries a connection value or credential.
 
 <br>
 
@@ -246,9 +275,15 @@ Every Principle below is mandatory.
 
 #### Interface conforms to the Database Interface Schema
 
-**Rule:** Every realization of Interface conforms to the versioned Database Interface Schema, which fixes every public contract, each Operation's and Lifecycle Command's input, effect, and result, the query vocabulary, values, results, error meanings, and what Interface never publishes. Consumers pass Entities, Fields, Instances, and vocabulary as imported values, never as strings.
+**Rule:** Every realization of Interface conforms to the versioned Database Interface Schema, which fixes every public contract, each Operation's and Setup Operation's input, effect, and result, the query vocabulary, values, results, error meanings, and what Interface never publishes. Consumers pass Entities, Fields, Instances, and vocabulary as imported values, never as strings.
 **Why:** Consumers depend on one contract instead of reinterpreting each realization, and typed values are checked before any storage is touched.
-**Boundary:** Interface declares and forwards public behavior; it does not select a driver or implement Engine work. Changing the structure itself requires a Schema version change.
+**Boundary:** Interface declares and forwards public behavior; it does not select a driver or implement Engine work. The Database Interface Schema is built from the Architecture and Interface sections of Database Preferences and this Definition; when either changes a public contract, the Schema is rebuilt from them and its version is raised.
+
+#### Interface contracts keep one fixed shape
+
+**Rule:** Every Operation and Setup Operation takes exactly its listed parameters, by those names and in that order, with every parameter after entity, id, field, and command optional and instance always last. Every Field in a Filter, Order, or aggregate is validated against the given Entity before any Instance is accessed. Database holds the Entity Operations and Command Operations, and Setup holds the Setup Operations; no other wrapper is added. Stored enumeration defaults use canonical member names, and an unknown name fails loading.
+**Why:** A consumer calls the same shape on every Instance, Engine, and language, and a bad Field fails before any storage is touched.
+**Boundary:** Changing Entities, Instances, Engines, languages, packages, or internal implementation never changes this shape; an incompatible technology fails generation rather than changing Database meaning.
 
 #### Query defaults are deterministic
 
@@ -258,30 +293,30 @@ Every Principle below is mandatory.
 
 <br>
 
-<!-------------------------- Lifecycle Commands -->
-### Lifecycle Commands
+<!-------------------------- Setup Operations -->
+### Setup Operations
 
-#### Lifecycle Commands are separate from Operations
+#### Setup Operations are separate from Operations
 
-**Rule:** CreateTables, InsertInitialData, and Prepare are public Lifecycle Commands, each with a generated manual entry point and a LifecycleResult. Prepare runs CreateTables and then InsertInitialData on the selected Instance and stops when CreateTables fails. They are not Entity Operations or Database-wide Operations.
+**Rule:** `create_tables`, `insert_initial_data`, and `prepare` are public Setup Operations, each with a generated manual entry point and a SetupResult. `prepare` runs `create_tables` and then `insert_initial_data` on the selected Instance and stops when `create_tables` fails. They are not Entity Operations or Command Operations.
 **Why:** Preparing storage is a different act from using it; keeping them apart prevents an everyday call from changing schema or seeding data.
 **Boundary:** Manual and after-generation execution invoke the same public commands and do not duplicate their logic inside an entry point.
 
-#### CreateTables builds Tables only from Model Entities
+#### `create_tables` builds Tables only from Model Entities
 
-**Rule:** CreateTables uses only the actual Entities of the Model Entity Collection and their Declarations to create the required Tables, Fields, Primary Keys, Relations, Uniqueness Constraints, and Indexes. It never reads the Target. Re-execution on matching Tables succeeds without change. A difference between an existing Table and its Declaration stops the command and is reported; it is never resolved by judgment.
+**Rule:** `create_tables` uses only the actual Entities of the Model Entity Collection and their Declarations to create the required Tables, Fields, Primary Keys, Relations, Uniqueness Constraints, and Indexes. It never reads the Target. Re-execution on matching Tables succeeds without change. A difference between an existing Table and its Declaration stops the command and is reported; it is never resolved by judgment.
 **Why:** The generated Entities already carry every structural fact, so Tables follow them exactly and the same Entities always yield the same Tables.
 **Boundary:** It does not copy runtime records between Instances, invent Relation cascade behavior, or alter a Declaration. Cross-Instance transfer requires a future explicit command.
 
-#### InsertInitialData is repeatable
+#### `insert_initial_data` is repeatable
 
-**Rule:** Generation copies every Target-defined Initial Data record into the shared Database Configuration. A Target value that is not concrete, including `Generate securely`, is copied as an empty string and generation continues; Database never produces a value itself, and the user fills such values later. InsertInitialData reads that complete collection, validates each record through its public Entity contract, inserts missing records, skips already-present identical records, and returns success with zero affected items only when the Target declares no Initial Data.
+**Rule:** Generation copies every Target-defined Initial Data record into the shared Database Configuration. A Target value that is not concrete, including `Generate securely`, is copied as an empty string and generation continues; Database never produces a value itself, and the user fills such values later. `insert_initial_data` reads that complete collection, validates each record through its public Entity contract, inserts missing records, skips already-present identical records, and returns success with zero affected items only when the Target declares no Initial Data.
 **Why:** Running it again must never duplicate or lose records, so preparation can be repeated safely on any Instance.
 **Boundary:** Database inserts each value unchanged. It does not silently update, delete, duplicate, or overwrite an existing record; conflicting Initial Data fails clearly.
 
 #### After-generation preparation uses the default Instance
 
-**Rule:** When enabled, generation runs Prepare on the active default Instance. Failure identifies the Instance and command and fails preparation.
+**Rule:** When enabled, generation runs `prepare` on the active default Instance. Failure identifies the Instance and command and fails preparation.
 **Why:** One predictable target keeps generation from touching Instances nobody asked it to prepare.
 **Boundary:** Other active Instances are prepared only by explicit selection.
 
@@ -298,7 +333,7 @@ Every Principle below is mandatory.
 
 #### Changes are atomic
 
-**Rule:** Every changing Operation and InsertInitialData completes atomically in its selected Instance or leaves no partial data change. CreateTables is atomic when supported; otherwise an incomplete state is explicitly reported as failure. Separate calls do not share a hidden transaction.
+**Rule:** Every changing Operation and `insert_initial_data` completes atomically in its selected Instance or leaves no partial data change. `create_tables` is atomic when supported; otherwise an incomplete state is explicitly reported as failure. Separate calls do not share a hidden transaction.
 **Why:** A half-applied change leaves data that no contract describes; all-or-nothing keeps storage always in a known state.
 **Boundary:** Libraries and Engines choose the technical transaction mechanism.
 
@@ -309,7 +344,7 @@ Every Principle below is mandatory.
 
 #### Every Engine in use owns one complete implementation
 
-**Rule:** Generation creates exactly one Engine unit for every Engine used by at least one active Instance and none for any other Engine. Instances of the same Engine share its unit and differ only in the connection Core passes to it. Each unit implements all Entity Operations, ExecuteCommand, and the capabilities required by the Lifecycle Commands while preserving public request, result, error, and atomicity meaning.
+**Rule:** Generation creates exactly one Engine unit for every Engine used by at least one active Instance and none for any other Engine. Instances of the same Engine share its unit and differ only in the connection Core passes to it. Each unit implements all Entity Operations, `execute_command`, and the capabilities required by the Setup Operations while preserving public request, result, error, and atomicity meaning.
 **Why:** Instances of one Engine work the same way, so one complete unit serves them all without duplicated code, and an Engine nobody uses leaves nothing behind.
 **Boundary:** An Engine unit implements storage behavior but never defines a new public contract or shared routing.
 
@@ -351,14 +386,14 @@ Every Principle below is mandatory.
 **Rule:** Review establishes Database conformance through these observations, every one of them on every review:
 
 - Interface publishes exactly the public contracts of the Database Interface Schema and nothing else.
-- Every Entity Operation, Database-wide Operation, and Lifecycle Command has the signature and result the Schema states, including the optional DatabaseInstance.
+- Every Entity Operation, Command Operation, and Setup Operation has the signature and result the Schema states, including the optional DatabaseInstance.
 - Each enumeration holds exactly its Schema members.
 - DatabaseInstance holds exactly one member per active configured Instance and none for an inactive one.
 - A call without a DatabaseInstance runs on the configured default Instance.
 - No Operation accepts an Entity name, a Field name, or any other string in place of an imported value.
-- CreateTables uses only the Entities of the Model Entity Collection and their Declarations, and stops on a difference with an existing Table.
+- `create_tables` uses only the Entities of the Model Entity Collection and their Declarations, and stops on a difference with an existing Table.
 - Every returned Entity is built through its own construction, and a row that breaks the Entity contract is an error.
-- Prepare runs CreateTables and then InsertInitialData, and stops when CreateTables fails.
+- `prepare` runs `create_tables` and then `insert_initial_data`, and stops when `create_tables` fails.
 - A Target Initial Data value that is not concrete is copied as an empty string, and no value is generated.
 - A missing record returns null, never an error.
 - Loading Interface opens no connection and creates no data or file.
@@ -401,6 +436,11 @@ Every Principle below is mandatory.
 - **Must** — conform every realization to the Database Interface Schema and accept only imported values where the Schema forbids strings.
 - **Never** — expose Core, Engine, configuration, credentials, or storage paths, or change Interface structure without a Schema version change.
 
+**Interface contracts keep one fixed shape**
+
+- **Must** — take exactly the listed parameters in order, with instance last, and validate every Field before any Instance is accessed.
+- **Never** — let a change of Entity, Instance, Engine, language, or package change the Interface shape.
+
 **Query defaults are deterministic**
 
 - **Must** — resolve omitted combination, Orders, and limit from Preferences and treat a zero or negative limit as no limit.
@@ -408,20 +448,20 @@ Every Principle below is mandatory.
 
 <br>
 
-<!-------------------------- Lifecycle Commands -->
-### Lifecycle Commands
+<!-------------------------- Setup Operations -->
+### Setup Operations
 
-**Lifecycle Commands are separate from Operations**
+**Setup Operations are separate from Operations**
 
-- **Must** — keep CreateTables, InsertInitialData, and Prepare separate from Operations and callable through Interface and manual entry points.
-- **Must** — return LifecycleResult from either invocation path.
+- **Must** — keep `create_tables`, `insert_initial_data`, and `prepare` separate from Operations and callable through Interface and manual entry points.
+- **Must** — return SetupResult from either invocation path.
 
-**CreateTables builds Tables only from Model Entities**
+**`create_tables` builds Tables only from Model Entities**
 
 - **Must** — build Tables only from the Entities of the Model Entity Collection and their Declarations, and stop on any difference with an existing Table.
 - **Never** — read the Target, alter an existing Table by judgment, copy records between Instances, or invent relationship behavior.
 
-**InsertInitialData is repeatable**
+**`insert_initial_data` is repeatable**
 
 - **Must** — copy every Target Initial Data record into config and insert the complete collection repeatably without silent overwrite, deletion, or duplication.
 - **Must** — validate every Initial Data record through its public Entity contract.
@@ -429,7 +469,7 @@ Every Principle below is mandatory.
 
 **After-generation preparation uses the default Instance**
 
-- **Must** — run Prepare on the default Instance when enabled.
+- **Must** — run `prepare` on the default Instance when enabled.
 - **Never** — prepare other Instances implicitly.
 
 <br>
