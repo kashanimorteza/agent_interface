@@ -30,10 +30,10 @@ content_map:
 content:
   active:
     mode: "implementing"
-    phase: "P1"
-    mode_reason: "Implement is coordinating Plan, Develop, and Review for phase P1."
+    phase: "P3"
+    mode_reason: "Implement is coordinating Plan, Develop, and Review for phase P3."
     set_by: "my-interface-implement"
-    set_at: "2026-10-08T04:13:07Z"
+    set_at: "2026-10-08T05:49:07Z"
   phases:
     P1:
       id: "P1"
@@ -41,6 +41,18 @@ content:
       development: "completed"
       review: "satisfied"
       completed_at: "2026-10-08T04:37:45Z"
+    P2:
+      id: "P2"
+      planning: "completed"
+      development: "completed"
+      review: "satisfied"
+      completed_at: "2026-10-08T05:14:09Z"
+    P3:
+      id: "P3"
+      planning: "completed"
+      development: "blocked"
+      review: "not satisfied"
+      completed_at: null
   log:
     - id: "001"
       skill: "my-interface-configure"
@@ -239,3 +251,380 @@ content:
         observations_about_the_review:
           - "The interface guard blocked one inline interpreter command that named the Target path while debugging my own comparison script; I did not rephrase around it and kept the comparison script's read of the Target as the only Target access. The guard appears to treat any interpreter command naming an Interface path as a possible write."
           - "On SQLite an AUTOINCREMENT primary key is rendered inline, so the pk_<table> name exists on the table metadata but cannot appear in the generated DDL; this was observed, not recorded as a Finding."
+    - id: "006"
+      skill: "my-interface-implement"
+      event: "implement"
+      outcome: "completed"
+      started_at: "2026-10-08T04:45:35Z"
+      completed_at: "2026-10-08T05:14:35Z"
+      duration: "29:00"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      open_questions: ["OQ-007-1", "OQ-007-2", "OQ-008-1"]
+      blockers: []
+      report: "Coordinated phase P2 (argument 2) in order: Plan (007) completed, Develop (008) completed, Review (009) satisfied after 1 Finding was resolved and rechecked. Config was valid, so Configure was not invoked. 3 unique Open Questions and 0 Blockers remain associated; none prevented an Operation."
+      data:
+        phases: ["P2"]
+        configure_invoked: false
+        phase_resolution: "Argument 2 resolved to the Target phase with id P2 (Phase 2)."
+        operations:
+          - phase: "P2"
+            plan: {log_entry: "007", outcome: "completed"}
+            develop: {log_entry: "008", outcome: "completed"}
+            review: {log_entry: "009", outcome: "satisfied"}
+        aggregate:
+          open_questions: 3
+          blockers: 0
+    - id: "007"
+      skill: "my-interface-plan"
+      parent_id: "006"
+      phase: "P2"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-10-08T04:45:59Z"
+      completed_at: "2026-10-08T04:49:12Z"
+      duration: "3:13"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      open_questions: ["OQ-007-1", "OQ-007-2"]
+      blockers: []
+      decisions: []
+      report: "Planned phase P2 (Database): 1 Plan, 10 Groups, 31 Tasks, all todo; dependencies explicit and acyclic, including the Model Interface results of P1; Plan Config verified. Planning progress for P2 set to completed."
+      data:
+        phase_resolution: "Invocation argument P2 is the Target phase with id P2."
+        changes:
+          - kind: "added"
+            what: "Plan P2 with Groups P2-G1 to P2-G10 and Tasks P2-G1-T1 to P2-G10-T1 (31 Tasks)"
+            reason: "No Plan existed for P2; decomposed from the Database Component, the Database Configuration Schema and the Target definitions."
+          - kind: "preserved"
+            what: "Plan P1 and all 24 of its Tasks with their status and Task Logs"
+            reason: "Plan P1 is unaffected by Planning P2; verified equal before and after."
+          - kind: "removed"
+            what: "none"
+            reason: "No earlier P2 Tasks existed."
+          - kind: "replaced"
+            what: "none"
+            reason: "No developed P2 Tasks existed."
+        open_questions:
+          - id: "OQ-007-1"
+            question: "Database must turn every stored row into an Entity through that Entity's own construction, and its Preferences say to build it from all Field values including the stored identity, while Model refuses any supplied Auto Increment value at construction (see OQ-004-2). Stored rows therefore cannot be materialized as written."
+            current_choice: "Plan the materialization work exactly as Database states it; Develop must resolve it under the precedence of Target meaning and Principles over Preferences, and if it cannot, the Task P2-G6-T1 is blocked with that condition."
+            needs_human: "Decide whether the Target explicitly permits a caller-supplied Auto Increment value so Entities can be built from stored rows (the same decision as OQ-004-2)."
+          - id: "OQ-007-2"
+            question: "Database Preferences give the inactive PostgreSQL Instance a default password value, while the Schema example uses an empty password and the project Skill policy forbids copying a credential value into a project declaration."
+            current_choice: "Planning is unaffected and stores no credential; Develop chooses when generating the Configuration, under the rule that an explicit Preference outranks a Rule, and records the decision."
+            needs_human: "Confirm whether the Preference default password should remain, or whether the inactive Instance should carry an empty password."
+    - id: "008"
+      skill: "my-interface-develop"
+      parent_id: "006"
+      phase: "P2"
+      event: "develop"
+      outcome: "completed"
+      started_at: "2026-10-08T04:52:15Z"
+      completed_at: "2026-10-08T05:07:06Z"
+      duration: "14:51"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used:
+        - name: "sqlmodel"
+          report: "Applied SQLModel guidance to the Engine unit: SQLModel imports for engine creation and statements; table-level statements on the Entity tables instead of ORM sessions."
+      open_questions: ["OQ-007-1", "OQ-007-2", "OQ-008-1"]
+      blockers: []
+      decisions:
+        - "P2-G1-T1"
+        - "P2-G2-T1"
+        - "P2-G2-T2"
+        - "P2-G3-T2"
+        - "P2-G3-T3"
+        - "P2-G4-T1"
+        - "P2-G4-T2"
+        - "P2-G5-T1"
+        - "P2-G5-T2"
+        - "P2-G5-T6"
+        - "P2-G6-T1"
+        - "P2-G6-T3"
+        - "P2-G6-T4"
+        - "P2-G7-T1"
+        - "P2-G8-T3"
+        - "P2-G10-T1"
+      report: "Developed phase P2 (Database): all 31 Tasks claimed and completed in dependency order. The Database Component exists with its package and lock metadata, the Configuration with the shared Initial Data, 8 Core units, the SQLite Engine unit, the Interface (six groups), 3 entry point scripts, the prepared default Instance (15 Tables, 23 Initial Data records) and the root documentation. Output formatted, linted and type-checked with the Development-selected tools and exercised once on temporary databases and copies; conformance is for Review to establish. Development progress for P2 set to completed."
+      data:
+        component: "Database"
+        tasks:
+          completed: 31
+          blocked: 0
+        output_summary: "Package manifest and lock metadata; Configuration (2 Engines, 2 Instances, settings, 23 Initial Data records); Core (configuration, data, errors, initial_data, query, setup, tables, values); SQLite Engine unit; Interface with six groups; three entry points; prepared storage; documentation."
+        open_questions:
+          - id: "OQ-008-1"
+            question: "The sqlmodel Skill recommends SQLModel Session and ORM query patterns (session.exec(select(Model))), while Database runs table-level statements on connections of the Entity tables and builds every returned Entity through its own constructor."
+            current_choice: "Continue with table-level statements, because every returned Entity must be built through its own construction, decimals need an exact collation, and an Engine unit owns the driver; SQLModel imports are used wherever SQLModel offers the name."
+            needs_human: "Decide whether Database should instead load Entities through ORM sessions."
+        associated_open_questions:
+          - "OQ-007-1 (stored identity versus Model's refusal of a supplied Auto Increment value): resolved for now by placing the stored identity on an Entity built through its own constructor; Human confirmation still needed."
+          - "OQ-007-2 (default password of the inactive PostgreSQL Instance copied from the Preferences): copied as given under the rule that an explicit Preference outranks a Rule; Human confirmation still needed."
+    - id: "009"
+      skill: "my-interface-review"
+      parent_id: "006"
+      phase: "P2"
+      event: "review"
+      outcome: "satisfied"
+      started_at: "2026-10-08T05:07:29Z"
+      completed_at: "2026-10-08T05:14:09Z"
+      duration: "6:40"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      open_questions: []
+      blockers: []
+      report: "Reviewed phase P2 (Database) against Plan P2 and the Database Review category, with technical and repeatable conformance checks: 1 Finding raised (documentation examples passing strings to demonstrate refusal), resolved and rechecked; every Task acceptance and every Database observation then held. Outcome: satisfied."
+      data:
+        scope: "Phase P2 (Database): Plan P2 with 31 Tasks; Database Review category; technical and repeatable conformance; consumes the Model Component without reviewing it. Persistent testing is disabled for Database, so all verification was transient (temporary copies of the Component) and nothing was added to the Component."
+        findings:
+          - id: "F-001"
+            state: "resolved"
+            resolution: "Replaced the string-refusal demonstrations in the documentation: the Error group example now refuses a Field reference of another Entity, and the Verify script refuses a Field of another Entity, a wrong enumeration kind as the combination, and a Field reference given as an Order; no example passes a string for an Entity, Field or Instance."
+            recheck: "A scan of all 18 documentation examples finds no string given for an Entity, Field, Instance, enumeration member, limit, combination or id (the only strings are native command text and values for string Fields); every example runs and prints exactly what is shown; the README regenerates with zero diff."
+            expected: "The documentation shows Field references and enumeration members and never strings (acceptance of the documentation Task)."
+            observed: "Two examples pass a string where an imported value is required, to demonstrate its refusal: the Error group example calls list with the string User, and the Verify script calls list with the string Currency and count with the string sqlite as the Instance."
+            evidence: "database/README.md, example under the database_error group in the Interface section, and the Verify section script (the string-refusal loop); flagged by a scan of every documentation example."
+        database_review_category:
+          - "Interface publishes exactly the public contracts of the Interface contract and nothing else: held (six prefixed groups; every other import underscore-aliased; no member published on its own)."
+          - "Every Entity Operation, Command Operation and Setup Operation has the signature and result the contract states, including the optional DatabaseInstance: held (parameter names and order compared with the Preferences for all 13 Operations and 3 Setup Operations; instance last and optional; results observed)."
+          - "Each enumeration holds exactly the members the Preferences list: held (12 operators, 2 combinations, 2 directions; each value equals its name)."
+          - "DatabaseInstance holds exactly one member per active configured Instance and none for an inactive one: held; activating the PostgreSQL Instance in a copy adds exactly its member."
+          - "A call without a DatabaseInstance runs on the configured default Instance: held."
+          - "No Operation accepts an Entity name, a Field name or any other string in place of an imported value: held (Entity, Field, operator, direction, combination, limit, id, filters, orders, Instance and command-kind inputs refused)."
+          - "create_tables uses only the Entities of the Model Entity Collection and their Declarations, and stops on a difference with an existing Table: held (an extra table is left alone; a Table with an added column stopped create_tables and prepare and was left unchanged)."
+          - "Every returned Entity is built through its own construction, and a row that breaks the Entity contract is an error: held (a stored row with an oversize code raised the Declaration incompatibility error naming no value)."
+          - "prepare runs create_tables and then insert_initial_data, and stops when create_tables fails: held."
+          - "A Target Initial Data value that is not concrete is copied as an empty string and no value is generated: held (all 23 Target records compared; User, Instance and Account credentials are empty strings in the Configuration and in storage)."
+          - "A missing record returns null, never an error: held for get_by_id, update, delete, enable and disable."
+          - "Loading Interface opens no connection and creates no data or file: held (pristine copy gained no file or directory and opened no engine)."
+        task_acceptance: "Acceptance established by direct observation for all 31 Tasks of P2: P2-G1-T1 (clean sync with Model, locked versions, side-effect-free import); P2-G2-T1 and T2 (Configuration against the Schema rules, the Preferences and 23 Target records); P2-G3-T1 to T3 (vocabulary, Results, errors); P2-G4-T1 and T2 (configuration loading with twelve invalid variants, query checking); P2-G5-T1 to T7 (storage resolution and foreign keys, Table creation, writes, reads, deletes, aggregates, commands); P2-G6-T1 to T4 (routing, create-tables, insert-initial-data, prepare); P2-G7-T1 to T7 (six groups and exact publication); P2-G8-T1 to T3 (scripts succeed, fail visibly, hold no logic); P2-G9-T1 (real storage: 15 Tables, 23 records, no violations); P2-G10-T1 (nine sections, every member documented, 18 executable examples, Initial Data listing, no credentials or internals)."
+        technical_conformance:
+          format: "passed"
+          lint: "passed"
+          static_type: "passed"
+          compile_and_import: "passed (all modules compile; import with warnings as errors)"
+          build: "passed without warnings"
+          installability: "passed (both Components synchronized in a clean location from their locks; import succeeds and creates nothing; prepare works there)"
+          dependencies: "passed (lock consistent, installed packages compatible, every direct import declared, none unused)"
+          runtime: "113 behavioural observations, 84 extra probes, 36 load and configuration observations, 166 comparisons with the Preferences and Target held"
+          zero_diff_regeneration: "documentation regenerates with zero diff; the Configuration has no generator in the Component and was compared with its authorities instead (observation below)"
+          persistent_testing: "disabled for Database; verification was transient on temporary copies and no test was added to the Component."
+        observations_about_the_review:
+          - "The Configuration (config.yaml) has no generation step inside the Component, so zero-diff regeneration of it could not be run; its equality with the Preferences, the Schema and the Target was established by comparison instead."
+          - "The interface guard blocked three shell commands that contained a heredoc and no search or listing of the Executor Module; I did not rephrase around the guard and made those edits with the file-editing tool instead."
+          - "Open Questions OQ-007-1 (stored identity versus Model refusing a supplied Auto Increment value) and OQ-007-2 (placeholder password of the inactive PostgreSQL Instance copied from the Preferences) remain Human decisions; Review observed both and judged the work against the current choices."
+    - id: "010"
+      skill: "my-interface-implement"
+      event: "implement"
+      outcome: "blocked"
+      started_at: "2026-10-08T05:49:07Z"
+      completed_at: "2026-10-08T05:56:02Z"
+      duration: "6:55"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      open_questions: ["OQ-011-1", "OQ-011-2"]
+      blockers: ["BL-012-1"]
+      report: "Coordinated phase P3 (argument 3) in order: Plan (011) completed, Develop (012) blocked, Review (013) not satisfied. Config was valid, so Configure was not invoked. Develop completed 2 of 12 Tasks and stopped on Blocker BL-012-1 (Database publishes no class-versus-instance information for the Entity Service to mirror); Review still ran on the Source that exists and recorded 10 Findings of missing evidence with that one root cause. 2 unique Open Questions and 1 Blocker remain associated; the Blocker needs a Human decision about Database."
+      data:
+        phases: ["P3"]
+        configure_invoked: false
+        phase_resolution: "Argument 3 resolved to the Target phase with id P3 (Phase 3)."
+        operations:
+          - phase: "P3"
+            plan: {log_entry: "011", outcome: "completed"}
+            develop: {log_entry: "012", outcome: "blocked"}
+            review: {log_entry: "013", outcome: "not satisfied"}
+        aggregate:
+          open_questions: 2
+          blockers: 1
+    - id: "011"
+      skill: "my-interface-plan"
+      parent_id: "010"
+      phase: "P3"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-10-08T05:49:26Z"
+      completed_at: "2026-10-08T05:51:57Z"
+      duration: "2:31"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      open_questions: ["OQ-011-1", "OQ-011-2"]
+      blockers: []
+      decisions: []
+      report: "Planned phase P3 (Logic): 1 Plan, 6 Groups, 12 Tasks, all todo; dependencies explicit and acyclic, including the Model and Database Interface results of P1 and P2; Plan Config verified. Planning progress for P3 set to completed."
+      data:
+        phase_resolution: "Invocation argument P3 is the Target phase with id P3."
+        changes:
+          - kind: "added"
+            what: "Plan P3 with Groups P3-G1 to P3-G6 and Tasks P3-G1-T1 to P3-G6-T2 (12 Tasks)"
+            reason: "No Plan existed for P3; decomposed from the Logic Definition, the fixed Entity Service Definition and Preferences, and the Target definitions."
+          - kind: "preserved"
+            what: "Plans P1 and P2 with all 55 of their Tasks, statuses and Task Logs"
+            reason: "They are unaffected by Planning P3; verified equal before and after."
+          - kind: "removed"
+            what: "none"
+            reason: "No earlier P3 Tasks existed."
+          - kind: "replaced"
+            what: "none"
+            reason: "No developed P3 Tasks existed."
+        open_questions:
+          - id: "OQ-011-1"
+            question: "The Entity Service Preferences import Model's Interface as an interface file inside the Model package, and the Logic Preferences import each Service as an interface file, while the Model and Database Components, as realized in P1 and P2, publish their Interface at the package root and have no interface file of that name."
+            current_choice: "Plan the work as the Logic and Entity Service Definitions state it; Develop imports each provider Interface from where it is actually published (the package root), which satisfies the rule that a consumer locates a provider only through its published Interface."
+            needs_human: "Decide whether Model and Database should have a separate interface file, as their Directory Structures and the consumers Preferences suggest, or whether the package root is the intended Interface location."
+          - id: "OQ-011-2"
+            question: "The Entity Service mirrors Database's Entity Operations and must tell a parameter that names the Entity class from one that carries an Entity instance, and copy each Operation's docstring. Database's published Interface methods are annotated generically and have no docstrings, so that distinction and text are not published in code."
+            current_choice: "Plan the mirroring as the Definition states it; Develop must derive the distinction from what Database publishes and its Preferences without naming Actions by hand, and records the Task P3-G2-T1 as blocked if that is impossible."
+            needs_human: "Decide whether Database should publish precise parameter kinds and docstrings (a change to the finished P2 result) or whether the Entity Service should derive them another way."
+    - id: "012"
+      skill: "my-interface-develop"
+      parent_id: "010"
+      phase: "P3"
+      event: "develop"
+      outcome: "blocked"
+      started_at: "2026-10-08T05:53:27Z"
+      completed_at: "2026-10-08T05:54:13Z"
+      duration: "46 seconds"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      open_questions: ["OQ-011-1", "OQ-011-2"]
+      blockers: ["BL-012-1"]
+      decisions:
+        - "P3-G1-T1"
+        - "P3-G4-T3"
+      report: "Developed what phase P3 (Logic) allows: the Logic package (P3-G1-T1) and the republished Database groups of the Entity Service Interface (P3-G4-T3) are done. P3-G2-T1 (mirror every Entity Operation of Database as an Action) is blocked because Database publishes no class-versus-instance information for its entity parameters; the other nine Tasks depend on it and were not eligible. Development progress for P3 set to blocked."
+      data:
+        component: "Logic"
+        tasks:
+          completed: 2
+          blocked: 1
+          not_eligible: 9
+        output_summary: "Logic package with manifest and lock metadata; the Entity Service Interface file holding the republished Database groups."
+        blockers:
+          - id: "BL-012-1"
+            task: "P3-G2-T1"
+            condition: "Entity Service must mirror Database's Entity Operations, removing the parameter that names the Entity class and keeping the one that carries an Entity instance, deriving this only from what Database Interface publishes and never by listing Actions by hand. The published methods annotate every entity parameter as Any and carry no docstrings, so the distinction is not available (add and update take an instance, the others a class)."
+            resolutions_considered:
+              - "Hand-list the Operations that take an instance: forbidden by the Entity Service Definition."
+              - "Probe Database with test calls at load: loading must perform no check and the probe is fragile."
+              - "Read Database Preferences at runtime: a deployed library cannot depend on Interface sources."
+              - "Annotate Database's published parameters (type for class parameters, the Entity instance for add and update) and add docstrings: a small behaviour-neutral change to the finished P2 result, outside the Logic Component."
+            needs_human: "Authorize reopening P2 for that change (a Plan of P2 with a replacing Task, then Develop and Review), or choose another way for Entity Service to learn the parameter kinds; then run Implement for P3 again."
+        open_questions:
+          - "OQ-011-1 (Interface placement and import form of Model and Database): Logic imports each provider Interface from its package root, where it is published."
+          - "OQ-011-2 (parameter kinds and docstrings not published by Database): this is the cause of BL-012-1."
+    - id: "013"
+      skill: "my-interface-review"
+      parent_id: "010"
+      phase: "P3"
+      event: "review"
+      outcome: "not satisfied"
+      started_at: "2026-10-08T05:55:01Z"
+      completed_at: "2026-10-08T05:55:37Z"
+      duration: "36 seconds"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      open_questions: ["OQ-011-1", "OQ-011-2"]
+      blockers: ["BL-012-1"]
+      report: "Reviewed phase P3 (Logic) against Plan P3 and the Logic and Entity Service Review categories. The two developed Tasks hold: the Logic package installs cleanly and the republished Database groups are identical objects. The other ten Tasks have no generated result, so their acceptance cannot be established; ten Findings of missing evidence are recorded and cannot be resolved by Review because the root cause is the Blocker BL-012-1. Outcome: not satisfied."
+      data:
+        scope: "Phase P3 (Logic and its fixed Entity Service): Plan P3 with 12 Tasks; Logic and Entity Service Review categories; technical conformance of the Source that exists. Persistent testing is disabled for Logic, so all verification was transient and nothing was added to the Component."
+        findings:
+          - id: "F-001"
+            state: "open"
+            expected: "Acceptance of P3-G2-T1: the shared structure has exactly one Action per Entity Operation of Database, in Database's order and under the same name, none for the command or Setup Operations, each with the Operation's parameter names, order and defaults without the parameter that names the Entity."
+            observed: "No structure holding Actions exists in the Logic Source; the Task is blocked by BL-012-1. Independent observation of the Database Interface group: the entity parameter of every Entity Operation is annotated Any and no method has a docstring, so nothing published distinguishes the Operations that take an Entity class from those that take an Entity instance."
+            evidence: "Logic Source holds only the package entrypoint and the Entity Service Interface file with three republished groups; Task status blocked with blocker BL-012-1; type-hint and docstring inspection of all 13 Database Interface methods."
+          - id: "F-002"
+            state: "open"
+            expected: "Acceptance of P3-G2-T2: Actions return what the same Database call returns, raise the same kind of error, share one Database object per Child Service, and reach nothing else of Database."
+            observed: "No Action exists, so nothing can be observed."
+            evidence: "Logic Source listing; Task status todo, dependent on P3-G2-T1."
+          - id: "F-003"
+            state: "open"
+            expected: "Acceptance of P3-G2-T3: an Action given a record of another Entity raises the Invalid Input error before Database is called, a record of the bound Entity is forwarded, Field values are never examined."
+            observed: "No Action exists, so nothing can be observed."
+            evidence: "Logic Source listing; Task status todo, dependent on P3-G2-T2."
+          - id: "F-004"
+            state: "open"
+            expected: "Acceptance of P3-G3-T1: exactly one Child Service for every Entity of Model's Entity Collection, each binding its own Entity, offering every Action, with valid unique names following the configured patterns."
+            observed: "No Child Service exists."
+            evidence: "Logic Source listing (no unit for any Entity); Task status todo."
+          - id: "F-005"
+            state: "open"
+            expected: "Acceptance of P3-G4-T1: the Service group holds one Child Service per Entity of the Collection under the Entity's name."
+            observed: "The Entity Service Interface publishes no Service group."
+            evidence: "Published names of the Entity Service Interface: database_error, database_instance, database_value only."
+          - id: "F-006"
+            state: "open"
+            expected: "Acceptance of P3-G4-T2: the Model group holds the identical Entity of every Child Service under the Child's name."
+            observed: "The Entity Service Interface publishes no Model group."
+            evidence: "Published names of the Entity Service Interface."
+          - id: "F-007"
+            state: "open"
+            expected: "Acceptance of P3-G4-T4: the Interface publishes exactly the Service, Model, Value, Instance and Error groups and nothing else, and loading it opens no connection and creates no data or file."
+            observed: "Only the Value, Instance and Error groups are published; the Service and Model groups are missing. Loading creates nothing."
+            evidence: "Published names and the working directory after import from a clean install."
+          - id: "F-008"
+            state: "open"
+            expected: "Acceptance of P3-G5-T1: Logic's Interface publishes exactly one entry per listed Service under its configured name, as the identical Interface object."
+            observed: "Logic's package entrypoint publishes nothing; the Entity entry does not exist."
+            evidence: "Names published by the Logic package after import: none beyond the services sub-package."
+          - id: "F-009"
+            state: "open"
+            expected: "Acceptance of P3-G6-T1: complete Entity Service documentation with a running example for every group and member."
+            observed: "No Entity Service documentation exists."
+            evidence: "Logic Source listing."
+          - id: "F-010"
+            state: "open"
+            expected: "Acceptance of P3-G6-T2: complete Logic root documentation in the seven required sections with running examples and Service links."
+            observed: "The Logic documentation file holds only a one-line title placeholder."
+            evidence: "Logic root documentation file content."
+        resolution_status: "No Finding could be resolved by Review: each needs generated Source that Develop has not produced because of Blocker BL-012-1, and Review changes only an existing implementation and its evidence. Review stopped further work on these conditions."
+        accepted_tasks:
+          - "P3-G1-T1: held - the package installs from a clean location together with Model and Database from their locks, importing it creates no file, data or connection, and its dependency set is consistent."
+          - "P3-G4-T3: held - the Value, Instance and Error groups are the identical objects Database publishes under their own names, with no member taken out on its own."
+        logic_review_category:
+          - "Logic Interface publishes exactly one entry for every listed Service under its configured name, and nothing else: not established (see F-008)."
+          - "Every entry is the identical Interface object of its Service: not established (no entry)."
+          - "No Service other than Entity Service imports Database Interface: held (the only Service imports it)."
+          - "No Service imports Logic Interface: held."
+          - "No two Services share a name or directory: held (one Service)."
+        entity_service_review_category:
+          - "Entity Service Interface publishes exactly Service, Model and the three Database groups: not established (see F-005 to F-007)."
+          - "Every Model entry and republished group is the identical object its source publishes: held for the three Database groups; not established for Model."
+          - "Base mirrors every Entity Operation in Database's order with the same name; parameter names, order and defaults; Actions return and raise unchanged and reject another Entity's instance; one Database object: not established (see F-001 to F-003)."
+          - "Every Child Service follows the configured patterns and binds exactly its own Entity: not established (see F-004)."
+          - "Loading the Interface opens no connection and creates no data or file: held for the Source that exists."
+        technical_conformance:
+          format: "passed"
+          lint: "passed"
+          static_type: "passed"
+          compile_and_import: "passed (compiles; imports with warnings as errors)"
+          build: "passed without warnings"
+          installability: "passed (Model, Database and Logic synchronized from their locks in a clean location; import creates nothing)"
+          dependencies: "lock consistent and installed packages compatible; every direct import declared; the declared Model dependency is not yet imported because the Tasks that use it are not done"
+          zero_diff_regeneration: "nothing to regenerate yet beyond the package skeleton"
+          persistent_testing: "disabled for Logic; verification was transient and nothing was added to the Component."
+        observations_about_the_review:
+          - "Review independently re-observed the blocking condition (all 12 Entity Operations annotated Any, no docstrings, group docstring only) and judged it genuine; it did not look for a way to derive the distinction by probing Database or listing Operations, because the Entity Service Definition forbids listing Actions by hand."
+          - "Open Question OQ-011-1 (Interface placement of Model and Database) was not a cause of any Finding; the package-root imports Logic uses work."
+          - "Ten Findings of missing evidence share one root cause; closing BL-012-1 (a Human decision about Database) is the next step before Develop and Review can proceed."

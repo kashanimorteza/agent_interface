@@ -1,0 +1,28 @@
+[project]
+name = "database"
+version = "0.1.0"
+description = "Persistence and data-access gateway for the Trading Assistant."
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "model",
+    "pyyaml>=6.0.3",
+    "sqlalchemy>=2.1.4",
+    "sqlmodel>=0.0.48",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.23,<0.13"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-root = ""
+
+[tool.uv.sources]
+model = { path = "../model", editable = true }
+
+[dependency-groups]
+dev = [
+    "ruff>=0.16.10",
+    "ty>=0.0.85",
+]
