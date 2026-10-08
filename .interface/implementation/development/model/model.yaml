@@ -2,10 +2,10 @@
 meta:
   path: ".interface/implementation/development/model/model.yaml"
   path_note: "The Preferences layer of the Model Component."
-  purpose: "Configurable component, stable Interface realization, architecture, language, Entity defaults, and documentation choices for Model."
+  purpose: "Configurable component, the entities of architecture with their Interface contract, Entity defaults, and documentation choices, and the language profile for Model."
   standard: "Agent Project Interface"
-  version: "23.0"
-  updated: "2026-10-02"
+  version: "26.0"
+  updated: "2026-10-08"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -16,25 +16,21 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read the content sections in read_order."
+  consumption: "Read the content sections in read_order; realize the entities of architecture through the selected language profile in development."
   selection: "Preserve explicit compatible Target choices. Use these Preferences for choices the Target leaves unstated; for anything still unset, follow Development's resolution order."
   version_resolution: "Resolve Model-owned versioned technical items from the selected language profile in development. Resolve latest-compatible to a concrete compatible version and preserve that resolution in dependency or lock metadata."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - settings
-  - interface
   - architecture
   - development
-  - documentation
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  settings: "Model's identity, the default properties of id and is_active, and the recognized Sensitivity Markers."
-  interface: "The Model Interface Schema version and the names of the published symbols."
-  architecture: "The physical names of Model's directories and files."
-  development: "Development capabilities, the selected language and its realization profile, and the selected generated-identifier algorithm with its alternatives."
-  documentation: "The documentation file, its section order, the content of each section, and the rules every section follows."
+  settings: "Model's identity."
+  architecture: "The entities of the Architecture tree — Entity with the default properties of id and is_active, its Value Generation with the selected generated-identifier algorithm and its alternatives, and its Sensitivity with the recognized markers; Interface with its contract version, publication prefix, and published symbol names, and Documentation with its file, location, and format."
+  development: "Development capabilities and the selected language and its realization profile."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
@@ -45,39 +41,44 @@ content:
       type: library
       directory: model
       package: model
-    entity:
-      defaults:
-        identity:
-          type: integer
-          nullable: false
-          immutable: true
-          value_generation: auto_increment
-        activity:
-          type: boolean
-          nullable: false
-          default: true
-          immutable: false
-      sensitivity_markers:
-      - password
-      - sensitive
-
-  # <!-------------------------------------------- interface -->
-  interface:
-    schema: .interface/foundation/schema/model-interface.yaml
-    contract_version: '2.1'
-    symbols:
-      entity_collection: entities
-      entity_declaration: declaration
 
   # <!-------------------------------------------- architecture -->
   architecture:
-    directories:
-      entity: entity
-      core: core
-    files:
-      interface: interface
-      declaration: declaration
-      foundation: foundation
+    entities:
+      entity:
+        defaults:
+          identity:
+            type: integer
+            nullable: false
+            immutable: true
+            value_generation: auto_increment
+          activity:
+            type: boolean
+            nullable: false
+            default: true
+            immutable: false
+        value_generation:
+          generated_identifier:
+            selected: uuid4
+            options:
+              uuid4: {}
+              uuid1: {}
+              ulid: {}
+        sensitivity:
+          markers:
+          - password
+          - sensitive
+      interface:
+        contract_version: '3.0'
+        prefix: model
+        naming: every published name is prefix, an underscore, and the name in lower snake_case, such as model_user and model_entities; the Entity itself keeps its own name
+        symbols:
+          entity_collection: entities
+          entity_declaration: declaration
+      documentation:
+        file: README.md
+        location: the Component root
+        format: markdown
 
   # <!-------------------------------------------- development -->
   development:
@@ -93,6 +94,7 @@ content:
             entity: PascalCase
             fields: snake_case
             modules: snake_case
+            published_names: snake_case
           symbols:
             declaration: Declaration
             foundation: Foundation
@@ -155,38 +157,4 @@ content:
               requirement: required
               activation: when_selected
               purpose: Apply SQLModel guidance while realizing and reviewing Entities.
-    generated_identifier:
-      selected: uuid4
-      options:
-        uuid4: {}
-        uuid1: {}
-        ulid: {}
 
-  # <!-------------------------------------------- documentation -->
-  documentation:
-    file: README.md
-    location: the Component root
-    format: markdown
-    order:
-    - overview
-    - interface
-    - declaration
-    - foundation
-    - setup
-    - use
-    - verify
-    - troubleshooting
-    sections:
-      overview: Give one concise introduction and one simple example using one Entity.
-      interface: Explain the Entity Exports and the Entity Collection, then list every Entity once in Target order with its description, complete Field table, and Entity Metadata outside that table. Show one consumer importing an Entity directly and one enumerating the Entity Collection, rather than using wildcard exports, __all__, reflection, directory scanning, or internal paths.
-      declaration: Show how a consumer reads one Entity's public Declaration, including Fields, Primary Key, Relations, Uniqueness Constraints, and Indexes, through the Entity itself.
-      foundation: Give one example for each Foundation capability, then one complete Entity-to-JSON-text-to-Entity round trip.
-      setup: Give the setup steps for the selected technology.
-      use: Show use that follows the Entity Exports and the Entity Collection.
-      verify: Verify Schema-conformant Interface shape, exact Entity Export membership, Entity Collection membership and order and its correspondence with the Exports, actual Entity and Declaration references, immutability, side-effect freedom, representative Entity construction, Declaration access, and a lossless JSON text round trip.
-      troubleshooting: Cover Model concerns only.
-    rules:
-    - Define no other Component.
-    - Expose no private helper as contract.
-    - Retain no stale meaning.
-    - Contain no real credential or secret.

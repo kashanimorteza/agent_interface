@@ -43,9 +43,9 @@ A consumer imports Interface, selects a DatabaseInstance or accepts the default,
 
 - **Engine** — a declared database technology used by one or more Instances.
 - **Instance** — one named database connection and storage identity, including its Engine, active state, database identity, connection values, and options.
-- **DatabaseInstance** — the public enumeration whose members identify exactly the active configured Instances; it contains no connection credentials.
+- **DatabaseInstance** — the public enumeration whose members identify exactly the active configured Instances; Interface publishes it as the Instance group itself, and it contains no connection credentials.
 - **Database Configuration** — the generated runtime configuration, the sole runtime source for Engines, Instances, Settings, and Initial Data.
-- **Database Interface Schema** — the versioned structure that fixes every public Database contract: the Operations and Setup Operations with their inputs, effects, and results, the query vocabulary, values, results, and error meanings.
+- **Interface contract** — the versioned public Database contract, declared in `architecture` in Database Preferences: the Operations and Setup Operations with their inputs, effects, and results, the query vocabulary, values, results, and error meanings.
 - **Database Configuration Schema** — the versioned structure that fixes the shape of the Database Configuration.
 - **Entity Operation** — an Operation scoped to one Entity.
 - **Command Operation** — an Operation scoped to the selected Instance rather than one Entity.
@@ -58,117 +58,45 @@ A consumer imports Interface, selects a DatabaseInstance or accepts the default,
 ## Architecture
 
 ```text
-Directory Structure
-└── database/
-    ├── database/
-    │   ├── interface
-    │   ├── core/
-    │   └── engine/
-    ├── scripts/
-    ├── db/
-    ├── config
-    └── README
-```
-
-The Package holds only importable source. Configuration, Storage, Entry Points, and Documentation sit beside it at the Component root, because configuration changes with the environment, stored data changes at runtime, and entry points are run by hand rather than imported.
-
-Database Preferences own the physical names in `architecture`, and the language, packages, Engines, Instance defaults, query defaults, technical realization, and documentation choices; these selections realize the responsibilities below without changing them, and implementation applies them to the current Target.
-
-<!-------------------------- Interface -->
-### Interface — `interface`
-
-The only public entry point, in the shape the Database Interface Schema that Database Preferences reference defines. It publishes exactly five groups, declared in the Interface section of Database Preferences, each importable by a consumer, and nothing else:
-
-- **Database** — the class a consumer creates once to call every Entity Operation and Command Operation.
-- **Setup** — the class a consumer creates to call every Setup Operation.
-- **Value** — what a consumer passes to an Operation: the values of Condition, Sort, and Instance.
-- **Result** — what a consumer reads back: every Result.
-- **Error** — every Error, so a consumer can catch it.
-
-It declares and forwards behavior and implements no Engine work.
-
-<!-------------------------- Core -->
-### Core — `core/`
-
-Core owns shared validation, default resolution, Instance selection, routing, and result normalization for all public requests, and holds the entities of the Conceptual Structure. It loads and validates the Database Configuration and resolves each Instance's connection from it; an invalid Configuration or an unresolved Instance selection fails loading before any connection is opened. It contains no Instance-specific connection or storage implementation.
-
-<!-------------------------- Engine -->
-### Engine — `engine/`
-
-Engine contains exactly one unit for every Engine used by at least one active Instance, named from that Engine. Instances that use the same Engine share its unit and differ only in their connection.
-
-Each unit implements every Entity Operation and Command Operation, and the Engine capabilities the Setup Operations require, and returns raw results. Its driver, connection arguments, and storage kind come from the Engine's entry in Database Preferences.
-
-<!-------------------------- Entry Points -->
-### Entry Points — `scripts/`
-
-Entry Points holds exactly three scripts, one for each Setup Operation — `create_tables`, `insert_initial_data`, and `prepare` — so a person can prepare storage by hand. Each runs its Setup Operation through Interface on the default Instance, reports its result, and holds no logic of its own. When after-generation preparation is enabled in Database Preferences, generation runs `prepare` the same way.
-
-<!-------------------------- Storage -->
-### Storage — `db/`
-
-The place where a file-backed database keeps its files. The database file of one file-backed Instance is named by that Instance's database value.
-
-<!-------------------------- Configuration -->
-### Configuration — `config`
-
-The generated Database Configuration, the sole runtime source for Engines, Instances, Settings, and Initial Data. Its structure is fixed by the Database Configuration Schema that Database Preferences reference.
-
-<!-------------------------- Documentation -->
-### Documentation — `README`
-
-The root documentation explaining every public contract, Instance selection, the Setup Operations, Initial Data, setup, use, verification, and Database-specific troubleshooting.
-
-Its sections, in this order:
-
-1. **Overview** — Give one short introduction and one simple example: create Database, then one add and one list.
-2. **Interface** — For each of the five groups Interface publishes, and every member and Operation in it with each of its parameters, explain what it is for and how to use it, with one example each. Cover every enumeration member, defaults, results, and errors.
-3. **Instances** — Explain active DatabaseInstance members, default selection, and Database-owned storage without exposing credentials.
-4. **Setup** — Give the setup steps for the selected technology.
-5. **Use** — Show every capability group used only through Interface, with Field references and enumeration members and never strings.
-6. **Setup Operations** — Explain manual `create_tables`, `insert_initial_data`, and `prepare` use, and that generation runs `prepare` automatically.
-7. **Initial Data** — List every Target-defined Initial Data record and state that Database inserts its values unchanged without security-based omission.
-8. **Verify** — Verify public import, Instance selection, query vocabulary, each capability group, persistent file location, and repeatable Setup Operations.
-9. **Troubleshooting** — Cover Database concerns only, including an inactive Instance, a difference between an existing Table and its Entity, and empty Initial Data values.
-
-
-<br>
-
-```text
-Conceptual Structure
+Database
 ├── Operation
-│   ├── Entity Operation
-│   │   ├── add
-│   │   ├── update
-│   │   ├── list
-│   │   ├── get_by_id
-│   │   ├── delete
-│   │   ├── enable
-│   │   ├── disable
-│   │   ├── count
-│   │   ├── sum
-│   │   ├── min
-│   │   ├── max
-│   │   └── truncate
-│   ├── Setup Operation
-│   │   ├── create_tables
-│   │   ├── insert_initial_data
-│   │   └── prepare
-│   └── Command Operation
-│       └── execute_command
 ├── Query
-│   ├── Condition
-│   ├── Sort
-│   └── Limit
-├── Instance
+├── Engine
+├── Error
 ├── Result
-└── Error
+├── Instance
+├── Interface
+├── Configuration
+└── Documentation
 ```
 
-Every entity below is declared in `architecture` in Database Preferences.
+Every entity below is declared in `architecture` in Database Preferences, which also own its physical names and placement, and the language, packages, Engines, Instance defaults, query defaults, technical realization, and documentation choices; these selections realize the responsibilities below without changing them, and implementation applies them to the current Target.
 
 <!-------------------------- Operation -->
 ### Operation
+
+```text
+Operation
+├── Entity Operation
+│   ├── add
+│   ├── update
+│   ├── list
+│   ├── get_by_id
+│   ├── delete
+│   ├── enable
+│   ├── disable
+│   ├── count
+│   ├── sum
+│   ├── min
+│   ├── max
+│   └── truncate
+├── Setup Operation
+│   ├── create_tables
+│   ├── insert_initial_data
+│   └── prepare
+└── Command Operation
+    └── execute_command
+```
 
 #### Entity Operation
 
@@ -185,6 +113,18 @@ Operations scoped to an Instance rather than one Entity.
 <!-------------------------- Query -->
 ### Query
 
+```text
+Query
+├── Condition
+│   ├── Filter
+│   ├── Operator
+│   └── Combination
+├── Sort
+│   ├── Order
+│   └── Direction
+└── Limit
+```
+
 Query is how a consumer narrows, orders, and bounds what an Operation reads: a Condition, a Sort, and a Limit. Its enumerations are closed member sets; a consumer imports and passes their members and values, and a string is never accepted in their place. A Field's declared Type is the Type its Field Declaration in Model carries, such as integer, string, or datetime. No checked form is published.
 
 #### Condition
@@ -199,20 +139,143 @@ The immutable Order a consumer builds, with its direction. Core checks each Orde
 
 A positive limit is the maximum returned count; zero or a negative limit means no limit.
 
-<!-------------------------- Instance -->
-### Instance
+<!-------------------------- Engine -->
+### Engine
 
-Which Instance a call runs on. Every Operation accepts an optional DatabaseInstance; when none is given, the call runs on the configured default Instance. DatabaseInstance has one member for every active configured Instance and none for an inactive one.
+```text
+Engine
+└── one unit per Engine in use
+```
 
-<!-------------------------- Result -->
-### Result
+Engine contains exactly one unit for every Engine used by at least one active Instance, named from that Engine. Instances that use the same Engine share its unit and differ only in their connection.
 
-The immutable results a consumer reads, each with its fields.
+Each unit implements every Entity Operation and Command Operation, and the Engine capabilities the Setup Operations require, and returns raw results. Its driver, connection arguments, and storage kind come from the Engine's entry in Database Preferences.
 
 <!-------------------------- Error -->
 ### Error
 
-The failure kinds declared in `architecture` in Database Preferences. Every realization keeps each kind distinguishable through the language's own error mechanism: each is published as its own error, derived from one base error, and its name belongs to the selected language profile. No error carries a connection value or credential.
+```text
+Error
+├── invalid_configuration_or_instance
+├── inactive_instance
+├── invalid_input_or_field
+├── declaration_incompatibility
+├── connection_failure
+├── execution_failure
+└── incomplete_lifecycle
+```
+
+The failure kinds declared in `architecture` in Database Preferences. Every realization keeps each kind distinguishable through the language's own error mechanism: each is its own error inside the Error group, derived from one base error, and its name belongs to the selected language profile. No error carries a connection value or credential.
+
+<!-------------------------- Result -->
+### Result
+
+```text
+Result
+├── CommandResult
+└── SetupResult
+```
+
+The immutable results a consumer reads, each with its fields.
+
+<!-------------------------- Instance -->
+### Instance
+
+```text
+Instance
+└── one member per active configured Instance
+```
+
+Which Instance a call runs on. Every Operation accepts an optional DatabaseInstance; when none is given, the call runs on the configured default Instance. DatabaseInstance has one member for every active configured Instance and none for an inactive one.
+
+<!-------------------------- Interface -->
+### Interface
+
+```text
+Interface
+├── Interface
+├── Setup
+├── Value
+├── Instance
+├── Result
+└── Error
+```
+
+The only public entry point, in the shape of the Interface contract. It publishes exactly six groups, declared in the Interface entity of `architecture` in Database Preferences, and nothing else. Each group is named by the prefix set there, an underscore, and its key, such as `database_error`. A consumer imports a group and uses the members inside it; no member is published on its own:
+
+- **Interface** — the class a consumer creates once to call every Entity Operation and Command Operation, such as `database_interface`.
+- **Setup** — the class a consumer creates to call every Setup Operation, such as `database_setup`.
+- **Value** — what a consumer passes to an Operation: the values of Condition and Sort, such as `database_value`.
+- **Instance** — the active Instances a call can run on; the group is itself the DatabaseInstance enumeration, such as `database_instance`.
+- **Result** — what a consumer reads back: every Result, such as `database_result`.
+- **Error** — every Error, so a consumer can catch it, such as `database_error`.
+
+It declares and forwards behavior and implements no Engine work.
+
+<!-------------------------- Configuration -->
+### Configuration
+
+The generated Database Configuration, the sole runtime source for Engines, Instances, Settings, and Initial Data. Its structure is fixed by the Database Configuration Schema that Database Preferences reference.
+
+<!-------------------------- Documentation -->
+### Documentation
+
+```text
+Documentation
+├── Overview
+├── Interface
+├── Instances
+├── Setup
+├── Use
+├── Setup Operations
+├── Initial Data
+├── Verify
+└── Troubleshooting
+```
+
+The root documentation explaining every public contract, Instance selection, the Setup Operations, Initial Data, setup, use, verification, and Database-specific troubleshooting.
+
+Its sections, in this order:
+
+1. **Overview** — Give one short introduction and one simple example: create Database, then one add and one list.
+2. **Interface** — For each of the six groups Interface publishes, and every member and Operation in it with each of its parameters, explain what it is for and how to use it, with one example each. Cover every enumeration member, defaults, results, and errors.
+3. **Instances** — Explain active DatabaseInstance members, default selection, and Database-owned storage without exposing credentials.
+4. **Setup** — Give the setup steps for the selected technology.
+5. **Use** — Show every capability group used only through Interface, with Field references and enumeration members and never strings.
+6. **Setup Operations** — Explain manual `create_tables`, `insert_initial_data`, and `prepare` use, and that generation runs `prepare` automatically.
+7. **Initial Data** — List every Target-defined Initial Data record and state that Database inserts its values unchanged without security-based omission.
+8. **Verify** — Verify public import, Instance selection, query vocabulary, each capability group, persistent file location, and repeatable Setup Operations.
+9. **Troubleshooting** — Cover Database concerns only, including an inactive Instance, a difference between an existing Table and its Entity, and empty Initial Data values.
+
+<!-------------------------- Directory Structure -->
+### Directory Structure
+
+```text
+Directory Structure
+└── database/
+    ├── database/
+    │   ├── interface
+    │   ├── core/
+    │   └── engine/
+    ├── scripts/
+    ├── db/
+    ├── config
+    └── README
+```
+
+The Package holds only importable source. Configuration, Storage, Entry Points, and Documentation sit beside it at the Component root, because configuration changes with the environment, stored data changes at runtime, and entry points are run by hand rather than imported.
+
+#### Core
+
+Core owns shared validation, default resolution, Instance selection, routing, and result normalization for all public requests. It loads and validates the Database Configuration and resolves each Instance's connection from it; an invalid Configuration or an unresolved Instance selection fails loading before any connection is opened. It contains no Instance-specific connection or storage implementation.
+
+#### Entry Points
+
+Entry Points holds exactly three scripts, one for each Setup Operation — `create_tables`, `insert_initial_data`, and `prepare` — so a person can prepare storage by hand. Each runs its Setup Operation through Interface on the default Instance, reports its result, and holds no logic of its own. When after-generation preparation is enabled in Database Preferences, generation runs `prepare` the same way.
+
+#### Storage
+
+The place where a file-backed database keeps its files. The database file of one file-backed Instance is named by that Instance's database value.
 
 <br>
 
@@ -273,17 +336,23 @@ Every Principle below is mandatory.
 <!-------------------------- Interface -->
 ### Interface
 
-#### Interface conforms to the Database Interface Schema
+#### Interface conforms to the Interface contract
 
-**Rule:** Every realization of Interface conforms to the versioned Database Interface Schema, which fixes every public contract, each Operation's and Setup Operation's input, effect, and result, the query vocabulary, values, results, error meanings, and what Interface never publishes. Consumers pass Entities, Fields, Instances, and vocabulary as imported values, never as strings.
+**Rule:** Every realization of Interface conforms to the versioned Interface contract, which fixes every public contract, each Operation's and Setup Operation's input, effect, and result, the query vocabulary, values, results, error meanings, and what Interface never publishes. Consumers pass Entities, Fields, Instances, and vocabulary as imported values, never as strings.
 **Why:** Consumers depend on one contract instead of reinterpreting each realization, and typed values are checked before any storage is touched.
-**Boundary:** Interface declares and forwards public behavior; it does not select a driver or implement Engine work. The Database Interface Schema is built from the Architecture and Interface sections of Database Preferences and this Definition; when either changes a public contract, the Schema is rebuilt from them and its version is raised.
+**Boundary:** Interface declares and forwards public behavior; it does not select a driver or implement Engine work. The Interface contract lives only in `architecture` in Database Preferences and this Definition; changing a public contract, its members, or its meaning requires raising `contract_version` and a consumer review.
 
 #### Interface contracts keep one fixed shape
 
-**Rule:** Every Operation and Setup Operation takes exactly its listed parameters, by those names and in that order, with every parameter after entity, id, field, and command optional and instance always last. Every Field in a Filter, Order, or aggregate is validated against the given Entity before any Instance is accessed. Database holds the Entity Operations and Command Operations, and Setup holds the Setup Operations; no other wrapper is added. Stored enumeration defaults use canonical member names, and an unknown name fails loading.
+**Rule:** Every Operation and Setup Operation takes exactly its listed parameters, by those names and in that order, with every parameter after entity, id, field, and command optional and instance always last. Every Field in a Filter, Order, or aggregate is validated against the given Entity before any Instance is accessed. The Interface group holds the Entity Operations and Command Operations, and the Setup group holds the Setup Operations; no other wrapper is added. Stored enumeration defaults use canonical member names, and an unknown name fails loading.
 **Why:** A consumer calls the same shape on every Instance, Engine, and language, and a bad Field fails before any storage is touched.
 **Boundary:** Changing Entities, Instances, Engines, languages, packages, or internal implementation never changes this shape; an incompatible technology fails generation rather than changing Database meaning.
+
+#### Interface publishes only prefixed groups
+
+**Rule:** Interface publishes only its groups, each named by the prefix in Database Preferences, an underscore, and the group key. A consumer imports a group and reaches every Operation, value, Instance, Result, and Error through it; no member is published on its own.
+**Why:** A consumer imports a few fixed names instead of one name per member, and one prefix change renames every group consistently.
+**Boundary:** The prefix and group keys change only through the Interface entity of `architecture` in Database Preferences; member names inside a group never take the prefix.
 
 #### Query defaults are deterministic
 
@@ -377,7 +446,7 @@ Every Principle below is mandatory.
 
 #### Database conformance covers every Database contract
 
-**Rule:** Database output is conformant only when it shows exact Architecture, one DatabaseInstance member per active Instance, one Engine unit per Engine in use, complete Interface publication conforming to the Database Interface Schema, valid config against its Schema, an active default Instance, Database-owned file storage resolution, complete Engine contracts, Documentation, and zero-diff regeneration.
+**Rule:** Database output is conformant only when it shows exact Architecture, one DatabaseInstance member per active Instance, one Engine unit per Engine in use, complete Interface publication conforming to the Interface contract, valid config against its Schema, an active default Instance, Database-owned file storage resolution, complete Engine contracts, Documentation, and zero-diff regeneration.
 **Why:** These are the contracts consumers rely on; a check that omits one lets a broken Database look complete.
 **Boundary:** Review reads dependencies as needed but changes, generates, builds, tests, and documents only Database output. The Review Operation establishes this; Plan and Develop check nothing.
 
@@ -385,8 +454,8 @@ Every Principle below is mandatory.
 
 **Rule:** Review establishes Database conformance through these observations, every one of them on every review:
 
-- Interface publishes exactly the public contracts of the Database Interface Schema and nothing else.
-- Every Entity Operation, Command Operation, and Setup Operation has the signature and result the Schema states, including the optional DatabaseInstance.
+- Interface publishes exactly the public contracts of the Interface contract and nothing else.
+- Every Entity Operation, Command Operation, and Setup Operation has the signature and result the Interface contract states, including the optional DatabaseInstance.
 - Each enumeration holds exactly its Schema members.
 - DatabaseInstance holds exactly one member per active configured Instance and none for an inactive one.
 - A call without a DatabaseInstance runs on the configured default Instance.
@@ -431,15 +500,20 @@ Every Principle below is mandatory.
 <!-------------------------- Interface -->
 ### Interface
 
-**Interface conforms to the Database Interface Schema**
+**Interface conforms to the Interface contract**
 
-- **Must** — conform every realization to the Database Interface Schema and accept only imported values where the Schema forbids strings.
-- **Never** — expose Core, Engine, configuration, credentials, or storage paths, or change Interface structure without a Schema version change.
+- **Must** — conform every realization to the Interface contract and accept only imported values where the contract forbids strings.
+- **Never** — expose Core, Engine, configuration, credentials, or storage paths, or change Interface structure without raising `contract_version`.
 
 **Interface contracts keep one fixed shape**
 
 - **Must** — take exactly the listed parameters in order, with instance last, and validate every Field before any Instance is accessed.
 - **Never** — let a change of Entity, Instance, Engine, language, or package change the Interface shape.
+
+**Interface publishes only prefixed groups**
+
+- **Must** — publish each group as prefix, underscore, and key, and reach every member through its group.
+- **Never** — publish a member on its own or put the prefix on a member name.
 
 **Query defaults are deterministic**
 

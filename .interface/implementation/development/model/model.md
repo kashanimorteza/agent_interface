@@ -65,32 +65,243 @@ Each Entity lives in its own unit and exposes its Declaration and the shared JSO
 
 ```text
 Model
-├── Interface       ← every Entity by name and the Entity Collection, in the shape the Model Interface Schema defines
-├── Entity          ← one unit per Target Entity
-└── Core
-    ├── Declaration ← the public logical contract
-    └── Foundation  ← the shared JSON conversion
+├── Entity
+├── Interface
+└── Documentation
 ```
 
-Model Preferences own configurable names, language, package, naming, symbols, method names, architecture, technical realization, Field defaults, and documentation choices; these selections realize the responsibilities in Architecture without changing them. The shape of Interface belongs to the Model Interface Schema.
+Every entity below is declared in `architecture` in Model Preferences, which also own the configurable names, language, package, naming, symbols, method names, technical realization, Field defaults, and documentation choices; these selections realize the responsibilities below without changing them.
 
-### Interface
-
-The package-root entrypoint through which every Entity is published, in the shape the Model Interface Schema defines. It meets these needs:
-
-1. **Complete** — exactly one Entity Export for every Target Entity, and the Entity Collection holding every Target Entity in Target order, changing when the Target changes.
-2. **Actual** — each export and each Collection item is the actual Entity, exposing its own actual Declaration, never a copy.
-3. **Nothing else** — nothing beyond these is published, and loading Interface has no side effect.
-
-The exact shape of these needs is fixed by the Model Interface Schema, which is built from them. These needs are the reference: when the two differ, the Schema is corrected to match them.
-
+<!-------------------------- Entity -->
 ### Entity
 
-The public area containing exactly one unit for every Entity. Each Entity exposes its own complete Declaration and the shared Foundation capabilities.
+```text
+Entity
+├── Declaration
+├── Validation
+├── Conversion
+└── Storage Mapping
+```
 
-### Core
+The public area containing exactly one unit for every Entity. Each Entity exposes its own complete Declaration and the shared Foundation capabilities. Every Entity carries the mandatory Identity (`id`) and Activity Field (`is_active`), whose default properties come from Model Preferences.
 
-The shared area containing the public Declaration and Foundation contracts plus any private base definitions and helpers shared across Entities. Declaration is the public structured contract for Entity and Field meaning; Foundation is the public shared conversion contract between an Entity and its JSON Object.
+Every Entity is realized in the same layers, from the most general to the most specific:
+
+1. **Base** — private and shared: realizes Validation for every Entity on top of the selected modeling package.
+2. **Foundation** — public and shared: extends Base with Conversion.
+3. **Entity unit** — one per Entity: holds its Declaration as a read-only member of its type, and that type, which extends Foundation and declares every Field in Declaration order.
+
+Each Field of the type is realized from its Field Declaration and its Entity's Metadata through Storage Mapping, so value rules are written once, in the Declaration, and never repeated beside it. When an Entity type is defined, Base checks that its type name and table name equal the Entity's physical name and that its Fields are exactly the Declaration's Fields in the same order; a mismatch fails loading.
+
+#### Declaration
+
+```text
+Declaration
+├── Entity Declaration
+│   ├── name
+│   ├── description
+│   ├── fields
+│   ├── primary_key
+│   ├── relations
+│   ├── uniqueness_constraints
+│   └── indexes
+├── Field Declaration
+│   ├── name
+│   ├── type
+│   ├── nullable
+│   ├── description
+│   ├── default
+│   ├── sensitivity
+│   ├── immutable
+│   ├── constraints
+│   └── value_generation
+├── Field Constraints
+├── Relation
+├── Uniqueness Constraint
+├── Index
+├── Field Type
+├── Value Generation
+└── Sensitivity
+```
+
+The public structured contract for Entity and Field meaning. An Entity Declaration records one Entity's name, description, ordered Fields, and Entity Metadata; a Field Declaration records one Field's name, description, Type, presence meaning, Default Value, sensitivity, immutability, constraints, and Value Generation. Primary Key, Relations, Uniqueness Constraints, and Indexes are Entity Metadata outside the Field Declarations.
+
+Every Declaration is an immutable record with ordered immutable collections and no runtime behavior. Its structural rules are checked when it is created, and an invalid or contradictory Declaration fails instead of being repaired:
+
+- Field names are unique within the Entity.
+- The Primary Key names `id`, which is non-nullable and immutable; `is_active` is a non-nullable, mutable boolean.
+- A Field Declaration distinguishes an absent Default Value from an explicit null default; a default matches the Field's Type and nullability, and never coexists with Value Generation.
+- A size constraint is a positive length and applies only to a string Field.
+- Every Relation names a known local Field, and one local Field has at most one Relation.
+- Every Uniqueness Constraint and Index names a non-empty ordered set of known Fields, without repeating a Field or duplicating another entry.
+
+##### Field Type
+
+```text
+Field Type
+├── string
+├── integer
+├── float
+├── decimal
+├── boolean
+├── datetime
+├── date
+├── time
+└── uuid
+```
+
+The closed set of Field Types; any other Type is refused, and an unknown Type stops generation instead of being guessed. The realization of each Type in the selected language and in a JSON Object belongs to that language's profile in Model Preferences.
+
+A float is always finite, because a JSON Object has no form for NaN or infinity; a datetime is always timezone-aware.
+
+##### Value Generation
+
+```text
+Value Generation
+├── auto_increment
+└── generated_identifier
+```
+
+The declared ways a Field value is supplied automatically. Auto Increment leaves the value pending until storage assigns it; a Generated Identifier is produced during Entity creation with the algorithm Model Preferences select, unless the Target names another.
+
+Auto Increment requires an integer Field, and a Generated Identifier requires a uuid or string Field. A caller-supplied value for an Auto Increment Field is refused at construction and at assignment.
+
+##### Sensitivity
+
+```text
+Sensitivity
+├── password
+└── sensitive
+```
+
+The recognized Sensitivity Markers, listed in Model Preferences. A marker records what a value means and changes nothing about it.
+
+Its only effect is in Validation: the input of a marked Field is replaced in every validation message, and the original message holding the value is never chained or exposed.
+
+#### Validation
+
+```text
+Validation
+├── Strict
+├── Construction
+├── Assignment
+└── Identity
+```
+
+The shared private behavior every Entity inherits: direct construction, JSON Object construction, and assignment accept only declared Fields and enforce each Field's contract, and a sensitive value never appears in a validation message.
+
+- **Strict** — no implicit coercion, no undeclared Field, and every default is itself validated against its Field.
+- **Construction** — direct construction validates the whole Entity before any value is set.
+- **Assignment** — assigning an immutable or Auto Increment Field is refused; any other assignment validates the whole Entity with the new value first, so a failed assignment keeps the prior value.
+- **Identity** — a mutable Entity is not hashable.
+
+#### Conversion
+
+```text
+Conversion
+├── to_json
+└── from_json
+```
+
+Foundation, the public shared conversion contract between an Entity and its JSON Object, giving every Entity a lossless round trip through JSON text.
+
+- **to_json** — returns JSON text with one root object whose keys are exactly the Entity's Field names, in Declaration order.
+- **from_json** — rejects malformed text, a repeated key, a non-standard constant, and a root that is not one object; decodes the text forms of decimal, datetime, date, time, and uuid by each Field's Type; then builds the Entity with the same rules as direct construction.
+
+#### Storage Mapping
+
+```text
+Storage Mapping
+├── Names
+├── Keys and constraints
+├── Identity
+└── Exact values
+```
+
+The private, table-ready realization a language profile may give every Entity: physical table and column names, column types, and the constraints and indexes its Declaration states. Model only declares this form; it never runs storage.
+
+Every storage option is derived only from the Declaration:
+
+- **Names** — the table is named by the Entity's physical name and each column by its Field name; a name that cannot be resolved fails generation.
+- **Keys and constraints** — the Primary Key column, a foreign key for each Relation to the target Entity's table and Field, uniqueness and an index on the column for a single-Field entry, and at table level for a combination; every constraint and index is named by one convention in Model Preferences.
+- **Identity** — an Auto Increment Field becomes a generated identity column.
+- **Exact values** — a decimal is stored as its exact text and read back as a decimal; a datetime is stored in UTC and read back timezone-aware.
+
+<!-------------------------- Interface -->
+### Interface
+
+```text
+Interface
+├── Entity Export
+└── Entity Collection
+```
+
+The package-root entrypoint through which every Entity is published. It always publishes both forms, and nothing else. Every published name starts with the prefix in Model Preferences and an underscore, so a consumer never confuses it with another Component's name; the Entity itself keeps its own name and takes the prefixed name only where Interface publishes it:
+
+- **Entity Export** — every Entity on its own, by its own name, for a consumer that works with one specific Entity.
+- **Entity Collection** — every Entity together, once each, in Target order, for a consumer that works with all Entities without knowing their names.
+
+For a Target with User and Account, Interface publishes `model_user`, `model_account`, and the Entity Collection `model_entities` holding them in that order, while the Entities themselves remain `User` and `Account`.
+
+Its Interface contract is these needs, with the symbol names and `contract_version` in Model Preferences:
+
+1. **Complete** — exactly one Entity Export for every Target Entity, and the Entity Collection holding every Target Entity in Target order, changing when the Target changes.
+2. **Explicit** — each Entity is exported by an explicit named export, named by the prefix, an underscore, and the Entity's name in lower snake_case; the Entity Collection is named the same way; no wildcard or dynamically generated export publishes an Entity.
+3. **Actual** — each export and each Collection item is the actual Entity, exposing its own actual Declaration, never a copy, wrapper, alias, or reconstruction.
+4. **Nothing else** — no other Entity registry, lookup table, or discovery mechanism is published beside the exports and the Collection.
+5. **No side effect** — loading Interface creates no Entity instance, data, connection, file, or process, and performs no network, storage, runtime-configuration, or other external side effect.
+6. **Versioned** — changing the meaning of the exports, the Collection, or an Entity's exposed Declaration requires raising `contract_version` and a consumer review.
+
+<!-------------------------- Documentation -->
+### Documentation
+
+```text
+Documentation
+├── Overview
+├── Interface
+├── Declaration
+├── Foundation
+├── Setup
+├── Use
+├── Verify
+└── Troubleshooting
+```
+
+The root documentation, in the file, location, and format Model Preferences name. Its sections, in this order:
+
+1. **Overview** — Give one concise introduction and one simple example using one Entity.
+2. **Interface** — Explain the Entity Exports and the Entity Collection, then list every Entity once in Target order with its description, complete Field table, and Entity Metadata outside that table. Show one consumer importing an Entity directly and one enumerating the Entity Collection, rather than using wildcard exports, __all__, reflection, directory scanning, or internal paths.
+3. **Declaration** — Show how a consumer reads one Entity's public Declaration, including Fields, Primary Key, Relations, Uniqueness Constraints, and Indexes, through the Entity itself.
+4. **Foundation** — Give one example for each Foundation capability, then one complete Entity-to-JSON-text-to-Entity round trip.
+5. **Setup** — Give the setup steps for the selected technology.
+6. **Use** — Show use that follows the Entity Exports and the Entity Collection.
+7. **Verify** — Verify Interface-contract-conformant shape, exact Entity Export membership, Entity Collection membership and order and its correspondence with the Exports, actual Entity and Declaration references, immutability, side-effect freedom, representative Entity construction, Declaration access, and a lossless JSON text round trip.
+8. **Troubleshooting** — Cover Model concerns only.
+
+Every section follows these rules:
+
+- Define no other Component.
+- Expose no private helper as contract.
+- Retain no stale meaning.
+- Contain no real credential or secret.
+
+<!-------------------------- Directory Structure -->
+### Directory Structure
+
+```text
+Directory Structure
+├── model/
+│   ├── interface
+│   ├── entity/
+│   └── core/
+└── README
+```
+
+The names in this tree, and the files named under Core, are the physical names of Model; the root of this tree is the Component directory, and it and the package directory take their names from `settings` in Model Preferences.
+
+#### Core
+
+The shared area holding every file that serves all Entities rather than one: the public Declaration and Foundation contracts, plus the private system files behind them, such as the base definitions, Field Type realization, Storage Mapping, and other helpers. The two public contracts are the files `declaration` and `foundation`; the private files are named freely, each by what it serves. Declaration is the public structured contract for Entity and Field meaning; Foundation is the public shared conversion contract between an Entity and its JSON Object.
 
 <br>
 
@@ -143,11 +354,11 @@ Every Principle below is mandatory and belongs to the Architecture category that
 
 ### Interface
 
-#### Interface conforms to the Model Interface Schema
+#### Interface conforms to the Interface contract
 
-**Rule:** Every realization of Interface conforms to the versioned Model Interface Schema, which fixes the Entity Exports, the Entity Collection, each Entity's exposed Declaration, and what Interface never publishes or does.
+**Rule:** Every realization of Interface conforms to the versioned Interface contract, which fixes the Entity Exports, the Entity Collection, each Entity's exposed Declaration, and what Interface never publishes or does.
 **Why:** Consumers depend on one contract instead of reinterpreting each realization, and can both import one Entity's real type and enumerate all of them.
-**Boundary:** Entity membership and meaning change under Target authority without being an Interface-structure change; changing the structure itself requires a Schema version change.
+**Boundary:** Entity membership and meaning change under Target authority without being an Interface-structure change; changing the structure itself requires raising `contract_version`.
 
 <br>
 
@@ -187,11 +398,7 @@ Every Principle below is mandatory and belongs to the Architecture category that
 
 **Rule:** Logical Entity and Field names, including Relation names, preserve exact case-sensitive Target spelling. Generation never translates, abbreviates, pluralizes, respells, prefixes, suffixes, or aliases them. Physical names apply the selected language's naming rules deterministically and reject unresolvable reserved-word or normalization collisions.
 **Why:** Domain names remain understandable without technical context while source follows its language.
-**Boundary:** Language-specific naming belongs to that language's Preferences and never changes names stored in Declaration.
-
-<br>
-
-### Core
+**Boundary:** Language-specific naming belongs to that language's Preferences and never changes names stored in Declaration. The prefixed name under which Interface publishes an Entity is not a rename of the Entity; the Entity and its Declaration keep their own names.
 
 #### Fields and Declarations carry one complete value contract
 
@@ -211,7 +418,7 @@ Every Principle below is mandatory and belongs to the Architecture category that
 
 #### Model conformance covers every Model contract
 
-**Rule:** Model is conformant only when its Interface needs in this Definition, the Model Interface Schema, and its real output all match one another, and every observation below holds.
+**Rule:** Model is conformant only when its Interface contract and its real output match one another, and every observation below holds.
 **Why:** A gap here lets a broken Model look complete to every consumer.
 **Boundary:** Review reads the Target only to compare; it changes nothing.
 
@@ -219,7 +426,7 @@ Every Principle below is mandatory and belongs to the Architecture category that
 
 **Rule:** Review establishes Model conformance through these observations, every one of them on every review:
 
-- Every need of the Interface layer in this Definition appears in the Model Interface Schema, and the Schema holds nothing beyond them.
+- Interface publishes every need of its Interface contract and nothing beyond them.
 - Every Target Entity has exactly one Entity Export.
 - The Entity Collection holds exactly the exported Entities, in Target order.
 - Each Entity's Declaration matches the Target — Fields, order, Types, nullability, defaults, and metadata.
@@ -255,9 +462,9 @@ Every obligation below derives from the Principle with the same title.
 
 ### Interface
 
-**Interface conforms to the Model Interface Schema**
+**Interface conforms to the Interface contract**
 
-- **Must** — Conform every realization to the Model Interface Schema.
+- **Must** — Conform every realization to the Interface contract.
 - **Never** — change Interface structure because Entity membership, language, package, or internal implementation changed.
 
 ### Entity
@@ -292,8 +499,6 @@ Every obligation below derives from the Principle with the same title.
 - **Must** — preserve logical Target names and apply language-specific physical naming deterministically.
 - **Never** — silently translate, pluralize, alias, or repair a collision.
 
-### Core
-
 **Fields and Declarations carry one complete value contract**
 
 - **Must** — Preserve and publicly expose every Field and Entity property, explicit value, constraint, order, and generation rule.
@@ -309,7 +514,7 @@ Every obligation below derives from the Principle with the same title.
 
 **Model conformance covers every Model contract**
 
-- **Must** — show that the Interface needs, the Model Interface Schema, and the real output all match and every observation holds before Model is conformant.
+- **Must** — show that the Interface contract and the real output match and every observation holds before Model is conformant.
 - **Never** — change anything during review.
 
 **Review observes Model through a fixed set of checks**

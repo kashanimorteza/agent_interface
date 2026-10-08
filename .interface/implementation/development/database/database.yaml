@@ -2,10 +2,10 @@
 meta:
   path: ".interface/implementation/development/database/database.yaml"
   path_note: "The Preferences layer of the Database Component."
-  purpose: "Database identity, Instances, Interface Schema reference, architecture, language profile, Engines, configuration, and documentation choices."
+  purpose: "Database identity, Instances, Interface contract, architecture, language profile, Engines, configuration, and documentation choices."
   standard: "Agent Project Interface"
-  version: "15.0"
-  updated: "2026-10-07"
+  version: "16.0"
+  updated: "2026-10-08"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -16,29 +16,21 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings and instances; copy the Target Initial Data; generate config from its Foundation Schema; realize Interface from the Database Interface Schema; realize the fixed Architecture; then apply development and documentation preferences."
+  consumption: "Read settings and the Instance definitions in architecture; copy the Target Initial Data; generate config from its Foundation Schema; realize Interface from the interface entity and the other entities of architecture; realize the fixed Architecture; then apply development and documentation preferences."
   selection: "Preserve explicit compatible Target choices. Use these Preferences for choices the Target leaves unstated; for anything still unset, follow Development's resolution order."
   version_resolution: "Resolve Database-owned versioned technical items from the selected language profile in development. Resolve latest-compatible to a concrete compatible version and preserve that resolution in dependency or lock metadata."
 
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - settings
-  - instances
-  - interface
   - architecture
   - development
-  - configuration
-  - documentation
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  settings: "Database's identity, the Model Interface Schema it consumes, the default Instance, the Storage root, and the query defaults."
-  instances: "The default definition of every Instance."
-  interface: "The five groups Interface publishes — Database, Setup, Value, Result, and Error — each with the entities of architecture it holds, and the Database Interface Schema built from them, with its version."
-  architecture: "The entities of the Conceptual Structure — Operation, Instance, Query with its Condition, Sort, and Limit, Result, and Error — and the physical names of the Directory Structure."
+  settings: "Database's identity, the Model contract it consumes, the default Instance, the Storage root, and the query defaults."
+  architecture: "The entities of the Architecture tree — Operation, Query with its Condition, Sort, and Limit, Error, Result, Instance with the default definition of every Instance; Interface with its contract version, group prefix, and six groups; Configuration with its file, location, format, and Schema; and Documentation with its file, location, and format — and the physical names of the Directory Structure."
   development: "Development capabilities, the selected language and its profile, after-generation behavior, and Engine technology."
-  configuration: "The configuration file, its location, and its format, and the Database Configuration Schema it follows."
-  documentation: "The documentation file, its location, and its format; its sections are described in the Database Definition."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
@@ -51,7 +43,8 @@ content:
       directory: "database"
       package: "database"
     model_dependency:
-      schema: ".interface/foundation/schema/model-interface.yaml"
+      definition: ".interface/implementation/development/model/model.md"
+      preferences: ".interface/implementation/development/model/model.yaml"
     default_instance: "sqlite"
     storage_root: "the Storage directory named in architecture"
     query:
@@ -60,50 +53,6 @@ content:
       default_order:
         field: "id"
         direction: "ASCENDING"
-
-  # <!-------------------------------------------- instances -->
-  instances:
-    sqlite:
-      name: "SQLite"
-      active: true
-      engine: "sqlite"
-      host: null
-      port: null
-      database: "application.db"
-      username: null
-      password: null
-      options: {}
-    postgresql:
-      name: "PostgreSQL"
-      active: false
-      engine: "postgresql"
-      host: "127.0.0.1"
-      port: 5432
-      database: "application"
-      username: "postgres"
-      password: "123456"
-      options: {}
-
-  # <!-------------------------------------------- interface -->
-  interface:
-    schema: ".interface/foundation/schema/database-interface.yaml"
-    contract_version: "2.0"
-    groups:
-      database:
-        name: "Database"
-        holds: ["operation.entity_operation", "operation.command_operation"]
-      setup:
-        name: "Setup"
-        holds: ["operation.setup_operation"]
-      value:
-        name: "Value"
-        holds: ["query.condition.filter", "query.condition.operator", "query.condition.combination", "query.sort.order", "query.sort.direction", "instance"]
-      result:
-        name: "Result"
-        holds: ["result.command_result", "result.setup_result"]
-      error:
-        name: "Error"
-        holds: ["error.kinds"]
 
   # <!-------------------------------------------- architecture -->
   architecture:
@@ -215,6 +164,27 @@ content:
         selection:
           rule: "Every Operation and Setup Operation accepts an optional DatabaseInstance member. When none is given, the call runs on the configured default Instance."
           values: "Only members of DatabaseInstance; an unknown or inactive Instance fails the call before any storage is touched."
+        definitions:
+          sqlite:
+            name: "SQLite"
+            active: true
+            engine: "sqlite"
+            host: null
+            port: null
+            database: "application.db"
+            username: null
+            password: null
+            options: {}
+          postgresql:
+            name: "PostgreSQL"
+            active: false
+            engine: "postgresql"
+            host: "127.0.0.1"
+            port: 5432
+            database: "application"
+            username: "postgres"
+            password: "123456"
+            options: {}
       result:
         command_result:
           immutable: true
@@ -242,6 +212,32 @@ content:
           connection_failure: "connection failure"
           execution_failure: "execution failure"
           incomplete_lifecycle: "incomplete Lifecycle execution"
+      interface:
+        contract_version: "3.0"
+        prefix: "database"
+        naming: "every group is published under prefix, an underscore, and its key, such as database_error"
+        groups:
+          interface:
+            holds: ["operation.entity_operation", "operation.command_operation"]
+          setup:
+            holds: ["operation.setup_operation"]
+          value:
+            holds: ["query.condition.filter", "query.condition.operator", "query.condition.combination", "query.sort.order", "query.sort.direction"]
+          instance:
+            holds: ["instance"]
+          result:
+            holds: ["result.command_result", "result.setup_result"]
+          error:
+            holds: ["error.kinds"]
+      configuration:
+        file: "config.yaml"
+        location: "the Component root"
+        format: "yaml"
+        schema: ".interface/foundation/schema/database-configuration.yaml"
+      documentation:
+        file: "README.md"
+        location: "the Component root"
+        format: "markdown"
     directories:
       core: "core"
       engine: "engine"
@@ -283,9 +279,12 @@ content:
               - "Never declare or subclass a table class inside Database; Tables come only from the Model Entities."
           table_creation: "Core Tables creates exactly the Tables of the Model Entity Collection's table models through their shared metadata (create_all restricted to those Tables). It writes no per-Entity code."
           value_shapes:
-            database: "a plain class, created with Database()"
+            executable_groups: "the interface and setup groups are plain classes named by their group name and created with no argument, such as database_interface() and database_setup()"
+            namespace_groups: "the value, result, and error groups are namespace classes named by their group name; each holds its entities as class attributes under their own names, such as database_value.Filter and database_error.ConnectionFailureError"
+            instance_group: "the instance group is itself the enum.Enum of active Instances, named by its group name; each member name is its Instance key in upper case, such as database_instance.SQLITE"
+            publication: "the interface file publishes only the group names, as its __all__"
             forms: "every immutable form in architecture is a frozen dataclass with exactly its listed fields, in that order"
-            enumerations: "enum.Enum for FilterOperator, FilterCombination, OrderDirection, and DatabaseInstance; each member's value equals its name"
+            enumerations: "enum.Enum for FilterOperator, FilterCombination, and OrderDirection; each member's value equals its name"
           error_classes:
             base: "DatabaseError"
             invalid_configuration_or_instance: "ConfigurationError"
@@ -334,16 +333,3 @@ content:
         connection:
           default_port: 5432
           required_parameters: ["host", "port", "database", "username", "password"]
-
-  # <!-------------------------------------------- configuration -->
-  configuration:
-    file: "config.yaml"
-    location: "the Component root"
-    format: "yaml"
-    schema: ".interface/foundation/schema/database-configuration.yaml"
-
-  # <!-------------------------------------------- documentation -->
-  documentation:
-    file: "README.md"
-    location: "the Component root"
-    format: "markdown"
