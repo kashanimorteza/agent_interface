@@ -194,7 +194,7 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 #### Action errors map to HTTP by one table
 
-**Rule:** Every error an Endpoint returns is sent as RFC 9457 Problem Details (`application/problem+json`), with `type` set to the error's class name, and with this status: Invalid Input `422`; Lifecycle `409`; Inactive Instance and Connection Failure `503`; Execution, Declaration Mismatch, Configuration, and every other Database error `500`.
+**Rule:** Every error an Endpoint returns is sent as RFC 9457 Problem Details (`application/problem+json`), with `type` set to the error's class name, and with this status: Invalid Input `422`; Setup `409`; Inactive Instance and Connection Failure `503`; Execution, Declaration Mismatch, Configuration, and every other Database error `500`.
 **Why:** Every client reads every Group's errors the same way, and the error's class reaches it unchanged.
 **Boundary:** This mapping is part of serving every Endpoint; it adds no retry, recovery, or other error-handling Behaviour.
 

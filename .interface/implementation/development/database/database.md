@@ -70,7 +70,7 @@ Database
 └── Documentation
 ```
 
-Every entity below is declared in `architecture` in Database Preferences, which also own its physical names and placement, and the language, packages, Engines, Instance defaults, query defaults, technical realization, and documentation choices; these selections realize the responsibilities below without changing them, and implementation applies them to the current Target.
+Every entity below is declared in `architecture` in Database Preferences, which also own the language, packages, Engines, Instance defaults, query defaults, technical realization, and documentation choices; these selections realize the responsibilities below without changing them, and implementation applies them to the current Target.
 
 <!-------------------------- Operation -->
 ### Operation
@@ -147,7 +147,7 @@ Engine
 └── one unit per Engine in use
 ```
 
-Engine contains exactly one unit for every Engine used by at least one active Instance, named from that Engine. Instances that use the same Engine share its unit and differ only in their connection.
+Engine contains exactly one unit for every Engine used by at least one active Instance, named by that Engine's key, such as `sqlite`. Instances that use the same Engine share its unit and differ only in their connection.
 
 Each unit implements every Entity Operation and Command Operation, and the Engine capabilities the Setup Operations require, and returns raw results. Its driver, connection arguments, and storage kind come from the Engine's entry in Database Preferences.
 
@@ -162,7 +162,7 @@ Error
 ├── declaration_incompatibility
 ├── connection_failure
 ├── execution_failure
-└── incomplete_lifecycle
+└── incomplete_setup
 ```
 
 The failure kinds declared in `architecture` in Database Preferences. Every realization keeps each kind distinguishable through the language's own error mechanism: each is its own error inside the Error group, derived from one base error, and its name belongs to the selected language profile. No error carries a connection value or credential.
@@ -237,7 +237,7 @@ The root documentation explaining every public contract, Instance selection, the
 
 Its sections, in this order:
 
-1. **Overview** — Give one short introduction and one simple example: create Database, then one add and one list.
+1. **Overview** — Give one short introduction and one simple example: create the Interface class, then one add and one list.
 2. **Interface** — For each of the six groups Interface publishes, and every member and Operation in it with each of its parameters, explain what it is for and how to use it, with one example each. Cover every enumeration member, defaults, results, and errors.
 3. **Instances** — Explain active DatabaseInstance members, default selection, and Database-owned storage without exposing credentials.
 4. **Setup** — Give the setup steps for the selected technology.
@@ -252,26 +252,38 @@ Its sections, in this order:
 
 ```text
 Directory Structure
-└── database/
-    ├── database/
-    │   ├── interface
-    │   ├── core/
-    │   └── engine/
-    ├── scripts/
-    ├── db/
-    ├── config
-    └── README
+├── database/
+│   ├── interface
+│   ├── core/
+│   └── engine/
+├── scripts/
+├── db/
+├── config
+└── README
 ```
+
+The root of this tree is the Component directory; it and the package directory take their names from `settings` in Database Preferences.
 
 The Package holds only importable source. Configuration, Storage, Entry Points, and Documentation sit beside it at the Component root, because configuration changes with the environment, stored data changes at runtime, and entry points are run by hand rather than imported.
 
 #### Core
 
-Core owns shared validation, default resolution, Instance selection, routing, and result normalization for all public requests. It loads and validates the Database Configuration and resolves each Instance's connection from it; an invalid Configuration or an unresolved Instance selection fails loading before any connection is opened. It contains no Instance-specific connection or storage implementation.
+Core owns shared validation, default resolution, Instance selection, routing, and result normalization for all public requests. It loads and validates the Database Configuration and resolves each Instance's connection from it; an invalid Configuration or an unresolved Instance selection fails loading before any connection is opened. It contains no Instance-specific connection or storage implementation. Its files, each named by what it holds:
+
+- `data` — the shared routing of every public request.
+- `query` — checking Conditions and Sorts against the given Entity.
+- `values` — the immutable forms, enumerations, and Results.
+- `errors` — the base error and every error kind.
+- `configuration` — loading and validating the Database Configuration.
+- `tables` — `create_tables`.
+- `initial_data` — `insert_initial_data`.
+- `setup` — coordinating the Setup Operations, including `prepare`.
+
+No other file is placed in Core.
 
 #### Entry Points
 
-Entry Points holds exactly three scripts, one for each Setup Operation — `create_tables`, `insert_initial_data`, and `prepare` — so a person can prepare storage by hand. Each runs its Setup Operation through Interface on the default Instance, reports its result, and holds no logic of its own. When after-generation preparation is enabled in Database Preferences, generation runs `prepare` the same way.
+Entry Points holds exactly three scripts, one for each Setup Operation and named by it — `create_tables`, `insert_initial_data`, and `prepare` — so a person can prepare storage by hand. Each runs its Setup Operation through Interface on the default Instance, reports its result, and holds no logic of its own. When after-generation preparation is enabled in Database Preferences, generation runs `prepare` the same way.
 
 #### Storage
 
@@ -317,7 +329,7 @@ Every Principle below is mandatory.
 
 **Rule:** The Component has exactly the parts Architecture shows, each with the responsibility stated there.
 **Why:** A fixed layout lets every generation place each file in the same place, so an Agent never decides structure and consumers always find the same parts.
-**Boundary:** Fixed Architecture members are renamed only through `architecture` in Database Preferences and never relocated. No additional internal source unit is placed at the Component root, beside an Engine unit, or inside Storage.
+**Boundary:** Fixed Architecture members keep the names and places the Directory Structure and its file names give them, and are never renamed or relocated by generation. No additional internal source unit is placed at the Component root, beside an Engine unit, or inside Storage.
 
 #### Database consumes Model without owning it
 
@@ -333,37 +345,8 @@ Every Principle below is mandatory.
 
 <br>
 
-<!-------------------------- Interface -->
-### Interface
-
-#### Interface conforms to the Interface contract
-
-**Rule:** Every realization of Interface conforms to the versioned Interface contract, which fixes every public contract, each Operation's and Setup Operation's input, effect, and result, the query vocabulary, values, results, error meanings, and what Interface never publishes. Consumers pass Entities, Fields, Instances, and vocabulary as imported values, never as strings.
-**Why:** Consumers depend on one contract instead of reinterpreting each realization, and typed values are checked before any storage is touched.
-**Boundary:** Interface declares and forwards public behavior; it does not select a driver or implement Engine work. The Interface contract lives only in `architecture` in Database Preferences and this Definition; changing a public contract, its members, or its meaning requires raising `contract_version` and a consumer review.
-
-#### Interface contracts keep one fixed shape
-
-**Rule:** Every Operation and Setup Operation takes exactly its listed parameters, by those names and in that order, with every parameter after entity, id, field, and command optional and instance always last. Every Field in a Filter, Order, or aggregate is validated against the given Entity before any Instance is accessed. The Interface group holds the Entity Operations and Command Operations, and the Setup group holds the Setup Operations; no other wrapper is added. Stored enumeration defaults use canonical member names, and an unknown name fails loading.
-**Why:** A consumer calls the same shape on every Instance, Engine, and language, and a bad Field fails before any storage is touched.
-**Boundary:** Changing Entities, Instances, Engines, languages, packages, or internal implementation never changes this shape; an incompatible technology fails generation rather than changing Database meaning.
-
-#### Interface publishes only prefixed groups
-
-**Rule:** Interface publishes only its groups, each named by the prefix in Database Preferences, an underscore, and the group key. A consumer imports a group and reaches every Operation, value, Instance, Result, and Error through it; no member is published on its own.
-**Why:** A consumer imports a few fixed names instead of one name per member, and one prefix change renames every group consistently.
-**Boundary:** The prefix and group keys change only through the Interface entity of `architecture` in Database Preferences; member names inside a group never take the prefix.
-
-#### Query defaults are deterministic
-
-**Rule:** List, Count, Sum, Min, and Max accept Filters and a FilterCombination; List alone also accepts ordered Orders and a limit. An omitted FilterCombination, Order set, or limit resolves from Database Preferences; an Order without a direction uses ASCENDING. A zero or negative limit means no limit; a positive limit is the maximum returned count.
-**Why:** Fixed defaults make the same call return the same result on every Instance and every generation.
-**Boundary:** Supplied Orders replace the default and are applied in supplied order. Aggregate Operations do not accept Order.
-
-<br>
-
-<!-------------------------- Setup Operations -->
-### Setup Operations
+<!-------------------------- Operation -->
+### Operation
 
 #### Setup Operations are separate from Operations
 
@@ -389,11 +372,6 @@ Every Principle below is mandatory.
 **Why:** One predictable target keeps generation from touching Instances nobody asked it to prepare.
 **Boundary:** Other active Instances are prepared only by explicit selection.
 
-<br>
-
-<!-------------------------- Core -->
-### Core
-
 #### Core owns shared routing
 
 **Rule:** Data receives each Interface request, validates public input, resolves defaults and the selected DatabaseInstance, loads its complete configuration, forwards work with that Instance's connection to its Engine unit, materializes published Entity results, and normalizes every result. Each stored row becomes an Entity through that Entity's own construction; a row that does not satisfy the Entity contract is an error and is never repaired.
@@ -408,6 +386,17 @@ Every Principle below is mandatory.
 
 <br>
 
+<!-------------------------- Query -->
+### Query
+
+#### Query defaults are deterministic
+
+**Rule:** List, Count, Sum, Min, and Max accept Filters and a FilterCombination; List alone also accepts ordered Orders and a limit. An omitted FilterCombination, Order set, or limit resolves from Database Preferences; an Order without a direction uses ASCENDING. A zero or negative limit means no limit; a positive limit is the maximum returned count.
+**Why:** Fixed defaults make the same call return the same result on every Instance and every generation.
+**Boundary:** Supplied Orders replace the default and are applied in supplied order. Aggregate Operations do not accept Order.
+
+<br>
+
 <!-------------------------- Engine -->
 ### Engine
 
@@ -416,6 +405,29 @@ Every Principle below is mandatory.
 **Rule:** Generation creates exactly one Engine unit for every Engine used by at least one active Instance and none for any other Engine. Instances of the same Engine share its unit and differ only in the connection Core passes to it. Each unit implements all Entity Operations, `execute_command`, and the capabilities required by the Setup Operations while preserving public request, result, error, and atomicity meaning.
 **Why:** Instances of one Engine work the same way, so one complete unit serves them all without duplicated code, and an Engine nobody uses leaves nothing behind.
 **Boundary:** An Engine unit implements storage behavior but never defines a new public contract or shared routing.
+
+<br>
+
+<!-------------------------- Interface -->
+### Interface
+
+#### Interface conforms to the Interface contract
+
+**Rule:** Every realization of Interface conforms to the versioned Interface contract, which fixes every public contract, each Operation's and Setup Operation's input, effect, and result, the query vocabulary, values, results, error meanings, and what Interface never publishes. Consumers pass Entities, Fields, Instances, and vocabulary as imported values, never as strings.
+**Why:** Consumers depend on one contract instead of reinterpreting each realization, and typed values are checked before any storage is touched.
+**Boundary:** Interface declares and forwards public behavior; it does not select a driver or implement Engine work. The Interface contract lives only in `architecture` in Database Preferences and this Definition; changing a public contract, its members, or its meaning requires raising `contract_version` and a consumer review.
+
+#### Interface contracts keep one fixed shape
+
+**Rule:** Every Operation and Setup Operation takes exactly its listed parameters, by those names and in that order, with every parameter after entity, id, field, and command optional and instance always last. Every Field in a Filter, Order, or aggregate is validated against the given Entity before any Instance is accessed. The Interface group holds the Entity Operations and Command Operations, and the Setup group holds the Setup Operations; no other wrapper is added. Stored enumeration defaults use canonical member names, and an unknown name fails loading.
+**Why:** A consumer calls the same shape on every Instance, Engine, and language, and a bad Field fails before any storage is touched.
+**Boundary:** Changing Entities, Instances, Engines, languages, packages, or internal implementation never changes this shape; an incompatible technology fails generation rather than changing Database meaning.
+
+#### Interface publishes only prefixed groups
+
+**Rule:** Interface publishes only its groups, each named by the prefix in Database Preferences, an underscore, and the group key. A consumer imports a group and reaches every Operation, value, Instance, Result, and Error through it; no member is published on its own.
+**Why:** A consumer imports a few fixed names instead of one name per member, and one prefix change renames every group consistently.
+**Boundary:** The prefix and group keys change only through the Interface entity of `architecture` in Database Preferences; member names inside a group never take the prefix.
 
 <br>
 
@@ -456,7 +468,7 @@ Every Principle below is mandatory.
 
 - Interface publishes exactly the public contracts of the Interface contract and nothing else.
 - Every Entity Operation, Command Operation, and Setup Operation has the signature and result the Interface contract states, including the optional DatabaseInstance.
-- Each enumeration holds exactly its Schema members.
+- Each enumeration holds exactly the members `architecture` in Database Preferences lists.
 - DatabaseInstance holds exactly one member per active configured Instance and none for an inactive one.
 - A call without a DatabaseInstance runs on the configured default Instance.
 - No Operation accepts an Entity name, a Field name, or any other string in place of an imported value.
@@ -480,7 +492,7 @@ Every Principle below is mandatory.
 
 **Database owns one canonical Architecture**
 
-- **Must** — preserve the canonical Interface, Core, Engine, Entry Points, Storage, Configuration, and Documentation, and rename a member only through `architecture` in Preferences.
+- **Must** — preserve the canonical Interface, Core, Engine, Entry Points, Storage, Configuration, and Documentation, and keep every member's name and place from the Directory Structure.
 - **Never** — place an internal source unit outside Core or its owning Engine unit, or place source code in Storage.
 
 **Database consumes Model without owning it**
@@ -497,33 +509,8 @@ Every Principle below is mandatory.
 
 <br>
 
-<!-------------------------- Interface -->
-### Interface
-
-**Interface conforms to the Interface contract**
-
-- **Must** — conform every realization to the Interface contract and accept only imported values where the contract forbids strings.
-- **Never** — expose Core, Engine, configuration, credentials, or storage paths, or change Interface structure without raising `contract_version`.
-
-**Interface contracts keep one fixed shape**
-
-- **Must** — take exactly the listed parameters in order, with instance last, and validate every Field before any Instance is accessed.
-- **Never** — let a change of Entity, Instance, Engine, language, or package change the Interface shape.
-
-**Interface publishes only prefixed groups**
-
-- **Must** — publish each group as prefix, underscore, and key, and reach every member through its group.
-- **Never** — publish a member on its own or put the prefix on a member name.
-
-**Query defaults are deterministic**
-
-- **Must** — resolve omitted combination, Orders, and limit from Preferences and treat a zero or negative limit as no limit.
-- **Must** — preserve supplied Order sequence and restrict Order to List.
-
-<br>
-
-<!-------------------------- Setup Operations -->
-### Setup Operations
+<!-------------------------- Operation -->
+### Operation
 
 **Setup Operations are separate from Operations**
 
@@ -546,11 +533,6 @@ Every Principle below is mandatory.
 - **Must** — run `prepare` on the default Instance when enabled.
 - **Never** — prepare other Instances implicitly.
 
-<br>
-
-<!-------------------------- Core -->
-### Core
-
 **Core owns shared routing**
 
 - **Must** — validate, resolve, route, materialize, and normalize through Core Data.
@@ -565,6 +547,16 @@ Every Principle below is mandatory.
 
 <br>
 
+<!-------------------------- Query -->
+### Query
+
+**Query defaults are deterministic**
+
+- **Must** — resolve omitted combination, Orders, and limit from Preferences and treat a zero or negative limit as no limit.
+- **Must** — preserve supplied Order sequence and restrict Order to List.
+
+<br>
+
 <!-------------------------- Engine -->
 ### Engine
 
@@ -572,6 +564,26 @@ Every Principle below is mandatory.
 
 - **Must** — generate one complete implementation unit for every Engine used by at least one active Instance and none for any other Engine.
 - **Never** — define public contracts or shared routing in an Engine unit, or duplicate a unit for another Instance of the same Engine.
+
+<br>
+
+<!-------------------------- Interface -->
+### Interface
+
+**Interface conforms to the Interface contract**
+
+- **Must** — conform every realization to the Interface contract and accept only imported values where the contract forbids strings.
+- **Never** — expose Core, Engine, configuration, credentials, or storage paths, or change Interface structure without raising `contract_version`.
+
+**Interface contracts keep one fixed shape**
+
+- **Must** — take exactly the listed parameters in order, with instance last, and validate every Field before any Instance is accessed.
+- **Never** — let a change of Entity, Instance, Engine, language, or package change the Interface shape.
+
+**Interface publishes only prefixed groups**
+
+- **Must** — publish each group as prefix, underscore, and key, and reach every member through its group.
+- **Never** — publish a member on its own or put the prefix on a member name.
 
 <br>
 

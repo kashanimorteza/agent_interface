@@ -4,8 +4,8 @@ meta:
   path_note: "The Preferences layer of the Database Component."
   purpose: "Database identity, Instances, Interface contract, architecture, language profile, Engines, configuration, and documentation choices."
   standard: "Agent Project Interface"
-  version: "16.0"
-  updated: "2026-10-08"
+  version: "17.0"
+  updated: "2026-10-09"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -16,7 +16,7 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read settings and the Instance definitions in architecture; copy the Target Initial Data; generate config from its Foundation Schema; realize Interface from the interface entity and the other entities of architecture; realize the fixed Architecture; then apply development and documentation preferences."
+  consumption: "Read settings and the Instance definitions in architecture; copy the Target Initial Data; generate config from its Foundation Schema; realize Interface from the interface entity and the other entities of architecture; realize the fixed Architecture; then apply development preferences."
   selection: "Preserve explicit compatible Target choices. Use these Preferences for choices the Target leaves unstated; for anything still unset, follow Development's resolution order."
   version_resolution: "Resolve Database-owned versioned technical items from the selected language profile in development. Resolve latest-compatible to a concrete compatible version and preserve that resolution in dependency or lock metadata."
 
@@ -28,9 +28,9 @@ read_order:
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  settings: "Database's identity, the Model contract it consumes, the default Instance, the Storage root, and the query defaults."
-  architecture: "The entities of the Architecture tree — Operation, Query with its Condition, Sort, and Limit, Error, Result, Instance with the default definition of every Instance; Interface with its contract version, group prefix, and six groups; Configuration with its file, location, format, and Schema; and Documentation with its file, location, and format — and the physical names of the Directory Structure."
-  development: "Development capabilities, the selected language and its profile, after-generation behavior, and Engine technology."
+  settings: "Database's identity and the Model contract it consumes."
+  architecture: "The entities of the Architecture tree — Operation with its after-generation behavior, Query with its defaults, Condition, Sort, and Limit, Engine with the version, storage, and connection of every Engine, Error, Result, Instance with the default Instance and the default definition of every Instance; Interface with its contract version, group prefix, and six groups; Configuration with its file, location, format, and Schema; and Documentation with its file, location, and format."
+  development: "Development capabilities and the selected language and its profile with its Engine drivers."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
@@ -45,14 +45,6 @@ content:
     model_dependency:
       definition: ".interface/implementation/development/model/model.md"
       preferences: ".interface/implementation/development/model/model.yaml"
-    default_instance: "sqlite"
-    storage_root: "the Storage directory named in architecture"
-    query:
-      filter_combination: "AND"
-      default_limit: -1
-      default_order:
-        field: "id"
-        direction: "ASCENDING"
 
   # <!-------------------------------------------- architecture -->
   architecture:
@@ -133,7 +125,17 @@ content:
             accepts: "a native command in the Instance Engine's query language and its bound parameters"
             effect: "runs any valid command the Engine supports, including a schema change; create_tables remains the standard schema-preparation path"
             returns: "a CommandResult"
+        after_generation:
+          enabled: true
+          fail_on_error: true
+          command: "prepare"
       query:
+        defaults:
+          filter_combination: "AND"
+          default_limit: -1
+          default_order:
+            field: "id"
+            direction: "ASCENDING"
         condition:
           filter:
             immutable: true
@@ -159,11 +161,57 @@ content:
             fields: ["field", "type", "descending"]
         limit:
           rule: "a positive limit is the maximum returned count; zero or a negative limit means no limit"
+      engine:
+        sqlite:
+          version: "runtime-provided"
+          storage:
+            kind: "file"
+            relative_to: "the Storage directory of the Directory Structure in the Database Definition"
+            location: "<database>"
+            reject_escape: true
+          connection:
+            required_parameters: ["database"]
+            foreign_keys: true
+        postgresql:
+          version: "latest-compatible"
+          storage:
+            kind: "server"
+          connection:
+            default_port: 5432
+            required_parameters: ["host", "port", "database", "username", "password"]
+      error:
+        kinds:
+          invalid_configuration_or_instance: "invalid configuration or Instance"
+          inactive_instance: "inactive Instance selected"
+          invalid_input_or_field: "invalid input or Field"
+          declaration_incompatibility: "Declaration incompatibility"
+          connection_failure: "connection failure"
+          execution_failure: "execution failure"
+          incomplete_setup: "incomplete Setup execution"
+      result:
+        command_result:
+          immutable: true
+          fields:
+            rows: "returned row mappings, or null"
+            affected: "affected row count, or null"
+            columns: "ordered column names, or null"
+            success: "whether the command succeeded"
+            message: "a public result or error message"
+            instance: "the DatabaseInstance used"
+        setup_result:
+          immutable: true
+          fields:
+            command: "the Setup Operation name"
+            instance: "the DatabaseInstance used"
+            success: "whether the command succeeded"
+            affected: "the processed Table or record count, or null"
+            message: "a public result or error message"
       instance:
         members: "one member per active configured Instance; an inactive Instance has none"
         selection:
           rule: "Every Operation and Setup Operation accepts an optional DatabaseInstance member. When none is given, the call runs on the configured default Instance."
           values: "Only members of DatabaseInstance; an unknown or inactive Instance fails the call before any storage is touched."
+        default_instance: "sqlite"
         definitions:
           sqlite:
             name: "SQLite"
@@ -185,33 +233,6 @@ content:
             username: "postgres"
             password: "123456"
             options: {}
-      result:
-        command_result:
-          immutable: true
-          fields:
-            rows: "returned row mappings, or null"
-            affected: "affected row count, or null"
-            columns: "ordered column names, or null"
-            success: "whether the command succeeded"
-            message: "a public result or error message"
-            instance: "the DatabaseInstance used"
-        setup_result:
-          immutable: true
-          fields:
-            command: "the Setup Operation name"
-            instance: "the DatabaseInstance used"
-            success: "whether the command succeeded"
-            affected: "the processed Table or record count, or null"
-            message: "a public result or error message"
-      error:
-        kinds:
-          invalid_configuration_or_instance: "invalid configuration or Instance"
-          inactive_instance: "inactive Instance selected"
-          invalid_input_or_field: "invalid input or Field"
-          declaration_incompatibility: "Declaration incompatibility"
-          connection_failure: "connection failure"
-          execution_failure: "execution failure"
-          incomplete_lifecycle: "incomplete Lifecycle execution"
       interface:
         contract_version: "3.0"
         prefix: "database"
@@ -238,23 +259,6 @@ content:
         file: "README.md"
         location: "the Component root"
         format: "markdown"
-    directories:
-      core: "core"
-      engine: "engine"
-      entry_points: "scripts"
-      storage: "db"
-    files:
-      interface: "interface"
-      data: "data"
-      tables: "tables"
-      initial_data: "initial_data"
-      lifecycle: "lifecycle"
-      configuration_loader: "configuration"
-      values: "values"
-      query: "query"
-      errors: "errors"
-      engine: "<engine-in-use>"
-      lifecycle_entry_points: "<lifecycle-command>"
 
   # <!-------------------------------------------- development -->
   development:
@@ -293,7 +297,7 @@ content:
             declaration_incompatibility: "DeclarationMismatchError"
             connection_failure: "ConnectionFailureError"
             execution_failure: "ExecutionError"
-            incomplete_lifecycle: "LifecycleError"
+            incomplete_setup: "SetupError"
           field_reference: "A Field reference is the Entity's class attribute for that Field, such as User.is_active."
           row_materialization: "Build the Entity with its own constructor from all Field values."
           engines:
@@ -311,25 +315,3 @@ content:
                 version: "latest-compatible"
                 package: "psycopg"
               url_scheme: "postgresql+psycopg"
-    after_generation:
-      enabled: true
-      fail_on_error: true
-      command: "prepare"
-    database_engines:
-      sqlite:
-        version: "runtime-provided"
-        storage:
-          kind: "file"
-          relative_to: "the Storage directory named in architecture"
-          location: "<database>"
-          reject_escape: true
-        connection:
-          required_parameters: ["database"]
-          foreign_keys: true
-      postgresql:
-        version: "latest-compatible"
-        storage:
-          kind: "server"
-        connection:
-          default_port: 5432
-          required_parameters: ["host", "port", "database", "username", "password"]

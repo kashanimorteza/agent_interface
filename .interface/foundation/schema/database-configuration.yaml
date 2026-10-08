@@ -1,7 +1,7 @@
 schema:
   id: "agent-interface-database-configuration"
-  version: "3.0"
-  purpose: "The independent structure of the Database Configuration file: Engines, complete Instances, runtime Settings, query defaults, Lifecycle behavior, and shared Initial Data."
+  version: "4.0"
+  purpose: "The independent structure of the Database Configuration file: Engines, complete Instances, runtime Settings, query defaults, Setup behavior, and shared Initial Data."
   kind: "Structure standard"
   applies_when: "The Implementation declares a Database Component."
 
@@ -44,7 +44,7 @@ structure:
         default_order:
           field: "<public Entity Field name; default id>"
           direction: "<OrderDirection member name: ASCENDING or DESCENDING>"
-      lifecycle:
+      setup:
         after_generation:
           enabled: "<boolean>"
           fail_on_error: "<boolean>"
@@ -78,7 +78,7 @@ rules:
   initial_data_completeness: "When the Target declares Initial Data, generation copies every declared record into this collection and may not emit an empty or partial collection."
   generated_initial_values: "A Target Initial Data value that is not concrete, including Generate securely, is copied as an empty string; generation continues and no value is generated. The user fills such values later."
   initial_data_security_boundary: "Sensitivity markers, credential Fields, at-rest instructions, and unavailable security processors never omit or block a record; Database stores each value unchanged without hash, encryption, masking, or authorization."
-  lifecycle_order: "When enabled, Prepare runs after generation; its failure fails preparation when fail_on_error is true."
+  setup_order: "When enabled, Prepare runs after generation; its failure fails preparation when fail_on_error is true."
 
 # <!--------------------------------------------------------------------------------- Example -->
 example: |
@@ -123,7 +123,7 @@ example: |
       default_order:
         field: "id"
         direction: "ASCENDING"
-    lifecycle:
+    setup:
       after_generation:
         enabled: true
         fail_on_error: true
