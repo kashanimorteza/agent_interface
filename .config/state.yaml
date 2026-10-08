@@ -41,6 +41,12 @@ content:
       development: "completed"
       review: "satisfied"
       completed_at: "2026-10-08T07:06:32Z"
+    P2:
+      id: "P2"
+      planning: "completed"
+      development: "completed"
+      review: "satisfied"
+      completed_at: "2026-10-08T07:55:35Z"
   log:
     - id: "001"
       skill: "my-interface-configure"
@@ -252,4 +258,203 @@ content:
           - "Loading Interface has no side effect: held"
           - "An unknown Type in the Target stops generation: held"
           - "Each Entity's storage mapping takes exactly the form Model Preferences list: held"
+    - id: "006"
+      skill: "my-interface-implement"
+      phase: null
+      event: "implement"
+      outcome: "completed"
+      started_at: "2026-10-08T07:14:49Z"
+      completed_at: "2026-10-08T07:55:47Z"
+      duration: "40:58"
+      skills_used: []
+      open_questions: ["007-OQ1", "007-OQ2", "008-OQ1"]
+      blockers: []
+      report: "Coordinated Plan, Develop and Review for phase P2 (Database). Config was valid, so Configure was not invoked. Plan created 10 Groups and 31 Tasks; Develop completed all 31; Review recorded and resolved 2 Findings and judged the phase satisfied. Three Open Questions are associated (one of them, 007-OQ2, was resolved by Develop with its own proposal and is kept for the Human to confirm); no Blockers."
+      data:
+        phases: ["2"]
+        resolved_phases: ["P2"]
+        configure_invoked: false
+        operations:
+          - phase: "P2"
+            skill: "my-interface-plan"
+            log_entry: "007"
+            outcome: "completed"
+          - phase: "P2"
+            skill: "my-interface-develop"
+            log_entry: "008"
+            outcome: "completed"
+          - phase: "P2"
+            skill: "my-interface-review"
+            log_entry: "009"
+            outcome: "satisfied"
+        counts:
+          open_questions: 3
+          blockers: 0
+    - id: "007"
+      skill: "my-interface-plan"
+      parent_id: "006"
+      phase: "P2"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-10-08T07:15:14Z"
+      completed_at: "2026-10-08T07:18:33Z"
+      duration: "3:19"
+      skills_used:
+        - name: "sqlmodel"
+          report: "Named as the Task Skill for the Engine and Core Tasks, as Database Preferences require; its guidance was already read for phase P1 and recommends no alternative to a Database choice."
+      open_questions: ["007-OQ1", "007-OQ2"]
+      blockers: []
+      decisions: []
+      report: "Created the one Plan for phase P2 (Database): 10 Groups and 31 atomic Tasks in the Plan Config, all status todo, dependencies explicit and acyclic (including the completed Model Interface Task of phase P1). Aggregate Planning progress for P2 set to completed. The P1 Plan and its Tasks were not touched."
+      data:
+        phase_resolution: "Requested phase '2' resolved to Target phase P2 (Database, enabled, ready); its prerequisite phase P1 is planned, developed and reviewed satisfied."
+        changes:
+          - kind: "addition"
+            scope: "Plan P2"
+            reason: "No Plan existed for P2; created from the Target phase goal and the Database Definition, Preferences and Configuration Schema."
+          - kind: "addition"
+            scope: "Groups P2-G1 to P2-G10 and Tasks P2-G1-T1 to P2-G10-T1 (31 Tasks)"
+            reason: "Decomposition: library package (1), configuration (2), shared values and errors (3), configuration loading and routing (4), SQLite Engine unit (6), Setup Operations (3), Interface publication (4), entry points and preparation (4), documentation (3), quality standards (1)."
+          - kind: "preservation"
+            scope: "Plan P1 (26 Tasks, all done)"
+            reason: "Phase P1 was not selected and is unchanged; P2 depends on its completed Model Interface Task."
+        task_count: 31
+        group_count: 10
+        root_task_count: 57
+        open_questions:
+          - id: "007-OQ1"
+            skill: null
+            current_choice: "Database Preferences declare a default password for the inactive PostgreSQL Instance; the Plan keeps the Preferences as the authority and leaves the value to Develop's copy of the configuration, as the Configuration Schema requires."
+            alternative: "Copy an empty password for that Instance, as the Schema's own example does, because the project Rules say never to copy a credential into a project declaration."
+            reason: "An owned Interface source outranks a Rule, but the value is a credential-like default; the Human may prefer an empty value."
+          - id: "007-OQ2"
+            skill: null
+            current_choice: "The Plan states the Database Principle as written: each stored row becomes an Entity through that Entity's own construction, with the stored identity preserved. Develop resolves how, as its own proposal, and records the decision."
+            alternative: "Have the Human state, in the Target, that a supplied identity is permitted at construction (see 004-OQ1), so rows can be built from all stored values directly."
+            reason: "Model refuses a caller-supplied identity at construction, so building a stored row from all its Field values conflicts with Model's Principle unless the identity is attached by storage or the Target permits it."
+        related_open_questions: ["003-OQ2", "004-OQ1"]
+    - id: "008"
+      skill: "my-interface-develop"
+      parent_id: "006"
+      phase: "P2"
+      event: "develop"
+      outcome: "completed"
+      started_at: "2026-10-08T07:18:45Z"
+      completed_at: "2026-10-08T07:39:21Z"
+      duration: "20:36"
+      skills_used:
+        - name: "sqlmodel"
+          report: "Considered as the Task Skill for the Engine and Core Tasks; its guidance (read earlier in this run) was weighed against the Database contract, which returns raw rows that Core builds into Entities, and the difference is recorded as 008-OQ1."
+      open_questions: ["008-OQ1"]
+      blockers: []
+      decisions: [P2-G1-T1, P2-G2-T1, P2-G2-T2, P2-G3-T2, P2-G4-T1, P2-G4-T2, P2-G4-T3, P2-G4-T4, P2-G5-T1,
+  P2-G5-T2, P2-G5-T5, P2-G6-T1, P2-G6-T2, P2-G6-T3, P2-G7-T1, P2-G8-T3, P2-G9-T1,
+  P2-G9-T3, P2-G10-T1]
+      report: "Developed all 31 Tasks of phase P2 (Database) in dependency order: package with a local path dependency on Model, generated configuration with the Target Initial Data, Core (errors, query vocabulary, results, configuration loading, Instance selection, query checking, routing), the SQLite Engine unit, the three Setup Operations, the six-group Interface, three manual entry points, preparation of the default Instance, nine-section documentation, and quality standards. Every Task is done with evidence in its Task Log. The Database Component is at database/ (package database/database, configuration database/config.yaml, storage database/db, documentation database/README.md). Observed at the end: formatter, linter and type checker report no findings; the default Instance holds the 15 Model Tables and 23 Initial Data records and preparing again changes nothing; regeneration of the configuration collection and the documentation gives zero difference; all 24 documentation examples run, including the Verify script against the real Instance. Conformance is not judged here; Review establishes it."
+      data:
+        phase: "P2"
+        tasks_done: 31
+        tasks_total: 31
+        component_location: "database/"
+        corrections:
+          - task: "P2-G2-T1"
+            note: "Engine entries of the configuration carried no parameters; they now carry the Engine facts from the Preferences so Core needs no Engine-specific knowledge."
+          - task: "P2-G1-T1"
+            note: "The unused sqlmodel dependency was removed after comparing declared with directly imported packages."
+        resolved_open_questions:
+          - id: "007-OQ2"
+            resolution: "Develop resolved it as its own proposal: a stored row is built through the Entity's own construction from every Field value except the Auto Increment Fields, and the stored identity is then attached through the persistence layer's committed-value call. Model was not changed; the Human may still answer 004-OQ1 to permit a supplied identity."
+        open_questions:
+          - id: "008-OQ1"
+            skill: "sqlmodel"
+            current_choice: "Engine units work with the Model table models through SQLAlchemy Core statements and plain row mappings, and Core builds each Entity through its own construction, as the Database Definition requires."
+            alternative: "Use SQLModel sessions and select, which the Skill prefers over lower-level SQLAlchemy patterns."
+            reason: "Session loading builds Entities without running their validation, which would break the Database Principle that every returned Entity is built through its own construction and that a row breaking the Entity contract is an error."
+        related_open_questions: ["004-OQ1", "007-OQ1"]
+    - id: "009"
+      skill: "my-interface-review"
+      parent_id: "006"
+      phase: "P2"
+      event: "review"
+      outcome: "satisfied"
+      started_at: "2026-10-08T07:40:30Z"
+      completed_at: "2026-10-08T07:55:35Z"
+      duration: "15:05"
+      skills_used: []
+      open_questions: []
+      blockers: []
+      report: "Reviewed phase P2 (Database) against its Plan and the Database Review category with independent observations: the Target text, Preferences and Schema compared with the configuration; the Interface contract, Architecture and every Operation checked programmatically; behaviour on a clean copy installed from the lock file through the real entry points and public API, against a Python oracle; refusals before storage; load-time failures; documentation structure and every example run; technical conformance and zero-difference regeneration. Two Findings were recorded and resolved: Orders and comparisons wrongly restricted by Field Type, which also required boolean comparison support in the Engine unit (F1), and missing examples for the value, result and error groups in the Interface documentation (F2). Outcome satisfied."
+      data:
+        phase: "P2"
+        scope: "Plan P2 (10 Groups, 31 Tasks) and the Database Review category, judged against the generated Database Component."
+        findings:
+          - id: "F1"
+            state: "resolved"
+            category: "behaviour"
+            expected: "Every Field of the given Entity can be used in an Order, and in a comparison Filter with a value compatible with it: the Database Definition checks a Field reference against the Entity and a comparison value for compatibility, and restricts only the text operators to textual Fields and the aggregates to numeric or comparable Fields."
+            observed: "An Order on a boolean Field (or a uuid Field) is refused with the invalid-input error (An Order needs a comparable Field), and so is a comparison Filter on those Types. For example list of Position ordered by is_executed fails, although ordering by is_active or is_executed is an ordinary request."
+            evidence: "Reproduction on the review copy: db.list(Position, orders=[database_value.Order(Position.is_executed, database_value.OrderDirection.DESCENDING)]) raises InvalidInputError. Source: database/database/core/query.py, check_orders (the comparable-Type test on each Order) and _check_filter (the ordering-operator test); the restriction is recorded as a decision in the Task Log of P2-G4-T3."
+            plan_reference: "P2-G4-T3 (a valid Filter or Order yields its checked form; refusals are limited to a Field not belonging to the Entity, an incompatible operator or value, a string in place of an imported value, and an unsuitable aggregate Field); P2-G5-T3"
+            resolution: "Removed the Type restriction on Orders and comparison Filters in the query checker (database/database/core/query.py): every Field of the Entity can be ordered by, and a comparison needs only a compatible value. Because relaxing it exposed that the persistence library refuses a greater-than on a boolean column, the SQLite Engine unit now compares booleans as 0 and 1 (False before True) for the four ordering operators (database/database/engine/sqlite.py). Minimum and maximum keep requiring a comparable Field, as the Preferences state. The documentation text for Order and the operators was updated to match."
+            recheck: "The independent behaviour review passes again with its oracle extended to boolean comparisons (99 Filter cases, 0 mismatches) and a boolean ordering check; ordering by is_executed then date works and equals a Python sort; formatter, linter and type checker report nothing; the static and load reviews and the query-default checks pass."
+          - id: "F2"
+            state: "resolved"
+            category: "missing evidence"
+            expected: "The Interface section explains every member of each of the six groups with one example each, covering every enumeration member, default, result and error (Database Definition, Documentation)."
+            observed: "database_result has no example (CommandResult and SetupResult are described but never shown being read), database_error has no example (the eight errors are listed but none is shown being caught), and database_value has one combined example for Filter, Order and the three enumerations; database_instance has one."
+            evidence: "database/README.md, section Interface: counting the Python examples per group subsection gives database_interface 14, database_setup 3, database_value 1, database_instance 1, database_result 0, database_error 0."
+            plan_reference: "P2-G9-T1 (covers all six groups and every Operation parameter, enumeration member, default, result and error, each with an example that runs)"
+            resolution: "Rewrote the Interface documentation of database_value, database_result and database_error (database/README.md, generated): database_value now has a subsection with a runnable example for each of Filter, Order, FilterCombination, OrderDirection and FilterOperator, whose table gives every one of the 12 members its meaning and an example; database_result has one subsection with an example for CommandResult and one for SetupResult; database_error has one subsection with an example for each of the eight error kinds."
+            recheck: "Counting examples per group gives database_interface 14, database_setup 3, database_value 5, database_instance 1, database_result 2, database_error 8; all 38 Python examples of the document run as separate processes on the real default Instance, twice in a row, leaving 15 Tables and 23 records and restoring every changed value (the Broker column, the User password); regenerating the documentation gives zero difference."
+        observations_made:
+          - "Independently parsed the Target's Initial Data and compared it with the configuration: 23 records in 12 Entities, order and values (five Generate securely values are empty strings), and compared Engines, Instances, default Instance, query defaults, storage root and after-generation behaviour with the Preferences and Schema."
+          - "Compared the Interface with the contract programmatically: exactly six published names equal to __all__; the 13 and 3 Operation parameter lists, order, optionality and instance-last; enumeration members and values; frozen forms and results with their field lists; the error hierarchy; DatabaseInstance members against the active Instances."
+          - "Architecture: Core has exactly its eight source files, Engine has one unit for the one Engine in use, Entry Points has exactly three scripts, empty initialisers, configuration and documentation at the Component root, Model reached only through its Interface."
+          - "Behaviour on a clean copy installed from the lock file, through the real entry points and public API only: add, update, get, delete, enable, disable, truncate, list, count, sum, minimum, maximum and the Command Operation, with 95 Filter cases (every operator across string, integer, float, decimal, datetime and boolean Fields) and combinations, orders and limits compared with a Python oracle, exact decimal sums, null handling, wildcard literals, atomic failures, referenced deletes refused without change, missing records as null."
+          - "Refusals: string in place of Entity, Field, operator, direction, combination, limit, id, command or Instance, a Field of another Entity, class/instance mix-ups - all invalid-input errors, and with pristine storage none of them created the storage directory."
+          - "Setup: create_tables on empty, matching, one-missing and five kinds of differing Table (column type, nullability, size, extra index, dropped foreign key and uniqueness) stopping unchanged; prepare stopping without inserting; insert_initial_data first, repeated, restoring a missing record, and failing on a conflict without inserting anything; stored values read back as configured."
+          - "Load time: loading with the connect call trapped opens no connection and creates nothing; 12 invalid configurations fail at load before any file exists; configured query defaults change behaviour as the Schema states; error messages from 8 failure paths contain no path or connection value."
+          - "Technical: formatter, linter, type checker, lock consistency, wheel build and clean install pass; declared dependencies equal the packages imported directly; all 24 documentation examples run as separate processes on the real default Instance leaving 23 records; README sections, per-Operation signatures, Initial Data listing and absence of forbidden constructs; zero-difference regeneration of the configuration collection and the documentation; the Model sources are identical to the reviewed ones."
+        notes_about_the_review:
+          - "NOT_EQUALS excludes records whose Field is null (standard SQL behaviour); the Definition does not state null handling for it, so this is reported here and not recorded as a Finding."
+          - "If an Instance is made active by hand in the configuration without a generated Engine unit, the Interface loads and a DatabaseInstance member exists, and the first use of that Instance fails with the invalid-configuration error before any storage is touched; the Schema ties such changes to regeneration, so this is reported here and not recorded as a Finding."
+          - "Zero-difference regeneration is observed with the generation scripts the Develop run used, which live outside the project and rest on the same transcription of the Target; the independent comparison of the configuration with the Target text covers that transcription."
+        outcome: "satisfied"
+        outcome_basis: "Every Finding is resolved and rechecked; every Task acceptance and every observation of the Database Review category is established by an observation made in this Review; technical and repeatable conformance holds."
+        acceptance_established:
+          - tasks: ["P2-G1-T1"]
+            by: "Clean install from the lock file of both Components in a scratch copy, import of the Interface, wheel build, local path dependency on Model, declared dependencies equal to the directly imported packages, ignore coverage of the storage."
+          - tasks: ["P2-G2-T1", "P2-G2-T2"]
+            by: "Independent comparison of the configuration with the Preferences, the Schema and the Target text: sections, Engines, Instances with nine members, default, query defaults, setup behaviour; 23 Initial Data records in 12 Entities in Target order with values unchanged and five Generate securely values as empty strings."
+          - tasks: ["P2-G3-T1", "P2-G3-T2", "P2-G3-T3"]
+            by: "Programmatic comparison of the error hierarchy, the enumerations (members, values equal names), the frozen Filter, Order and result forms and their field lists; messages from eight failure paths scanned for connection values and paths."
+          - tasks: ["P2-G4-T1", "P2-G4-T2"]
+            by: "13 invalid configurations failing at load before any file exists; configured query defaults changing behaviour; DatabaseInstance members equal to the active Instances, strings and foreign values refused, default and explicit selection equal."
+          - tasks: ["P2-G4-T3", "P2-G4-T4"]
+            by: "Refusal of 26 kinds of invalid request with storage never created; 99 Filter cases, combinations, orders and limits against a Python oracle; materialization through the Entity constructor with the stored identity; a broken stored row raising the Declaration-incompatibility error; missing records returning null (after F1)."
+          - tasks: ["P2-G5-T1", "P2-G5-T2", "P2-G5-T3", "P2-G5-T4", "P2-G5-T5", "P2-G5-T6"]
+            by: "Behaviour of every Operation on a database prepared through the real entry points: atomic failures leaving data unchanged, referenced deletes refused, exact decimal and float sums, null handling, native commands, table inspection and creation, atomic batch insertion, storage inside the Database-owned directory."
+          - tasks: ["P2-G6-T1", "P2-G6-T2", "P2-G6-T3"]
+            by: "create_tables on empty, matching, one-missing and five kinds of differing Table; prepare stopping without inserting; insert_initial_data first, repeated, restoring and conflicting without partial insertion; stored values read back as configured."
+          - tasks: ["P2-G7-T1", "P2-G7-T2", "P2-G7-T3", "P2-G7-T4"]
+            by: "Signatures of all 16 Operations against the Preferences, group contents, exactly six published names equal to __all__, loading with the connect call trapped opening no connection and creating nothing."
+          - tasks: ["P2-G8-T1", "P2-G8-T2", "P2-G8-T3", "P2-G8-T4"]
+            by: "The three real entry points run on the clean copy (exit 0, repeatable, exit 1 on a differing Table in Develop evidence re-observed through prepare); the default Instance prepared with 15 Tables and 23 records and nothing else created."
+          - tasks: ["P2-G9-T1", "P2-G9-T2", "P2-G9-T3"]
+            by: "Section order, per-group and per-member examples, signatures equal to the real ones, Initial Data listing equal to the configuration, absence of credentials and forbidden constructs, and all 38 examples including the Verify script run as processes on the real default Instance (after F2)."
+          - tasks: ["P2-G10-T1"]
+            by: "Formatter, linter and type checker, lock consistency, zero-difference regeneration of the configuration collection and the documentation, all examples still running."
+        review_category_observations:
+          - "Interface publishes exactly the public contracts of the Interface contract and nothing else: held"
+          - "Every Entity, Command and Setup Operation has the stated signature and result, including the optional DatabaseInstance: held"
+          - "Each enumeration holds exactly the members the Preferences list: held"
+          - "DatabaseInstance holds exactly one member per active configured Instance and none for an inactive one: held"
+          - "A call without a DatabaseInstance runs on the configured default Instance: held"
+          - "No Operation accepts an Entity name, a Field name or any other string in place of an imported value: held"
+          - "create_tables uses only the Entities of the Model Entity Collection and their Declarations, and stops on a difference with an existing Table: held"
+          - "Every returned Entity is built through its own construction, and a row that breaks the Entity contract is an error: held"
+          - "prepare runs create_tables and then insert_initial_data, and stops when create_tables fails: held"
+          - "A Target Initial Data value that is not concrete is copied as an empty string, and no value is generated: held"
+          - "A missing record returns null, never an error: held"
+          - "Loading Interface opens no connection and creates no data or file: held"
 

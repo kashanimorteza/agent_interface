@@ -1,0 +1,26 @@
+[project]
+name = "database"
+version = "0.1.0"
+description = "Persistence of the Trading Assistant Model Entities behind one public Interface."
+requires-python = ">=3.14"
+dependencies = [
+    "model",
+    "pyyaml>=6.0.3",
+    "sqlalchemy>=2.1.4",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.23,<0.13"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-root = ""
+
+[tool.uv.sources]
+model = { path = "../model", editable = true }
+
+[dependency-groups]
+dev = [
+    "ruff>=0.16.10",
+    "ty>=0.0.85",
+]

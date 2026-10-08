@@ -26,7 +26,7 @@ content_map:
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
-  task_count: 26
+  task_count: 57
   plans:
     P1:
       id: P1
@@ -912,3 +912,1027 @@ content:
               - at: '2026-10-08T07:00:01Z'
                 event: done
                 note: 'Applied the quality standards the Development Preferences select to the complete Model source (formatter, linter and type checker, all with the locked tool versions) and resolved every finding without weakening a Model contract. Observed: formatting check, lint check and type check all report no findings over the library and its documentation code blocks; regenerating the 15 Entity units from the Target produces zero difference; all 12 documentation examples and the Verify script still run (Model verified).'
+    P2:
+      id: P2
+      title: Database
+      order: 2
+      target: Database
+      does: The Database library exists as a reusable project-internal package that persists every Model Entity through one published Interface on its active default Instance, with a generated configuration, the Target Initial Data, manual Setup entry points and documentation, and with that Instance prepared once generation is complete.
+      constraints:
+      - A capability is made public only by the Interface publication work of this phase; no Core, Engine or configuration work publishes it.
+      task_count: 31
+      groups:
+        P2-G1:
+          id: P2-G1
+          title: Library Package
+          description: The Database library's own packaging, dependency baseline and connection to the Model library.
+          area: Database library packaging and Model connection
+          does: The Database library can be installed and imported as a project-internal package that reaches Model through its declared dependency.
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-G1-T1:
+              id: P2-G1-T1
+              source_id: '007'
+              title: Establish the Database library package
+              description: Create the Database Component as a self-contained library that depends on the Model library as a local project dependency. Resolve the dependencies its selected technology needs to concrete compatible versions, make the language's quality-standard tooling available to it, and make sure the project's single ignore file covers its stored data and caches.
+              reason: Every later Database Task needs a package to live in and a resolved connection to Model.
+              inputs:
+              - Database Component identity and selected language profile
+              - Development language standards and declared Connections
+              - Published Model Interface
+              skills:
+              - sqlmodel
+              expected_result: An importable Database package, containing no behaviour yet, that reaches the Model Interface through its dependency.
+              depends_on:
+              - P1-G8-T1
+              constraints: []
+              acceptance: The package installs into an isolated environment from the repository alone and imports without error; the Model Interface can be imported through the declared dependency; every dependency is recorded at a concrete version in lock metadata; the project's single ignore file covers the Database's stored data and caches.
+              status: done
+              log:
+              - at: '2026-10-08T07:18:55Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-08T07:19:39Z'
+                event: decision
+                note: PostgreSQL support packages are not added because no active Instance uses the PostgreSQL Engine.
+              - at: '2026-10-08T07:19:39Z'
+                event: decision
+                note: Runtime dependencies are limited to what the Database source will import directly; any further direct import is declared when it is added.
+              - at: '2026-10-08T07:19:39Z'
+                event: done
+                note: 'Created the Database Component directory (database/, package database/database with core and engine areas) as a flat-layout library built with uv_build. Model is a local editable path dependency on ../model; sqlmodel 0.0.48, sqlalchemy 2.1.4 and pyyaml 6.0.3 are the runtime dependencies, ruff and ty the dev tools, all pinned by the lock file. Observed: the package imports and the Model Interface imports through the dependency (15 Entities); the root ignore file already ignores database/db/, .venv and caches.'
+              - at: '2026-10-08T07:38:40Z'
+                event: completed-result-corrected
+                note: 'At the end of development the declared dependencies were compared with the packages the Database source imports directly: sqlmodel was declared but never imported (Tables come only from Model, which carries it), so it was removed from the dependencies and the lock file; sqlalchemy, pyyaml and model remain. Status stays done.'
+        P2-G2:
+          id: P2-G2
+          title: Database Configuration
+          description: The generated runtime configuration that is the sole source of Engines, Instances, settings and Initial Data.
+          area: 'Configuration: generated Engines, Instances, settings and Initial Data'
+          does: A complete, valid Database Configuration exists, holding every Engine, Instance, setting and Target Initial Data record.
+          constraints: []
+          task_count: 2
+          tasks:
+            P2-G2-T1:
+              id: P2-G2-T1
+              source_id: '007'
+              title: Generate the Engines, Instances and settings of the Database Configuration
+              description: Produce the generated Database Configuration's Engines, complete Instances, and runtime settings (default Instance, Database-owned storage root, query defaults, and after-generation Setup behaviour) from the Database Preferences, in the shape and under the rules of the Database Configuration Schema. The Initial Data collection is present and empty until its own Task fills it.
+              reason: Runtime reads only this configuration, so every Engine, Instance and default has to be in it.
+              inputs:
+              - Database Preferences' Engine, Instance and query-default choices
+              - Database Configuration Schema
+              skills: []
+              expected_result: A valid Database Configuration holding every declared Engine and Instance, the default Instance, the storage root and the query defaults.
+              depends_on:
+              - P2-G1-T1
+              constraints: []
+              acceptance: 'The configuration conforms to the Database Configuration Schema: every Instance is complete and names an existing Engine, the default Instance is an active existing Instance, and the query defaults and after-generation behaviour equal those the Preferences declare.'
+              status: done
+              log:
+              - at: '2026-10-08T07:19:39Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-08T07:19:54Z'
+                event: decision
+                note: The inactive PostgreSQL Instance keeps the connection defaults the Database Preferences declare, including the password default, because the Preferences outrank the project Rule on copying credentials; this is recorded as an Open Question in the State Log (007-OQ1).
+              - at: '2026-10-08T07:19:54Z'
+                event: decision
+                note: 'Engine entries carry an empty parameters mapping, as the Schema example does: the SQLite connection arguments belong to the Engine unit generated from the Preferences, which runtime does not read.'
+              - at: '2026-10-08T07:19:54Z'
+                event: done
+                note: 'Generated the Database Configuration (database/config.yaml) from the Database Preferences in the Schema shape: engines sqlite and postgresql, instances sqlite (active, default) and postgresql (inactive) each with all nine members, settings with default Instance sqlite, storage root db, query defaults (AND, no limit, order by id ascending) and after-generation prepare enabled with failure failing, and an empty Initial Data collection. Observed: the file loads as YAML with exactly the four top-level sections; the default Instance is active and exists; both Instances name declared Engines.'
+              - at: '2026-10-08T07:23:19Z'
+                event: completed-result-corrected
+                note: While starting the configuration loader, the Engine entries were found to be empty although the configuration is the sole runtime source for Engines; they now carry the Engine facts the Preferences declare (version, storage kind and escape rejection, required connection parameters, enforced foreign keys for SQLite, default port for PostgreSQL), so Core needs no Engine-specific knowledge. The earlier decision that Engine entries stay empty is superseded. Status stays done.
+            P2-G2-T2:
+              id: P2-G2-T2
+              source_id: '007'
+              title: Copy the Target Initial Data into the Database Configuration
+              description: Copy every Initial Data record the Target declares, for every Entity, into the one shared Initial Data collection, grouped by Entity in Target order and keeping each stated value unchanged. A value the Target does not state concretely is copied as an empty string and no value is produced.
+              reason: Initial Data insertion reads only this collection, so it has to be complete.
+              inputs:
+              - Target Initial Data records
+              - Public Entity identities from the Model Interface
+              skills: []
+              expected_result: A complete shared Initial Data collection in the Database Configuration.
+              depends_on:
+              - P2-G2-T1
+              - P1-G8-T1
+              constraints: []
+              acceptance: The collection holds exactly one record for each Initial Data record the Target declares, grouped by Entity in Target order, each with its stated values unchanged; every value the Target gives as Generate securely is an empty string; nothing is omitted because of what a Field means.
+              status: done
+              log:
+              - at: '2026-10-08T07:19:54Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-08T07:21:59Z'
+                event: decision
+                note: An Entity in the collection is identified by its exported Entity name (for example TradingPlatform), because that is the identity Model Interface publishes.
+              - at: '2026-10-08T07:21:59Z'
+                event: decision
+                note: Each record lists only the Fields the Target states; the Entity contract supplies the defaults when the record is inserted.
+              - at: '2026-10-08T07:21:59Z'
+                event: done
+                note: 'Copied every Target-defined Initial Data record into the shared Initial Data collection of the Database Configuration (database/config.yaml): 23 records for 12 Entities in Target order (User 1, Trading Platform 2, Instance 1, Currency 8, Broker 1, Asset 4, Account Group 1, Account 1, Trailing Group 1, Partial Group 1, Action Group 1, Action 1), values as the Target states them. Every value the Target gives as Generate securely (User password and api_key, Instance password and api_key, Account password) is an empty string. Trailing Rule, Partial Rule and Position have no Initial Data in the Target and no entry. Observed: the collection loads as YAML with those counts.'
+        P2-G3:
+          id: P2-G3
+          title: Core Values and Errors
+          description: The immutable forms, enumerations, results and error kinds that Core and the published groups share.
+          area: 'Core: shared immutable forms, enumerations, results and error kinds'
+          does: Every value a consumer passes or reads, and every failure a consumer can catch, exists as a shared immutable form or distinct error.
+          constraints: []
+          task_count: 3
+          tasks:
+            P2-G3-T1:
+              id: P2-G3-T1
+              source_id: '007'
+              title: Define the Database error kinds
+              description: 'Provide one base Database error and one distinct error for each declared failure kind: invalid configuration or Instance, inactive Instance, invalid input or Field, Declaration incompatibility, connection failure, execution failure, and incomplete Setup. No error carries a connection value or credential.'
+              reason: Consumers must tell failures apart and catch them all under one base.
+              inputs:
+              - Database error kinds
+              skills: []
+              expected_result: A base error and seven distinct error kinds.
+              depends_on:
+              - P2-G1-T1
+              constraints: []
+              acceptance: Each failure kind is raised as its own error derived from the one base error, each is distinguishable from the others, and no error message contains a connection value or credential.
+              status: done
+              log:
+              - at: '2026-10-08T07:21:59Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-08T07:22:54Z'
+                event: done
+                note: 'Wrote the error kinds (database/database/core/errors.py): the base DatabaseError and seven distinct subclasses named by the Database Preferences (ConfigurationError, InactiveInstanceError, InvalidInputError, DeclarationMismatchError, ConnectionFailureError, ExecutionError, SetupError). Observed: seven distinct errors, each a subclass of the base and none the base itself; none holds a field for a connection value.'
+            P2-G3-T2:
+              id: P2-G3-T2
+              source_id: '007'
+              title: Define the query vocabulary and its checked forms
+              description: Provide the closed enumerations of Filter operators, Filter combinations and Order directions, the immutable Filter and Order values a consumer builds from them, and the immutable checked forms Core derives from those values.
+              reason: Queries are expressed only in typed values, never in strings.
+              inputs:
+              - Database query vocabulary and defaults
+              skills: []
+              expected_result: The query enumerations, the Filter and Order values, and their checked forms.
+              depends_on:
+              - P2-G1-T1
+              constraints: []
+              acceptance: Each enumeration holds exactly the members the Preferences list with each member's value equal to its name; a Filter, an Order and each checked form is immutable with exactly its listed fields in order; an Order without a direction ascends.
+              status: done
+              log:
+              - at: '2026-10-08T07:21:59Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-08T07:22:54Z'
+                event: decision
+                note: The declared Type in a checked form is stored as the Type name text (for example integer) so Database depends on Model only through the Entity Declaration it exposes.
+              - at: '2026-10-08T07:22:54Z'
+                event: done
+                note: 'Wrote the query vocabulary (database/database/core/values.py): FilterOperator (12 members), FilterCombination (AND, OR) and OrderDirection as enumerations whose member values equal their names; frozen dataclasses Filter (field, operator, value), Order (field, direction ascending by default) and the checked forms CheckedFilter (field, type, operator, value) and CheckedOrder (field, type, descending). Observed: member counts and value-equals-name for all 12 operators, field lists in the stated order, assignment to a Filter raises FrozenInstanceError.'
+            P2-G3-T3:
+              id: P2-G3-T3
+              source_id: '007'
+              title: Define the Command and Setup results
+              description: Provide the immutable CommandResult and SetupResult values a consumer reads back, each with exactly its listed fields, including the Instance the call used.
+              reason: Consumers read every command and setup outcome in one stable published form.
+              inputs:
+              - Database result definitions
+              - DatabaseInstance enumeration
+              skills: []
+              expected_result: The two immutable result forms.
+              depends_on:
+              - P2-G4-T2
+              constraints: []
+              acceptance: Both results are immutable and expose exactly their listed fields in order, and their Instance field holds a DatabaseInstance member.
+              status: done
+              log:
+              - at: '2026-10-08T07:24:19Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-08T07:24:48Z'
+                event: done
+                note: 'Added the immutable CommandResult (rows, affected, columns, success, message, instance) and SetupResult (command, instance, success, affected, message) to the values module as frozen dataclasses with exactly the listed fields in that order. Observed: field lists match; assigning to either raises FrozenInstanceError; the instance field holds a database_instance member.'
+        P2-G4:
+          id: P2-G4
+          title: Core Configuration and Routing
+          description: Core's loading of the configuration, selection of Instances, checking of queries, and routing of every public request.
+          area: 'Core: configuration loading, Instance selection, query checking and request routing'
+          does: Every public request is validated, resolved to an Instance, routed to its Engine unit, and returned in the published form.
+          constraints: []
+          task_count: 4
+          tasks:
+            P2-G4-T1:
+              id: P2-G4-T1
+              source_id: '007'
+              title: Load and validate the Database Configuration
+              description: 'Core loads the generated configuration as the sole runtime source and validates every rule of the Database Configuration Schema: complete uniquely identified Instances that name existing Engines, an active existing default Instance, canonical enumeration names, limit normalization, and Database-owned storage. Any violation fails loading before a connection is opened.'
+              reason: Every request depends on one checked configuration.
+              inputs:
+              - Generated Database Configuration
+              - Database Configuration Schema rules
+              - Database error kinds
+              - Query vocabulary
+              skills: []
+              expected_result: A configuration loader that returns a checked configuration or fails explicitly.
+              depends_on:
+              - P2-G2-T1
+              - P2-G2-T2
+              - P2-G3-T1
+              - P2-G3-T2
+              constraints: []
+              acceptance: A valid configuration loads; a configuration with an incomplete or duplicate Instance, an unknown Engine, an inactive or missing default Instance, an unknown enumeration name, or a storage path that escapes the storage root fails loading with the invalid-configuration error before any connection is opened; a zero or negative default limit normalizes to no limit.
+              status: done
+              log:
+              - at: '2026-10-08T07:22:54Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-08T07:23:58Z'
+                event: decision
+                note: The Component root is found from the location of the package, so the configuration file and the Database-owned storage directory sit beside the package inside the Component.
+              - at: '2026-10-08T07:23:58Z'
+                event: decision
+                note: Required connection values and file-backed storage are checked only for active Instances, because only they receive an Engine unit; an inactive Instance still must have all nine members.
+              - at: '2026-10-08T07:23:58Z'
+                event: decision
+                note: Engine knowledge needed by Core (storage kind, required connection values) is read from the Engine entries of the configuration, not from Engine units.
+              - at: '2026-10-08T07:23:58Z'
+                event: done
+                note: 'Wrote the configuration loader (database/database/core/configuration.py): reads the generated configuration as the sole runtime source and validates every Schema rule - exactly four sections; Engines with name, driver and parameters; Instances with exactly the nine members, unique keys, names and upper-case member names, existing Engine, text/boolean/integer types, Engine-required connection values non-empty for active Instances, file-backed storage contained in the Database-owned storage root (relative, no escape, no absolute path); an active existing default Instance; canonical enumeration names; limit normalization (zero or negative to -1); after-generation command prepare; Initial Data as groups of mapping records. Every violation raises the invalid-configuration error with a message naming the item but no value; connection values are excluded from repr. Observed: the real configuration loads (2 Engines, 2 Instances, 12 Initial Data groups); 19 invalid variants were each refused, limits 0 and -7 normalized to -1, an inactive Instance with an empty value loads, an unreadable file is refused.'
+            P2-G4-T2:
+              id: P2-G4-T2
+              source_id: '007'
+              title: Provide the DatabaseInstance enumeration
+              description: Provide the enumeration whose members identify exactly the active configured Instances, each named by its Instance key in upper case and carrying no connection value. An omitted selection resolves to the default Instance; an unknown or inactive selection fails before any storage is touched.
+              reason: A call must name its Instance by an imported value without ever seeing connection details.
+              inputs:
+              - Checked Database Configuration
+              - Database error kinds
+              skills: []
+              expected_result: The DatabaseInstance enumeration and the rule that resolves a selection.
+              depends_on:
+              - P2-G4-T1
+              - P2-G3-T1
+              constraints: []
+              acceptance: The enumeration holds exactly one member per active Instance and none for an inactive one; a call without a selection runs on the default Instance; selecting an unknown or inactive Instance fails with the matching error before any storage is touched; no member exposes a connection value.
+              status: done
+              log:
+              - at: '2026-10-08T07:23:58Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-08T07:24:19Z'
+                event: decision
+                note: The enumeration is built when the configuration module loads, so loading the Interface reads the configuration file but opens no connection and creates no data or file.
+              - at: '2026-10-08T07:24:19Z'
+                event: decision
+                note: Any selection that is not a member of the enumeration, including a string naming an Instance, is an invalid-input failure; the inactive-Instance failure is raised only for a member whose configured Instance is no longer active.
+              - at: '2026-10-08T07:24:19Z'
+                event: done
+                note: 'Added to the configuration module the DatabaseInstance enumeration (database_instance), built from the configuration with one member per active Instance named by its Instance key in upper case (value: the key) and none for an inactive Instance, and resolve_instance, which maps an omitted selection to the default Instance, a member to its configured Instance, and refuses anything else (strings included) with the invalid-input error, an unconfigured key with the invalid-configuration error and an inactive Instance with the inactive-Instance error, all before any storage is touched. Observed: members are exactly SQLITE (sqlite); no POSTGRESQL member exists; default and explicit selection both resolve to sqlite; four non-member selections (two strings, an integer, an object) were refused; the member representations show no connection value.'
+            P2-G4-T3:
+              id: P2-G4-T3
+              source_id: '007'
+              title: Check queries against the given Entity
+              description: 'Check each Filter, Order and aggregate Field against the given Entity''s complete Declaration before any Instance is accessed: the Field must be a Field reference the Entity exposes, the operator must suit the Field''s declared Type, the value must be compatible, a text operator needs a textual Field, a sum needs a numeric Field, and a minimum or maximum a comparable Field.'
+              reason: A bad query must fail before any storage is touched.
+              inputs:
+              - Query vocabulary and checked forms
+              - Public Entity Declarations from the Model Interface
+              - Database error kinds
+              skills: []
+              expected_result: A query checker that yields checked forms or refuses.
+              depends_on:
+              - P2-G3-T1
+              - P2-G3-T2
+              - P1-G8-T1
+              constraints: []
+              acceptance: A valid Filter or Order yields its checked form; a Field that is not a Field reference of the Entity, an incompatible operator or value, a string in place of an imported value, and an aggregate on an unsuitable Field are each refused with the invalid-input error before any Instance is accessed.
+              status: done
+              log:
+              - at: '2026-10-08T07:24:49Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-08T07:25:44Z'
+                event: decision
+                note: Comparison operators and Orders are allowed for string, integer, float, decimal, datetime, date and time Fields; booleans and uuids are compared only for equality, because their ordering carries no stated meaning.
+              - at: '2026-10-08T07:25:44Z'
+                event: decision
+                note: An integer is accepted as a value for a float or decimal Field and normalized to that Type; a float is never accepted for a decimal Field.
+              - at: '2026-10-08T07:25:44Z'
+                event: decision
+                note: Aggregate sum needs an integer, float or decimal Field; minimum and maximum need a comparable Field.
+              - at: '2026-10-08T07:25:44Z'
+                event: done
+                note: 'Wrote the query checker (database/database/core/query.py): Entity class/instance checks against the Model Entity Collection, Field-reference checks (an InstrumentedAttribute of the very Entity, mapped to the Declaration Field), value normalization per declared Type without coercion across Types (integers accepted for float and decimal Fields, floats refused for decimal), operator rules (text operators need a textual Field and text value, comparisons need a comparable Field, IN needs a non-empty collection, null operators take no value), Order checks with default order from the configuration, limit normalization, id and combination checks, aggregate Field suitability (numeric for sum, comparable for minimum and maximum). Observed: valid Filters and Orders yield checked forms with the declared Type and normalized value; 32 invalid requests (other Entity Field, Field name string, operator string, wrong or bool or float value, naive datetime, text operator misuse, null operator with value, missing value, ordering on boolean, empty/string IN, non-Filter, string combination, string/bool limit, string id, aggregate misuse, string Entity, instance/class mix-ups) were each refused with the invalid-input error.'
+            P2-G4-T4:
+              id: P2-G4-T4
+              source_id: '007'
+              title: Route every public request through Core
+              description: Core receives each public request, validates its input, resolves defaults and the selected Instance, loads that Instance's complete configuration, forwards the work with its connection to the Engine unit, builds each stored row into an Entity through that Entity's own construction while preserving the identity storage assigned, and normalizes every result. A row that does not satisfy the Entity contract is an error and is never repaired.
+              reason: One shared route makes every Engine receive the same checked request and return the same normalized result.
+              inputs:
+              - Checked configuration
+              - DatabaseInstance rule
+              - Query checker
+              - Command and Setup results
+              - Engine unit operations
+              skills:
+              - sqlmodel
+              expected_result: A shared request route used by every Entity and Command Operation.
+              depends_on:
+              - P2-G4-T1
+              - P2-G4-T2
+              - P2-G4-T3
+              - P2-G3-T3
+              - P2-G5-T2
+              - P2-G5-T3
+              - P2-G5-T4
+              - P2-G5-T5
+              constraints: []
+              acceptance: A request without an Instance runs on the default Instance; a bad input fails before any storage is touched; each returned Entity is an instance of the requested Entity built through its own construction with the stored identity intact; a stored row that breaks the Entity contract raises an error that names no stored value; a missing record yields null, never an error.
+              status: done
+              log:
+              - at: '2026-10-08T07:30:35Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-08T07:31:54Z'
+                event: decision
+                note: A stored row is built by constructing the Entity from every Field value except the Auto Increment Fields, then the stored identity is attached through the persistence layers committed-value call, because Model refuses a caller-supplied identity at construction; Model is unchanged. This is Develops own proposal for 007-OQ2.
+              - at: '2026-10-08T07:31:54Z'
+                event: decision
+                note: Add accepts only a new Entity instance (generated Fields pending); update needs an Entity instance that carries its stored identity and replaces every mutable Field.
+              - at: '2026-10-08T07:31:54Z'
+                event: decision
+                note: A native command that fails to execute returns an unsuccessful CommandResult with the public message; connection and configuration failures are raised.
+              - at: '2026-10-08T07:31:54Z'
+                event: decision
+                note: Sequence parameters of a native command are passed to the Engine as a tuple so one list is one parameter set.
+              - at: '2026-10-08T07:31:54Z'
+                event: done
+                note: 'Wrote the shared routing (database/database/core/data.py): each Entity Operation and the Command Operation checks its input (Entity class or instance, identity, Field references, Filters, combination, Orders, limit, command and parameters) before an Instance is resolved or storage touched, resolves the default or selected Instance, obtains the Engine unit for its Engine (cached per Instance), forwards the checked request, builds every returned row into an Entity through that Entitys own construction with the stored identity attached through the persistence layer, and normalizes results (a missing record is None, a negative affected count is None). A row that breaks the Entity contract raises the Declaration-incompatibility error naming no value. Observed through the routing on a temporary database: add, update, get, delete, enable, disable, list (default order, filters, OR, descending, limit), count, sum, minimum, maximum, truncate, native command (read, change, schema change, parameters as list/tuple/named/none); 11 invalid requests refused with the invalid-input error including strings for Entity, Field and Instance; a broken stored row raised the Declaration-incompatibility error; invalid input was refused before an unreachable storage was touched while valid input reached it (connection-failure error).'
+        P2-G5:
+          id: P2-G5
+          title: SQLite Engine
+          description: The one Engine unit for the SQLite Engine used by the active default Instance.
+          area: 'Engine: the unit for the SQLite Engine'
+          does: The SQLite Engine unit implements every Entity Operation, the Command Operation and the capabilities the Setup Operations require.
+          constraints: []
+          task_count: 6
+          tasks:
+            P2-G5-T1:
+              id: P2-G5-T1
+              source_id: '007'
+              title: Resolve the SQLite connection and storage
+              description: The Engine unit opens the connection for an Instance from the connection Core passes, applying the Engine's declared connection arguments and enforced foreign keys, and resolves the database file inside the Database-owned storage directory, refusing a path that would escape it. Only Database creates and manages that storage.
+              reason: Every SQLite operation needs one correct, contained connection.
+              inputs:
+              - Checked configuration
+              - SQLite Engine preferences
+              - Database error kinds
+              skills:
+              - sqlmodel
+              expected_result: A connection and storage resolution for SQLite Instances.
+              depends_on:
+              - P2-G4-T1
+              - P2-G3-T1
+              constraints: []
+              acceptance: A connection to the default Instance opens on a file named by the Instance's database value inside the storage directory; a database value that would escape the directory is refused before any connection is opened; foreign key enforcement is on; an unreachable database fails with the connection-failure error.
+              status: done
+              log:
+              - at: '2026-10-08T07:25:44Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-08T07:26:49Z'
+                event: decision
+                note: Atomic work uses an explicit transaction opened on every connection (the standard-library driver otherwise runs schema changes outside a transaction), so changes and schema work are all-or-nothing.
+              - at: '2026-10-08T07:26:49Z'
+                event: decision
+                note: Decimal comparison, ordering and sum are made exact inside SQLite by a registered decimal collation and decimal sum, because decimals are stored as text.
+              - at: '2026-10-08T07:26:49Z'
+                event: decision
+                note: A decimal sum over no rows yields null at this level; the aggregate Operation turns it into zero.
+              - at: '2026-10-08T07:26:49Z'
+                event: done
+                note: 'Wrote the SQLite Engine unit (database/database/engine/sqlite.py) connection and storage handling, plus the internal Connection form (values module) and connection_for (configuration module): a file-backed Instance resolves to a location inside the Database-owned storage root; the unit creates the storage directory only when first used, opens a SQLAlchemy engine with the driver arguments the Preferences declare, enforces foreign keys, registers an exact decimal collation and exact decimal sum on every connection, and runs every unit of work as an explicit transaction that is kept completely or not at all. Open and driver failures become the connection-failure or execution-failure error with a message free of paths and values. Observed against a temporary database: location is db/application.db inside the storage root; nothing exists before first use; foreign key pragma is 1; decimal order 1.10 < 1.9 < 10 and exact sum 13.00; a failing block rolled back; an unreachable location raised the connection-failure error without the path; a non-file Instance is refused with the invalid-configuration error.'
+            P2-G5-T2:
+              id: P2-G5-T2
+              source_id: '007'
+              title: Implement the data-changing Entity Operations on SQLite
+              description: Implement add, update, delete, enable, disable and truncate. Add returns the stored Entity including generated values. Update replaces every mutable Field, never the identity or another immutable Field, and returns null when no record exists. Delete returns the final deleted Entity or null. Enable and disable set only the activity Field and return the final Entity, including when it was unchanged, or null. Truncate removes every record of the Entity, keeps its Table and returns the deleted count. Every change completes atomically or leaves no partial data change.
+              reason: These are the Operations through which consumers change stored data.
+              inputs:
+              - Entity Operation contract
+              - Query checker
+              - Public Entity Declarations from the Model Interface
+              skills:
+              - sqlmodel
+              expected_result: The six changing Operations in the SQLite Engine unit.
+              depends_on:
+              - P2-G5-T1
+              - P2-G4-T3
+              - P1-G8-T1
+              constraints: []
+              acceptance: Each Operation returns exactly what the contract states, including null for a missing record; an update never changes the identity; enable and disable change only the activity Field; truncate keeps the Table; a failed change leaves stored data exactly as it was.
+              status: done
+              log:
+              - at: '2026-10-08T07:26:49Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-08T07:28:08Z'
+                event: decision
+                note: Engine unit methods take an Entity class, the identity and the already checked Field values, and return plain row mappings; building Entities from rows is Core routing work.
+              - at: '2026-10-08T07:28:08Z'
+                event: done
+                note: 'Added to the SQLite Engine unit the data-changing operations add, update, delete, set-active (enable and disable) and truncate (database/database/engine/sqlite.py). Each runs in one explicit transaction and returns raw row mappings: add returns the stored record including the generated identity; update replaces the given Field values and returns the stored record or None; delete returns the record as it was or None; set-active changes only the activity Field and returns the final record, also when unchanged, or None; truncate removes every record, keeps the Table and returns the removed count. Observed against a temporary database with the Model tables: ids 1 and 2 assigned; update changed name, kept the identity, returned None for a missing id; disable twice then enable returned the final state each time; delete returned the record then None; a unique violation and a foreign key violation raised the execution-failure error naming no value; an update with an unknown column failed and left data unchanged; truncate returned 3 then 0 and the Table remained.'
+            P2-G5-T3:
+              id: P2-G5-T3
+              source_id: '007'
+              title: Implement the reading Entity Operations on SQLite
+              description: Implement list and get by id. List accepts optional Filters, a Filter combination, ordered Orders and a limit, applies the configured defaults when they are omitted, preserves the supplied Order sequence, and treats a zero or negative limit as no limit. Get by id returns the Entity or null.
+              reason: Consumers read stored data through these Operations.
+              inputs:
+              - Entity Operation contract
+              - Query defaults
+              - Query checker
+              skills:
+              - sqlmodel
+              expected_result: The two reading Operations in the SQLite Engine unit.
+              depends_on:
+              - P2-G5-T1
+              - P2-G4-T3
+              constraints: []
+              acceptance: List returns exactly the matching Entities in the requested or default order and honours a positive limit as the maximum count; a zero or negative limit returns all matches; get by id returns the stored Entity or null when no record exists.
+              status: done
+              log:
+              - at: '2026-10-08T07:28:08Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-08T07:29:26Z'
+                event: done
+                note: 'Added the reading operations to the SQLite Engine unit: get by identity and list, which applies the checked Filters under AND or OR (equality, inequality, the four orderings, IN, contains/starts-with/ends-with with wildcard characters taken literally, null tests), the supplied Orders in sequence (decimal Fields ordered numerically through the decimal collation) and a limit of zero or less as no limit. Observed on seeded data: all/filters/IN/orderings return the expected identities; a search for l%p matches only the record containing that literal text; AND and OR combine as stated; descending, limit 2 and limits 0 and -1 behave; decimal order 1.10, 1.9, 9.95, 10, 100.005 and decimal comparisons and IN match numerically; get returns None for a missing identity.'
+            P2-G5-T4:
+              id: P2-G5-T4
+              source_id: '007'
+              title: Implement the aggregate Entity Operations on SQLite
+              description: Implement count, sum, minimum and maximum over optional Filters and a Filter combination. Sum, minimum and maximum ignore null values; sum returns zero when nothing matches, and minimum and maximum return null.
+              reason: Consumers summarize stored data without reading every record.
+              inputs:
+              - Entity Operation contract
+              - Query defaults
+              - Query checker
+              skills:
+              - sqlmodel
+              expected_result: The four aggregate Operations in the SQLite Engine unit.
+              depends_on:
+              - P2-G5-T1
+              - P2-G4-T3
+              constraints: []
+              acceptance: Count returns the matching count; sum returns the total of the non-null values, or zero when nothing matches; minimum and maximum return the smallest and largest non-null value, or null when nothing matches; none accepts an Order.
+              status: done
+              log:
+              - at: '2026-10-08T07:28:08Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-08T07:29:27Z'
+                event: done
+                note: 'Added count, total (sum), and extreme (minimum and maximum) to the SQLite Engine unit, all taking the same checked Filters and combination. Sum ignores null values and returns zero of the Field Type when nothing matches (decimal sums are exact); minimum and maximum ignore nulls and return None when nothing matches (decimal ones compare numerically). Observed: count 4, 3 and 0 for none/active/no match; integer sum 4, 0 for no match, 2 filtered; minimum 0 and maximum 2, None for no match; string minimum EUR and maximum USD; decimal sum 122.955 as a decimal, nulls ignored giving 7.6, zero when nothing matches; decimal minimum 1.10 and maximum 100.005, None when nothing matches.'
+            P2-G5-T5:
+              id: P2-G5-T5
+              source_id: '007'
+              title: Implement the Command Operation on SQLite
+              description: Implement execute command, which runs any valid native command with its bound parameters on the selected Instance, including a schema change, and returns a CommandResult holding the returned rows, affected count, column names, success, a public message and the Instance used.
+              reason: Consumers need a defined way to run a native command that no Entity Operation covers.
+              inputs:
+              - Command Operation contract
+              - Command result
+              - Database error kinds
+              skills:
+              - sqlmodel
+              expected_result: The Command Operation in the SQLite Engine unit.
+              depends_on:
+              - P2-G5-T1
+              - P2-G3-T3
+              constraints: []
+              acceptance: A valid reading command returns its rows and column names, a valid changing command returns its affected count, and a failing command returns an unsuccessful result or raises the execution-failure error; every outcome carries the Instance used and no connection value.
+              status: done
+              log:
+              - at: '2026-10-08T07:29:27Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-08T07:30:35Z'
+                event: decision
+                note: Engine failure text for operational errors is passed on in the public message because it names SQL objects, never stored values or connection values.
+              - at: '2026-10-08T07:30:35Z'
+                event: done
+                note: 'Added the native-command capability to the SQLite Engine unit: it runs a command with positional or named bound parameters in one transaction and returns raw rows and column names for a reading command or the affected count otherwise; a failing command raises the execution-failure error carrying the engine message text. Observed: positional, named, none and no-parameter forms; a change command reports 1 affected; a syntax error raised the execution-failure error with the engine text and no path or value; a schema command ran (the Table appeared).'
+            P2-G5-T6:
+              id: P2-G5-T6
+              source_id: '007'
+              title: Provide the SQLite capabilities the Setup Operations require
+              description: 'Provide what the Setup Operations need from the Engine: creating exactly the Tables of the Model Entity Collection through their shared table metadata, reporting the structure of an existing Table so it can be compared with its Entity''s Declaration, and inserting a set of records atomically.'
+              reason: Setup Operations are coordinated by Core but depend on Engine-specific storage work.
+              inputs:
+              - Model Entity Collection and shared table metadata
+              - Entity Declarations
+              - Engine connection
+              skills:
+              - sqlmodel
+              expected_result: The Engine capabilities for table creation, table inspection and atomic insertion.
+              depends_on:
+              - P2-G5-T1
+              - P1-G8-T1
+              constraints: []
+              acceptance: Exactly the Tables of the Entity Collection are created and no other; creating them again on matching Tables changes nothing; the structure of an existing Table can be read and compared with its Declaration; a set of records is inserted completely or not at all.
+              status: done
+              log:
+              - at: '2026-10-08T07:29:27Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-08T07:30:35Z'
+                event: done
+                note: 'Added the Engine capabilities the Setup Operations need: create the Tables of the given Entities that are missing in one transaction through their shared table metadata (restricted to those Tables), list existing Tables, describe an existing Table (columns with type, length and nullability, primary key, foreign keys, uniqueness, non-automatic indexes) and insert a batch of records atomically. Observed on an empty temporary database: 15 Tables created and exactly the Model Tables exist; a second run created none; Account reports the primary key id, four foreign keys, the combined and single uniqueness and no indexes; Currency code reflects VARCHAR(3); a batch of two inserted both; a batch with a duplicate failed and inserted nothing.'
+        P2-G6:
+          id: P2-G6
+          title: Setup Operations
+          description: Core's explicit preparation commands, kept separate from the Entity and Command Operations.
+          area: 'Core: the Setup Operations'
+          does: Storage can be prepared repeatably by creating its Tables and inserting its Initial Data.
+          constraints: []
+          task_count: 3
+          tasks:
+            P2-G6-T1:
+              id: P2-G6-T1
+              source_id: '007'
+              title: Provide the Create Tables Setup Operation
+              description: Create the required Tables using only the actual Entities of the Model Entity Collection and their Declarations, never reading the Target. Re-execution on matching Tables succeeds without change. A difference between an existing Table and its Entity's Declaration stops the command and is reported, never resolved by judgment. It returns a SetupResult.
+              reason: Tables must follow the Entities exactly and the same Entities must always yield the same Tables.
+              inputs:
+              - Model Entity Collection and Declarations
+              - Engine capabilities
+              - Request route
+              skills:
+              - sqlmodel
+              expected_result: The Create Tables Setup Operation.
+              depends_on:
+              - P2-G4-T4
+              - P2-G5-T6
+              constraints: []
+              acceptance: Running it on an empty Instance creates exactly the Tables of the Entity Collection; running it again succeeds and changes nothing; with an existing Table that differs from its Declaration it stops, reports the Declaration-incompatibility error naming the Table, and changes nothing; the SetupResult states the command, Instance, success, processed count and a message.
+              status: done
+              log:
+              - at: '2026-10-08T07:31:54Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-08T07:32:21Z'
+                event: decision
+                note: SetupResult.affected for Create Tables is the number of Tables processed (the Entity count); the message states how many were created and how many already matched.
+              - at: '2026-10-08T07:32:21Z'
+                event: decision
+                note: A failure while creating Tables is reported as the incomplete-setup error; a difference with an existing Table as the Declaration-incompatibility error.
+              - at: '2026-10-08T07:32:21Z'
+                event: done
+                note: 'Wrote the Create Tables Setup Operation (database/database/core/tables.py): it uses only the Entities of the Model Entity Collection and their Declarations, compares every existing Table with its Declaration (columns with type family, nullability and size, primary key, foreign keys, uniqueness, indexes) and stops with the Declaration-incompatibility error naming the Table and the kinds of difference when any differs, creating nothing; otherwise it creates the missing Tables in one transaction and returns a SetupResult. Observed on temporary databases: an empty Instance gets 15 Tables and exactly the Model Tables; a second run succeeds creating 0; one dropped Table is recreated alone (1 created, 14 matched); an added column stopped the command naming Broker (columns); a Broker Table lacking its foreign key and uniqueness stopped it (foreign keys, uniqueness); in both cases the set of Tables was unchanged.'
+            P2-G6-T2:
+              id: P2-G6-T2
+              source_id: '007'
+              title: Provide the Insert Initial Data Setup Operation
+              description: Read the complete Initial Data collection from the configuration, validate each record through its public Entity contract, insert every missing record unchanged, skip an already present identical record, and fail clearly on a conflicting one. The whole insertion is atomic. It succeeds with zero affected items only when the Target declares no Initial Data, and returns a SetupResult.
+              reason: Preparation must be repeatable on any Instance without losing or duplicating records.
+              inputs:
+              - Initial Data collection
+              - Entity contracts
+              - Engine capabilities
+              skills:
+              - sqlmodel
+              expected_result: The Insert Initial Data Setup Operation.
+              depends_on:
+              - P2-G2-T2
+              - P2-G4-T4
+              - P2-G5-T6
+              - P2-G6-T1
+              constraints: []
+              acceptance: On prepared Tables the first run inserts every configured record and later runs insert nothing and change nothing; a conflicting record fails with a clear error and leaves stored data unchanged; every value is stored exactly as configured, including empty-string values and credential Fields; the SetupResult states the processed count.
+              status: done
+              log:
+              - at: '2026-10-08T07:32:21Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-08T07:33:09Z'
+                event: decision
+                note: SetupResult.affected for Insert Initial Data is the number of configured records processed (inserted plus already present); the message states how many were inserted.
+              - at: '2026-10-08T07:33:09Z'
+                event: decision
+                note: A configured record is the same as a stored one when every Field except the generated identity is equal; a different record with the same uniqueness key is a conflict.
+              - at: '2026-10-08T07:33:09Z'
+                event: decision
+                note: Values from the configuration are converted to the declared Types before the Entity validates them (for example a decimal from its number or text), because the configuration is text-typed data.
+              - at: '2026-10-08T07:33:09Z'
+                event: done
+                note: 'Wrote the Insert Initial Data Setup Operation (database/database/core/initial_data.py): it reads the complete configured collection, finds each Entity by its exported name in the Model Entity Collection, converts each records values to the Python forms of the declared Types, validates the record by constructing the Entity, compares it with the stored records (identical present record skipped; a record sharing a uniqueness key with a different stored record is a conflict that fails; otherwise inserted), and inserts all missing records in one transaction. Values are stored unchanged, including empty strings for credential Fields. Observed on temporary databases: first run inserted 23 records (User 1, Trading Platform 2, Instance 1, Currency 8, Broker 1, Asset 4, Account Group 1, Account 1, Trailing Group 1, Partial Group 1, Action Group 1, Action 1), repeat run inserted 0 and skipped 23 with the total unchanged; stored values read back as configured (empty credentials, symbols, decimals, floats); a changed User record made the command fail with the incomplete-setup error leaving data unchanged; a deleted record was re-inserted alone; an empty collection succeeded with 0; an invalid record, an unknown Entity and two conflicting records failed clearly and inserted nothing.'
+            P2-G6-T3:
+              id: P2-G6-T3
+              source_id: '007'
+              title: Provide the Prepare Setup Operation
+              description: Run the Create Tables Setup Operation and then the Insert Initial Data Setup Operation on the selected Instance, stopping without running the second when the first fails, and return a SetupResult.
+              reason: One command prepares an Instance completely.
+              inputs:
+              - Create Tables and Insert Initial Data Setup Operations
+              skills: []
+              expected_result: The Prepare Setup Operation.
+              depends_on:
+              - P2-G6-T1
+              - P2-G6-T2
+              constraints: []
+              acceptance: On an empty Instance it leaves the Tables created and the Initial Data inserted; repeated, it changes nothing; when table creation fails the Initial Data is not inserted and the result is unsuccessful.
+              status: done
+              log:
+              - at: '2026-10-08T07:33:10Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-08T07:33:42Z'
+                event: decision
+                note: Prepare reports a failing step as an unsuccessful SetupResult carrying the public error message instead of raising, so a caller and the manual entry point can read one result; the two Operations it runs raise their typed errors when called on their own.
+              - at: '2026-10-08T07:33:42Z'
+                event: decision
+                note: SetupResult.affected for Prepare is the Tables processed plus the records processed.
+              - at: '2026-10-08T07:33:42Z'
+                event: done
+                note: 'Wrote the Setup coordination (database/database/core/setup.py): a Setup class whose create_tables and insert_initial_data forward to their Operations and whose prepare resolves the Instance, runs Create Tables and then Insert Initial Data, stops without inserting when table creation fails, and returns a SetupResult in every case. Observed on temporary databases: on an empty Instance prepare created 15 Tables and inserted 23 records (affected 38, success); repeated, it changed nothing; with a Broker Table that differs from its Entity it returned an unsuccessful result naming the difference and no Initial Data was inserted; with a changed User record it returned an unsuccessful result after the Tables step (affected 15) naming the conflict; a string or integer Instance is refused.'
+        P2-G7:
+          id: P2-G7
+          title: Interface Publication
+          description: 'The only public boundary of the Database library: six prefixed groups.'
+          area: 'Interface: the six published groups'
+          does: A consumer reaches every capability of the Database through exactly six published groups.
+          constraints: []
+          task_count: 4
+          tasks:
+            P2-G7-T1:
+              id: P2-G7-T1
+              source_id: '007'
+              title: Publish the Entity and Command Operations group
+              description: Provide the class a consumer creates once, with no argument, to call every Entity Operation and the Command Operation. Each Operation takes exactly its listed parameters by those names and in that order with the optional Instance last, accepts Entities, Fields, Instances and vocabulary only as imported values, and forwards to Core.
+              reason: Consumers call the same shape on every Instance.
+              inputs:
+              - Interface contract
+              - Request route
+              skills: []
+              expected_result: The published Operations group.
+              depends_on:
+              - P2-G4-T4
+              - P2-G3-T2
+              - P2-G3-T3
+              - P2-G4-T2
+              constraints: []
+              acceptance: Creating the class takes no argument and opens no connection; every Operation has exactly its listed parameters in order with the Instance last and optional; a call passing a string for an Entity, Field or vocabulary value is refused; a call returns the declared result.
+              status: done
+              log:
+              - at: '2026-10-08T07:33:42Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-08T07:34:15Z'
+                event: decision
+                note: All group classes and aliases are defined in the one Interface module; imports are underscore-prefixed so only the group names are public.
+              - at: '2026-10-08T07:34:15Z'
+                event: done
+                note: 'Wrote the Operations group in the Interface (database/database/interface.py): the class database_interface, created with no argument and opening no connection, with exactly the 13 Operations (add, update, list, get_by_id, delete, enable, disable, count, sum, min, max, truncate, execute_command), each forwarding to Core with the parameters the Preferences list, by those names and in that order, optional parameters after entity/id/field/command and the optional instance last. Observed: signatures compared programmatically with the Preferences (all 13 match); the class takes no argument; add, list with a Filter and an Order built from the value group, count and execute_command worked through it on a temporary database; a string Entity was refused.'
+            P2-G7-T2:
+              id: P2-G7-T2
+              source_id: '007'
+              title: Publish the Setup group
+              description: Provide the class a consumer creates, with no argument, to call the three Setup Operations, each taking only the optional Instance and returning a SetupResult.
+              reason: Preparing storage is a different act from using it and has its own group.
+              inputs:
+              - Interface contract
+              - Setup Operations
+              skills: []
+              expected_result: The published Setup group.
+              depends_on:
+              - P2-G6-T3
+              constraints: []
+              acceptance: Creating the class takes no argument and opens no connection; it exposes exactly the three Setup Operations, each taking only the optional Instance, each returning a SetupResult; no Entity or Command Operation is reachable through it.
+              status: done
+              log:
+              - at: '2026-10-08T07:34:16Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-08T07:34:28Z'
+                event: done
+                note: 'Added the Setup group to the Interface: the class database_setup, created with no argument and opening no connection, exposing exactly create_tables, insert_initial_data and prepare, each taking only the optional instance and returning a SetupResult, and no Entity or Command Operation. Observed on a temporary database: parameter lists are exactly [instance]; the three Operations returned SetupResults (15, 23 and 38 processed) with success.'
+            P2-G7-T3:
+              id: P2-G7-T3
+              source_id: '007'
+              title: Publish the value, Instance, result and error groups
+              description: 'Provide the namespace groups a consumer imports: the query values and vocabulary, the DatabaseInstance enumeration itself, the results, and every error, each reaching its members as members of the group.'
+              reason: Consumers pass and read typed values through a few fixed names.
+              inputs:
+              - Query vocabulary
+              - DatabaseInstance enumeration
+              - Results
+              - Error kinds
+              skills: []
+              expected_result: The four published value-carrying groups.
+              depends_on:
+              - P2-G3-T1
+              - P2-G3-T2
+              - P2-G3-T3
+              - P2-G4-T2
+              constraints: []
+              acceptance: The value group holds the Filter, Order, operator, combination and direction forms; the Instance group is the DatabaseInstance enumeration; the result group holds both results; the error group holds every error kind; none exposes a connection value.
+              status: done
+              log:
+              - at: '2026-10-08T07:33:42Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-08T07:34:15Z'
+                event: done
+                note: 'Wrote the value, Instance, result and error groups in the Interface: database_value (Filter, FilterOperator, FilterCombination, Order, OrderDirection), database_instance (the enumeration itself, member SQLITE), database_result (CommandResult, SetupResult) and database_error (DatabaseError and the seven kinds). Observed: the members of each group are exactly those listed; database_instance is an Enum named database_instance; every error derives from the base; no connection value appears in any member.'
+            P2-G7-T4:
+              id: P2-G7-T4
+              source_id: '007'
+              title: Publish exactly the six groups through the Interface
+              description: Provide the single publication entrypoint that publishes exactly the six groups, each named by the declared prefix, an underscore and its key, and nothing else. Loading it opens no connection and creates no data or file.
+              reason: Consumers import a few fixed names and never reach Core, Engine units, configuration or storage paths.
+              inputs:
+              - Interface contract and group prefix
+              - The six groups
+              skills: []
+              expected_result: One Interface publishing exactly six groups.
+              depends_on:
+              - P2-G7-T1
+              - P2-G7-T2
+              - P2-G7-T3
+              constraints: []
+              acceptance: Exactly six names are published, each equal to the prefix, an underscore and a group key; nothing from Core, an Engine unit, the configuration or storage is reachable as a published name; loading the Interface opens no connection and creates no data or file.
+              status: done
+              log:
+              - at: '2026-10-08T07:34:28Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-08T07:34:47Z'
+                event: done
+                note: 'Completed the Interface publication (database/database/interface.py): the module publishes exactly six names through __all__ - database_error, database_instance, database_interface, database_result, database_setup, database_value - each the prefix, an underscore and a group key, and every import inside it is underscore-prefixed so nothing else is public. Observed in a fresh interpreter started in an empty directory: the public names equal the six and __all__; one thread; the directory stayed empty and no db directory or database file appeared in the Component after loading, so loading opened no connection and created no data or file; nothing of Core, an Engine unit, the configuration or storage is a published name.'
+        P2-G8:
+          id: P2-G8
+          title: Entry Points and Preparation
+          description: The manual Setup scripts and the preparation of storage after generation.
+          area: 'Entry Points: manual Setup scripts and after-generation preparation'
+          does: A person can prepare storage by hand, and the default Instance is prepared once generation is complete.
+          constraints: []
+          task_count: 4
+          tasks:
+            P2-G8-T1:
+              id: P2-G8-T1
+              source_id: '007'
+              title: Provide the create-tables entry point
+              description: Provide a script a person runs by hand that runs the Create Tables Setup Operation through the Interface on the default Instance, reports its result, and holds no logic of its own.
+              reason: A person must be able to create storage Tables without writing code.
+              inputs:
+              - Published Setup group
+              skills: []
+              expected_result: A manual entry point for table creation.
+              depends_on:
+              - P2-G7-T4
+              - P2-G6-T1
+              constraints: []
+              acceptance: Running it creates the Tables on the default Instance and prints the SetupResult; it exits unsuccessfully with a clear message when the operation fails; it contains no behaviour beyond calling the published operation.
+              status: done
+              log:
+              - at: '2026-10-08T07:34:47Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-08T07:35:21Z'
+                event: done
+                note: 'Wrote the create-tables entry point (database/scripts/create_tables.py): it runs the Create Tables Setup Operation through the published Setup group on the default Instance, prints the SetupResult, and exits 1 with the public error message when a Database error is raised; it holds no other logic. Observed on the default Instance: first run printed success, Created 15 Tables, exit 0; with a Broker Table that differs from its Entity it printed failed naming Broker (columns) on stderr, exit 1.'
+            P2-G8-T2:
+              id: P2-G8-T2
+              source_id: '007'
+              title: Provide the insert-initial-data entry point
+              description: Provide a script a person runs by hand that runs the Insert Initial Data Setup Operation through the Interface on the default Instance, reports its result, and holds no logic of its own.
+              reason: A person must be able to seed storage without writing code.
+              inputs:
+              - Published Setup group
+              skills: []
+              expected_result: A manual entry point for Initial Data insertion.
+              depends_on:
+              - P2-G7-T4
+              - P2-G6-T2
+              constraints: []
+              acceptance: Running it on prepared Tables inserts the missing Initial Data and prints the SetupResult; running it again changes nothing; it exits unsuccessfully with a clear message when the operation fails; it contains no behaviour beyond calling the published operation.
+              status: done
+              log:
+              - at: '2026-10-08T07:34:47Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-08T07:35:21Z'
+                event: done
+                note: 'Wrote the insert-initial-data entry point (database/scripts/insert_initial_data.py) with the same shape. Observed on the default Instance: inserted 23 records, exit 0; run again it inserted 0 and reported 23 already present, exit 0.'
+            P2-G8-T3:
+              id: P2-G8-T3
+              source_id: '007'
+              title: Provide the prepare entry point
+              description: Provide a script a person runs by hand that runs the Prepare Setup Operation through the Interface on the default Instance, reports its result, and holds no logic of its own.
+              reason: A person must be able to prepare storage in one step.
+              inputs:
+              - Published Setup group
+              skills: []
+              expected_result: A manual entry point for complete preparation.
+              depends_on:
+              - P2-G7-T4
+              - P2-G6-T3
+              constraints: []
+              acceptance: Running it creates the Tables and inserts the Initial Data on the default Instance and prints the SetupResult; running it again changes nothing; it exits unsuccessfully with a clear message when the operation fails; it contains no behaviour beyond calling the published operation.
+              status: done
+              log:
+              - at: '2026-10-08T07:34:47Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-08T07:35:21Z'
+                event: decision
+                note: The three scripts print through the SetupResult the published operation returns and use the exit status to report failure; they import only the published groups.
+              - at: '2026-10-08T07:35:21Z'
+                event: done
+                note: 'Wrote the prepare entry point (database/scripts/prepare.py) with the same shape. Observed on the default Instance: after the two other entry points it reported 0 Tables created and 0 records inserted, exit 0; with a differing Broker Table it printed failed - create_tables did not complete naming the difference, exit 1. The test database created by these runs was removed afterwards so that preparation after generation starts from empty storage.'
+            P2-G8-T4:
+              id: P2-G8-T4
+              source_id: '007'
+              title: Prepare storage on the default Instance after generation
+              description: As the last step of generation, run the Prepare Setup Operation through the Interface on the default Instance only. Failure identifies the Instance and command and fails preparation; no other Instance is prepared implicitly.
+              reason: The Database is expected to be usable as soon as it is generated.
+              inputs:
+              - Prepare entry point
+              - Initial Data collection
+              - After-generation setting
+              skills: []
+              expected_result: Prepared storage for the default Instance.
+              depends_on:
+              - P2-G8-T3
+              - P2-G2-T2
+              constraints: []
+              acceptance: After this step the default Instance's storage exists inside the Database-owned storage directory, holding exactly the Tables of the Entity Collection and every configured Initial Data record; a second run changes nothing; no other Instance has storage created.
+              status: done
+              log:
+              - at: '2026-10-08T07:35:21Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-08T07:35:31Z'
+                event: done
+                note: 'Ran the Prepare Setup Operation through the prepare entry point on the default Instance only, as the last generation step (the Preferences enable it and require a failure to fail preparation). Observed: success, Created 15 Tables, Inserted 23 records, exit 0; the storage file database/db/application.db exists inside the Database-owned storage directory (ignored by the project ignore file) and is the only database file in the Component, so no other Instance was prepared; it holds exactly the 15 Model Tables and 23 records (User 1, Trading Platform 2, Instance 1, Currency 8, Broker 1, Asset 4, Account Group 1, Account 1, Trailing Group 1, Partial Group 1, Action Group 1, Action 1); a second run created 0 Tables, inserted 0 records and exited 0.'
+        P2-G9:
+          id: P2-G9
+          title: Documentation
+          description: The root documentation of the Database library, in the section order the Database Documentation contract sets.
+          area: 'Documentation: root documentation of the library'
+          does: A consumer can learn, set up, use, prepare and verify the Database library from its root documentation alone.
+          constraints: []
+          task_count: 3
+          tasks:
+            P2-G9-T1:
+              id: P2-G9-T1
+              source_id: '007'
+              title: Document the Overview and Interface sections
+              description: Write the Overview, with one short introduction and one simple example that creates the Interface class and then adds and lists one Entity, and the Interface section, which for each of the six groups explains every member and Operation with each of its parameters, what it is for and how to use it, with one example each, covering every enumeration member, defaults, results and errors.
+              reason: The published contract is only usable if consumers can learn it without reading internals.
+              inputs:
+              - Published Interface
+              - Interface contract
+              - Database Documentation contract
+              skills: []
+              expected_result: The first two documentation sections.
+              depends_on:
+              - P2-G7-T4
+              constraints: []
+              acceptance: The two sections appear in order, cover all six groups and every Operation parameter, enumeration member, default, result and error, each with an example that runs, and expose no credential or Engine internal.
+              status: done
+              log:
+              - at: '2026-10-08T07:35:31Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-08T07:37:04Z'
+                event: decision
+                note: Examples that add or change data restore it, so they can be run repeatedly against a real Instance.
+              - at: '2026-10-08T07:37:04Z'
+                event: done
+                note: 'Wrote the Overview and Interface sections of the root documentation (database/README.md): an overview with one short introduction and an example that creates the Interface class, adds and lists; the Interface section naming the six groups and then, for each, every member and Operation with its exact parameter list (generated from the real signatures), purpose, accepted input, result, the optional Instance, and one example each - 13 Operations of database_interface, 3 of database_setup, Filter, Order, the 12 FilterOperator members with their meaning, FilterCombination, OrderDirection, defaults, database_instance, both results with every field, and every error kind with when it is raised. Observed: all 20 Python examples ran against a freshly prepared temporary database without error and restore the data they change; the text names no credential, Engine driver or connection value.'
+            P2-G9-T2:
+              id: P2-G9-T2
+              source_id: '007'
+              title: Document the Instances, Setup, Use and Setup Operations sections
+              description: Write the Instances section, explaining the active DatabaseInstance members, default selection and Database-owned storage without exposing credentials; the Setup section with the setup steps for the selected technology; the Use section showing every capability group used only through the Interface with Field references and enumeration members, never strings; and the Setup Operations section explaining manual use and that generation runs Prepare automatically.
+              reason: Selecting Instances, setting up, using and preparing storage complete what a consumer needs.
+              inputs:
+              - Documentation sections already written
+              - Entry points
+              - Instance selection rules
+              skills: []
+              expected_result: Documentation sections three to six.
+              depends_on:
+              - P2-G9-T1
+              - P2-G8-T4
+              constraints: []
+              acceptance: The four sections follow the earlier ones in order; every example uses imported values and no strings for Entities, Fields or vocabulary; the setup steps work from a clean checkout; the manual and automatic preparation paths are both explained; no credential is shown.
+              status: done
+              log:
+              - at: '2026-10-08T07:37:04Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-08T07:38:04Z'
+                event: done
+                note: 'Wrote the Instances, Setup, Use and Setup Operations sections of the root documentation (database/README.md): active DatabaseInstance members, default selection and Database-owned storage without any connection value; uv setup steps from a clean checkout including the local path dependencies; a use example of every capability group only through the Interface with Field references and enumeration members; manual and automatic preparation with the three entry points. Observed: the three new Python examples (Instance selection, the full use walk-through, programmatic prepare) ran without error against a temporary prepared database, and the text shows no credential.'
+            P2-G9-T3:
+              id: P2-G9-T3
+              source_id: '007'
+              title: Document the Initial Data, Verify and Troubleshooting sections
+              description: Write the Initial Data section listing every Target-defined Initial Data record and stating that Database inserts its values unchanged without security-based omission; the Verify section covering public import, Instance selection, the query vocabulary, each capability group, persistent file location and repeatable Setup Operations; and the Troubleshooting section covering Database concerns only, including an inactive Instance, a difference between an existing Table and its Entity, and empty Initial Data values.
+              reason: Consumers need to know what is seeded and how to confirm and repair their Database.
+              inputs:
+              - Documentation sections already written
+              - Initial Data collection
+              - Database Documentation contract
+              skills: []
+              expected_result: The last three documentation sections.
+              depends_on:
+              - P2-G9-T2
+              - P2-G2-T2
+              constraints: []
+              acceptance: All nine sections appear in the order of the Documentation contract; the Initial Data section lists exactly the configured records; the Verify section has a script that runs and covers every listed subject; the Troubleshooting section covers only Database concerns; no section exposes a credential.
+              status: done
+              log:
+              - at: '2026-10-08T07:38:04Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-08T07:38:40Z'
+                event: decision
+                note: The Verify script leaves out truncate because it removes data; the text says so.
+              - at: '2026-10-08T07:38:40Z'
+                event: decision
+                note: Troubleshooting advises restoring the Table or removing the database file for a Table difference, because Database never alters an existing Table.
+              - at: '2026-10-08T07:38:40Z'
+                event: done
+                note: 'Wrote the Initial Data, Verify and Troubleshooting sections of the root documentation (database/README.md), completing all nine sections in the Documentation contract order. Initial Data lists all 23 configured records grouped by Entity in Target order (generated from the configuration), states that values are inserted unchanged without security-based omission and that Generate securely values are empty strings to be filled later; Verify holds a script covering public import, Instance selection, the query vocabulary, each of the six groups, the persistent file location and repeatable Setup Operations; Troubleshooting covers an inactive Instance, a difference between an existing Table and its Entity, empty Initial Data values and the other Database errors. Observed: all 24 Python examples ran, and the Verify script printed Database verified both against a temporary database and against the real default Instance, leaving its stored data identical.'
+        P2-G10:
+          id: P2-G10
+          title: Quality Standards
+          description: The final conformance of the complete Database library source to the language's quality standards.
+          area: Library-wide source quality
+          does: The complete Database library source meets the language's formatting, lint and typing standards.
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-G10-T1:
+              id: P2-G10-T1
+              source_id: '007'
+              title: Bring the Database library source to the quality standards
+              description: Apply the formatting, lint and type-checking standards that the Development Preferences select for the language to the complete Database library source and its documentation examples, and resolve every finding without weakening any Database contract.
+              reason: Consistent, type-sound source is a standing Development standard and must hold for the finished library.
+              inputs:
+              - Complete Database library source
+              - Development language quality standards
+              skills: []
+              expected_result: The complete Database library source is free of formatting, lint and type findings.
+              depends_on:
+              - P2-G1-T1
+              - P2-G2-T1
+              - P2-G2-T2
+              - P2-G3-T1
+              - P2-G3-T2
+              - P2-G3-T3
+              - P2-G4-T1
+              - P2-G4-T2
+              - P2-G4-T3
+              - P2-G4-T4
+              - P2-G5-T1
+              - P2-G5-T2
+              - P2-G5-T3
+              - P2-G5-T4
+              - P2-G5-T5
+              - P2-G5-T6
+              - P2-G6-T1
+              - P2-G6-T2
+              - P2-G6-T3
+              - P2-G7-T1
+              - P2-G7-T2
+              - P2-G7-T3
+              - P2-G7-T4
+              - P2-G8-T1
+              - P2-G8-T2
+              - P2-G8-T3
+              - P2-G8-T4
+              - P2-G9-T1
+              - P2-G9-T2
+              - P2-G9-T3
+              constraints: []
+              acceptance: The library reports no formatting, lint or type findings under the standards the Development Preferences select, and every Database contract still holds.
+              status: done
+              log:
+              - at: '2026-10-08T07:38:40Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-08T07:39:21Z'
+                event: decision
+                note: The type checker is satisfied without suppressions except where the standard-library stubs type the SQLite aggregate callbacks too narrowly; those two signatures use the broader type instead.
+              - at: '2026-10-08T07:39:21Z'
+                event: done
+                note: 'Applied the quality standards the Development Preferences select to the complete Database library, its entry points and its documentation. Observed: the formatter check reports 17 files already formatted, the linter and the type checker report no findings, the lock file is consistent; regenerating the Initial Data collection and the documentation from their sources gives zero difference; all 24 documentation examples including the Verify script still run; the declared dependencies (model, pyyaml, sqlalchemy) equal the packages imported directly; Core holds exactly its eight named source files and the Component holds the Directory Structure members (database package with interface, core and engine; scripts; db; config; README).'
