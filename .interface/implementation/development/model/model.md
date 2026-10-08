@@ -250,8 +250,9 @@ Its Interface contract is these needs, with the symbol names and `contract_versi
 2. **Explicit** — each Entity is exported by an explicit named export, named by the Entity's physical name under the selected language's naming rules; no wildcard or dynamically generated export publishes an Entity.
 3. **Actual** — each export and each Collection item is the actual Entity, exposing its own actual Declaration, never a copy, wrapper, alias, or reconstruction.
 4. **Nothing else** — no other Entity registry, lookup table, or discovery mechanism is published beside the exports and the Collection.
-5. **No side effect** — loading Interface creates no Entity instance, data, connection, file, or process, and performs no network, storage, runtime-configuration, or other external side effect.
-6. **Versioned** — changing the meaning of the exports, the Collection, or an Entity's exposed Declaration requires raising `contract_version` and a consumer review.
+5. **Publication only** — Interface holds only the imports, the Entity Exports, and the Entity Collection; it runs no check, because the Principles are met at generation and their conformance belongs to Review.
+6. **No side effect** — loading Interface creates no Entity instance, data, connection, file, or process, and performs no network, storage, runtime-configuration, or other external side effect.
+7. **Versioned** — changing the meaning of the exports, the Collection, or an Entity's exposed Declaration requires raising `contract_version` and a consumer review.
 
 <!-------------------------- Documentation -->
 ### Documentation
@@ -375,7 +376,7 @@ Every Principle below is mandatory and belongs to the Architecture category that
 
 **Rule:** Primary Key, Relations, Uniqueness Constraints, and Indexes belong to Entity Metadata outside Field Declarations. Every local Field reference resolves within the Entity; every Relation target Entity and Field resolves within Model; Relation endpoint Types are compatible; participating Fields are not repeated; duplicate metadata is invalid. An Entity contains only its own Fields and metadata: cross-Entity meaning is recorded only by Relation names, never by nesting, inheriting, copying, or importing another Entity.
 **Why:** Consumers realize structure only from complete, unambiguous metadata, and flat Entities avoid hidden coupling.
-**Boundary:** A Relation records local Field, target Entity name, and target Field name only, with no cardinality, cascade, deletion, or other undeclared behaviour. An Entity may use a shared private base from Core without inheriting another Entity's meaning.
+**Boundary:** A Relation records local Field, target Entity name, and target Field name only, with no cardinality, cascade, deletion, or other undeclared behaviour. An Entity may use a shared private base from Core without inheriting another Entity's meaning. These rules are met at generation and observed by Review; no runtime check is generated for them.
 
 #### Entity runtime behaviour enforces Field contracts only
 
@@ -399,7 +400,7 @@ Every Principle below is mandatory and belongs to the Architecture category that
 
 **Rule:** Logical Entity and Field names, including Relation names, preserve exact case-sensitive Target spelling. Generation never translates, abbreviates, pluralizes, respells, prefixes, suffixes, or aliases them. Physical names apply the selected language's naming rules deterministically and reject unresolvable reserved-word or normalization collisions.
 **Why:** Domain names remain understandable without technical context while source follows its language.
-**Boundary:** Language-specific naming belongs to that language's Preferences and never changes names stored in Declaration.
+**Boundary:** Language-specific naming belongs to that language's Preferences and never changes names stored in Declaration. Collisions are rejected at generation and observed by Review; no runtime check is generated for them.
 
 #### Fields and Declarations carry one complete value contract
 
@@ -430,6 +431,8 @@ Every Principle below is mandatory and belongs to the Architecture category that
 - Interface publishes every need of its Interface contract and nothing beyond them.
 - Every Target Entity has exactly one Entity Export.
 - The Entity Collection holds exactly the exported Entities, in Target order.
+- Every Relation reaches a Field of an Entity in Model with a compatible Type, and no two Entities collide in name, before or after physical naming.
+- Interface runs no check.
 - Each Entity's Declaration matches the Target — Fields, order, Types, nullability, defaults, and metadata.
 - Every Entity has an immutable id and a Boolean is_active.
 - Each Entity constructs from valid values and rejects an unknown Field, a wrong Type, and a missing required value.

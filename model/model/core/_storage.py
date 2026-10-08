@@ -76,36 +76,6 @@ def column_name(entity: EntityDeclaration, field: FieldDeclaration) -> str:
     return name
 
 
-def check_relations(declarations: tuple[EntityDeclaration, ...]) -> None:
-    """Fail unless every Relation resolves to a Field of an Entity of the same set with a compatible Type."""
-    by_name: dict[str, EntityDeclaration] = {}
-    physical: dict[str, str] = {}
-    for declaration in declarations:
-        if (
-            declaration.name in by_name
-            or physical.setdefault(table_name(declaration), declaration.name)
-            != declaration.name
-        ):
-            raise StorageMappingError(
-                f"Entity {declaration.name!r}: the name is duplicated or collides after normalization."
-            )
-        by_name[declaration.name] = declaration
-    for declaration in declarations:
-        for relation in declaration.relations:
-            target = by_name.get(relation.target_entity)
-            if target is None or relation.target_field not in target.field_names:
-                raise StorageMappingError(
-                    f"Entity {declaration.name!r}: the Relation on {relation.local_field!r} does not resolve."
-                )
-            if (
-                declaration.field(relation.local_field).type
-                is not target.field(relation.target_field).type
-            ):
-                raise StorageMappingError(
-                    f"Entity {declaration.name!r}: the Relation on {relation.local_field!r} joins incompatible Types."
-                )
-
-
 #: The one naming convention of every constraint and index.
 NAMING_CONVENTION = {
     "pk": "pk_%(table_name)s",

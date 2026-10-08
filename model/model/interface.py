@@ -1,6 +1,5 @@
 """Interface: the package-root entrypoint through which every Entity is published."""
 
-from model.core._storage import check_relations
 from model.entity.account import Account
 from model.entity.account_group import AccountGroup
 from model.entity.action import Action
@@ -35,5 +34,3 @@ entities = (
     Action,
     Position,
 )
-
-check_relations(tuple(entity.declaration for entity in entities))
