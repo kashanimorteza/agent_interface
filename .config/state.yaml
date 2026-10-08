@@ -38,6 +38,12 @@ content:
       development: completed
       review: satisfied
       completed_at: "2026-10-07T23:38:24Z"
+    P2:
+      id: P2
+      planning: completed
+      development: completed
+      review: satisfied
+      completed_at: "2026-10-08T01:46:06Z"
   log:
     - id: "001"
       skill: "my-interface-configure"
@@ -140,3 +146,142 @@ content:
           - "Model Preferences describe construction validation as running model_validate before initializing; the source validates through the validator on a probe instance for recursion reasons recorded in the Task Log of P1-G3-T01. The behaviour required by the Plan and the Model Review category was observed to hold; the mechanism is outside the review baseline."
           - "Ignored local artifacts (.venv, __pycache__, .ruff_cache) exist in the Component directory; they are excluded by the Component's ignore file and are not part of its tracked output."
           - "Primary key constraint names exist on the shared metadata (pk_<table>); SQLite does not persist a name for an autoincrement primary key, so that name is observed on the metadata rather than on the engine."
+    - id: "005"
+      skill: "my-interface-plan"
+      phase: "P2"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-10-08T00:42:57Z"
+      completed_at: "2026-10-08T00:49:06Z"
+      duration: "6:09"
+      open_questions: ["OQ-005-1"]
+      blockers: []
+      report: "Planned phase P2 (Database; requested as 2): created its Plan with 12 Groups and 84 Tasks, all todo. No prior Plan existed; the P1 Plan was preserved unchanged and the total Task count is now 131. P1 is satisfied with no open Blocker. Planning progress for P2 set to completed. Active Workflow position left unchanged."
+      data:
+        changes:
+          - kind: "addition"
+            scope: "Plan P2"
+            reason: "No Plan existed for the phase."
+            groups: ["P2-G1", "P2-G2", "P2-G3", "P2-G4", "P2-G5", "P2-G6", "P2-G7", "P2-G8", "P2-G9", "P2-G10", "P2-G11", "P2-G12"]
+            tasks_added: 84
+        preserved: ["Plan P1 (47 Tasks, unchanged)"]
+        removed: []
+        replaced: []
+        open_questions:
+          - id: "OQ-005-1"
+            question: "Database Preferences give the inactive secondary Instance a non-empty default password, and generation copies Instance definitions into the Database Configuration unchanged, so a credential value would be written into a project file. Should that Preference value be empty, as the Database Configuration Schema example shows?"
+            current_choice: "Plan the Instances section from the Preferences as stated; the explicit Preference outranks the general conduct Rule. Develop records the value only where the Preferences require it and never prints or logs it."
+        notes:
+          - "The sqlmodel Skill was checked against the Database Preferences: no recommended alternative conflicts with a Database choice that is not already recorded (OQ-003-2, OQ-003-3 concern Model), so no new Skill-recommendation Open Question was added."
+          - "Task Skills record sqlmodel for Tasks that realize Engine behaviour, Table creation, setup coordination, and Entity materialization."
+          - "Cross-phase dependencies point to the P1 Tasks that publish the Entities and the ordered Entity Collection."
+          - "Initial Data is planned as one Task per Target Entity that defines records (12 of 15), in Target order, so no record precedes a record it refers to."
+    - id: "006"
+      skill: "my-interface-develop"
+      phase: "P2"
+      event: "develop"
+      outcome: "completed"
+      started_at: "2026-10-08T00:56:14Z"
+      completed_at: "2026-10-08T01:18:00Z"
+      duration: "21:46"
+      open_questions: ["OQ-006-1"]
+      blockers: []
+      decisions: ["P2-G1-T01", "P2-G2-T01", "P2-G2-T03", "P2-G3-T01", "P2-G3-T03", "P2-G4-T01", "P2-G4-T02", "P2-G4-T03", "P2-G4-T04", "P2-G4-T15", "P2-G5-T01", "P2-G5-T03", "P2-G6-T02", "P2-G6-T04", "P2-G7-T01", "P2-G7-T02", "P2-G7-T09", "P2-G7-T11", "P2-G7-T19", "P2-G8-T02", "P2-G8-T04", "P2-G8-T06", "P2-G9-T01", "P2-G9-T02", "P2-G9-T03"]
+      report: "Developed all 84 Tasks of phase P2 (Database) to done: the Database Component library with its package, public vocabulary, configuration loading, generated Database Configuration (Engines, Instances, Settings and 23 Initial Data records), query checking, request routing, the SQLite Engine unit, Setup coordination, the six-group Interface, three manual entry points, default Instance preparation and the root documentation. Formatter, linter and type checker report nothing; every README example ran; Review has not run. Development progress for P2 set to completed."
+      data:
+        tasks_developed: 84
+        component: "Database"
+        open_questions:
+          - id: "OQ-006-1"
+            question: "Database Preferences say a stored row is built with the Entity's own constructor from all Field values, but Model refuses a caller-supplied Auto Increment value in its constructor, in model_validate and in JSON text, so a stored row with its id cannot be built that way (the same limit as OQ-003-1). The sqlmodel Skill recommends model_validate for building table objects from data, which Model also refuses for an id. Should Model permit supplying Auto Increment values for reconstruction?"
+            current_choice: "Construct the Entity from every Field value except the Auto Increment Field and then set the storage-assigned value with SQLAlchemy's public attribute setter, so every stored row is still validated through the Entity's own construction."
+        notes:
+          - "Open Question OQ-005-1 (a non-empty default password in the inactive Instance's Preferences) is unchanged: the value was copied into the Instance definition as the Preferences state it and was not printed or logged."
+          - "A failure of a Setup Operation after its Instance is selected is returned as an unsuccessful Setup Result (matching the Plan acceptance); failures before selection are raised."
+          - "Decimal Fields are stored by Model as exact text, so the SQLite unit registers a decimal collation for conditions and orders and computes decimal sum, min and max in exact arithmetic."
+          - "The configuration file was emitted deterministically from Database Preferences and the Target definition by a throwaway generator kept outside the repository; Task checks used temporary Component roots outside the repository, and the real default Instance was prepared once and then re-run to show repeatability."
+          - "The Setup coordination source was drafted before Tasks P2-G8-T02, P2-G8-T04, P2-G8-T05, P2-G8-T06 and P2-G9-T05 were claimed; those Tasks were claimed immediately afterwards and marked done only after their behaviour was observed."
+          - "The README example blocks are rewritten by the formatter when it formats the Component; they were re-run after formatting."
+          - "Develop checked its own output with smoke checks (every Engine operation, Interface Operations, Setup Operations, entry points, import side effects, README examples, quality tools); conformance is for Review."
+    - id: '007'
+      skill: my-interface-review
+      phase: P2
+      event: review
+      outcome: satisfied
+      started_at: '2026-10-08T01:37:52Z'
+      completed_at: '2026-10-08T01:46:06Z'
+      duration: '8:14'
+      open_questions:
+      - OQ-007-1
+      blockers: []
+      report: 'Reviewed phase P2 (Database) against its Plan and the Database Review category: seven Findings (undeclared direct dependency; Instance enumeration name; Setup Result count for Initial Data; missing documentation examples; inaccurate error documentation; unneeded suppression comments; unwrapped value-range failure) were recorded, resolved and rechecked. Every Task acceptance and every Database Review observation now holds on current evidence observed in this Review; outcome satisfied. Open Questions OQ-005-1, OQ-006-1 (and the earlier OQ-002-1, OQ-003-1..3) remain with the Human, and OQ-007-1 is new.'
+      data:
+        findings:
+        - id: F-007-1
+          state: resolved
+          task: P2-G1-T01
+          expected: 'The package declares every third-party package its source imports directly, with concrete versions stabilized (Plan acceptance: dependencies resolve reproducibly; Review dependency check).'
+          observed: Core imports pydantic directly but the project does not declare it; it resolves only as a transitive dependency of sqlmodel. The dependency checker, run inside the project environment, reports DEP003 'pydantic' imported but it is a transitive dependency.
+          evidence: 'database/database/core/data.py line 8 (from pydantic import ValidationError); pyproject.toml dependency list (model, pyyaml, sqlalchemy, sqlmodel); deptry output: 1 dependency issue.'
+          resolution: Removed the direct pydantic import from Core; the stored-row materialization now catches ValueError and TypeError, which already include pydantic's validation error, so no new dependency is needed (database/database/core/data.py).
+          recheck: The dependency checker reports no dependency issues; the lock check passes; the contract-breaking stored row is still reported as ExecutionError by list and get_by_id; formatter, linter and type checker report nothing.
+        - id: F-007-2
+          state: resolved
+          task: P2-G9-T01
+          expected: The instance group is itself the enumeration of active Instances, named by its group name, with member names such as database_instance.SQLITE (Database Preferences, value_shapes.instance_group; Database Definition, Interface).
+          observed: The published enumeration is a class named DatabaseInstance that is re-published under the name database_instance; its own name and the representation of its members use DatabaseInstance.
+          evidence: 'database/database/core/values.py (class DatabaseInstance) and database/database/interface.py (database_instance = DatabaseInstance); observation: database_instance.__name__ == ''DatabaseInstance'' and repr(database_instance.SQLITE) == "<DatabaseInstance.SQLITE: ''sqlite''>".'
+          resolution: Renamed the enumeration class itself to database_instance everywhere it is used (values.py, configuration.py, data.py, interface.py) and removed the re-publishing assignment; import order fixed accordingly.
+          recheck: 'database_instance.__name__ is ''database_instance'' and repr(database_instance.SQLITE) is "<database_instance.SQLITE: ''sqlite''>"; the signature, member, group and configuration observations (113 behavioural observations, 31 configuration observations, README examples) all pass; the entry point still prepares the default Instance.'
+        - id: F-007-3
+          state: resolved
+          task: P2-G8-T04
+          expected: insert_initial_data returns a Setup Result whose affected value is the processed record count, and 'success with zero affected items only when the Target declares no Initial Data' (Database Definition, insert_initial_data is repeatable; Database Preferences, setup_result.affected).
+          observed: affected counts only the records inserted, so a run over a fully prepared Instance (23 Initial Data records declared by the Target) returns success with affected 0; the same value would be returned for an Instance with no Initial Data.
+          evidence: 'database/database/core/setup.py (_insert_initial_data passes the inserted count as affected) and database/database/core/initial_data.py (insert returns inserted and skipped); observation: database_setup().insert_initial_data() on a prepared Instance returned success true, affected 0, message ''0 records inserted, 23 already present''.'
+          resolution: The Setup Result now carries inserted plus already-present records as affected, and the message keeps the inserted and already-present split (database/database/core/setup.py). The README states the meaning of affected and its Verify script checks the message instead of a zero count (database/README.md).
+          recheck: On a fully prepared Instance insert_initial_data returns success true with affected 23 and '0 records inserted, 23 already present'; after removing three records it returns affected 23 with '3 records inserted'; prepare sums both steps; the conflict and partial-fill observations still pass; the README Verify script prints verified.
+          note: The Plan acceptance of P2-G8-T04 words the count as the records inserted; the Definition was followed and the difference is recorded as Open Question OQ-007-1.
+        - id: F-007-4
+          state: resolved
+          task: P2-G12-T02
+          expected: 'The Interface section gives each member of the Error group, and each enumeration member, an example (Plan acceptance: every published group, member, Operation and parameter appears with an explanation and an example).'
+          observed: Only InvalidInputError and ExecutionError have examples; ConfigurationError, InactiveInstanceError, DeclarationMismatchError, ConnectionFailureError, SetupError and the base DatabaseError appear only as table rows. The FilterCombination member AND is never shown in an example.
+          evidence: database/README.md, Interface section, subsection database_error (table and one example block catching two errors) and subsection database_value (examples use OR explicitly and AND only implicitly).
+          resolution: Added to the database_error subsection one handler example that catches every error kind in turn, each with what to do next (and exercises two of them), and to the database_value subsection an explicit AND example beside OR (database/README.md).
+          recheck: Every README Python example (11 blocks) was run against a freshly prepared database and exited 0; the handler example printed the invalid-input and unique-constraint messages; the combination example printed 0 for AND and 2 for OR.
+        - id: F-007-5
+          state: resolved
+          task: P2-G12-T02
+          expected: 'Documentation matches the published behaviour (Plan acceptance for the Interface section: the content matches the published surface).'
+          observed: The error table says DeclarationMismatchError and SetupError are raised, but through the public Interface a failing Setup Operation returns an unsuccessful Setup Result whose message carries the cause and never raises them.
+          evidence: 'database/README.md, subsection database_error table rows for DeclarationMismatchError and SetupError; observation: database_setup().create_tables() on an Instance holding a differing Table returned success false with the Declaration-incompatibility text and raised nothing.'
+          resolution: 'Rewrote the error table with a ''Where you meet it'' column: those two errors are reported in the message of an unsuccessful Setup Result and are not raised by a Setup Operation; the other kinds list the calls that raise them; the SetupResult text now says what affected and message mean (database/README.md).'
+          recheck: Re-observed that create_tables over a differing Table (extra, renamed, type-changed, nullability-changed and key-dropped variants) returns success false with the cause in message and raises nothing, which is what the table now states; README examples all run.
+        - id: F-007-6
+          state: resolved
+          task: P2-G1-T02
+          expected: Generated source contains no dead artifact (Develop generation standard) and the quality tools report no violation.
+          observed: 'Four type-checker suppression comments in the Engine unit are not needed: the type checker reports nothing when all four are removed.'
+          evidence: 'database/database/engine/sqlite.py lines 195, 218, 227 and 331 (type: ignore[call-overload]); observation: ty check of a clean copy with the four comments removed reported ''All checks passed!''.'
+          resolution: Removed the four suppression comments (database/database/engine/sqlite.py).
+          recheck: No type-ignore comment remains in the Component; the type checker, linter and formatter report nothing on the real Component.
+        - id: F-007-7
+          state: resolved
+          task: P2-G6-T01
+          expected: 'A value that cannot be stored is refused or reported as a Database error before or while storage is touched, so a consumer can catch every failure kind through the Error group (Database Definition, Error: each kind distinguishable inside the Error group derived from one base error).'
+          observed: 'An integer too large for the Engine escapes as a raw OverflowError that is not a Database error: as an identifier, as a Filter value and inside an IN collection.'
+          evidence: 'database/database/engine/sqlite.py scope (only SQLAlchemy errors are converted) and database/database/core/query.py compatible (no range check); observation: get_by_id(User, 2**70), count with Filter(User.id, EQUALS, 2**70) and with IN [2**70] each raised OverflowError ''Python int too large to convert to SQLite INTEGER''.'
+          resolution: The unit of work now rolls back and reports an OverflowError as an ExecutionError naming only the Instance (database/database/engine/sqlite.py).
+          recheck: get_by_id with 2**70, a Filter value 2**70 and an IN collection holding 2**70 each now raise ExecutionError ('The request carries a value too large for the Instance sqlite') and change nothing; the other edge inputs (NaN filter value, two statements in one command, NUL character) still behave as before.
+        observations:
+        - 'Testing is disabled for Database, so all runtime verification was transient: scripts written for this Review (not the implementer''s checks) compared the published signatures, enumeration members, form fields, error names and group members with Database Preferences (113 observations), exercised 31 configuration variants, edge-case inputs, difference detection, atomicity, datetime and decimal round trips through the public Interface, and independently compared the configuration and the README Initial Data listing with the Target definition (23 records, zero differences) and with Database Preferences.'
+        - 'Technical checks passed: formatter, linter and type checker report nothing; compilation and import with warnings as errors, lock check, wheel and source build (20 files, no cached or environment artifacts), a locked sync and import in a clean copy, a consumer project with local path dependencies, the dependency checker run inside the project environment, and the three entry points and the README Verify script in a clean copy.'
+        - 'Zero-diff regeneration: re-running the configuration generator into a temporary file reproduced config.yaml exactly, and a fresh composition of the README Initial Data section from the configuration equals the README text. The Source itself is written by Develop and has no generator in the repository, so its regeneration cannot be re-run here; this is an observation about the review, not a Finding.'
+        - The real default Instance was inspected read-only and holds the 15 Entity Tables with 23 Initial Data records, and re-running the prepare entry point on it changed nothing. Ignored local artifacts (.venv, caches, the db directory) exist in the Component and are excluded by its ignore file.
+        - The Task Logs of P2-G8-T04 and P2-G6-T04 describe behaviour as observed at Develop time (for example the earlier inserted-only count); Review does not change Task Logs or Task status.
+        - The README Python blocks are rewritten by the formatter when it formats the Component, so the examples were re-run after every formatting pass.
+        open_questions:
+        - id: OQ-007-1
+          question: The Plan acceptance of P2-G8-T04 says the Setup Result counts the records inserted, while the Database Definition says insert_initial_data returns success with zero affected items only when the Target declares no Initial Data. Should the Plan acceptance be reworded to the processed record count?
+          current_choice: 'Follow the Database Definition: affected is the number of records processed (inserted plus already present), and the message states how many were inserted.'

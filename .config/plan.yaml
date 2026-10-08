@@ -24,7 +24,7 @@ content_map:
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
-  task_count: 47
+  task_count: 131
   plans:
     P1:
       id: P1
@@ -1543,3 +1543,2691 @@ content:
                   locations:
                   - model/README.md
                   observed: Each symptom was reproduced against the package (supplied Auto Increment value, non-null id in JSON text, coercion refusals, naive datetime, undeclared Field, immutable assignment, unhashable Entity, declaration structural error, shared metadata); the definition-mismatch and redaction rows were reproduced in earlier checks. All 13 README examples still run.
+    P2:
+      id: P2
+      title: Database
+      order: 2
+      target: Database
+      does: 'Deliver the Database Component: a reusable library that persists every Model Entity through a selected Instance behind one stable public boundary and prepares storage with the Target''s Initial Data.'
+      constraints: []
+      task_count: 84
+      groups:
+        P2-G1:
+          id: P2-G1
+          title: Component package
+          description: Makes the Database Component an independently usable library that consumes the Model Component, and holds the standards its finished source must satisfy.
+          area: Component packaging and source quality
+          does: The Database Component is a reusable library package, dependent on the Model Component, whose finished source meets the project's quality standards.
+          constraints: []
+          task_count: 2
+          tasks:
+            P2-G1-T01:
+              id: P2-G1-T01
+              source_id: '005'
+              title: Establish the Database library package
+              description: Create the Database Component as a self-contained, reusable library that declares the Model Component as its direct dependency within the project and whose third-party dependencies resolve to concrete compatible versions recorded in lock metadata.
+              reason: Every other Task in this phase places its result in a package that later Components depend on.
+              inputs:
+              - Database Component packaging choices
+              - Development shared defaults, Connections, and package-dependency rules
+              - Published Model Component
+              skills: []
+              expected_result: The Database Component exists as a library package that a consumer inside the repository can depend on, that reaches the Model Component through its declared dependency, and that resolves its dependencies reproducibly.
+              depends_on:
+              - P1-G7-T02
+              constraints: []
+              acceptance: A consumer elsewhere in the repository can declare a local dependency on the Database Component and load it successfully, the Database Component can load the Model Component through its own declared dependency, and its dependencies resolve to the same concrete versions on every installation.
+              status: done
+              log:
+              - at: '2026-10-08T01:01:16Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:01:33Z'
+                transition: claimed -> done
+                note: Created the Database library package with a lock file; it declares the Model Component as a local path dependency and loads it, and a separate project with a path dependency on the Component imported it.
+                evidence:
+                  locations:
+                  - database/pyproject.toml
+                  - database/uv.lock
+                  - database/.gitignore
+                  - database/README.md
+                  - database/database/__init__.py
+                  - database/database/core/__init__.py
+                  - database/database/engine/__init__.py
+                  observed: uv lock resolved 12 packages (model 0.1.0 as editable path, pyyaml 6.0.3, sqlalchemy 2.1.4, sqlmodel 0.0.48; dev tools ruff 0.16.10, ty 0.0.85); uv lock --check passes; uv sync installed it; inside it the Model package imported with 15 Entities; a throwaway consumer project outside the repository declaring a path dependency on the Component (and, as uv requires of a root project, on the Model path) imported both.
+                decisions:
+                - unset: Dependency version specifiers
+                  chosen: Lower bounds at the resolved versions, exact versions recorded in the lock file
+                  why: Keeps the library compatible with a consumer's own resolution while the lock stabilizes concrete versions.
+                - unset: How the Model dependency is declared
+                  chosen: A local editable path source to the Model directory in the repository
+                  why: Development requires every Connection to be a local path dependency; editable keeps the Component and its configuration resolving from the repository.
+                - unset: Direct third-party dependencies
+                  chosen: sqlmodel and sqlalchemy for the Engine unit, and pyyaml to read the YAML configuration
+                  why: These are imported directly by Database source, and the configuration format is YAML.
+                - unset: Ignoring generated artifacts and runtime storage
+                  chosen: A Component-local ignore file for the virtual environment, caches, and the Storage directory
+                  why: Keeps cached artifacts and runtime database files out of the tracked output.
+            P2-G1-T02:
+              id: P2-G1-T02
+              source_id: '005'
+              title: Bring the finished source to the quality standards
+              description: Once all Database source exists, make it conform to the selected language's formatting, lint, and static type-checking standards without changing Database meaning.
+              reason: Quality standards are a Development obligation, and failing checks would block downstream Components.
+              inputs:
+              - Completed Database source
+              - Development language quality standards
+              skills: []
+              expected_result: The complete Database source passes the formatting, lint, and static type-checking standards.
+              depends_on:
+              - P2-G9-T10
+              - P2-G10-T01
+              - P2-G10-T02
+              - P2-G10-T03
+              constraints: []
+              acceptance: Formatting, lint, and static type checks over the complete Database source report no violations.
+              status: done
+              log:
+              - at: '2026-10-08T01:13:29Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:13:35Z'
+                transition: claimed -> done
+                note: 'Brought all Database source to the selected quality standards: the formatter, linter and type checker report nothing for the complete Component, including the entry points. Fixes during development were limited to formatting, removal of unused imports and typing of the generator-based unit of work; no Database meaning changed.'
+                evidence:
+                  locations:
+                  - database/pyproject.toml
+                  - database/database/
+                  - database/scripts/
+                  observed: 'ruff format --check: all files already formatted; ruff check: all checks passed; ty check: all checks passed.'
+        P2-G2:
+          id: P2-G2
+          title: Errors, query values, and results
+          description: 'The immutable public vocabulary every Operation speaks: the failure kinds, the closed query enumerations, the immutable Filter and Order values, and the Results a consumer reads.'
+          area: Public vocabulary
+          does: A consumer can express every query, read every result, and tell every failure apart using values that Database defines once.
+          constraints: []
+          task_count: 6
+          tasks:
+            P2-G2-T01:
+              id: P2-G2-T01
+              source_id: '005'
+              title: Realize the Database failure kinds
+              description: Provide one base Database error and one distinct error for each failure meaning the Database Definition names, each derived from the base and none carrying a connection value or credential.
+              reason: Consumers must tell failures apart without inspecting message text.
+              inputs:
+              - Database failure kinds
+              - Selected language's error naming
+              skills: []
+              expected_result: Each failure kind is its own error, and all of them can be caught through the one base error.
+              depends_on:
+              - P2-G1-T01
+              constraints: []
+              acceptance: Every failure kind can be raised and caught on its own, each is also caught as the base error, and no error text contains a connection value or credential.
+              status: done
+              log:
+              - at: '2026-10-08T01:02:15Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:03:21Z'
+                transition: claimed -> done
+                note: 'Created the Database failure kinds: a base DatabaseError and seven distinct errors (invalid configuration or Instance, inactive Instance, invalid input or Field, Declaration incompatibility, connection failure, execution failure, incomplete Setup), each derived from the base.'
+                evidence:
+                  locations:
+                  - database/database/core/errors.py
+                  observed: Each of the seven kinds was raised and caught on its own as exactly its type and also caught as the base error. Messages are written by callers and carry no connection value.
+                decisions:
+                - unset: Error class names and base
+                  chosen: DatabaseError as base; ConfigurationError, InactiveInstanceError, InvalidInputError, DeclarationMismatchError, ConnectionFailureError, ExecutionError, SetupError
+                  why: Database Preferences select these names for the Python profile.
+            P2-G2-T02:
+              id: P2-G2-T02
+              source_id: '005'
+              title: Realize the closed query enumerations
+              description: Provide the Filter operator, Filter combination, and Order direction enumerations as closed sets whose members are exactly those Database Preferences list.
+              reason: Queries must be built from imported members so that a mistyped condition cannot reach storage.
+              inputs:
+              - Database query vocabulary
+              skills: []
+              expected_result: Each enumeration exists with exactly its defined members.
+              depends_on:
+              - P2-G1-T01
+              constraints: []
+              acceptance: Each enumeration holds exactly its defined members and no others, and each member can be reached by its name.
+              status: done
+              log:
+              - at: '2026-10-08T01:02:15Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:03:21Z'
+                transition: claimed -> done
+                note: 'Created the three closed query enumerations: FilterOperator (twelve members), FilterCombination (AND, OR) and OrderDirection (ASCENDING, DESCENDING), each member''s value equal to its name.'
+                evidence:
+                  locations:
+                  - database/database/core/values.py
+                  observed: Listed the members of each enumeration and they equal the members Database Preferences list, in that order; each member is reachable by name.
+            P2-G2-T03:
+              id: P2-G2-T03
+              source_id: '005'
+              title: Realize the immutable Filter value
+              description: Provide the Filter a consumer builds to state a condition, holding a Field reference, an operator member, and an operator-compatible value, with the value absent for the null-test operators.
+              reason: A condition must be one checked, unchangeable value that every Engine receives in the same form.
+              inputs:
+              - Database Filter definition
+              - Query enumerations
+              skills: []
+              expected_result: A Filter can be created from a Field reference, an operator, and a value, and cannot be changed afterwards.
+              depends_on:
+              - P2-G2-T02
+              constraints: []
+              acceptance: A created Filter exposes its Field reference, operator, and value, a null-test Filter is created without a value, and every attempt to change a Filter is refused.
+              status: done
+              log:
+              - at: '2026-10-08T01:03:45Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:04:05Z'
+                transition: claimed -> done
+                note: Created the immutable Filter (Field reference, operator, value) and the internal immutable checked Filter form.
+                evidence:
+                  locations:
+                  - database/database/core/values.py
+                  observed: A Filter exposes field, operator and value, a null-test Filter is created without a value (value is None), and assigning to a Filter raised FrozenInstanceError.
+                decisions:
+                - unset: How an absent Filter value is represented
+                  chosen: The value defaults to None and is checked against the operator when the Filter is checked against its Entity
+                  why: The Preferences make the value absent only for the null-test operators; a missing value elsewhere is rejected by the query check.
+                - unset: Equality of immutable query values
+                  chosen: Identity equality (no generated equality)
+                  why: A Field reference compares as a query expression, so generated field-wise equality would misbehave.
+            P2-G2-T04:
+              id: P2-G2-T04
+              source_id: '005'
+              title: Realize the immutable Order value
+              description: Provide the Order a consumer builds to state a sort, holding a Field reference and a direction member, with the ascending direction when none is given.
+              reason: A sort must be one unchangeable value that every Engine receives in the same form.
+              inputs:
+              - Database Order definition
+              - Query enumerations
+              skills: []
+              expected_result: An Order can be created from a Field reference and an optional direction, and cannot be changed afterwards.
+              depends_on:
+              - P2-G2-T02
+              constraints: []
+              acceptance: A created Order exposes its Field reference and direction, an Order created without a direction is ascending, and every attempt to change an Order is refused.
+              status: done
+              log:
+              - at: '2026-10-08T01:03:45Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:04:05Z'
+                transition: claimed -> done
+                note: Created the immutable Order (Field reference, direction defaulting to ascending) and the internal immutable checked Order form.
+                evidence:
+                  locations:
+                  - database/database/core/values.py
+                  observed: An Order created without a direction reported ASCENDING, it exposes field and direction, and assigning to it raised FrozenInstanceError.
+            P2-G2-T05:
+              id: P2-G2-T05
+              source_id: '005'
+              title: Realize the immutable Command Result
+              description: Provide the Result a consumer reads after running a native command, carrying the returned rows, the affected count, the column names, the success flag, a message, and the Instance used, in that order.
+              reason: Consumers need one stable form for the outcome of a native command.
+              inputs:
+              - Database Command Result definition
+              skills: []
+              expected_result: A Command Result can be created and read with every defined field and cannot be changed afterwards.
+              depends_on:
+              - P2-G1-T01
+              - P2-G9-T01
+              constraints: []
+              acceptance: A created Command Result exposes rows, affected count, columns, success, message, and Instance in the defined order, and every attempt to change one is refused.
+              status: done
+              log:
+              - at: '2026-10-08T01:06:18Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:06:56Z'
+                transition: claimed -> done
+                note: Created the immutable Command Result with rows, affected count, column names, success flag, message and the Instance used, in that order.
+                evidence:
+                  locations:
+                  - database/database/core/values.py
+                  observed: A Command Result built from sample values exposes the six fields in the defined order and assigning to it raised FrozenInstanceError.
+            P2-G2-T06:
+              id: P2-G2-T06
+              source_id: '005'
+              title: Realize the immutable Setup Result
+              description: Provide the Result a consumer reads after a Setup Operation, carrying the command name, the Instance used, the success flag, the processed Table or record count, and a message, in that order.
+              reason: Consumers and entry points need one stable form for the outcome of storage preparation.
+              inputs:
+              - Database Setup Result definition
+              skills: []
+              expected_result: A Setup Result can be created and read with every defined field and cannot be changed afterwards.
+              depends_on:
+              - P2-G1-T01
+              - P2-G9-T01
+              constraints: []
+              acceptance: A created Setup Result exposes command, Instance, success, affected count, and message in the defined order, and every attempt to change one is refused.
+              status: done
+              log:
+              - at: '2026-10-08T01:06:18Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:06:56Z'
+                transition: claimed -> done
+                note: Created the immutable Setup Result with the command name, the Instance used, the success flag, the processed count and a message, in that order.
+                evidence:
+                  locations:
+                  - database/database/core/values.py
+                  observed: A Setup Result built from sample values exposes the five fields in the defined order and assigning to it raised FrozenInstanceError.
+        P2-G3:
+          id: P2-G3
+          title: Configuration loading
+          description: Reading and validating the Database Configuration, the only runtime source of Engines, Instances, Settings, and Initial Data.
+          area: Database Configuration loading
+          does: Database starts only from a complete, valid configuration and refuses any other before a connection is opened.
+          constraints: []
+          task_count: 4
+          tasks:
+            P2-G3-T01:
+              id: P2-G3-T01
+              source_id: '005'
+              title: Load the complete Database Configuration
+              description: Read the Database Configuration into runtime values for Engines, Instances, Settings, and Initial Data, and refuse one that lacks a required section or required Instance value, reporting it as an invalid configuration without exposing connection values.
+              reason: Every other behaviour of Database depends on one checked configuration.
+              inputs:
+              - Database Configuration structure
+              - Database failure kinds
+              skills: []
+              expected_result: A complete configuration loads, and an incomplete one is refused with the invalid-configuration failure.
+              depends_on:
+              - P2-G2-T01
+              constraints: []
+              acceptance: A complete configuration loads, a configuration missing a section, an Instance value, or a connection value its Engine requires is refused as invalid before any connection is opened, and the failure text contains no connection value.
+              status: done
+              log:
+              - at: '2026-10-08T01:03:45Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:04:05Z'
+                transition: claimed -> done
+                note: 'Created configuration loading: the Database Configuration is read into immutable runtime values for Engines, Instances, Settings and Initial Data, and a missing section, missing Instance value or wrongly typed value is refused as an invalid configuration naming the item but never a value.'
+                evidence:
+                  locations:
+                  - database/database/core/configuration.py
+                  observed: A complete configuration (copy kept outside the repository) loaded with 2 Engines, 2 Instances, the Settings and 12 Initial Data sets; copies missing the Initial Data section, an Instance password, or the default limit, or holding a non-text password, were each refused with a ConfigurationError that names only the item; the repository file, still lacking its Settings section at that time, was refused the same way. Connection values are excluded from the representation of an Instance.
+                decisions:
+                - unset: Where the configuration is read from
+                  chosen: The configuration file at the Component root, located from the package location
+                  why: Database Preferences place the configuration at the Component root and runtime must not depend on the working directory.
+                - unset: How the configuration file is parsed
+                  chosen: A safe YAML parser
+                  why: The configuration format is YAML and must never execute content.
+            P2-G3-T02:
+              id: P2-G3-T02
+              source_id: '005'
+              title: Validate Instance and default integrity
+              description: Refuse a configuration in which an Instance names an Engine that does not exist, two Instances share one public member identity, or the default Instance is missing or inactive.
+              reason: A call must always resolve to exactly one active Instance on a declared Engine.
+              inputs:
+              - Loaded Database Configuration
+              skills: []
+              expected_result: A configuration whose Instances and default Instance are inconsistent cannot load.
+              depends_on:
+              - P2-G3-T01
+              constraints: []
+              acceptance: A configuration with an Instance naming an unknown Engine, with duplicate Instance identities, or with a missing or inactive default Instance is refused as invalid, and a consistent configuration loads.
+              status: done
+              log:
+              - at: '2026-10-08T01:04:38Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:04:50Z'
+                transition: claimed -> done
+                note: 'Added Instance and default integrity checks to configuration loading: an Instance naming an undeclared Engine, a repeated public Instance identity (key in upper case), a repeated Instance name, and a missing or inactive default Instance each make the configuration invalid.'
+                evidence:
+                  locations:
+                  - database/database/core/configuration.py
+                  observed: Five broken copies (unknown Engine, repeated name, repeated identity differing only in case, unknown default Instance, inactive default Instance) were each refused with a ConfigurationError naming the item; the repository configuration loaded.
+            P2-G3-T03:
+              id: P2-G3-T03
+              source_id: '005'
+              title: Keep file storage inside the Database storage area
+              description: Resolve the storage location of a file-backed Instance beneath the configured storage root, and refuse a location that escapes it before any connection is opened.
+              reason: Only Database may create and manage its storage files, and a consumer must not be able to redirect them.
+              inputs:
+              - Loaded Database Configuration
+              - Database-owned storage rule
+              skills: []
+              expected_result: A file-backed Instance resolves to a location inside the storage root, and an escaping location is refused.
+              depends_on:
+              - P2-G3-T01
+              constraints: []
+              acceptance: A file-backed Instance resolves to a location inside the storage root, a location that escapes the root or resolves from outside Database is refused before any connection, and loading the configuration creates no storage file.
+              status: done
+              log:
+              - at: '2026-10-08T01:04:38Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:04:50Z'
+                transition: claimed -> done
+                note: 'Added storage-area resolution: a file-backed Instance''s database value resolves beneath the configured storage root inside the Database Component, and an escaping, absolute, empty or root-only location is refused with a ConfigurationError before any connection; resolution creates nothing.'
+                evidence:
+                  locations:
+                  - database/database/core/configuration.py
+                  observed: The sqlite Instance resolved to db/application.db inside the Component; the values ../outside.db, /etc/x.db, sub/../../x.db, an empty value and . were each refused, sub/a.db resolved inside the area; after loading and resolving, no db directory or file existed.
+                decisions:
+                - unset: Where the Component root for storage is taken from
+                  chosen: The Component directory located from the package location
+                  why: A file-backed path may not resolve from the working directory, an installed package or a consumer.
+                - unset: Which Instances are subject to resolution
+                  chosen: Resolution is a function applied to an Instance by Core when it builds a connection, so the Engine decides whether it is file-backed
+                  why: Only the Engine knows whether its storage is a file; Preferences place that knowledge with the Engine.
+            P2-G3-T04:
+              id: P2-G3-T04
+              source_id: '005'
+              title: Normalize the configured query defaults
+              description: 'Resolve the configured combination, default order, and default limit to canonical values when the configuration loads: a zero or negative default limit means no limit, and an unknown enumeration name is refused.'
+              reason: Defaults must resolve the same way before every call on every Instance.
+              inputs:
+              - Loaded Database Configuration
+              - Query enumerations
+              skills: []
+              expected_result: The query defaults are available as canonical values, and an unknown default name is refused.
+              depends_on:
+              - P2-G3-T01
+              - P2-G2-T02
+              constraints: []
+              acceptance: A configured zero or negative limit is read as no limit, a configured combination and direction are read as their enumeration members, and a configuration naming an unknown member is refused as invalid.
+              status: done
+              log:
+              - at: '2026-10-08T01:04:38Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:04:50Z'
+                transition: claimed -> done
+                note: 'Normalized the configured query defaults at load: the combination and default order direction must name enumeration members (an unknown name is refused), and a zero or negative default limit is read as no limit (-1).'
+                evidence:
+                  locations:
+                  - database/database/core/configuration.py
+                  observed: The repository defaults loaded as AND, limit -1, order id ascending; a copy with OR, limit 0 and DESCENDING loaded as those members with limit -1; limit -7 loaded as -1; a combination XOR and a direction UP were each refused as invalid.
+        P2-G4:
+          id: P2-G4
+          title: Database Configuration content
+          description: 'The generated Database Configuration: its Engines, Instances, Settings, and the shared Initial Data collection, each produced from its authoritative source. Initial Data is copied as the Database Definition requires, including values the Target does not make concrete.'
+          area: Generated Database Configuration
+          does: The Database Configuration exists in its defined structure and holds every Engine, Instance, Setting, and Target-defined Initial Data record.
+          constraints:
+          - Entities appear in the Initial Data collection in Target order, so that a record never precedes a record it refers to.
+          task_count: 15
+          tasks:
+            P2-G4-T01:
+              id: P2-G4-T01
+              source_id: '005'
+              title: Generate the Engines section
+              description: Record every Engine that Database Preferences declare, with the identity and driver information the configuration structure requires.
+              reason: Instances must name an Engine the configuration declares.
+              inputs:
+              - Database Preferences Engines
+              - Database Configuration structure
+              skills: []
+              expected_result: The configuration lists every declared Engine in the defined structure.
+              depends_on:
+              - P2-G1-T01
+              constraints: []
+              acceptance: The configuration lists each declared Engine with the fields the configuration structure requires, and no other Engine.
+              status: done
+              log:
+              - at: '2026-10-08T01:02:15Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:03:21Z'
+                transition: claimed -> done
+                note: 'Generated the Engines section of the Database Configuration from Database Preferences: one entry for each declared Engine with name, driver and parameters.'
+                evidence:
+                  locations:
+                  - database/config.yaml
+                  observed: The section lists exactly the two declared Engines (sqlite with driver sqlite3, postgresql with driver psycopg) and nothing else.
+                decisions:
+                - unset: Display name of an Engine
+                  chosen: The name of the Instance that uses the Engine
+                  why: The configuration structure asks for a human-readable Engine name, Preferences state none, and each Engine is used by exactly one Instance whose name is the Engine's display name.
+                - unset: How the configuration file is produced
+                  chosen: Emitted deterministically from Database Preferences and the Target definition by a throwaway generator kept outside the repository
+                  why: The configuration copies many Target records; a generator keeps them equal to the Target.
+            P2-G4-T02:
+              id: P2-G4-T02
+              source_id: '005'
+              title: Generate the Instances section
+              description: 'Record every Instance that Database Preferences define completely: name, active state, Engine, host, port, database identity, credentials, and options.'
+              reason: Instance selection and the public Instance enumeration are derived from this section.
+              inputs:
+              - Database Preferences Instances
+              - Engines section
+              skills: []
+              expected_result: The configuration holds each defined Instance with all of its values.
+              depends_on:
+              - P2-G4-T01
+              constraints: []
+              acceptance: Each defined Instance appears with every required value as the Preferences state it, names a declared Engine, and keeps its active state.
+              status: done
+              log:
+              - at: '2026-10-08T01:03:45Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:04:05Z'
+                transition: claimed -> done
+                note: 'Generated the Instances section of the Database Configuration from Database Preferences: every defined Instance with its name, active state, Engine, host, port, database, username, password and options.'
+                evidence:
+                  locations:
+                  - database/config.yaml
+                  observed: The section holds the sqlite Instance (active) and the postgresql Instance (inactive), each with all nine values as the Preferences state them and each naming a declared Engine; the configuration loaded them. Credential values were copied unchanged and not printed or logged.
+                decisions:
+                - unset: Whether a credential default in Preferences is copied
+                  chosen: Copied unchanged into the Instance definition
+                  why: The Database Configuration Schema requires complete Instance definitions and an explicit Preference outranks the general conduct Rule; recorded as an Open Question.
+            P2-G4-T03:
+              id: P2-G4-T03
+              source_id: '005'
+              title: Generate the Settings section
+              description: Record the default Instance, the Database storage root, the query defaults as canonical enumeration member names, and the after-generation preparation behaviour.
+              reason: Runtime reads its defaults and storage location only from the configuration.
+              inputs:
+              - Database Preferences defaults
+              - Database Configuration structure
+              skills: []
+              expected_result: The configuration holds the default Instance, storage root, query defaults, and preparation behaviour.
+              depends_on:
+              - P2-G4-T02
+              constraints: []
+              acceptance: The default Instance names an active Instance, a storage root is present, the query defaults are written as canonical member names, and the preparation behaviour matches the Preferences.
+              status: done
+              log:
+              - at: '2026-10-08T01:04:38Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:04:50Z'
+                transition: claimed -> done
+                note: 'Generated the Settings section of the Database Configuration: default Instance, storage root, query defaults as canonical member names, and the after-generation preparation behaviour.'
+                evidence:
+                  locations:
+                  - database/config.yaml
+                  observed: The section holds default_instance sqlite (an active Instance), storage_root db, query defaults AND / -1 / id ASCENDING, and after-generation preparation enabled with fail_on_error true and command prepare, equal to the Preferences; the configuration loaded.
+                decisions:
+                - unset: Value of the storage root
+                  chosen: db
+                  why: The Database Definition names the Storage directory db and the configuration structure example uses the same value.
+            P2-G4-T04:
+              id: P2-G4-T04
+              source_id: '005'
+              title: Record the User Initial Data
+              description: Record in the shared Initial Data collection every Initial Data record the Target defines for the User Entity.
+              reason: Every owned record belongs to a user, so the initial user must exist first.
+              inputs:
+              - Target Initial Data of the User model
+              - Published Entity identity
+              skills: []
+              expected_result: The collection holds the User records the Target defines.
+              depends_on:
+              - P1-G7-T01
+              constraints: []
+              acceptance: The collection's User records equal the Target's User Initial Data in number, order, and value. The password and API key are not concrete in the Target and are held as empty strings.
+              status: done
+              log:
+              - at: '2026-10-08T01:02:15Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:03:21Z'
+                transition: claimed -> done
+                note: 'Recorded the User Initial Data in the shared collection: the one Admin user, with the password and API key held as empty strings.'
+                evidence:
+                  locations:
+                  - database/config.yaml
+                  observed: The collection holds 1 User record(s) in Target order, equal to the Target's Initial Data; each record was built through the Entity's own JSON construction without error.
+                decisions:
+                - unset: Scope of the stated values and the id
+                  chosen: Only values the Target states, with no id and no defaulted Field; the Entity supplies its own defaults
+                  why: The Target's Initial Data lists stated values only, and Auto Increment identifiers belong to storage.
+                - unset: Value written for a Target value that is not concrete
+                  chosen: An empty string
+                  why: The Database Definition requires a non-concrete value such as Generate securely to be copied as an empty string.
+            P2-G4-T05:
+              id: P2-G4-T05
+              source_id: '005'
+              title: Record the Trading Platform Initial Data
+              description: Record in the shared Initial Data collection every Initial Data record the Target defines for the Trading Platform Entity.
+              reason: Instances and Positions refer to a supported trading platform.
+              inputs:
+              - Target Initial Data of the Trading Platform model
+              - Published Entity identity
+              skills: []
+              expected_result: The collection holds the Trading Platform records the Target defines.
+              depends_on:
+              - P1-G7-T01
+              constraints: []
+              acceptance: The collection's Trading Platform records equal the Target's Trading Platform Initial Data in number, order, and value.
+              status: done
+              log:
+              - at: '2026-10-08T01:02:15Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:03:21Z'
+                transition: claimed -> done
+                note: 'Recorded the Trading Platform Initial Data in the shared collection: the MetaTrader 5 and Binance platforms.'
+                evidence:
+                  locations:
+                  - database/config.yaml
+                  observed: The collection holds 2 Trading Platform record(s) in Target order, equal to the Target's Initial Data; each record was built through the Entity's own JSON construction without error.
+            P2-G4-T06:
+              id: P2-G4-T06
+              source_id: '005'
+              title: Record the Instance Initial Data
+              description: Record in the shared Initial Data collection every Initial Data record the Target defines for the Instance Entity.
+              reason: The initial account connects through a user-owned instance.
+              inputs:
+              - Target Initial Data of the Instance model
+              - Published Entity identity
+              skills: []
+              expected_result: The collection holds the Instance records the Target defines.
+              depends_on:
+              - P1-G7-T01
+              constraints: []
+              acceptance: The collection's Instance records equal the Target's Instance Initial Data in number, order, and value. The password and API key are not concrete in the Target and are held as empty strings.
+              status: done
+              log:
+              - at: '2026-10-08T01:02:15Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:03:21Z'
+                transition: claimed -> done
+                note: 'Recorded the Instance Initial Data in the shared collection: the MetaTrader instance, with the password and API key held as empty strings.'
+                evidence:
+                  locations:
+                  - database/config.yaml
+                  observed: The collection holds 1 Instance record(s) in Target order, equal to the Target's Initial Data; each record was built through the Entity's own JSON construction without error.
+            P2-G4-T07:
+              id: P2-G4-T07
+              source_id: '005'
+              title: Record the Currency Initial Data
+              description: Record in the shared Initial Data collection every Initial Data record the Target defines for the Currency Entity.
+              reason: The initial account needs a base currency.
+              inputs:
+              - Target Initial Data of the Currency model
+              - Published Entity identity
+              skills: []
+              expected_result: The collection holds the Currency records the Target defines.
+              depends_on:
+              - P1-G7-T01
+              constraints: []
+              acceptance: The collection's Currency records equal the Target's Currency Initial Data in number, order, and value.
+              status: done
+              log:
+              - at: '2026-10-08T01:02:15Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:03:21Z'
+                transition: claimed -> done
+                note: 'Recorded the Currency Initial Data in the shared collection: the eight currencies USD, EUR, GBP, JPY, CHF, CAD, AUD and NZD.'
+                evidence:
+                  locations:
+                  - database/config.yaml
+                  observed: The collection holds 8 Currency record(s) in Target order, equal to the Target's Initial Data; each record was built through the Entity's own JSON construction without error.
+            P2-G4-T08:
+              id: P2-G4-T08
+              source_id: '005'
+              title: Record the Broker Initial Data
+              description: Record in the shared Initial Data collection every Initial Data record the Target defines for the Broker Entity.
+              reason: Assets and the initial account refer to a broker.
+              inputs:
+              - Target Initial Data of the Broker model
+              - Published Entity identity
+              skills: []
+              expected_result: The collection holds the Broker records the Target defines.
+              depends_on:
+              - P1-G7-T01
+              constraints: []
+              acceptance: The collection's Broker records equal the Target's Broker Initial Data in number, order, and value.
+              status: done
+              log:
+              - at: '2026-10-08T01:02:15Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:03:21Z'
+                transition: claimed -> done
+                note: 'Recorded the Broker Initial Data in the shared collection: the FxPro broker.'
+                evidence:
+                  locations:
+                  - database/config.yaml
+                  observed: The collection holds 1 Broker record(s) in Target order, equal to the Target's Initial Data; each record was built through the Entity's own JSON construction without error.
+            P2-G4-T09:
+              id: P2-G4-T09
+              source_id: '005'
+              title: Record the Asset Initial Data
+              description: Record in the shared Initial Data collection every Initial Data record the Target defines for the Asset Entity.
+              reason: The initial action selects a tradable asset.
+              inputs:
+              - Target Initial Data of the Asset model
+              - Published Entity identity
+              skills: []
+              expected_result: The collection holds the Asset records the Target defines.
+              depends_on:
+              - P1-G7-T01
+              constraints: []
+              acceptance: The collection's Asset records equal the Target's Asset Initial Data in number, order, and value.
+              status: done
+              log:
+              - at: '2026-10-08T01:02:15Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:03:21Z'
+                transition: claimed -> done
+                note: 'Recorded the Asset Initial Data in the shared collection: the four assets EUR/USD, EUR/GBP, XAU/USD and USOil.'
+                evidence:
+                  locations:
+                  - database/config.yaml
+                  observed: The collection holds 4 Asset record(s) in Target order, equal to the Target's Initial Data; each record was built through the Entity's own JSON construction without error.
+            P2-G4-T10:
+              id: P2-G4-T10
+              source_id: '005'
+              title: Record the Account Group Initial Data
+              description: Record in the shared Initial Data collection every Initial Data record the Target defines for the Account Group Entity.
+              reason: The initial account is organized into a group.
+              inputs:
+              - Target Initial Data of the Account Group model
+              - Published Entity identity
+              skills: []
+              expected_result: The collection holds the Account Group records the Target defines.
+              depends_on:
+              - P1-G7-T01
+              constraints: []
+              acceptance: The collection's Account Group records equal the Target's Account Group Initial Data in number, order, and value.
+              status: done
+              log:
+              - at: '2026-10-08T01:02:15Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:03:21Z'
+                transition: claimed -> done
+                note: 'Recorded the Account Group Initial Data in the shared collection: the Default account group.'
+                evidence:
+                  locations:
+                  - database/config.yaml
+                  observed: The collection holds 1 Account Group record(s) in Target order, equal to the Target's Initial Data; each record was built through the Entity's own JSON construction without error.
+            P2-G4-T11:
+              id: P2-G4-T11
+              source_id: '005'
+              title: Record the Account Initial Data
+              description: Record in the shared Initial Data collection every Initial Data record the Target defines for the Account Entity.
+              reason: The initial action executes through a trading account.
+              inputs:
+              - Target Initial Data of the Account model
+              - Published Entity identity
+              skills: []
+              expected_result: The collection holds the Account records the Target defines.
+              depends_on:
+              - P1-G7-T01
+              constraints: []
+              acceptance: The collection's Account records equal the Target's Account Initial Data in number, order, and value. The password is not concrete in the Target and is held as an empty string.
+              status: done
+              log:
+              - at: '2026-10-08T01:02:15Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:03:21Z'
+                transition: claimed -> done
+                note: 'Recorded the Account Initial Data in the shared collection: the Acc-1 account, with the password held as an empty string.'
+                evidence:
+                  locations:
+                  - database/config.yaml
+                  observed: The collection holds 1 Account record(s) in Target order, equal to the Target's Initial Data; each record was built through the Entity's own JSON construction without error.
+            P2-G4-T12:
+              id: P2-G4-T12
+              source_id: '005'
+              title: Record the Trailing Group Initial Data
+              description: Record in the shared Initial Data collection every Initial Data record the Target defines for the Trailing Group Entity.
+              reason: The initial action refers to a trailing group.
+              inputs:
+              - Target Initial Data of the Trailing Group model
+              - Published Entity identity
+              skills: []
+              expected_result: The collection holds the Trailing Group records the Target defines.
+              depends_on:
+              - P1-G7-T01
+              constraints: []
+              acceptance: The collection's Trailing Group records equal the Target's Trailing Group Initial Data in number, order, and value.
+              status: done
+              log:
+              - at: '2026-10-08T01:02:15Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:03:21Z'
+                transition: claimed -> done
+                note: 'Recorded the Trailing Group Initial Data in the shared collection: the Default trailing group.'
+                evidence:
+                  locations:
+                  - database/config.yaml
+                  observed: The collection holds 1 Trailing Group record(s) in Target order, equal to the Target's Initial Data; each record was built through the Entity's own JSON construction without error.
+            P2-G4-T13:
+              id: P2-G4-T13
+              source_id: '005'
+              title: Record the Partial Group Initial Data
+              description: Record in the shared Initial Data collection every Initial Data record the Target defines for the Partial Group Entity.
+              reason: The initial action refers to a partial group.
+              inputs:
+              - Target Initial Data of the Partial Group model
+              - Published Entity identity
+              skills: []
+              expected_result: The collection holds the Partial Group records the Target defines.
+              depends_on:
+              - P1-G7-T01
+              constraints: []
+              acceptance: The collection's Partial Group records equal the Target's Partial Group Initial Data in number, order, and value.
+              status: done
+              log:
+              - at: '2026-10-08T01:02:15Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:03:21Z'
+                transition: claimed -> done
+                note: 'Recorded the Partial Group Initial Data in the shared collection: the Default partial group.'
+                evidence:
+                  locations:
+                  - database/config.yaml
+                  observed: The collection holds 1 Partial Group record(s) in Target order, equal to the Target's Initial Data; each record was built through the Entity's own JSON construction without error.
+            P2-G4-T14:
+              id: P2-G4-T14
+              source_id: '005'
+              title: Record the Action Group Initial Data
+              description: Record in the shared Initial Data collection every Initial Data record the Target defines for the Action Group Entity.
+              reason: The initial action belongs to an action group.
+              inputs:
+              - Target Initial Data of the Action Group model
+              - Published Entity identity
+              skills: []
+              expected_result: The collection holds the Action Group records the Target defines.
+              depends_on:
+              - P1-G7-T01
+              constraints: []
+              acceptance: The collection's Action Group records equal the Target's Action Group Initial Data in number, order, and value.
+              status: done
+              log:
+              - at: '2026-10-08T01:02:15Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:03:21Z'
+                transition: claimed -> done
+                note: 'Recorded the Action Group Initial Data in the shared collection: the Default action group.'
+                evidence:
+                  locations:
+                  - database/config.yaml
+                  observed: The collection holds 1 Action Group record(s) in Target order, equal to the Target's Initial Data; each record was built through the Entity's own JSON construction without error.
+            P2-G4-T15:
+              id: P2-G4-T15
+              source_id: '005'
+              title: Record the Action Initial Data
+              description: Record in the shared Initial Data collection every Initial Data record the Target defines for the Action Entity.
+              reason: The Target defines a default action for opening positions.
+              inputs:
+              - Target Initial Data of the Action model
+              - Published Entity identity
+              skills: []
+              expected_result: The collection holds the Action records the Target defines.
+              depends_on:
+              - P1-G7-T01
+              constraints: []
+              acceptance: The collection's Action records equal the Target's Action Initial Data in number, order, and value.
+              status: done
+              log:
+              - at: '2026-10-08T01:02:15Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:03:21Z'
+                transition: claimed -> done
+                note: 'Recorded the Action Initial Data in the shared collection: the Default action, whose decimal values are written as exact text.'
+                evidence:
+                  locations:
+                  - database/config.yaml
+                  observed: The collection holds 1 Action record(s) in Target order, equal to the Target's Initial Data; each record was built through the Entity's own JSON construction without error.
+                decisions:
+                - unset: How a decimal Initial Data value is written
+                  chosen: As exact text, the Model JSON form of a decimal
+                  why: The Entity contract refuses a number for a decimal Field, and building each record through the Entity's JSON conversion needs the text form.
+        P2-G5:
+          id: P2-G5
+          title: Query checking
+          description: Core's validation of Conditions and Sorts against the Entity they target, so that every Field reference is verified before any Instance is accessed.
+          area: Query checking and defaults
+          does: A Filter, Order, or aggregate Field that does not suit its Entity is refused before storage is touched, and every valid one is turned into a checked form.
+          constraints: []
+          task_count: 4
+          tasks:
+            P2-G5-T01:
+              id: P2-G5-T01
+              source_id: '005'
+              title: Check a Filter against its Entity
+              description: Verify that a Filter's Field belongs to the given Entity, that its operator suits the Field's declared Type, that its value is compatible, and produce the checked Filter holding the Field's name and Type, the operator, and the normalized value.
+              reason: A condition that does not fit its Entity must fail before any storage is touched.
+              inputs:
+              - Immutable Filter value
+              - Entity Declaration
+              - Database failure kinds
+              skills: []
+              expected_result: A valid Filter becomes a checked Filter, and an unsuitable one is refused as invalid input.
+              depends_on:
+              - P2-G2-T01
+              - P2-G2-T03
+              - P1-G7-T02
+              constraints: []
+              acceptance: A Filter on a Field of another Entity, a textual operator on a non-textual Field, an incompatible value, a missing value for a comparison, or a non-collection value for set membership is refused as invalid input, and each valid Filter yields a checked Filter with the Field's declared Type.
+              status: done
+              log:
+              - at: '2026-10-08T01:05:23Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:05:36Z'
+                transition: claimed -> done
+                note: 'Created Filter checking against the Entity: the Field must be a reference of that Entity, the operator a FilterOperator member, the operator must suit the Field''s declared Type, the value must be compatible (a null test takes none, set membership takes a collection), and the checked Filter holds the Field name, Type, operator and normalized value.'
+                evidence:
+                  locations:
+                  - database/database/core/query.py
+                  observed: 'Run against the real Entities: a valid Filter became a checked Filter; a Field of another Entity, a Field name string, an operator string, a textual operator on a boolean, an ordering comparison on a boolean, a bool for an integer, a missing value, a value for a null test, a non-collection for IN, an int for a float, and a naive datetime were each refused with InvalidInputError; a datetime with an offset was normalized to UTC.'
+                decisions:
+                - unset: Which Types accept ordering comparisons
+                  chosen: All Types except boolean and uuid
+                  why: The definition requires a compatible value but orders only comparable Types; booleans and uuids have no meaningful order.
+                - unset: Strictness of a Filter value against its Field Type
+                  chosen: Same strict type matching as the Entity (no int for float, no bool for integer, aware datetimes only)
+                  why: Model refuses implicit coercion, and a lenient query would accept values no Entity can hold.
+            P2-G5-T02:
+              id: P2-G5-T02
+              source_id: '005'
+              title: Check an Order against its Entity
+              description: Verify that an Order's Field belongs to the given Entity and produce the checked Order holding the Field's name and Type and whether it descends.
+              reason: A sort that does not fit its Entity must fail before any storage is touched.
+              inputs:
+              - Immutable Order value
+              - Entity Declaration
+              - Database failure kinds
+              skills: []
+              expected_result: A valid Order becomes a checked Order, and an unsuitable one is refused as invalid input.
+              depends_on:
+              - P2-G2-T01
+              - P2-G2-T04
+              - P1-G7-T02
+              constraints: []
+              acceptance: An Order on a Field of another Entity is refused as invalid input, and each valid Order yields a checked Order with the Field's declared Type and its direction.
+              status: done
+              log:
+              - at: '2026-10-08T01:05:23Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:05:36Z'
+                transition: claimed -> done
+                note: 'Created Order checking against the Entity: the Field must be a reference of that Entity and the direction an OrderDirection member; the checked Order holds the Field name, Type and whether it descends.'
+                evidence:
+                  locations:
+                  - database/database/core/query.py
+                  observed: A valid ascending and a descending Order became checked Orders; an Order on a Field of another Entity and an Order with a direction string were refused with InvalidInputError.
+            P2-G5-T03:
+              id: P2-G5-T03
+              source_id: '005'
+              title: Check an aggregate Field against its Entity
+              description: Verify that the Field named for a sum belongs to the Entity and is numeric, and that the Field named for a minimum or maximum belongs to the Entity and is comparable.
+              reason: An aggregate over an unsuitable Field must fail before any storage is touched.
+              inputs:
+              - Entity Declaration
+              - Database failure kinds
+              skills: []
+              expected_result: A suitable aggregate Field is accepted, and an unsuitable one is refused as invalid input.
+              depends_on:
+              - P2-G2-T01
+              - P1-G7-T02
+              constraints: []
+              acceptance: A sum over a non-numeric Field, a minimum or maximum over a non-comparable Field, and an aggregate over a Field of another Entity are each refused as invalid input, and suitable Fields are accepted.
+              status: done
+              log:
+              - at: '2026-10-08T01:05:23Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:05:36Z'
+                transition: claimed -> done
+                note: 'Created aggregate Field checking: a sum needs a numeric Field (integer, float or decimal) and a minimum or maximum a comparable Field, each belonging to the Entity.'
+                evidence:
+                  locations:
+                  - database/database/core/query.py
+                  observed: A sum of a decimal Field and a minimum of a string Field were accepted; a sum of a string Field, a maximum of a boolean Field, and a Field of another Entity were each refused with InvalidInputError.
+                decisions:
+                - unset: Which Types are comparable for a minimum or maximum
+                  chosen: string, integer, float, decimal, datetime, date and time
+                  why: These Types have a total order; boolean and uuid do not.
+            P2-G5-T04:
+              id: P2-G5-T04
+              source_id: '005'
+              title: Resolve omitted query inputs from the defaults
+              description: Resolve an omitted Filter combination, an omitted set of Orders, and an omitted limit from the configured query defaults, keeping supplied Orders in the order given in place of the default.
+              reason: The same call must return the same result on every Instance and every run.
+              inputs:
+              - Normalized query defaults
+              - Checked Filters and Orders
+              skills: []
+              expected_result: Omitted query inputs take their configured values, and supplied Orders replace the default.
+              depends_on:
+              - P2-G3-T04
+              - P2-G5-T01
+              - P2-G5-T02
+              constraints: []
+              acceptance: An omitted combination resolves to the configured one, omitted Orders resolve to the configured default order, an omitted limit resolves to no limit, a positive limit is the maximum count, and supplied Orders replace the default and are applied in the order given.
+              status: done
+              log:
+              - at: '2026-10-08T01:06:18Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:06:56Z'
+                transition: claimed -> done
+                note: 'Created defaults resolution: an omitted combination takes the configured one, omitted Orders take the configured default order (checked against the Entity), an omitted limit takes the configured limit, a positive limit is the maximum count, zero or negative means no limit, and supplied Orders replace the default and keep their sequence.'
+                evidence:
+                  locations:
+                  - database/database/core/query.py
+                  observed: 'With the repository defaults: omitted combination gave AND, an explicit OR was kept, a string was refused; omitted Orders gave id ascending, two supplied Orders (name descending, id) were kept in that sequence; limits None, 5, 0 and -3 resolved to -1, 5, -1 and -1; a string and a boolean limit were refused with InvalidInputError.'
+        P2-G6:
+          id: P2-G6
+          title: Shared request routing
+          description: 'Core''s handling of every public request: validating input, choosing the Instance, forwarding to the Engine, materializing Entities, and normalizing results.'
+          area: Core request routing
+          does: Every request is validated and routed in the same way whichever Instance or Engine serves it.
+          constraints: []
+          task_count: 5
+          tasks:
+            P2-G6-T01:
+              id: P2-G6-T01
+              source_id: '005'
+              title: Refuse strings where imported values are required
+              description: Refuse an Entity Operation whose entity is not an imported Entity (such as an Entity name or another string), whose identifier or supplied Entity does not suit that Entity, or whose Instance is not a member of the public Instance enumeration, before any storage is touched.
+              reason: Typed values are checked before storage so that a wrong call never reaches an Instance.
+              inputs:
+              - Published Entity identities
+              - Database failure kinds
+              skills: []
+              expected_result: A request built from a string identity or an unsuitable value is refused as invalid input.
+              depends_on:
+              - P2-G2-T01
+              - P1-G7-T01
+              constraints: []
+              acceptance: An Entity Operation given an Entity name, a Field name, or any other string in place of an imported value is refused as invalid input, and nothing is stored or read.
+              status: done
+              log:
+              - at: '2026-10-08T01:06:18Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:06:56Z'
+                transition: claimed -> done
+                note: 'Created public input validation: an Entity class or Entity instance must be one of Model''s Entities (an Entity name or any other string is refused), an identifier must suit the Entity''s Primary Key Field, and an Instance must be a database_instance member or absent, each refused with InvalidInputError before any storage is touched.'
+                evidence:
+                  locations:
+                  - database/database/core/data.py
+                  observed: An Entity class and an instance were accepted where each is required; the string User, a User instance where a class is required, and a class where an instance is required were refused; identifiers 3 was accepted and '3', True and None refused; Instance None and the SQLITE member accepted and the string sqlite refused. No connection was opened and no file created.
+            P2-G6-T02:
+              id: P2-G6-T02
+              source_id: '005'
+              title: Select the Instance for each request
+              description: Use the Instance a request names or, when none is named, the configured default Instance, and resolve its complete configuration; an unknown Instance fails as invalid and an inactive one fails as inactive, each before any storage is touched.
+              reason: A consumer selects an Instance by public member and never sees connection values.
+              inputs:
+              - Loaded Database Configuration
+              - Public Instance enumeration
+              skills: []
+              expected_result: Every request runs on exactly one active Instance with its full configuration resolved.
+              depends_on:
+              - P2-G3-T02
+              - P2-G2-T01
+              - P2-G9-T01
+              constraints: []
+              acceptance: A request without an Instance runs on the configured default Instance, a request naming an active Instance runs on it, and a request naming an unknown or inactive Instance fails with the matching failure kind before any storage is touched.
+              status: done
+              log:
+              - at: '2026-10-08T01:06:18Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:06:56Z'
+                transition: claimed -> done
+                note: 'Created Instance selection: the named Instance or, when none, the configured default Instance is resolved to its Engine unit and complete connection before any storage is touched; an unconfigured Instance fails as a configuration error and an inactive one as an inactive-Instance error.'
+                evidence:
+                  locations:
+                  - database/database/core/data.py
+                  - database/database/core/configuration.py
+                  observed: Selecting with no Instance and with the SQLITE member both resolved to the sqlite unit with a connection whose representation hides connection values; resolving the inactive postgresql Instance raised InactiveInstanceError and an unconfigured key raised ConfigurationError, with no storage file or directory created.
+                decisions:
+                - unset: When the configuration is loaded
+                  chosen: On first use and then kept for the process
+                  why: The Interface must open nothing on import, and one validated configuration keeps every call consistent.
+                - unset: Where the resolved connection is built
+                  chosen: In the configuration module as an immutable connection value that hides connection values from its representation
+                  why: The Definition makes Core resolve each Instance's connection from the configuration.
+            P2-G6-T03:
+              id: P2-G6-T03
+              source_id: '005'
+              title: Forward each request to its Engine
+              description: Hand every validated request, together with the resolved connection of its Instance, to the Engine implementation for that Instance's Engine and receive the raw result, without any Engine-specific behaviour in Core.
+              reason: Instances of one Engine must be served by the same implementation and differ only in their connection.
+              inputs:
+              - Selected Instance
+              - Engine implementations
+              skills: []
+              expected_result: Each request reaches the Engine of its Instance with that Instance's connection.
+              depends_on:
+              - P2-G6-T02
+              - P2-G7-T01
+              - P2-G3-T01
+              constraints: []
+              acceptance: Requests for two Instances of the same Engine reach the same Engine implementation with different connections, and a request for an Instance whose Engine has no implementation fails as an invalid configuration.
+              status: done
+              log:
+              - at: '2026-10-08T01:07:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:08:48Z'
+                transition: claimed -> done
+                note: 'Added request forwarding to Core: a validated request and the Instance''s resolved connection are handed to the Engine unit of that Instance''s Engine, and the raw result returned, without any Engine-specific behaviour in Core.'
+                evidence:
+                  locations:
+                  - database/database/core/data.py
+                  observed: Two selections of the same Engine with different connections used the same unit module; a record added through the first was counted by the first and not by the second, and each connection created its own storage file; an Engine with no unit is refused at selection as an invalid configuration.
+            P2-G6-T04:
+              id: P2-G6-T04
+              source_id: '005'
+              title: Build every returned Entity through its own construction
+              description: Turn each stored row a request returns into an Entity through that Entity's own construction from all of its Field values, and report a row that does not satisfy the Entity's contract as an error without repairing it.
+              reason: Consumers must only ever receive Entities that satisfy their own contract.
+              inputs:
+              - Raw Engine results
+              - Published Entity identities
+              skills:
+              - sqlmodel
+              expected_result: Returned Entities satisfy their contract, and a row that breaks it is reported.
+              depends_on:
+              - P2-G6-T03
+              - P1-G7-T01
+              constraints: []
+              acceptance: A stored row that satisfies its Entity is returned as that Entity with all Field values, and a stored row that breaks the Entity's contract is reported as an error and is never returned corrected.
+              status: done
+              log:
+              - at: '2026-10-08T01:09:28Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:10:15Z'
+                transition: claimed -> done
+                note: 'Added row materialization to Core: each stored row becomes an Entity through that Entity''s own construction from every Field value except the Auto Increment Field, whose storage-assigned value is then set on the built Entity; a row that does not satisfy the Entity contract is reported as an execution error naming only the Entity and is never repaired.'
+                evidence:
+                  locations:
+                  - database/database/core/data.py
+                  observed: A User row with id 5 became a User with id 5 whose JSON conversion and mutable Fields work and whose id stayed immutable; a missing row became None; rows with a wrongly typed name and a wrongly typed password were each refused with ExecutionError whose text names only the Entity.
+                decisions:
+                - unset: How a stored row with an Auto Increment value becomes an Entity
+                  chosen: Construct the Entity from all other Field values and set the storage-assigned value with SQLAlchemy's public attribute setter
+                  why: Model refuses a caller-supplied Auto Increment value in its constructor, in model_validate and in JSON text, so Database Preferences' 'construct from all Field values' cannot be followed literally; recorded as an Open Question.
+            P2-G6-T05:
+              id: P2-G6-T05
+              source_id: '005'
+              title: Normalize raw results into the published forms
+              description: Convert whatever an Engine returns into the published form of each Operation, so that a missing record is returned as null rather than raised and every result looks the same on every Engine.
+              reason: Consumers must read identical results whichever Engine served them.
+              inputs:
+              - Raw Engine results
+              - Database Result definitions
+              skills: []
+              expected_result: Each Operation returns its published result form on every Engine.
+              depends_on:
+              - P2-G6-T03
+              - P2-G2-T05
+              constraints: []
+              acceptance: A lookup of a missing record returns null, counts and aggregates are returned as plain numbers or null as defined, and a native command returns the published Command Result.
+              status: done
+              log:
+              - at: '2026-10-08T01:09:28Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:10:15Z'
+                transition: claimed -> done
+                note: 'Added result normalization to Core: a missing record becomes None instead of an error, and a native command''s rows, affected count and columns become the published immutable Command Result for the Instance used.'
+                evidence:
+                  locations:
+                  - database/database/core/data.py
+                  observed: Normalizing a missing row gave None; a row result gave a Command Result with a tuple of rows and a column tuple, and a count result gave a Command Result with affected 3; both carry the SQLITE Instance and success true.
+        P2-G7:
+          id: P2-G7
+          title: Engine implementations
+          description: One complete Engine implementation for each Engine used by at least one active Instance, serving every Entity Operation, the Command Operation, and the storage capabilities the Setup Operations require, and returning raw results.
+          area: Engine implementations
+          does: Every active Instance is served by a complete Engine implementation that preserves the published request, result, error, and atomicity meaning.
+          constraints: []
+          task_count: 19
+          tasks:
+            P2-G7-T01:
+              id: P2-G7-T01
+              source_id: '005'
+              title: Provide one implementation per Engine in use
+              description: Provide an Engine implementation for every Engine that at least one active Instance uses and for no other Engine, shared by all Instances of that Engine.
+              reason: An Engine nobody uses must leave nothing behind, and an Engine in use must always be served.
+              inputs:
+              - Instances section
+              - Instance and default integrity
+              skills:
+              - sqlmodel
+              expected_result: Engine implementations exist for exactly the Engines used by active Instances.
+              depends_on:
+              - P2-G3-T02
+              - P2-G4-T02
+              constraints: []
+              acceptance: The set of Engine implementations equals the set of Engines used by at least one active Instance, and an Engine used only by inactive Instances has none.
+              status: done
+              log:
+              - at: '2026-10-08T01:06:18Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:06:56Z'
+                transition: claimed -> done
+                note: Created the Engine unit for the Engine used by the active Instance (sqlite, a file-backed Engine requiring a database value) and none for the Engine used only by the inactive Instance; configuration loading now refuses an active Instance whose Engine has no unit, a missing required connection value, or an escaping storage location.
+                evidence:
+                  locations:
+                  - database/database/engine/sqlite.py
+                  - database/database/core/configuration.py
+                  observed: The Engine package holds exactly one unit, sqlite; activating the postgresql Instance, or pointing the sqlite Instance at it, was refused at load because that Engine has no implementation; an empty database value and an escaping location were refused; a made-up Engine key and a path-like Engine key were refused; no storage file or directory was created by loading.
+                decisions:
+                - unset: How a unit declares the connection values it requires and its storage kind
+                  chosen: Two module constants, STORAGE and REQUIRED, read by Core when resolving a connection
+                  why: Only the Engine knows whether its storage is a file and which connection values it needs, and Core must hold no Engine-specific behaviour.
+            P2-G7-T02:
+              id: P2-G7-T02
+              source_id: '005'
+              title: Open a connection for an Instance
+              description: Open, for the Instance Core supplies, a connection to its storage using its Engine's connection requirements, and report a failure to connect as a connection failure that carries no connection value or credential.
+              reason: Every Operation needs a connection that is opened from configuration only.
+              inputs:
+              - Resolved Instance connection
+              - Database storage area
+              skills:
+              - sqlmodel
+              expected_result: A valid Instance connects, and an Instance that cannot be reached fails as a connection failure.
+              depends_on:
+              - P2-G7-T01
+              - P2-G3-T03
+              - P2-G2-T01
+              constraints: []
+              acceptance: A valid Instance connects, an unreachable Instance fails as a connection failure whose text carries no connection value or credential, and a file-backed Instance keeps its storage inside the Database storage area.
+              status: done
+              log:
+              - at: '2026-10-08T01:07:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:08:48Z'
+                transition: claimed -> done
+                note: 'Added connection handling to the Engine unit: a unit of work opens a connection to the Instance''s storage (creating the storage directory on first use), enables foreign keys, registers an exact decimal comparison, runs inside an explicit transaction that commits only when the work completes, and reports a failure to connect as a connection failure that carries no connection value.'
+                evidence:
+                  locations:
+                  - database/database/engine/sqlite.py
+                  observed: A valid location connected and its storage directory was created inside the given area; a location that could not be prepared raised ConnectionFailureError with text naming only the Instance key; a failing statement inside the unit of work rolled back and surfaced as ExecutionError.
+                decisions:
+                - unset: How atomic units of work are made on this Engine
+                  chosen: Disable the driver's implicit transaction handling and begin each unit of work explicitly
+                  why: The driver's default leaves schema statements outside transactions, and Database needs every change, including table creation, to be all-or-nothing.
+                - unset: How exact decimal comparison works on an Engine that stores decimals as text
+                  chosen: Register a decimal collation on every connection and apply it to decimal Fields in conditions and orders
+                  why: Model stores a decimal as its exact text, so plain text comparison would order and match numeric values wrongly.
+                - unset: How an Engine error is reported
+                  chosen: The Engine's own message about the violated constraint or syntax, without statement text or parameters
+                  why: Failures must be actionable without exposing values.
+            P2-G7-T03:
+              id: P2-G7-T03
+              source_id: '005'
+              title: Add one Entity
+              description: Store one complete new Entity and return the stored Entity, including the values storage generated for it.
+              reason: Consumers create records only through this Operation.
+              inputs:
+              - Entity Declaration
+              - Open connection
+              skills:
+              - sqlmodel
+              expected_result: A new Entity is stored and returned with its generated values.
+              depends_on:
+              - P2-G7-T02
+              - P1-G7-T02
+              constraints: []
+              acceptance: Adding a new Entity stores one record and returns the stored Entity with its generated identifier filled in.
+              status: done
+              log:
+              - at: '2026-10-08T01:07:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:08:48Z'
+                transition: claimed -> done
+                note: 'Added add to the Engine unit: it stores one complete new record and returns the stored row read back, including the storage-assigned identifier.'
+                evidence:
+                  locations:
+                  - database/database/engine/sqlite.py
+                  observed: Three Users were added and received ids 1, 2 and 3 with their defaults applied; a duplicate unique value inside a unit of work failed as ExecutionError and the whole unit rolled back, so a User added earlier in that unit was absent afterwards.
+            P2-G7-T04:
+              id: P2-G7-T04
+              source_id: '005'
+              title: Get one Entity by identifier
+              description: Return the Entity stored under a given identifier, or null when no such record exists.
+              reason: Consumers retrieve a single record by identity.
+              inputs:
+              - Entity Declaration
+              - Open connection
+              skills:
+              - sqlmodel
+              expected_result: A stored Entity is returned by identifier, and a missing record gives null.
+              depends_on:
+              - P2-G7-T02
+              - P1-G7-T02
+              constraints: []
+              acceptance: Getting an existing identifier returns that Entity, and getting an identifier with no record returns null instead of an error.
+              status: done
+              log:
+              - at: '2026-10-08T01:07:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:08:48Z'
+                transition: claimed -> done
+                note: 'Added get by identifier to the Engine unit: it returns the stored row or None.'
+                evidence:
+                  locations:
+                  - database/database/engine/sqlite.py
+                  observed: Getting id 2 returned Bob's row and getting id 99 returned None without raising.
+            P2-G7-T05:
+              id: P2-G7-T05
+              source_id: '005'
+              title: Update one Entity
+              description: Replace every mutable Field of the stored record identified by the supplied Entity with the supplied values, never changing the identifier or another immutable Field, and return the stored Entity or null when no record exists.
+              reason: Consumers edit records only through this Operation.
+              inputs:
+              - Entity Declaration
+              - Open connection
+              skills:
+              - sqlmodel
+              expected_result: The record's mutable Fields take the supplied values and the stored Entity is returned.
+              depends_on:
+              - P2-G7-T02
+              - P1-G7-T02
+              constraints: []
+              acceptance: Updating an existing record changes every mutable Field to the supplied value and leaves identifier and immutable Fields as stored, and updating a missing record returns null.
+              status: done
+              log:
+              - at: '2026-10-08T01:07:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:08:48Z'
+                transition: claimed -> done
+                note: 'Added update to the Engine unit: it replaces the given mutable values of the identified record, never the identifier, and returns the stored row, or None when no record exists.'
+                evidence:
+                  locations:
+                  - database/database/engine/sqlite.py
+                  observed: Updating User 1 changed name, description and is_active and left id 1; updating id 99 returned None.
+            P2-G7-T06:
+              id: P2-G7-T06
+              source_id: '005'
+              title: Delete one Entity
+              description: Remove the record stored under a given identifier and return the final deleted Entity, or null when no such record exists.
+              reason: Consumers remove records only through this Operation.
+              inputs:
+              - Entity Declaration
+              - Open connection
+              skills:
+              - sqlmodel
+              expected_result: The record is removed and the deleted Entity is returned.
+              depends_on:
+              - P2-G7-T02
+              - P1-G7-T02
+              constraints: []
+              acceptance: Deleting an existing record removes it and returns the Entity as it was stored, and deleting an identifier with no record returns null.
+              status: done
+              log:
+              - at: '2026-10-08T01:07:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:08:48Z'
+                transition: claimed -> done
+                note: 'Added delete to the Engine unit: it removes the identified record and returns the row as it was stored, or None when no record exists.'
+                evidence:
+                  locations:
+                  - database/database/engine/sqlite.py
+                  observed: Deleting User 3 returned Cy's row and removed it; deleting id 3 again returned None.
+            P2-G7-T07:
+              id: P2-G7-T07
+              source_id: '005'
+              title: Enable one Entity
+              description: Set only the activity Field of the identified record to true and return the final Entity, including when it was already enabled, or null when no record exists.
+              reason: Consumers switch records on without editing any other value.
+              inputs:
+              - Entity Declaration
+              - Open connection
+              skills:
+              - sqlmodel
+              expected_result: The record is active afterwards and no other Field has changed.
+              depends_on:
+              - P2-G7-T02
+              - P1-G7-T02
+              constraints: []
+              acceptance: Enabling a disabled record makes it active, enabling an active record returns it unchanged, no other Field changes, and enabling a missing record returns null.
+              status: done
+              log:
+              - at: '2026-10-08T01:07:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:08:48Z'
+                transition: claimed -> done
+                note: 'Added enable to the Engine unit: it sets only the activity Field to true and returns the final row, including when already enabled, or None when no record exists.'
+                evidence:
+                  locations:
+                  - database/database/engine/sqlite.py
+                  observed: Enabling a disabled record made it active, enabling it again returned it active, other Fields were unchanged, and enabling id 99 returned None.
+            P2-G7-T08:
+              id: P2-G7-T08
+              source_id: '005'
+              title: Disable one Entity
+              description: Set only the activity Field of the identified record to false and return the final Entity, including when it was already disabled, or null when no record exists.
+              reason: Consumers switch records off without deleting them or editing any other value.
+              inputs:
+              - Entity Declaration
+              - Open connection
+              skills:
+              - sqlmodel
+              expected_result: The record is inactive afterwards and no other Field has changed.
+              depends_on:
+              - P2-G7-T02
+              - P1-G7-T02
+              constraints: []
+              acceptance: Disabling an active record makes it inactive, disabling an inactive record returns it unchanged, no other Field changes, and disabling a missing record returns null.
+              status: done
+              log:
+              - at: '2026-10-08T01:07:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:08:48Z'
+                transition: claimed -> done
+                note: 'Added disable to the Engine unit: it sets only the activity Field to false and returns the final row, including when already disabled, or None when no record exists.'
+                evidence:
+                  locations:
+                  - database/database/engine/sqlite.py
+                  observed: Disabling an active record made it inactive, disabling it again returned it inactive, and other Fields were unchanged.
+            P2-G7-T09:
+              id: P2-G7-T09
+              source_id: '005'
+              title: List matching Entities
+              description: Return the Entities that satisfy the checked Filters under the given combination, ordered by the checked Orders in the order supplied and bounded by the limit.
+              reason: Consumers read many records, narrowed, ordered, and bounded.
+              inputs:
+              - Checked Filters and Orders
+              - Open connection
+              skills:
+              - sqlmodel
+              expected_result: The matching Entities are returned in the requested order and within the limit.
+              depends_on:
+              - P2-G7-T02
+              - P1-G7-T02
+              - P2-G5-T01
+              - P2-G5-T02
+              constraints: []
+              acceptance: Listing returns only Entities matching the Filters under AND or OR as given, in the supplied Order sequence, at most the positive limit, and all matches when the limit is zero or negative.
+              status: done
+              log:
+              - at: '2026-10-08T01:07:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:08:48Z'
+                transition: claimed -> done
+                note: 'Added list to the Engine unit: it returns the rows that satisfy the checked Filters under AND or OR, ordered by the Orders in the sequence given and bounded by a positive limit, with all matches when the limit is not positive; decimal Fields compare and order by numeric value.'
+                evidence:
+                  locations:
+                  - database/database/engine/sqlite.py
+                  observed: 'Against three Users: default order gave Ann, Bob, Cy; descending name with limit 2 gave Cy, Bob; contains, starts-with, ends-with (case-sensitive, an empty ends-with matches all), OR, AND, IN and the two null tests returned the expected rows; against decimal values 10, 9, 9.5, 100 and 2.50 the order was 2.50, 9, 9.5, 10, 100, greater-than 9.5 gave 10 and 100, and an equality filter for 2.5 matched the stored 2.50.'
+                decisions:
+                - unset: Case sensitivity of text matching
+                  chosen: Case-sensitive containment, prefix and suffix matching
+                  why: The Definition states no case folding and a case-insensitive match would depend on the Engine's pattern semantics.
+            P2-G7-T10:
+              id: P2-G7-T10
+              source_id: '005'
+              title: Count matching Entities
+              description: Return the number of Entities that satisfy the checked Filters under the given combination.
+              reason: Consumers need totals without reading records.
+              inputs:
+              - Checked Filters
+              - Open connection
+              skills:
+              - sqlmodel
+              expected_result: The count of matching Entities is returned.
+              depends_on:
+              - P2-G7-T02
+              - P2-G5-T01
+              constraints: []
+              acceptance: Counting returns the number of records matching the Filters under the given combination, and the number of all records when no Filter is given.
+              status: done
+              log:
+              - at: '2026-10-08T01:07:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:08:48Z'
+                transition: claimed -> done
+                note: 'Added count to the Engine unit: it returns the number of rows that satisfy the checked Filters, or of all rows when none is given.'
+                evidence:
+                  locations:
+                  - database/database/engine/sqlite.py
+                  observed: Counting Users gave 3 without Filters and 2 with an active-only Filter.
+            P2-G7-T11:
+              id: P2-G7-T11
+              source_id: '005'
+              title: Sum a numeric Field
+              description: Return the total of a numeric Field over the Entities that satisfy the checked Filters, ignoring null values, or zero when nothing matches.
+              reason: Consumers need totals over stored values.
+              inputs:
+              - Checked Filters and aggregate Field
+              - Open connection
+              skills:
+              - sqlmodel
+              expected_result: The total of the Field over the matching Entities is returned.
+              depends_on:
+              - P2-G7-T02
+              - P2-G5-T01
+              - P2-G5-T03
+              constraints: []
+              acceptance: Summing returns the total over matching records with null values ignored, and zero when no record matches.
+              status: done
+              log:
+              - at: '2026-10-08T01:07:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:08:48Z'
+                transition: claimed -> done
+                note: 'Added sum to the Engine unit: it returns the total of a numeric Field over the matching rows, ignoring nulls, or zero when nothing matches, with decimals added exactly.'
+                evidence:
+                  locations:
+                  - database/database/engine/sqlite.py
+                  observed: The sum of User ids was 6 and 0 for an empty match; a decimal Field summed to 131.00 exactly and to Decimal 0 for an empty match; a float Field with no rows gave 0.0.
+                decisions:
+                - unset: Where decimal aggregates are computed
+                  chosen: In the Engine unit from the stored values, using exact decimal arithmetic
+                  why: Stored decimal text cannot be added or compared exactly by the Engine's own numeric functions.
+            P2-G7-T12:
+              id: P2-G7-T12
+              source_id: '005'
+              title: Find the minimum of a comparable Field
+              description: Return the smallest value of a comparable Field over the Entities that satisfy the checked Filters, ignoring null values, or null when nothing matches.
+              reason: Consumers need the lower bound of stored values.
+              inputs:
+              - Checked Filters and aggregate Field
+              - Open connection
+              skills:
+              - sqlmodel
+              expected_result: The smallest value of the Field over the matching Entities is returned.
+              depends_on:
+              - P2-G7-T02
+              - P2-G5-T01
+              - P2-G5-T03
+              constraints: []
+              acceptance: The minimum is the smallest non-null value among matching records, and null when no record matches.
+              status: done
+              log:
+              - at: '2026-10-08T01:07:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:08:48Z'
+                transition: claimed -> done
+                note: 'Added minimum to the Engine unit: it returns the smallest non-null value of a comparable Field over the matching rows, or None when nothing matches.'
+                evidence:
+                  locations:
+                  - database/database/engine/sqlite.py
+                  observed: The minimum name was Ann, the minimum over an empty match was None, nulls in the description Field were ignored, and the decimal minimum was 2.50.
+            P2-G7-T13:
+              id: P2-G7-T13
+              source_id: '005'
+              title: Find the maximum of a comparable Field
+              description: Return the largest value of a comparable Field over the Entities that satisfy the checked Filters, ignoring null values, or null when nothing matches.
+              reason: Consumers need the upper bound of stored values.
+              inputs:
+              - Checked Filters and aggregate Field
+              - Open connection
+              skills:
+              - sqlmodel
+              expected_result: The largest value of the Field over the matching Entities is returned.
+              depends_on:
+              - P2-G7-T02
+              - P2-G5-T01
+              - P2-G5-T03
+              constraints: []
+              acceptance: The maximum is the largest non-null value among matching records, and null when no record matches.
+              status: done
+              log:
+              - at: '2026-10-08T01:07:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:08:48Z'
+                transition: claimed -> done
+                note: 'Added maximum to the Engine unit: it returns the largest non-null value of a comparable Field over the matching rows, or None when nothing matches.'
+                evidence:
+                  locations:
+                  - database/database/engine/sqlite.py
+                  observed: The maximum name was Cy and the decimal maximum was 100.
+            P2-G7-T14:
+              id: P2-G7-T14
+              source_id: '005'
+              title: Truncate one Entity
+              description: Remove every record of one Entity while keeping its Table, and return the number of records removed.
+              reason: Consumers clear an Entity's data without rebuilding its structure.
+              inputs:
+              - Entity Declaration
+              - Open connection
+              skills:
+              - sqlmodel
+              expected_result: All records of the Entity are removed, its Table remains, and the removed count is returned.
+              depends_on:
+              - P2-G7-T02
+              - P1-G7-T02
+              constraints: []
+              acceptance: Truncating removes every record of the Entity, returns how many were removed, leaves the Table in place and usable, and leaves other Entities' records untouched.
+              status: done
+              log:
+              - at: '2026-10-08T01:07:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:08:48Z'
+                transition: claimed -> done
+                note: 'Added truncate to the Engine unit: it removes every record of one Entity, keeps its Table, and returns the removed count.'
+                evidence:
+                  locations:
+                  - database/database/engine/sqlite.py
+                  observed: Truncating the trailing rules removed 5 and left the Table in place with count 0 and the Users untouched; truncating the Users while rows referenced them failed as ExecutionError and the Users remained.
+            P2-G7-T15:
+              id: P2-G7-T15
+              source_id: '005'
+              title: Run a native command
+              description: Run a native command in the Instance Engine's own query language with its bound parameters, including a schema change, and return the Command Result.
+              reason: Some needs fall outside the standard Operations and must still be met through the same boundary.
+              inputs:
+              - Command Result definition
+              - Open connection
+              skills:
+              - sqlmodel
+              expected_result: A native command runs and its outcome is returned as a Command Result.
+              depends_on:
+              - P2-G7-T02
+              - P2-G2-T05
+              constraints: []
+              acceptance: A valid command returns a successful Command Result with its rows, columns, or affected count as applicable, and an invalid command fails as an execution failure.
+              status: done
+              log:
+              - at: '2026-10-08T01:07:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:08:48Z'
+                transition: claimed -> done
+                note: 'Added native command execution to the Engine unit: a command with bound parameters runs in the Engine''s own query language inside the unit of work and returns its rows and columns, or its affected count, including schema statements.'
+                evidence:
+                  locations:
+                  - database/database/engine/sqlite.py
+                  observed: A select with a named parameter returned two rows with columns id and name; an update with positional parameters returned affected 1; a table creation statement ran and returned affected 0; a syntax error failed as ExecutionError with the Engine's message.
+            P2-G7-T16:
+              id: P2-G7-T16
+              source_id: '005'
+              title: Create the Tables of the given Entities
+              description: Create, from the Declarations of the Entities supplied, a Table for each with its Fields, Primary Key, Relations, Uniqueness Constraints, and Indexes, leaving a Table that already matches unchanged.
+              reason: Storage structure must follow the Entities and nothing else.
+              inputs:
+              - Entity Declarations
+              - Open connection
+              skills:
+              - sqlmodel
+              expected_result: Tables matching the supplied Entities exist afterwards.
+              depends_on:
+              - P2-G7-T02
+              - P1-G7-T02
+              constraints: []
+              acceptance: Creating Tables for the supplied Entities yields exactly their Tables with every declared Field, Primary Key, Relation, Uniqueness Constraint, and Index, and doing so again over matching Tables changes nothing.
+              status: done
+              log:
+              - at: '2026-10-08T01:07:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:08:48Z'
+                transition: claimed -> done
+                note: 'Added table creation to the Engine unit: it creates every missing Table of the supplied Entities from their shared table metadata in one unit of work and returns how many were created and how many already existed.'
+                evidence:
+                  locations:
+                  - database/database/engine/sqlite.py
+                  observed: On an empty database 15 Tables were created; running again created 0 and found 15 existing.
+            P2-G7-T17:
+              id: P2-G7-T17
+              source_id: '005'
+              title: Detect a difference between a Table and its Declaration
+              description: Compare each existing Table with its Entity's Declaration and, on any difference, stop and report a Declaration incompatibility without altering the existing Table.
+              reason: A difference must never be resolved by judgment.
+              inputs:
+              - Entity Declarations
+              - Existing Tables
+              skills:
+              - sqlmodel
+              expected_result: A Table that differs from its Declaration stops table creation with a clear report.
+              depends_on:
+              - P2-G7-T16
+              - P2-G2-T01
+              constraints: []
+              acceptance: An existing Table that differs from its Declaration in a Field, Type, nullability, key, Relation, uniqueness, or index stops the command with a Declaration incompatibility, and that Table is left exactly as it was.
+              status: done
+              log:
+              - at: '2026-10-08T01:09:28Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:10:15Z'
+                transition: claimed -> done
+                note: 'Added Declaration comparison to table creation: every existing Table is compared with its Entity''s Declaration (columns, nullability, types, Primary Key, Relations, Uniqueness Constraints, Indexes) before anything is created; any difference stops the work with a Declaration-incompatibility error naming the Table and item and leaves every Table unchanged.'
+                evidence:
+                  locations:
+                  - database/database/engine/sqlite.py
+                  observed: After a fresh creation a second run compared all 15 Tables with no difference; an added column, a renamed column and a User Table with the wrong columns were each refused with DeclarationMismatchError naming the Table and column; with a wrong User Table and 14 missing Tables, no further Table was created.
+            P2-G7-T18:
+              id: P2-G7-T18
+              source_id: '005'
+              title: Make every changing request atomic
+              description: Make each changing Entity Operation complete entirely within its Instance or leave no partial data change, without any hidden transaction shared between separate calls.
+              reason: A half-applied change leaves data that no contract describes.
+              inputs:
+              - Changing Entity Operations
+              skills:
+              - sqlmodel
+              expected_result: A failed changing request leaves the stored data exactly as it was.
+              depends_on:
+              - P2-G7-T03
+              - P2-G7-T05
+              - P2-G7-T06
+              - P2-G7-T07
+              - P2-G7-T08
+              - P2-G7-T14
+              constraints: []
+              acceptance: When a changing Operation fails part-way, no part of its change is visible afterwards, and two separate calls never behave as one transaction.
+              status: done
+              log:
+              - at: '2026-10-08T01:09:28Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:10:15Z'
+                transition: claimed -> done
+                note: 'Made every changing request atomic through the unit of work: each public change runs in its own explicit transaction that commits only on completion and rolls back on any failure, and separate calls never share one.'
+                evidence:
+                  locations:
+                  - database/database/engine/sqlite.py
+                  observed: A unit of work that added a User and then violated a uniqueness rule left no trace of the first add; a truncate blocked by a referencing row left every record; an add blocked by a foreign key left nothing; a committed earlier call persisted when a later separate call failed.
+            P2-G7-T19:
+              id: P2-G7-T19
+              source_id: '005'
+              title: Report incomplete table creation explicitly
+              description: Complete table creation atomically where the Engine supports it and otherwise report an incomplete state explicitly as a setup failure.
+              reason: Storage must never be left in an unexplained half-built state.
+              inputs:
+              - Table creation capability
+              - Database failure kinds
+              skills:
+              - sqlmodel
+              expected_result: Table creation either completes fully or is reported as incomplete.
+              depends_on:
+              - P2-G7-T16
+              - P2-G7-T17
+              constraints: []
+              acceptance: When table creation cannot finish, the outcome is either no Table created or an explicit incomplete-setup failure identifying the Instance, and never a silent partial result.
+              status: done
+              log:
+              - at: '2026-10-08T01:09:28Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:10:15Z'
+                transition: claimed -> done
+                note: 'Made table creation all-or-nothing and explicit on failure: all missing Tables are created in one transaction on this Engine, and a failure rolls back and is reported as an incomplete-setup error identifying the Instance.'
+                evidence:
+                  locations:
+                  - database/database/engine/sqlite.py
+                  observed: With a view named like the last Entity blocking its Table, creation failed with SetupError naming the Instance and the database held no Table afterwards (14 earlier Tables were rolled back).
+                decisions:
+                - unset: How Tables are created once the missing set is known
+                  chosen: Create exactly the missing Tables without a second existence check
+                  why: The built-in existence check also treats a view as an existing Table and silently skipped it, leaving setup incomplete without a report.
+        P2-G8:
+          id: P2-G8
+          title: Setup coordination
+          description: 'Core''s coordination of storage preparation: creating Tables, inserting Initial Data, and doing both in order.'
+          area: Setup Operations
+          does: Storage can be prepared repeatably on any active Instance, and each outcome is reported as a Setup Result.
+          constraints: []
+          task_count: 6
+          tasks:
+            P2-G8-T01:
+              id: P2-G8-T01
+              source_id: '005'
+              title: Create Tables for every Entity
+              description: Create, on the selected Instance, the Tables of exactly the Entities of the Model Entity Collection using their Declarations and nothing else, and report a Setup Result.
+              reason: Tables must follow the Entities so that the same Entities always yield the same Tables.
+              inputs:
+              - Model Entity Collection
+              - Table creation capability
+              skills:
+              - sqlmodel
+              expected_result: The selected Instance holds the Tables of every Entity and a Setup Result reports it.
+              depends_on:
+              - P2-G7-T16
+              - P2-G2-T06
+              - P2-G6-T02
+              - P1-G7-T02
+              constraints: []
+              acceptance: After the command the Instance holds one Table for every Entity of the collection and no other, the command succeeds again on an unchanged Instance, and the Setup Result names the command and Instance and counts the Tables processed.
+              status: done
+              log:
+              - at: '2026-10-08T01:10:41Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:11:58Z'
+                transition: claimed -> done
+                note: 'Added Create Tables coordination: for the selected Instance it creates the Table of every Entity of the Model Entity Collection from their Declarations and nothing else, and returns a Setup Result naming the command and Instance and counting the Tables processed.'
+                evidence:
+                  locations:
+                  - database/database/core/tables.py
+                  - database/database/core/setup.py
+                  observed: On a fresh temporary database the command created 15 Tables (exactly the 15 Entities, no others) and reported success with affected 15 for the SQLITE Instance; running it again reported success with 0 created and 15 matching and changed nothing.
+            P2-G8-T02:
+              id: P2-G8-T02
+              source_id: '005'
+              title: Stop table creation on any difference
+              description: Stop the command when any existing Table differs from its Entity's Declaration and report the difference, creating nothing further and altering nothing.
+              reason: A difference between storage and the Entities needs a human decision.
+              inputs:
+              - Table difference detection
+              skills:
+              - sqlmodel
+              expected_result: A differing Table makes the command fail with a clear report.
+              depends_on:
+              - P2-G8-T01
+              - P2-G7-T17
+              constraints: []
+              acceptance: On an Instance holding a Table that differs from its Declaration, the command fails with a Declaration incompatibility and an unsuccessful Setup Result, and the Instance's Tables are unchanged.
+              status: done
+              log:
+              - at: '2026-10-08T01:11:58Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:12:35Z'
+                transition: claimed -> done
+                note: 'Made Create Tables stop on any difference: when an existing Table differs from its Entity''s Declaration the command reports an unsuccessful Setup Result carrying the Declaration-incompatibility text and creates and alters nothing.'
+                evidence:
+                  locations:
+                  - database/database/core/setup.py
+                  - database/database/core/tables.py
+                  observed: With a Broker Table holding only an id column, create_tables returned success false with the message naming the Broker Table and its missing columns, and the database still held only that Broker Table; no other Table was created.
+                decisions:
+                - unset: How a setup failure is reported
+                  chosen: A failure of a Setup Operation after its Instance is selected is returned as an unsuccessful Setup Result whose message states the cause; failures before selection (configuration, unknown or inactive Instance, invalid input) are raised
+                  why: A Setup Result carries success and an error message, and an Instance must be selected before it can name one.
+            P2-G8-T03:
+              id: P2-G8-T03
+              source_id: '005'
+              title: Validate every Initial Data record through its Entity
+              description: Check each record of the shared Initial Data collection by building its Entity through the Entity's own construction, reporting a record that does not satisfy it without repairing it.
+              reason: Only records that satisfy their Entity may reach storage.
+              inputs:
+              - Shared Initial Data collection
+              - Published Entity identities
+              skills: []
+              expected_result: Each valid record is accepted and each invalid record is reported.
+              depends_on:
+              - P2-G3-T01
+              - P1-G7-T01
+              - P2-G2-T01
+              constraints: []
+              acceptance: A record that satisfies its Entity is accepted with its values unchanged, and a record that breaks its Entity's contract is reported as invalid input naming its Entity and position, and is not changed.
+              status: done
+              log:
+              - at: '2026-10-08T01:10:41Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:11:58Z'
+                transition: claimed -> done
+                note: 'Added Initial Data validation: every record of the shared collection is built through its Entity''s own JSON construction, an unknown Entity or a record that does not satisfy its Entity is reported as invalid input naming the Entity and position, and no value is echoed or repaired.'
+                evidence:
+                  locations:
+                  - database/database/core/initial_data.py
+                  observed: All 23 configured records were accepted; a record with an undeclared Field, a wrongly typed value, a missing required Field, an integer for a decimal Field, and an unknown Entity name were each refused with InvalidInputError naming the Entity and position, and the secret-looking value in the first record did not appear in the text.
+            P2-G8-T04:
+              id: P2-G8-T04
+              source_id: '005'
+              title: Insert the missing Initial Data repeatably
+              description: Insert, on the selected Instance, each Initial Data record that is not yet present and skip each identical present record, succeeding with zero affected items when the collection is empty.
+              reason: Preparation must be repeatable on any Instance without duplicating or losing records.
+              inputs:
+              - Validated Initial Data records
+              - Open connection
+              skills:
+              - sqlmodel
+              expected_result: Every missing record is inserted once, and running again changes nothing.
+              depends_on:
+              - P2-G8-T03
+              - P2-G7-T03
+              - P2-G7-T09
+              - P2-G2-T06
+              constraints: []
+              acceptance: On an empty Instance every record is inserted with its values unchanged, running the command again inserts nothing and duplicates nothing, a partly filled Instance receives only the missing records, and the Setup Result counts the records inserted.
+              status: done
+              log:
+              - at: '2026-10-08T01:11:58Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:12:35Z'
+                transition: claimed -> done
+                note: 'Added repeatable Initial Data insertion: on the selected Instance every record not yet present is inserted with its values unchanged in one atomic unit, an identical present record is skipped, and an empty collection succeeds with zero affected.'
+                evidence:
+                  locations:
+                  - database/database/core/initial_data.py
+                  - database/database/core/setup.py
+                  observed: On a fresh database prepare inserted all 23 records; the next run inserted 0 and reported 23 already present, with identical row counts; after deleting two currencies and one platform, the next run inserted exactly those 3 and left 20; without Tables the command returned success false with a message naming the missing table.
+                decisions:
+                - unset: What makes a present record identical
+                  chosen: Every Field value the record states equals the stored value; the storage-assigned id is not compared
+                  why: Initial Data states no id, and the Entity supplies the same defaults on every run.
+            P2-G8-T05:
+              id: P2-G8-T05
+              source_id: '005'
+              title: Refuse conflicting Initial Data without partial change
+              description: Fail clearly when a record conflicts with a different existing record, never overwriting, deleting, or duplicating, and leave no partial data change from the failed command.
+              reason: Conflicts need a human decision, and a failed command must not leave half the data inserted.
+              inputs:
+              - Initial Data insertion
+              - Atomic changes
+              skills:
+              - sqlmodel
+              expected_result: A conflicting record makes the command fail and changes nothing.
+              depends_on:
+              - P2-G8-T04
+              - P2-G7-T18
+              constraints: []
+              acceptance: A record that conflicts with a different existing record makes the command fail with an unsuccessful Setup Result, and afterwards the Instance holds exactly the records it held before the command.
+              status: done
+              log:
+              - at: '2026-10-08T01:11:58Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:12:35Z'
+                transition: claimed -> done
+                note: 'Added conflict refusal to Initial Data insertion: a record that differs from an existing record on a declared uniqueness constraint fails the whole command with a clear report, nothing is overwritten, deleted or duplicated, and the unit of work is rolled back.'
+                evidence:
+                  locations:
+                  - database/database/core/initial_data.py
+                  observed: After changing the stored Admin user's password, insert_initial_data returned success false with 'Initial Data record 1 of User conflicts with an existing record'; the row counts of every Entity were identical before and after (a currency removed beforehand was not re-inserted), and the changed password remained.
+            P2-G8-T06:
+              id: P2-G8-T06
+              source_id: '005'
+              title: Prepare by creating Tables and then inserting Initial Data
+              description: Run table creation and then Initial Data insertion on the selected Instance, stopping without inserting when table creation fails, and report one Setup Result.
+              reason: A single call must bring any active Instance to a usable, seeded state.
+              inputs:
+              - Table creation
+              - Initial Data insertion
+              skills: []
+              expected_result: One command leaves the Instance with its Tables and Initial Data, and reports the outcome.
+              depends_on:
+              - P2-G8-T02
+              - P2-G8-T05
+              constraints: []
+              acceptance: After the command a new Instance holds all Tables and all Initial Data, running it again changes nothing, and when table creation fails no Initial Data is inserted and the Setup Result reports the failure.
+              status: done
+              log:
+              - at: '2026-10-08T01:11:58Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:12:35Z'
+                transition: claimed -> done
+                note: 'Added Prepare: it creates the Tables and then inserts the Initial Data on the selected Instance, stops without inserting when table creation fails, and reports one Setup Result.'
+                evidence:
+                  locations:
+                  - database/database/core/setup.py
+                  observed: On a new database prepare returned success with affected 38 (15 Tables, 23 records); running it again returned success with 0 created and 0 inserted; with a differing Broker Table it returned success false with 'stopped' and no Initial Data was inserted (the only Table present was the differing one).
+                decisions:
+                - unset: What Prepare counts as affected
+                  chosen: The Tables processed plus the records inserted
+                  why: The Setup Result carries one count and Prepare runs both steps.
+        P2-G9:
+          id: P2-G9
+          title: Public Interface
+          description: 'The only public boundary of Database: six groups, each named by the Database prefix, an underscore, and its key, through which a consumer reaches every Operation, value, Instance, Result, and Error.'
+          area: Public Interface publication
+          does: A consumer imports a group and reaches every public contract of Database, and nothing else.
+          constraints: []
+          task_count: 10
+          tasks:
+            P2-G9-T01:
+              id: P2-G9-T01
+              source_id: '005'
+              title: Publish the active Instance group
+              description: Publish the enumeration of Instances a call can run on, holding one member for every active configured Instance and none for an inactive one, and containing no connection value.
+              reason: A consumer selects an Instance by public member without ever seeing how to connect to it.
+              inputs:
+              - Instances section
+              - Instance integrity
+              skills: []
+              expected_result: The Instance group has exactly the active Instances as members.
+              depends_on:
+              - P2-G3-T02
+              - P2-G4-T02
+              constraints: []
+              acceptance: The group holds one member for each active Instance and none for an inactive Instance, and no member exposes a host, port, database identity, username, or password.
+              status: done
+              log:
+              - at: '2026-10-08T01:05:23Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:05:36Z'
+                transition: claimed -> done
+                note: 'Created the Instance group: an enumeration whose members are exactly the active configured Instances (member name is the Instance key in upper case, value the key), published as the interface group database_instance, with no connection value on any member; configuration loading now refuses a configuration whose active Instances differ from the published members.'
+                evidence:
+                  locations:
+                  - database/database/core/values.py
+                  - database/database/core/configuration.py
+                  - database/database/interface.py
+                  observed: The group holds one member, SQLITE (value sqlite), for the one active Instance and none for the inactive postgresql Instance; a copy of the configuration activating postgresql was refused at load because the published members did not match; members expose only name and value.
+                decisions:
+                - unset: How the Instance enumeration follows the configuration
+                  chosen: Members are written into source for the active Instances and configuration loading verifies they match
+                  why: Active membership changes take effect through the configuration and the next generation, and an unresolved selection must fail configuration loading.
+              - at: '2026-10-08T01:06:56Z'
+                transition: done (unchanged)
+                note: 'Relaxed the configuration check that ties the published Instance members to the configuration: loading now refuses a member that names no configured Instance, instead of requiring the active set to equal the members, so that an Instance deactivated after generation is still reported as an inactive Instance when selected.'
+                evidence:
+                  locations:
+                  - database/database/core/configuration.py
+                  observed: The enumeration still holds exactly SQLITE; a configuration lacking the Instance a member names is refused as invalid, and selecting a member whose Instance is inactive fails with the inactive-Instance failure (see P2-G6-T02).
+            P2-G9-T02:
+              id: P2-G9-T02
+              source_id: '005'
+              title: Publish the read Operations
+              description: Publish, through the Interface class, the get by identifier, list, count, sum, minimum, and maximum Operations, each taking exactly its defined parameters in the defined order with the optional Instance last.
+              reason: Consumers read data only through the published shape.
+              inputs:
+              - Interface contract
+              - Routed requests
+              skills: []
+              expected_result: The Interface class offers every read Operation with its defined shape.
+              depends_on:
+              - P2-G6-T01
+              - P2-G6-T04
+              - P2-G6-T05
+              - P2-G5-T04
+              - P2-G7-T04
+              - P2-G7-T09
+              - P2-G7-T10
+              - P2-G7-T11
+              - P2-G7-T12
+              - P2-G7-T13
+              constraints: []
+              acceptance: Each read Operation accepts exactly its defined parameters in order with Instance last and optional, runs on the default Instance when none is given, and returns its defined result.
+              status: done
+              log:
+              - at: '2026-10-08T01:10:41Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:11:58Z'
+                transition: claimed -> done
+                note: 'Published the read Operations through the database_interface class: get_by_id, list, count, sum, min and max, each taking exactly its listed parameters in the listed order with the optional instance last, running on the default Instance when none is given.'
+                evidence:
+                  locations:
+                  - database/database/interface.py
+                  - database/database/core/data.py
+                  observed: 'Against a temporary Component root with a created database: get_by_id returned the Entity or None; list returned Entities in the default id order, in a descending name order with limit 1, and filtered by a contains Filter; count gave 2 overall, 1 for an active Filter and 2 for an OR of two id Filters; sum of ids 5 and 0 for no match; min and max of names Ann and Bob; the same calls with instance=database_instance.SQLITE worked, and strings in place of an Entity, a Field or an instance, a non-numeric sum Field and a Field of another Entity were each refused with InvalidInputError before any storage was touched.'
+                decisions:
+                - unset: How the Interface classes name Operations that shadow language built-ins
+                  chosen: Operations keep their published names (list, sum, min, max) and annotations inside the class use an alias for the built-in list
+                  why: Operation names are fixed by the Interface contract.
+                - unset: What the Entity parameter of the read Operations accepts
+                  chosen: An Entity class imported from Model, checked against the Model Entity Collection
+                  why: The Definition requires an Entity class and never a name or other string.
+            P2-G9-T03:
+              id: P2-G9-T03
+              source_id: '005'
+              title: Publish the change Operations
+              description: Publish, through the Interface class, the add, update, delete, enable, disable, and truncate Operations, each taking exactly its defined parameters in the defined order with the optional Instance last.
+              reason: Consumers change data only through the published shape.
+              inputs:
+              - Interface contract
+              - Routed requests
+              skills: []
+              expected_result: The Interface class offers every change Operation with its defined shape.
+              depends_on:
+              - P2-G6-T01
+              - P2-G6-T04
+              - P2-G6-T05
+              - P2-G7-T03
+              - P2-G7-T05
+              - P2-G7-T06
+              - P2-G7-T07
+              - P2-G7-T08
+              - P2-G7-T14
+              - P2-G7-T18
+              constraints: []
+              acceptance: Each change Operation accepts exactly its defined parameters in order with Instance last and optional, runs on the default Instance when none is given, and returns its defined result.
+              status: done
+              log:
+              - at: '2026-10-08T01:10:41Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:11:58Z'
+                transition: claimed -> done
+                note: 'Published the change Operations through the database_interface class: add, update, delete, enable, disable and truncate, each taking exactly its listed parameters in the listed order with the optional instance last; add and update take an Entity instance, the others an Entity class.'
+                evidence:
+                  locations:
+                  - database/database/interface.py
+                  - database/database/core/data.py
+                  observed: add stored two Users and returned them with ids 1 and 2 and defaults; update replaced mutable Fields of an Entity returned by get_by_id and returned None for a deleted record; delete returned the final Entity; enable and disable returned the final Entity, also when already in that state, and None for a missing record; truncate removed the Broker rows and returned 1 and was refused as ExecutionError while referenced Users existed; adding an Entity that already has an id was refused.
+                decisions:
+                - unset: How an Entity gets the id that update needs
+                  chosen: Only Entities returned by Database carry an id, so update works on an Entity read back from Database
+                  why: Model refuses a caller-supplied id, so storage is the only source of one.
+            P2-G9-T04:
+              id: P2-G9-T04
+              source_id: '005'
+              title: Publish the native command Operation
+              description: Publish, through the Interface class, the Operation that runs a native command with its bound parameters on an optional Instance and returns the Command Result.
+              reason: Consumers reach native commands through the same single boundary.
+              inputs:
+              - Interface contract
+              - Native command capability
+              skills: []
+              expected_result: The Interface class offers the native command Operation with its defined shape.
+              depends_on:
+              - P2-G6-T03
+              - P2-G6-T05
+              - P2-G7-T15
+              constraints: []
+              acceptance: The Operation accepts the command, its parameters, and an optional Instance last, runs on the default Instance when none is given, and returns a Command Result.
+              status: done
+              log:
+              - at: '2026-10-08T01:10:41Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:11:58Z'
+                transition: claimed -> done
+                note: 'Published the native command Operation through the database_interface class: execute_command(command, parameters, instance) runs a command with bound parameters on the selected Instance and returns the published Command Result.'
+                evidence:
+                  locations:
+                  - database/database/interface.py
+                  - database/database/core/data.py
+                  observed: A select with a positional parameter returned a Command Result with the two rows, the columns id and name, success true and the SQLITE Instance; an empty command was refused with InvalidInputError.
+            P2-G9-T05:
+              id: P2-G9-T05
+              source_id: '005'
+              title: Publish the Setup group
+              description: Publish, through the Setup class, the table creation, Initial Data insertion, and prepare Setup Operations, each taking only an optional Instance and returning a Setup Result.
+              reason: Consumers and entry points prepare storage through the published shape.
+              inputs:
+              - Interface contract
+              - Setup coordination
+              skills: []
+              expected_result: The Setup class offers all three Setup Operations with their defined shape.
+              depends_on:
+              - P2-G8-T06
+              - P2-G6-T02
+              constraints: []
+              acceptance: Each Setup Operation accepts only an optional Instance, runs on the default Instance when none is given, and returns a Setup Result.
+              status: done
+              log:
+              - at: '2026-10-08T01:11:58Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:12:57Z'
+                transition: claimed -> done
+                note: Published the Setup group as the plain class database_setup, created with no argument, offering create_tables, insert_initial_data and prepare, each taking only an optional instance and returning a Setup Result.
+                evidence:
+                  locations:
+                  - database/database/interface.py
+                  observed: database_setup() ran create_tables, insert_initial_data and prepare with no Instance (default Instance) and with instance=database_instance.SQLITE, each returning a SetupResult; the Setup Operation behaviour was observed in the Setup Tasks.
+            P2-G9-T06:
+              id: P2-G9-T06
+              source_id: '005'
+              title: Publish the Value group
+              description: 'Publish the query values a consumer passes to an Operation: the Filter, the operator, the combination, the Order, and the direction.'
+              reason: Consumers build queries from imported values only.
+              inputs:
+              - Interface contract
+              - Query values
+              skills: []
+              expected_result: The Value group holds every query value and nothing else.
+              depends_on:
+              - P2-G2-T02
+              - P2-G2-T03
+              - P2-G2-T04
+              constraints: []
+              acceptance: The group holds exactly the Filter, operator, combination, Order, and direction values, each reachable through the group.
+              status: done
+              log:
+              - at: '2026-10-08T01:10:41Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:11:58Z'
+                transition: claimed -> done
+                note: Published the Value group as the namespace class database_value holding Filter, FilterOperator, FilterCombination, Order and OrderDirection as class attributes under their own names.
+                evidence:
+                  locations:
+                  - database/database/interface.py
+                  observed: The Filter, operator, combination and Order values were built from database_value members in the Interface checks above; the class holds exactly those five attributes.
+            P2-G9-T07:
+              id: P2-G9-T07
+              source_id: '005'
+              title: Publish the Result group
+              description: 'Publish the Results a consumer reads back: the Command Result and the Setup Result.'
+              reason: Consumers read results through the published group only.
+              inputs:
+              - Interface contract
+              - Results
+              skills: []
+              expected_result: The Result group holds every Result and nothing else.
+              depends_on:
+              - P2-G2-T05
+              - P2-G2-T06
+              constraints: []
+              acceptance: The group holds exactly the Command Result and the Setup Result, each reachable through the group.
+              status: done
+              log:
+              - at: '2026-10-08T01:10:41Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:11:58Z'
+                transition: claimed -> done
+                note: Published the Result group as the namespace class database_result holding CommandResult and SetupResult.
+                evidence:
+                  locations:
+                  - database/database/interface.py
+                  observed: The class holds exactly the two Results, which are the classes the Interface returns.
+            P2-G9-T08:
+              id: P2-G9-T08
+              source_id: '005'
+              title: Publish the Error group
+              description: Publish the base Database error and every failure kind so a consumer can catch each of them.
+              reason: Consumers catch failures through the published group only.
+              inputs:
+              - Interface contract
+              - Failure kinds
+              skills: []
+              expected_result: The Error group holds every failure kind.
+              depends_on:
+              - P2-G2-T01
+              constraints: []
+              acceptance: The group holds the base error and each failure kind, and each can be caught through the group.
+              status: done
+              log:
+              - at: '2026-10-08T01:10:41Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:11:58Z'
+                transition: claimed -> done
+                note: Published the Error group as the namespace class database_error holding the base DatabaseError and every failure kind by its own name.
+                evidence:
+                  locations:
+                  - database/database/interface.py
+                  observed: InvalidInputError and ExecutionError were caught through the group in the Interface checks above; the class holds the base error and the seven failure kinds.
+            P2-G9-T09:
+              id: P2-G9-T09
+              source_id: '005'
+              title: Publish exactly the six prefixed groups
+              description: Make the Interface publish only its six groups, each under the Database prefix, an underscore, and its group key, with no member published on its own.
+              reason: A fixed, small public surface keeps consumers independent of internals.
+              inputs:
+              - Interface contract
+              skills: []
+              expected_result: Importing the Interface shows exactly the six groups and nothing else.
+              depends_on:
+              - P2-G9-T01
+              - P2-G9-T02
+              - P2-G9-T03
+              - P2-G9-T04
+              - P2-G9-T05
+              - P2-G9-T06
+              - P2-G9-T07
+              - P2-G9-T08
+              constraints: []
+              acceptance: The published names are exactly the six prefixed groups, no Core, Engine, configuration, credential, or storage path is reachable through them, and no member name carries the prefix.
+              status: done
+              log:
+              - at: '2026-10-08T01:12:57Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:13:29Z'
+                transition: claimed -> done
+                note: 'Made the published surface exact: the Interface module and the package root publish exactly the six groups database_error, database_instance, database_interface, database_result, database_setup and database_value through __all__, internal modules are imported under underscore names, and no member is published on its own or carries the prefix.'
+                evidence:
+                  locations:
+                  - database/database/interface.py
+                  - database/database/__init__.py
+                  observed: __all__ of both the package and the Interface module equals the six names, a star import brought in exactly those six, each group has exactly the members the Interface contract lists (13 Entity/Command Operations, 3 Setup Operations, 5 values, 2 Results, 8 errors, 1 Instance member), and the signatures list the contract's parameters in order with instance last.
+            P2-G9-T10:
+              id: P2-G9-T10
+              source_id: '005'
+              title: Keep loading the Interface free of side effects
+              description: Make importing the Interface open no connection and create no data and no file.
+              reason: Loading a library must never touch storage.
+              inputs:
+              - Published Interface
+              skills: []
+              expected_result: Importing the Interface changes nothing outside the process.
+              depends_on:
+              - P2-G9-T09
+              constraints: []
+              acceptance: After the Interface is imported, no connection has been opened and no storage file or record has been created.
+              status: done
+              log:
+              - at: '2026-10-08T01:12:57Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:13:29Z'
+                transition: claimed -> done
+                note: 'Confirmed that loading the Interface performs no work: importing it reads no configuration and touches no storage.'
+                evidence:
+                  locations:
+                  - database/database/interface.py
+                  - database/database/__init__.py
+                  observed: With the SQLite connection function and file opening watched, importing the package and the Interface module opened no connection, opened no file for writing, added nothing to the working directory, and the db directory did not exist afterwards.
+        P2-G10:
+          id: P2-G10
+          title: Manual entry points
+          description: 'Three manual entry points, one per Setup Operation, so that a person can prepare storage by hand. An entry point holds no setup logic of its own: it invokes the public Setup Operation and reports its Setup Result.'
+          area: Manual Setup entry points
+          does: A person can run each Setup Operation by hand on the default Instance and read its outcome.
+          constraints: []
+          task_count: 3
+          tasks:
+            P2-G10-T01:
+              id: P2-G10-T01
+              source_id: '005'
+              title: Provide the table creation entry point
+              description: Provide an entry point that runs the table creation Setup Operation on the default Instance and reports its Setup Result.
+              reason: A person needs to build the Tables without writing code.
+              inputs:
+              - Public Setup group
+              skills: []
+              expected_result: Running the entry point creates the Tables and reports the outcome.
+              depends_on:
+              - P2-G9-T05
+              constraints: []
+              acceptance: Running the entry point on the default Instance creates the Tables, prints the outcome of the Setup Result, and signals failure when the Setup Result is unsuccessful.
+              status: done
+              log:
+              - at: '2026-10-08T01:12:57Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:13:29Z'
+                transition: claimed -> done
+                note: 'Provided the create_tables entry point: it runs the create_tables Setup Operation through the public Setup group on the default Instance, prints the Setup Result message, and exits with failure when the result is unsuccessful or a Database error is raised.'
+                evidence:
+                  locations:
+                  - database/scripts/create_tables.py
+                  observed: On a temporary Component root it created 15 Tables and exited 0, ran again with 0 created and exit 0, and against a database with a differing Table printed the failure and exited 1.
+            P2-G10-T02:
+              id: P2-G10-T02
+              source_id: '005'
+              title: Provide the Initial Data entry point
+              description: Provide an entry point that runs the Initial Data insertion Setup Operation on the default Instance and reports its Setup Result.
+              reason: A person needs to seed or re-seed data without writing code.
+              inputs:
+              - Public Setup group
+              skills: []
+              expected_result: Running the entry point inserts the missing Initial Data and reports the outcome.
+              depends_on:
+              - P2-G9-T05
+              constraints: []
+              acceptance: Running the entry point on the default Instance inserts the missing records, prints the outcome of the Setup Result, and signals failure when the Setup Result is unsuccessful.
+              status: done
+              log:
+              - at: '2026-10-08T01:12:57Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:13:29Z'
+                transition: claimed -> done
+                note: 'Provided the insert_initial_data entry point: it runs the insert_initial_data Setup Operation through the public Setup group on the default Instance, prints the Setup Result message, and exits with failure when the result is unsuccessful or a Database error is raised.'
+                evidence:
+                  locations:
+                  - database/scripts/insert_initial_data.py
+                  observed: Without Tables it printed the failure and exited 1; after create_tables it inserted 23 records and exited 0; run again it inserted 0 with 23 already present and exited 0.
+            P2-G10-T03:
+              id: P2-G10-T03
+              source_id: '005'
+              title: Provide the prepare entry point
+              description: Provide an entry point that runs the prepare Setup Operation on the default Instance and reports its Setup Result.
+              reason: A person needs to bring an Instance to its seeded state in one step.
+              inputs:
+              - Public Setup group
+              skills: []
+              expected_result: Running the entry point prepares the Instance and reports the outcome.
+              depends_on:
+              - P2-G9-T05
+              constraints: []
+              acceptance: Running the entry point on the default Instance creates the Tables and inserts the missing records, prints the outcome of the Setup Result, and signals failure when the Setup Result is unsuccessful.
+              status: done
+              log:
+              - at: '2026-10-08T01:12:57Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:13:29Z'
+                transition: claimed -> done
+                note: 'Provided the prepare entry point: it runs the prepare Setup Operation through the public Setup group on the default Instance, prints the Setup Result message, and exits with failure when the result is unsuccessful or a Database error is raised.'
+                evidence:
+                  locations:
+                  - database/scripts/prepare.py
+                  observed: On an already prepared database it reported 0 created and 0 inserted and exited 0; with a differing Table it printed 'stopped' with the difference and exited 1; with an unreadable configuration it printed the failure and exited 1 without a traceback.
+        P2-G11:
+          id: P2-G11
+          title: Default Instance preparation
+          description: Preparation of the default Instance once the Component is complete, because Database Preferences enable after-generation preparation.
+          area: After-generation preparation
+          does: The default Instance holds the Tables of every Entity and the Target's Initial Data.
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-G11-T01:
+              id: P2-G11-T01
+              source_id: '005'
+              title: Prepare the default Instance
+              description: Run the prepare Setup Operation on the active default Instance only, failing the preparation and identifying the Instance and command when it does not succeed.
+              reason: The Component is only usable once its default Instance holds its Tables and Initial Data.
+              inputs:
+              - Completed Database Component
+              - Configured preparation behaviour
+              skills: []
+              expected_result: The default Instance holds every Table and every Initial Data record.
+              depends_on:
+              - P2-G10-T03
+              - P2-G1-T02
+              - P2-G4-T03
+              - P2-G4-T04
+              - P2-G4-T05
+              - P2-G4-T06
+              - P2-G4-T07
+              - P2-G4-T08
+              - P2-G4-T09
+              - P2-G4-T10
+              - P2-G4-T11
+              - P2-G4-T12
+              - P2-G4-T13
+              - P2-G4-T14
+              - P2-G4-T15
+              constraints: []
+              acceptance: The default Instance's storage holds exactly the Entities' Tables and all Initial Data records, running preparation again changes nothing, and no other active Instance has been prepared.
+              status: done
+              log:
+              - at: '2026-10-08T01:13:35Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:14:06Z'
+                transition: claimed -> done
+                note: Prepared the default Instance by running the prepare Setup Operation through its entry point on the active default Instance only, as Database Preferences enable after-generation preparation.
+                evidence:
+                  locations:
+                  - database/db/application.db (git-ignored runtime storage)
+                  observed: The first run created 15 Tables and inserted 23 records and exited 0; a second run created 0, inserted 0 and reported 23 already present, exit 0. Afterwards the Instance held User 1, TradingPlatform 2, Instance 1, Currency 8, Broker 1, Asset 4, AccountGroup 1, Account 1, TrailingGroup 1, PartialGroup 1, ActionGroup 1, Action 1 and 0 records for the other three Entities; the only storage file is the default Instance's, and the inactive Instance has none.
+        P2-G12:
+          id: P2-G12
+          title: Component documentation
+          description: The root documentation explaining every public contract of Database and how to use it, in the section order the Database Definition lists.
+          area: Component documentation
+          does: A consumer can learn, set up, use, and verify Database from its documentation alone.
+          constraints: []
+          task_count: 9
+          tasks:
+            P2-G12-T01:
+              id: P2-G12-T01
+              source_id: '005'
+              title: Write the Overview section
+              description: Give one short introduction and one simple example that creates the Interface class and performs one add and one list.
+              reason: A reader needs the whole idea of Database in one short example.
+              inputs:
+              - Published Interface
+              skills: []
+              expected_result: The Overview section exists.
+              depends_on:
+              - P2-G9-T02
+              - P2-G9-T03
+              constraints: []
+              acceptance: The section holds a short introduction and one example performing an add and a list, and the example runs with the real behaviour.
+              status: done
+              log:
+              - at: '2026-10-08T01:14:06Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:16:00Z'
+                transition: claimed -> done
+                note: 'Wrote the Overview section: a short introduction and one example that creates the Interface class, adds one User and lists every User.'
+                evidence:
+                  locations:
+                  - database/README.md
+                  observed: 'The example ran: it printed the new id 2 and [''admin'', ''ada'']. Every Python example in the README (11 blocks) was executed against a freshly prepared database in a temporary Component root and ran without error.'
+            P2-G12-T02:
+              id: P2-G12-T02
+              source_id: '005'
+              title: Write the Interface section
+              description: Explain each of the six published groups and every member and Operation in it with each of its parameters, what it is for and how to use it, with one example each, covering enumeration members, defaults, results, and errors.
+              reason: Consumers use Database through its documentation.
+              inputs:
+              - Published Interface
+              skills: []
+              expected_result: The Interface section exists.
+              depends_on:
+              - P2-G9-T09
+              constraints: []
+              acceptance: Every published group, member, Operation, and parameter appears with an explanation and an example, and the content matches the published surface.
+              status: done
+              log:
+              - at: '2026-10-08T01:14:06Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:16:00Z'
+                transition: claimed -> done
+                note: 'Wrote the Interface section: the six groups; for every Operation its parameters, defaults and result in a table with notes and one example each; the Setup Operations; every FilterOperator, FilterCombination and OrderDirection member with an example; the Instance enumeration; the two Results with their fields; and every error with when it is raised and an example that catches two of them.'
+                evidence:
+                  locations:
+                  - database/README.md
+                  observed: The listed groups, members, parameter names and order were compared with the published surface (signatures printed from the classes match the tables); the examples exercised all 13 Operations, all 12 operators with counts as expected, both combinations and directions, both Results and two errors. Every Python example in the README (11 blocks) was executed against a freshly prepared database in a temporary Component root and ran without error.
+            P2-G12-T03:
+              id: P2-G12-T03
+              source_id: '005'
+              title: Write the Instances section
+              description: Explain the active Instance members, how the default Instance is selected, and where Database keeps its storage, without exposing credentials.
+              reason: Consumers must know which Instances they can select and where data lives.
+              inputs:
+              - Public Instance group
+              - Settings section
+              skills: []
+              expected_result: The Instances section exists.
+              depends_on:
+              - P2-G9-T01
+              - P2-G3-T03
+              constraints: []
+              acceptance: The section lists the active Instance members, explains default selection and Database-owned storage, and contains no credential or connection value.
+              status: done
+              log:
+              - at: '2026-10-08T01:14:06Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:16:00Z'
+                transition: claimed -> done
+                note: 'Wrote the Instances section: the active member SQLITE, default selection, passing an Instance explicitly, Database-owned file storage in the db directory, the inactive PostgreSQL Instance having no member, and that connection values are never exposed.'
+                evidence:
+                  locations:
+                  - database/README.md
+                  observed: The example counting Users without and with instance=database_instance.SQLITE printed the same number; no credential or connection value appears in the section. Every Python example in the README (11 blocks) was executed against a freshly prepared database in a temporary Component root and ran without error.
+            P2-G12-T04:
+              id: P2-G12-T04
+              source_id: '005'
+              title: Write the Setup section
+              description: Give the setup steps for the selected technology.
+              reason: A consumer must be able to install and load the Database Component.
+              inputs:
+              - Database library package
+              skills: []
+              expected_result: The Setup section exists.
+              depends_on:
+              - P2-G1-T01
+              - P2-G9-T10
+              constraints: []
+              acceptance: Following the steps from a clean environment results in a working installation of the Database Component.
+              status: done
+              log:
+              - at: '2026-10-08T01:14:06Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:16:00Z'
+                transition: claimed -> done
+                note: 'Wrote the Setup section: requirements (Python 3.14 or newer, uv), installing the dependencies, preparing the default Instance, and declaring Database and Model as local path dependencies from another project.'
+                evidence:
+                  locations:
+                  - database/README.md
+                  observed: uv sync and the prepare script were run from the Component directory exactly as written and succeeded; a project outside the Component declaring the two path dependencies imported Database. Every Python example in the README (11 blocks) was executed against a freshly prepared database in a temporary Component root and ran without error.
+            P2-G12-T05:
+              id: P2-G12-T05
+              source_id: '005'
+              title: Write the Use section
+              description: Show every capability group used only through the Interface, with Field references and enumeration members and never strings.
+              reason: Consumers must see the correct, typed way to call every Operation.
+              inputs:
+              - Published Interface
+              skills: []
+              expected_result: The Use section exists.
+              depends_on:
+              - P2-G9-T09
+              constraints: []
+              acceptance: The section demonstrates each capability group through the Interface using Field references and enumeration members only, and every demonstration matches the real behaviour.
+              status: done
+              log:
+              - at: '2026-10-08T01:14:06Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:16:00Z'
+                transition: claimed -> done
+                note: 'Wrote the Use section: one flow through every capability group using only the Interface, Field references and enumeration members, never strings.'
+                evidence:
+                  locations:
+                  - database/README.md
+                  observed: The flow printed grace, Trader, False True, ['USD', 'GBP'], 7, 14, AUD USD, 100, Temporary, 0 and the native command rows, matching the prepared data. Every Python example in the README (11 blocks) was executed against a freshly prepared database in a temporary Component root and ran without error.
+            P2-G12-T06:
+              id: P2-G12-T06
+              source_id: '005'
+              title: Write the Setup Operations section
+              description: Explain how to run the table creation, Initial Data insertion, and prepare Setup Operations by hand, and that generation runs prepare automatically.
+              reason: Consumers must know how to prepare storage and what already happened at generation.
+              inputs:
+              - Manual entry points
+              - Default Instance preparation
+              skills: []
+              expected_result: The Setup Operations section exists.
+              depends_on:
+              - P2-G10-T03
+              - P2-G11-T01
+              constraints: []
+              acceptance: The section explains the three Setup Operations and their manual use, states that generation prepares the default Instance, and matches the real behaviour.
+              status: done
+              log:
+              - at: '2026-10-08T01:14:06Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:16:00Z'
+                transition: claimed -> done
+                note: 'Wrote the Setup Operations section: what create_tables, insert_initial_data and prepare do and how to run each entry point by hand, and that generation runs prepare automatically on the default Instance only.'
+                evidence:
+                  locations:
+                  - database/README.md
+                  observed: The three entry-point commands were run as written against the real Component (prepare) and a temporary root (all three) and behaved as described.
+            P2-G12-T07:
+              id: P2-G12-T07
+              source_id: '005'
+              title: Write the Initial Data section
+              description: List every Initial Data record the Target defines and state that Database inserts the values unchanged without security-based omission.
+              reason: Consumers must know exactly what data a prepared Instance starts with.
+              inputs:
+              - Shared Initial Data collection
+              skills: []
+              expected_result: The Initial Data section exists.
+              depends_on:
+              - P2-G4-T04
+              - P2-G4-T05
+              - P2-G4-T06
+              - P2-G4-T07
+              - P2-G4-T08
+              - P2-G4-T09
+              - P2-G4-T10
+              - P2-G4-T11
+              - P2-G4-T12
+              - P2-G4-T13
+              - P2-G4-T14
+              - P2-G4-T15
+              constraints: []
+              acceptance: The section lists every Target-defined Initial Data record and states that values are inserted unchanged, and the listing matches the collection.
+              status: done
+              log:
+              - at: '2026-10-08T01:14:06Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:16:00Z'
+                transition: claimed -> done
+                note: 'Wrote the Initial Data section: it lists every Target-defined record as a table per Entity, generated from the configuration so the listing equals the collection, and states that Database inserts the values unchanged without security-based omission, with non-concrete values held as empty strings.'
+                evidence:
+                  locations:
+                  - database/README.md
+                  observed: The 12 tables hold 1, 2, 1, 8, 1, 4, 1, 1, 1, 1, 1 and 1 records (23), equal to the configured collection; no credential value appears.
+            P2-G12-T08:
+              id: P2-G12-T08
+              source_id: '005'
+              title: Write the Verify section
+              description: Explain how to verify the public import, Instance selection, query vocabulary, each capability group, the persistent file location, and repeatable Setup Operations.
+              reason: Consumers need a way to confirm that their installation works.
+              inputs:
+              - Published Interface
+              - Default Instance preparation
+              skills: []
+              expected_result: The Verify section exists.
+              depends_on:
+              - P2-G9-T10
+              - P2-G11-T01
+              constraints: []
+              acceptance: The section covers each listed verification, and following it on the prepared Component gives the results it states.
+              status: done
+              log:
+              - at: '2026-10-08T01:14:06Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+              - at: '2026-10-08T01:16:00Z'
+                transition: claimed -> done
+                note: 'Wrote the Verify section: a single script that checks the public import, Instance selection, the query vocabulary, each capability group, the persistent file location, and repeatable Setup Operations, and prints verified.'
+                evidence:
+                  locations:
+                  - database/README.md
+                  observed: Run against a freshly prepared database it printed verified. Every Python example in the README (11 blocks) was executed against a freshly prepared database in a temporary Component root and ran without error.
+            P2-G12-T09:
+              id: P2-G12-T09
+              source_id: '005'
+              title: Write the Troubleshooting section
+              description: Cover Database concerns only, including an inactive Instance, a difference between an existing Table and its Entity, and empty Initial Data values.
+              reason: Consumers need the cause and remedy for the failures Database itself can produce.
+              inputs:
+              - Failure kinds
+              - Setup coordination
+              skills: []
+              expected_result: The Troubleshooting section exists.
+              depends_on:
+              - P2-G6-T02
+              - P2-G8-T02
+              - P2-G8-T03
+              constraints: []
+              acceptance: Each listed symptom appears with its cause and remedy, concerns Database only, and matches behaviour reproduced against the Component.
+              status: done
+              log:
+              - at: '2026-10-08T01:14:06Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 006) before changing the result.
+
+              - at: '2026-10-08T01:16:00Z'
+                transition: claimed -> done
+                note: 'Wrote the Troubleshooting section: ten symptoms with cause and remedy, all concerning Database only, including an inactive Instance, a difference between an existing Table and its Entity, and empty Initial Data values.'
+                evidence:
+                  locations:
+                  - database/README.md
+                  observed: 'Each symptom was reproduced against the Component: an incomplete or escaping configuration, a differing Table, empty credential values after prepare, a conflicting record, strings for imported values, update without an Entity read from Database, foreign key and uniqueness failures, an unusable storage location, and an inactive default Instance (the message was checked).'
