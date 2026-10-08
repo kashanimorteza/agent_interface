@@ -29,7 +29,7 @@ read_order:
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
   settings: "Model's identity."
-  architecture: "The entities of the Architecture tree — Entity with the default properties of id and is_active, its Value Generation with the selected generated-identifier algorithm and its alternatives, and its Sensitivity with the recognized markers; Interface with its contract version, publication prefix, and published symbol names, and Documentation with its file, location, and format."
+  architecture: "The entities of the Architecture tree — Entity with the default properties of id and is_active, its Value Generation with the selected generated-identifier algorithm and its alternatives, and its Sensitivity with the recognized markers; Interface with its contract version and published symbol names, and Documentation with its file, location, and format."
   development: "Development capabilities and the selected language and its realization profile."
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -69,9 +69,7 @@ content:
           - password
           - sensitive
       interface:
-        contract_version: '3.0'
-        prefix: model
-        naming: every published name is prefix, an underscore, and the name in lower snake_case, such as model_user and model_entities; the Entity itself keeps its own name
+        contract_version: '2.1'
         symbols:
           entity_collection: entities
           entity_declaration: declaration
@@ -94,7 +92,6 @@ content:
             entity: PascalCase
             fields: snake_case
             modules: snake_case
-            published_names: snake_case
           symbols:
             declaration: Declaration
             foundation: Foundation

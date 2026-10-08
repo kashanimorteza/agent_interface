@@ -321,7 +321,7 @@ Every Principle below is mandatory.
 
 #### Database consumes Model without owning it
 
-**Rule:** Database imports Model Interface and reaches Entities only through its Schema-defined Entity Collection and Entity Exports. It iterates the Entity Collection and uses each actual public Entity and the complete public Declaration it exposes. It never uses wildcard or attribute discovery, scans Model directories, imports Entity-unit paths, builds another Model registry, or creates, edits, builds, tests, documents, or generates an artifact inside Model.
+**Rule:** Database imports Model Interface and reaches Entities only through the Entity Collection and Entity Exports of its Interface contract. It iterates the Entity Collection and uses each actual public Entity and the complete public Declaration it exposes. It never uses wildcard or attribute discovery, scans Model directories, imports Entity-unit paths, builds another Model registry, or creates, edits, builds, tests, documents, or generates an artifact inside Model.
 **Why:** One path to Entities keeps Database in step with Model and prevents a second, drifting copy of Model's meaning.
 **Boundary:** A missing or incompatible Model capability is reported; Database does not repair or redefine Model.
 

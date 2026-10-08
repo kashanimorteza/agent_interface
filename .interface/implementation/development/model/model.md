@@ -55,6 +55,7 @@ Each Entity lives in its own unit and exposes its Declaration and the shared JSO
 - **Entity Declaration** — the complete structured public record of one Entity's name, description, ordered Fields, and Entity Metadata.
 - **Field Declaration** — the complete structured public record of one Field's name, description, Type, presence meaning, Default Value, sensitivity, immutability, constraints, and Value Generation.
 - **JSON Object** — the representation of one Entity as JSON text conforming to the JSON standard, with one object at its root whose keys are the Entity's Fields.
+- **Foundation** — the public shared contract every Entity extends, giving it Conversion to and from its JSON Object.
 - **Entity Export** — the explicit named export through which one actual Entity is imported directly by its own name.
 - **Entity Collection** — the ordered immutable public collection of every actual Entity, in Target order.
 
@@ -164,7 +165,7 @@ Value Generation
 
 The declared ways a Field value is supplied automatically. Auto Increment leaves the value pending until storage assigns it; a Generated Identifier is produced during Entity creation with the algorithm Model Preferences select, unless the Target names another.
 
-Auto Increment requires an integer Field, and a Generated Identifier requires a uuid or string Field. A caller-supplied value for an Auto Increment Field is refused at construction and at assignment.
+Auto Increment requires an integer Field, and a Generated Identifier requires a uuid or string Field. A caller-supplied value for an Auto Increment Field is refused at construction and at assignment, unless the Target explicitly permits one.
 
 ##### Sensitivity
 
@@ -192,7 +193,7 @@ The shared private behavior every Entity inherits: direct construction, JSON Obj
 
 - **Strict** — no implicit coercion, no undeclared Field, and every default is itself validated against its Field.
 - **Construction** — direct construction validates the whole Entity before any value is set.
-- **Assignment** — assigning an immutable or Auto Increment Field is refused; any other assignment validates the whole Entity with the new value first, so a failed assignment keeps the prior value.
+- **Assignment** — assigning an immutable Field, or an Auto Increment Field the Target does not open to callers, is refused; any other assignment validates the whole Entity with the new value first, so a failed assignment keeps the prior value.
 - **Identity** — a mutable Entity is not hashable.
 
 #### Conversion
@@ -218,7 +219,7 @@ Storage Mapping
 └── Exact values
 ```
 
-The private, table-ready realization a language profile may give every Entity: physical table and column names, column types, and the constraints and indexes its Declaration states. Model only declares this form; it never runs storage.
+The private, table-ready realization every Entity always has when the selected language profile defines one: physical table and column names, column types, and the constraints and indexes its Declaration states. The table forms of all Entities are registered in one shared table metadata, which a consumer such as Database reaches through the Entities themselves, so that it creates exactly their Tables and no other. Model only declares this form; it never runs storage.
 
 Every storage option is derived only from the Declaration:
 
@@ -236,17 +237,17 @@ Interface
 └── Entity Collection
 ```
 
-The package-root entrypoint through which every Entity is published. It always publishes both forms, and nothing else. Every published name starts with the prefix in Model Preferences and an underscore, so a consumer never confuses it with another Component's name; the Entity itself keeps its own name and takes the prefixed name only where Interface publishes it:
+The package-root entrypoint through which every Entity is published. It always publishes both forms, and nothing else:
 
 - **Entity Export** — every Entity on its own, by its own name, for a consumer that works with one specific Entity.
 - **Entity Collection** — every Entity together, once each, in Target order, for a consumer that works with all Entities without knowing their names.
 
-For a Target with User and Account, Interface publishes `model_user`, `model_account`, and the Entity Collection `model_entities` holding them in that order, while the Entities themselves remain `User` and `Account`.
+For a Target with User and Account, Interface publishes `User`, `Account`, and the Entity Collection holding them in that order, under the symbol name Model Preferences set. A consumer that needs another name gives it on its own side when it imports.
 
 Its Interface contract is these needs, with the symbol names and `contract_version` in Model Preferences:
 
 1. **Complete** — exactly one Entity Export for every Target Entity, and the Entity Collection holding every Target Entity in Target order, changing when the Target changes.
-2. **Explicit** — each Entity is exported by an explicit named export, named by the prefix, an underscore, and the Entity's name in lower snake_case; the Entity Collection is named the same way; no wildcard or dynamically generated export publishes an Entity.
+2. **Explicit** — each Entity is exported by an explicit named export, named by the Entity's physical name under the selected language's naming rules; no wildcard or dynamically generated export publishes an Entity.
 3. **Actual** — each export and each Collection item is the actual Entity, exposing its own actual Declaration, never a copy, wrapper, alias, or reconstruction.
 4. **Nothing else** — no other Entity registry, lookup table, or discovery mechanism is published beside the exports and the Collection.
 5. **No side effect** — loading Interface creates no Entity instance, data, connection, file, or process, and performs no network, storage, runtime-configuration, or other external side effect.
@@ -297,11 +298,11 @@ Directory Structure
 └── README
 ```
 
-The names in this tree, and the files named under Core, are the physical names of Model; the root of this tree is the Component directory, and it and the package directory take their names from `settings` in Model Preferences.
+Entity holds one unit per Entity, named by the Entity's name under the selected language's module naming, such as `user` and `account_group`. The names in this tree, and the files named under Core, are the physical names of Model; the root of this tree is the Component directory, and it and the package directory take their names from `settings` in Model Preferences.
 
 #### Core
 
-The shared area holding every file that serves all Entities rather than one: the public Declaration and Foundation contracts, plus the private system files behind them, such as the base definitions, Field Type realization, Storage Mapping, and other helpers. The two public contracts are the files `declaration` and `foundation`; the private files are named freely, each by what it serves. Declaration is the public structured contract for Entity and Field meaning; Foundation is the public shared conversion contract between an Entity and its JSON Object.
+The shared area holding every file that serves all Entities rather than one: the public Declaration and Foundation contracts, plus the private system files behind them: the base definitions, Field Type realization, and Storage Mapping. The two public contracts are the files `declaration` and `foundation`; the private files are `base` for Validation, `types` for Field Type realization, and `storage` for Storage Mapping, each marked private in the selected language's own way. No other file is placed in Core. Declaration is the public structured contract for Entity and Field meaning; Foundation is the public shared conversion contract between an Entity and its JSON Object.
 
 <br>
 
@@ -315,7 +316,7 @@ The shared area holding every file that serves all Entities rather than one: the
 <!--------------------------------------------------------------------------------- Boundaries --->
 ## Boundaries
 
-- **Queries, migrations, Instances, and storage lifecycle** — are not Model's, because they describe how data is stored and handled, not what it means. A language profile may realize Entities in a table-ready form, but Model never runs storage.
+- **Queries, migrations, Instances, and storage lifecycle** — are not Model's, because they describe how data is stored and handled, not what it means. The selected language profile, when it defines one, always realizes Entities in a table-ready form, but Model never runs storage.
 - **Actions, decisions, workflows, authorization, quotas, and orchestration** — are not Model's, because they depend on an operation and its application context rather than on one Entity's own data.
 - **Endpoints, requests, responses, protocols, and transport schemas** — are not Model's, because they are properties of a transport, not of what the data means.
 - **Encryption, hashing, masking, and secret storage** — are not Model's, because they protect a value rather than define it.
@@ -346,7 +347,7 @@ Every Principle below is mandatory and belongs to the Architecture category that
 
 #### Model has one canonical structure
 
-**Rule:** Every realization contains Interface, the Entity directory, and Core with Declaration and Foundation, with the ownership shown in Architecture. Every Entity has exactly one public unit directly inside the Entity directory, holding everything private to that Entity; infrastructure shared across Entities belongs under Core. Declaration and Foundation are public; base definitions, validation mechanisms, adapters, and other helpers stay private. Dependencies flow from Interface to Entity units and from Entity units to Core; Core depends on neither Interface nor a specific Entity.
+**Rule:** Every realization contains Interface, the Entity directory, and Core with Declaration and Foundation, with the ownership shown in Architecture. Every Entity has exactly one public unit directly inside the Entity directory, holding everything private to that Entity; infrastructure shared across Entities belongs under Core. Declaration and Foundation are public; `base`, `types`, and `storage` stay private. Dependencies flow from Interface to Entity units and from Entity units to Core; Core depends on neither Interface nor a specific Entity.
 **Why:** Stable ownership keeps each Entity independently changeable, prevents cycles, and gives consumers Model's meaning without its internals.
 **Boundary:** Language-required files, entrypoints, annotations, and native constructs may exist without creating another conceptual layer; physical casing, extensions, and symbol and method names belong to the language's Preferences.
 
@@ -398,7 +399,7 @@ Every Principle below is mandatory and belongs to the Architecture category that
 
 **Rule:** Logical Entity and Field names, including Relation names, preserve exact case-sensitive Target spelling. Generation never translates, abbreviates, pluralizes, respells, prefixes, suffixes, or aliases them. Physical names apply the selected language's naming rules deterministically and reject unresolvable reserved-word or normalization collisions.
 **Why:** Domain names remain understandable without technical context while source follows its language.
-**Boundary:** Language-specific naming belongs to that language's Preferences and never changes names stored in Declaration. The prefixed name under which Interface publishes an Entity is not a rename of the Entity; the Entity and its Declaration keep their own names.
+**Boundary:** Language-specific naming belongs to that language's Preferences and never changes names stored in Declaration.
 
 #### Fields and Declarations carry one complete value contract
 
