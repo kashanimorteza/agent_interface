@@ -24,7 +24,7 @@ content_map:
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
-  task_count: 131
+  task_count: 215
   plans:
     P1:
       id: P1
@@ -4231,3 +4231,2557 @@ content:
                   locations:
                   - database/README.md
                   observed: 'Each symptom was reproduced against the Component: an incomplete or escaping configuration, a differing Table, empty credential values after prepare, a conflicting record, strings for imported values, update without an Entity read from Database, foreign key and uniqueness failures, an unusable storage location, and an inactive default Instance (the message was checked).'
+    P3:
+      id: P3
+      title: Logic
+      order: 3
+      target: Logic
+      does: 'Deliver the Logic Component: a reusable library whose Interface publishes the Storage Service gateway to Database and one Entity Child Service for every Model Entity, so that the application''s Behaviour is reached through one exact gateway.'
+      constraints: []
+      task_count: 84
+      groups:
+        P3-G1:
+          id: P3-G1
+          title: Component package
+          description: Makes the Logic Component an independently usable library that consumes the Model and Database Components, and holds the standards its finished source must satisfy.
+          area: Component packaging and source quality
+          does: The Logic Component is a reusable library package, dependent on Model and Database, whose finished source meets the project's quality standards and starts nothing of its own.
+          constraints: []
+          task_count: 3
+          tasks:
+            P3-G1-T01:
+              id: P3-G1-T01
+              source_id: 008
+              title: Establish the Logic library package
+              description: Create the Logic Component as a self-contained, reusable library that declares the Model and Database Components as its direct dependencies within the project and whose third-party dependencies resolve to concrete compatible versions recorded in lock metadata.
+              reason: Every other Task in this phase places its result in a package that later Components depend on.
+              inputs:
+              - Logic Component packaging choices
+              - Development shared defaults, Connections, and package-dependency rules
+              - Published Model and Database Components
+              skills: []
+              expected_result: The Logic Component exists as a library package that a consumer inside the repository can depend on, that reaches Model and Database through its declared dependencies, and that resolves its dependencies reproducibly.
+              depends_on:
+              - P1-G7-T02
+              - P2-G9-T09
+              constraints: []
+              acceptance: A consumer elsewhere in the repository can declare a local dependency on the Logic Component and load it successfully, Logic can load Model and Database through its own declared dependencies, and its dependencies resolve to the same concrete versions on every installation.
+              status: done
+              log:
+              - at: '2026-10-08T03:03:47Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:03:59Z'
+                transition: claimed -> done
+                note: Created the Logic library package with a lock file; it declares Database and Model as local editable path dependencies and loads them, and a separate project outside the repository declaring a path dependency on the Component imported it.
+                evidence:
+                  locations:
+                  - logic/pyproject.toml
+                  - logic/uv.lock
+                  - logic/.gitignore
+                  - logic/README.md
+                  - logic/logic/__init__.py
+                  - logic/logic/services/__init__.py
+                  - logic/logic/services/entity/__init__.py
+                  - logic/logic/services/entity/entity/__init__.py
+                  - logic/logic/services/storage/__init__.py
+                  observed: uv lock resolved 13 packages (logic, database and model as editable paths; sqlalchemy, sqlmodel, pyyaml and pydantic transitively; dev tools ruff 0.16.10, ty 0.0.85); uv lock --check passes; uv sync installed it; inside it logic, database and model imported with warnings as errors and Model's 15 Entities were visible; a throwaway consumer project outside the repository that declares the three path sources imported all three.
+                decisions:
+                - unset: How the Database and Model dependencies are declared
+                  chosen: Bare package names resolved by local editable path sources to the sibling directories
+                  why: Development requires every Connection to be a local path dependency and a consumer root must declare the path sources itself.
+                - unset: What the package root exposes
+                  chosen: The package root and the Service packages hold only a docstring; the Logic Interface is imported from its own unit
+                  why: A package root that imported the Logic Interface would load it whenever any Service is imported, against the rule that Service imports point away from Logic Interface.
+                - unset: Direct third-party dependencies
+                  chosen: None beyond the project's own Database and Model
+                  why: Logic imports only those two packages and the standard library.
+              - at: '2026-10-08T03:12:16Z'
+                transition: done (unchanged)
+                note: 'Corrected an earlier statement in this Task Log: a consumer project does not need to declare the Database and Model path sources itself, because uv follows a path dependency''s own path sources.'
+                evidence:
+                  locations:
+                  - logic/pyproject.toml
+                  observed: A throwaway consumer project outside the repository that declares only a path dependency on Logic synced Database and Model from their sibling directories and imported Logic's Interface with warnings as errors; the earlier decision text saying a consumer root must declare the path sources was wrong, and the Component's own declaration of them is what makes this work.
+            P3-G1-T02:
+              id: P3-G1-T02
+              source_id: 008
+              title: Bring the finished source to the quality standards
+              description: Once all Logic source exists, make it conform to the selected language's formatting, lint, and static type-checking standards without changing Logic meaning.
+              reason: Quality standards are a Development obligation, and failing checks would block downstream Components.
+              inputs:
+              - Completed Logic source
+              - Development language quality standards
+              skills: []
+              expected_result: The complete Logic source passes the formatting, lint, and static type-checking standards.
+              depends_on:
+              - P3-G9-T03
+              - P3-G9-T04
+              - P3-G9-T05
+              - P3-G9-T06
+              - P3-G1-T03
+              constraints: []
+              acceptance: Formatting, lint, and static type checks over the complete Logic source report no violations.
+              status: done
+              log:
+              - at: '2026-10-08T03:09:55Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:10:12Z'
+                transition: claimed -> done
+                note: 'Brought all Logic source to the selected quality standards: the formatter, linter and type checker report nothing for the complete Component, and the dependency checker reports no issue. Fixes during development were limited to formatting and import order; no Logic meaning changed.'
+                evidence:
+                  locations:
+                  - logic/pyproject.toml
+                  - logic/logic/
+                  observed: 'ruff format --check: 26 files already formatted; ruff check: all checks passed; ty check: all checks passed; deptry: no dependency issues; uv lock --check passes.'
+            P3-G1-T03:
+              id: P3-G1-T03
+              source_id: 008
+              title: Keep Logic a reusable library
+              description: Make Logic expose Behaviour only through its Interface, start no process, own no transport schema, and depend on no consumer framework.
+              reason: Behaviour without a transport of its own can be reused by any consumer and used without a running server.
+              inputs:
+              - Logic Component packaging
+              skills: []
+              expected_result: Logic can be imported and used by any consumer without side effects or framework requirements of its own.
+              depends_on:
+              - P3-G1-T01
+              constraints: []
+              acceptance: Importing Logic starts no process and opens no port, Logic declares no web framework or transport-schema library among its dependencies, and every Behaviour a consumer can reach is reached through the Logic Interface.
+              status: done
+              log:
+              - at: '2026-10-08T03:03:59Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:09:55Z'
+                transition: claimed -> done
+                note: 'Confirmed Logic is a reusable library: it exposes Behaviour only through its Interface, starts no process, owns no transport schema, and depends on no consumer framework.'
+                evidence:
+                  locations:
+                  - logic/pyproject.toml
+                  - logic/logic/interface.py
+                  observed: With process creation, socket binding and listening watched, importing Logic's Interface and creating every published gateway and all 15 Child Services produced no process, no bound or listening socket and no new thread; the declared dependencies are only database and model and none of the common web or transport frameworks is installed in the Component's environment; every Behaviour is reached through the two published entries.
+        P3-G2:
+          id: P3-G2
+          title: Storage gateway
+          description: 'Storage Service''s Core: the one gateway through which Logic reaches Database. It offers one Action for each Entity Operation and the Command Operation of Database''s Interface group. Every Action takes the same parameters, names and defaults as its Database Operation, forwards every argument unchanged, adds no validation, retry, Engine or default-Instance selection of its own, and returns the Operation''s answer and errors unchanged.'
+          area: Storage Service Core
+          does: Logic has one gateway that mirrors every Entity Operation and the Command Operation of Database one to one.
+          constraints: []
+          task_count: 15
+          tasks:
+            P3-G2-T01:
+              id: P3-G2-T01
+              source_id: 008
+              title: Provide the Storage gateway holding one Database access
+              description: Provide the gateway structure that, when created, creates one object of Database's Interface group and keeps it, so that every Action uses that same object.
+              reason: One route keeps every Action a faithful mirror of Database and keeps Database internals out of Logic.
+              inputs:
+              - Database Interface group
+              - Storage Service contract
+              skills: []
+              expected_result: A gateway can be created and holds exactly one Database access, shared by all of its Actions.
+              depends_on:
+              - P3-G1-T01
+              - P2-G9-T09
+              constraints: []
+              acceptance: Creating the gateway creates one Database access, opens no connection and creates no data or file, and two gateways created separately each hold their own single access.
+              status: done
+              log:
+              - at: '2026-10-08T03:03:59Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:04:22Z'
+                transition: claimed -> done
+                note: 'Created the Storage gateway structure: a class that, when created, creates one object of Database''s Interface group and keeps it on the instance.'
+                evidence:
+                  locations:
+                  - logic/logic/services/storage/core.py
+                  observed: Two gateways created separately were distinct objects each holding its own single Database Interface object; importing and creating them, with the SQLite connection function watched, opened no connection and added nothing to the working directory.
+            P3-G2-T02:
+              id: P3-G2-T02
+              source_id: 008
+              title: Mirror the add Operation
+              description: Give the gateway one Action for Database's add Operation, with the Operation's name, parameter names, order, defaults and documentation, forwarding every argument to the kept Database access and returning its answer and errors unchanged.
+              reason: Services create records only through the gateway.
+              inputs:
+              - Database Interface group
+              - Kept Database access
+              skills: []
+              expected_result: The gateway offers the add Action as a faithful mirror of Database.
+              depends_on:
+              - P3-G2-T01
+              - P2-G9-T03
+              constraints: []
+              acceptance: Calling the Action with a Model Entity instance stores it and returns exactly what Database's add returns for the same call, and a call Database refuses raises the same error.
+              status: done
+              log:
+              - at: '2026-10-08T03:04:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:05:12Z'
+                transition: claimed -> done
+                note: Added an Action for Database's add Operation. It has the Operation's name, parameter names, order, defaults and documentation, and calls the kept Database access with every argument in order.
+                evidence:
+                  locations:
+                  - logic/logic/services/storage/core.py
+                  observed: A User added through Storage was read back through Database with the same username and id. Signature (names, order, defaults, kinds) and documentation equal Database's; with a recording stand-in for the kept access, the Action forwarded every argument positionally in order and returned its answer unchanged, and an error raised by the access propagated unchanged.
+                decisions:
+                - unset: How the Actions are written
+                  chosen: Emitted deterministically from what Database's Interface group publishes (its class and the signatures and documentation of its methods) by a throwaway generator kept outside the repository, then formatted
+                  why: The Actions must follow Database one to one without being named or listed by hand; a generator reading only the published Interface keeps them in step.
+                - unset: How published types are named in the generated signatures
+                  chosen: Types that Database's Interface publishes are written through their published group names (database_value, database_instance, database_result); the built-in list type is written through an alias because an Action is named list
+                  why: Storage may reach Database only through Database Interface, and the Action named list would shadow the built-in inside the class.
+            P3-G2-T03:
+              id: P3-G2-T03
+              source_id: 008
+              title: Mirror the update Operation
+              description: Give the gateway one Action for Database's update Operation, with the Operation's name, parameter names, order, defaults and documentation, forwarding every argument to the kept Database access and returning its answer and errors unchanged.
+              reason: Services edit records only through the gateway.
+              inputs:
+              - Database Interface group
+              - Kept Database access
+              skills: []
+              expected_result: The gateway offers the update Action as a faithful mirror of Database.
+              depends_on:
+              - P3-G2-T01
+              - P2-G9-T03
+              constraints: []
+              acceptance: Calling the Action with a stored Entity replaces its mutable Fields and returns what Database's update returns, including null when no record exists.
+              status: done
+              log:
+              - at: '2026-10-08T03:04:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:05:12Z'
+                transition: claimed -> done
+                note: Added an Action for Database's update Operation. It has the Operation's name, parameter names, order, defaults and documentation, and calls the kept Database access with every argument in order.
+                evidence:
+                  locations:
+                  - logic/logic/services/storage/core.py
+                  observed: A stored User changed through Storage showed the new description when read back through Database; updating a missing record returned None via Database. Signature (names, order, defaults, kinds) and documentation equal Database's; with a recording stand-in for the kept access, the Action forwarded every argument positionally in order and returned its answer unchanged, and an error raised by the access propagated unchanged.
+            P3-G2-T04:
+              id: P3-G2-T04
+              source_id: 008
+              title: Mirror the list Operation
+              description: Give the gateway one Action for Database's list Operation, with the Operation's name, parameter names, order, defaults and documentation, forwarding every argument to the kept Database access and returning its answer and errors unchanged.
+              reason: Services read many records only through the gateway.
+              inputs:
+              - Database Interface group
+              - Kept Database access
+              skills: []
+              expected_result: The gateway offers the list Action as a faithful mirror of Database.
+              depends_on:
+              - P3-G2-T01
+              - P2-G9-T02
+              constraints: []
+              acceptance: Calling the Action with an Entity class and optional Filters, combination, Orders and limit returns the same Entities in the same order as Database's list for the same arguments.
+              status: done
+              log:
+              - at: '2026-10-08T03:04:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:05:12Z'
+                transition: claimed -> done
+                note: Added an Action for Database's list Operation. It has the Operation's name, parameter names, order, defaults and documentation, and calls the kept Database access with every argument in order.
+                evidence:
+                  locations:
+                  - logic/logic/services/storage/core.py
+                  observed: Storage's list with an equality Filter returned ['Via']; the default call returned the same Entities as Database. Signature (names, order, defaults, kinds) and documentation equal Database's; with a recording stand-in for the kept access, the Action forwarded every argument positionally in order and returned its answer unchanged, and an error raised by the access propagated unchanged.
+            P3-G2-T05:
+              id: P3-G2-T05
+              source_id: 008
+              title: Mirror the get by identifier Operation
+              description: Give the gateway one Action for Database's get by identifier Operation, with the Operation's name, parameter names, order, defaults and documentation, forwarding every argument to the kept Database access and returning its answer and errors unchanged.
+              reason: Services read one record by identity only through the gateway.
+              inputs:
+              - Database Interface group
+              - Kept Database access
+              skills: []
+              expected_result: The gateway offers the get by identifier Action as a faithful mirror of Database.
+              depends_on:
+              - P3-G2-T01
+              - P2-G9-T02
+              constraints: []
+              acceptance: Calling the Action with an Entity class and an identifier returns the Entity or null exactly as Database does.
+              status: done
+              log:
+              - at: '2026-10-08T03:04:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:05:12Z'
+                transition: claimed -> done
+                note: Added an Action for Database's get_by_id Operation. It has the Operation's name, parameter names, order, defaults and documentation, and calls the kept Database access with every argument in order.
+                evidence:
+                  locations:
+                  - logic/logic/services/storage/core.py
+                  observed: Getting the added id returned the Entity and an absent id returned None; a string Entity was refused with the same InvalidInputError. Signature (names, order, defaults, kinds) and documentation equal Database's; with a recording stand-in for the kept access, the Action forwarded every argument positionally in order and returned its answer unchanged, and an error raised by the access propagated unchanged.
+            P3-G2-T06:
+              id: P3-G2-T06
+              source_id: 008
+              title: Mirror the delete Operation
+              description: Give the gateway one Action for Database's delete Operation, with the Operation's name, parameter names, order, defaults and documentation, forwarding every argument to the kept Database access and returning its answer and errors unchanged.
+              reason: Services remove records only through the gateway.
+              inputs:
+              - Database Interface group
+              - Kept Database access
+              skills: []
+              expected_result: The gateway offers the delete Action as a faithful mirror of Database.
+              depends_on:
+              - P3-G2-T01
+              - P2-G9-T03
+              constraints: []
+              acceptance: Calling the Action with an Entity class and an identifier removes the record and returns the final deleted Entity or null exactly as Database does.
+              status: done
+              log:
+              - at: '2026-10-08T03:04:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:05:12Z'
+                transition: claimed -> done
+                note: Added an Action for Database's delete Operation. It has the Operation's name, parameter names, order, defaults and documentation, and calls the kept Database access with every argument in order.
+                evidence:
+                  locations:
+                  - logic/logic/services/storage/core.py
+                  observed: Deleting returned the final deleted Entity and a second delete returned None. Signature (names, order, defaults, kinds) and documentation equal Database's; with a recording stand-in for the kept access, the Action forwarded every argument positionally in order and returned its answer unchanged, and an error raised by the access propagated unchanged.
+            P3-G2-T07:
+              id: P3-G2-T07
+              source_id: 008
+              title: Mirror the enable Operation
+              description: Give the gateway one Action for Database's enable Operation, with the Operation's name, parameter names, order, defaults and documentation, forwarding every argument to the kept Database access and returning its answer and errors unchanged.
+              reason: Services switch records on only through the gateway.
+              inputs:
+              - Database Interface group
+              - Kept Database access
+              skills: []
+              expected_result: The gateway offers the enable Action as a faithful mirror of Database.
+              depends_on:
+              - P3-G2-T01
+              - P2-G9-T03
+              constraints: []
+              acceptance: Calling the Action with an Entity class and an identifier returns the final Entity, also when already enabled, or null, exactly as Database does.
+              status: done
+              log:
+              - at: '2026-10-08T03:04:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:05:12Z'
+                transition: claimed -> done
+                note: Added an Action for Database's enable Operation. It has the Operation's name, parameter names, order, defaults and documentation, and calls the kept Database access with every argument in order.
+                evidence:
+                  locations:
+                  - logic/logic/services/storage/core.py
+                  observed: Enabling returned the final Entity (also when already enabled) and None for an absent id. Signature (names, order, defaults, kinds) and documentation equal Database's; with a recording stand-in for the kept access, the Action forwarded every argument positionally in order and returned its answer unchanged, and an error raised by the access propagated unchanged.
+            P3-G2-T08:
+              id: P3-G2-T08
+              source_id: 008
+              title: Mirror the disable Operation
+              description: Give the gateway one Action for Database's disable Operation, with the Operation's name, parameter names, order, defaults and documentation, forwarding every argument to the kept Database access and returning its answer and errors unchanged.
+              reason: Services switch records off only through the gateway.
+              inputs:
+              - Database Interface group
+              - Kept Database access
+              skills: []
+              expected_result: The gateway offers the disable Action as a faithful mirror of Database.
+              depends_on:
+              - P3-G2-T01
+              - P2-G9-T03
+              constraints: []
+              acceptance: Calling the Action with an Entity class and an identifier returns the final Entity, also when already disabled, or null, exactly as Database does.
+              status: done
+              log:
+              - at: '2026-10-08T03:04:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:05:12Z'
+                transition: claimed -> done
+                note: Added an Action for Database's disable Operation. It has the Operation's name, parameter names, order, defaults and documentation, and calls the kept Database access with every argument in order.
+                evidence:
+                  locations:
+                  - logic/logic/services/storage/core.py
+                  observed: Disabling returned the final Entity with is_active false. Signature (names, order, defaults, kinds) and documentation equal Database's; with a recording stand-in for the kept access, the Action forwarded every argument positionally in order and returned its answer unchanged, and an error raised by the access propagated unchanged.
+            P3-G2-T09:
+              id: P3-G2-T09
+              source_id: 008
+              title: Mirror the count Operation
+              description: Give the gateway one Action for Database's count Operation, with the Operation's name, parameter names, order, defaults and documentation, forwarding every argument to the kept Database access and returning its answer and errors unchanged.
+              reason: Services need totals only through the gateway.
+              inputs:
+              - Database Interface group
+              - Kept Database access
+              skills: []
+              expected_result: The gateway offers the count Action as a faithful mirror of Database.
+              depends_on:
+              - P3-G2-T01
+              - P2-G9-T02
+              constraints: []
+              acceptance: Calling the Action with an Entity class and optional Filters and combination returns the same number as Database's count.
+              status: done
+              log:
+              - at: '2026-10-08T03:04:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:05:12Z'
+                transition: claimed -> done
+                note: Added an Action for Database's count Operation. It has the Operation's name, parameter names, order, defaults and documentation, and calls the kept Database access with every argument in order.
+                evidence:
+                  locations:
+                  - logic/logic/services/storage/core.py
+                  observed: Storage's count equalled Database's count. Signature (names, order, defaults, kinds) and documentation equal Database's; with a recording stand-in for the kept access, the Action forwarded every argument positionally in order and returned its answer unchanged, and an error raised by the access propagated unchanged.
+            P3-G2-T10:
+              id: P3-G2-T10
+              source_id: 008
+              title: Mirror the sum Operation
+              description: Give the gateway one Action for Database's sum Operation, with the Operation's name, parameter names, order, defaults and documentation, forwarding every argument to the kept Database access and returning its answer and errors unchanged.
+              reason: Services total a Field only through the gateway.
+              inputs:
+              - Database Interface group
+              - Kept Database access
+              skills: []
+              expected_result: The gateway offers the sum Action as a faithful mirror of Database.
+              depends_on:
+              - P3-G2-T01
+              - P2-G9-T02
+              constraints: []
+              acceptance: Calling the Action with an Entity class, a numeric Field reference and optional Filters returns the same total as Database's sum, zero when nothing matches.
+              status: done
+              log:
+              - at: '2026-10-08T03:04:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:05:12Z'
+                transition: claimed -> done
+                note: Added an Action for Database's sum Operation. It has the Operation's name, parameter names, order, defaults and documentation, and calls the kept Database access with every argument in order.
+                evidence:
+                  locations:
+                  - logic/logic/services/storage/core.py
+                  observed: Storage's sum of Account.leverage equalled Database's sum. Signature (names, order, defaults, kinds) and documentation equal Database's; with a recording stand-in for the kept access, the Action forwarded every argument positionally in order and returned its answer unchanged, and an error raised by the access propagated unchanged.
+            P3-G2-T11:
+              id: P3-G2-T11
+              source_id: 008
+              title: Mirror the min Operation
+              description: Give the gateway one Action for Database's min Operation, with the Operation's name, parameter names, order, defaults and documentation, forwarding every argument to the kept Database access and returning its answer and errors unchanged.
+              reason: Services find the lower bound of a Field only through the gateway.
+              inputs:
+              - Database Interface group
+              - Kept Database access
+              skills: []
+              expected_result: The gateway offers the min Action as a faithful mirror of Database.
+              depends_on:
+              - P3-G2-T01
+              - P2-G9-T02
+              constraints: []
+              acceptance: Calling the Action with an Entity class and a comparable Field reference returns the same smallest value as Database's min, null when nothing matches.
+              status: done
+              log:
+              - at: '2026-10-08T03:04:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:05:12Z'
+                transition: claimed -> done
+                note: Added an Action for Database's min Operation. It has the Operation's name, parameter names, order, defaults and documentation, and calls the kept Database access with every argument in order.
+                evidence:
+                  locations:
+                  - logic/logic/services/storage/core.py
+                  observed: Storage's min of Currency.code returned AUD, as Database does. Signature (names, order, defaults, kinds) and documentation equal Database's; with a recording stand-in for the kept access, the Action forwarded every argument positionally in order and returned its answer unchanged, and an error raised by the access propagated unchanged.
+            P3-G2-T12:
+              id: P3-G2-T12
+              source_id: 008
+              title: Mirror the max Operation
+              description: Give the gateway one Action for Database's max Operation, with the Operation's name, parameter names, order, defaults and documentation, forwarding every argument to the kept Database access and returning its answer and errors unchanged.
+              reason: Services find the upper bound of a Field only through the gateway.
+              inputs:
+              - Database Interface group
+              - Kept Database access
+              skills: []
+              expected_result: The gateway offers the max Action as a faithful mirror of Database.
+              depends_on:
+              - P3-G2-T01
+              - P2-G9-T02
+              constraints: []
+              acceptance: Calling the Action with an Entity class and a comparable Field reference returns the same largest value as Database's max, null when nothing matches.
+              status: done
+              log:
+              - at: '2026-10-08T03:04:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:05:12Z'
+                transition: claimed -> done
+                note: Added an Action for Database's max Operation. It has the Operation's name, parameter names, order, defaults and documentation, and calls the kept Database access with every argument in order.
+                evidence:
+                  locations:
+                  - logic/logic/services/storage/core.py
+                  observed: Storage's max of Currency.code returned USD, as Database does. Signature (names, order, defaults, kinds) and documentation equal Database's; with a recording stand-in for the kept access, the Action forwarded every argument positionally in order and returned its answer unchanged, and an error raised by the access propagated unchanged.
+            P3-G2-T13:
+              id: P3-G2-T13
+              source_id: 008
+              title: Mirror the truncate Operation
+              description: Give the gateway one Action for Database's truncate Operation, with the Operation's name, parameter names, order, defaults and documentation, forwarding every argument to the kept Database access and returning its answer and errors unchanged.
+              reason: Services clear an Entity's records only through the gateway.
+              inputs:
+              - Database Interface group
+              - Kept Database access
+              skills: []
+              expected_result: The gateway offers the truncate Action as a faithful mirror of Database.
+              depends_on:
+              - P3-G2-T01
+              - P2-G9-T03
+              constraints: []
+              acceptance: Calling the Action with an Entity class removes every record of the Entity and returns the deleted count exactly as Database does.
+              status: done
+              log:
+              - at: '2026-10-08T03:04:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:05:12Z'
+                transition: claimed -> done
+                note: Added an Action for Database's truncate Operation. It has the Operation's name, parameter names, order, defaults and documentation, and calls the kept Database access with every argument in order.
+                evidence:
+                  locations:
+                  - logic/logic/services/storage/core.py
+                  observed: Truncating the empty PartialRule table returned 0 as Database does. Signature (names, order, defaults, kinds) and documentation equal Database's; with a recording stand-in for the kept access, the Action forwarded every argument positionally in order and returned its answer unchanged, and an error raised by the access propagated unchanged.
+            P3-G2-T14:
+              id: P3-G2-T14
+              source_id: 008
+              title: Mirror the execute command Operation
+              description: Give the gateway one Action for Database's execute command Operation, with the Operation's name, parameter names, order, defaults and documentation, forwarding every argument to the kept Database access and returning its answer and errors unchanged.
+              reason: Services reach native commands only through the gateway.
+              inputs:
+              - Database Interface group
+              - Kept Database access
+              skills: []
+              expected_result: The gateway offers the execute command Action as a faithful mirror of Database.
+              depends_on:
+              - P3-G2-T01
+              - P2-G9-T04
+              constraints: []
+              acceptance: Calling the Action with a command and bound parameters returns the same Command Result as Database's execute command and raises the same error for an invalid command.
+              status: done
+              log:
+              - at: '2026-10-08T03:04:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:05:12Z'
+                transition: claimed -> done
+                note: Added an Action for Database's execute_command Operation. It has the Operation's name, parameter names, order, defaults and documentation, and calls the kept Database access with every argument in order.
+                evidence:
+                  locations:
+                  - logic/logic/services/storage/core.py
+                  observed: A select returned a CommandResult with the rows; an invalid command raised the same ExecutionError kind. Signature (names, order, defaults, kinds) and documentation equal Database's; with a recording stand-in for the kept access, the Action forwarded every argument positionally in order and returned its answer unchanged, and an error raised by the access propagated unchanged.
+            P3-G2-T15:
+              id: P3-G2-T15
+              source_id: 008
+              title: Keep the Actions equal to Database's published Operations
+              description: Derive the gateway's Actions from what Database's Interface group publishes, in Database's order, with an Action for every Entity Operation and the Command Operation and none for the Setup Operations or anything else, so that a change in that group changes the Actions without a manual edit.
+              reason: Storage must never fall behind or get ahead of Database.
+              inputs:
+              - Database Interface group
+              - Gateway Actions
+              skills: []
+              expected_result: The gateway's Actions correspond exactly to Database's published Operations.
+              depends_on:
+              - P3-G2-T02
+              - P3-G2-T03
+              - P3-G2-T04
+              - P3-G2-T05
+              - P3-G2-T06
+              - P3-G2-T07
+              - P3-G2-T08
+              - P3-G2-T09
+              - P3-G2-T10
+              - P3-G2-T11
+              - P3-G2-T12
+              - P3-G2-T13
+              - P3-G2-T14
+              constraints: []
+              acceptance: The Actions equal, in name and order, the Entity Operations and the Command Operation Database's Interface group publishes, with no Action more or fewer and none for a Setup Operation, and when Database's published Operations change the Actions change with them without a manual edit.
+              status: done
+              log:
+              - at: '2026-10-08T03:05:12Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:05:35Z'
+                transition: claimed -> done
+                note: 'Confirmed the Storage Actions are derived from what Database''s Interface group publishes: they equal its Entity Operations and the Command Operation in Database''s order, with no Setup Operation, and regeneration from the unchanged published Interface reproduces the stored gateway exactly.'
+                evidence:
+                  locations:
+                  - logic/logic/services/storage/core.py
+                  observed: The gateway has 13 Actions in the same order as Database's 13 Operations and none for create_tables, insert_initial_data or prepare; regenerating from Database's published Interface and formatting reproduced the stored file byte for byte; adding a synthetic Operation to Database's published class made the generator emit a matching Action and still no Setup Action, without any manual edit.
+        P3-G3:
+          id: P3-G3
+          title: Storage Service Interface
+          description: 'The gateway other Logic Services import from: it publishes the Storage gateway under the configured Service name and, unchanged, the four Database groups a Service needs to build a request, read a result and catch an error. Every republished group is the identical object Database''s Interface publishes, read from Database''s Interface each time rather than listed by hand.'
+          area: Storage Service Interface
+          does: Other Logic Services reach the Storage gateway and the four Database groups through one exact Interface and nothing else.
+          constraints: []
+          task_count: 7
+          tasks:
+            P3-G3-T01:
+              id: P3-G3-T01
+              source_id: 008
+              title: Republish Database's Value group
+              description: Publish Database's Value group under its own name as the identical object Database's Interface publishes.
+              reason: A Service builds a request from Database's query values without reaching Database directly.
+              inputs:
+              - Database Value group
+              skills: []
+              expected_result: Storage's Interface offers Database's Value group unchanged.
+              depends_on:
+              - P2-G9-T06
+              - P3-G2-T15
+              constraints: []
+              acceptance: The Value group obtained from the Storage Interface is the same object as the one Database's Interface publishes, not a copy, and a Filter built from it is accepted by a Storage Action.
+              status: done
+              log:
+              - at: '2026-10-08T03:05:35Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:05:52Z'
+                transition: claimed -> done
+                note: Republished Database's Value group under its own name, imported directly from Database's Interface so it is the identical object.
+                evidence:
+                  locations:
+                  - logic/logic/services/storage/interface.py
+                  observed: database_value from the Storage Interface is the same object as database.database_value; a Filter built from it was accepted by Storage's list and returned the Admin user.
+            P3-G3-T02:
+              id: P3-G3-T02
+              source_id: 008
+              title: Republish Database's Instance group
+              description: Publish Database's Instance group under its own name as the identical object Database's Interface publishes.
+              reason: A Service selects an Instance without reaching Database directly.
+              inputs:
+              - Database Instance group
+              skills: []
+              expected_result: Storage's Interface offers Database's Instance group unchanged.
+              depends_on:
+              - P2-G9-T01
+              - P3-G2-T15
+              constraints: []
+              acceptance: The Instance group obtained from the Storage Interface is the same object as the one Database's Interface publishes, and one of its members selects the Instance of a Storage Action call.
+              status: done
+              log:
+              - at: '2026-10-08T03:05:35Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:05:52Z'
+                transition: claimed -> done
+                note: Republished Database's Instance group under its own name, imported directly from Database's Interface so it is the identical object.
+                evidence:
+                  locations:
+                  - logic/logic/services/storage/interface.py
+                  observed: database_instance from the Storage Interface is the same object as database.database_instance; its SQLITE member selected the Instance of a Storage count call (1 record).
+            P3-G3-T03:
+              id: P3-G3-T03
+              source_id: 008
+              title: Republish Database's Result group
+              description: Publish Database's Result group under its own name as the identical object Database's Interface publishes.
+              reason: A Service reads a Database result without reaching Database directly.
+              inputs:
+              - Database Result group
+              skills: []
+              expected_result: Storage's Interface offers Database's Result group unchanged.
+              depends_on:
+              - P2-G9-T07
+              - P3-G2-T15
+              constraints: []
+              acceptance: The Result group obtained from the Storage Interface is the same object as the one Database's Interface publishes, and the result of the native command Action is an instance of its Command Result.
+              status: done
+              log:
+              - at: '2026-10-08T03:05:35Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:05:52Z'
+                transition: claimed -> done
+                note: Republished Database's Result group under its own name, imported directly from Database's Interface so it is the identical object.
+                evidence:
+                  locations:
+                  - logic/logic/services/storage/interface.py
+                  observed: database_result from the Storage Interface is the same object as database.database_result, and the object returned by Storage's native command Action is an instance of its CommandResult.
+            P3-G3-T04:
+              id: P3-G3-T04
+              source_id: 008
+              title: Republish Database's Error group
+              description: Publish Database's Error group under its own name as the identical object Database's Interface publishes.
+              reason: A Service catches a Database failure without reaching Database directly.
+              inputs:
+              - Database Error group
+              skills: []
+              expected_result: Storage's Interface offers Database's Error group unchanged.
+              depends_on:
+              - P2-G9-T08
+              - P3-G2-T15
+              constraints: []
+              acceptance: The Error group obtained from the Storage Interface is the same object as the one Database's Interface publishes, and a failure raised through a Storage Action is caught by a member of it.
+              status: done
+              log:
+              - at: '2026-10-08T03:05:35Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:05:52Z'
+                transition: claimed -> done
+                note: Republished Database's Error group under its own name, imported directly from Database's Interface so it is the identical object.
+                evidence:
+                  locations:
+                  - logic/logic/services/storage/interface.py
+                  observed: database_error from the Storage Interface is the same object as database.database_error, and a failure raised through a Storage Action (a string where an Entity class is required) was caught by its InvalidInputError member.
+            P3-G3-T05:
+              id: P3-G3-T05
+              source_id: 008
+              title: Publish the Storage gateway under its configured name
+              description: Publish the gateway under the Service name Storage Service Preferences configure, a name that is valid for the selected language and collides with none of the republished groups.
+              reason: Other Services import the gateway by one stable, discoverable name.
+              inputs:
+              - Storage Service configured name
+              - Storage gateway
+              skills: []
+              expected_result: The Storage Interface offers the gateway under its configured name.
+              depends_on:
+              - P3-G2-T15
+              constraints: []
+              acceptance: The Storage Interface offers the gateway under the configured name, the name is valid and different from every republished group name, and creating the published gateway yields the one that mirrors Database.
+              status: done
+              log:
+              - at: '2026-10-08T03:05:35Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:05:52Z'
+                transition: claimed -> done
+                note: Published the Storage gateway under the configured Service name Storage from the Interface unit, importing it from its Core unit.
+                evidence:
+                  locations:
+                  - logic/logic/services/storage/interface.py
+                  observed: The Interface offers Storage, a valid Python class name distinct from the four republished group names; creating the published gateway returned one that mirrors Database (it added and read back a User in the Action checks).
+            P3-G3-T06:
+              id: P3-G3-T06
+              source_id: 008
+              title: Publish exactly the gateway and the four groups
+              description: Make the Storage Interface publish only the gateway and the four Database groups, and nothing else, running no check of its own.
+              reason: A fixed, small public surface keeps other Services independent of Storage's internals.
+              inputs:
+              - Storage Service Interface contract
+              skills: []
+              expected_result: Importing the Storage Interface shows exactly the gateway and four groups.
+              depends_on:
+              - P3-G3-T01
+              - P3-G3-T02
+              - P3-G3-T03
+              - P3-G3-T04
+              - P3-G3-T05
+              constraints: []
+              acceptance: The published names are exactly the gateway and the four groups, no Action implementation, Database internal or Setup group is reachable from them, and the Interface performs no validation or other work of its own.
+              status: done
+              log:
+              - at: '2026-10-08T03:05:52Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:06:04Z'
+                transition: claimed -> done
+                note: Made the Storage Interface publish only the gateway and the four Database groups through its published list; the unit holds nothing else and performs no check.
+                evidence:
+                  locations:
+                  - logic/logic/services/storage/interface.py
+                  observed: The published list is exactly Storage, database_error, database_instance, database_result, database_value; a star import brought in exactly those five names; no Setup group is published; the unit defines no function or class of its own.
+            P3-G3-T07:
+              id: P3-G3-T07
+              source_id: 008
+              title: Keep loading the Storage Interface free of side effects
+              description: Make importing the Storage Interface open no connection and create no data and no file.
+              reason: Importing Storage must never touch storage, so any Service can load it safely.
+              inputs:
+              - Storage Interface
+              skills: []
+              expected_result: Importing the Storage Interface changes nothing outside the process.
+              depends_on:
+              - P3-G3-T06
+              - P2-G9-T10
+              constraints: []
+              acceptance: After the Storage Interface is imported, no connection has been opened and no storage file or record has been created.
+              status: done
+              log:
+              - at: '2026-10-08T03:05:52Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:06:04Z'
+                transition: claimed -> done
+                note: 'Confirmed that loading the Storage Interface performs no work of its own: importing it and creating the gateway open no connection and create no data or file.'
+                evidence:
+                  locations:
+                  - logic/logic/services/storage/interface.py
+                  observed: With the SQLite connection function watched, importing the Interface and creating a Storage opened no connection and added nothing to the working directory.
+        P3-G4:
+          id: P3-G4
+          title: Storage Service documentation
+          description: The documentation of Storage Service, in the section order its Definition lists.
+          area: Storage Service documentation
+          does: A Logic Service author can learn, use and verify Storage from its documentation alone.
+          constraints: []
+          task_count: 4
+          tasks:
+            P3-G4-T01:
+              id: P3-G4-T01
+              source_id: 008
+              title: Write the Storage Overview section
+              description: Explain in one paragraph what Storage is and why it exists, with one simple example.
+              reason: A reader needs the purpose of Storage before its details.
+              inputs:
+              - Published Storage Interface
+              skills: []
+              expected_result: The Storage Service Overview section exists.
+              depends_on:
+              - P3-G3-T06
+              constraints: []
+              acceptance: The section holds one paragraph on what Storage is and why it exists and one simple example, and the example runs with the real behaviour.
+              status: done
+              log:
+              - at: '2026-10-08T03:10:12Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:11:22Z'
+                transition: claimed -> done
+                note: 'Wrote the Storage Overview section: one paragraph on what Storage is and why it exists, and one simple example that adds a User through Storage and counts the Users.'
+                evidence:
+                  locations:
+                  - logic/logic/services/storage/README.md
+                  observed: The example printed '2 2' (new id and count). Every Python example in the Storage README (5 blocks) was run against a freshly prepared database in a temporary Component root and ran without error.
+            P3-G4-T02:
+              id: P3-G4-T02
+              source_id: 008
+              title: Write the Storage Interface section
+              description: Give every Action and every republished contract an explanation and one example.
+              reason: Service authors use Storage through its documentation.
+              inputs:
+              - Published Storage Interface
+              skills: []
+              expected_result: The Storage Service Interface section exists.
+              depends_on:
+              - P3-G3-T06
+              constraints: []
+              acceptance: Every Action and each of the four republished groups appears with an explanation and an example, and the content matches the published surface.
+              status: done
+              log:
+              - at: '2026-10-08T03:10:12Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:11:22Z'
+                transition: claimed -> done
+                note: 'Wrote the Storage Interface section: the five published names, a table of all 13 Actions with their parameters, one example covering every Action, and one example for each of the four republished groups.'
+                evidence:
+                  locations:
+                  - logic/logic/services/storage/README.md
+                  observed: The table matches the published surface (Actions and parameters equal Database's); the Action example printed Analyst, False, True, ['Admin', 'Alan'], 2, 100, Admin Alan, Example, 0, 2; the group example printed 1, True and the refusal text. Every Python example in the Storage README (5 blocks) was run against a freshly prepared database in a temporary Component root and ran without error.
+            P3-G4-T03:
+              id: P3-G4-T03
+              source_id: 008
+              title: Write the Storage Use section
+              description: Show how another Logic Service imports from the Storage Interface.
+              reason: Service authors must see the one correct way to reach persistence.
+              inputs:
+              - Published Storage Interface
+              skills: []
+              expected_result: The Storage Service Use section exists.
+              depends_on:
+              - P3-G3-T06
+              constraints: []
+              acceptance: The section shows a Service importing the gateway and the Database groups from the Storage Interface, and the demonstration matches the real behaviour.
+              status: done
+              log:
+              - at: '2026-10-08T03:10:12Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:11:22Z'
+                transition: claimed -> done
+                note: 'Wrote the Storage Use section: another Logic Service imports the gateway and the Database groups from the Storage Interface, creates one gateway, adds Behaviour around a call, and catches Database errors through the republished Error group.'
+                evidence:
+                  locations:
+                  - logic/logic/services/storage/README.md
+                  observed: The example Service listed the eight currency codes in order. Every Python example in the Storage README (5 blocks) was run against a freshly prepared database in a temporary Component root and ran without error.
+            P3-G4-T04:
+              id: P3-G4-T04
+              source_id: 008
+              title: Write the Storage Verify section
+              description: Explain how to see that Storage has one Action for every Operation of Database's Interface group and republishes Database's four groups unchanged.
+              reason: Reviewers and authors need a way to confirm Storage still mirrors Database.
+              inputs:
+              - Published Storage Interface
+              - Database Interface group
+              skills: []
+              expected_result: The Storage Service Verify section exists.
+              depends_on:
+              - P3-G3-T07
+              constraints: []
+              acceptance: Following the section on the Component shows one Action per Database Operation and four identical republished groups, with the results the section states.
+              status: done
+              log:
+              - at: '2026-10-08T03:10:12Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:11:22Z'
+                transition: claimed -> done
+                note: 'Wrote the Storage Verify section: a script that checks one Action per Database Operation in Database''s order with the same parameters and defaults, that the four groups are Database''s identical objects, and that exactly five names are published.'
+                evidence:
+                  locations:
+                  - logic/logic/services/storage/README.md
+                  observed: The script printed verified. Every Python example in the Storage README (5 blocks) was run against a freshly prepared database in a temporary Component root and ran without error.
+        P3-G5:
+          id: P3-G5
+          title: Entity Service Base
+          description: Entity Service's one shared structure and every Action it holds. When created it takes one access to Storage, and each Action hands its request to Storage through that access and returns Storage's answer and errors unchanged. Each Action keeps its Storage Action's name, and its parameters' names, order and defaults, except that a parameter taking the Entity class is removed and supplied from the bound Entity.
+          area: Entity Service Base
+          does: Every Child Service inherits one Action for each Storage Action that takes an Entity, without passing the Entity again.
+          constraints: []
+          task_count: 15
+          tasks:
+            P3-G5-T01:
+              id: P3-G5-T01
+              source_id: 008
+              title: Provide the Base holding one Storage access
+              description: Provide the shared structure that, when created, takes one access to Storage and keeps it, so that every Action uses that same access.
+              reason: One route keeps every Action a faithful mirror of Storage and keeps persistence out of Entity Service.
+              inputs:
+              - Storage Interface
+              - Entity Service contract
+              skills: []
+              expected_result: A Base can be created and holds exactly one Storage access shared by all of its Actions.
+              depends_on:
+              - P3-G3-T06
+              constraints: []
+              acceptance: Creating a Base creates one Storage access, opens no connection and creates no data or file, and two Bases created separately each hold their own single access.
+              status: done
+              log:
+              - at: '2026-10-08T03:06:04Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:06:20Z'
+                transition: claimed -> done
+                note: 'Created the Base: a shared class that, when created, creates one Storage gateway from the Storage Interface and keeps it on the instance.'
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/base.py
+                  observed: Two Bases created separately each held their own single Storage; importing the Base and creating two of them, with the SQLite connection function watched, opened no connection and added nothing to the working directory.
+            P3-G5-T02:
+              id: P3-G5-T02
+              source_id: 008
+              title: Mirror Storage's add Action in the Base
+              description: Give the Base one Action for Storage's add Action, with the same name, parameter order and defaults, taking an Entity instance of the bound Entity and supplying the bound Entity in place of the removed Entity class, and handing the request to Storage unchanged.
+              reason: A Child Service must offer the add behaviour without the caller selecting the Entity each time.
+              inputs:
+              - Storage Action
+              - Bound Entity
+              skills: []
+              expected_result: The Base offers the add Action for the bound Entity.
+              depends_on:
+              - P3-G5-T01
+              - P3-G2-T02
+              constraints: []
+              acceptance: Calling the Action on a Base bound to an Entity returns exactly what Storage's add returns for the same instance, and a failure Storage raises is raised unchanged.
+              status: done
+              log:
+              - at: '2026-10-08T03:06:20Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:06:54Z'
+                transition: claimed -> done
+                note: Added the Base Action for Storage's add Action, taking an Entity instance, which stays a parameter, with Storage's name, parameter order, defaults and documentation; it hands the request to the kept Storage access and returns its answer and errors unchanged.
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/base.py
+                  observed: Adding a User instance through a Base bound to User called Storage's add with that instance and the Instance argument in order and returned Storage's answer. With a recording stand-in for the Storage access the answer was returned unchanged and an error raised by it propagated unchanged.
+                decisions:
+                - unset: How the Base Actions are written
+                  chosen: Emitted deterministically from what the Storage Interface publishes (the signatures and documentation of the Storage Actions whose first parameter is the Entity) by a throwaway generator kept outside the repository, then formatted
+                  why: The Base must follow Storage one to one without any Action being named or listed by hand.
+                - unset: Whether an Entity parameter is a class or an instance, since Database annotates every entity parameter the same way
+                  chosen: A parameter is an instance when Database Preferences describe the Operation as accepting an Entity instance (add and update), and a class for every other Operation
+                  why: Entity Service Preferences distinguish the two but Database's published signatures do not; the accepted form is stated in Database Preferences; recorded as an Open Question.
+            P3-G5-T03:
+              id: P3-G5-T03
+              source_id: 008
+              title: Mirror Storage's update Action in the Base
+              description: Give the Base one Action for Storage's update Action, with the same name, parameter order and defaults, taking a stored instance of the bound Entity and supplying the bound Entity in place of the removed Entity class, and handing the request to Storage unchanged.
+              reason: A Child Service must offer the update behaviour without the caller selecting the Entity each time.
+              inputs:
+              - Storage Action
+              - Bound Entity
+              skills: []
+              expected_result: The Base offers the update Action for the bound Entity.
+              depends_on:
+              - P3-G5-T01
+              - P3-G2-T03
+              constraints: []
+              acceptance: Calling the Action on a Base bound to an Entity returns what Storage's update returns, including null when no record exists, and a failure Storage raises is raised unchanged.
+              status: done
+              log:
+              - at: '2026-10-08T03:06:20Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:06:54Z'
+                transition: claimed -> done
+                note: Added the Base Action for Storage's update Action, taking a stored Entity instance, which stays a parameter, with Storage's name, parameter order, defaults and documentation; it hands the request to the kept Storage access and returns its answer and errors unchanged.
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/base.py
+                  observed: Updating through a Base bound to User called Storage's update with the instance and returned its answer. With a recording stand-in for the Storage access the answer was returned unchanged and an error raised by it propagated unchanged.
+            P3-G5-T04:
+              id: P3-G5-T04
+              source_id: 008
+              title: Mirror Storage's list Action in the Base
+              description: Give the Base one Action for Storage's list Action, with the same name, parameter order and defaults, taking no Entity class and supplying the bound Entity in place of the removed Entity class, and handing the request to Storage unchanged.
+              reason: A Child Service must offer the list behaviour without the caller selecting the Entity each time.
+              inputs:
+              - Storage Action
+              - Bound Entity
+              skills: []
+              expected_result: The Base offers the list Action for the bound Entity.
+              depends_on:
+              - P3-G5-T01
+              - P3-G2-T04
+              constraints: []
+              acceptance: Calling the Action on a Base bound to an Entity returns the Entities Storage's list returns for the bound Entity and the same other arguments, in the same order, and a failure Storage raises is raised unchanged.
+              status: done
+              log:
+              - at: '2026-10-08T03:06:20Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:06:54Z'
+                transition: claimed -> done
+                note: Added the Base Action for Storage's list Action, without the Entity class, with Storage's name, parameter order, defaults and documentation; it hands the request to the kept Storage access and returns its answer and errors unchanged.
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/base.py
+                  observed: The Action's parameters are Storage's list parameters minus the Entity class; it called Storage's list with the bound User first and every other argument in order. With a recording stand-in for the Storage access the answer was returned unchanged and an error raised by it propagated unchanged.
+            P3-G5-T05:
+              id: P3-G5-T05
+              source_id: 008
+              title: Mirror Storage's get by identifier Action in the Base
+              description: Give the Base one Action for Storage's get by identifier Action, with the same name, parameter order and defaults, taking only an identifier and supplying the bound Entity in place of the removed Entity class, and handing the request to Storage unchanged.
+              reason: A Child Service must offer the get by identifier behaviour without the caller selecting the Entity each time.
+              inputs:
+              - Storage Action
+              - Bound Entity
+              skills: []
+              expected_result: The Base offers the get by identifier Action for the bound Entity.
+              depends_on:
+              - P3-G5-T01
+              - P3-G2-T05
+              constraints: []
+              acceptance: Calling the Action on a Base bound to an Entity returns the Entity or null exactly as Storage does for the bound Entity, and a failure Storage raises is raised unchanged.
+              status: done
+              log:
+              - at: '2026-10-08T03:06:20Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:06:54Z'
+                transition: claimed -> done
+                note: Added the Base Action for Storage's get by identifier Action, without the Entity class, with Storage's name, parameter order, defaults and documentation; it hands the request to the kept Storage access and returns its answer and errors unchanged.
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/base.py
+                  observed: The Action takes id then instance; it called Storage's get_by_id with the bound User first. With a recording stand-in for the Storage access the answer was returned unchanged and an error raised by it propagated unchanged.
+            P3-G5-T06:
+              id: P3-G5-T06
+              source_id: 008
+              title: Mirror Storage's delete Action in the Base
+              description: Give the Base one Action for Storage's delete Action, with the same name, parameter order and defaults, taking only an identifier and supplying the bound Entity in place of the removed Entity class, and handing the request to Storage unchanged.
+              reason: A Child Service must offer the delete behaviour without the caller selecting the Entity each time.
+              inputs:
+              - Storage Action
+              - Bound Entity
+              skills: []
+              expected_result: The Base offers the delete Action for the bound Entity.
+              depends_on:
+              - P3-G5-T01
+              - P3-G2-T06
+              constraints: []
+              acceptance: Calling the Action on a Base bound to an Entity removes the record and returns the final deleted Entity or null exactly as Storage does, and a failure Storage raises is raised unchanged.
+              status: done
+              log:
+              - at: '2026-10-08T03:06:20Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:06:54Z'
+                transition: claimed -> done
+                note: Added the Base Action for Storage's delete Action, without the Entity class, with Storage's name, parameter order, defaults and documentation; it hands the request to the kept Storage access and returns its answer and errors unchanged.
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/base.py
+                  observed: The Action takes id then instance; it called Storage's delete with the bound User first. With a recording stand-in for the Storage access the answer was returned unchanged and an error raised by it propagated unchanged.
+            P3-G5-T07:
+              id: P3-G5-T07
+              source_id: 008
+              title: Mirror Storage's enable Action in the Base
+              description: Give the Base one Action for Storage's enable Action, with the same name, parameter order and defaults, taking only an identifier and supplying the bound Entity in place of the removed Entity class, and handing the request to Storage unchanged.
+              reason: A Child Service must offer the enable behaviour without the caller selecting the Entity each time.
+              inputs:
+              - Storage Action
+              - Bound Entity
+              skills: []
+              expected_result: The Base offers the enable Action for the bound Entity.
+              depends_on:
+              - P3-G5-T01
+              - P3-G2-T07
+              constraints: []
+              acceptance: Calling the Action on a Base bound to an Entity returns the final Entity, also when already enabled, or null, exactly as Storage does, and a failure Storage raises is raised unchanged.
+              status: done
+              log:
+              - at: '2026-10-08T03:06:20Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:06:54Z'
+                transition: claimed -> done
+                note: Added the Base Action for Storage's enable Action, without the Entity class, with Storage's name, parameter order, defaults and documentation; it hands the request to the kept Storage access and returns its answer and errors unchanged.
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/base.py
+                  observed: The Action takes id then instance; it called Storage's enable with the bound User first. With a recording stand-in for the Storage access the answer was returned unchanged and an error raised by it propagated unchanged.
+            P3-G5-T08:
+              id: P3-G5-T08
+              source_id: 008
+              title: Mirror Storage's disable Action in the Base
+              description: Give the Base one Action for Storage's disable Action, with the same name, parameter order and defaults, taking only an identifier and supplying the bound Entity in place of the removed Entity class, and handing the request to Storage unchanged.
+              reason: A Child Service must offer the disable behaviour without the caller selecting the Entity each time.
+              inputs:
+              - Storage Action
+              - Bound Entity
+              skills: []
+              expected_result: The Base offers the disable Action for the bound Entity.
+              depends_on:
+              - P3-G5-T01
+              - P3-G2-T08
+              constraints: []
+              acceptance: Calling the Action on a Base bound to an Entity returns the final Entity, also when already disabled, or null, exactly as Storage does, and a failure Storage raises is raised unchanged.
+              status: done
+              log:
+              - at: '2026-10-08T03:06:20Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:06:54Z'
+                transition: claimed -> done
+                note: Added the Base Action for Storage's disable Action, without the Entity class, with Storage's name, parameter order, defaults and documentation; it hands the request to the kept Storage access and returns its answer and errors unchanged.
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/base.py
+                  observed: The Action takes id then instance; it called Storage's disable with the bound User first. With a recording stand-in for the Storage access the answer was returned unchanged and an error raised by it propagated unchanged.
+            P3-G5-T09:
+              id: P3-G5-T09
+              source_id: 008
+              title: Mirror Storage's count Action in the Base
+              description: Give the Base one Action for Storage's count Action, with the same name, parameter order and defaults, taking no Entity class and supplying the bound Entity in place of the removed Entity class, and handing the request to Storage unchanged.
+              reason: A Child Service must offer the count behaviour without the caller selecting the Entity each time.
+              inputs:
+              - Storage Action
+              - Bound Entity
+              skills: []
+              expected_result: The Base offers the count Action for the bound Entity.
+              depends_on:
+              - P3-G5-T01
+              - P3-G2-T09
+              constraints: []
+              acceptance: Calling the Action on a Base bound to an Entity returns the number Storage's count returns for the bound Entity and the same Filters and combination, and a failure Storage raises is raised unchanged.
+              status: done
+              log:
+              - at: '2026-10-08T03:06:20Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:06:54Z'
+                transition: claimed -> done
+                note: Added the Base Action for Storage's count Action, without the Entity class, with Storage's name, parameter order, defaults and documentation; it hands the request to the kept Storage access and returns its answer and errors unchanged.
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/base.py
+                  observed: The Action takes filters, combination, instance; it called Storage's count with the bound User first. With a recording stand-in for the Storage access the answer was returned unchanged and an error raised by it propagated unchanged.
+            P3-G5-T10:
+              id: P3-G5-T10
+              source_id: 008
+              title: Mirror Storage's sum Action in the Base
+              description: Give the Base one Action for Storage's sum Action, with the same name, parameter order and defaults, taking no Entity class and supplying the bound Entity in place of the removed Entity class, and handing the request to Storage unchanged.
+              reason: A Child Service must offer the sum behaviour without the caller selecting the Entity each time.
+              inputs:
+              - Storage Action
+              - Bound Entity
+              skills: []
+              expected_result: The Base offers the sum Action for the bound Entity.
+              depends_on:
+              - P3-G5-T01
+              - P3-G2-T10
+              constraints: []
+              acceptance: Calling the Action on a Base bound to an Entity returns the total Storage's sum returns for the bound Entity and the given Field reference, and a failure Storage raises is raised unchanged.
+              status: done
+              log:
+              - at: '2026-10-08T03:06:20Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:06:54Z'
+                transition: claimed -> done
+                note: Added the Base Action for Storage's sum Action, without the Entity class, with Storage's name, parameter order, defaults and documentation; it hands the request to the kept Storage access and returns its answer and errors unchanged.
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/base.py
+                  observed: The Action takes field then filters, combination, instance; it called Storage's sum with the bound User first. With a recording stand-in for the Storage access the answer was returned unchanged and an error raised by it propagated unchanged.
+            P3-G5-T11:
+              id: P3-G5-T11
+              source_id: 008
+              title: Mirror Storage's min Action in the Base
+              description: Give the Base one Action for Storage's min Action, with the same name, parameter order and defaults, taking no Entity class and supplying the bound Entity in place of the removed Entity class, and handing the request to Storage unchanged.
+              reason: A Child Service must offer the min behaviour without the caller selecting the Entity each time.
+              inputs:
+              - Storage Action
+              - Bound Entity
+              skills: []
+              expected_result: The Base offers the min Action for the bound Entity.
+              depends_on:
+              - P3-G5-T01
+              - P3-G2-T11
+              constraints: []
+              acceptance: Calling the Action on a Base bound to an Entity returns the smallest value Storage's min returns for the bound Entity and the given Field reference, and a failure Storage raises is raised unchanged.
+              status: done
+              log:
+              - at: '2026-10-08T03:06:20Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:06:54Z'
+                transition: claimed -> done
+                note: Added the Base Action for Storage's min Action, without the Entity class, with Storage's name, parameter order, defaults and documentation; it hands the request to the kept Storage access and returns its answer and errors unchanged.
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/base.py
+                  observed: The Action takes field then filters, combination, instance; it called Storage's min with the bound User first. With a recording stand-in for the Storage access the answer was returned unchanged and an error raised by it propagated unchanged.
+            P3-G5-T12:
+              id: P3-G5-T12
+              source_id: 008
+              title: Mirror Storage's max Action in the Base
+              description: Give the Base one Action for Storage's max Action, with the same name, parameter order and defaults, taking no Entity class and supplying the bound Entity in place of the removed Entity class, and handing the request to Storage unchanged.
+              reason: A Child Service must offer the max behaviour without the caller selecting the Entity each time.
+              inputs:
+              - Storage Action
+              - Bound Entity
+              skills: []
+              expected_result: The Base offers the max Action for the bound Entity.
+              depends_on:
+              - P3-G5-T01
+              - P3-G2-T12
+              constraints: []
+              acceptance: Calling the Action on a Base bound to an Entity returns the largest value Storage's max returns for the bound Entity and the given Field reference, and a failure Storage raises is raised unchanged.
+              status: done
+              log:
+              - at: '2026-10-08T03:06:20Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:06:54Z'
+                transition: claimed -> done
+                note: Added the Base Action for Storage's max Action, without the Entity class, with Storage's name, parameter order, defaults and documentation; it hands the request to the kept Storage access and returns its answer and errors unchanged.
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/base.py
+                  observed: The Action takes field then filters, combination, instance; it called Storage's max with the bound User first. With a recording stand-in for the Storage access the answer was returned unchanged and an error raised by it propagated unchanged.
+            P3-G5-T13:
+              id: P3-G5-T13
+              source_id: 008
+              title: Mirror Storage's truncate Action in the Base
+              description: Give the Base one Action for Storage's truncate Action, with the same name, parameter order and defaults, taking no Entity class and supplying the bound Entity in place of the removed Entity class, and handing the request to Storage unchanged.
+              reason: A Child Service must offer the truncate behaviour without the caller selecting the Entity each time.
+              inputs:
+              - Storage Action
+              - Bound Entity
+              skills: []
+              expected_result: The Base offers the truncate Action for the bound Entity.
+              depends_on:
+              - P3-G5-T01
+              - P3-G2-T13
+              constraints: []
+              acceptance: Calling the Action on a Base bound to an Entity removes every record of the bound Entity and returns the deleted count exactly as Storage does, and a failure Storage raises is raised unchanged.
+              status: done
+              log:
+              - at: '2026-10-08T03:06:20Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:06:54Z'
+                transition: claimed -> done
+                note: Added the Base Action for Storage's truncate Action, without the Entity class, with Storage's name, parameter order, defaults and documentation; it hands the request to the kept Storage access and returns its answer and errors unchanged.
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/base.py
+                  observed: The Action takes only instance; it called Storage's truncate with the bound User first. With a recording stand-in for the Storage access the answer was returned unchanged and an error raised by it propagated unchanged.
+            P3-G5-T14:
+              id: P3-G5-T14
+              source_id: 008
+              title: Reject an instance of another Entity before calling Storage
+              description: Make every Action that takes an Entity instance reject an instance that is not of the bound Entity with the Invalid Input error Storage's Interface republishes, before Storage is called, checking the Entity's identity only and never its Field values.
+              reason: Selecting a Child Service must reliably select the Entity the Action works on.
+              inputs:
+              - Mirrored add and update Actions
+              - Storage Error group
+              skills: []
+              expected_result: An instance of another Entity is refused with the Invalid Input error and Storage is never called.
+              depends_on:
+              - P3-G5-T02
+              - P3-G5-T03
+              - P3-G3-T04
+              constraints: []
+              acceptance: Passing an instance of a different Entity to the add or update Action raises the Invalid Input error and no Storage Action is called, while an instance of the bound Entity with any Field values is passed to Storage.
+              status: done
+              log:
+              - at: '2026-10-08T03:06:54Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:07:19Z'
+                transition: claimed -> done
+                note: Made the Actions that take an Entity instance (add and update) refuse an instance that is not of the bound Entity with the Invalid Input error the Storage Interface republishes, before Storage is called; the check looks at the instance's Entity only.
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/base.py
+                  observed: With a Base bound to User, passing an Account to add or update raised InvalidInputError and made 0 Storage calls; a User instance was passed to Storage; a string, None and the User class given to add were refused the same way.
+                decisions:
+                - unset: How an instance is matched to the bound Entity
+                  chosen: isinstance against the bound Entity class
+                  why: The rule checks Entity identity only and never Field values.
+            P3-G5-T15:
+              id: P3-G5-T15
+              source_id: 008
+              title: Keep the Base's Actions equal to Storage's Entity-taking Actions
+              description: Derive the Base's Actions from the Storage Actions that take an Entity, in Storage's order, with the Entity class parameter removed, and give no Action for a Storage Action that takes no Entity.
+              reason: The Base must follow Storage one to one so that nothing is named or listed by hand.
+              inputs:
+              - Storage Interface
+              - Base Actions
+              skills: []
+              expected_result: The Base's Actions correspond exactly to Storage's Entity-taking Actions.
+              depends_on:
+              - P3-G5-T02
+              - P3-G5-T03
+              - P3-G5-T04
+              - P3-G5-T05
+              - P3-G5-T06
+              - P3-G5-T07
+              - P3-G5-T08
+              - P3-G5-T09
+              - P3-G5-T10
+              - P3-G5-T11
+              - P3-G5-T12
+              - P3-G5-T13
+              constraints: []
+              acceptance: The Base's Actions equal, in name and order, the Storage Actions that take an Entity, each with Storage's parameters minus the Entity class, none more and none fewer, and the Storage Action that takes no Entity has no counterpart.
+              status: done
+              log:
+              - at: '2026-10-08T03:06:54Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:07:19Z'
+                transition: claimed -> done
+                note: Confirmed the Base's Actions are derived from Storage's Entity-taking Actions in Storage's order, with the Entity class parameter removed, and that the Storage Action without an Entity (the native command) has no counterpart; regeneration reproduces the stored Base exactly.
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/base.py
+                  observed: The Base has 12 Actions equal in name and order to the 12 Storage Actions whose first parameter is the Entity; each has Storage's parameters minus the Entity class (add and update keep the instance); execute_command is absent; regenerating from the Storage Interface and formatting reproduced the stored file byte for byte.
+        P3-G6:
+          id: P3-G6
+          title: Entity Child Services
+          description: One Child Service for every Entity in Model's Entity Collection. Each receives the Base, binds its own Entity, holds only Behaviour or Actions specific to that Entity, and lets a caller add, read, list, change, enable, disable, count and delete that Entity's records without supplying the Entity. Their unit and structure names follow the configured Child naming patterns.
+          area: Entity Service Child Services
+          does: Every Entity has exactly one Child Service that works through Storage.
+          constraints: []
+          task_count: 15
+          tasks:
+            P3-G6-T01:
+              id: P3-G6-T01
+              source_id: 008
+              title: Realize the User Child Service
+              description: Realize the Child Service bound to the User Entity, receiving the Base and holding nothing else unless Behaviour specific to User is required.
+              reason: Every owned record belongs to a user, so users are the first records a caller manages.
+              inputs:
+              - Published User Entity
+              - Entity Service Base
+              skills: []
+              expected_result: The User Child Service is complete and works through Storage.
+              depends_on:
+              - P3-G5-T15
+              - P3-G5-T14
+              - P1-G7-T01
+              - P2-G11-T01
+              constraints: []
+              acceptance: 'The User Child Service is bound to exactly the User Entity: records it returns are User Entities, a User added through it is read back by identifier equal to what was added, and an instance of another Entity is refused.'
+              status: done
+              log:
+              - at: '2026-10-08T03:07:19Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:08:02Z'
+                transition: claimed -> done
+                note: 'Created the User Child Service unit: a class User that receives the Base and binds the User Entity published by Model''s Interface, holding nothing of its own.'
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/entity/user.py
+                  observed: 'Against a temporary prepared Instance: the Child is bound to exactly the User Entity and is a subclass of the Base; a User added through it was returned as that Entity with a stored identifier and read back by identifier with equal JSON; list returned only User Entities including it; update, disable, enable, count and delete worked without passing the Entity; adding an instance of another Entity was refused with InvalidInputError.'
+                decisions:
+                - unset: How the Child Service units are produced and named
+                  chosen: 'Emitted deterministically from Model''s Entity Collection by a throwaway generator kept outside the repository: one unit per Entity named by the Entity''s name in lower snake case, holding a class named by the Entity''s published name that binds the Entity from Model''s Interface'
+                  why: Fifteen Child Services share one shape and must follow the Collection; Entity Service Preferences set the unit and structure naming patterns and the binding form.
+            P3-G6-T02:
+              id: P3-G6-T02
+              source_id: 008
+              title: Realize the Trading Platform Child Service
+              description: Realize the Child Service bound to the Trading Platform Entity, receiving the Base and holding nothing else unless Behaviour specific to Trading Platform is required.
+              reason: Instances and Positions refer to a supported trading platform.
+              inputs:
+              - Published Trading Platform Entity
+              - Entity Service Base
+              skills: []
+              expected_result: The Trading Platform Child Service is complete and works through Storage.
+              depends_on:
+              - P3-G5-T15
+              - P3-G5-T14
+              - P1-G7-T01
+              - P2-G11-T01
+              constraints: []
+              acceptance: 'The Trading Platform Child Service is bound to exactly the Trading Platform Entity: records it returns are Trading Platform Entities, a Trading Platform added through it is read back by identifier equal to what was added, and an instance of another Entity is refused.'
+              status: done
+              log:
+              - at: '2026-10-08T03:07:19Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:08:02Z'
+                transition: claimed -> done
+                note: 'Created the Trading Platform Child Service unit: a class TradingPlatform that receives the Base and binds the Trading Platform Entity published by Model''s Interface, holding nothing of its own.'
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/entity/trading_platform.py
+                  observed: 'Against a temporary prepared Instance: the Child is bound to exactly the Trading Platform Entity and is a subclass of the Base; a Trading Platform added through it was returned as that Entity with a stored identifier and read back by identifier with equal JSON; list returned only Trading Platform Entities including it; update, disable, enable, count and delete worked without passing the Entity; adding an instance of another Entity was refused with InvalidInputError.'
+            P3-G6-T03:
+              id: P3-G6-T03
+              source_id: 008
+              title: Realize the Instance Child Service
+              description: Realize the Child Service bound to the Instance Entity, receiving the Base and holding nothing else unless Behaviour specific to Instance is required.
+              reason: Accounts connect through a user-owned instance.
+              inputs:
+              - Published Instance Entity
+              - Entity Service Base
+              skills: []
+              expected_result: The Instance Child Service is complete and works through Storage.
+              depends_on:
+              - P3-G5-T15
+              - P3-G5-T14
+              - P1-G7-T01
+              - P2-G11-T01
+              constraints: []
+              acceptance: 'The Instance Child Service is bound to exactly the Instance Entity: records it returns are Instance Entities, a Instance added through it is read back by identifier equal to what was added, and an instance of another Entity is refused.'
+              status: done
+              log:
+              - at: '2026-10-08T03:07:19Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:08:02Z'
+                transition: claimed -> done
+                note: 'Created the Instance Child Service unit: a class Instance that receives the Base and binds the Instance Entity published by Model''s Interface, holding nothing of its own.'
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/entity/instance.py
+                  observed: 'Against a temporary prepared Instance: the Child is bound to exactly the Instance Entity and is a subclass of the Base; a Instance added through it was returned as that Entity with a stored identifier and read back by identifier with equal JSON; list returned only Instance Entities including it; update, disable, enable, count and delete worked without passing the Entity; adding an instance of another Entity was refused with InvalidInputError.'
+            P3-G6-T04:
+              id: P3-G6-T04
+              source_id: 008
+              title: Realize the Currency Child Service
+              description: Realize the Child Service bound to the Currency Entity, receiving the Base and holding nothing else unless Behaviour specific to Currency is required.
+              reason: Accounts need a base currency.
+              inputs:
+              - Published Currency Entity
+              - Entity Service Base
+              skills: []
+              expected_result: The Currency Child Service is complete and works through Storage.
+              depends_on:
+              - P3-G5-T15
+              - P3-G5-T14
+              - P1-G7-T01
+              - P2-G11-T01
+              constraints: []
+              acceptance: 'The Currency Child Service is bound to exactly the Currency Entity: records it returns are Currency Entities, a Currency added through it is read back by identifier equal to what was added, and an instance of another Entity is refused.'
+              status: done
+              log:
+              - at: '2026-10-08T03:07:19Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:08:02Z'
+                transition: claimed -> done
+                note: 'Created the Currency Child Service unit: a class Currency that receives the Base and binds the Currency Entity published by Model''s Interface, holding nothing of its own.'
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/entity/currency.py
+                  observed: 'Against a temporary prepared Instance: the Child is bound to exactly the Currency Entity and is a subclass of the Base; a Currency added through it was returned as that Entity with a stored identifier and read back by identifier with equal JSON; list returned only Currency Entities including it; update, disable, enable, count and delete worked without passing the Entity; adding an instance of another Entity was refused with InvalidInputError.'
+            P3-G6-T05:
+              id: P3-G6-T05
+              source_id: 008
+              title: Realize the Broker Child Service
+              description: Realize the Child Service bound to the Broker Entity, receiving the Base and holding nothing else unless Behaviour specific to Broker is required.
+              reason: Assets and Accounts refer to a broker.
+              inputs:
+              - Published Broker Entity
+              - Entity Service Base
+              skills: []
+              expected_result: The Broker Child Service is complete and works through Storage.
+              depends_on:
+              - P3-G5-T15
+              - P3-G5-T14
+              - P1-G7-T01
+              - P2-G11-T01
+              constraints: []
+              acceptance: 'The Broker Child Service is bound to exactly the Broker Entity: records it returns are Broker Entities, a Broker added through it is read back by identifier equal to what was added, and an instance of another Entity is refused.'
+              status: done
+              log:
+              - at: '2026-10-08T03:07:19Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:08:02Z'
+                transition: claimed -> done
+                note: 'Created the Broker Child Service unit: a class Broker that receives the Base and binds the Broker Entity published by Model''s Interface, holding nothing of its own.'
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/entity/broker.py
+                  observed: 'Against a temporary prepared Instance: the Child is bound to exactly the Broker Entity and is a subclass of the Base; a Broker added through it was returned as that Entity with a stored identifier and read back by identifier with equal JSON; list returned only Broker Entities including it; update, disable, enable, count and delete worked without passing the Entity; adding an instance of another Entity was refused with InvalidInputError.'
+            P3-G6-T06:
+              id: P3-G6-T06
+              source_id: 008
+              title: Realize the Asset Child Service
+              description: Realize the Child Service bound to the Asset Entity, receiving the Base and holding nothing else unless Behaviour specific to Asset is required.
+              reason: Actions select a tradable asset.
+              inputs:
+              - Published Asset Entity
+              - Entity Service Base
+              skills: []
+              expected_result: The Asset Child Service is complete and works through Storage.
+              depends_on:
+              - P3-G5-T15
+              - P3-G5-T14
+              - P1-G7-T01
+              - P2-G11-T01
+              constraints: []
+              acceptance: 'The Asset Child Service is bound to exactly the Asset Entity: records it returns are Asset Entities, a Asset added through it is read back by identifier equal to what was added, and an instance of another Entity is refused.'
+              status: done
+              log:
+              - at: '2026-10-08T03:07:19Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:08:02Z'
+                transition: claimed -> done
+                note: 'Created the Asset Child Service unit: a class Asset that receives the Base and binds the Asset Entity published by Model''s Interface, holding nothing of its own.'
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/entity/asset.py
+                  observed: 'Against a temporary prepared Instance: the Child is bound to exactly the Asset Entity and is a subclass of the Base; a Asset added through it was returned as that Entity with a stored identifier and read back by identifier with equal JSON; list returned only Asset Entities including it; update, disable, enable, count and delete worked without passing the Entity; adding an instance of another Entity was refused with InvalidInputError.'
+            P3-G6-T07:
+              id: P3-G6-T07
+              source_id: 008
+              title: Realize the Account Group Child Service
+              description: Realize the Child Service bound to the Account Group Entity, receiving the Base and holding nothing else unless Behaviour specific to Account Group is required.
+              reason: Accounts are organized into groups.
+              inputs:
+              - Published Account Group Entity
+              - Entity Service Base
+              skills: []
+              expected_result: The Account Group Child Service is complete and works through Storage.
+              depends_on:
+              - P3-G5-T15
+              - P3-G5-T14
+              - P1-G7-T01
+              - P2-G11-T01
+              constraints: []
+              acceptance: 'The Account Group Child Service is bound to exactly the Account Group Entity: records it returns are Account Group Entities, a Account Group added through it is read back by identifier equal to what was added, and an instance of another Entity is refused.'
+              status: done
+              log:
+              - at: '2026-10-08T03:07:19Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:08:02Z'
+                transition: claimed -> done
+                note: 'Created the Account Group Child Service unit: a class AccountGroup that receives the Base and binds the Account Group Entity published by Model''s Interface, holding nothing of its own.'
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/entity/account_group.py
+                  observed: 'Against a temporary prepared Instance: the Child is bound to exactly the Account Group Entity and is a subclass of the Base; a Account Group added through it was returned as that Entity with a stored identifier and read back by identifier with equal JSON; list returned only Account Group Entities including it; update, disable, enable, count and delete worked without passing the Entity; adding an instance of another Entity was refused with InvalidInputError.'
+            P3-G6-T08:
+              id: P3-G6-T08
+              source_id: 008
+              title: Realize the Account Child Service
+              description: Realize the Child Service bound to the Account Entity, receiving the Base and holding nothing else unless Behaviour specific to Account is required.
+              reason: Actions and Positions execute through a trading account.
+              inputs:
+              - Published Account Entity
+              - Entity Service Base
+              skills: []
+              expected_result: The Account Child Service is complete and works through Storage.
+              depends_on:
+              - P3-G5-T15
+              - P3-G5-T14
+              - P1-G7-T01
+              - P2-G11-T01
+              constraints: []
+              acceptance: 'The Account Child Service is bound to exactly the Account Entity: records it returns are Account Entities, a Account added through it is read back by identifier equal to what was added, and an instance of another Entity is refused.'
+              status: done
+              log:
+              - at: '2026-10-08T03:07:19Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:08:02Z'
+                transition: claimed -> done
+                note: 'Created the Account Child Service unit: a class Account that receives the Base and binds the Account Entity published by Model''s Interface, holding nothing of its own.'
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/entity/account.py
+                  observed: 'Against a temporary prepared Instance: the Child is bound to exactly the Account Entity and is a subclass of the Base; a Account added through it was returned as that Entity with a stored identifier and read back by identifier with equal JSON; list returned only Account Entities including it; update, disable, enable, count and delete worked without passing the Entity; adding an instance of another Entity was refused with InvalidInputError.'
+            P3-G6-T09:
+              id: P3-G6-T09
+              source_id: 008
+              title: Realize the Trailing Group Child Service
+              description: Realize the Child Service bound to the Trailing Group Entity, receiving the Base and holding nothing else unless Behaviour specific to Trailing Group is required.
+              reason: Trailing rules, Actions and Positions refer to a trailing group.
+              inputs:
+              - Published Trailing Group Entity
+              - Entity Service Base
+              skills: []
+              expected_result: The Trailing Group Child Service is complete and works through Storage.
+              depends_on:
+              - P3-G5-T15
+              - P3-G5-T14
+              - P1-G7-T01
+              - P2-G11-T01
+              constraints: []
+              acceptance: 'The Trailing Group Child Service is bound to exactly the Trailing Group Entity: records it returns are Trailing Group Entities, a Trailing Group added through it is read back by identifier equal to what was added, and an instance of another Entity is refused.'
+              status: done
+              log:
+              - at: '2026-10-08T03:07:19Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:08:02Z'
+                transition: claimed -> done
+                note: 'Created the Trailing Group Child Service unit: a class TrailingGroup that receives the Base and binds the Trailing Group Entity published by Model''s Interface, holding nothing of its own.'
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/entity/trailing_group.py
+                  observed: 'Against a temporary prepared Instance: the Child is bound to exactly the Trailing Group Entity and is a subclass of the Base; a Trailing Group added through it was returned as that Entity with a stored identifier and read back by identifier with equal JSON; list returned only Trailing Group Entities including it; update, disable, enable, count and delete worked without passing the Entity; adding an instance of another Entity was refused with InvalidInputError.'
+            P3-G6-T10:
+              id: P3-G6-T10
+              source_id: 008
+              title: Realize the Trailing Rule Child Service
+              description: Realize the Child Service bound to the Trailing Rule Entity, receiving the Base and holding nothing else unless Behaviour specific to Trailing Rule is required.
+              reason: A trailing group is defined by its rules.
+              inputs:
+              - Published Trailing Rule Entity
+              - Entity Service Base
+              skills: []
+              expected_result: The Trailing Rule Child Service is complete and works through Storage.
+              depends_on:
+              - P3-G5-T15
+              - P3-G5-T14
+              - P1-G7-T01
+              - P2-G11-T01
+              constraints: []
+              acceptance: 'The Trailing Rule Child Service is bound to exactly the Trailing Rule Entity: records it returns are Trailing Rule Entities, a Trailing Rule added through it is read back by identifier equal to what was added, and an instance of another Entity is refused.'
+              status: done
+              log:
+              - at: '2026-10-08T03:07:19Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:08:02Z'
+                transition: claimed -> done
+                note: 'Created the Trailing Rule Child Service unit: a class TrailingRule that receives the Base and binds the Trailing Rule Entity published by Model''s Interface, holding nothing of its own.'
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/entity/trailing_rule.py
+                  observed: 'Against a temporary prepared Instance: the Child is bound to exactly the Trailing Rule Entity and is a subclass of the Base; a Trailing Rule added through it was returned as that Entity with a stored identifier and read back by identifier with equal JSON; list returned only Trailing Rule Entities including it; update, disable, enable, count and delete worked without passing the Entity; adding an instance of another Entity was refused with InvalidInputError.'
+            P3-G6-T11:
+              id: P3-G6-T11
+              source_id: 008
+              title: Realize the Partial Group Child Service
+              description: Realize the Child Service bound to the Partial Group Entity, receiving the Base and holding nothing else unless Behaviour specific to Partial Group is required.
+              reason: Partial rules, Actions and Positions refer to a partial group.
+              inputs:
+              - Published Partial Group Entity
+              - Entity Service Base
+              skills: []
+              expected_result: The Partial Group Child Service is complete and works through Storage.
+              depends_on:
+              - P3-G5-T15
+              - P3-G5-T14
+              - P1-G7-T01
+              - P2-G11-T01
+              constraints: []
+              acceptance: 'The Partial Group Child Service is bound to exactly the Partial Group Entity: records it returns are Partial Group Entities, a Partial Group added through it is read back by identifier equal to what was added, and an instance of another Entity is refused.'
+              status: done
+              log:
+              - at: '2026-10-08T03:07:19Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:08:02Z'
+                transition: claimed -> done
+                note: 'Created the Partial Group Child Service unit: a class PartialGroup that receives the Base and binds the Partial Group Entity published by Model''s Interface, holding nothing of its own.'
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/entity/partial_group.py
+                  observed: 'Against a temporary prepared Instance: the Child is bound to exactly the Partial Group Entity and is a subclass of the Base; a Partial Group added through it was returned as that Entity with a stored identifier and read back by identifier with equal JSON; list returned only Partial Group Entities including it; update, disable, enable, count and delete worked without passing the Entity; adding an instance of another Entity was refused with InvalidInputError.'
+            P3-G6-T12:
+              id: P3-G6-T12
+              source_id: 008
+              title: Realize the Partial Rule Child Service
+              description: Realize the Child Service bound to the Partial Rule Entity, receiving the Base and holding nothing else unless Behaviour specific to Partial Rule is required.
+              reason: A partial group is defined by its rules.
+              inputs:
+              - Published Partial Rule Entity
+              - Entity Service Base
+              skills: []
+              expected_result: The Partial Rule Child Service is complete and works through Storage.
+              depends_on:
+              - P3-G5-T15
+              - P3-G5-T14
+              - P1-G7-T01
+              - P2-G11-T01
+              constraints: []
+              acceptance: 'The Partial Rule Child Service is bound to exactly the Partial Rule Entity: records it returns are Partial Rule Entities, a Partial Rule added through it is read back by identifier equal to what was added, and an instance of another Entity is refused.'
+              status: done
+              log:
+              - at: '2026-10-08T03:07:19Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:08:02Z'
+                transition: claimed -> done
+                note: 'Created the Partial Rule Child Service unit: a class PartialRule that receives the Base and binds the Partial Rule Entity published by Model''s Interface, holding nothing of its own.'
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/entity/partial_rule.py
+                  observed: 'Against a temporary prepared Instance: the Child is bound to exactly the Partial Rule Entity and is a subclass of the Base; a Partial Rule added through it was returned as that Entity with a stored identifier and read back by identifier with equal JSON; list returned only Partial Rule Entities including it; update, disable, enable, count and delete worked without passing the Entity; adding an instance of another Entity was refused with InvalidInputError.'
+            P3-G6-T13:
+              id: P3-G6-T13
+              source_id: 008
+              title: Realize the Action Group Child Service
+              description: Realize the Child Service bound to the Action Group Entity, receiving the Base and holding nothing else unless Behaviour specific to Action Group is required.
+              reason: Actions are organized by risk profile.
+              inputs:
+              - Published Action Group Entity
+              - Entity Service Base
+              skills: []
+              expected_result: The Action Group Child Service is complete and works through Storage.
+              depends_on:
+              - P3-G5-T15
+              - P3-G5-T14
+              - P1-G7-T01
+              - P2-G11-T01
+              constraints: []
+              acceptance: 'The Action Group Child Service is bound to exactly the Action Group Entity: records it returns are Action Group Entities, a Action Group added through it is read back by identifier equal to what was added, and an instance of another Entity is refused.'
+              status: done
+              log:
+              - at: '2026-10-08T03:07:19Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:08:02Z'
+                transition: claimed -> done
+                note: 'Created the Action Group Child Service unit: a class ActionGroup that receives the Base and binds the Action Group Entity published by Model''s Interface, holding nothing of its own.'
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/entity/action_group.py
+                  observed: 'Against a temporary prepared Instance: the Child is bound to exactly the Action Group Entity and is a subclass of the Base; a Action Group added through it was returned as that Entity with a stored identifier and read back by identifier with equal JSON; list returned only Action Group Entities including it; update, disable, enable, count and delete worked without passing the Entity; adding an instance of another Entity was refused with InvalidInputError.'
+            P3-G6-T14:
+              id: P3-G6-T14
+              source_id: 008
+              title: Realize the Action Child Service
+              description: Realize the Child Service bound to the Action Entity, receiving the Base and holding nothing else unless Behaviour specific to Action is required.
+              reason: Positions are created from actions.
+              inputs:
+              - Published Action Entity
+              - Entity Service Base
+              skills: []
+              expected_result: The Action Child Service is complete and works through Storage.
+              depends_on:
+              - P3-G5-T15
+              - P3-G5-T14
+              - P1-G7-T01
+              - P2-G11-T01
+              constraints: []
+              acceptance: 'The Action Child Service is bound to exactly the Action Entity: records it returns are Action Entities, a Action added through it is read back by identifier equal to what was added, and an instance of another Entity is refused.'
+              status: done
+              log:
+              - at: '2026-10-08T03:07:19Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:08:02Z'
+                transition: claimed -> done
+                note: 'Created the Action Child Service unit: a class Action that receives the Base and binds the Action Entity published by Model''s Interface, holding nothing of its own.'
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/entity/action.py
+                  observed: 'Against a temporary prepared Instance: the Child is bound to exactly the Action Entity and is a subclass of the Base; a Action added through it was returned as that Entity with a stored identifier and read back by identifier with equal JSON; list returned only Action Entities including it; update, disable, enable, count and delete worked without passing the Entity; adding an instance of another Entity was refused with InvalidInputError.'
+            P3-G6-T15:
+              id: P3-G6-T15
+              source_id: 008
+              title: Realize the Position Child Service
+              description: Realize the Child Service bound to the Position Entity, receiving the Base and holding nothing else unless Behaviour specific to Position is required.
+              reason: Positions record every trade the system creates.
+              inputs:
+              - Published Position Entity
+              - Entity Service Base
+              skills: []
+              expected_result: The Position Child Service is complete and works through Storage.
+              depends_on:
+              - P3-G5-T15
+              - P3-G5-T14
+              - P1-G7-T01
+              - P2-G11-T01
+              constraints: []
+              acceptance: 'The Position Child Service is bound to exactly the Position Entity: records it returns are Position Entities, a Position added through it is read back by identifier equal to what was added, and an instance of another Entity is refused.'
+              status: done
+              log:
+              - at: '2026-10-08T03:07:19Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:08:02Z'
+                transition: claimed -> done
+                note: 'Created the Position Child Service unit: a class Position that receives the Base and binds the Position Entity published by Model''s Interface, holding nothing of its own.'
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/entity/position.py
+                  observed: 'Against a temporary prepared Instance: the Child is bound to exactly the Position Entity and is a subclass of the Base; a Position added through it was returned as that Entity with a stored identifier and read back by identifier with equal JSON; list returned only Position Entities including it; update, disable, enable, count and delete worked without passing the Entity; adding an instance of another Entity was refused with InvalidInputError.'
+        P3-G7:
+          id: P3-G7
+          title: Entity Service Interface
+          description: 'The gateway callers import from: everything a caller needs to call Actions, build requests, read results and catch errors without importing Model, Storage or Database. It publishes its own two groups, Service and Model, under the configured names, and the four groups Storage''s Interface republishes, and nothing else.'
+          area: Entity Service Interface
+          does: A caller reaches every Child Service, every bound Entity and the four Database groups through one exact Interface and nothing else.
+          constraints: []
+          task_count: 8
+          tasks:
+            P3-G7-T01:
+              id: P3-G7-T01
+              source_id: 008
+              title: Publish the Service group of Child Services
+              description: Publish, under the configured group name, a group holding exactly one Child Service for every Entity in Model's Entity Collection, each under its Entity's name, with names that are valid and collide with nothing in the group.
+              reason: A caller selects an Entity once by selecting its Child Service.
+              inputs:
+              - Child Services
+              - Model Entity Collection
+              skills: []
+              expected_result: The Service group holds every Child Service.
+              depends_on:
+              - P3-G6-T01
+              - P3-G6-T02
+              - P3-G6-T03
+              - P3-G6-T04
+              - P3-G6-T05
+              - P3-G6-T06
+              - P3-G6-T07
+              - P3-G6-T08
+              - P3-G6-T09
+              - P3-G6-T10
+              - P3-G6-T11
+              - P3-G6-T12
+              - P3-G6-T13
+              - P3-G6-T14
+              - P3-G6-T15
+              - P1-G7-T02
+              constraints: []
+              acceptance: The group holds one Child Service for every Entity of the Collection in Collection order and no other, creating one from the group yields a Service bound to that Entity, and a change in the Collection changes the group without a manual edit.
+              status: done
+              log:
+              - at: '2026-10-08T03:08:02Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:08:42Z'
+                transition: claimed -> done
+                note: Published the Service group as a namespace class named Service holding one Child Service class for every Entity in Model's Entity Collection, under the Entity's name, in Collection order.
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/interface.py
+                  observed: The group holds 15 Child Services in the same order as the Collection and no other; each is creatable and bound to its Entity; the names are valid and unique within the group; regenerating from the Collection reproduced the stored unit exactly, and shortening the Collection by one removed that Entity from the regenerated group without a manual edit.
+                decisions:
+                - unset: How the Interface unit is produced
+                  chosen: Emitted deterministically from Model's Entity Collection by a throwaway generator kept outside the repository, importing every Child under a private alias
+                  why: The groups must follow the Collection without a hand-written list, and private aliases keep the Child classes out of the published names.
+            P3-G7-T02:
+              id: P3-G7-T02
+              source_id: 008
+              title: Publish the Model group of bound Entities
+              description: Publish, under the configured group name, a group holding the Entity each Child Service binds, under the same name as its Child Service, as the original object Model's Interface publishes.
+              reason: A caller builds an Entity without importing Model.
+              inputs:
+              - Child Services
+              - Model Entity Exports
+              skills: []
+              expected_result: The Model group holds every bound Entity.
+              depends_on:
+              - P3-G7-T01
+              - P1-G7-T01
+              constraints: []
+              acceptance: For every Child Service the group holds an Entity under the same name, each is the identical object Model's Interface publishes and not a copy, and an Entity taken from it is accepted by its Child Service.
+              status: done
+              log:
+              - at: '2026-10-08T03:08:02Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:08:42Z'
+                transition: claimed -> done
+                note: Published the Model group as a namespace class named Model holding the Entity each Child Service binds, under the same name, as the original object Model's Interface publishes.
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/interface.py
+                  observed: For every one of the 15 Child Services the group holds an Entity of the same name that is the identical object Model's Interface publishes (not a copy) and is the object the Child binds; an Entity taken from the group was accepted by its Child Service.
+            P3-G7-T03:
+              id: P3-G7-T03
+              source_id: 008
+              title: Republish Storage's Value group
+              description: Publish Storage's Value group under its own name as the identical object Storage's Interface publishes, read from the Storage Interface each time rather than listed by hand.
+              reason: A caller builds a query value without importing Storage or Database.
+              inputs:
+              - Storage Value group
+              skills: []
+              expected_result: Entity Service's Interface offers the Value group unchanged.
+              depends_on:
+              - P3-G3-T01
+              - P3-G3-T06
+              constraints: []
+              acceptance: The Value group obtained from the Entity Service Interface is the same object as the one the Storage Interface publishes, and a Filter built from it is accepted by a Child Service.
+              status: done
+              log:
+              - at: '2026-10-08T03:08:02Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:08:42Z'
+                transition: claimed -> done
+                note: Republished Storage's Value group under its own name, imported from the Storage Interface so it is the identical object.
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/interface.py
+                  observed: database_value from the Entity Service Interface is the same object as the Storage Interface's and Database's; a Filter built from it was accepted by a Child Service list in the Child checks.
+            P3-G7-T04:
+              id: P3-G7-T04
+              source_id: 008
+              title: Republish Storage's Instance group
+              description: Publish Storage's Instance group under its own name as the identical object Storage's Interface publishes, read from the Storage Interface each time rather than listed by hand.
+              reason: A caller selects an Instance without importing Storage or Database.
+              inputs:
+              - Storage Instance group
+              skills: []
+              expected_result: Entity Service's Interface offers the Instance group unchanged.
+              depends_on:
+              - P3-G3-T02
+              - P3-G3-T06
+              constraints: []
+              acceptance: The Instance group obtained from the Entity Service Interface is the same object as the one the Storage Interface publishes, and a member of it selects the Instance of a Child Service call.
+              status: done
+              log:
+              - at: '2026-10-08T03:08:02Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:08:42Z'
+                transition: claimed -> done
+                note: Republished Storage's Instance group under its own name, imported from the Storage Interface so it is the identical object.
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/interface.py
+                  observed: database_instance from the Entity Service Interface is the same object as the Storage Interface's and Database's; its SQLITE member selected the Instance of a Child Service call.
+            P3-G7-T05:
+              id: P3-G7-T05
+              source_id: 008
+              title: Republish Storage's Result group
+              description: Publish Storage's Result group under its own name as the identical object Storage's Interface publishes, read from the Storage Interface each time rather than listed by hand.
+              reason: A caller reads a result without importing Storage or Database.
+              inputs:
+              - Storage Result group
+              skills: []
+              expected_result: Entity Service's Interface offers the Result group unchanged.
+              depends_on:
+              - P3-G3-T03
+              - P3-G3-T06
+              constraints: []
+              acceptance: The Result group obtained from the Entity Service Interface is the same object as the one the Storage Interface publishes.
+              status: done
+              log:
+              - at: '2026-10-08T03:08:02Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:08:42Z'
+                transition: claimed -> done
+                note: Republished Storage's Result group under its own name, imported from the Storage Interface so it is the identical object.
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/interface.py
+                  observed: database_result from the Entity Service Interface is the same object as the Storage Interface's and Database's.
+            P3-G7-T06:
+              id: P3-G7-T06
+              source_id: 008
+              title: Republish Storage's Error group
+              description: Publish Storage's Error group under its own name as the identical object Storage's Interface publishes, read from the Storage Interface each time rather than listed by hand.
+              reason: A caller catches a failure without importing Storage or Database.
+              inputs:
+              - Storage Error group
+              skills: []
+              expected_result: Entity Service's Interface offers the Error group unchanged.
+              depends_on:
+              - P3-G3-T04
+              - P3-G3-T06
+              constraints: []
+              acceptance: The Error group obtained from the Entity Service Interface is the same object as the one the Storage Interface publishes, and a failure raised through a Child Service is caught by a member of it.
+              status: done
+              log:
+              - at: '2026-10-08T03:08:02Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:08:42Z'
+                transition: claimed -> done
+                note: Republished Storage's Error group under its own name, imported from the Storage Interface so it is the identical object.
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/interface.py
+                  observed: database_error from the Entity Service Interface is the same object as the Storage Interface's and Database's; a failure raised through a Child Service (another Entity's instance) was caught by its InvalidInputError member.
+            P3-G7-T07:
+              id: P3-G7-T07
+              source_id: 008
+              title: Publish exactly the six groups
+              description: Make the Entity Service Interface publish only the Service group, the Model group and the four republished groups, and nothing else, running no check of its own.
+              reason: A fixed, small public surface keeps callers independent of the Base and of Storage.
+              inputs:
+              - Entity Service Interface contract
+              skills: []
+              expected_result: Importing the Entity Service Interface shows exactly the six groups.
+              depends_on:
+              - P3-G7-T01
+              - P3-G7-T02
+              - P3-G7-T03
+              - P3-G7-T04
+              - P3-G7-T05
+              - P3-G7-T06
+              constraints: []
+              acceptance: The published names are exactly the six groups, neither the Base nor the Storage gateway is reachable from them as a published member, and the Interface performs no validation or other work of its own.
+              status: done
+              log:
+              - at: '2026-10-08T03:08:42Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:08:42Z'
+                transition: claimed -> done
+                note: Made the Entity Service Interface publish only the Service group, the Model group and the four republished groups through its published list; the unit holds nothing else and performs no check.
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/interface.py
+                  observed: The published list is exactly Model, Service, database_error, database_instance, database_result, database_value; a star import brought in exactly those six names; neither the Base nor the Storage gateway is published; the unit defines no function of its own.
+            P3-G7-T08:
+              id: P3-G7-T08
+              source_id: 008
+              title: Keep loading the Entity Service Interface free of side effects
+              description: Make importing the Entity Service Interface open no connection and create no data and no file.
+              reason: Importing Entity Service must never touch storage, so any caller can load it safely.
+              inputs:
+              - Entity Service Interface
+              skills: []
+              expected_result: Importing the Entity Service Interface changes nothing outside the process.
+              depends_on:
+              - P3-G7-T07
+              - P3-G3-T07
+              constraints: []
+              acceptance: After the Entity Service Interface is imported, no connection has been opened and no storage file or record has been created.
+              status: done
+              log:
+              - at: '2026-10-08T03:08:42Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:08:42Z'
+                transition: claimed -> done
+                note: 'Confirmed that loading the Entity Service Interface performs no work of its own: importing it, and creating Child Services, opens no connection and creates no data or file.'
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/interface.py
+                  observed: With the SQLite connection function watched, importing the Interface and creating all 15 Child Services opened no connection and added nothing to the working directory.
+        P3-G8:
+          id: P3-G8
+          title: Entity Service documentation
+          description: The documentation of Entity Service, in the section order its Definition lists.
+          area: Entity Service documentation
+          does: A caller can learn, use and verify Entity Service from its documentation alone.
+          constraints: []
+          task_count: 4
+          tasks:
+            P3-G8-T01:
+              id: P3-G8-T01
+              source_id: 008
+              title: Write the Entity Service Overview section
+              description: Explain in one paragraph what Entity Service is and why it exists, with one simple example.
+              reason: A reader needs the purpose of Entity Service before its details.
+              inputs:
+              - Published Entity Service Interface
+              skills: []
+              expected_result: The Entity Service Overview section exists.
+              depends_on:
+              - P3-G7-T07
+              constraints: []
+              acceptance: The section holds one paragraph on what Entity Service is and why it exists and one simple example, and the example runs with the real behaviour.
+              status: done
+              log:
+              - at: '2026-10-08T03:10:12Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:11:22Z'
+                transition: claimed -> done
+                note: 'Wrote the Entity Service Overview section: one paragraph on what Entity Service is and why it exists, and one simple example that adds a User through the User Child Service and reads it back.'
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/README.md
+                  observed: The example printed '2 ada'. Every Python example in the Entity Service README (8 blocks) was run against a freshly prepared database in a temporary Component root and ran without error.
+            P3-G8-T02:
+              id: P3-G8-T02
+              source_id: 008
+              title: Write the Entity Service Interface section
+              description: Give every group with its members — every Child Service and its Actions, every bound Entity, and every member of the four Storage groups — an explanation and one example.
+              reason: Callers use Entity Service through its documentation.
+              inputs:
+              - Published Entity Service Interface
+              skills: []
+              expected_result: The Entity Service Interface section exists.
+              depends_on:
+              - P3-G7-T07
+              constraints: []
+              acceptance: Every group and member appears with an explanation and an example, and the content matches the published surface.
+              status: done
+              log:
+              - at: '2026-10-08T03:10:12Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:11:22Z'
+                transition: claimed -> done
+                note: 'Wrote the Entity Service Interface section: the six published names; the Service group with all 15 Child Services; a table of the 12 Actions with their parameters and the example for each; the Model group; and an example for each of the four Storage groups.'
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/README.md
+                  observed: The listed Child Services and Actions match the published surface; the Service example printed all 15 Child Services; the Action example printed Analyst, False True, ['Admin', 'Alan'], 2, 100, AUD USD, Alan, 0; the Model example printed 'XTS True'; the group example printed 1, CommandResult and the refusal 'The entity must be an instance of User'. Every Python example in the Entity Service README (8 blocks) was run against a freshly prepared database in a temporary Component root and ran without error.
+            P3-G8-T03:
+              id: P3-G8-T03
+              source_id: 008
+              title: Write the Entity Service Use section
+              description: Show how a caller imports a Child Service and how a Child Service adds Behaviour of its own.
+              reason: Callers and authors must see the one correct way to use and extend a Child Service.
+              inputs:
+              - Published Entity Service Interface
+              skills: []
+              expected_result: The Entity Service Use section exists.
+              depends_on:
+              - P3-G7-T07
+              constraints: []
+              acceptance: The section demonstrates importing a Child Service and adding Behaviour specific to one Entity, and the demonstration matches the real behaviour.
+              status: done
+              log:
+              - at: '2026-10-08T03:10:12Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:11:22Z'
+                transition: claimed -> done
+                note: 'Wrote the Entity Service Use section: how a caller imports and creates a Child Service, and how a Child Service gets Behaviour of its own by subclassing it while keeping its Base.'
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/README.md
+                  observed: The first example printed 8 (currencies counted); the extension example printed ['JPY']. Every Python example in the Entity Service README (8 blocks) was run against a freshly prepared database in a temporary Component root and ran without error.
+            P3-G8-T04:
+              id: P3-G8-T04
+              source_id: 008
+              title: Write the Entity Service Verify section
+              description: Explain how to see that Entity Service matches Model's Entity Collection and Storage's Interface.
+              reason: Reviewers and callers need a way to confirm Entity Service is complete.
+              inputs:
+              - Published Entity Service Interface
+              - Model Entity Collection
+              skills: []
+              expected_result: The Entity Service Verify section exists.
+              depends_on:
+              - P3-G7-T08
+              constraints: []
+              acceptance: Following the section shows one Child Service for every Entity of the Collection and four republished groups identical to Storage's, with the results the section states.
+              status: done
+              log:
+              - at: '2026-10-08T03:10:12Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:11:22Z'
+                transition: claimed -> done
+                note: 'Wrote the Entity Service Verify section: a script that checks one Child Service per Entity of Model''s Entity Collection bound to that Entity, the Model group''s identity with Model''s Entities, the Base''s Actions equal to Storage''s Entity-taking Actions, the four groups identical to Storage''s, and the six published names.'
+                evidence:
+                  locations:
+                  - logic/logic/services/entity/README.md
+                  observed: The script printed verified. Every Python example in the Entity Service README (8 blocks) was run against a freshly prepared database in a temporary Component root and ran without error.
+        P3-G9:
+          id: P3-G9
+          title: Logic Interface
+          description: 'Logic''s outward surface: one entry for every Service listed in Logic Preferences, under that Service''s configured name, each entry being that Service''s own Interface and nothing else. Logic Interface defines no Action, wrapper or rule of its own and runs no check.'
+          area: Logic Interface publication
+          does: A consumer finds every Service through one exact gateway and nothing else.
+          constraints: []
+          task_count: 6
+          tasks:
+            P3-G9-T01:
+              id: P3-G9-T01
+              source_id: 008
+              title: Publish the Entity Service entry
+              description: Publish the Entity Service's own Interface under that Service's configured name, locating it from that Service's own Preferences.
+              reason: A consumer reaches every Child Service through Logic.
+              inputs:
+              - Entity Service Interface
+              - Entity Service configured name
+              skills: []
+              expected_result: Logic's Interface offers Entity Service under its name.
+              depends_on:
+              - P3-G7-T08
+              constraints: []
+              acceptance: The entry carries the configured name and is the identical object the Entity Service Interface is, never a copy, wrapper or added Action.
+              status: done
+              log:
+              - at: '2026-10-08T03:08:52Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:09:32Z'
+                transition: claimed -> done
+                note: Published the Entity Service entry in Logic's Interface by importing the Entity Service's own Interface under that Service's configured name Entity.
+                evidence:
+                  locations:
+                  - logic/logic/interface.py
+                  observed: logic.interface.Entity is the identical object (the module) logic.services.entity.interface, not a copy, wrapper or added Action.
+                decisions:
+                - unset: How Logic's Interface is exposed
+                  chosen: As its own unit imported by consumers (the package root stays empty), publishing the Services' Interface modules under their configured names
+                  why: Logic Preferences name the import form for every listed Service, and a package root that re-exported it would load it whenever a Service is imported.
+            P3-G9-T02:
+              id: P3-G9-T02
+              source_id: 008
+              title: Publish the Storage Service entry
+              description: Publish the Storage Service's own Interface under that Service's configured name, locating it from that Service's own Preferences.
+              reason: A consumer reaches the Storage gateway through Logic.
+              inputs:
+              - Storage Service Interface
+              - Storage Service configured name
+              skills: []
+              expected_result: Logic's Interface offers Storage Service under its name.
+              depends_on:
+              - P3-G3-T07
+              constraints: []
+              acceptance: The entry carries the configured name and is the identical object the Storage Service Interface is, never a copy, wrapper or added Action.
+              status: done
+              log:
+              - at: '2026-10-08T03:08:52Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:09:32Z'
+                transition: claimed -> done
+                note: Published the Storage Service entry in Logic's Interface by importing the Storage Service's own Interface under that Service's configured name Storage.
+                evidence:
+                  locations:
+                  - logic/logic/interface.py
+                  observed: logic.interface.Storage is the identical object (the module) logic.services.storage.interface, not a copy, wrapper or added Action.
+            P3-G9-T03:
+              id: P3-G9-T03
+              source_id: 008
+              title: Publish exactly one entry per listed Service
+              description: Make Logic Interface publish exactly one entry for every Service listed in Logic Preferences and nothing else, so that adding or removing a listed Service changes the entries without a change to the structure.
+              reason: Consumers depend on one exact gateway instead of reinterpreting each realization.
+              inputs:
+              - Logic Interface contract
+              - Logic Preferences Service list
+              skills: []
+              expected_result: Importing Logic's Interface shows exactly the listed Services.
+              depends_on:
+              - P3-G9-T01
+              - P3-G9-T02
+              constraints: []
+              acceptance: The published names are exactly one per listed Service under its configured name, nothing else is published, and the Interface runs no check and defines no Action of its own.
+              status: done
+              log:
+              - at: '2026-10-08T03:08:52Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:09:32Z'
+                transition: claimed -> done
+                note: Made Logic's Interface publish exactly one entry per listed Service, through its published list, with nothing else and no check or Action of its own.
+                evidence:
+                  locations:
+                  - logic/logic/interface.py
+                  observed: The published list is Entity and Storage, matching the two Services in Logic Preferences and their configured names in order; a star import brought in exactly those two; the unit defines no function or class.
+            P3-G9-T04:
+              id: P3-G9-T04
+              source_id: 008
+              title: Keep Service names and directories unique
+              description: Ensure no two Services share a name or a directory, and that a collision stops generation with a clear configuration error instead of a silent rename.
+              reason: Logic Interface cannot publish two Services under one name.
+              inputs:
+              - Logic Preferences Service list
+              - Service configured names
+              skills: []
+              expected_result: Every Service has its own name and directory.
+              depends_on:
+              - P3-G3-T06
+              - P3-G7-T07
+              constraints: []
+              acceptance: Every listed Service has a distinct name and a distinct directory, and no name was altered to avoid a collision.
+              status: done
+              log:
+              - at: '2026-10-08T03:08:52Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:09:32Z'
+                transition: claimed -> done
+                note: Confirmed that every Service has its own name and directory and that none was altered to avoid a collision.
+                evidence:
+                  locations:
+                  - logic/logic/interface.py
+                  - logic/logic/services/entity/
+                  - logic/logic/services/storage/
+                  observed: The configured names Entity and Storage are distinct and so are the directories entity and storage; both directories exist under the Services directory; no suffix or rename was applied.
+            P3-G9-T05:
+              id: P3-G9-T05
+              source_id: 008
+              title: Keep Service imports pointing away from Logic Interface
+              description: Make Logic Interface import Service Interfaces, make no Service import Logic Interface, and let a collaborating Service import the other Service's Interface directly.
+              reason: One-way imports keep Logic Interface and its Services free of a dependency cycle.
+              inputs:
+              - Logic Interface
+              - Service Interfaces
+              skills: []
+              expected_result: Importing a Service on its own never loads Logic Interface.
+              depends_on:
+              - P3-G9-T03
+              - P3-G7-T08
+              - P3-G3-T07
+              constraints: []
+              acceptance: Importing the Entity Service Interface or the Storage Service Interface on its own does not load Logic's Interface, and importing Logic's Interface loads each Service Interface once.
+              status: done
+              log:
+              - at: '2026-10-08T03:08:52Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:09:32Z'
+                transition: claimed -> done
+                note: 'Confirmed Service imports point away from Logic''s Interface: Logic''s Interface imports the Service Interfaces and no Service imports it.'
+                evidence:
+                  locations:
+                  - logic/logic/interface.py
+                  observed: In fresh processes, importing the Entity Service Interface, the Storage Service Interface, or the Base alone left logic.interface unloaded; importing Logic's Interface loaded each of the two Service Interfaces; no Service source contains an import of Logic's Interface.
+            P3-G9-T06:
+              id: P3-G9-T06
+              source_id: 008
+              title: Route all persistence through Storage Service
+              description: Ensure that every Logic Service that needs Database uses the Storage Service Interface and that only Storage Service calls Database's Interface.
+              reason: One gateway keeps Database access consistent and replaceable across Logic.
+              inputs:
+              - Storage Service Interface
+              - Entity Service Base
+              skills: []
+              expected_result: Persistence is reachable only by way of Storage.
+              depends_on:
+              - P3-G5-T15
+              - P3-G3-T07
+              constraints: []
+              acceptance: A call on any Child Service reaches Database only as the corresponding Storage Action call, and no Service other than Storage Service obtains or uses Database's Interface.
+              status: done
+              log:
+              - at: '2026-10-08T03:08:52Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:09:32Z'
+                transition: claimed -> done
+                note: 'Confirmed all persistence goes through Storage: only Storage Service''s units import Database, and a call on any Child Service reaches Database as exactly the corresponding Storage Action call.'
+                evidence:
+                  locations:
+                  - logic/logic/services/storage/core.py
+                  - logic/logic/services/storage/interface.py
+                  - logic/logic/services/entity/base.py
+                  observed: The only files importing Database are Storage's core and interface units; with a recording stand-in for the Database access held by each Child's Storage gateway, every one of the 12 inherited Actions of all 15 Child Services produced exactly one Database call of the same name.
+        P3-G10:
+          id: P3-G10
+          title: Logic documentation
+          description: The root documentation of Logic, in the section order the Logic Definition lists.
+          area: Component documentation
+          does: A consumer can learn, set up, use and verify Logic from its documentation alone.
+          constraints: []
+          task_count: 7
+          tasks:
+            P3-G10-T01:
+              id: P3-G10-T01
+              source_id: 008
+              title: Write the Logic Overview section
+              description: Explain in one paragraph what Logic is and why it exists, with one simple example.
+              reason: A reader needs the purpose of Logic before its details.
+              inputs:
+              - Published Logic Interface
+              skills: []
+              expected_result: The Logic Overview section exists.
+              depends_on:
+              - P3-G9-T03
+              constraints: []
+              acceptance: The section holds one paragraph on what Logic is and why it exists and one simple example, and the example runs with the real behaviour.
+              status: done
+              log:
+              - at: '2026-10-08T03:11:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:13:46Z'
+                transition: claimed -> done
+                note: 'Wrote the Logic Overview section: one paragraph on what Logic is and why it exists, and one simple example that selects the User Child Service through Logic''s Interface, adds a User and lists the Users.'
+                evidence:
+                  locations:
+                  - logic/README.md
+                  observed: The example printed '2 ['admin', 'ada']'. Every Python example in the Logic README (4 blocks) was run against a freshly prepared database in a temporary Component root and ran without error.
+            P3-G10-T02:
+              id: P3-G10-T02
+              source_id: 008
+              title: Write the Logic Interface section
+              description: List every name Logic Interface publishes.
+              reason: Consumers must know exactly what Logic offers.
+              inputs:
+              - Published Logic Interface
+              skills: []
+              expected_result: The Logic Interface section exists.
+              depends_on:
+              - P3-G9-T03
+              constraints: []
+              acceptance: Every published name appears and no unpublished name does, and the listing matches the published surface.
+              status: done
+              log:
+              - at: '2026-10-08T03:11:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:13:46Z'
+                transition: claimed -> done
+                note: 'Wrote the Logic Interface section: the two published names Entity and Storage, that the package root publishes nothing, and an example importing both.'
+                evidence:
+                  locations:
+                  - logic/README.md
+                  observed: The listing equals logic.interface.__all__ (Entity, Storage) and names nothing unpublished; the example printed the two Service Interface module names. Every Python example in the Logic README (4 blocks) was run against a freshly prepared database in a temporary Component root and ran without error.
+            P3-G10-T03:
+              id: P3-G10-T03
+              source_id: 008
+              title: Write the Logic Services section
+              description: For every Service, give its name and links to its own documentation, its Definition and its Preferences, never a copy of its contract.
+              reason: Consumers find each Service's own documentation from one place.
+              inputs:
+              - Service documentation
+              - Service Definitions and Preferences
+              skills: []
+              expected_result: The Services section exists.
+              depends_on:
+              - P3-G4-T04
+              - P3-G8-T04
+              - P3-G9-T03
+              constraints: []
+              acceptance: Every listed Service appears with its name and three links that lead to existing documents, and no Service contract is copied into the section.
+              status: done
+              log:
+              - at: '2026-10-08T03:11:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:13:46Z'
+                transition: claimed -> done
+                note: 'Wrote the Logic Services section: for each listed Service its name and links to its documentation, its Definition and its Preferences, with no copy of any contract.'
+                evidence:
+                  locations:
+                  - logic/README.md
+                  observed: Both Services appear with three links each; all six links resolve to existing documents (checked from the Component directory); no contract text is copied.
+            P3-G10-T04:
+              id: P3-G10-T04
+              source_id: 008
+              title: Write the Logic Setup section
+              description: Explain how to install Logic and what it needs next to it.
+              reason: A consumer must be able to install and load Logic.
+              inputs:
+              - Logic library package
+              skills: []
+              expected_result: The Setup section exists.
+              depends_on:
+              - P3-G1-T01
+              - P3-G9-T03
+              constraints: []
+              acceptance: Following the steps from a clean environment results in a working installation of Logic with the Components it needs.
+              status: done
+              log:
+              - at: '2026-10-08T03:11:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:13:46Z'
+                transition: claimed -> done
+                note: 'Wrote the Logic Setup section: requirements (Python 3.14 or newer, uv, the sibling Model and Database Components, a prepared Database), installing, and declaring Logic as a path dependency of another project.'
+                evidence:
+                  locations:
+                  - logic/README.md
+                  observed: In a clean copy of the repository the steps were followed as written (Database sync and prepare, then Logic sync) and the Logic README Verify script and both Service Verify scripts printed verified; a project outside the repository that declares only a path dependency on Logic installed Database and Model and imported Logic's Interface.
+            P3-G10-T05:
+              id: P3-G10-T05
+              source_id: 008
+              title: Write the Logic Use section
+              description: Explain how a consumer imports from Logic Interface.
+              reason: Consumers must see the one correct way to reach a Service.
+              inputs:
+              - Published Logic Interface
+              skills: []
+              expected_result: The Logic Use section exists.
+              depends_on:
+              - P3-G9-T03
+              constraints: []
+              acceptance: The section demonstrates importing each published entry, and every demonstration matches the real behaviour.
+              status: done
+              log:
+              - at: '2026-10-08T03:11:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:13:46Z'
+                transition: claimed -> done
+                note: 'Wrote the Logic Use section: how a consumer imports Logic Interface and uses an Entity Child Service and the Storage gateway through it.'
+                evidence:
+                  locations:
+                  - logic/README.md
+                  observed: The example printed 8 and 8 (currency counts through the Child Service and through Storage). Every Python example in the Logic README (4 blocks) was run against a freshly prepared database in a temporary Component root and ran without error.
+            P3-G10-T06:
+              id: P3-G10-T06
+              source_id: 008
+              title: Write the Logic Verify section
+              description: Explain how to see that Logic Interface publishes exactly every listed Service.
+              reason: Reviewers and consumers need a way to confirm Logic is complete.
+              inputs:
+              - Published Logic Interface
+              - Logic Preferences Service list
+              skills: []
+              expected_result: The Logic Verify section exists.
+              depends_on:
+              - P3-G9-T03
+              - P3-G9-T04
+              constraints: []
+              acceptance: Following the section on the Component shows exactly one entry per listed Service and each entry identical to its Service's Interface, with the results the section states.
+              status: done
+              log:
+              - at: '2026-10-08T03:11:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+              - at: '2026-10-08T03:13:46Z'
+                transition: claimed -> done
+                note: 'Wrote the Logic Verify section: a script that checks Logic Interface publishes exactly one entry per listed Service, that each entry is the identical Service Interface object, and that no Service imports Logic Interface.'
+                evidence:
+                  locations:
+                  - logic/README.md
+                  observed: The script printed verified, including in the clean copy. Every Python example in the Logic README (4 blocks) was run against a freshly prepared database in a temporary Component root and ran without error.
+            P3-G10-T07:
+              id: P3-G10-T07
+              source_id: 008
+              title: Write the Logic Troubleshooting section
+              description: Describe real problems a consumer can meet and how to fix them.
+              reason: Consumers need the cause and remedy for the failures Logic itself can produce.
+              inputs:
+              - Logic Interface
+              - Service Interfaces
+              skills: []
+              expected_result: The Troubleshooting section exists.
+              depends_on:
+              - P3-G9-T05
+              - P3-G9-T06
+              - P3-G1-T03
+              constraints: []
+              acceptance: Each symptom appears with its cause and remedy, concerns Logic only, and matches behaviour reproduced against the Component.
+              status: done
+              log:
+              - at: '2026-10-08T03:11:22Z'
+                transition: todo -> claimed
+                note: Claimed by Develop (execution 009) before changing the result.
+
+              - at: '2026-10-08T03:13:46Z'
+                transition: claimed -> done
+                note: 'Wrote the Logic Troubleshooting section: eight problems a consumer can meet, with cause and remedy, all concerning Logic only.'
+                evidence:
+                  locations:
+                  - logic/README.md
+                  observed: 'Each symptom was reproduced: the missing-package import error outside the Component''s environment, the package-root import error, no such table before preparation, another Entity''s instance refused by a Child Service, a string refused by Storage, update with no stored identifier refused, the absent native command on a Child Service; the configuration error row restates Database''s own error and was reproduced in the Database Tasks.'
