@@ -47,6 +47,12 @@ content:
       development: "completed"
       review: "satisfied"
       completed_at: "2026-10-08T07:55:35Z"
+    P3:
+      id: "P3"
+      planning: "completed"
+      development: "completed"
+      review: "satisfied"
+      completed_at: "2026-10-08T08:44:24Z"
   log:
     - id: "001"
       skill: "my-interface-configure"
@@ -457,4 +463,163 @@ content:
           - "A Target Initial Data value that is not concrete is copied as an empty string, and no value is generated: held"
           - "A missing record returns null, never an error: held"
           - "Loading Interface opens no connection and creates no data or file: held"
+    - id: "010"
+      skill: "my-interface-implement"
+      phase: null
+      event: "implement"
+      outcome: "completed"
+      started_at: "2026-10-08T08:28:36Z"
+      completed_at: "2026-10-08T08:44:38Z"
+      duration: "16:02"
+      skills_used: []
+      open_questions: ["011-OQ1"]
+      blockers: []
+      report: "Coordinated Plan, Develop and Review for phase P3 (Logic). Config was valid, so Configure was not invoked. Plan created 7 Groups and 28 Tasks; Develop completed all 28; Review raised no Finding and judged the phase satisfied. One Open Question is associated (011-OQ1, resolved by Develop with its own proposal and kept for the Human to confirm); no Blockers."
+      data:
+        phases: ["3"]
+        resolved_phases: ["P3"]
+        configure_invoked: false
+        operations:
+          - phase: "P3"
+            skill: "my-interface-plan"
+            log_entry: "011"
+            outcome: "completed"
+          - phase: "P3"
+            skill: "my-interface-develop"
+            log_entry: "012"
+            outcome: "completed"
+          - phase: "P3"
+            skill: "my-interface-review"
+            log_entry: "013"
+            outcome: "satisfied"
+        counts:
+          open_questions: 1
+          blockers: 0
+    - id: "011"
+      skill: "my-interface-plan"
+      parent_id: "010"
+      phase: "P3"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-10-08T08:28:53Z"
+      completed_at: "2026-10-08T08:31:09Z"
+      duration: "2:16"
+      skills_used: []
+      open_questions: ["011-OQ1"]
+      blockers: []
+      decisions: []
+      report: "Created the one Plan for phase P3 (Logic): 7 Groups and 28 atomic Tasks in the Plan Config, all status todo, dependencies explicit and acyclic (including the completed Model and Database Interface Tasks of phases P1 and P2). Aggregate Planning progress for P3 set to completed. The P1 and P2 Plans and their Tasks were not touched."
+      data:
+        phase_resolution: "Requested phase '3' resolved to Target phase P3 (Logic, enabled, ready); its prerequisite phases P1 and P2 are planned, developed and reviewed satisfied."
+        changes:
+          - kind: "addition"
+            scope: "Plan P3"
+            reason: "No Plan existed for P3; created from the Target phase goal and the Logic and Entity Service Definitions and Preferences."
+          - kind: "addition"
+            scope: "Groups P3-G1 to P3-G7 and Tasks P3-G1-T1 to P3-G7-T1 (28 Tasks)"
+            reason: "Decomposition: library package (1), Base (3), one Child Service per Entity (15), Entity Service Interface (3), Logic Interface (1), documentation (4), quality standards (1)."
+          - kind: "preservation"
+            scope: "Plans P1 (26 Tasks) and P2 (31 Tasks), all done"
+            reason: "Phases P1 and P2 were not selected and are unchanged; P3 depends on their completed Model Interface and Database Interface Tasks."
+        task_count: 28
+        group_count: 7
+        root_task_count: 85
+        open_questions:
+          - id: "011-OQ1"
+            skill: null
+            current_choice: "The Plan states the Entity Service Preferences as written: a mirrored Action drops its entity parameter when the Database Operation takes the Entity class and keeps it, checked against the bound Entity, when it takes an Entity instance. Develop decides how to tell the two from what Database Interface publishes, as its own proposal, and records the decision."
+            alternative: "Have the Database Interface publish its entity parameters with distinguishable types (an Entity class for most Operations, an Entity instance for add and update) through a new Task in the Database Plan that replaces the completed Interface Task, so that Base can follow the published types."
+            reason: "The published Database Interface types every entity parameter alike, while the Entity Service Preferences derive the Actions from that typing; Logic cannot change Database, and a heuristic would silently depend on text."
+        related_open_questions: ["004-OQ1", "007-OQ1", "007-OQ2", "008-OQ1"]
+    - id: "012"
+      skill: "my-interface-develop"
+      parent_id: "010"
+      phase: "P3"
+      event: "develop"
+      outcome: "completed"
+      started_at: "2026-10-08T08:32:04Z"
+      completed_at: "2026-10-08T08:39:53Z"
+      duration: "7:49"
+      skills_used: []
+      open_questions: []
+      blockers: []
+      decisions: ["P3-G1-T1", "P3-G2-T1", "P3-G7-T1"]
+      report: "Developed all 28 Tasks of phase P3 (Logic) in dependency order: package with Model and Database path dependencies, Base with its Actions mirrored from Database, bound-Entity checking, the 15 Child Services, the Service and Model groups and the republished Database groups, the five-name Entity Service Interface, the one-name Logic Interface, both documents, and quality standards. Every Task is done with evidence in its Task Log. The Logic Component is at logic/ (package logic/logic, Entity Service at logic/logic/services/entity, documentation logic/README.md and logic/logic/services/entity/README.md). Observed at the end: formatter, linter and type checker report no findings; regeneration of the Child Services, the Entity Service Interface and both documents gives zero difference; all 36 documentation examples run twice as separate processes on a scratch copy and both Verify scripts pass; reads through Child Services on the project default Instance returned the stored Entities. Conformance is not judged here; Review establishes it."
+      data:
+        phase: "P3"
+        tasks_done: 28
+        tasks_total: 28
+        component_location: "logic/"
+        resolved_open_questions:
+          - id: "011-OQ1"
+            resolution: "Develop resolved it as its own proposal: Base follows the type Database publishes for the entity parameter when it says anything (the Entity class type means the class is supplied by the Child Service, any other type means an instance is kept and checked), and when Database publishes it as Any the documentation text of the Operation decides (one new Entity instance or an Entity instance). With the Database Interface as delivered this keeps entity for add and update and drops it for the other ten Actions. The Human may still ask for precise types in the Database Interface so no text is relied on."
+        related_open_questions: ["004-OQ1", "007-OQ1", "007-OQ2", "008-OQ1"]
+    - id: "013"
+      skill: "my-interface-review"
+      parent_id: "010"
+      phase: "P3"
+      event: "review"
+      outcome: "in progress"
+      started_at: "2026-10-08T08:40:45Z"
+      outcome: "satisfied"
+      started_at: "2026-10-08T08:40:45Z"
+      completed_at: "2026-10-08T08:44:24Z"
+      duration: "3:39"
+      skills_used: []
+      open_questions: []
+      blockers: []
+      report: "Reviewed phase P3 (Logic) against its Plan and the Logic and Entity Service Review categories with independent observations on a clean copy installed from the lock files: both Review categories checked programmatically against transcribed expectations, every Child Service Action compared with the direct Database call (results and errors) for all 15 Entities, 150 refusals of another Entity, forwarding proven with a spy, Base followed a stand-in Database Interface, loading side-effect free, both documents reviewed with all 36 examples run twice, technical conformance and zero-difference regeneration. No Finding was raised. Outcome satisfied."
+      data:
+        phase: "P3"
+        scope: "Plan P3 (7 Groups, 28 Tasks), the Logic Review category (5 observations) and the Entity Service Review category (9 observations), judged against the generated Logic Component."
+        findings: []
+        outcome: "satisfied"
+        outcome_basis: "No Finding was raised; every Task acceptance and every observation of both Review categories is established by an observation made in this Review; technical and repeatable conformance holds."
+        observations_made:
+          - "Static review of both Review categories on a clean copy of Model, Database and Logic installed from their lock files: Logic Interface publishes exactly Entity, the identical Entity Service Interface object; no Service imports the Logic Interface; Database is imported only by Entity Service Base and Interface; one Service directory; Entity Service Interface publishes exactly Service, Model and Database's three groups, nothing else reachable; 15 Child Services and 15 Model entries in Collection order, every Model entry and Database group the identical source object; 12 Actions with the names, order, parameters, defaults and documentation of Database's Entity Operations (expected values transcribed from the Database Preferences, not derived from the code under review) and no Command Operation; unit and structure names valid, unique and following the patterns; every Child binds exactly its Entity, receives Base and defines only the binding; directory structure, empty initialisers, interface files holding only imports, the namespaces and the published list."
+          - "Behaviour review on the scratch copy with prepared storage: for all 15 Entities the Child Service results (list, count, get, aggregates, filters, orders, limit, Instance) equal the direct Database calls; nine failure kinds are raised with the identical type and message; add, update, enable, disable, delete and truncate work end to end and the data is restored; 150 refusals (another Entity's instance, the Entity class, a string, None, an integer) across all 15 Entities for add and update with data never changed; a spy test proves every Action reaches the one Database object with exactly the bound Entity and the arguments given, by keyword or position, with no default, Instance, retry or validation added."
+          - "Independent check that the Actions follow the Database Interface: Base reloaded against a stand-in Interface (class-typed, object-typed and command-style methods) produced exactly the matching Actions and checked the instance-typed one."
+          - "Loading: in an empty directory with the database connect call trapped, loading the Logic Interface opened no connection, created nothing and started no thread."
+          - "Documentation: section order of both documents; every Child Service, Action (heading equal to the real signature, example calling it), Model, database_value member, database_instance and each of the 8 database_error kinds has an example; no Base or Database internal in the Overview and Interface sections; the Services section links without copying a contract; all local links resolve in the repository; all 36 examples run twice as separate processes and both Verify scripts pass."
+          - "Technical: formatter, linter, type checker, lock consistency, wheel build and clean install pass; declared dependencies (database, model) equal the packages imported directly and are local path dependencies; zero-difference regeneration of the Child Services, the Entity Service Interface and both documents with the generation scripts used by Develop; the Model and Database sources are identical to the reviewed ones and the real Database storage still holds 15 Tables and 23 records."
+        notes_about_the_review:
+          - "Base decides whether an Action keeps its entity parameter from the type Database publishes for it and, because the delivered Database Interface publishes every entity parameter as Any, from the Operation's documentation text. It works and is recorded as a decision (Open Question 011-OQ1), but a change of wording in those two docstrings, without precise types, would change the Actions; this is reported here and not recorded as a Finding because no stated requirement is unmet."
+          - "The source holds one type-checker suppression comment, on the assignment of the signature to the generated Action, which the standard typing of functions does not allow."
+          - "Links from the Logic documentation to the Definitions and Preferences resolve only inside the repository, not in the scratch copy; they were checked in the repository."
+          - "Zero-difference regeneration is observed with generation scripts that live outside the project and rest on the same transcription of the Model Entity Collection; the independent static review compares the generated output with Model and Database directly."
+        acceptance_established:
+          - tasks: ["P3-G1-T1"]
+            by: "Clean install of all three Components from their lock files, import of Logic with Model and Database through the local path dependencies, wheel build, declared dependencies equal to directly imported packages."
+          - tasks: ["P3-G2-T1"]
+            by: "Static comparison of the Actions with Database's Entity Operations (transcribed expectations) and the stand-in Database Interface test."
+          - tasks: ["P3-G2-T2"]
+            by: "Parity of results and errors with direct Database calls for all 15 Entities, spy test of forwarded arguments, one Database object, creation opening no connection."
+          - tasks: ["P3-G2-T3"]
+            by: "150 refusals before Database was reached with data unchanged; own-Entity instances accepted."
+          - tasks: ["P3-G3-T1", "P3-G3-T2", "P3-G3-T3", "P3-G3-T4", "P3-G3-T5", "P3-G3-T6", "P3-G3-T7", "P3-G3-T8", "P3-G3-T9", "P3-G3-T10", "P3-G3-T11", "P3-G3-T12", "P3-G3-T13", "P3-G3-T14", "P3-G3-T15"]
+            by: "Binding, Base ancestry, unit and structure names and parity of every Action for each of the 15 Child Services."
+          - tasks: ["P3-G4-T1", "P3-G4-T2", "P3-G4-T3"]
+            by: "Identity of every Model entry and Database group with its source, exactly five published names, nothing else reachable, loading side-effect free."
+          - tasks: ["P3-G5-T1"]
+            by: "Exactly one published name equal to the identical Entity Service Interface, import analysis of all source, unique Service directory, side-effect-free loading."
+          - tasks: ["P3-G6-T1", "P3-G6-T2", "P3-G6-T3", "P3-G6-T4"]
+            by: "Documentation review of both documents and execution of all 36 examples twice, including both Verify scripts."
+          - tasks: ["P3-G7-T1"]
+            by: "Formatter, linter, type checker, lock consistency, zero-difference regeneration, all examples still running."
+        logic_review_category_observations:
+          - "Logic Interface publishes exactly one entry for every Service listed in Logic Preferences, under its configured name, and nothing else: held"
+          - "Every entry is the identical Interface object of its Service: held"
+          - "No Service other than Entity Service imports Database Interface: held"
+          - "No Service imports Logic Interface: held"
+          - "No two Services share a name or directory: held"
+        entity_service_review_category_observations:
+          - "Entity Service Interface publishes exactly Service (one Child Service per Entity), Model, and Database's Value, Instance and Error groups, and nothing else: held"
+          - "Every object in Model and every republished group is the identical object its source Interface publishes: held"
+          - "Base has exactly one Action for every Entity Operation of Database's Interface group, in Database's order, with the same name: held"
+          - "Each Action has its Operation's parameter names, order and defaults, without the Entity class parameter: held"
+          - "Each Action returns its Operation's result and raises its errors unchanged, and rejects an instance of another Entity with the Invalid Input error: held"
+          - "Every Action uses the one Database object Base holds, and adds no validation, retry or Instance selection of its own: held"
+          - "Every Child Service unit and structure name follows the configured patterns, and every name is valid and unique: held"
+          - "Every Child Service binds exactly its own Entity and receives Base: held"
+          - "Loading the Interface opens no connection and creates no data or file: held"
 
