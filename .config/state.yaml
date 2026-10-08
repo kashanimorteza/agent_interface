@@ -1,0 +1,241 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".config/state.yaml"
+  path_note: "Mutable Workflow position, Phase progress, and execution Log."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current State Component and the active operation's ownership rules."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read active, then the Phase selected by stable Target phase identifier, then the Log Entries by identifier."
+  selection: "A requested phase resolves to the phases entry keyed by that phase identifier; a Log Entry resolves by its identifier."
+  absence: "No matching phases entry means no progress is recorded for that phase."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "active"
+  - "phases"
+  - "log"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  active: "Current Workflow position."
+  phases: "Aggregate progress for each Target phase."
+  log: "Recorded Skill executions and their outcomes."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  active:
+    mode: "implementing"
+    phase: "P1"
+    mode_reason: "Implement is coordinating Plan, Develop, and Review for phase P1."
+    set_by: "my-interface-implement"
+    set_at: "2026-10-08T04:13:07Z"
+  phases:
+    P1:
+      id: "P1"
+      planning: "completed"
+      development: "completed"
+      review: "satisfied"
+      completed_at: "2026-10-08T04:37:45Z"
+  log:
+    - id: "001"
+      skill: "my-interface-configure"
+      event: "configure"
+      outcome: "completed"
+      started_at: "2026-10-08T04:06:48Z"
+      completed_at: "2026-10-08T04:07:06Z"
+      duration: "18 seconds"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      report: "Generated Plan Config and State Config from their current Schemas; both conform to their Schemas and the general YAML structure."
+      data:
+        records:
+          - file: ".config/plan.yaml"
+            action: "created"
+          - file: ".config/state.yaml"
+            action: "created"
+    - id: "002"
+      skill: "my-interface-implement"
+      event: "implement"
+      outcome: "completed"
+      started_at: "2026-10-08T04:13:07Z"
+      completed_at: "2026-10-08T04:38:27Z"
+      duration: "25:20"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      open_questions: ["OQ-003-1", "OQ-004-1", "OQ-004-2"]
+      blockers: []
+      report: "Coordinated phase P1 (argument 1) in order: Plan (003) completed, Develop (004) completed, Review (005) satisfied after 3 Findings were resolved and rechecked. Config was valid, so Configure was not invoked. 3 unique Open Questions and 0 Blockers remain associated; none prevented an Operation."
+      data:
+        phases: ["P1"]
+        configure_invoked: false
+        phase_resolution: "Argument 1 resolved to the Target phase with id P1 (Phase 1)."
+        operations:
+          - phase: "P1"
+            plan: {log_entry: "003", outcome: "completed"}
+            develop: {log_entry: "004", outcome: "completed"}
+            review: {log_entry: "005", outcome: "satisfied"}
+        aggregate:
+          open_questions: 3
+          blockers: 0
+    - id: "003"
+      skill: "my-interface-plan"
+      parent_id: "002"
+      phase: "P1"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-10-08T04:13:19Z"
+      completed_at: "2026-10-08T04:16:07Z"
+      duration: "2:48"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      open_questions: ["OQ-003-1"]
+      blockers: []
+      decisions: []
+      report: "Planned phase P1 (Model): 1 Plan, 9 Groups, 24 Tasks, all todo; dependencies explicit and acyclic; Plan Config verified against its Schema. Planning progress for P1 set to completed."
+      data:
+        phase_resolution: "Invocation argument 1 resolved to the Target phase with id P1 (Phase 1)."
+        changes:
+          - kind: "added"
+            what: "Plan P1 with Groups P1-G1 to P1-G9 and Tasks P1-G1-T1 to P1-G9-T1 (24 Tasks)"
+            reason: "No Plan existed for P1; decomposed from the Model Component and the Target Entity definitions."
+          - kind: "preserved"
+            what: "none"
+            reason: "Plan Config held no earlier work."
+          - kind: "removed"
+            what: "none"
+            reason: "No earlier Tasks existed."
+          - kind: "replaced"
+            what: "none"
+            reason: "No developed Tasks existed."
+        open_questions:
+          - id: "OQ-003-1"
+            question: "The Target declares at-rest protection for credential Fields (hash for User password and api_key; encrypted for Instance password and api_key and Account password). Model records only Sensitivity Markers and never hashes or encrypts, so the planned Model Tasks preserve markers only."
+            current_choice: "Continue with Model planned as marker-only; protection is left to the Components that store and handle the values."
+            needs_human: "Confirm which Component is meant to apply hash and encrypted storage."
+    - id: "004"
+      skill: "my-interface-develop"
+      parent_id: "002"
+      phase: "P1"
+      event: "develop"
+      outcome: "completed"
+      started_at: "2026-10-08T04:16:27Z"
+      completed_at: "2026-10-08T04:31:09Z"
+      duration: "14:42"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      skills_used:
+        - name: "sqlmodel"
+          report: "Applied SQLModel guidance to the table-model Entities, Fields, constraints and datetime handling."
+      open_questions: ["OQ-004-1", "OQ-004-2"]
+      blockers: []
+      decisions:
+        - "P1-G1-T1"
+        - "P1-G2-T1"
+        - "P1-G2-T2"
+        - "P1-G2-T3"
+        - "P1-G2-T4"
+        - "P1-G2-T5"
+        - "P1-G3-T1"
+        - "P1-G3-T2"
+        - "P1-G3-T3"
+        - "P1-G5-T2"
+        - "P1-G8-T1"
+        - "P1-G8-T2"
+        - "P1-G9-T1"
+      report: "Developed phase P1 (Model): all 24 Tasks claimed and completed in dependency order; the Model Component exists with a package manifest and lock metadata, Core (Declaration, Field Types, Validation, Storage Mapping, Foundation), 15 Entity units, the Interface (Entity Exports and Entity Collection) and the root documentation. Output formatted, linted and type-checked with the Development-selected tools and exercised once; conformance is for Review to establish. Development progress for P1 set to completed."
+      data:
+        component: "Model"
+        tasks:
+          completed: 24
+          blocked: 0
+        output_summary: "Package manifest and lock metadata, 5 Core units, 15 Entity units, the package-root Interface and the root documentation."
+        open_questions:
+          - id: "OQ-004-1"
+            question: "The sqlmodel Skill recommends the library's own UTC datetime column type for timezone-aware datetimes and warns that overriding the column type with DateTime(timezone=True) bypasses its UTC handling."
+            current_choice: "Continue with the Model Preference: DateTime(timezone=True), stored in UTC, realized by a private wrapper that normalises to UTC on write and restores UTC awareness on read."
+            needs_human: "Decide whether Model Preferences should switch to the library's own UTC datetime type."
+          - id: "OQ-004-2"
+            question: "Foundation conversion builds an Entity under the ordinary construction rules, which refuse any supplied Auto Increment value, so JSON text of a stored Entity (with its assigned id) cannot be rebuilt by from_json; only a pending id (null) round-trips."
+            current_choice: "Follow the Principle exactly: refuse a non-null Auto Increment id in from_json."
+            needs_human: "Decide whether the Target should explicitly permit a caller-supplied Auto Increment value so stored Entities can round-trip."
+    - id: "005"
+      skill: "my-interface-review"
+      parent_id: "002"
+      phase: "P1"
+      event: "review"
+      outcome: "satisfied"
+      started_at: "2026-10-08T04:31:31Z"
+      completed_at: "2026-10-08T04:37:45Z"
+      duration: "6:14"
+      token_usage:
+        input: null
+        output: null
+        total: null
+      open_questions: []
+      blockers: []
+      report: "Reviewed phase P1 (Model) against Plan P1 and the Model Review category, with technical and repeatable conformance checks: 3 Findings raised (description text differing from the Target, an unbounded build backend requirement, undeclared direct dependencies), all resolved and rechecked; every Task acceptance and every Model observation then held. Outcome: satisfied."
+      data:
+        scope: "Phase P1 (Model): Plan P1 with 24 Tasks; Model Component Review category; technical and repeatable conformance. Persistent testing is disabled for Model, so all verification was transient and nothing was added to the Component."
+        findings:
+          - id: "F-001"
+            state: "resolved"
+            resolution: "Corrected the user_id description of Instance and Currency to the Target text and regenerated the two units and the documentation from the same inputs."
+            recheck: "Independent comparison of all 124 Fields with the Target Technical Definition reports no difference; regeneration of every Entity unit and of the README produces zero diff; the nine documented examples run and match their shown output."
+            expected: "Every Field description equals the Purpose the Target states for that Field."
+            observed: "The user_id Field of Instance and of Currency carries 'Identifies the user who owns the instance.' / '...the currency.'; the Target states 'Identifies the user who owns this instance.' / '...this currency.'."
+            evidence: "model/model/entity/instance.py and model/model/entity/currency.py (user_id description); independent comparison of 124 Fields against the Target Technical Definition reported exactly these two differences; the same text appears in the Instance and Currency tables of model/README.md."
+          - id: "F-002"
+            state: "resolved"
+            resolution: "Bounded the build backend requirement to the 0.12 series (uv_build>=0.12.23,<0.13) in the package manifest."
+            recheck: "Rebuilding the source distribution and wheel prints no warning; the wheel installs into a clean environment and imports with warnings treated as errors."
+            expected: "The build produces no warning owned by the Component."
+            observed: "Building the package prints: build_system.requires = [\"uv_build\"] is missing an upper bound on the uv_build version, so the source distribution will break when a future breaking backend release appears."
+            evidence: "model/pyproject.toml [build-system] requires; output of the package build."
+          - id: "F-003"
+            state: "resolved"
+            resolution: "Declared pydantic, pydantic-core and sqlalchemy as dependencies (lower bounds at the resolved versions) and refreshed the lock metadata."
+            recheck: "The import scan reports every directly imported third-party package declared and none unused; the lock is consistent and the dependency check of a clean install reports all packages compatible."
+            expected: "Every third-party package the source imports directly is a declared dependency."
+            observed: "Only sqlmodel is declared, while the source imports pydantic (core/_base.py, entity/position.py), pydantic_core (core/_base.py) and sqlalchemy (core/_storage.py) directly."
+            evidence: "model/pyproject.toml [project] dependencies; static scan of the imports of every module under model/model."
+        model_review_category:
+          - "Interface publishes every need of its contract and nothing beyond: held (package root holds only the Entity Exports and the Entity Collection; no wildcard or dynamic export)."
+          - "Every Target Entity has exactly one Entity Export: held (15 of 15)."
+          - "The Entity Collection holds exactly the exported Entities in Target order: held; items are the same objects as the exports; the Collection cannot be modified."
+          - "Every Relation reaches a Field of an Entity in Model with a compatible Type, and no names collide before or after physical naming: held."
+          - "Each Declaration matches the Target in Fields, order, Types, nullability, defaults and metadata: held after F-001 (124 Fields compared)."
+          - "Every Entity has an immutable id and a Boolean is_active: held."
+          - "Each Entity constructs from valid values and rejects an unknown Field, a wrong Type and a missing Required Field: held for every Field of every Entity."
+          - "Converting any Entity to its JSON Object and back returns an equal Entity: held for all 15."
+          - "Decimal and datetime values keep their exact value through JSON text and through storage: held."
+          - "Loading Interface has no side effect: held (empty working directory afterwards, no instance created, warnings treated as errors)."
+          - "An unknown Type stops generation: held (the Declaration refuses it with a report)."
+          - "Each Entity's storage mapping takes the listed form: held for table, column, constraint and index names and the identity column, observed on a real database; the primary key name is carried by the table metadata."
+        task_acceptance: "Acceptance established by direct observation for all 24 Tasks of P1: P1-G1-T1 (clean install, concrete locked versions, side-effect-free import); P1-G2-T1 to T5 (Declaration refusals and immutability, Field Type forms, validation behavior, storage mapping, JSON conversion); P1-G3-T1 to P1-G7-T3 (each Entity against the Target); P1-G8-T1 and T2 (exports and Collection); P1-G9-T1 (documentation structure, completeness, executable examples)."
+        technical_conformance:
+          format: "passed"
+          lint: "passed"
+          static_type: "passed"
+          compile_and_import: "passed (all modules compile; import with warnings as errors)"
+          build: "passed without warnings after F-002"
+          installability: "passed (wheel built and installed into a clean environment; all 24 source files packaged)"
+          dependencies: "passed after F-003 (lock consistent, installed packages compatible, every direct import declared)"
+          runtime: "958 transient observations held"
+          zero_diff_regeneration: "passed (Entity units, documentation and lock metadata)"
+          persistent_testing: "disabled for Model; verification was transient and no test was added to the Component."
+        observations_about_the_review:
+          - "The interface guard blocked one inline interpreter command that named the Target path while debugging my own comparison script; I did not rephrase around it and kept the comparison script's read of the Target as the only Target access. The guard appears to treat any interpreter command naming an Interface path as a possible write."
+          - "On SQLite an AUTOINCREMENT primary key is rendered inline, so the pk_<table> name exists on the table metadata but cannot appear in the generated DDL; this was observed, not recorded as a Finding."
