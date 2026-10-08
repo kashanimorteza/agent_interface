@@ -1,0 +1,255 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".config/state.yaml"
+  path_note: "Mutable Workflow position, Phase progress, and execution Log."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current State Component and the active operation's ownership rules."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read active, then the Phase selected by stable Target phase identifier, then the Log Entries by identifier."
+  selection: "A requested phase resolves to the phases entry keyed by that phase identifier; a Log Entry resolves by its identifier."
+  absence: "No matching phases entry means no progress is recorded for that phase."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "active"
+  - "phases"
+  - "log"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  active: "Current Workflow position."
+  phases: "Aggregate progress for each Target phase."
+  log: "Recorded Skill executions and their outcomes."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  active:
+    mode: "not set"
+    phase: null
+    mode_reason: "No Workflow operation has been recorded."
+    set_by: "initialization"
+    set_at: null
+  phases:
+    P1:
+      id: "P1"
+      planning: "completed"
+      development: "completed"
+      review: "satisfied"
+      completed_at: "2026-10-08T07:06:32Z"
+  log:
+    - id: "001"
+      skill: "my-interface-configure"
+      event: "configure"
+      outcome: "completed"
+      started_at: "2026-10-08T06:39:45Z"
+      completed_at: "2026-10-08T06:40:09Z"
+      duration: "24 seconds"
+      skills_used: []
+      open_questions: []
+      blockers: []
+      report: "Created Plan Config (.config/plan.yaml) and State Config (.config/state.yaml) from their Schemas composed with the general YAML structure; both were missing. Verified structure, section order, and initial content against the current Schemas."
+    - id: "002"
+      skill: "my-interface-implement"
+      phase: null
+      event: "implement"
+      outcome: "completed"
+      started_at: "2026-10-08T06:40:47Z"
+      completed_at: "2026-10-08T07:06:46Z"
+      duration: "25:59"
+      skills_used: []
+      open_questions: ["003-OQ1", "003-OQ2", "004-OQ1", "004-OQ2"]
+      blockers: []
+      report: "Coordinated Plan, Develop and Review for phase P1 (Model). Config was valid, so Configure was not invoked. Plan created 10 Groups and 26 Tasks; Develop completed all 26; Review recorded and resolved 3 Findings and judged the phase satisfied. Four Open Questions remain for the Human; no Blockers."
+      data:
+        phases: ["1"]
+        resolved_phases: ["P1"]
+        configure_invoked: false
+        operations:
+          - phase: "P1"
+            skill: "my-interface-plan"
+            log_entry: "003"
+            outcome: "completed"
+          - phase: "P1"
+            skill: "my-interface-develop"
+            log_entry: "004"
+            outcome: "completed"
+          - phase: "P1"
+            skill: "my-interface-review"
+            log_entry: "005"
+            outcome: "satisfied"
+        counts:
+          open_questions: 4
+          blockers: 0
+    - id: "003"
+      skill: "my-interface-plan"
+      parent_id: "002"
+      phase: "P1"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-10-08T06:41:03Z"
+      completed_at: "2026-10-08T06:44:41Z"
+      duration: "3:38"
+      skills_used:
+        - name: "sqlmodel"
+          report: "Read to confirm guidance for the Task Skills that realize Entities; recorded where it differs from Model Preferences."
+      open_questions: ["003-OQ1", "003-OQ2"]
+      blockers: []
+      decisions: []
+      report: "Created the one Plan for phase P1 (Model): 10 Groups and 26 atomic Tasks in the Plan Config, all status todo, dependencies explicit and acyclic. Aggregate Planning progress for P1 set to completed. No existing Plan or Task was present, so nothing was changed, removed, or replaced."
+      data:
+        phase_resolution: "Requested phase '1' resolved to Target phase P1 (Model, enabled, ready)."
+        changes:
+          - kind: "addition"
+            scope: "Plan P1"
+            reason: "No Plan existed for P1; created from the Target phase goal and the Model Definition and Preferences."
+          - kind: "addition"
+            scope: "Groups P1-G1 to P1-G10 and Tasks P1-G1-T1 to P1-G10-T1 (26 Tasks)"
+            reason: "Decomposition: library package (1), shared Entity contract (6), Entity realization by area (15), Interface publication (1), documentation (2), quality standards (1)."
+          - kind: "preservation"
+            scope: "none"
+            reason: "No earlier Task existed to preserve, remove, or replace."
+        task_count: 26
+        group_count: 10
+        open_questions:
+          - id: "003-OQ1"
+            skill: "sqlmodel"
+            current_choice: "Model Preferences: Entity datetime columns use an explicit timezone-aware column type, and each Entity is its own unit, with relationships expressed only as Relation metadata."
+            alternative: "The sqlmodel Skill advises against adding an explicit timezone-aware column type (SQLModel 0.0.45+ selects UTC handling automatically) and prefers keeping related table models in one file."
+            reason: "The Skill's alternative would simplify datetime handling and relationship annotations; work continues with the Model Preferences."
+          - id: "003-OQ2"
+            skill: null
+            current_choice: "Plan creates no Task for Target Rules outside Model's Boundaries, and attaches no Sensitivity Marker because the Target declares none."
+            alternative: "Confirm which later phase owns: at-rest hash/encrypted storage of credential Fields (User, Instance, Account), the Instance rule that the selected Trading Platform defines its required connection Fields, and the rule against duplicating a credential across Instance and Account."
+            reason: "Model's Boundaries exclude encryption, hashing, cross-Entity runtime checks, and workflows, so no P1 Task can realize these Target Rules."
+    - id: "004"
+      skill: "my-interface-develop"
+      parent_id: "002"
+      phase: "P1"
+      event: "develop"
+      outcome: "completed"
+      started_at: "2026-10-08T06:45:06Z"
+      completed_at: "2026-10-08T07:00:01Z"
+      duration: "14:55"
+      skills_used:
+        - name: "sqlmodel"
+          report: "Considered as the Task Skill for the Entity, validation, storage and conversion Tasks; its guidance (read earlier in this run) was applied to table-model definition and metadata, and its datetime advice was left to Model Preferences (see 003-OQ1)."
+      open_questions: ["004-OQ1", "004-OQ2"]
+      blockers: []
+      decisions: ["P1-G1-T1", "P1-G2-T1", "P1-G2-T2", "P1-G2-T3", "P1-G2-T4", "P1-G2-T5", "P1-G2-T6", "P1-G3-T1", "P1-G3-T3", "P1-G5-T2", "P1-G8-T1", "P1-G9-T1", "P1-G9-T2", "P1-G10-T1"]
+      report: "Developed all 26 Tasks of phase P1 (Model) in dependency order: package, shared Entity contract (declarations, field types, validation, storage mapping, JSON conversion), the 15 Entities, the Interface, documentation, and quality standards. Every Task is done with evidence in its Task Log. The Model Component is at model/ (package model/model, documentation model/README.md). Observed at the end: formatter, linter and type checker report no findings; all 15 Entity units load together and create their tables; regeneration from the Target gives zero difference; all 12 documentation examples run, including the Verify script. Conformance is not judged here; Review establishes it."
+      data:
+        phase: "P1"
+        tasks_done: 26
+        tasks_total: 26
+        component_location: "model/"
+        corrections:
+          - task: "P1-G2-T4"
+            note: "Finiteness of float and decimal values was added to the shared validation after the library column API was found not to accept it; recorded in that Task's Task Log."
+        open_questions:
+          - id: "004-OQ1"
+            skill: null
+            current_choice: "A non-null Auto Increment value is refused in direct construction and in JSON text, as the Model Principles require unless the Target permits one."
+            alternative: "Permit a caller-supplied identity (at least in JSON text) so an Entity whose identity storage has assigned can be rebuilt from its own JSON text."
+            reason: "Without it the lossless round trip holds only for Entities not yet stored; the Target does not explicitly permit supplied identities, so the Human may want to state one."
+          - id: "004-OQ2"
+            skill: null
+            current_choice: "The shared validation imports finish_init from the modeling package's main module to cooperate with its table-model construction."
+            alternative: "Avoid depending on that non-documented name once the modeling package offers a public hook for table-model validation."
+            reason: "It is an internal name of the pinned modeling package version (0.0.48) and may change in a later release; the lock file keeps the resolved version stable meanwhile."
+        related_open_questions: ["003-OQ1", "003-OQ2"]
+    - id: "005"
+      skill: "my-interface-review"
+      parent_id: "002"
+      phase: "P1"
+      event: "review"
+      outcome: "satisfied"
+      started_at: "2026-10-08T07:00:24Z"
+      completed_at: "2026-10-08T07:06:32Z"
+      duration: "6:08"
+      skills_used: []
+      open_questions: []
+      blockers: []
+      report: "Reviewed phase P1 (Model) against its Plan and the Model Review category with independent observations: Target text compared with the published Declarations, behaviour, exactness, storage form, Interface contract, a transient probe of contract areas the Target Entities do not exercise, technical conformance and documentation. Three Findings were recorded and resolved: undeclared direct dependencies (F1), integer coerced for a float Field (F2), missing Declaration-reference check in the Verify script (F3). Outcome satisfied."
+      data:
+        phase: "P1"
+        scope: "Plan P1 (10 Groups, 26 Tasks) and the Model Review category, judged against the generated Model Component."
+        findings:
+          - id: "F1"
+            state: "resolved"
+            category: "dependency"
+            expected: "Every third-party package the library imports directly is declared as a necessary dependency with its version resolved in lock metadata."
+            observed: "The library declares only sqlmodel, but imports pydantic and sqlalchemy directly: model/core/_base.py (pydantic, sqlalchemy), model/core/_storage.py (sqlalchemy), model/core/_types.py (pydantic, sqlalchemy). Both are present only as transitive dependencies of sqlmodel."
+            evidence: "model/pyproject.toml, [project] dependencies = [\"sqlmodel>=0.0.48\"]; import analysis of model/model/**/*.py lists pydantic (3 files), sqlalchemy (3 files), sqlmodel (2 files)."
+            plan_reference: "P1-G1-T1 (every dependency recorded at a concrete version in lock metadata); P1-G10-T1"
+            resolution: "Declared pydantic and sqlalchemy as direct dependencies of the library with their resolved versions (pyproject dependencies and lock file updated); no code changed."
+            recheck: "Import analysis of the library now lists pydantic, sqlalchemy and sqlmodel as imported and the same three as declared, none undeclared and none unused; lock file consistent; a clean install from the lock file, import of the Interface (15 Entities) and the package build all succeed."
+          - id: "F2"
+            state: "resolved"
+            category: "behaviour"
+            expected: "A float Field accepts only a float: direct construction applies the same no-coercion rule as for every other Type, and agrees with the Declaration contract, which refuses an integer Default Value for a float Field."
+            observed: "Asset(broker_id=1, symbol=\"s\", category=\"c\", point_size=1) is accepted and the stored value becomes the float 1.0. Integer, decimal and boolean Fields all refuse a value of another Type."
+            evidence: "Reproduction: from model.interface import Asset; Asset(broker_id=1, symbol='s', category='c', point_size=1).point_size == 1.0 and is a float. The strict validator built in model/core/_base.py (_validator_for) uses the library's strict float, which converts an integer."
+            plan_reference: "P1-G2-T3 (a value of each Field Type is refused in any other form without coercion); P1-G2-T4"
+            resolution: "The shared validation now refuses an integer, including a boolean, for a float Field before the strict check, in model/core/_base.py; a JSON integer for a float Field is still read as that float by the JSON conversion, which converts by Type before construction."
+            recheck: "Asset(point_size=1) and point_size=True are refused with a validation error, point_size=1.0 is accepted, assigning an integer is refused and keeps the prior value, and JSON text holding 2 for a float Field rebuilds the Entity with 2.0. The independent Target comparison, the behaviour checks, the transient probe and Develop's verification all pass again; formatter, linter and type checker report nothing."
+          - id: "F3"
+            state: "resolved"
+            category: "missing evidence"
+            expected: "The Verify section covers each listed conformance observation, including that each Entity exposes its own actual Declaration (Documentation contract: actual Entity and Declaration references)."
+            observed: "The Verify script checks that every export is the actual Entity, but never checks that an Entity's declaration is its own actual Declaration; no other part of the section demonstrates it."
+            evidence: "model/README.md, section Verify: the script asserts getattr(interface, entity.__name__) is entity and reads entity.declaration, with no check that the Declaration is the Entity's own member."
+            plan_reference: "P1-G9-T2 (verification covers each listed conformance observation)"
+            resolution: "Added to the Verify script a check that each Entity holds its own Declaration as the very object it exposes, and named that check in the section's description (model/README.md)."
+            recheck: "The documentation was regenerated from the Declarations and differs from the previous one only in those two places; all 12 Python examples run, and the Verify script prints Model verified with the new check in place."
+        observations_made:
+          - "Compared the Target's Model definitions, parsed from the Target text, with all 15 published Declarations: 124 Fields (names, order, Types, nullability, descriptions, sizes, Defaults, generation), Primary Keys, uniqueness rules, Relations and their targets and Types, name collisions - no differences."
+          - "Interface contract: AST of the entrypoint holds only 15 explicit named imports and the collection tuple; public names are exactly the 15 Entities and the collection; exports are the actual Entities; every package initialiser is empty; Core holds exactly the five named files; importing in an empty directory creates no file and starts no thread."
+          - "Behaviour of all 15 Entities: valid construction, defaults and pending identity, refusal of unknown Field, wrong Type, missing Required Field, null for non-nullable, immutable id assignment, unhashable, atomic failed assignment, JSON round trip with Declaration key order; exact decimal and microsecond datetime with non-UTC offset through JSON and through storage."
+          - "Storage form: shared metadata and naming convention, table and column names, identity column with sqlite autoincrement, unique and foreign-key names, absence of indexes, sized string and datetime and decimal column types, created DDL, stored values read back."
+          - "Transient probe with throwaway Entities for what the Target Entities do not exercise: all nine Field Types accepted and refused by form, generated identifier, null/false/zero/empty-string distinctions, rejected JSON forms, redaction of Sensitivity-marked input on construction, assignment, JSON and model_validate paths without error chaining, load-time mismatch and collision refusals, 16 Entity Declaration and 14 Field Declaration refusals."
+          - "Technical conformance: formatter, linter and type checker pass; lock file consistent; clean install from the lock file, import and wheel/sdist build succeed with all 15 Entity units in the wheel; documentation structure, Target order, table completeness, forbidden constructs and all documentation code examples."
+        notes_about_the_review:
+          - "The Entity declaration class attribute can be rebound (Entity.declaration = other). The Architecture describes it as a read-only member, but neither the Model Review category nor a Task acceptance names it, so it is reported here and not recorded as a Finding."
+          - "Zero-diff regeneration is observed with the generation scripts the Develop run used, which live outside the project; a regeneration check therefore repeats the same transcription of the Target. The independent Target-versus-Declaration comparison above covers that transcription."
+        outcome: "satisfied"
+        outcome_basis: "Every Finding is resolved and rechecked; every Task acceptance and every observation of the Model Review category is established by an observation made in this Review; technical and repeatable conformance holds."
+        acceptance_established:
+          - tasks: ["P1-G1-T1"]
+            by: "Clean install from the lock file in an empty directory, import of the Interface, package build; dependency declaration analysis (after F1)."
+          - tasks: ["P1-G2-T1", "P1-G2-T2"]
+            by: "Transient probe: 14 Field Declaration and 16 Entity Declaration refusals, absent versus null Default Value, exact member lists of both Declarations, immutable records with tuple collections."
+          - tasks: ["P1-G2-T3"]
+            by: "Transient probe over all nine Field Types: accepted in declared form, refused in any other (after F2), naive datetime, non-finite float and decimal refused; unknown Type refused."
+          - tasks: ["P1-G2-T4"]
+            by: "Behaviour checks on 15 Entities and transient probe: unknown Field, wrong Type, missing Required Field, supplied identity, immutable assignment refused; failed assignment keeps prior value; load-time mismatch and collision refusals; marked input absent and not chained on construction, assignment, JSON and model_validate paths."
+          - tasks: ["P1-G2-T5"]
+            by: "Storage form check on 15 Entities and DDL: names, keys, constraint names, identity, column types, one shared metadata with exactly the Entity tables; colliding and unresolvable physical names refused; stored decimal and datetime values read back exact."
+          - tasks: ["P1-G2-T6"]
+            by: "Round trips of all 15 Entities and the probe Entity, null/false/zero/empty-string distinctions, exact decimal and microsecond offset datetime, 12 rejected text forms."
+          - tasks: ["P1-G3-T1", "P1-G3-T2", "P1-G3-T3", "P1-G4-T1", "P1-G4-T2", "P1-G4-T3", "P1-G5-T1", "P1-G5-T2", "P1-G6-T1", "P1-G6-T2", "P1-G6-T3", "P1-G6-T4", "P1-G7-T1", "P1-G7-T2", "P1-G7-T3"]
+            by: "Target text parsed independently and compared with each published Declaration (124 Fields, uniqueness, Relations); valid construction of every Entity."
+          - tasks: ["P1-G8-T1"]
+            by: "Syntax tree of the entrypoint, public names, identity of exports and collection items, empty initialisers, side-effect-free load in an empty directory."
+          - tasks: ["P1-G9-T1", "P1-G9-T2"]
+            by: "Documentation structure, Target order, table and metadata completeness, forbidden-construct scan, execution of all 12 examples including the Verify script; Verify coverage gap closed by F3."
+          - tasks: ["P1-G10-T1"]
+            by: "Formatter, linter and type checker pass over library and documentation; zero-difference regeneration of the Entity units and the documentation."
+        review_category_observations:
+          - "Interface publishes every need of its contract and nothing beyond: held"
+          - "Every Target Entity has exactly one Entity Export: held"
+          - "The Entity Collection holds exactly the exported Entities, in Target order: held"
+          - "Every Relation reaches a Field of an Entity in Model with a compatible Type, and no two Entities collide in name before or after physical naming: held"
+          - "Each Entity's Declaration matches the Target: held (124 Fields compared)"
+          - "Every Entity has an immutable id and a Boolean is_active: held"
+          - "Each Entity constructs from valid values and rejects an unknown Field, a wrong Type and a missing Required Field: held (after F2)"
+          - "Converting any Entity to its JSON Object and back returns an equal Entity: held"
+          - "Decimal and datetime values keep their exact value through JSON: held"
+          - "Loading Interface has no side effect: held"
+          - "An unknown Type in the Target stops generation: held"
+          - "Each Entity's storage mapping takes exactly the form Model Preferences list: held"
+
