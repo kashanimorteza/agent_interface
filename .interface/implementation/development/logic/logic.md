@@ -1,6 +1,6 @@
 # Logic Definition
 
-Logic is the Development Component that holds the application's Behaviour in modular Services and publishes every Service Interface through one Interface.
+Logic is the Development Component that holds the application's Behavior in modular Services and publishes every Service Interface through one Interface.
 
 <br>
 
@@ -85,7 +85,6 @@ One Child Service for every Model Entity.
 → [Definition of Entity Service](services/entity/entity.md)
 → [Preferences of Entity Service](services/entity/entity.yaml)
 
-
 <!-------------------------- Documentation -->
 ### Documentation
 
@@ -136,7 +135,7 @@ The root of this tree is the Component directory; it and the package directory t
 <!--------------------------------------------------------------------------------- Boundaries --->
 ## Boundaries
 
-- **Behaviour and Actions** — are not Logic's, because every Action is defined and implemented by the Service that owns it.
+- **Behavior and Actions** — are not Logic's, because every Action is defined and implemented by the Service that owns it.
 - **A Service's own contract** — is not Logic's, because that Service's Definition and Preferences decide it.
 
 <br>
@@ -157,8 +156,8 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 #### Logic is a reusable library
 
-**Rule:** Logic exposes Behaviour only through its Interface. It starts no process, owns no transport schema, and depends on no consumer's framework.
-**Why:** Behaviour without a transport of its own can be reused by any consumer and tested without a running server.
+**Rule:** Logic exposes Behavior only through its Interface. It starts no process, owns no transport schema, and depends on no consumer's framework.
+**Why:** Behavior without a transport of its own can be reused by any consumer and tested without a running server.
 **Boundary:** Being a library never makes a Service's implementation public.
 
 ### Interface
@@ -186,14 +185,14 @@ Every Principle below is mandatory and belongs to the category that owns it.
 #### Logic is composed of modular Services
 
 **Rule:** All of Logic's work is divided into Services, each owning one coherent responsibility, its own directory, and its own Interface. Entity Service is fixed in every Logic; more Services may be added.
-**Why:** One Service per responsibility keeps its dependencies and Behaviour together, so a change stays inside it.
+**Why:** One Service per responsibility keeps its dependencies and Behavior together, so a change stays inside it.
 **Boundary:** Services sit beside one another; a Service uses another only through that Service's Interface.
 
 #### Entity Service is every other Service's only route to Database
 
 **Rule:** Every Logic Service that needs Database uses Entity Service Interface; only Entity Service calls Database Interface, and it never uses Database's Setup group or Command Operations.
 **Why:** One gateway keeps Database access consistent and replaceable across Logic.
-**Boundary:** A Service owns any Behaviour it adds around an Entity Service call.
+**Boundary:** A Service owns any Behavior it adds around an Entity Service call.
 
 ### Review
 
@@ -225,7 +224,7 @@ Every obligation in the file, under the Principle it comes from.
 
 **Logic is a reusable library**
 
-- **Must** — Expose Behaviour only through Logic Interface.
+- **Must** — Expose Behavior only through Logic Interface.
 - **Never** — Start a process, own a transport schema, or depend on a consumer's framework.
 
 ### Interface

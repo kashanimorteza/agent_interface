@@ -210,7 +210,12 @@ The only public entry point, in the shape of the Interface contract. It publishe
 - **Result** — what a consumer reads back: every Result, such as `database_result`.
 - **Error** — every Error, so a consumer can catch it, such as `database_error`.
 
-It declares and forwards behavior and implements no Engine work.
+It declares and forwards behavior and implements no Engine work. Its Interface contract is these needs, with `contract_version` in Database Preferences:
+
+1. **Grouped** — exactly the six groups above, each named by the prefix, an underscore, and its key; every member is reached through its group.
+2. **Fixed shape** — every Operation takes exactly its listed parameters in their order, with `instance` last, and Entities, Fields, Instances, and vocabulary are passed as imported values, never as strings.
+3. **Nothing else** — Core, Engine units, configuration, connection values, and storage paths are never published; Interface runs no check of its own beyond validating each call's input, and loading it opens no connection and creates no data or file.
+4. **Versioned** — changing a public contract, its members, or its meaning requires raising `contract_version` and a consumer review; a change in Model's Entities, the Instances, or the Engines flows through without one.
 
 <!-------------------------- Configuration -->
 ### Configuration

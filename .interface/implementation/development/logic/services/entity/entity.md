@@ -27,7 +27,7 @@ Entity Service is a fixed internal Service of every Logic Component. For every E
 
 ### Purpose
 
-Database takes the Entity on every request. Entity Service binds that Entity once per Child Service and gives each Entity one place for Behaviour of its own.
+Database takes the Entity on every request. Entity Service binds that Entity once per Child Service and gives each Entity one place for Behavior of its own.
 
 ### How It Works
 
@@ -100,7 +100,7 @@ Entities
 └── one Child Service per Entity
 ```
 
-The layer that holds one unit and one Child Service for every Entity in Model's Entity Collection. Each Child Service receives Base, binds its own Entity, and holds only Behaviour or Actions specific to that Entity. Their unit and structure names follow the Child naming patterns in Entity Service Preferences, and an override of a Base Action applies to its own Entity only.
+The layer that holds one unit and one Child Service for every Entity in Model's Entity Collection. Each Child Service receives Base, binds its own Entity, and holds only Behavior or Actions specific to that Entity. Their unit and structure names follow the Child naming patterns in Entity Service Preferences, and an override of a Base Action applies to its own Entity only.
 
 <!-------------------------- Documentation -->
 ### Documentation
@@ -117,7 +117,7 @@ The documentation of Entity Service, in the file, location, and format Entity Se
 
 1. **Overview** — What Entity Service is and why it exists, in one paragraph, with one simple example.
 2. **Interface** — Every group with its members — every Child Service and its Actions, every Model, and every member of the three Database groups — each with one example.
-3. **Use** — How a caller imports a Child Service and how a Child Service adds its own Behaviour.
+3. **Use** — How a caller imports a Child Service and how a Child Service adds its own Behavior.
 4. **Verify** — How to see that Entity Service matches Model's Entity Collection and Database's Interface group.
 
 <!-------------------------- Directory Structure -->
@@ -198,7 +198,7 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 #### Every Action works only through Database Interface
 
-**Rule:** Every Action calls its Database Operation through Database Interface, using the one Database object Base created, and returns its answer and errors unchanged, adding no behaviour of its own.
+**Rule:** Every Action calls its Database Operation through Database Interface, using the one Database object Base created, and returns its answer and errors unchanged, adding no behavior of its own.
 **Why:** One route keeps every Action a faithful mirror of Database and keeps persistence out of Entity Service.
 **Boundary:** An Action never reaches a Database implementation detail.
 
@@ -218,7 +218,7 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 #### A Child Service holds only what is its own
 
-**Rule:** A Child Service holds only Behaviour or Actions specific to its Entity; everything shared comes from Base.
+**Rule:** A Child Service holds only Behavior or Actions specific to its Entity; everything shared comes from Base.
 **Why:** Shared Actions are written once and cannot drift between Entities.
 **Boundary:** A Child Service may override a Base Action for its own Entity but never detaches itself from Base.
 
@@ -281,7 +281,7 @@ Every obligation in the file, under the Principle it comes from.
 **Every Action works only through Database Interface**
 
 - **Must** — Call every Database Operation through Database Interface with the one Database object Base holds.
-- **Never** — Reach a Database implementation detail from an Action, or add behaviour of its own.
+- **Never** — Reach a Database implementation detail from an Action, or add behavior of its own.
 
 **Every Action keeps to its bound Entity**
 
@@ -297,7 +297,7 @@ Every obligation in the file, under the Principle it comes from.
 
 **A Child Service holds only what is its own**
 
-- **Must** — Keep only Entity-specific Behaviour or Actions in a Child Service.
+- **Must** — Keep only Entity-specific Behavior or Actions in a Child Service.
 - **Never** — Detach a Child Service from Base.
 
 ### Review

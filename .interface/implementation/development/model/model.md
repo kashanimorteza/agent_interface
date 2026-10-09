@@ -376,12 +376,12 @@ Every Principle below is mandatory and belongs to the Architecture category that
 
 **Rule:** Primary Key, Relations, Uniqueness Constraints, and Indexes belong to Entity Metadata outside Field Declarations. Every local Field reference resolves within the Entity; every Relation target Entity and Field resolves within Model; Relation endpoint Types are compatible; participating Fields are not repeated; duplicate metadata is invalid. An Entity contains only its own Fields and metadata: cross-Entity meaning is recorded only by Relation names, never by nesting, inheriting, copying, or importing another Entity.
 **Why:** Consumers realize structure only from complete, unambiguous metadata, and flat Entities avoid hidden coupling.
-**Boundary:** A Relation records local Field, target Entity name, and target Field name only, with no cardinality, cascade, deletion, or other undeclared behaviour. An Entity may use a shared private base from Core without inheriting another Entity's meaning. These rules are met at generation and observed by Review; no runtime check across Entities is generated for them. Checks one Entity runs on itself — its Declaration's structural rules when created and Base's match of type, table, and Fields when loaded — remain.
+**Boundary:** A Relation records local Field, target Entity name, and target Field name only, with no cardinality, cascade, deletion, or other undeclared behavior. An Entity may use a shared private base from Core without inheriting another Entity's meaning. These rules are met at generation and observed by Review; no runtime check across Entities is generated for them. Checks one Entity runs on itself — its Declaration's structural rules when created and Base's match of type, table, and Fields when loaded — remain.
 
-#### Entity runtime behaviour enforces Field contracts only
+#### Entity runtime behavior enforces Field contracts only
 
 **Rule:** Direct and JSON Object construction accept only declared Fields and identically enforce Required Fields, nullability, Types, defaults, generation, and constraints without implicit coercion; explicit false, zero, empty string, and null remain supplied values. Assignment to a mutable Field revalidates atomically, a failed assignment keeps the prior value, and an immutable Field cannot change. Model defines no equality, ordering, hashing, copy, clone, merge, or reconstruction beyond the JSON Object round trip, and mutable Entities are not hashable.
-**Why:** One runtime contract stops package-specific construction, mutation, and object conventions from changing data or inventing behaviour.
+**Why:** One runtime contract stops package-specific construction, mutation, and object conventions from changing data or inventing behavior.
 **Boundary:** Construction and mutation perform no storage, network, application, or workflow operation. A language-required diagnostic representation may exist internally but is not a portable contract.
 
 #### Generated identities follow their declaration
@@ -406,11 +406,11 @@ Every Principle below is mandatory and belongs to the Architecture category that
 
 **Rule:** Every Field name is unique within its Entity and preserves, in Target order, its description, declared or resolved Type, nullability, explicit Default Value presence and value, Sensitivity Marker, immutability, applicable constraints, and optional Value Generation. Absence of a Default Value differs from explicit null; no Field has both a Default Value and Value Generation; every default and generated value satisfies the Field contract. Every Entity Declaration publicly exposes its name, description, ordered Fields, Primary Key, Relations, Uniqueness Constraints, and Indexes, and every Field Declaration exposes exactly the Field properties above; physical member names are selected by Model Preferences.
 **Why:** One complete logical shape stops languages and packages from reading omission, null, defaults, or generation differently, and makes independent implementations comparable.
-**Boundary:** Invalid, incompatible, or contradictory values and constraints fail instead of being ignored, coerced, or replaced. Declaration holds no runtime behaviour and chooses no technical type, table, query, index implementation, transport, or consumer behaviour.
+**Boundary:** Invalid, incompatible, or contradictory values and constraints fail instead of being ignored, coerced, or replaced. Declaration holds no runtime behavior and chooses no technical type, table, query, index implementation, transport, or consumer behavior.
 
 #### Foundation converts Entities through JSON Objects
 
-**Rule:** Foundation converts an Entity to a JSON Object — JSON text conforming to the JSON standard, with one object at its root whose keys are exactly the Entity's Field names in Declaration order — and reconstructs an Entity from that text without loss. Values preserve declared Type semantics and distinguish null, false, zero, and empty string. Reconstruction rejects malformed text and otherwise applies Principle "Entity runtime behaviour enforces Field contracts only".
+**Rule:** Foundation converts an Entity to a JSON Object — JSON text conforming to the JSON standard, with one object at its root whose keys are exactly the Entity's Field names in Declaration order — and reconstructs an Entity from that text without loss. Values preserve declared Type semantics and distinguish null, false, zero, and empty string. Reconstruction rejects malformed text and otherwise applies Principle "Entity runtime behavior enforces Field contracts only".
 **Why:** Consumers need one portable, lossless value representation.
 **Boundary:** Foundation does not add Declaration metadata, nest Entities, add keys, transform sensitive values, or define domain meaning. How a consumer's language represents the decoded text is that consumer's concern.
 
@@ -480,9 +480,9 @@ Every obligation below derives from the Principle with the same title.
 **Entity Metadata is complete and Entities stay flat**
 
 - **Must** — Keep metadata outside Fields, resolve every reference, and record cross-Entity meaning only by Relation names.
-- **Never** — Accept unresolved or duplicate metadata, invent relationship behaviour, or nest, inherit, copy, or import another Entity.
+- **Never** — Accept unresolved or duplicate metadata, invent relationship behavior, or nest, inherit, copy, or import another Entity.
 
-**Entity runtime behaviour enforces Field contracts only**
+**Entity runtime behavior enforces Field contracts only**
 
 - **Must** — Apply identical strict Field rules to direct construction, JSON Object construction, and mutation.
 - **Never** — Accept unknown Fields, coerce values, allow invalid mutation, or invent equality, ordering, hashing, copying, or merging.
