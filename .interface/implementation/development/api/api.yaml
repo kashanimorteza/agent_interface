@@ -2,10 +2,10 @@
 meta:
   path: ".interface/implementation/development/api/api.yaml"
   path_note: "The Preferences layer of the API Component."
-  purpose: "Identity, Interface Schema reference, architecture, Group list, Endpoint rules, network, runtime, development, and documentation for API."
+  purpose: "Identity, the entities of architecture with the Interface and Group contract versions, Group list, Endpoint rules, Configuration defaults, and documentation, and the language profile for API."
   standard: "Agent Project Interface"
-  version: "14.0"
-  updated: "2026-10-05"
+  version: "15.0"
+  updated: "2026-10-09"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -23,28 +23,14 @@ resolution:
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - settings
-  - interface
   - architecture
-  - groups
-  - endpoints
-  - network
-  - identity
-  - runtime
   - development
-  - documentation
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  settings: "API's identity and the structure of its runtime Configuration."
-  interface: "The API Interface Schema, its version, and the API Group Interface Schema every Group follows."
-  architecture: "The physical names of the Groups directory and the Bootstrap, Configuration, and documentation files."
-  groups: "Every Group of API, with its Definition and Preferences."
-  endpoints: "The verb-to-Method table, the Path and Parameter placement every Endpoint derives from its operation, and the URL shape."
-  network: "Transport protocol, host, port, whether a URL Key is generated, and the derived Base URL."
-  identity: "The title and description the running API presents."
-  runtime: "The number of worker processes."
+  settings: "API's identity."
+  architecture: "The entities of the Architecture tree — Groups with the Interface and Group contract versions and every Group's Definition and Preferences, Endpoints with the verb-to-Method table, Path and Parameter placement, URL shape, value forms, and error statuses, Configuration with its file, location, format, structure, and the network, identity, and runtime defaults it is generated with, and Documentation with its file, location, and format."
   development: "Development capabilities and the selected language with its realization profile."
-  documentation: "The documentation file, its location, its section order, and the content of each section."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
@@ -52,68 +38,94 @@ content:
   # <!-------------------------------------------- settings -->
   settings:
     component:
-      type: "executable"
-      platform: "VPS"
-      directory: "api"
-      package: "api"
-    configuration:
-      structure: ".interface/foundation/schema/api-configuration.yaml"
-
-  # <!-------------------------------------------- interface -->
-  interface:
-    schema: ".interface/foundation/schema/api-interface.yaml"
-    group_schema: ".interface/foundation/schema/api-group-interface.yaml"
-    contract_version: "1.4"
+      type: executable
+      platform: VPS
+      directory: api
+      package: api
 
   # <!-------------------------------------------- architecture -->
   architecture:
-    directories:
-      groups: "groups"
-    files:
-      bootstrap: "bootstrap"
-      configuration: "config.yaml"
-      documentation: "README.md"
-
-  # <!-------------------------------------------- groups -->
-  groups:
-    entity:
-      definition: "groups/entity/entity.md"
-      preferences: "groups/entity/entity.yaml"
-
-  # <!-------------------------------------------- endpoints -->
-  endpoints:
-    method_by_verb:
-      GET: ["get", "list", "find", "search", "count", "sum", "min", "max", "read"]
-      PUT: ["update", "replace"]
-      PATCH: ["enable", "disable", "set", "patch"]
-      DELETE: ["delete", "remove", "truncate", "clear"]
-    default_method: "POST"
-    path: "/<operation>"
-    path_with_id: "/<operation>/{id}"
-    parameter_placement:
-      path: ["id"]
-      query_methods: ["GET", "DELETE"]
-      body_methods: ["POST", "PUT", "PATCH"]
-      complex_in_query_method: "POST"
-    url: "<base_url>/<group segment>/<adapter segment><endpoint path>"
-
-  # <!-------------------------------------------- network -->
-  network:
-    transport_protocol: "HTTP"
-    host: "127.0.0.1"
-    port: 8000
-    key: true
-    key_length: 32
-    url: "http://127.0.0.1:8000/<key>"
-
-  # <!-------------------------------------------- identity -->
-  identity:
-    title: "Target API"
-    description: ""
-
-  # <!-------------------------------------------- runtime -->
-  runtime:
-    workers: 2
+    entities:
+      groups:
+        contract_version: '1.4'
+        group_contract_version: '1.0'
+        list:
+          entity:
+            definition: groups/entity/entity.md
+            preferences: groups/entity/entity.yaml
+      endpoints:
+        method_by_verb:
+          GET:
+          - get
+          - list
+          - find
+          - search
+          - count
+          - sum
+          - min
+          - max
+          - read
+          PUT:
+          - update
+          - replace
+          PATCH:
+          - enable
+          - disable
+          - set
+          - patch
+          DELETE:
+          - delete
+          - remove
+          - truncate
+          - clear
+        default_method: POST
+        path: /<operation>
+        path_with_id: /<operation>/{id}
+        parameter_placement:
+          path:
+          - id
+          query_methods:
+          - GET
+          - DELETE
+          body_methods:
+          - POST
+          - PUT
+          - PATCH
+          complex_in_query_method: POST
+        url: <base_url>/<group segment>/<adapter segment><endpoint path>
+        value_forms:
+          Filter: "{field, operator, value}, in Body"
+          Order: "{field, direction}, in Body"
+          DatabaseInstance: "its name"
+        error_status:
+          Invalid Input: 422
+          Inactive Instance: 503
+          Connection Failure: 503
+          Execution: 500
+          Declaration Mismatch: 500
+          Configuration: 500
+      configuration:
+        file: config.yaml
+        location: the Component root
+        format: yaml
+        structure: .interface/foundation/schema/api-configuration.yaml
+        defaults:
+          network:
+            transport_protocol: HTTP
+            host: 127.0.0.1
+            port: 8000
+            key: true
+            key_length: 32
+            url: http://127.0.0.1:8000/<key>
+          identity:
+            title: Target API
+            description: ''
+          runtime:
+            workers: 2
+      documentation:
+        file: README.md
+        location: the Component root
+        format: markdown
 
   # <!-------------------------------------------- development -->
   development:
@@ -144,28 +156,6 @@ content:
               allow_headers: ["*"]
           group:
             adapter: "One module per Adapter holding one APIRouter."
-            endpoint: "One route function per Endpoint, decorated with its method and path; its parameters copy the operation's names, types, and defaults, placed by endpoints.parameter_placement."
+            endpoint: "One route function per Endpoint, decorated with its method and path; its parameters copy the operation's names, types, and defaults, placed by architecture.entities.endpoints.parameter_placement."
             handler: "Each route calls the operation its Group names and returns the result unchanged."
           bootstrap: "Create one FastAPI app from config.yaml and include each Group's routers under its segment; Bootstrap performs no check, because conformance belongs to Review."
-
-  # <!-------------------------------------------- documentation -->
-  documentation:
-    file: "README.md"
-    location: "the Component root"
-    format: "markdown"
-    order:
-      - overview
-      - configuration
-      - groups
-      - setup
-      - use
-      - verify
-      - troubleshooting
-    sections:
-      overview: "What API is, in one paragraph, with one request example."
-      configuration: "Every runtime Configuration value and how the Base URL is formed from it."
-      groups: "Every Group beneath its URL segment, with a link to its own documentation; never a copy of its Endpoints."
-      setup: "How to install and start API."
-      use: "How a client reaches a Group."
-      verify: "How to see that every listed Group is served beneath its segment and nothing else is."
-      troubleshooting: "Real problems a client can meet and how to fix them."

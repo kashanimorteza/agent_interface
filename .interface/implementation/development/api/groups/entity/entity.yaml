@@ -2,10 +2,10 @@
 meta:
   path: ".interface/implementation/development/api/groups/entity/entity.yaml"
   path_note: "The Preferences layer of Entity Group inside the API Component."
-  purpose: "Name, Interface Schema reference, architecture, and documentation for Entity Group."
+  purpose: "Role, name, directory, the Adapter naming pattern, and documentation for Entity Group."
   standard: "Agent Project Interface"
-  version: "7.0"
-  updated: "2026-10-05"
+  version: "8.0"
+  updated: "2026-10-09"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -23,16 +23,12 @@ resolution:
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - settings
-  - interface
   - architecture
-  - documentation
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  settings: "Entity Group's role and configurable name."
-  interface: "The API Group Interface Schema this Group follows, and its version."
-  architecture: "The Group directory and the Adapter naming pattern."
-  documentation: "The documentation file, its location, its section order, and the content of each section."
+  settings: "Entity Group's role, configurable name, and directory."
+  architecture: "The entities of the Architecture tree — Adapters with their naming pattern, and Documentation with its file, location, and format."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
@@ -40,32 +36,16 @@ content:
   # <!-------------------------------------------- settings -->
   settings:
     group:
-      role: "entity"
-      name: "Entity"
-
-  # <!-------------------------------------------- interface -->
-  interface:
-    schema: ".interface/foundation/schema/api-group-interface.yaml"
-    contract_version: "1.0"
+      role: entity
+      name: Entity
+      directory: entity
 
   # <!-------------------------------------------- architecture -->
   architecture:
-    directory: "entity"
-    patterns:
-      adapter: "<entity>"
-
-  # <!-------------------------------------------- documentation -->
-  documentation:
-    file: "README.md"
-    location: "the Entity Group directory"
-    format: "markdown"
-    order:
-      - overview
-      - endpoints
-      - use
-      - verify
-    sections:
-      overview: "What Entity Group is, in one paragraph, with one request example."
-      endpoints: "Every Entity's Endpoints with Method, Path, and Parameters, each with one example."
-      use: "How a client calls an Endpoint."
-      verify: "How to see that every Entity and Action has its Endpoint."
+    entities:
+      adapters:
+        naming: <entity>
+      documentation:
+        file: README.md
+        location: the Entity Group directory
+        format: markdown

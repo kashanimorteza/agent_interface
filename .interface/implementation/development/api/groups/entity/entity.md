@@ -27,7 +27,7 @@ Entity Group is the API Group that turns Entity Service into API Endpoints: one 
 
 ### Purpose
 
-Entity Service already holds every Entity and its Actions. Entity Group gives them one consistent API surface without repeating their contracts or adding Behaviour.
+Entity Service already holds every Entity and its Actions. Entity Group gives them one consistent API surface without repeating their contracts or adding Behavior.
 
 ### How It Works
 
@@ -41,7 +41,7 @@ A request reaches an Endpoint; its Handler calls the same Action on the Entity's
 - **Adapter** — the unit for one Entity that holds the Endpoints of that Entity's Actions.
 - **Action** — one operation an Entity Child Service offers.
 - **Handler** — the part of an Endpoint that calls its Action and returns the result.
-- **API Group Interface Schema** — the versioned contract through which every Group states what it serves.
+- **Group contract** — the versioned contract, stated in the API Definition, through which every Group states what it serves.
 
 <br>
 
@@ -50,25 +50,60 @@ A request reaches an Endpoint; its Handler calls the same Action on the Entity's
 
 ```text
 Entity Group
-├── <entity>   ← Adapter: the Endpoints of one Entity
-└── <entity>   ← Adapter
+├── Adapters
+├── Endpoints
+└── Documentation
 ```
 
-Entity Group Preferences own its name, directory, Adapter naming pattern, and documentation. The shape in which it states what it serves belongs to the API Group Interface Schema.
+Every entity below is declared in `architecture` in Entity Group Preferences, which also own its name, Adapter naming pattern, and documentation choices. Entity Group states what it serves in the shape of the Group contract in the API Definition: its source is Entity Service, reached through Logic Interface, whose Service group gives the Child Services and whose Model and Database groups give the types its Parameters use.
 
+<!-------------------------- Adapters -->
 ### Adapters
+
+```text
+Adapters
+└── one Adapter per Entity
+```
 
 One unit for every Entity Child Service, placed directly inside the Entity Group directory and named from the bound Entity. Selecting an Adapter selects its Entity once; a caller never supplies the Entity again.
 
+<!-------------------------- Endpoints -->
 ### Endpoints
 
 The API surface of every Adapter. It meets these needs:
 
 1. **Complete** — exactly one Adapter for every Entity that Entity Service presents, and exactly one Endpoint for every Action of that Entity, changing when Entity Service changes.
 2. **Unchanged** — every Parameter keeps the Action's name, requirement, structure, and default, and every Endpoint returns the Action's result and errors unchanged.
-3. **Nothing else** — no Endpoint or Behaviour beyond these is added.
+3. **Nothing else** — no Endpoint or Behavior beyond these is added.
 
-These needs are stated in the shape the API Group Interface Schema defines for every Group.
+<!-------------------------- Documentation -->
+### Documentation
+
+```text
+Documentation
+├── Overview
+├── Endpoints
+├── Use
+└── Verify
+```
+
+The documentation of Entity Group, in the file, location, and format Entity Group Preferences name. Its sections, in this order:
+
+1. **Overview** — What Entity Group is, in one paragraph, with one request example.
+2. **Endpoints** — Every Entity's Endpoints with Method, Path, and Parameters, each with one example.
+3. **Use** — How a client calls an Endpoint.
+4. **Verify** — How to see that every Entity and Action has its Endpoint.
+
+<!-------------------------- Directory Structure -->
+### Directory Structure
+
+```text
+Directory Structure
+├── <adapter>
+└── README
+```
+
+The root of this tree is the Entity Group directory, named in `settings` in Entity Group Preferences. It holds one unit per Adapter, named by the Adapter pattern.
 
 <br>
 
@@ -84,7 +119,7 @@ These needs are stated in the shape the API Group Interface Schema defines for e
 ## Boundaries
 
 - **Entity and Action membership and Action contracts** — are not Entity Group's, because it represents them without defining them.
-- **Action Behaviour and everything after an Action call** — are not Entity Group's, because a Handler only calls the Action.
+- **Action Behavior and everything after an Action call** — are not Entity Group's, because a Handler only calls the Action.
 
 <br>
 
@@ -108,13 +143,13 @@ Every Principle below is mandatory and belongs to the category that owns it.
 **Why:** One source keeps every Adapter and Endpoint aligned with the authoritative contract.
 **Boundary:** Entity Group publishes Endpoints but never performs an Action's work.
 
-### Interface
+#### Entity Group conforms to the Group contract
 
-#### Entity Group conforms to the API Group Interface Schema
-
-**Rule:** Entity Group states its source, Adapters, and Endpoints in the shape the versioned API Group Interface Schema defines.
+**Rule:** Entity Group states its source, Adapters, and Endpoints in the shape the versioned Group contract defines.
 **Why:** Every client depends on one exact API surface instead of reinterpreting each realization.
-**Boundary:** Changing the structure itself requires a Schema version change.
+**Boundary:** Changing the structure itself requires raising the Group contract version in API Preferences.
+
+<br>
 
 ### Adapters
 
@@ -124,24 +159,30 @@ Every Principle below is mandatory and belongs to the category that owns it.
 **Why:** The API surface stays a complete representation of Entity Service, and callers never repeat an Entity's identity.
 **Boundary:** No Entity or Action is filtered out, no Action outside the Child Service is added, and an Adapter never accepts another Entity from a caller.
 
+<br>
+
+### Endpoints
+
 #### Handlers only call their Action
 
 **Rule:** A Handler calls only its Action on the bound Child Service and returns its result and errors unchanged.
-**Why:** Entity Service stays the single owner of Behaviour while every Handler stays uniform.
-**Boundary:** A Handler adds no decision, semantic validation, initialization, result wrapper, other call, retry, or alternate path.
+**Why:** Entity Service stays the single owner of Behavior while every Handler stays uniform.
+**Boundary:** A Handler follows the Handler rule of the Group contract in the API Definition.
+
+<br>
 
 ### Review
 
 #### Entity Group conformance covers every Entity Group contract
 
-**Rule:** Entity Group is conformant only when its Endpoint needs in this Definition and its real Endpoints match, its statement follows the API Group Interface Schema, and every observation below holds.
+**Rule:** Entity Group is conformant only when its Endpoint needs in this Definition and its real Endpoints match, its statement follows the Group contract, and every observation below holds.
 **Why:** A gap here silently hides or breaks an Action for every client.
 **Boundary:** Review reads Logic Interface only to compare; it changes nothing outside Entity Group.
 
 #### Review observes Entity Group through a fixed set of checks
 
 **Rule:** Review establishes Entity Group conformance through these observations, every one of them on every review:
-- Entity Group states its source, Adapters, and Endpoints in the shape the API Group Interface Schema defines.
+- Entity Group states its source, Adapters, and Endpoints in the shape the Group contract defines.
 - There is exactly one Adapter for every Entity that Entity Service presents, and nothing else.
 - Every Adapter has exactly one Endpoint for every Action of its Child Service, and nothing else.
 - Every Endpoint's Parameters keep the Action's names, requirements, and defaults.
@@ -164,12 +205,12 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — Obtain Entities, Actions, and contracts from Entity Service through Logic Interface and call Actions the same way.
 - **Never** — Perform an Action's work inside Entity Group.
 
-### Interface
+**Entity Group conforms to the Group contract**
 
-**Entity Group conforms to the API Group Interface Schema**
+- **Must** — Conform every realization to the Group contract.
+- **Never** — Add anything the contract does not list or change its structure without raising its version.
 
-- **Must** — Conform every realization to the API Group Interface Schema.
-- **Never** — Add anything the Schema does not list or change its structure without a Schema version change.
+<br>
 
 ### Adapters
 
@@ -178,16 +219,22 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — Give every Entity one bound Adapter and every Action one Endpoint.
 - **Never** — Filter an Entity or Action, add an unknown Action, or accept another Entity from a caller.
 
+<br>
+
+### Endpoints
+
 **Handlers only call their Action**
 
 - **Must** — Call only the bound Child Service's Action and return the result unchanged.
 - **Never** — Add a decision, validation, initialization, wrapper, other call, retry, or alternate path.
 
+<br>
+
 ### Review
 
 **Entity Group conformance covers every Entity Group contract**
 
-- **Must** — show that the Endpoint needs and the real Endpoints match and follow the API Group Interface Schema before Entity Group is conformant.
+- **Must** — show that the Endpoint needs and the real Endpoints match and follow the Group contract before Entity Group is conformant.
 - **Never** — change anything outside Entity Group during review.
 
 **Review observes Entity Group through a fixed set of checks**
