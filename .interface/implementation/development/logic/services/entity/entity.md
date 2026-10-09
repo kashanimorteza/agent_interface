@@ -39,7 +39,7 @@ A caller selects a Child Service and calls an Action; the Child Service adds its
 ## Terms
 
 - **Entity Role** — the fixed identity of this Service inside Logic, independent of its configurable name.
-- **Base** — the one shared structure that holds every Action and that every Child Service receives.
+- **Base** — the one shared structure that holds every Action and that every Child Service inherits.
 - **Child Service** — the structure bound to one Entity of Model's Entity Collection.
 - **Action** — one operation of Base, named and shaped exactly like one Entity Operation of Database's Interface group, without the Entity class.
 - **Interface contract** — the versioned public contract of Entity Service Interface, stated in its Architecture section, with its version in Entity Service Preferences.
@@ -90,6 +90,7 @@ The layer that holds the one shared structure, in one unit, and every Action:
 - **Mirror** — one Action for every Entity Operation of that group, in the order Database publishes them, with the Operation's name and no prefix, and its parameters' names, order, and defaults; a parameter taking the Entity class is removed and supplied from the bound Entity, and a parameter taking an Entity instance stays. Command Operations take no Entity and are not part of Base.
 - **Forwarding** — each Action passes every other argument unchanged and returns Database's answer and errors unchanged.
 - **Bound Entity** — an instance that is not of the bound Entity is rejected with Database's Invalid Input error before Database is called.
+- **Explicit** — Base writes every Action out as its own method; no Action is forwarded through a generic or dynamic dispatcher or produced at runtime.
 - **Source** — Base reads only what Database Interface publishes, located from Database's own Preferences, never Database's structure files.
 
 <!-------------------------- Entities -->
@@ -100,7 +101,7 @@ Entities
 └── one Child Service per Entity
 ```
 
-The layer that holds one unit and one Child Service for every Entity in Model's Entity Collection. Each Child Service receives Base, binds its own Entity, and holds only Behavior or Actions specific to that Entity. Their unit and structure names follow the Child naming patterns in Entity Service Preferences, and an override of a Base Action applies to its own Entity only.
+The layer that holds one unit and one Child Service for every Entity in Model's Entity Collection, each unit placed directly in the Entity Service directory beside `interface` and `base`, never in a sub-directory. Each Child Service inherits Base, binds its own Entity, and holds only Behavior or Actions specific to that Entity: it may add an Action, override a Base Action, or override one to make it unavailable for its Entity. Their unit and structure names follow the Child naming patterns in Entity Service Preferences, and an override of a Base Action applies to its own Entity only.
 
 <!-------------------------- Documentation -->
 ### Documentation
@@ -127,11 +128,11 @@ The documentation of Entity Service, in the file, location, and format Entity Se
 Directory Structure
 ├── interface
 ├── base
-├── entity/
+├── <entity>
 └── README
 ```
 
-The root of this tree is the Entity Service directory, named in `settings` in Entity Service Preferences. `entity/` holds one unit per Entity, named by the Child naming pattern.
+The root of this tree is the Entity Service directory, named in `settings` in Entity Service Preferences. It holds one unit per Entity directly beside `interface` and `base`, named by the Child naming pattern; there is no Entity sub-directory.
 
 <br>
 
@@ -192,7 +193,7 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 #### Base mirrors every Entity Operation of Database
 
-**Rule:** Base has exactly one Action for every Entity Operation of Database's Interface group, in Database's order, with the same name and parameters except the removed Entity class. No Action is named or listed by hand.
+**Rule:** Base has exactly one Action for every Entity Operation of Database's Interface group, in Database's order, with the same name and parameters except the removed Entity class. Every Action is written out as its own method; none is forwarded through a generic or dynamic dispatcher. No Action is named or listed by hand.
 **Why:** Base follows Database one to one, so whoever knows Database already knows every Child Service.
 **Boundary:** An Operation that takes no Entity never becomes an Action.
 
@@ -212,15 +213,15 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 #### Every Entity has exactly one Child Service
 
-**Rule:** Entity Service has exactly one Child Service for every Entity in Model's Entity Collection. Each binds its own Entity and receives Base.
+**Rule:** Entity Service has exactly one Child Service for every Entity in Model's Entity Collection. Each binds its own Entity and inherits Base.
 **Why:** The Child Services stay complete and in step with Model.
 **Boundary:** A Child Service never copies or redefines its Entity.
 
 #### A Child Service holds only what is its own
 
-**Rule:** A Child Service holds only Behavior or Actions specific to its Entity; everything shared comes from Base.
+**Rule:** A Child Service inherits Base and holds only Behavior or Actions specific to its Entity; everything shared comes from Base.
 **Why:** Shared Actions are written once and cannot drift between Entities.
-**Boundary:** A Child Service may override a Base Action for its own Entity but never detaches itself from Base.
+**Boundary:** A Child Service may add an Action, override a Base Action, or override one to make it unavailable, for its own Entity only, but never detaches itself from Base.
 
 ### Review
 
@@ -235,12 +236,12 @@ Every Principle below is mandatory and belongs to the category that owns it.
 **Rule:** Review establishes Entity conformance through these observations, every one of them on every review:
 - Entity Service Interface publishes exactly Service, with one Child Service for every Entity in Model's Entity Collection; Model, with the Entity each Child Service binds under the same name; and Database's Value, Instance, and Error groups; and nothing else.
 - Every object in Model and every republished group is the identical object its source Interface publishes.
-- Base has exactly one Action for every Entity Operation of Database's Interface group, in Database's order, with the same name.
+- Base has exactly one Action for every Entity Operation of Database's Interface group, in Database's order, with the same name, each written out as its own method and none produced by a generic or dynamic dispatcher.
 - Each Action has its Operation's parameter names, order, and defaults, without the Entity class parameter.
 - Each Action returns its Operation's result and raises its errors unchanged, and rejects an instance of another Entity with the Invalid Input error.
 - Every Action uses the one Database object Base holds, and adds no validation, retry, or Instance selection of its own.
 - Every Child Service unit and structure name follows the configured patterns, and every name is valid and unique.
-- Every Child Service binds exactly its own Entity and receives Base.
+- Every Child Service binds exactly its own Entity, inherits Base, and sits in its own unit directly in the Entity Service directory.
 - Loading the Interface opens no connection and creates no data or file.
 **Why:** A fixed set of observations proves the same things on every review, so a result is never judged by a different standard from one run to the next.
 **Boundary:** Each observation states what is seen, never the command, tool, or code that observes it; how it is realized belongs to the Review Operation.
@@ -275,7 +276,7 @@ Every obligation in the file, under the Principle it comes from.
 
 **Base mirrors every Entity Operation of Database**
 
-- **Must** — Give Base one Action for every Entity Operation of Database's Interface group, in Database's order and with its name.
+- **Must** — Give Base one explicitly written Action for every Entity Operation of Database's Interface group, in Database's order and with its name.
 - **Never** — Name or list an Action by hand, or add an Action that takes no Entity.
 
 **Every Action works only through Database Interface**

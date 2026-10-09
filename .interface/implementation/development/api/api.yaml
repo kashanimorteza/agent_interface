@@ -155,7 +155,7 @@ content:
               allow_methods: ["*"]
               allow_headers: ["*"]
           group:
-            adapter: "One module per Adapter holding one APIRouter."
+            adapter: "One module per Adapter holding one APIRouter with one explicitly written route function per Endpoint; Adapters share no base class, router factory, or loop that generates routes."
             endpoint: "One route function per Endpoint, decorated with its method and path; its parameters copy the operation's names, types, and defaults, placed by architecture.entities.endpoints.parameter_placement."
             handler: "Each route calls the operation its Group names and returns the result unchanged."
           bootstrap: "Create one FastAPI app from config.yaml and include each Group's routers under its segment; Bootstrap performs no check, because conformance belongs to Review."

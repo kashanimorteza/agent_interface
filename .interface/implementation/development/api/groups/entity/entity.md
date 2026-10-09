@@ -65,7 +65,7 @@ Adapters
 └── one Adapter per Entity
 ```
 
-One unit for every Entity Child Service, placed directly inside the Entity Group directory and named from the bound Entity. Selecting an Adapter selects its Entity once; a caller never supplies the Entity again.
+One unit for every Entity Child Service, placed directly inside the Entity Group directory and named from the bound Entity. Each Adapter is standalone: it writes every Endpoint of its Entity out explicitly, one for every Action its Child Service offers, including any Action the Child Service adds or overrides and excluding any Action it makes unavailable, and shares no base, inherited structure, or generated routes with another Adapter. Selecting an Adapter selects its Entity once; a caller never supplies the Entity again.
 
 <!-------------------------- Endpoints -->
 ### Endpoints
@@ -157,7 +157,13 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 **Rule:** Entity Group has exactly one Adapter for every Entity Child Service that Entity Service presents, permanently bound to that Entity, and each Adapter has exactly one Endpoint for every Action of its Child Service.
 **Why:** The API surface stays a complete representation of Entity Service, and callers never repeat an Entity's identity.
-**Boundary:** No Entity or Action is filtered out, no Action outside the Child Service is added, and an Adapter never accepts another Entity from a caller.
+**Boundary:** No Entity or offered Action is filtered out, no Action outside the Child Service is added, an Action the Child Service makes unavailable has no Endpoint, and an Adapter never accepts another Entity from a caller.
+
+#### Every Adapter writes its own Endpoints
+
+**Rule:** Every Adapter writes each of its Endpoints out explicitly in its own unit. No Adapter inherits from or shares a base with another, and no Endpoint is produced by a generic handler, a loop, or any dynamic mechanism.
+**Why:** Each Entity's API surface can be read, extended, or reduced on its own without touching any other Entity.
+**Boundary:** The common HTTP rules still come from API; only the writing of each Endpoint stays inside its Adapter.
 
 <br>
 
@@ -184,7 +190,7 @@ Every Principle below is mandatory and belongs to the category that owns it.
 **Rule:** Review establishes Entity Group conformance through these observations, every one of them on every review:
 - Entity Group states its source, Adapters, and Endpoints in the shape the Group contract defines.
 - There is exactly one Adapter for every Entity that Entity Service presents, and nothing else.
-- Every Adapter has exactly one Endpoint for every Action of its Child Service, and nothing else.
+- Every Adapter has exactly one Endpoint for every Action of its Child Service, and nothing else, each written out explicitly in that Adapter, with no shared base or generated route.
 - Every Endpoint's Parameters keep the Action's names, requirements, and defaults.
 - Every Handler calls only its Action through Logic Interface and returns its result and errors unchanged.
 - Entity Group imports nothing but Logic Interface for the application.
@@ -218,6 +224,11 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — Give every Entity one bound Adapter and every Action one Endpoint.
 - **Never** — Filter an Entity or Action, add an unknown Action, or accept another Entity from a caller.
+
+**Every Adapter writes its own Endpoints**
+
+- **Must** — Write every Endpoint out explicitly in its Adapter's own unit.
+- **Never** — Share a base between Adapters or produce an Endpoint by a generic handler, loop, or dynamic mechanism.
 
 <br>
 
