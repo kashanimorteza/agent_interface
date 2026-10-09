@@ -40,7 +40,7 @@ A consumer imports Logic Interface, selects a Service, and uses what that Servic
 
 - **Service** — one modular part of Logic that owns one coherent responsibility, all of its files in its own directory, and its own Interface, Definition, and Preferences.
 - **Service Interface** — the gateway inside one Service's directory that presents that Service's capabilities.
-- **Logic Interface Schema** — the versioned structure that fixes the exact shape of Logic Interface.
+- **Interface contract** — the versioned public contract of Logic Interface, stated in its Architecture section, with its version in Logic Preferences.
 
 <br>
 
@@ -49,23 +49,33 @@ A consumer imports Logic Interface, selects a Service, and uses what that Servic
 
 ```text
 Logic
-├── Interface       ← every Service Interface, in the shape the Logic Interface Schema defines
-└── Services        ← one directory per Service
+├── Interface
+├── Services
+└── Documentation
 ```
 
-Logic Preferences own its identity, architecture, Service list, language and realization, and documentation. The shape of its Interface belongs to the Logic Interface Schema.
+Every entity below is declared in `architecture` in Logic Preferences, which also own the language, realization, and documentation choices; these selections realize the responsibilities below without changing them.
 
+<!-------------------------- Interface -->
 ### Interface
 
-Logic's outward surface. It meets these needs:
+Logic's outward surface: one entry for every Service, under that Service's name. Its Interface contract is these needs, with `contract_version` in Logic Preferences:
 
-1. **Complete** — exactly one entry for every Service listed in Logic Preferences, under that Service's configured name, changing when the list changes.
-2. **Unchanged** — each entry is that Service's own Interface, never a copy, wrapper, or added Action.
-3. **Nothing else** — nothing beyond these is published.
+1. **Complete** — exactly one entry for every Service listed in Logic Preferences, under that Service's configured name, changing when the list changes; each Service's name and Interface location come from that Service's own Preferences.
+2. **Unchanged** — each entry is that Service's own Interface, the identical object, never a copy, wrapper, or added Action.
+3. **Nothing else** — nothing beyond these is published, and Interface defines no Action, wrapper, or rule of its own and runs no check.
+4. **Versioned** — changing this structure requires raising `contract_version` and a consumer review; adding or removing a Service in the list flows through without one.
 
-The exact shape of these needs is fixed by the Logic Interface Schema, which is built from them. These needs are the reference: when the two differ, the Schema is corrected to match them.
+For a Logic with Entity Service and Storage Service, Interface publishes `Entity` and `Storage`, each the identical Interface of its Service.
 
+<!-------------------------- Services -->
 ### Services
+
+```text
+Services
+├── Entity Service
+└── Storage Service
+```
 
 Every Service listed in Logic Preferences has its own directory and Interface, and is governed by its own Definition and Preferences.
 
@@ -73,15 +83,54 @@ Every Service listed in Logic Preferences has its own directory and Interface, a
 
 One Child Service for every Model Entity.
 
-→ [Definition of Entity Service](services/entity/entity.md)<br>
+→ [Definition of Entity Service](services/entity/entity.md)
 → [Preferences of Entity Service](services/entity/entity.yaml)
 
 #### Storage Service
 
 Logic's gateway to Database.
 
-→ [Definition of Storage Service](services/storage/storage.md)<br>
+→ [Definition of Storage Service](services/storage/storage.md)
 → [Preferences of Storage Service](services/storage/storage.yaml)
+
+<!-------------------------- Documentation -->
+### Documentation
+
+```text
+Documentation
+├── Overview
+├── Interface
+├── Services
+├── Setup
+├── Use
+├── Verify
+└── Troubleshooting
+```
+
+The root documentation, in the file, location, and format Logic Preferences name. Its sections, in this order:
+
+1. **Overview** — What Logic is and why it exists, in one paragraph, with one simple example.
+2. **Interface** — Every name Logic Interface publishes.
+3. **Services** — For every Service, its name and links to its README, its Definition, and its Preferences; never a copy of its contract.
+4. **Setup** — How to install Logic and what it needs next to it.
+5. **Use** — How a consumer imports from Logic Interface.
+6. **Verify** — How to see that Logic Interface publishes exactly every listed Service.
+7. **Troubleshooting** — Real problems a consumer can meet and how to fix them.
+
+<!-------------------------- Directory Structure -->
+### Directory Structure
+
+```text
+Directory Structure
+├── logic/
+│   ├── interface
+│   └── services/
+│       ├── entity/
+│       └── storage/
+└── README
+```
+
+The root of this tree is the Component directory; it and the package directory take their names from `settings` in Logic Preferences. Each Service has its own directory under `services/`, named by the Service's key in Logic Preferences.
 
 <br>
 
@@ -122,11 +171,11 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 ### Interface
 
-#### Logic Interface conforms to the Logic Interface Schema
+#### Logic Interface conforms to the Interface contract
 
-**Rule:** Every realization of Logic Interface conforms to the versioned Logic Interface Schema, which fixes what it publishes and what it never publishes.
+**Rule:** Every realization of Logic Interface conforms to the versioned Interface contract, which fixes what it publishes and what it never publishes.
 **Why:** Every consumer depends on one exact gateway instead of reinterpreting each realization.
-**Boundary:** Changing the structure itself requires a Schema version change.
+**Boundary:** Changing the structure itself requires raising `contract_version`.
 
 #### Service imports point away from Logic Interface
 
@@ -158,14 +207,13 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 #### Logic conformance covers every Logic contract
 
-**Rule:** Logic is conformant only when its Interface needs in this Definition, the Logic Interface Schema, and its real Interface all match one another.
+**Rule:** Logic is conformant only when its Interface contract and its real Interface match one another.
 **Why:** A gap here silently hides or misnames a Service for every consumer.
 **Boundary:** Review reads Service Interfaces only to compare; it changes nothing outside Logic's own files.
 
 #### Review observes Logic through a fixed set of checks
 
 **Rule:** Review establishes Logic conformance through these observations, every one of them on every review:
-- Every need of the Interface layer in this Definition appears in the Logic Interface Schema, and the Schema holds nothing beyond them.
 - Logic Interface publishes exactly one entry for every Service listed in Logic Preferences, under its configured name, and nothing else.
 - Every entry is the identical Interface object of its Service.
 - No Service other than Storage Service imports Database Interface.
@@ -190,10 +238,10 @@ Every obligation in the file, under the Principle it comes from.
 
 ### Interface
 
-**Logic Interface conforms to the Logic Interface Schema**
+**Logic Interface conforms to the Interface contract**
 
-- **Must** — Conform every realization to the Logic Interface Schema.
-- **Never** — Publish anything the Schema does not list or change its structure without a Schema version change.
+- **Must** — Conform every realization to the Interface contract.
+- **Never** — Publish anything the contract does not list or change its structure without raising `contract_version`.
 
 **Service imports point away from Logic Interface**
 
@@ -221,7 +269,7 @@ Every obligation in the file, under the Principle it comes from.
 
 **Logic conformance covers every Logic contract**
 
-- **Must** — show that the Interface needs, the Logic Interface Schema, and the real Interface all match before Logic is conformant.
+- **Must** — show that the Interface contract and the real Interface match before Logic is conformant.
 - **Never** — change anything outside Logic's own files during review.
 
 **Review observes Logic through a fixed set of checks**

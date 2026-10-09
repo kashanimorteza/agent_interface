@@ -2,10 +2,10 @@
 meta:
   path: ".interface/implementation/development/logic/logic.yaml"
   path_note: "The Preferences layer of the Logic Component."
-  purpose: "Identity, Interface Schema reference, architecture, Service list, development, and documentation for Logic."
+  purpose: "Identity, the entities of architecture with the Interface contract version, Service list, and documentation, and the language profile for Logic."
   standard: "Agent Project Interface"
-  version: "18.0"
-  updated: "2026-10-01"
+  version: "19.0"
+  updated: "2026-10-09"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -23,20 +23,14 @@ resolution:
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - settings
-  - interface
   - architecture
-  - services
   - development
-  - documentation
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
   settings: "Logic's identity: type, platform, directory, and package."
-  interface: "The Logic Interface Schema and its version."
-  architecture: "The physical names of the Services directory and the Interface and documentation files."
-  services: "Every Service of Logic, with its Definition and Preferences."
+  architecture: "The entities of the Architecture tree — Interface with its contract version, Services with the Definition and Preferences of every Service, and Documentation with its file, location, and format."
   development: "Development capabilities and the selected language with its realization profile."
-  documentation: "The documentation file, its location, its section order, and the content of each section."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
@@ -44,32 +38,27 @@ content:
   # <!-------------------------------------------- settings -->
   settings:
     component:
-      type: "library"
-      platform: "VPS"
-      directory: "logic"
-      package: "logic"
-
-  # <!-------------------------------------------- interface -->
-  interface:
-    schema: ".interface/foundation/schema/logic-interface.yaml"
-    contract_version: "1.1"
+      type: library
+      platform: VPS
+      directory: logic
+      package: logic
 
   # <!-------------------------------------------- architecture -->
   architecture:
-    directories:
-      services: "services"
-    files:
-      interface: "interface"
-      documentation: "README.md"
-
-  # <!-------------------------------------------- services -->
-  services:
-    entity:
-      definition: "services/entity/entity.md"
-      preferences: "services/entity/entity.yaml"
-    storage:
-      definition: "services/storage/storage.md"
-      preferences: "services/storage/storage.yaml"
+    entities:
+      interface:
+        contract_version: '1.1'
+      services:
+        entity:
+          definition: services/entity/entity.md
+          preferences: services/entity/entity.yaml
+        storage:
+          definition: services/storage/storage.md
+          preferences: services/storage/storage.yaml
+      documentation:
+        file: README.md
+        location: the Component root
+        format: markdown
 
   # <!-------------------------------------------- development -->
   development:
@@ -83,25 +72,3 @@ content:
         python:
           identifier_case: "snake_case"
           interface: "For every listed Service, `from logic.services.<directory> import interface as <Name>`, then `__all__` with every Name. The interface file holds nothing else and performs no check, because conformance belongs to Review."
-
-  # <!-------------------------------------------- documentation -->
-  documentation:
-    file: "README.md"
-    location: "the Component root"
-    format: "markdown"
-    order:
-      - overview
-      - interface
-      - services
-      - setup
-      - use
-      - verify
-      - troubleshooting
-    sections:
-      overview: "What Logic is and why it exists, in one paragraph, with one simple example."
-      interface: "Every name Logic Interface publishes."
-      services: "For every Service, its name and links to its README, its Definition, and its Preferences; never a copy of its contract."
-      setup: "How to install Logic and what it needs next to it."
-      use: "How a consumer imports from Logic Interface."
-      verify: "How to see that Logic Interface publishes exactly every listed Service."
-      troubleshooting: "Real problems a consumer can meet and how to fix them."

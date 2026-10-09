@@ -23,7 +23,7 @@ Entity Service is the fixed internal Logic Service whose Interface gives every E
 
 ### Overview
 
-Entity Service is a fixed internal Service of every Logic Component. For every Entity in Model's Entity Collection it provides one Child Service, so a caller selects an Entity once and then calls its Actions without passing the Entity again. Its Interface publishes four groups: Service, the Child Services; Model, the Entity each binds; Parameter, the non-error contracts Storage publishes; and Error, the errors Storage publishes.
+Entity Service is a fixed internal Service of every Logic Component. For every Entity in Model's Entity Collection it provides one Child Service, so a caller selects an Entity once and then calls its Actions without passing the Entity again. Its Interface publishes Service, the Child Services; Model, the Entity each binds; and, unchanged, the four Database groups Storage republishes.
 
 ### Purpose
 
@@ -42,7 +42,7 @@ A caller selects a Child Service and calls an Action; the Child Service adds its
 - **Base** — the one shared structure that holds every Action and that every Child Service receives.
 - **Child Service** — the structure bound to one Entity of Model's Entity Collection.
 - **Action** — one operation of Base, named and shaped exactly like one Storage Action that takes an Entity, without the Entity class.
-- **Logic Entity Interface Schema** — the versioned structure that fixes the exact shape of Entity Service Interface.
+- **Interface contract** — the versioned public contract of Entity Service Interface, stated in its Architecture section, with its version in Entity Service Preferences.
 
 <br>
 
@@ -51,32 +51,82 @@ A caller selects a Child Service and calls an Action; the Child Service adds its
 
 ```text
 Entity Service
-├── Interface   ← the Child Services and contracts, in the shape the Logic Entity Interface Schema defines
-├── Base        ← the shared structure that offers every Action
-└── Entities    ← one Child Service per Entity
+├── Interface
+├── Base
+├── Entities
+└── Documentation
 ```
 
-Entity Service Preferences own its configurable name, directory, architecture, naming patterns, language and realization, and documentation. The shape of its Interface belongs to the Logic Entity Interface Schema.
+Every entity below is declared in `architecture` in Entity Service Preferences, which also own the configurable name, naming patterns, language, realization, and documentation choices; these selections realize the responsibilities below without changing them.
 
+<!-------------------------- Interface -->
 ### Interface
 
-The gateway callers import from. It publishes four groups, and nothing else. It meets these needs:
+```text
+Interface
+├── Service
+├── Model
+├── database_value
+├── database_instance
+├── database_result
+└── database_error
+```
+
+The gateway callers import from: everything a caller needs to call Actions, build requests, read results, and catch errors without importing Model, Storage, or Database. It publishes its own two groups, Service and Model, named in Entity Service Preferences, and the four groups Storage republishes, and nothing else. Its Interface contract is these needs, with `contract_version` in Entity Service Preferences:
 
 1. **Service** — exactly one Child Service for every Entity in Model's Entity Collection, changing when the Collection changes.
 2. **Model** — the Entity every Child Service binds, under the same name as its Child Service, as the original object Model Interface publishes, never a copy, so no caller has to reach Model directly.
-3. **Parameter** — every contract Storage Interface publishes that is not an error, except the Storage gateway, as the original object, never a copy.
-4. **Error** — every error Storage Interface publishes, as the original object, never a copy.
-5. **Nothing else** — Base, the Storage gateway, and anything beyond these four groups are never published, and loading the Interface has no side effect.
+3. **Storage groups** — the four Database groups Storage Interface republishes, `database_value`, `database_instance`, `database_result`, and `database_error`, each passed on under its own name as the identical object, never a copy or a member taken out on its own, and read from Storage Interface each time rather than listed by hand.
+4. **Nothing else** — Base, the Storage gateway, and anything beyond these groups are never published; Interface runs no check, and loading it opens no connection and creates no data or file.
+5. **Versioned** — changing this structure requires raising `contract_version` and a consumer review; a change in Model's Entity Collection or in what Storage Interface publishes flows through without one.
 
-The exact shape of these needs is fixed by the Logic Entity Interface Schema, which is built from them. These needs are the reference: when the two differ, the Schema is corrected to match them.
+For example, a caller creates `Service.User()`, calls `add` with a `Model.User`, filters `list` with a `database_value.Filter` on `Model.User.is_active`, and catches `database_error.InvalidInputError` when it passes a `Model.Account` instead.
 
+<!-------------------------- Base -->
 ### Base
 
-The layer that holds the one shared structure, in one unit, and every Action. When it is created, it takes one access to Storage, and every Action uses that same access. For every Storage Action that takes an Entity, in the order Storage publishes them, it offers one Action with the same name and the same parameters, except that a parameter taking the Entity class is removed and supplied from the bound Entity; a parameter taking an Entity instance stays. The Action hands the request to Storage and returns its answer and errors unchanged, with one exception: an instance that is not of the bound Entity is rejected with the Invalid Input error Storage Interface republishes, before Storage is called.
+The layer that holds the one shared structure, in one unit, and every Action. When it is created, it takes one access to Storage, and every Action uses that same access. For every Storage Action that takes an Entity, in the order Storage publishes them, it offers one Action with the same name and the same parameters, except that a parameter taking the Entity class is removed and supplied from the bound Entity; a parameter taking an Entity instance stays. The Action hands the request to Storage and returns its answer and errors unchanged, with one exception: an instance that is not of the bound Entity is rejected with the Invalid Input error Storage Interface republishes, before Storage is called. Base reads only what Storage Interface publishes, located from Storage Service's own Preferences; each Action keeps its Storage Action's name with no prefix, and its parameters' names, order, and defaults.
 
+<!-------------------------- Entities -->
 ### Entities
 
-The layer that holds one unit and one Child Service for every Entity in Model's Entity Collection. Each Child Service receives Base, binds its own Entity, and holds only Behaviour or Actions specific to that Entity.
+```text
+Entities
+└── one Child Service per Entity
+```
+
+The layer that holds one unit and one Child Service for every Entity in Model's Entity Collection. Each Child Service receives Base, binds its own Entity, and holds only Behaviour or Actions specific to that Entity. Their unit and structure names follow the Child naming patterns in Entity Service Preferences, and an override of a Base Action applies to its own Entity only.
+
+<!-------------------------- Documentation -->
+### Documentation
+
+```text
+Documentation
+├── Overview
+├── Interface
+├── Use
+└── Verify
+```
+
+The documentation of Entity Service, in the file, location, and format Entity Service Preferences name. Its sections, in this order:
+
+1. **Overview** — What Entity Service is and why it exists, in one paragraph, with one simple example.
+2. **Interface** — Every group with its members — every Child Service and its Actions, every Model, and every member of the four Storage groups — each with one example.
+3. **Use** — How a caller imports a Child Service and how a Child Service adds its own Behaviour.
+4. **Verify** — How to see that Entity Service matches Model's Entity Collection and Storage Interface.
+
+<!-------------------------- Directory Structure -->
+### Directory Structure
+
+```text
+Directory Structure
+├── interface
+├── base
+├── entity/
+└── README
+```
+
+The root of this tree is the Entity Service directory, named in `settings` in Entity Service Preferences. `entity/` holds one unit per Entity, named by the Child naming pattern.
 
 <br>
 
@@ -121,15 +171,15 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 ### Interface
 
-#### Entity Service Interface conforms to the Logic Entity Interface Schema
+#### Entity Service Interface conforms to the Interface contract
 
-**Rule:** Every realization of Entity Service Interface conforms to the versioned Logic Entity Interface Schema, which fixes its four groups, the Actions of every Child Service, and what it never publishes.
+**Rule:** Every realization of Entity Service Interface conforms to the versioned Interface contract, which fixes its groups, the Actions of every Child Service, and what it never publishes.
 **Why:** Every caller depends on one exact gateway instead of reinterpreting each realization.
-**Boundary:** Changing the structure itself requires a Schema version change.
+**Boundary:** Changing the structure itself requires raising `contract_version`.
 
 #### Entity Service names are valid and unique
 
-**Rule:** The configured Service name, the Base name, the four group names, and every Child Service unit and structure name derived from the configured patterns are valid for the selected language and never collide within the same group. A Child Service and its Model share one name by design.
+**Rule:** The configured Service name, the Base name, the Service and Model group names, and every Child Service unit and structure name derived from the configured patterns are valid for the selected language and never collide within the same group. A Child Service and its Model share one name by design.
 **Why:** Every Entity needs an unambiguous realization that the selected language accepts.
 **Boundary:** An invalid, reserved, or colliding value stops generation with a clear configuration error. The generator never invents a suffix, number, or silent rename.
 
@@ -171,16 +221,15 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 #### Entity conformance covers every Entity contract
 
-**Rule:** Entity Service is conformant only when its Interface needs in this Definition, the Logic Entity Interface Schema, and its real Interface all match one another.
+**Rule:** Entity Service is conformant only when its Interface contract and its real Interface match one another.
 **Why:** A gap or a change here silently breaks every caller of Entity Service.
 **Boundary:** Review reads Model and Storage Interfaces only to compare; it changes nothing outside Entity Service.
 
 #### Review observes Entity Service through a fixed set of checks
 
 **Rule:** Review establishes Entity conformance through these observations, every one of them on every review:
-- Every need of the Interface, Base, and Entities layers in this Definition appears in the Logic Entity Interface Schema, and the Schema holds nothing beyond them.
-- Entity Service Interface publishes exactly four groups, and nothing else: Service, with one Child Service for every Entity in Model's Entity Collection; Model, with the Entity each Child Service binds under the same name; Parameter, with every non-error contract Storage Interface publishes except the Storage gateway; and Error, with every error Storage Interface publishes.
-- Every object in Model, Parameter, and Error is the identical object its source Interface publishes.
+- Entity Service Interface publishes exactly Service, with one Child Service for every Entity in Model's Entity Collection; Model, with the Entity each Child Service binds under the same name; and the four groups Storage Interface republishes; and nothing else.
+- Every object in Model and every republished group is the identical object its source Interface publishes.
 - Base has exactly one Action for every Storage Action that takes an Entity, in Storage's order, with the same name.
 - Each Action has Storage's parameter names, order, and defaults, without the Entity class parameter.
 - Each Action returns its Storage Action's result and raises its errors unchanged, and rejects an instance of another Entity with the Invalid Input error.
@@ -207,10 +256,10 @@ Every obligation in the file, under the Principle it comes from.
 
 ### Interface
 
-**Entity Service Interface conforms to the Logic Entity Interface Schema**
+**Entity Service Interface conforms to the Interface contract**
 
-- **Must** — Conform every realization to the Logic Entity Interface Schema.
-- **Never** — Publish anything the Schema does not list or change its structure without a Schema version change.
+- **Must** — Conform every realization to the Interface contract.
+- **Never** — Publish anything the contract does not list or change its structure without raising `contract_version`.
 
 **Entity Service names are valid and unique**
 
@@ -250,7 +299,7 @@ Every obligation in the file, under the Principle it comes from.
 
 **Entity conformance covers every Entity contract**
 
-- **Must** — show that the Interface needs, the Logic Entity Interface Schema, and the real Interface all match before Entity Service is conformant.
+- **Must** — show that the Interface contract and the real Interface match before Entity Service is conformant.
 - **Never** — change anything outside Entity Service during review.
 
 **Review observes Entity Service through a fixed set of checks**

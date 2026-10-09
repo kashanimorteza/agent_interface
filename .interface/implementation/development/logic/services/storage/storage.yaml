@@ -2,10 +2,10 @@
 meta:
   path: ".interface/implementation/development/logic/services/storage/storage.yaml"
   path_note: "The Preferences layer of the fixed Storage Role inside the Logic Component."
-  purpose: "Name, directory, Interface Schema reference, architecture, development, and documentation for Storage Service."
+  purpose: "Name, directory, the entities of architecture with the Interface contract and documentation, and the language profile for Storage Service."
   standard: "Agent Project Interface"
-  version: "6.1"
-  updated: "2026-10-01"
+  version: "7.0"
+  updated: "2026-10-09"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -23,18 +23,14 @@ resolution:
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - settings
-  - interface
   - architecture
   - development
-  - documentation
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
   settings: "The fixed Logic owner and Storage Role, and the configurable Service name and directory."
-  interface: "The Logic Storage Interface Schema and its version."
-  architecture: "The physical names of the Interface and Core files."
+  architecture: "The entities of the Architecture tree — Interface with its contract version, and Documentation with its file, location, and format."
   development: "Development capabilities and the selected language with its realization profile."
-  documentation: "The documentation file, its location, its section order, and the content of each section."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
@@ -42,22 +38,21 @@ content:
   # <!-------------------------------------------- settings -->
   settings:
     component:
-      role: "logic"
+      role: logic
     service:
-      role: "storage"
-      name: "Storage"
-      directory: "storage"
-
-  # <!-------------------------------------------- interface -->
-  interface:
-    schema: ".interface/foundation/schema/logic-storage-interface.yaml"
-    contract_version: "2.2"
+      role: storage
+      name: Storage
+      directory: storage
 
   # <!-------------------------------------------- architecture -->
   architecture:
-    files:
-      interface: "interface"
-      core: "core"
+    entities:
+      interface:
+        contract_version: '3.0'
+      documentation:
+        file: README.md
+        location: the Storage Service directory
+        format: markdown
 
   # <!-------------------------------------------- development -->
   development:
@@ -71,22 +66,6 @@ content:
         python:
           identifier_case: "snake_case"
           structure: "One class named by settings.service.name, in the core file"
-          constructor: "__init__ creates one Database() and keeps it on the instance"
-          methods: "One method per Database capability, in the order Database Interface publishes them, with the capability's exact name, signature, and docstring; each calls the kept Database's method with every argument, in order."
-          republish: "Every contract is imported directly from Database Interface and republished. The interface file holds only these imports and the published list; it performs no check, because conformance belongs to Review."
-
-  # <!-------------------------------------------- documentation -->
-  documentation:
-    file: "README.md"
-    location: "the Storage Service directory"
-    format: "markdown"
-    order:
-      - overview
-      - interface
-      - use
-      - verify
-    sections:
-      overview: "What Storage is and why it exists, in one paragraph, with one simple example."
-      interface: "Every Action and every republished contract, each with one example."
-      use: "How another Logic Service imports from the Storage Interface."
-      verify: "How to see that Storage matches Database Interface."
+          constructor: "__init__ creates one database_interface() and keeps it on the instance"
+          methods: "One method per method of database_interface, in the order Database Interface publishes them, with the capability's exact name, signature, and docstring; each calls the kept Database's method with every argument, in order."
+          republish: "The database_value, database_instance, database_result, and database_error groups are imported directly from Database Interface and republished unchanged under their own names. The interface file holds only these imports and the published list; it performs no check, because conformance belongs to Review."

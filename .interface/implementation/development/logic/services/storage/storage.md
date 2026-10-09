@@ -1,6 +1,6 @@
 # Storage Service Definition
 
-Storage Service is the fixed internal Logic Service whose Interface gives other Logic Services access to every public capability published by Database.
+Storage Service is the fixed internal Logic Service whose Interface gives other Logic Services access to every Operation of Database's Interface group.
 
 <br>
 
@@ -23,7 +23,7 @@ Storage Service is the fixed internal Logic Service whose Interface gives other 
 
 ### Overview
 
-Storage Service is a fixed internal Service of every Logic Component. It is Logic's complete gateway to Database: for every capability Database Interface publishes, its one Storage gateway provides one corresponding Action. Its Interface publishes that gateway and republishes the Database contracts those Actions need.
+Storage Service is a fixed internal Service of every Logic Component. It is Logic's complete gateway to Database: for every Operation of Database's Interface group, its one Storage gateway provides one corresponding Action. Its Interface publishes that gateway and republishes, unchanged, the Database groups those Actions need.
 
 ### Purpose
 
@@ -39,8 +39,8 @@ A Logic Service calls an Action on Storage; Storage hands the request to Databas
 ## Terms
 
 - **Storage Role** — the fixed identity of this Service inside Logic, independent of its configurable name.
-- **Action** — one operation of the Core gateway, named and shaped exactly like one capability published by Database Interface.
-- **Logic Storage Interface Schema** — the versioned structure that fixes the exact shape of Storage Service Interface.
+- **Action** — one operation of the Core gateway, named and shaped exactly like one Operation of Database's Interface group.
+- **Interface contract** — the versioned public contract of Storage Service Interface, stated in its Architecture section, with its version in Storage Service Preferences.
 
 <br>
 
@@ -49,34 +49,77 @@ A Logic Service calls an Action on Storage; Storage hands the request to Databas
 
 ```text
 Storage Service
-├── Interface   ← the gateway, in the shape the Logic Storage Interface Schema defines
-└── Core        ← the gateway structure that offers every Action
+├── Interface
+├── Core
+└── Documentation
 ```
 
-Storage Service Preferences own its configurable name, directory, architecture, language and realization, and documentation. The shape of its Interface belongs to the Logic Storage Interface Schema.
+Every entity below is declared in `architecture` in Storage Service Preferences, which also own the configurable name, language, realization, and documentation choices; these selections realize the responsibilities below without changing them.
 
+<!-------------------------- Interface -->
 ### Interface
 
-The gateway other Logic Services import from. It publishes the Core gateway and the Database contracts it needs. It meets these needs:
+```text
+Interface
+├── Storage
+├── database_value
+├── database_instance
+├── database_result
+└── database_error
+```
 
-1. **Complete** — exactly one Action for every capability Database Interface publishes, changing automatically when Database's capabilities change, so Storage never falls behind Database.
-2. **Unchanged** — every Action passes the Database capability's input, result, and errors through exactly, so Database stays the only authority for storage.
-3. **Needed contracts** — everything a Service needs to build a request, read a result, and catch an error is republished as the original object, never a copy, so no Service has to reach Database directly.
+The gateway other Logic Services import from. It publishes the Core gateway and, unchanged, the four Database groups a Service needs to build a request, read a result, and catch an error, so no Service has to reach Database directly. Its Interface contract is these needs, with `contract_version` in Storage Service Preferences:
+
+1. **Complete** — exactly one Action for every Entity Operation and Command Operation in Database's Interface group, in the order Database publishes them, changing automatically when that group changes, so Storage never falls behind Database. Database's Setup group is not part of Storage.
+2. **Unchanged** — every Action passes the Database Operation's input, result, and errors through exactly, so Database stays the only authority for storage.
+3. **Needed contracts** — Database's Value, Instance, Result, and Error groups, each republished under Database's own group name as the identical object, never a copy or a member taken out on its own, and read from Database Interface each time rather than listed by hand.
 4. **No behaviour** — no Action adds validation, retry, Engine or default-Instance selection, or a rule of its own, because behaviour belongs to the calling Service.
-5. **Nothing else** — nothing beyond these is published, and loading the Interface has no side effect.
+5. **Nothing else** — Action implementations, Database internals, and anything beyond these are never published; Interface runs no check, and loading it opens no connection and creates no data or file.
+6. **Versioned** — changing this structure requires raising `contract_version` and a consumer review; a change in what Database Interface publishes flows through without one.
 
-The exact shape of these needs is fixed by the Logic Storage Interface Schema, which is built from them. These needs are the reference: when the two differ, the Schema is corrected to match them.
+For example, a Service creates `Storage()`, calls `add` with a Model Entity, filters `list` with a `database_value.Filter` and selects `database_instance.SQLITE`, and catches `database_error.ConnectionFailureError`.
 
+<!-------------------------- Core -->
 ### Core
 
-The layer that holds the one gateway structure, in one unit, and every Action. When the gateway is created, it takes one access to Database, and every Action uses that same access. For every capability Database Interface publishes, in the order Database publishes them, it offers one Action with the same name and the same parameters; the Action hands the request to that capability and returns its answer.
+The layer that holds the one gateway structure, in one unit, and every Action. Core reads only what Database Interface publishes, located from Database's own Preferences, never Database's structure files. When the gateway is created, it creates one object of Database's Interface group, and every Action uses that same object. For every Operation that group publishes, in the order Database publishes them, it offers one Action with exactly the Operation's name, no prefix, and the same parameter names, order, and defaults; the Action forwards every argument unchanged, performs no other work, and returns the Operation's answer and errors unchanged.
+
+<!-------------------------- Documentation -->
+### Documentation
+
+```text
+Documentation
+├── Overview
+├── Interface
+├── Use
+└── Verify
+```
+
+The documentation of Storage Service, in the file, location, and format Storage Service Preferences name. Its sections, in this order:
+
+1. **Overview** — What Storage is and why it exists, in one paragraph, with one simple example.
+2. **Interface** — Every Action and every republished contract, each with one example.
+3. **Use** — How another Logic Service imports from the Storage Interface.
+4. **Verify** — How to see that Storage has one Action for every Operation of Database's Interface group and republishes Database's four groups unchanged.
+
+<!-------------------------- Directory Structure -->
+### Directory Structure
+
+```text
+Directory Structure
+├── interface
+├── core
+└── README
+```
+
+The root of this tree is the Storage Service directory, named in `settings` in Storage Service Preferences.
 
 <br>
 
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
-- **Consumes Database** — uses every capability and supporting contract Database Interface publishes, only through Database Interface. It finds that Interface from Database's own Preferences and never reads Database's structure files.
+- **Consumes Database** — uses every Operation of Database's Interface group and its Value, Instance, Result, and Error groups, only through Database Interface. It finds that Interface from Database's own Preferences and never reads Database's structure files.
 - **Consumes Development** — follows its shared rules and Defaults for every choice this Component leaves unstated.
 
 <br>
@@ -115,15 +158,15 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 ### Interface
 
-#### Storage Service Interface conforms to the Logic Storage Interface Schema
+#### Storage Service Interface conforms to the Interface contract
 
-**Rule:** Every realization of Storage Service Interface conforms to the versioned Logic Storage Interface Schema, which fixes its Actions, their parameters, results, and errors, the republished contracts, and what it never publishes.
+**Rule:** Every realization of Storage Service Interface conforms to the versioned Interface contract, which fixes its Actions, their parameters, results, and errors, the republished groups, and what it never publishes.
 **Why:** Every Logic Service depends on one exact gateway instead of reinterpreting each realization.
-**Boundary:** Changing the structure itself requires a Schema version change.
+**Boundary:** Changing the structure itself requires raising `contract_version`.
 
 #### Storage Service name is valid and unique
 
-**Rule:** The configured Service name is valid for the selected language and never collides with a republished contract.
+**Rule:** The configured Service name is valid for the selected language and never collides with a republished group.
 **Why:** The gateway is named by it, and an invalid or colliding name cannot be realized safely.
 **Boundary:** An invalid, reserved, or colliding value stops generation with a clear configuration error. The generator never invents a suffix, number, or silent rename.
 
@@ -149,7 +192,7 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 #### Storage conformance covers every Storage contract
 
-**Rule:** Storage Service is conformant only when its Interface needs in this Definition, the Logic Storage Interface Schema, and its real Interface all match one another.
+**Rule:** Storage Service is conformant only when its Interface contract and its real Interface match one another.
 **Why:** A gap or a change here silently breaks every caller of Storage.
 **Boundary:** Review reads Database Interface only to compare; it changes nothing outside Storage Service.
 
@@ -157,11 +200,10 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 **Rule:** Review establishes Storage conformance through these observations, every one of them on every review:
 
-- Every need of the Interface and Core layers in this Definition appears in the Logic Storage Interface Schema, and the Schema holds nothing beyond them.
-- Storage Service Interface publishes exactly one Action for every capability Database Interface publishes, and nothing else.
+- Storage Service Interface publishes exactly one Action for every Operation of Database's Interface group, Database's Value, Instance, Result, and Error groups, and nothing else.
 - Each Action has the same parameter names, order, and defaults as its Database capability.
 - Each Action returns its Database capability's result and raises its errors unchanged.
-- Every republished contract, including every Database error, is the identical object Database Interface publishes.
+- Every republished group is the identical object Database Interface publishes.
 - No Action adds validation, retry, Engine or default-Instance selection, or a rule of its own.
 - Every Action is an operation of the one Core gateway, has exactly its Database capability's name, and uses the one Database access that gateway holds.
 - Loading the Interface opens no connection and creates no data or file.
@@ -187,14 +229,14 @@ Every obligation in the file, under the Principle it comes from.
 
 ### Interface
 
-**Storage Service Interface conforms to the Logic Storage Interface Schema**
+**Storage Service Interface conforms to the Interface contract**
 
-- **Must** — Conform every realization to the Logic Storage Interface Schema.
-- **Never** — Publish anything the Schema does not list or change its structure without a Schema version change.
+- **Must** — Conform every realization to the Interface contract.
+- **Never** — Publish anything the contract does not list or change its structure without raising `contract_version`.
 
 **Storage Service name is valid and unique**
 
-- **Must** — Keep the configured Service name valid and free of collision with every republished contract.
+- **Must** — Keep the configured Service name valid and free of collision with every republished group.
 - **Never** — Resolve a collision by inventing a suffix, number, or silent rename.
 
 <br>
@@ -217,7 +259,7 @@ Every obligation in the file, under the Principle it comes from.
 
 **Storage conformance covers every Storage contract**
 
-- **Must** — show that the Interface needs, the Logic Storage Interface Schema, and the real Interface all match before Storage is conformant.
+- **Must** — show that the Interface contract and the real Interface match before Storage is conformant.
 - **Never** — change anything outside Storage Service during review.
 
 **Review observes Storage through a fixed set of checks**

@@ -2,10 +2,10 @@
 meta:
   path: ".interface/implementation/development/logic/services/entity/entity.yaml"
   path_note: "The Preferences layer of the fixed Entity Role inside the Logic Component."
-  purpose: "Name, directory, Interface Schema reference, architecture, development, and documentation for Entity Service."
+  purpose: "Name, directory, the entities of architecture with the Interface contract, naming patterns, and documentation, and the language profile for Entity Service."
   standard: "Agent Project Interface"
-  version: "7.0"
-  updated: "2026-10-07"
+  version: "8.0"
+  updated: "2026-10-09"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -23,18 +23,14 @@ resolution:
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
   - settings
-  - interface
   - architecture
   - development
-  - documentation
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
   settings: "The fixed Logic owner and Entity Role, and the configurable Service name and directory."
-  interface: "The Logic Entity Interface Schema and its version."
-  architecture: "The physical names of the Interface and Base files, the Entities directory, and the Child naming patterns."
+  architecture: "The entities of the Architecture tree — Interface with its contract version and the names of its own two groups, Entities with the Child naming patterns, and Documentation with its file, location, and format."
   development: "Development capabilities and the selected language with its realization profile."
-  documentation: "The documentation file, its location, its section order, and the content of each section."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
@@ -42,32 +38,28 @@ content:
   # <!-------------------------------------------- settings -->
   settings:
     component:
-      role: "logic"
+      role: logic
     service:
-      role: "entity"
-      name: "Entity"
-      directory: "entity"
-
-  # <!-------------------------------------------- interface -->
-  interface:
-    schema: ".interface/foundation/schema/logic-entity-interface.yaml"
-    contract_version: "2.0"
+      role: entity
+      name: Entity
+      directory: entity
 
   # <!-------------------------------------------- architecture -->
   architecture:
-    files:
-      interface: "interface"
-      base: "base"
-    directories:
-      entities: "entity"
-    naming:
-      child_file: "<entity>"
-      child_structure: "<entity>"
-      groups:
-        service: "Service"
-        model: "Model"
-        parameter: "Parameter"
-        error: "Error"
+    entities:
+      interface:
+        contract_version: '3.0'
+        groups:
+          service: Service
+          model: Model
+      entities:
+        naming:
+          child_file: <entity>
+          child_structure: <entity>
+      documentation:
+        file: README.md
+        location: the Entity Service directory
+        format: markdown
 
   # <!-------------------------------------------- development -->
   development:
@@ -84,20 +76,4 @@ content:
           constructor: "__init__ creates one Storage() and keeps it on the instance"
           methods: "One method per Storage method whose first parameter is entity, in the order Storage publishes them, with the method's exact name and docstring. An entity parameter typed as a class is removed and the bound Entity is passed in its place; an entity parameter typed as an instance stays and is checked against the bound Entity, raising InvalidInputError on a mismatch. Every other argument is passed unchanged, in order."
           child: "One file per Entity holding class <Entity>(BaseEntity) with _entity = model.<Entity> from `from model import interface as model`, and only what is specific to that Entity."
-          republish: "The interface file publishes four namespace classes named by architecture.naming.groups: Service holds every Child class; Model holds the Entity each Child binds, under the Child's name; Parameter holds every non-error contract Storage Interface publishes except Storage; Error holds every error Storage Interface publishes. The interface file holds only these imports, the four namespace classes, and the published list; it performs no check, because conformance belongs to Review."
-
-  # <!-------------------------------------------- documentation -->
-  documentation:
-    file: "README.md"
-    location: "the Entity Service directory"
-    format: "markdown"
-    order:
-      - overview
-      - interface
-      - use
-      - verify
-    sections:
-      overview: "What Entity Service is and why it exists, in one paragraph, with one simple example."
-      interface: "Every group with its members — every Child Service and its Actions, every Model, every Parameter, and every Error — each with one example."
-      use: "How a caller imports a Child Service and how a Child Service adds its own Behaviour."
-      verify: "How to see that Entity Service matches Model's Entity Collection and Storage Interface."
+          republish: "The interface file publishes two namespace classes named by architecture.entities.interface.groups: Service holds every Child class; Model holds the Entity each Child binds, under the Child's name. It also imports database_value, database_instance, database_result, and database_error from Storage Interface and publishes them unchanged under their own names. The interface file holds only these imports, the two namespace classes, and the published list; it performs no check, because conformance belongs to Review."
