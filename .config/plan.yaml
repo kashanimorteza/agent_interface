@@ -26,7 +26,7 @@ content_map:
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
-  task_count: 85
+  task_count: 113
   plans:
     P1:
       id: P1
@@ -2726,3 +2726,677 @@ content:
               - at: '2026-10-08T08:39:53Z'
                 event: done
                 note: 'Applied the quality standards the Development Preferences select to the complete Logic library and its documentation. Observed: the formatter check reports 24 files already formatted, the linter and the type checker report no findings, the lock file is consistent; regenerating the 15 Child Services, the Entity Service Interface and both documents from their sources gives zero difference; the declared dependencies (database, model) equal the packages imported directly; the Component holds the Directory Structure members (logic package with the interface and services/entity holding the interface, base and one unit per Entity; documentation at the Component root and in the Entity Service directory); all examples of both documents still run and both Verify scripts print their success line.'
+    P4:
+      id: P4
+      title: API
+      order: 4
+      target: API
+      does: The API executable exists as a separate project-internal component that, from one runtime Configuration, serves the Entity Group, one Adapter for every Entity of Logic's Entity Service each with one Endpoint for every Action of that Entity, beneath one Base URL together with its interactive documentation, with documentation for the API and for the Entity Group.
+      constraints:
+      - A Group is registered beneath the Base URL and the API is run only by the Bootstrap work of this phase; no Entity Group work registers a Group or starts anything.
+      task_count: 28
+      groups:
+        P4-G1:
+          id: P4-G1
+          title: API Package
+          description: The API executable's own packaging, dependency baseline and Connection to Logic.
+          area: API executable packaging and Connection
+          does: The API executable can be installed and imported as a project-internal package that reaches Logic Interface through its declared Connection.
+          constraints: []
+          task_count: 1
+          tasks:
+            P4-G1-T1:
+              id: P4-G1-T1
+              source_id: '015'
+              title: Establish the API executable package
+              description: Create the API Component as a self-contained executable package that depends on the Logic library as a local project dependency, matching its declared Connection and no other Component directly. Resolve the dependencies its selected technology needs to concrete compatible versions, make the language's quality-standard tooling available to it, and make sure the project's single ignore file covers its caches.
+              reason: Every later API Task needs a package to live in and a resolved Connection to the Logic library it serves.
+              inputs:
+              - API Component identity and selected language profile
+              - Development language standards and declared Connections
+              - Published Logic Interface
+              skills: &id001
+              - fastapi
+              expected_result: An installable, importable API package, containing no Endpoint yet, that reaches Logic Interface through its dependency.
+              depends_on:
+              - P3-G5-T1
+              constraints: []
+              acceptance: The package installs into an isolated environment from the repository alone and imports without error; Logic Interface can be imported through the declared dependency; no Component other than Logic is declared as a direct dependency; every dependency is recorded at a concrete version in lock metadata; the project's single ignore file covers the API caches.
+              status: done
+              log:
+              - at: '2026-10-09T16:20:32Z'
+                event: claimed
+                note: Claimed. The first package definition and a trial dependency resolution were written just before this claim was recorded; the claim covers them and every later change to the package.
+              - at: '2026-10-09T16:20:57Z'
+                event: decision
+                note: 'Declared direct dependencies are exactly the packages the API source imports directly: the Logic library (local path source), the web package with its standard extra, the validation package, the YAML reader and the server. Nothing else, and no Component other than Logic. Lower bounds are the versions resolved at this execution, as the sibling libraries do. The root ignore file already covers the environment, bytecode and ruff caches at any depth, so no entry was added.'
+              - at: '2026-10-09T16:20:57Z'
+                event: done
+                note: 'Created the api package (pyproject, empty package initialiser, uv.lock). Observed: uv lock resolved 65 packages, uv sync built an isolated .venv from the repository alone, `import api` and `from logic.interface import Entity` succeed (Entity publishes Model, Service, database_error, database_instance, database_value), uv lock --check passes, the only local source is ../logic, every dependency is pinned in uv.lock, and git check-ignore confirms .venv/ is covered by the single root .gitignore.'
+        P4-G2:
+          id: P4-G2
+          title: Runtime Configuration
+          description: The runtime values that identify and run the API, held in one place that Bootstrap alone reads.
+          area: API runtime Configuration
+          does: An operator finds every changeable API value, including the URL Key, the Base URL and the documentation addresses, in the runtime Configuration and changes nothing in source.
+          constraints: []
+          task_count: 3
+          tasks:
+            P4-G2-T1:
+              id: P4-G2-T1
+              source_id: '015'
+              title: Generate the URL Key once and keep it
+              description: 'Follow the key setting: when it is on, generate one random URL-safe key of the configured length the first time the runtime Configuration is produced and record it; on every later generation keep the recorded key unchanged; when the setting is off, record an empty key so the Base URL has no key segment.'
+              reason: An Endpoint should not sit at a bare, guessable address, and a key that moves would break its clients.
+              inputs:
+              - API Configuration Structure
+              - Configured key setting and key length
+              skills: []
+              expected_result: A URL Key that is generated once and stays stable, or an empty key when the setting is off.
+              depends_on:
+              - P4-G1-T1
+              constraints: []
+              acceptance: With the setting on, the first generation records a non-empty key of exactly the configured length made only of URL-safe characters; generating again leaves that key unchanged; with the setting off, the recorded key is empty.
+              status: done
+              log:
+              - at: '2026-10-09T16:21:16Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T16:21:26Z'
+                event: done
+                note: 'Generated one random URL-safe key of the configured length (32 characters, characters limited to letters, digits, hyphen and underscore) with the standard library''s secure generator and recorded it in the runtime Configuration at the Component root. Observed: the recorded key is non-empty, 32 characters, matches the URL-safe pattern. The key setting is on, so no empty key was recorded; later generation reads the recorded key and keeps it.'
+            P4-G2-T2:
+              id: P4-G2-T2
+              source_id: '015'
+              title: Record every identity, network and runtime value
+              description: Write the title, description, key, host, port, workers and transport protocol that the API Configuration Structure defines into the runtime Configuration after each generation, taking the configured defaults, even when a value equals its default.
+              reason: An operator must find and change the API's address and behaviour in one record, never in source.
+              inputs:
+              - API Configuration Structure
+              - Configured identity, network and runtime defaults
+              - URL Key
+              skills: []
+              expected_result: A runtime Configuration holding every identity, network and runtime value.
+              depends_on:
+              - P4-G2-T1
+              constraints: []
+              acceptance: The runtime Configuration holds the title, description, key, host, port, workers and transport protocol, each at its configured default, including values equal to the default; the port is a valid network port and workers is a positive integer; no value of this kind is held in source.
+              status: done
+              log:
+              - at: '2026-10-09T16:21:26Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T16:21:36Z'
+                event: done
+                note: 'Recorded title, description, key, host, port, workers and transport protocol in the runtime Configuration at the Component root, each at its configured default (title Target API, empty description, host 127.0.0.1, port 8000, two workers, protocol HTTP), the existing key kept. Observed: all seven values are present in the structure''s order, the port is within 1-65535, workers is a positive integer, and the source holds none of these values yet.'
+            P4-G2-T3:
+              id: P4-G2-T3
+              source_id: '015'
+              title: Derive the Base URL and the documentation addresses
+              description: Record the Base URL derived from the transport protocol, host, port and key, with a non-empty key as the first path segment and an empty key adding none, and record the full addresses of the interactive documentation derived from that Base URL. Neither is ever resolved independently.
+              reason: Clients and operators need one authoritative address that cannot disagree with the values it is built from.
+              inputs:
+              - Recorded identity, network and runtime values
+              - API Configuration Structure rules
+              skills: []
+              expected_result: A Base URL and documentation addresses that always follow the recorded values.
+              depends_on:
+              - P4-G2-T2
+              constraints: []
+              acceptance: The Base URL equals the transport protocol, host, port and key combined, with the key as its first path segment when present and no extra segment when empty; the documentation addresses equal the Base URL with the documentation paths; changing a source value and regenerating changes the derived values to match.
+              status: done
+              log:
+              - at: '2026-10-09T16:21:36Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T16:21:49Z'
+                event: done
+                note: 'Derived the Base URL from transport protocol, host, port and key (protocol rendered in lower case, the key as the first path segment) and the two interactive-documentation addresses from that Base URL, and recorded url and documentation in the runtime Configuration. Observed: the recorded url equals the derivation from the recorded values; the documentation addresses equal url plus the two documentation paths; re-deriving with a changed port and an empty key gives an address without key segment and with the new port, so derived values follow their sources. Outputs the structure''s nine entries in its order.'
+        P4-G3:
+          id: P4-G3
+          title: Entity Group Adapters
+          description: The Entity Group's role, its single source, and the one Adapter that represents each Entity.
+          area: 'Entity Group: Adapters'
+          does: Every Entity of the Entity Service has exactly one Adapter, permanently bound to that Entity and publicly named from it.
+          constraints: []
+          task_count: 3
+          tasks:
+            P4-G3-T1:
+              id: P4-G3-T1
+              source_id: '015'
+              title: Give the Entity Group its role, name and single source
+              description: 'Establish the Entity Group with its fixed role and its configured name, which sets its public identity, and state its source in the shape of the Group contract: Entity Service, reached only through Logic Interface, which supplies the Child Services, the Entity each binds, and the types the Parameters use. The Entity Group obtains and calls everything application-related through that one boundary.'
+              reason: One source keeps every Adapter and Endpoint aligned with the authoritative contract and keeps the Group governed by its own role.
+              inputs:
+              - Entity Group role and configured name
+              - Group contract
+              - Published Logic Interface and Entity Service Interface
+              skills: []
+              expected_result: An Entity Group with a stated role, name and source.
+              depends_on:
+              - P4-G1-T1
+              - P3-G5-T1
+              constraints: []
+              acceptance: The Entity Group's name sets its URL segment while its role is unchanged by a rename; its source is the Entity Service reached through Logic Interface; every import of application code in the Entity Group is of Logic Interface and of nothing else.
+              status: done
+              log:
+              - at: '2026-10-09T16:24:19Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T16:27:16Z'
+                event: done
+                note: 'Created the Entity Group with its fixed role (entity), its configured name (Entity, which sets its URL segment) and its single source, the Entity Service Interface as reached through Logic Interface. Observed: the group module loads; its source publishes Model, Service, database_error, database_instance and database_value; the only application import in the Entity Group is `from logic.interface import Entity`; the role is a separate value from the name, so renaming changes the segment only.'
+            P4-G3-T2:
+              id: P4-G3-T2
+              source_id: '015'
+              title: Provide one bound Adapter for every Entity
+              description: 'Provide exactly one Adapter for every Entity Child Service that the Entity Service presents, each permanently bound to its Entity so that a caller never supplies the Entity. Adapters follow what the Entity Service publishes: an Entity added or removed adds or removes its Adapter, and none is listed by hand.'
+              reason: The API surface must stay a complete representation of the Entity Service, and callers must never repeat an Entity's identity.
+              inputs:
+              - Child Services published by Entity Service Interface
+              - Group contract
+              skills: *id001
+              expected_result: One bound Adapter for every Entity.
+              depends_on:
+              - P4-G3-T1
+              constraints: []
+              acceptance: There is exactly one Adapter for every Child Service of the Entity Service's Service group and nothing else; each Adapter works on its own Entity only and accepts no Entity from a caller; when the Entity Service presents a different set of Entities the Adapters follow it without a change to the Entity Group.
+              status: done
+              log:
+              - at: '2026-10-09T16:27:16Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T16:27:41Z'
+                event: decision
+                note: 'Realization of ''one Adapter per Entity'': one generated module per Child Service, each holding one router that is permanently bound to its Child Service and that Child''s Entity (taken from the Model group the Entity Service publishes, not from a private attribute of the Child Service). The generator reads the Child Services the Entity Service publishes and adds or removes only the Adapter modules it generated; the shared rules (the Adapter class) and the Group''s statement never list an Entity. Reading of the acceptance wording ''without a change to the Entity Group'': a changed Entity set changes the set of generated Adapter modules only, not the Group''s shared code or its statement.'
+              - at: '2026-10-09T16:27:41Z'
+                event: done
+                note: 'Created the Adapter binding (a router subclass holding the Child Service object and its Entity) and generated 15 Adapter modules, one for each Child Service the Entity Service publishes. Observed: the set of Adapter modules equals the Child Service set (15, no extra); each Adapter''s service is an object of exactly its own Child Service and its entity is the identical Entity class published in the Model group; the Adapter accepts no Entity from a caller (none is a parameter).'
+            P4-G3-T3:
+              id: P4-G3-T3
+              source_id: '015'
+              title: Name every Adapter from its Entity
+              description: Give each Adapter its public segment from its Entity by the configured Adapter naming pattern, so the segment is derived and never listed by hand.
+              reason: A client finds each Entity's Endpoints at an address that follows from the Entity.
+              inputs:
+              - Adapter naming pattern
+              - Entities presented by Entity Service
+              skills: []
+              expected_result: A public segment for every Adapter.
+              depends_on:
+              - P4-G3-T2
+              constraints: []
+              acceptance: Every Adapter segment equals its Entity's name rendered by the configured pattern; a different set of Entities yields correspondingly different segments without any list being edited.
+              status: done
+              log:
+              - at: '2026-10-09T16:27:41Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T16:28:10Z'
+                event: done
+                note: 'Gave each Adapter its public segment from its Entity by the configured pattern (the Entity''s name, rendered in the project''s identifier case, snake_case), through one rule shared by the generator and the Group. The Group derives its Adapter set from the Child Services the Entity Service publishes and imports each Adapter module by its derived segment. Observed: 15 segments (user, trading_platform, instance, currency, broker, asset, account_group, account, trailing_group, trailing_rule, partial_group, partial_rule, action_group, action, position), all valid and unique, each equal to the rendered Entity name, no list of Entities held by hand.'
+              - at: '2026-10-09T16:28:10Z'
+                event: decision
+                note: 'The configured pattern <entity> does not say how an Entity name is written in a URL. Chosen on Develop''s own proposal: the same snake_case rendering the Logic Child Service units use (TradingPlatform becomes trading_platform), because API Preferences select snake_case as the identifier case and a lower-case segment avoids case-sensitive path mismatches. The Group segment follows the same rule (Entity becomes entity).'
+        P4-G4:
+          id: P4-G4
+          title: Entity Group Endpoints
+          description: 'The Endpoints of every Adapter: one for each Action of its Child Service, with identity, Parameters and Handler derived from that Action.'
+          area: 'Entity Group: Endpoints'
+          does: Every Action of every Entity has exactly one Endpoint that calls it and returns its result unchanged.
+          constraints: []
+          task_count: 6
+          tasks:
+            P4-G4-T1:
+              id: P4-G4-T1
+              source_id: '015'
+              title: Provide one Endpoint for every Action
+              description: 'Provide, in every Adapter, exactly one Endpoint for every Action of that Adapter''s Child Service, with no Action filtered out, no unknown Action added and no Endpoint beyond these. The Endpoints follow what the Child Service publishes: an Action added or removed adds or removes its Endpoint, and none is listed or mapped by hand.'
+              reason: The API surface must stay a complete representation of the Entity Service, so no Action is hidden or invented.
+              inputs:
+              - Actions of every Child Service
+              - Group contract
+              skills: *id001
+              expected_result: A complete set of Endpoints for every Adapter.
+              depends_on:
+              - P4-G3-T2
+              constraints: []
+              acceptance: For every Adapter the Endpoints correspond one to one with the Actions of its Child Service and no Endpoint exists for anything else; when a Child Service publishes a different set of Actions the Endpoints follow it without a change to the Entity Group.
+              status: done
+              log:
+              - at: '2026-10-09T16:28:10Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T16:28:38Z'
+                event: done
+                note: 'Each Adapter registers exactly one Endpoint for every Action of its Child Service, derived from the Child Service class (all public functions across its inheritance chain, in the order its Base publishes them, an override keeping its place). Observed: for all 15 Adapters the Endpoint names equal the Action names [add, update, list, get_by_id, delete, enable, disable, count, sum, min, max, truncate] in Database''s order, 15 x 12 = 180 Endpoints, no duplicate and no Endpoint without an Action; no Action or Endpoint is listed by hand. Method, Path, Parameters and Handler content are provisional here and are realized by the following Tasks.'
+            P4-G4-T2:
+              id: P4-G4-T2
+              source_id: '015'
+              title: Derive each Endpoint's Method from its operation
+              description: Give every Endpoint its Method from the leading verb of its operation by the configured verb table, and the default Method when the verb is not in the table. No Method is chosen any other way.
+              reason: Endpoints must follow the operations each time the API is generated, so a change in them never leaves a stale mapping.
+              inputs:
+              - Configured verb table and default Method
+              - Operations of every Action
+              skills: *id001
+              expected_result: A Method for every Endpoint that follows from its operation.
+              depends_on:
+              - P4-G4-T1
+              constraints: []
+              acceptance: Every Endpoint's Method is the one the verb table sets for its operation's leading verb, or the default Method when the verb is unlisted, except where the Parameter placement rule requires the default Method; no Method is set by any other rule.
+              status: done
+              log:
+              - at: '2026-10-09T16:28:38Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T16:28:51Z'
+                event: done
+                note: 'Gave every Endpoint its Method from the leading verb of its operation (the first word of the operation name) by the configured verb table, and the default Method (POST) for a verb not in the table. Observed: in all 15 Adapters add=POST, update=PUT, list=GET, get_by_id=GET, delete=DELETE, enable=PATCH, disable=PATCH, count=GET, sum=GET, min=GET, max=GET, truncate=DELETE; an unlisted verb gives POST and read_all/remove_old resolve to GET/DELETE. The Method is chosen by no other rule yet; the placement Task may require the default Method for some retrieval operations.'
+            P4-G4-T3:
+              id: P4-G4-T3
+              source_id: '015'
+              title: Derive each Endpoint's Path from its operation
+              description: Give every Endpoint a Path formed from its operation, extended by the id carried in the Path when the operation takes an id. Nothing is listed or mapped by hand.
+              reason: A client must find every operation at a predictable address.
+              inputs:
+              - Configured Path forms
+              - Operations of every Action
+              skills: *id001
+              expected_result: A Path for every Endpoint that follows from its operation.
+              depends_on:
+              - P4-G4-T1
+              constraints: []
+              acceptance: Every Endpoint answers at its Adapter's address followed by a Path that is its operation, extended by the id when the operation takes an id; no Path is set by hand.
+              status: done
+              log:
+              - at: '2026-10-09T16:28:51Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T16:29:21Z'
+                event: done
+                note: 'Gave every Endpoint the Path formed from its operation name, extended by the id carried in the Path when the operation takes an id (decided from the Action''s own parameter names). Observed: in all 15 Adapters add, update, list, count, sum, min, max and truncate are /<operation>; get_by_id, delete, enable and disable are /<operation>/{id}; no Path is set by hand. Full addresses (Base URL, Group segment, Adapter segment) are formed at registration.'
+            P4-G4-T4:
+              id: P4-G4-T4
+              source_id: '015'
+              title: Mirror each Action's Parameters
+              description: 'Give every Endpoint exactly the Parameters of its Action: the same names, requirements, structures and defaults, with the types the Entity Service publishes; none added, removed, renamed or reinterpreted.'
+              reason: Callers must be able to use an Action through the API exactly as it is defined.
+              inputs:
+              - Parameters of every Action
+              - Group contract
+              skills: *id001
+              expected_result: Every Endpoint carrying exactly its Action's Parameters.
+              depends_on:
+              - P4-G4-T1
+              constraints: []
+              acceptance: For every Endpoint the set of Parameters equals its Action's, with identical names, required or optional status, structures and defaults; a Parameter the Action lacks does not exist on the Endpoint.
+              status: done
+              log:
+              - at: '2026-10-09T16:29:21Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T16:29:46Z'
+                event: decision
+                note: 'The Entity Service publishes every Action parameter with the type Any, and the Operation documentation names no parameter type, so the ''types the source publishes'' that the Group contract refers to are not published and the Endpoint cannot read the structure of a Parameter from the Action. Chosen on Develop''s own proposal: the structure of a Parameter follows from its name, in one table kept with the shared Endpoint rules - entity (the bound Entity), id (integer), field (a Field name), filters (a list of the Filter form), orders (a list of the Order form), combination (the combination enumeration), limit (integer), instance (the Instance name enumeration) - and a Parameter whose name is not in the table keeps the type the Action publishes. A Parameter with a None default is optional. This is the same condition as Open Question 011-OQ1 and is recorded as 016-OQ1; Database and Logic were not changed.'
+              - at: '2026-10-09T16:29:46Z'
+                event: done
+                note: 'Gave every Endpoint exactly the Parameters of its Action by building the Handler''s signature from the Action''s own (self removed): the same names, order, required or optional status and defaults, with the structures in the decision above. Observed over all 180 Endpoints, comparing the Endpoint''s declared path, query and body parameters with the Action''s signature: 0 name mismatches (no added, removed or renamed Parameter), 0 requirement mismatches, 0 default mismatches. Placement is FastAPI''s provisional default at this point (scalars in the query, structured values in the body) and is set by the next Task.'
+            P4-G4-T5:
+              id: P4-G4-T5
+              source_id: '015'
+              title: Place every Parameter by the placement rule
+              description: 'Place each Parameter where the Parameter placement rule puts it for its Endpoint''s Method: the id in the Path, every other simple Parameter in the query or in the body according to the Method, and an operation whose Method would need a Parameter that the query cannot carry served with the default Method instead.'
+              reason: Inputs must sit predictably in every request of every Group.
+              inputs:
+              - Parameter placement rule
+              - Methods and Parameters of every Endpoint
+              skills: *id001
+              expected_result: Every Parameter placed by one rule.
+              depends_on:
+              - P4-G4-T2
+              - P4-G4-T4
+              constraints: []
+              acceptance: Every id sits in the Path; every other simple Parameter sits where the rule requires for its Endpoint's Method; an operation with a Parameter that the query cannot carry is served with the default Method; no Parameter's name, requirement, structure, meaning or default changes through its placement.
+              status: claimed
+              log:
+              - at: '2026-10-09T16:29:46Z'
+                event: claimed
+                note: Claimed before changing its result.
+            P4-G4-T6:
+              id: P4-G4-T6
+              source_id: '015'
+              title: Make every Handler only call its Action
+              description: Make every Endpoint's Handler call only its Action on the bound Child Service, through Logic Interface and with the Parameters it received, and return the Action's result and errors unchanged. A Handler adds no decision, semantic validation, initialization, wrapper, other call, retry or alternate path.
+              reason: The Entity Service stays the single owner of Behavior while every Handler stays uniform.
+              inputs:
+              - Endpoints with placed Parameters
+              - Group contract Handler rule
+              skills: *id001
+              expected_result: Handlers that do nothing but call their Action.
+              depends_on:
+              - P4-G4-T5
+              constraints: []
+              acceptance: Calling an Endpoint returns exactly what calling its Action on the bound Child Service returns, and a failing Action's error leaves the Handler unchanged; no Handler makes any call other than its Action and none holds validation, retry, initialization or an alternate path.
+              status: todo
+        P4-G5:
+          id: P4-G5
+          title: Request Conversion and Errors
+          description: The shared rules that turn request values into the values Actions take and turn Action errors into responses, applied to every Endpoint of every Group.
+          area: 'API: shared Endpoint rules'
+          does: Every non-simple value reaches an Action in the form it expects, and every error reaches the client in one uniform form.
+          constraints: []
+          task_count: 4
+          tasks:
+            P4-G5-T1:
+              id: P4-G5-T1
+              source_id: '015'
+              title: Carry published-class Parameters as JSON objects
+              description: A Parameter whose type is a class the Entity Service publishes travels as a JSON object of that class's fields and is built into an instance of that class before the Handler runs. The conversion is part of serving and is never performed by a Handler.
+              reason: Every client must send such values the same way in every Group.
+              inputs:
+              - Classes published by Entity Service Interface
+              - Non-simple Parameter rule
+              skills: *id001
+              expected_result: Published-class Parameters accepted as JSON objects and converted before their Handler.
+              depends_on:
+              - P4-G4-T5
+              constraints: []
+              acceptance: An Endpoint whose Action takes an instance of a published class accepts a JSON object of the class's fields, and its Handler receives an instance of that class; the Handler contains no conversion and the value's meaning is unchanged.
+              status: todo
+            P4-G5-T2:
+              id: P4-G5-T2
+              source_id: '015'
+              title: Resolve field references to the bound Entity
+              description: A Parameter that refers to a Field of the bound Entity travels as that Field's name and is resolved to that Field of the bound Entity before the Handler runs; a name that is not a Field of the bound Entity fails with the Entity Service's invalid-input error.
+              reason: Clients refer to Fields by name, while Actions take the Field itself.
+              inputs:
+              - Fields of the bound Entity
+              - Entity Service invalid-input error
+              - Non-simple Parameter rule
+              skills: *id001
+              expected_result: Field references accepted by name and resolved before their Handler.
+              depends_on:
+              - P4-G4-T5
+              constraints: []
+              acceptance: A name that is a Field of the bound Entity reaches the Action as that Field; an unknown name fails with the invalid-input error and the Action is not called.
+              status: todo
+            P4-G5-T3:
+              id: P4-G5-T3
+              source_id: '015'
+              title: Carry the other published value types in their configured forms
+              description: A Parameter of any other value type that the Entity Service publishes, such as a filter, an ordering or an Instance selection, travels in the form the value table gives it and is converted into the published value before the Handler runs.
+              reason: Every client must send these values the same way in every Group.
+              inputs:
+              - Value forms table
+              - Value types published by Entity Service Interface
+              skills: *id001
+              expected_result: Every remaining published value type accepted in its configured form.
+              depends_on:
+              - P4-G4-T5
+              constraints: []
+              acceptance: Each such Parameter is accepted in exactly the form the value table gives it and reaches the Action as the published value it denotes; the Handler contains no conversion.
+              status: todo
+            P4-G5-T4:
+              id: P4-G5-T4
+              source_id: '015'
+              title: Return every error as Problem Details
+              description: Return every error an Endpoint produces as a Problem Details response whose type is the error's class name and whose status is the one the error table sets for that error, and the default failure status for an error the table does not name. The mapping adds no retry, recovery or other error handling.
+              reason: Every client must read every Group's errors the same way, and the error class must reach it unchanged.
+              inputs:
+              - Error table
+              - Errors published by Entity Service Interface
+              skills: *id001
+              expected_result: One uniform error response for every Endpoint.
+              depends_on:
+              - P4-G4-T6
+              constraints: []
+              acceptance: Each error the table names is returned with its table status, its class name as the type and the Problem Details content form; an error the table does not name returns the default failure status; no retry or recovery takes place.
+              status: todo
+        P4-G6:
+          id: P4-G6
+          title: Bootstrap
+          description: The single composition and execution point that creates the API, registers the Entity Group and serves it.
+          area: 'API: Bootstrap'
+          does: Running the API serves the Entity Group's Endpoints and the interactive documentation at the Base URL recorded in the runtime Configuration, and nothing else.
+          constraints: []
+          task_count: 6
+          tasks:
+            P4-G6-T1:
+              id: P4-G6-T1
+              source_id: '015'
+              title: Create the API from the runtime Configuration
+              description: Bootstrap reads the runtime Configuration and creates the one API it describes, presenting the configured title and description. It takes values only from the runtime Configuration and reads no Definition or Preferences file at runtime.
+              reason: One narrow entry point keeps execution separate from the sources it was generated from and from the capabilities it serves.
+              inputs:
+              - Runtime Configuration
+              - Bootstrap rules
+              skills: *id001
+              expected_result: An API created from the runtime Configuration.
+              depends_on:
+              - P4-G2-T3
+              constraints: []
+              acceptance: The created API presents the title and description recorded in the runtime Configuration; changing those recorded values changes what it presents without a change in source; no Definition or Preferences file is read while it is created or run.
+              status: todo
+            P4-G6-T2:
+              id: P4-G6-T2
+              source_id: '015'
+              title: Register the Entity Group beneath its segment
+              description: Register every Group the API is configured to serve, here the Entity Group, with its Adapters beneath the Group segment derived from its configured name and after the Base URL, so that every Endpoint is served at the Base URL, the Group segment, the Adapter segment and the Endpoint Path. API adds no Endpoint, wrapper or behavior of its own.
+              reason: Clients need one address for every capability area while each area keeps its own surface.
+              inputs:
+              - Created API
+              - Entity Group with its Adapters and Endpoints
+              - Base URL
+              skills: *id001
+              expected_result: The Entity Group's Endpoints reachable beneath the Base URL.
+              depends_on:
+              - P4-G6-T1
+              - P4-G3-T3
+              - P4-G4-T6
+              constraints: []
+              acceptance: Every Endpoint of the Entity Group answers at the Base URL followed by the Group segment, the Adapter segment and the Endpoint Path; no path outside the registered Groups and the interactive documentation answers; the API defines no Endpoint of its own; renaming the Group changes only its segment.
+              status: todo
+            P4-G6-T3:
+              id: P4-G6-T3
+              source_id: '015'
+              title: Keep every public identity valid and unique
+              description: Ensure that every Group segment, every Adapter segment and every Method-and-Path combination across the API is valid and unique, and that an invalid or colliding identity stops generation with a clear error, never repaired by a silent rename.
+              reason: A client must find every Group and operation without an ambiguous address.
+              inputs:
+              - Registered Group
+              - Derived Adapter segments, Methods and Paths
+              skills: []
+              expected_result: A guarantee that no public identity is invalid or ambiguous.
+              depends_on:
+              - P4-G6-T2
+              - P4-G4-T5
+              constraints: []
+              acceptance: No two Group segments, Adapter segments or Method-and-Path combinations are equal and each is valid; a deliberately colliding or invalid identity stops generation with an error that names it, and nothing is renamed silently.
+              status: todo
+            P4-G6-T4:
+              id: P4-G6-T4
+              source_id: '015'
+              title: Serve the interactive documentation
+              description: Enable the interactive documentation that the selected package offers, with one section for every Group and, within it, one section for every Adapter holding all of that Adapter's Endpoints, at the addresses recorded in the runtime Configuration. It shows only what the Groups serve.
+              reason: Every client can discover and try every Endpoint without reading source.
+              inputs:
+              - Registered Group
+              - Documentation addresses in the runtime Configuration
+              - Documentation section rule
+              skills: *id001
+              expected_result: Interactive documentation of every served Endpoint.
+              depends_on:
+              - P4-G6-T2
+              - P4-G2-T3
+              constraints: []
+              acceptance: The documentation is reachable at the recorded addresses; it lists every Endpoint of the Entity Group and nothing else; it has one section for the Group and one section for each Adapter, each holding all of that Adapter's Endpoints.
+              status: todo
+            P4-G6-T5:
+              id: P4-G6-T5
+              source_id: '015'
+              title: Permit cross-origin browser access
+              description: Allow pages served from other origins to call the API as the configured cross-origin policy states.
+              reason: The Presentation Component runs in a browser and consumes the API from another origin.
+              inputs:
+              - Created API
+              - Configured cross-origin policy
+              skills: *id001
+              expected_result: An API that answers cross-origin requests according to the configured policy.
+              depends_on:
+              - P4-G6-T1
+              constraints: []
+              acceptance: A request carrying a foreign origin receives the cross-origin response the configured policy specifies, and a preflight request for any Endpoint is answered according to it.
+              status: todo
+            P4-G6-T6:
+              id: P4-G6-T6
+              source_id: '015'
+              title: Serve the API
+              description: Start serving the registered API on the configured host and port with the configured number of workers, so the API runs as the one boundary of the application and no Group creates its own server.
+              reason: The application needs one running address at which every capability is reachable.
+              inputs:
+              - Registered Group
+              - Interactive documentation
+              - Cross-origin policy
+              - Runtime Configuration
+              skills: *id001
+              expected_result: A running API.
+              depends_on:
+              - P4-G6-T2
+              - P4-G6-T3
+              - P4-G6-T4
+              - P4-G6-T5
+              constraints: []
+              acceptance: Starting the API makes it answer at the Base URL in the runtime Configuration, on the configured host and port with the configured number of workers; the Entity Group's Endpoints and the interactive documentation answer there; starting again with an unchanged runtime Configuration keeps the same Base URL, including the same URL Key.
+              status: todo
+        P4-G7:
+          id: P4-G7
+          title: Documentation
+          description: The documentation of the Entity Group and of the API, each in the section order its Documentation contract sets.
+          area: 'Documentation: Entity Group and API'
+          does: A client can learn, set up, use and verify the Entity Group and the API from their documentation alone.
+          constraints: []
+          task_count: 4
+          tasks:
+            P4-G7-T1:
+              id: P4-G7-T1
+              source_id: '015'
+              title: Document the Entity Group Overview and Endpoints sections
+              description: Write the Entity Group's Overview, one paragraph on what it is with one request example, and its Endpoints section, giving for every Entity its Endpoints with Method, Path and Parameters, each with one example.
+              reason: The surface is only usable if clients can learn each Endpoint without reading internals.
+              inputs:
+              - Served Entity Group Endpoints
+              - Entity Group Documentation contract
+              skills: []
+              expected_result: The first two sections of the Entity Group documentation.
+              depends_on:
+              - P4-G6-T6
+              - P4-G5-T1
+              - P4-G5-T2
+              - P4-G5-T3
+              - P4-G5-T4
+              constraints: []
+              acceptance: The Overview and Endpoints sections appear in order; every Entity's Endpoints are listed with their Method, Path and Parameters and match what the running API serves; each example runs against the running API and returns the documented result; the text names no Logic internal.
+              status: todo
+            P4-G7-T2:
+              id: P4-G7-T2
+              source_id: '015'
+              title: Document the Entity Group Use and Verify sections
+              description: Write the Use section, showing how a client calls an Endpoint, and the Verify section, showing how to see that every Entity has its Adapter and every Action its Endpoint.
+              reason: Clients need to know how to call the surface and how to confirm it is complete.
+              inputs:
+              - Entity Group documentation already written
+              - Entity Group Documentation contract
+              skills: []
+              expected_result: The last two sections of the Entity Group documentation.
+              depends_on:
+              - P4-G7-T1
+              constraints: []
+              acceptance: The Use and Verify sections follow the earlier ones in order; the examples run; the Verify section has a script that runs and covers every Entity against its Adapter and every Action against its Endpoint.
+              status: todo
+            P4-G7-T3:
+              id: P4-G7-T3
+              source_id: '015'
+              title: Document the API Overview, Configuration and Groups sections
+              description: Write the API Overview, one paragraph on what the API is with one request example; the Configuration section, describing every runtime Configuration value and how the Base URL is formed from it; and the Groups section, listing every Group beneath its URL segment with a link to its own documentation and never a copy of its Endpoints.
+              reason: Operators and clients must find the address, the values and the Groups from the root.
+              inputs:
+              - Runtime Configuration
+              - Served Groups
+              - API Documentation contract
+              skills: []
+              expected_result: The first three sections of the API documentation.
+              depends_on:
+              - P4-G6-T6
+              - P4-G2-T3
+              - P4-G7-T2
+              constraints: []
+              acceptance: The three sections appear in order; every runtime Configuration value is described and the Base URL formation is correct; the Groups section lists the Entity Group beneath its URL segment with a working link to its documentation and copies none of its Endpoints; the example runs.
+              status: todo
+            P4-G7-T4:
+              id: P4-G7-T4
+              source_id: '015'
+              title: Document the API Setup, Use, Verify and Troubleshooting sections
+              description: Write the Setup section on how to install and start the API, the Use section on how a client reaches a Group, the Verify section showing how to see that every listed Group is served beneath its segment and nothing else is, and the Troubleshooting section on real problems a client can meet and how to fix them.
+              reason: Setup, use and verification guidance completes what an operator and a client need.
+              inputs:
+              - API documentation already written
+              - API Documentation contract
+              skills: []
+              expected_result: The last four sections of the API documentation.
+              depends_on:
+              - P4-G7-T3
+              constraints: []
+              acceptance: All seven sections appear in the order of the Documentation contract; the setup steps work from a clean checkout; the examples run; the Verify section has a script that runs and shows exactly the listed Groups served beneath their segments; the Troubleshooting section covers only API concerns.
+              status: todo
+        P4-G8:
+          id: P4-G8
+          title: Quality Standards
+          description: The final conformance of the complete API source to the language's quality standards.
+          area: Executable-wide source quality
+          does: The complete API source meets the language's formatting, lint and typing standards.
+          constraints: []
+          task_count: 1
+          tasks:
+            P4-G8-T1:
+              id: P4-G8-T1
+              source_id: '015'
+              title: Bring the API source to the quality standards
+              description: Apply the formatting, lint and type-checking standards that the Development Preferences select for the language to the complete API source and its documentation examples, and resolve every finding without weakening any API or Entity Group contract.
+              reason: Consistent, type-sound source is a standing Development standard and must hold for the finished executable.
+              inputs:
+              - Complete API source
+              - Development language quality standards
+              skills: []
+              expected_result: The complete API source is free of formatting, lint and type findings.
+              depends_on:
+              - P4-G1-T1
+              - P4-G2-T1
+              - P4-G2-T2
+              - P4-G2-T3
+              - P4-G3-T1
+              - P4-G3-T2
+              - P4-G3-T3
+              - P4-G4-T1
+              - P4-G4-T2
+              - P4-G4-T3
+              - P4-G4-T4
+              - P4-G4-T5
+              - P4-G4-T6
+              - P4-G5-T1
+              - P4-G5-T2
+              - P4-G5-T3
+              - P4-G5-T4
+              - P4-G6-T1
+              - P4-G6-T2
+              - P4-G6-T3
+              - P4-G6-T4
+              - P4-G6-T5
+              - P4-G6-T6
+              - P4-G7-T1
+              - P4-G7-T2
+              - P4-G7-T3
+              - P4-G7-T4
+              constraints: []
+              acceptance: The executable reports no formatting, lint or type findings under the standards the Development Preferences select, and every API and Entity Group contract still holds.
+              status: todo

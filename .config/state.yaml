@@ -29,11 +29,11 @@ content_map:
 # <!--------------------------------------------------------------------------------- Content -->
 content:
   active:
-    mode: "not set"
-    phase: null
-    mode_reason: "No Workflow operation has been recorded."
-    set_by: "initialization"
-    set_at: null
+    mode: "implementing"
+    phase: "P4"
+    mode_reason: "Implement is coordinating Plan, Develop and Review for phase P4 (Log Entry 014)."
+    set_by: "my-interface-implement"
+    set_at: "2026-10-09T16:08:48Z"
   phases:
     P1:
       id: "P1"
@@ -53,6 +53,12 @@ content:
       development: "completed"
       review: "satisfied"
       completed_at: "2026-10-08T08:44:24Z"
+    P4:
+      id: "P4"
+      planning: "completed"
+      development: "not started"
+      review: "not satisfied"
+      completed_at: null
   log:
     - id: "001"
       skill: "my-interface-configure"
@@ -623,3 +629,325 @@ content:
           - "Every Child Service binds exactly its own Entity and receives Base: held"
           - "Loading the Interface opens no connection and creates no data or file: held"
 
+    - id: "014"
+      skill: "my-interface-implement"
+      phase: "P4"
+      event: "implement"
+      outcome: "in progress"
+      started_at: "2026-10-09T16:08:48Z"
+      skills_used: []
+      open_questions: []
+      blockers: []
+      data:
+        phases: ["4"]
+        resolved_phases: ["P4"]
+        configure_invoked: false
+    - id: '015'
+      skill: my-interface-plan
+      parent_id: '014'
+      phase: P4
+      event: plan
+      outcome: completed
+      started_at: '2026-10-09T16:12:00Z'
+      completed_at: '2026-10-09T16:18:34Z'
+      duration: '6:34'
+      skills_used:
+      - name: fastapi
+        report: Read to identify the guidance useful for the Tasks that realize routes, registration and documentation; recorded where it differs from API Preferences (015-OQ1).
+      open_questions:
+      - 015-OQ1
+      blockers: []
+      decisions: []
+      report: 'Created the one Plan for phase P4 (API): 8 Groups and 28 atomic Tasks in the Plan Config, all status todo, dependencies explicit and acyclic; the only dependency outside the phase is the completed Logic Interface Task of phase P3. Aggregate Planning progress for P4 set to completed. The P1, P2 and P3 Plans and their Tasks were not touched. One Open Question recorded (015-OQ1); no Blockers.'
+      data:
+        phase_resolution: Requested phase '4' resolved to Target phase P4 (API, enabled, ready); its prerequisite phases P1, P2 and P3 are planned, developed and reviewed satisfied.
+        changes:
+        - kind: addition
+          scope: Plan P4
+          reason: No Plan existed for P4; created from the Target phase goal and the API and Entity Group Definitions and Preferences.
+        - kind: addition
+          scope: Groups P4-G1 to P4-G8 and Tasks P4-G1-T1 to P4-G8-T1 (28 Tasks)
+          reason: 'Decomposition: package (1), runtime Configuration (3), Entity Group Adapters (3), Entity Group Endpoints (6), shared request conversion and errors (4), Bootstrap (6), documentation (4), quality standards (1).'
+        - kind: preservation
+          scope: Plans P1 (26 Tasks), P2 (31 Tasks) and P3 (28 Tasks), all done
+          reason: Phases P1, P2 and P3 were not selected and are unchanged; P4 depends on the completed Logic Interface Task of phase P3.
+        - kind: update
+          scope: Plan Config task_count
+          reason: Raised from 85 to 113 for the 28 added Tasks.
+        task_count: 28
+        group_count: 8
+        root_task_count: 113
+        open_questions:
+        - id: 015-OQ1
+          skill: fastapi
+          current_choice: API applies the Group segment, the Base URL key and the section tags itself when it registers each Group's routers, because the API Definition gives API every placement and a Group states none; Group routers carry no prefix of their own.
+          alternative: Declare the prefix and tags on each router itself, as the fastapi Skill recommends instead of passing them when the router is included, with Bootstrap composing the full prefix when it creates each Group's routers.
+          reason: The Skill holds that router-level prefix and tags keep a router self-describing; the difference concerns where the segment is applied, not the resulting addresses.
+        related_open_questions:
+        - 011-OQ1
+        related_open_questions_note: 011-OQ1 concerns how the Entity Service types the entity parameters of its Actions; the Endpoint Parameters of P4 mirror the types the Entity Service publishes, so Develop meets the same typing.
+    - id: "016"
+      skill: "my-interface-develop"
+      parent_id: "014"
+      phase: "P4"
+      event: "develop"
+      outcome: "in progress"
+      started_at: "2026-10-09T16:19:01Z"
+      skills_used: []
+      open_questions: []
+      blockers: []
+    - id: '017'
+      skill: my-interface-review
+      phase: P4
+      event: review
+      outcome: not satisfied
+      started_at: '2026-10-09T16:36:26Z'
+      completed_at: '2026-10-09T16:40:19Z'
+      duration: '3:53'
+      skills_used: []
+      open_questions: []
+      blockers:
+      - 017-B1
+      - 017-B2
+      report: 'Reviewed phase P4 (API) against its Plan and the API and Entity Group Review categories while Development was incomplete (11 of 28 Tasks done, 1 claimed, 16 todo). Completed work holds: a clean-checkout install, lock, lint, types, 15 Adapters matching the 15 Child Services, 180 Endpoints with correct Methods and Paths, a valid runtime Configuration and zero-difference regeneration. 19 Findings: 017-F1 (90 Endpoints do not carry their structured Parameter under its Action name) is open and needs the claimed placement Task; 017-F2 was resolved by a transient repeat-generation observation; 017-F3 to 017-F19 are missing evidence for the 17 unfinished Tasks. Outcome not satisfied; two Blockers recorded; no Open Questions.'
+      data:
+        phase: P4
+        plan_state_at_review:
+          done: 11
+          claimed: 1
+          todo: 16
+        findings:
+        - id: 017-F1
+          task: P4-G4-T4
+          kind: acceptance not established
+          expected: For every Endpoint the set of Parameters equals its Action's, with identical names, required or optional status, structures and defaults (Plan Task P4-G4-T4); and, in the Entity Group Review category, every Endpoint's Parameters keep the Action's names, requirements and defaults.
+          observed: 'In the OpenAPI document of the assembled Adapters, 90 of 180 Endpoints publish their structured Parameter without its Action name: add and update (30) publish the Entity''s own fields at the body root instead of an entity Parameter; count, sum, min and max (60) publish no filters Parameter at all because the bare filters array is the body root. The other 90 Endpoints (list, get_by_id, delete, enable, disable, truncate) match exactly.'
+          evidence: 'Independent comparison of the OpenAPI declared names and required flags against each Action''s signature: 180 Endpoints checked, 90 differences, all in add, update, count, sum, min and max; e.g. /entity/user/add declares id, name, username, password, api_key, is_active, description and instance, while the Action''s Parameters are entity and instance. The Task Log of P4-G4-T4 records a function-level comparison that does not show this.'
+          state: open
+          resolution_note: Resolving it means giving every body Parameter its own name in the request, which is the work of Task P4-G4-T5 (placement), currently claimed by Develop; Review does not take over claimed work (see Blocker 017-B2).
+        - id: 017-F2
+          task: P4-G2-T1
+          kind: missing evidence
+          expected: Generating the runtime Configuration again leaves the recorded URL Key unchanged (Plan Task P4-G2-T1 acceptance).
+          observed: The Task Log states that later generation keeps the recorded key but records no observed second generation, and no generation procedure exists in the project to repeat.
+          evidence: Task Log of P4-G2-T1 (done entry).
+          state: resolved
+          resolution: 'Observed transiently on a scratch copy of the runtime Configuration (the real file untouched): two repeat generations from the recorded values produced a file byte-identical to the original, with the key unchanged and the Base URL and documentation addresses unchanged. The criterion holds for the recorded generation recipe.'
+          rechecked: true
+          limitation: The recipe is recorded in the Task Logs and run from outside the project; the project holds no persisted generation procedure, the same arrangement the earlier phases used.
+        - id: 017-F3
+          task: P4-G4-T5
+          kind: missing evidence
+          expected: Every Parameter sits where the placement rule requires for its Endpoint's Method (id in the Path; other simple Parameters in the query for retrieval and deletion Methods and in the body for creation and update Methods; an operation with a Parameter the query cannot carry served with the default Method).
+          observed: 'Task status is claimed, not done. The current placement does not satisfy the criterion: in the user Adapter, add, update, enable and disable carry the optional instance Parameter in the query on a body Method (4 of 12 Endpoints, 60 over 15 Adapters), and list, count, sum, min and max are retrieval Endpoints that carry a request body (5 of 12, 75 over 15 Adapters).'
+          evidence: Plan Task P4-G4-T5 status; OpenAPI document of the assembled Adapters, e.g. /entity/user/add (instance in query), /entity/user/list (request body on a retrieval Method).
+          state: open
+          blocker: 017-B1
+        - id: 017-F4
+          task: P4-G4-T6
+          kind: missing evidence
+          expected: Every Handler calls only its Action and returns its result and errors unchanged, with no validation, retry, initialization or alternate path.
+          observed: Task status is todo. The provisional Handler forwards its arguments to the Action, but no completed result exists for the criterion to be established.
+          evidence: Plan Task P4-G4-T6 status; the Handler in the shared Endpoint rules is the provisional one written for Task P4-G4-T1.
+          state: open
+          blocker: 017-B1
+        - id: 017-F5
+          task: P4-G5-T1
+          kind: missing evidence
+          expected: A published-class Parameter travels as a JSON object of its fields and the Handler receives an instance of that class.
+          observed: 'Task status is todo; no result is recorded for it. (Observation: the Entity class is currently used as the body type, which may later establish this, but nothing records that it was developed or checked for this Task.)'
+          evidence: Plan Task P4-G5-T1 status.
+          state: open
+          blocker: 017-B1
+        - id: 017-F6
+          task: P4-G5-T2
+          kind: missing evidence
+          expected: A field name resolves to that Field of the bound Entity; an unknown name fails with the invalid-input error and the Action is not called.
+          observed: 'Task status is todo; the Source contains no resolution of a field name to a Field: the field Parameter is declared as a plain string and reaches the Action unchanged.'
+          evidence: Plan Task P4-G5-T2 status; Parameter structure table in the shared Endpoint rules (field is a string).
+          state: open
+          blocker: 017-B1
+        - id: 017-F7
+          task: P4-G5-T3
+          kind: missing evidence
+          expected: Filter, Order and Instance-selection Parameters are accepted in their configured forms and reach the Action as the published values.
+          observed: Task status is todo; the Source declares the forms but contains no conversion into the published Filter, Order or Instance values.
+          evidence: Plan Task P4-G5-T3 status; the form models and the instance-name enumeration in the shared Endpoint rules have no conversion step.
+          state: open
+          blocker: 017-B1
+        - id: 017-F8
+          task: P4-G5-T4
+          kind: missing evidence
+          expected: Every error is returned as a Problem Details response with the error class name as type and the table status, and the default failure status for an unnamed error.
+          observed: Task status is todo; the Source contains no error mapping.
+          evidence: Plan Task P4-G5-T4 status; no module of the API holds an error table.
+          state: open
+          blocker: 017-B1
+        - id: 017-F9
+          task: P4-G6-T1
+          kind: missing evidence
+          expected: Bootstrap creates the API from the runtime Configuration and reads no Definition or Preferences file at runtime.
+          observed: Task status is todo; the API has no Bootstrap and no application object.
+          evidence: Plan Task P4-G6-T1 status; the API package holds no Bootstrap module.
+          state: open
+          blocker: 017-B1
+        - id: 017-F10
+          task: P4-G6-T2
+          kind: missing evidence
+          expected: Every Endpoint of the Entity Group answers beneath the Base URL, the Group segment, the Adapter segment and the Endpoint Path; the API has no Endpoint of its own.
+          observed: Task status is todo; no Group is registered because no API object exists.
+          evidence: Plan Task P4-G6-T2 status; the Entity Group module publishes its Adapters but nothing registers them.
+          state: open
+          blocker: 017-B1
+        - id: 017-F11
+          task: P4-G6-T3
+          kind: missing evidence
+          expected: Every Group segment, Adapter segment and Method-and-Path combination is valid and unique, and an invalid or colliding identity stops generation with a clear error without a silent rename.
+          observed: Task status is todo. The 15 Adapter segments and 180 Method-and-Path combinations are valid and unique as generated, but nothing records or demonstrates that a collision or invalid identity stops generation with an error.
+          evidence: Plan Task P4-G6-T3 status; OpenAPI document of the assembled Adapters.
+          state: open
+          blocker: 017-B1
+        - id: 017-F12
+          task: P4-G6-T4
+          kind: missing evidence
+          expected: The interactive documentation is reachable at the recorded addresses, lists every Endpoint and nothing else, and has one section per Group and per Adapter.
+          observed: Task status is todo; no API is running or assembled to serve documentation.
+          evidence: Plan Task P4-G6-T4 status; no Bootstrap module.
+          state: open
+          blocker: 017-B1
+        - id: 017-F13
+          task: P4-G6-T5
+          kind: missing evidence
+          expected: A request with a foreign origin receives the configured cross-origin response and a preflight is answered according to it.
+          observed: Task status is todo; no API object carries a cross-origin policy.
+          evidence: Plan Task P4-G6-T5 status; no Bootstrap module.
+          state: open
+          blocker: 017-B1
+        - id: 017-F14
+          task: P4-G6-T6
+          kind: missing evidence
+          expected: Starting the API makes it answer at the recorded Base URL with the configured host, port and workers.
+          observed: Task status is todo; nothing in the API starts a server.
+          evidence: Plan Task P4-G6-T6 status; no Bootstrap module.
+          state: open
+          blocker: 017-B1
+        - id: 017-F15
+          task: P4-G7-T1
+          kind: missing evidence
+          expected: The Entity Group Overview and Endpoints sections exist, in order, with working examples.
+          observed: Task status is todo; the Entity Group directory holds no documentation file.
+          evidence: Plan Task P4-G7-T1 status; listing of the Entity Group directory (15 Adapter modules, the Group module, no documentation).
+          state: open
+          blocker: 017-B1
+        - id: 017-F16
+          task: P4-G7-T2
+          kind: missing evidence
+          expected: The Entity Group Use and Verify sections exist, with a Verify script that runs.
+          observed: Task status is todo; no Entity Group documentation exists.
+          evidence: Plan Task P4-G7-T2 status; listing of the Entity Group directory.
+          state: open
+          blocker: 017-B1
+        - id: 017-F17
+          task: P4-G7-T3
+          kind: missing evidence
+          expected: The API Overview, Configuration and Groups sections exist, in order, with working examples.
+          observed: Task status is todo; the API Component root holds no documentation file.
+          evidence: Plan Task P4-G7-T3 status; listing of the API Component root (package, runtime Configuration, project and lock files).
+          state: open
+          blocker: 017-B1
+        - id: 017-F18
+          task: P4-G7-T4
+          kind: missing evidence
+          expected: The API Setup, Use, Verify and Troubleshooting sections exist, with a Verify script that runs.
+          observed: Task status is todo; no API documentation exists.
+          evidence: Plan Task P4-G7-T4 status; listing of the API Component root.
+          state: open
+          blocker: 017-B1
+        - id: 017-F19
+          task: P4-G8-T1
+          kind: missing evidence
+          expected: The complete API source reports no formatting, lint or type findings.
+          observed: 'Task status is todo. Observed on the present source: the linter and the type checker report no finding; the formatter reports that one source file (the shared Endpoint rules) would be reformatted.'
+          evidence: Plan Task P4-G8-T1 status; formatter check of the API Component (1 file would be reformatted, 19 already formatted).
+          state: open
+          blocker: 017-B1
+        findings_summary:
+          total: 19
+          open: 18
+          resolved: 1
+        blockers:
+        - id: 017-B1
+          condition: 'Development of phase P4 is incomplete: 16 Tasks are todo and P4-G4-T5 is claimed but not done, so their acceptance cannot be established by Review (Findings 017-F3 to 017-F19).'
+          needed: Develop must complete the remaining Tasks (resume /my-interface-develop 4 or /my-interface-implement 4); Review must then run again.
+        - id: 017-B2
+          condition: Finding 017-F1 is resolved only by the placement work of Task P4-G4-T5, which Develop has claimed; Review may not take over claimed work or change Task status.
+          needed: Develop completes P4-G4-T5 so that every body Parameter keeps its Action name; Review rechecks 017-F1.
+        observations:
+          api_review_category:
+          - observation: Every listed Group is registered exactly beneath the URL segment of its name and nothing else is registered
+            result: not established
+            basis: no Bootstrap exists (017-F10)
+          - observation: Every Group segment, Adapter segment and Method-and-Path combination is unique
+            result: held for what exists
+            basis: 15 unique valid Adapter segments; 180 unique Method-and-Path combinations; one Group
+          - observation: Every Group conforms to the Group contract
+            result: not established
+            basis: source, Adapters and Endpoints follow the contract, but the Handler rule and Parameters are unfinished (017-F1, 017-F4)
+          - observation: API serves no Endpoint of its own
+            result: not established
+            basis: no API object exists (017-F10)
+          - observation: Every Endpoint's Method follows the verb table, or POST, and its Path is the operation or the operation with the id
+            result: held
+            basis: 180 of 180 Endpoints, observed independently; placement-driven Method changes are pending (017-F3)
+          - observation: Every Parameter sits in Path, Query or Body as the placement rule requires
+            result: not held
+            basis: 017-F3
+          - observation: Every non-simple Parameter travels in its stated form and is converted before its Handler runs
+            result: not established
+            basis: 017-F5, 017-F6, 017-F7
+          - observation: Every returned error is Problem Details with the class name as type and the table status
+            result: not established
+            basis: 017-F8
+          - observation: When the key setting is on, the Base URL carries a non-empty URL Key
+            result: held at the runtime Configuration; not observable on a running API
+            basis: recorded url ends with the 32-character key
+          - observation: Interactive documentation is served, lists every Endpoint and has one section per Group and per Adapter
+            result: not established
+            basis: no API object (017-F12)
+          - observation: The runtime Configuration holds every value the structure defines and follows its rules
+            result: held
+            basis: nine entries in structure order; derived values equal their derivation; port and workers valid
+          - observation: Bootstrap reads no Definition or Preferences file at runtime
+            result: not established
+            basis: no Bootstrap exists (017-F9)
+          entity_group_review_category:
+          - observation: Entity Group states its source, Adapters and Endpoints in the Group contract shape
+            result: partly held
+            basis: source and Adapters stated; Endpoint Parameters and Handler unfinished
+          - observation: Exactly one Adapter for every Entity that Entity Service presents, and nothing else
+            result: held
+            basis: 15 Adapter modules equal the 15 Child Services; each binds exactly its own Child Service
+          - observation: Every Adapter has exactly one Endpoint for every Action of its Child Service, and nothing else
+            result: held
+            basis: 15 x 12 Actions = 180 Endpoints, no duplicate
+          - observation: Every Endpoint's Parameters keep the Action's names, requirements and defaults
+            result: not held
+            basis: 017-F1
+          - observation: Every Handler calls only its Action through Logic Interface and returns its result and errors unchanged
+            result: not established
+            basis: Handler is provisional (017-F4)
+          - observation: Entity Group imports nothing but Logic Interface for the application
+            result: held
+            basis: imports are logic.interface, the standard importlib and API's own shared rules
+          technical_conformance:
+            installability_and_import: 'held: a clean copy of the repository installs from the lock file alone (65 packages) and imports the API package and Logic Interface'
+            lock_and_dependencies: 'held: lock is consistent; every package pinned; the only Component declared directly is Logic. The YAML reader and the server are declared but not yet imported by any source because Bootstrap is not developed'
+            format: 'not held: one source file would be reformatted (see 017-F19)'
+            lint: 'held: no finding'
+            static_types: 'held: no finding'
+            zero_difference_regeneration: 'held: regenerating the 15 Adapter modules leaves the API source and Configuration byte-identical (hash before equals hash after); runtime Configuration regeneration identical (017-F2)'
+            testing: persistent testing is disabled for API; verification was transient and the scope was not widened
+          about_the_review:
+          - Review was invoked directly by the Human while Implement (Log Entry 014) and Develop (Log Entry 016) were still in progress for P4; both Entries and the aggregate Development progress of P4 were left unchanged by Review.
+          - The Adapter generator and the Configuration recipe live outside the project; zero-difference regeneration was observed with them.
+          - Finding 017-F1 was found by reading the published OpenAPI document; the implementer's check compared function-level parameter names and could not show it.

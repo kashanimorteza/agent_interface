@@ -1,0 +1,28 @@
+[project]
+name = "api"
+version = "0.1.0"
+description = "HTTP API of the Trading Assistant, serving the application's Groups through one network boundary."
+requires-python = ">=3.14"
+dependencies = [
+    "fastapi[standard]>=0.143.0",
+    "logic",
+    "pydantic>=2.14.0",
+    "pyyaml>=6.0.3",
+    "uvicorn>=0.54.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.23,<0.13"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-root = ""
+
+[tool.uv.sources]
+logic = { path = "../logic", editable = true }
+
+[dependency-groups]
+dev = [
+    "ruff>=0.16.10",
+    "ty>=0.0.85",
+]
