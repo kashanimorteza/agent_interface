@@ -66,15 +66,14 @@ Logic's outward surface: one entry for every Service, under that Service's name.
 3. **Nothing else** — nothing beyond these is published, and Interface defines no Action, wrapper, or rule of its own and runs no check.
 4. **Versioned** — changing this structure requires raising `contract_version` and a consumer review; adding or removing a Service in the list flows through without one.
 
-For a Logic with Entity Service and Storage Service, Interface publishes `Entity` and `Storage`, each the identical Interface of its Service.
+For a Logic with Entity Service, Interface publishes `Entity`, the identical Interface of that Service.
 
 <!-------------------------- Services -->
 ### Services
 
 ```text
 Services
-├── Entity Service
-└── Storage Service
+└── Entity Service
 ```
 
 Every Service listed in Logic Preferences has its own directory and Interface, and is governed by its own Definition and Preferences.
@@ -86,12 +85,6 @@ One Child Service for every Model Entity.
 → [Definition of Entity Service](services/entity/entity.md)
 → [Preferences of Entity Service](services/entity/entity.yaml)
 
-#### Storage Service
-
-Logic's gateway to Database.
-
-→ [Definition of Storage Service](services/storage/storage.md)
-→ [Preferences of Storage Service](services/storage/storage.yaml)
 
 <!-------------------------- Documentation -->
 ### Documentation
@@ -125,8 +118,7 @@ Directory Structure
 ├── logic/
 │   ├── interface
 │   └── services/
-│       ├── entity/
-│       └── storage/
+│       └── entity/
 └── README
 ```
 
@@ -193,15 +185,15 @@ Every Principle below is mandatory and belongs to the category that owns it.
 
 #### Logic is composed of modular Services
 
-**Rule:** All of Logic's work is divided into Services, each owning one coherent responsibility, its own directory, and its own Interface. Entity Service and Storage Service are fixed in every Logic; more Services may be added.
+**Rule:** All of Logic's work is divided into Services, each owning one coherent responsibility, its own directory, and its own Interface. Entity Service is fixed in every Logic; more Services may be added.
 **Why:** One Service per responsibility keeps its dependencies and Behaviour together, so a change stays inside it.
 **Boundary:** Services sit beside one another; a Service uses another only through that Service's Interface.
 
-#### Storage Service is every other Service's only route to Database
+#### Entity Service is every other Service's only route to Database
 
-**Rule:** Every Logic Service that needs Database uses Storage Service Interface; only Storage Service calls Database Interface.
+**Rule:** Every Logic Service that needs Database uses Entity Service Interface; only Entity Service calls Database Interface, and it never uses Database's Setup group or Command Operations.
 **Why:** One gateway keeps Database access consistent and replaceable across Logic.
-**Boundary:** A Service owns any Behaviour it adds around a Storage call.
+**Boundary:** A Service owns any Behaviour it adds around an Entity Service call.
 
 ### Review
 
@@ -216,7 +208,7 @@ Every Principle below is mandatory and belongs to the category that owns it.
 **Rule:** Review establishes Logic conformance through these observations, every one of them on every review:
 - Logic Interface publishes exactly one entry for every Service listed in Logic Preferences, under its configured name, and nothing else.
 - Every entry is the identical Interface object of its Service.
-- No Service other than Storage Service imports Database Interface.
+- No Service other than Entity Service imports Database Interface.
 - No Service imports Logic Interface.
 - No two Services share a name or directory.
 **Why:** A fixed set of observations proves the same things on every review, so a result is never judged by a different standard from one run to the next.
@@ -257,13 +249,13 @@ Every obligation in the file, under the Principle it comes from.
 
 **Logic is composed of modular Services**
 
-- **Must** — Divide all of Logic's work into Services, each with its own directory and Interface, including Entity and Storage Service.
+- **Must** — Divide all of Logic's work into Services, each with its own directory and Interface, including Entity Service.
 - **Never** — Let one Service reach into another except through its Interface.
 
-**Storage Service is every other Service's only route to Database**
+**Entity Service is every other Service's only route to Database**
 
-- **Must** — Use Storage Service Interface whenever a Service needs Database.
-- **Never** — Call Database Interface from any Service but Storage Service.
+- **Must** — Use Entity Service Interface whenever a Service needs Database.
+- **Never** — Call Database Interface from any Service but Entity Service.
 
 ### Review
 

@@ -52,9 +52,6 @@ content:
         entity:
           definition: services/entity/entity.md
           preferences: services/entity/entity.yaml
-        storage:
-          definition: services/storage/storage.md
-          preferences: services/storage/storage.yaml
       documentation:
         file: README.md
         location: the Component root
