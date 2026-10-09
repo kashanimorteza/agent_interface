@@ -1,0 +1,11 @@
+title: Target API
+description: ''
+key: Y954RJHWaPoom8i75KsL5FI-29Unf4gg
+host: 0.0.0.0
+port: 8000
+workers: 2
+transport_protocol: HTTP
+url: http://0.0.0.0:8000/Y954RJHWaPoom8i75KsL5FI-29Unf4gg
+documentation:
+  swagger: http://0.0.0.0:8000/Y954RJHWaPoom8i75KsL5FI-29Unf4gg/docs
+  redoc: http://0.0.0.0:8000/Y954RJHWaPoom8i75KsL5FI-29Unf4gg/redoc

@@ -26,7 +26,7 @@ content_map:
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
-  task_count: 113
+  task_count: 126
   plans:
     P1:
       id: P1
@@ -1936,3 +1936,2498 @@ content:
               - at: '2026-10-08T07:39:21Z'
                 event: done
                 note: 'Applied the quality standards the Development Preferences select to the complete Database library, its entry points and its documentation. Observed: the formatter check reports 17 files already formatted, the linter and the type checker report no findings, the lock file is consistent; regenerating the Initial Data collection and the documentation from their sources gives zero difference; all 24 documentation examples including the Verify script still run; the declared dependencies (model, pyyaml, sqlalchemy) equal the packages imported directly; Core holds exactly its eight named source files and the Component holds the Directory Structure members (database package with interface, core and engine; scripts; db; config; README).'
+    P3:
+      id: P3
+      title: Logic
+      order: 3
+      target: Logic
+      does: The Logic library exists as a reusable project-internal package whose single Interface publishes Entity Service, which gives every Model Entity one Child Service offering every Entity Operation
+        of Database for that Entity alone, with Logic and Entity Service documented.
+      constraints:
+      - An Entity Service or Logic capability is made public only by the Interface publication work of this phase; no Base or Child Service work publishes it.
+      task_count: 32
+      groups:
+        P3-G1:
+          id: P3-G1
+          title: Library Package
+          description: The Logic library's own packaging, dependency baseline and connections to the Model and Database libraries.
+          area: Logic library packaging and its Model and Database connections
+          does: The Logic library can be installed and imported as a project-internal package that reaches Model and Database through their declared dependencies.
+          constraints: []
+          task_count: 1
+          tasks:
+            P3-G1-T1:
+              id: P3-G1-T1
+              source_id: '011'
+              title: Establish the Logic library package
+              description: Create the Logic Component as a self-contained library that depends on the Model and Database libraries as local project dependencies. Resolve the dependencies it needs to concrete
+                compatible versions, make the language's quality-standard tooling available to it, and make sure the project's single ignore file covers its environment and caches.
+              reason: Every later Logic Task needs a package to live in and resolved connections to Model and Database.
+              inputs:
+              - Logic Component identity and selected language profile
+              - Development language standards and declared Connections
+              - Published Model Interface
+              - Published Database Interface
+              skills: []
+              expected_result: An importable Logic package, containing no behaviour yet, that reaches the Model and Database Interfaces through its dependencies.
+              depends_on:
+              - P1-G8-T1
+              - P2-G7-T4
+              constraints: []
+              acceptance: The package installs into an isolated environment from the repository alone and imports without error; the Model Interface and the Database Interface can each be imported through the
+                declared dependencies; every dependency is recorded at a concrete version in lock metadata; the project's single ignore file covers the Logic library's environment and caches.
+              status: done
+              log:
+              - at: '2026-10-09T18:36:48Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:37:28Z'
+                event: decision
+                note: Python floor set to >=3.14 and the dev tool floors set to the versions the sibling libraries use (ruff 0.16.10, ty 0.0.85), because the Preferences leave the Python version at latest-compatible
+                  and set no lower bound; the lock file resolves ruff 0.17.0.
+              - at: '2026-10-09T18:37:28Z'
+                event: decision
+                note: Runtime dependencies are limited to model and database, the only packages Logic will import directly, and both are local editable path dependencies on the sibling directories; no third-party runtime
+                  package is added.
+              - at: '2026-10-09T18:37:28Z'
+                event: done
+                note: 'Created the Logic Component directory (logic/, package logic/logic with empty initialisers for the package, services and the entity service directory) as a flat-layout library built with uv_build;
+                  model and database are local editable path dependencies; ruff and ty are dev tools; uv resolved and locked everything (uv.lock, isolated .venv). Added a Logic section to the root ignore file (logic/.venv/,
+                  logic/**/__pycache__/, logic/.ruff_cache/), leaving every existing entry untouched. Observed: from inside the Logic environment both model.interface (15 entities) and database.interface (6 published
+                  groups) import, and git reports logic/.venv as ignored.'
+        P3-G2:
+          id: P3-G2
+          title: Entity Service Base
+          description: 'The one shared structure every Child Service inherits: the single Database object it holds, the Entity it is bound to, and one Action for every Entity Operation of Database''s Interface
+            group. The Tasks follow the order in which that group publishes its Operations, so that Base mirrors it in that order.'
+          area: 'Entity Service: Base and its shared Actions'
+          does: Every Action a Child Service offers exists once, in Base, as the Entity-bound form of the Database Operation it mirrors.
+          constraints: []
+          task_count: 6
+          tasks:
+            P3-G2-T1:
+              id: P3-G2-T1
+              source_id: '011'
+              title: Provide the Base foundation
+              description: Provide the shared structure every Child Service inherits, with no Action yet. When created it creates one object of Database's Interface group and keeps it for every Action to use,
+                and it carries the Entity that each Child Service binds, which Actions pass to Database and check Entity instances against.
+              reason: Every Action needs the same Database object and the same notion of the Entity it works on, so both are provided once.
+              inputs:
+              - Database's Interface group of Entity Operations
+              - Entity Service Base responsibilities
+              skills: []
+              expected_result: A shared structure holding one Database object and an Entity binding, ready to receive Actions.
+              depends_on:
+              - P3-G1-T1
+              - P2-G7-T4
+              constraints: []
+              acceptance: Creating the structure creates exactly one Database object, which stays the same for the structure's lifetime; creating it opens no connection and creates no data or file; the structure
+                names no Entity until a Child Service binds one.
+              status: done
+              log:
+              - at: '2026-10-09T18:37:41Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:37:47Z'
+                event: done
+                note: 'Wrote the Base structure with its constructor, which creates one Database Interface object and keeps it on the instance for every Action, and the declaration of the Entity binding that each Child
+                  Service supplies; no Action yet. Observed: creating a Base opens no connection and leaves the Entity unbound until a Child binds one.'
+            P3-G2-T2:
+              id: P3-G2-T2
+              source_id: '011'
+              title: Provide the add and update Actions
+              description: Provide the Actions that mirror Database's add and update Entity Operations, each without the Entity class parameter, which the bound Entity supplies.
+              reason: A caller must be able to store and replace a record of its selected Entity without naming the Entity again.
+              inputs:
+              - Database's Interface group of Entity Operations
+              - Base foundation
+              - Database's Invalid Input error
+              skills: []
+              expected_result: The add and update Actions on Base.
+              depends_on:
+              - P3-G2-T1
+              constraints: []
+              acceptance: Both Actions exist with their Operation's name, parameter names, order and defaults, minus the Entity class parameter; given an instance of the bound Entity each returns exactly what
+                Database returns and raises exactly what Database raises for that Entity; given an instance of any other Entity each raises the Invalid Input error and Database is not called.
+              status: done
+              log:
+              - at: '2026-10-09T18:37:51Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:38:06Z'
+                event: decision
+                note: The rejection of an instance of another Entity is a private helper of Base that raises Database's Invalid Input error with a message naming the expected Entity, because the Definition fixes the
+                  error kind and not its message; the helper is shared by the add and update Actions and by no Action that takes no instance.
+              - at: '2026-10-09T18:38:06Z'
+                event: done
+                note: 'Added the add and update Actions to Base, each written out as its own method with the Database Operation''s name, parameters, defaults and docstring, calling the one Database object and returning
+                  its answer unchanged; an instance that is not of the bound Entity is rejected with the Invalid Input error before Database is called. Observed with a recording stand-in for the Database object: a bound
+                  instance reaches Database with its arguments unchanged and the answer returned; an instance of another Entity raises Invalid Input and makes no Database call; both signatures and docstrings equal Database''s,
+                  the first parameter being kept because it takes an instance.'
+            P3-G2-T3:
+              id: P3-G2-T3
+              source_id: '011'
+              title: Provide the list and get-by-id Actions
+              description: Provide the Actions that mirror Database's list and get-by-id Entity Operations, each without the Entity class parameter, which the bound Entity supplies.
+              reason: A caller must be able to read the records of its selected Entity, by query or by id, without naming the Entity again.
+              inputs:
+              - Database's Interface group of Entity Operations
+              - Base foundation
+              skills: []
+              expected_result: The list and get-by-id Actions on Base.
+              depends_on:
+              - P3-G2-T1
+              constraints: []
+              acceptance: Both Actions exist with their Operation's name, parameter names, order and defaults, minus the Entity class parameter; list keeps the filter, combination, order and limit parameters;
+                for the bound Entity each returns exactly what Database returns, including null for an id with no record, and raises exactly what Database raises.
+              status: done
+              log:
+              - at: '2026-10-09T18:38:08Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:39:44Z'
+                event: done
+                note: 'Added the list and get_by_id Actions to Base after update, each written out as its own method with the Database Operation''s name, parameters, defaults and docstring minus the Entity class parameter,
+                  passing the bound Entity first and returning Database''s answer unchanged. Observed: on the real default Instance, list with a limit returned 2 Currency records and get_by_id returned the USD record
+                  and None for an unknown id; with a recording stand-in every other argument reached Database unchanged and in order.'
+            P3-G2-T4:
+              id: P3-G2-T4
+              source_id: '011'
+              title: Provide the delete, enable and disable Actions
+              description: Provide the Actions that mirror Database's delete, enable and disable Entity Operations, each without the Entity class parameter, which the bound Entity supplies.
+              reason: A caller must be able to remove, enable and disable a record of its selected Entity by id without naming the Entity again.
+              inputs:
+              - Database's Interface group of Entity Operations
+              - Base foundation
+              skills: []
+              expected_result: The delete, enable and disable Actions on Base.
+              depends_on:
+              - P3-G2-T1
+              constraints: []
+              acceptance: All three Actions exist with their Operation's name, parameter names, order and defaults, minus the Entity class parameter; for the bound Entity each returns exactly what Database
+                returns, including null for an id with no record, and raises exactly what Database raises.
+              status: done
+              log:
+              - at: '2026-10-09T18:38:08Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:39:44Z'
+                event: done
+                note: 'Added the delete, enable and disable Actions to Base after get_by_id, each written out as its own method with the Database Operation''s name, parameters, defaults and docstring minus the Entity
+                  class parameter. Observed with a recording stand-in: each passes the bound Entity, the id and the instance to the matching Database Operation unchanged and returns its answer; signatures and docstrings
+                  equal Database''s apart from the removed Entity class parameter. Not run against the real data, because the Operations change stored records.'
+            P3-G2-T5:
+              id: P3-G2-T5
+              source_id: '011'
+              title: Provide the count, sum, min and max Actions
+              description: Provide the Actions that mirror Database's count, sum, min and max Entity Operations, each without the Entity class parameter, which the bound Entity supplies.
+              reason: A caller must be able to measure the records of its selected Entity without naming the Entity again.
+              inputs:
+              - Database's Interface group of Entity Operations
+              - Base foundation
+              skills: []
+              expected_result: The count, sum, min and max Actions on Base.
+              depends_on:
+              - P3-G2-T1
+              constraints: []
+              acceptance: All four Actions exist with their Operation's name, parameter names, order and defaults, minus the Entity class parameter; for the bound Entity each returns exactly what Database returns,
+                including zero for a sum with no match and null for a min or max with no match, and raises exactly what Database raises.
+              status: done
+              log:
+              - at: '2026-10-09T18:38:08Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:39:45Z'
+                event: done
+                note: 'Added the count, sum, min and max Actions to Base after disable, each written out as its own method with the Database Operation''s name, parameters, defaults and docstring minus the Entity class
+                  parameter. Observed on the real default Instance for Currency: count 8, count with an EQUALS Filter on code 1, sum of decimal_digits 14, min 0, max 2; with a recording stand-in the arguments reached
+                  Database unchanged and in order.'
+            P3-G2-T6:
+              id: P3-G2-T6
+              source_id: '011'
+              title: Provide the truncate Action
+              description: Provide the Action that mirrors Database's truncate Entity Operation, without the Entity class parameter, which the bound Entity supplies.
+              reason: A caller must be able to empty its selected Entity without naming the Entity again, completing the mirror of every Entity Operation.
+              inputs:
+              - Database's Interface group of Entity Operations
+              - Base foundation
+              skills: []
+              expected_result: The truncate Action on Base.
+              depends_on:
+              - P3-G2-T1
+              constraints: []
+              acceptance: The Action exists with its Operation's name and parameters, minus the Entity class parameter; for the bound Entity it returns exactly the deleted count Database returns and raises
+                exactly what Database raises; Base then holds an Action for every Entity Operation of Database's group and none for the Command or Setup Operations.
+              status: done
+              log:
+              - at: '2026-10-09T18:38:08Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:39:45Z'
+                event: done
+                note: 'Added the truncate Action as the last Action of Base, written out as its own method with the Database Operation''s name, parameters, defaults and docstring minus the Entity class parameter. Observed:
+                  Base now holds exactly 12 Actions, equal in names and order to the Entity Operations of the Database Interface group (add, update, list, get_by_id, delete, enable, disable, count, sum, min, max, truncate)
+                  and none for execute_command or the Setup Operations; with a recording stand-in truncate passes the bound Entity and instance and returns Database''s answer. Not run against the real data, because it
+                  removes records.'
+        P3-G3:
+          id: P3-G3
+          title: Child Services
+          description: One Child Service for every Entity in Model's Entity Collection. Each binds its own Entity and inherits Base. The Target defines no Behaviour specific to any single Entity, so no Child
+            Service adds, overrides or removes an Action.
+          area: 'Entity Service: the Child Service of every Model Entity'
+          does: Every Entity in Model's Entity Collection has exactly one Child Service, in step with that Collection.
+          constraints: []
+          task_count: 15
+          tasks:
+            P3-G3-T1:
+              id: P3-G3-T1
+              source_id: '011'
+              title: Provide the User Child Service
+              description: Provide the Child Service bound to the User Entity published by Model.
+              reason: Callers must be able to select the User Entity once and then use every Action for it.
+              inputs:
+              - The User Entity published by Model
+              - Completed Base
+              skills: []
+              expected_result: A Child Service for the User Entity.
+              depends_on:
+              - P3-G2-T2
+              - P3-G2-T3
+              - P3-G2-T4
+              - P3-G2-T5
+              - P3-G2-T6
+              - P1-G8-T1
+              constraints: []
+              acceptance: The Child Service binds exactly the User Entity as Model publishes it, inherits every Action of Base, and is available under the name of that Entity; a call of any Action on it works
+                on User records, and an instance of another Entity given to an Action that takes an instance is rejected with the Invalid Input error.
+              status: done
+              log:
+              - at: '2026-10-09T18:39:54Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:40:07Z'
+                event: done
+                note: 'Wrote the User Child Service in its own unit directly in the Entity Service directory beside the Base unit: class User inherits BaseEntity, binds the Model Interface''s User Entity, and holds nothing
+                  else because the Target defines no Behaviour specific to it. Observed: the class is a subclass of the Base, its bound Entity is the identical object Model publishes, an object that is not an instance
+                  of it is rejected with Invalid Input, and its count Action returned 1 on the real default Instance.'
+            P3-G3-T2:
+              id: P3-G3-T2
+              source_id: '011'
+              title: Provide the Trading Platform Child Service
+              description: Provide the Child Service bound to the Trading Platform Entity published by Model.
+              reason: Callers must be able to select the Trading Platform Entity once and then use every Action for it.
+              inputs:
+              - The Trading Platform Entity published by Model
+              - Completed Base
+              skills: []
+              expected_result: A Child Service for the Trading Platform Entity.
+              depends_on:
+              - P3-G2-T2
+              - P3-G2-T3
+              - P3-G2-T4
+              - P3-G2-T5
+              - P3-G2-T6
+              - P1-G8-T1
+              constraints: []
+              acceptance: The Child Service binds exactly the Trading Platform Entity as Model publishes it, inherits every Action of Base, and is available under the name of that Entity; a call of any Action
+                on it works on Trading Platform records, and an instance of another Entity given to an Action that takes an instance is rejected with the Invalid Input error.
+              status: done
+              log:
+              - at: '2026-10-09T18:39:54Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:40:07Z'
+                event: done
+                note: 'Wrote the TradingPlatform Child Service in its own unit directly in the Entity Service directory beside the Base unit: class TradingPlatform inherits BaseEntity, binds the Model Interface''s TradingPlatform
+                  Entity, and holds nothing else because the Target defines no Behaviour specific to it. Observed: the class is a subclass of the Base, its bound Entity is the identical object Model publishes, an object
+                  that is not an instance of it is rejected with Invalid Input, and its count Action returned 2 on the real default Instance.'
+            P3-G3-T3:
+              id: P3-G3-T3
+              source_id: '011'
+              title: Provide the Instance Child Service
+              description: Provide the Child Service bound to the Instance Entity published by Model.
+              reason: Callers must be able to select the Instance Entity once and then use every Action for it.
+              inputs:
+              - The Instance Entity published by Model
+              - Completed Base
+              skills: []
+              expected_result: A Child Service for the Instance Entity.
+              depends_on:
+              - P3-G2-T2
+              - P3-G2-T3
+              - P3-G2-T4
+              - P3-G2-T5
+              - P3-G2-T6
+              - P1-G8-T1
+              constraints: []
+              acceptance: The Child Service binds exactly the Instance Entity as Model publishes it, inherits every Action of Base, and is available under the name of that Entity; a call of any Action on it
+                works on Instance records, and an instance of another Entity given to an Action that takes an instance is rejected with the Invalid Input error.
+              status: done
+              log:
+              - at: '2026-10-09T18:39:54Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:40:07Z'
+                event: done
+                note: 'Wrote the Instance Child Service in its own unit directly in the Entity Service directory beside the Base unit: class Instance inherits BaseEntity, binds the Model Interface''s Instance Entity,
+                  and holds nothing else because the Target defines no Behaviour specific to it. Observed: the class is a subclass of the Base, its bound Entity is the identical object Model publishes, an object that
+                  is not an instance of it is rejected with Invalid Input, and its count Action returned 1 on the real default Instance.'
+            P3-G3-T4:
+              id: P3-G3-T4
+              source_id: '011'
+              title: Provide the Currency Child Service
+              description: Provide the Child Service bound to the Currency Entity published by Model.
+              reason: Callers must be able to select the Currency Entity once and then use every Action for it.
+              inputs:
+              - The Currency Entity published by Model
+              - Completed Base
+              skills: []
+              expected_result: A Child Service for the Currency Entity.
+              depends_on:
+              - P3-G2-T2
+              - P3-G2-T3
+              - P3-G2-T4
+              - P3-G2-T5
+              - P3-G2-T6
+              - P1-G8-T1
+              constraints: []
+              acceptance: The Child Service binds exactly the Currency Entity as Model publishes it, inherits every Action of Base, and is available under the name of that Entity; a call of any Action on it
+                works on Currency records, and an instance of another Entity given to an Action that takes an instance is rejected with the Invalid Input error.
+              status: done
+              log:
+              - at: '2026-10-09T18:39:54Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:40:07Z'
+                event: done
+                note: 'Wrote the Currency Child Service in its own unit directly in the Entity Service directory beside the Base unit: class Currency inherits BaseEntity, binds the Model Interface''s Currency Entity,
+                  and holds nothing else because the Target defines no Behaviour specific to it. Observed: the class is a subclass of the Base, its bound Entity is the identical object Model publishes, an object that
+                  is not an instance of it is rejected with Invalid Input, and its count Action returned 8 on the real default Instance.'
+            P3-G3-T5:
+              id: P3-G3-T5
+              source_id: '011'
+              title: Provide the Broker Child Service
+              description: Provide the Child Service bound to the Broker Entity published by Model.
+              reason: Callers must be able to select the Broker Entity once and then use every Action for it.
+              inputs:
+              - The Broker Entity published by Model
+              - Completed Base
+              skills: []
+              expected_result: A Child Service for the Broker Entity.
+              depends_on:
+              - P3-G2-T2
+              - P3-G2-T3
+              - P3-G2-T4
+              - P3-G2-T5
+              - P3-G2-T6
+              - P1-G8-T1
+              constraints: []
+              acceptance: The Child Service binds exactly the Broker Entity as Model publishes it, inherits every Action of Base, and is available under the name of that Entity; a call of any Action on it works
+                on Broker records, and an instance of another Entity given to an Action that takes an instance is rejected with the Invalid Input error.
+              status: done
+              log:
+              - at: '2026-10-09T18:39:54Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:40:07Z'
+                event: done
+                note: 'Wrote the Broker Child Service in its own unit directly in the Entity Service directory beside the Base unit: class Broker inherits BaseEntity, binds the Model Interface''s Broker Entity, and holds
+                  nothing else because the Target defines no Behaviour specific to it. Observed: the class is a subclass of the Base, its bound Entity is the identical object Model publishes, an object that is not an
+                  instance of it is rejected with Invalid Input, and its count Action returned 1 on the real default Instance.'
+            P3-G3-T6:
+              id: P3-G3-T6
+              source_id: '011'
+              title: Provide the Asset Child Service
+              description: Provide the Child Service bound to the Asset Entity published by Model.
+              reason: Callers must be able to select the Asset Entity once and then use every Action for it.
+              inputs:
+              - The Asset Entity published by Model
+              - Completed Base
+              skills: []
+              expected_result: A Child Service for the Asset Entity.
+              depends_on:
+              - P3-G2-T2
+              - P3-G2-T3
+              - P3-G2-T4
+              - P3-G2-T5
+              - P3-G2-T6
+              - P1-G8-T1
+              constraints: []
+              acceptance: The Child Service binds exactly the Asset Entity as Model publishes it, inherits every Action of Base, and is available under the name of that Entity; a call of any Action on it works
+                on Asset records, and an instance of another Entity given to an Action that takes an instance is rejected with the Invalid Input error.
+              status: done
+              log:
+              - at: '2026-10-09T18:39:54Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:40:07Z'
+                event: done
+                note: 'Wrote the Asset Child Service in its own unit directly in the Entity Service directory beside the Base unit: class Asset inherits BaseEntity, binds the Model Interface''s Asset Entity, and holds
+                  nothing else because the Target defines no Behaviour specific to it. Observed: the class is a subclass of the Base, its bound Entity is the identical object Model publishes, an object that is not an
+                  instance of it is rejected with Invalid Input, and its count Action returned 4 on the real default Instance.'
+            P3-G3-T7:
+              id: P3-G3-T7
+              source_id: '011'
+              title: Provide the Account Group Child Service
+              description: Provide the Child Service bound to the Account Group Entity published by Model.
+              reason: Callers must be able to select the Account Group Entity once and then use every Action for it.
+              inputs:
+              - The Account Group Entity published by Model
+              - Completed Base
+              skills: []
+              expected_result: A Child Service for the Account Group Entity.
+              depends_on:
+              - P3-G2-T2
+              - P3-G2-T3
+              - P3-G2-T4
+              - P3-G2-T5
+              - P3-G2-T6
+              - P1-G8-T1
+              constraints: []
+              acceptance: The Child Service binds exactly the Account Group Entity as Model publishes it, inherits every Action of Base, and is available under the name of that Entity; a call of any Action
+                on it works on Account Group records, and an instance of another Entity given to an Action that takes an instance is rejected with the Invalid Input error.
+              status: done
+              log:
+              - at: '2026-10-09T18:39:55Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:40:07Z'
+                event: done
+                note: 'Wrote the AccountGroup Child Service in its own unit directly in the Entity Service directory beside the Base unit: class AccountGroup inherits BaseEntity, binds the Model Interface''s AccountGroup
+                  Entity, and holds nothing else because the Target defines no Behaviour specific to it. Observed: the class is a subclass of the Base, its bound Entity is the identical object Model publishes, an object
+                  that is not an instance of it is rejected with Invalid Input, and its count Action returned 1 on the real default Instance.'
+            P3-G3-T8:
+              id: P3-G3-T8
+              source_id: '011'
+              title: Provide the Account Child Service
+              description: Provide the Child Service bound to the Account Entity published by Model.
+              reason: Callers must be able to select the Account Entity once and then use every Action for it.
+              inputs:
+              - The Account Entity published by Model
+              - Completed Base
+              skills: []
+              expected_result: A Child Service for the Account Entity.
+              depends_on:
+              - P3-G2-T2
+              - P3-G2-T3
+              - P3-G2-T4
+              - P3-G2-T5
+              - P3-G2-T6
+              - P1-G8-T1
+              constraints: []
+              acceptance: The Child Service binds exactly the Account Entity as Model publishes it, inherits every Action of Base, and is available under the name of that Entity; a call of any Action on it
+                works on Account records, and an instance of another Entity given to an Action that takes an instance is rejected with the Invalid Input error.
+              status: done
+              log:
+              - at: '2026-10-09T18:39:55Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:40:08Z'
+                event: done
+                note: 'Wrote the Account Child Service in its own unit directly in the Entity Service directory beside the Base unit: class Account inherits BaseEntity, binds the Model Interface''s Account Entity, and
+                  holds nothing else because the Target defines no Behaviour specific to it. Observed: the class is a subclass of the Base, its bound Entity is the identical object Model publishes, an object that is
+                  not an instance of it is rejected with Invalid Input, and its count Action returned 1 on the real default Instance.'
+            P3-G3-T9:
+              id: P3-G3-T9
+              source_id: '011'
+              title: Provide the Trailing Group Child Service
+              description: Provide the Child Service bound to the Trailing Group Entity published by Model.
+              reason: Callers must be able to select the Trailing Group Entity once and then use every Action for it.
+              inputs:
+              - The Trailing Group Entity published by Model
+              - Completed Base
+              skills: []
+              expected_result: A Child Service for the Trailing Group Entity.
+              depends_on:
+              - P3-G2-T2
+              - P3-G2-T3
+              - P3-G2-T4
+              - P3-G2-T5
+              - P3-G2-T6
+              - P1-G8-T1
+              constraints: []
+              acceptance: The Child Service binds exactly the Trailing Group Entity as Model publishes it, inherits every Action of Base, and is available under the name of that Entity; a call of any Action
+                on it works on Trailing Group records, and an instance of another Entity given to an Action that takes an instance is rejected with the Invalid Input error.
+              status: done
+              log:
+              - at: '2026-10-09T18:39:55Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:40:08Z'
+                event: done
+                note: 'Wrote the TrailingGroup Child Service in its own unit directly in the Entity Service directory beside the Base unit: class TrailingGroup inherits BaseEntity, binds the Model Interface''s TrailingGroup
+                  Entity, and holds nothing else because the Target defines no Behaviour specific to it. Observed: the class is a subclass of the Base, its bound Entity is the identical object Model publishes, an object
+                  that is not an instance of it is rejected with Invalid Input, and its count Action returned 1 on the real default Instance.'
+            P3-G3-T10:
+              id: P3-G3-T10
+              source_id: '011'
+              title: Provide the Trailing Rule Child Service
+              description: Provide the Child Service bound to the Trailing Rule Entity published by Model.
+              reason: Callers must be able to select the Trailing Rule Entity once and then use every Action for it.
+              inputs:
+              - The Trailing Rule Entity published by Model
+              - Completed Base
+              skills: []
+              expected_result: A Child Service for the Trailing Rule Entity.
+              depends_on:
+              - P3-G2-T2
+              - P3-G2-T3
+              - P3-G2-T4
+              - P3-G2-T5
+              - P3-G2-T6
+              - P1-G8-T1
+              constraints: []
+              acceptance: The Child Service binds exactly the Trailing Rule Entity as Model publishes it, inherits every Action of Base, and is available under the name of that Entity; a call of any Action
+                on it works on Trailing Rule records, and an instance of another Entity given to an Action that takes an instance is rejected with the Invalid Input error.
+              status: done
+              log:
+              - at: '2026-10-09T18:39:55Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:40:08Z'
+                event: done
+                note: 'Wrote the TrailingRule Child Service in its own unit directly in the Entity Service directory beside the Base unit: class TrailingRule inherits BaseEntity, binds the Model Interface''s TrailingRule
+                  Entity, and holds nothing else because the Target defines no Behaviour specific to it. Observed: the class is a subclass of the Base, its bound Entity is the identical object Model publishes, an object
+                  that is not an instance of it is rejected with Invalid Input, and its count Action returned 0 on the real default Instance.'
+            P3-G3-T11:
+              id: P3-G3-T11
+              source_id: '011'
+              title: Provide the Partial Group Child Service
+              description: Provide the Child Service bound to the Partial Group Entity published by Model.
+              reason: Callers must be able to select the Partial Group Entity once and then use every Action for it.
+              inputs:
+              - The Partial Group Entity published by Model
+              - Completed Base
+              skills: []
+              expected_result: A Child Service for the Partial Group Entity.
+              depends_on:
+              - P3-G2-T2
+              - P3-G2-T3
+              - P3-G2-T4
+              - P3-G2-T5
+              - P3-G2-T6
+              - P1-G8-T1
+              constraints: []
+              acceptance: The Child Service binds exactly the Partial Group Entity as Model publishes it, inherits every Action of Base, and is available under the name of that Entity; a call of any Action
+                on it works on Partial Group records, and an instance of another Entity given to an Action that takes an instance is rejected with the Invalid Input error.
+              status: done
+              log:
+              - at: '2026-10-09T18:39:55Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:40:08Z'
+                event: done
+                note: 'Wrote the PartialGroup Child Service in its own unit directly in the Entity Service directory beside the Base unit: class PartialGroup inherits BaseEntity, binds the Model Interface''s PartialGroup
+                  Entity, and holds nothing else because the Target defines no Behaviour specific to it. Observed: the class is a subclass of the Base, its bound Entity is the identical object Model publishes, an object
+                  that is not an instance of it is rejected with Invalid Input, and its count Action returned 1 on the real default Instance.'
+            P3-G3-T12:
+              id: P3-G3-T12
+              source_id: '011'
+              title: Provide the Partial Rule Child Service
+              description: Provide the Child Service bound to the Partial Rule Entity published by Model.
+              reason: Callers must be able to select the Partial Rule Entity once and then use every Action for it.
+              inputs:
+              - The Partial Rule Entity published by Model
+              - Completed Base
+              skills: []
+              expected_result: A Child Service for the Partial Rule Entity.
+              depends_on:
+              - P3-G2-T2
+              - P3-G2-T3
+              - P3-G2-T4
+              - P3-G2-T5
+              - P3-G2-T6
+              - P1-G8-T1
+              constraints: []
+              acceptance: The Child Service binds exactly the Partial Rule Entity as Model publishes it, inherits every Action of Base, and is available under the name of that Entity; a call of any Action on
+                it works on Partial Rule records, and an instance of another Entity given to an Action that takes an instance is rejected with the Invalid Input error.
+              status: done
+              log:
+              - at: '2026-10-09T18:39:55Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:40:08Z'
+                event: done
+                note: 'Wrote the PartialRule Child Service in its own unit directly in the Entity Service directory beside the Base unit: class PartialRule inherits BaseEntity, binds the Model Interface''s PartialRule
+                  Entity, and holds nothing else because the Target defines no Behaviour specific to it. Observed: the class is a subclass of the Base, its bound Entity is the identical object Model publishes, an object
+                  that is not an instance of it is rejected with Invalid Input, and its count Action returned 0 on the real default Instance.'
+            P3-G3-T13:
+              id: P3-G3-T13
+              source_id: '011'
+              title: Provide the Action Group Child Service
+              description: Provide the Child Service bound to the Action Group Entity published by Model.
+              reason: Callers must be able to select the Action Group Entity once and then use every Action for it.
+              inputs:
+              - The Action Group Entity published by Model
+              - Completed Base
+              skills: []
+              expected_result: A Child Service for the Action Group Entity.
+              depends_on:
+              - P3-G2-T2
+              - P3-G2-T3
+              - P3-G2-T4
+              - P3-G2-T5
+              - P3-G2-T6
+              - P1-G8-T1
+              constraints: []
+              acceptance: The Child Service binds exactly the Action Group Entity as Model publishes it, inherits every Action of Base, and is available under the name of that Entity; a call of any Action on
+                it works on Action Group records, and an instance of another Entity given to an Action that takes an instance is rejected with the Invalid Input error.
+              status: done
+              log:
+              - at: '2026-10-09T18:39:55Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:40:08Z'
+                event: done
+                note: 'Wrote the ActionGroup Child Service in its own unit directly in the Entity Service directory beside the Base unit: class ActionGroup inherits BaseEntity, binds the Model Interface''s ActionGroup
+                  Entity, and holds nothing else because the Target defines no Behaviour specific to it. Observed: the class is a subclass of the Base, its bound Entity is the identical object Model publishes, an object
+                  that is not an instance of it is rejected with Invalid Input, and its count Action returned 1 on the real default Instance.'
+            P3-G3-T14:
+              id: P3-G3-T14
+              source_id: '011'
+              title: Provide the Action Child Service
+              description: Provide the Child Service bound to the Action Entity published by Model.
+              reason: Callers must be able to select the Action Entity once and then use every Action for it.
+              inputs:
+              - The Action Entity published by Model
+              - Completed Base
+              skills: []
+              expected_result: A Child Service for the Action Entity.
+              depends_on:
+              - P3-G2-T2
+              - P3-G2-T3
+              - P3-G2-T4
+              - P3-G2-T5
+              - P3-G2-T6
+              - P1-G8-T1
+              constraints: []
+              acceptance: The Child Service binds exactly the Action Entity as Model publishes it, inherits every Action of Base, and is available under the name of that Entity; a call of any Action on it works
+                on Action records, and an instance of another Entity given to an Action that takes an instance is rejected with the Invalid Input error.
+              status: done
+              log:
+              - at: '2026-10-09T18:39:55Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:40:08Z'
+                event: done
+                note: 'Wrote the Action Child Service in its own unit directly in the Entity Service directory beside the Base unit: class Action inherits BaseEntity, binds the Model Interface''s Action Entity, and holds
+                  nothing else because the Target defines no Behaviour specific to it. Observed: the class is a subclass of the Base, its bound Entity is the identical object Model publishes, an object that is not an
+                  instance of it is rejected with Invalid Input, and its count Action returned 1 on the real default Instance.'
+            P3-G3-T15:
+              id: P3-G3-T15
+              source_id: '011'
+              title: Provide the Position Child Service
+              description: Provide the Child Service bound to the Position Entity published by Model.
+              reason: Callers must be able to select the Position Entity once and then use every Action for it.
+              inputs:
+              - The Position Entity published by Model
+              - Completed Base
+              skills: []
+              expected_result: A Child Service for the Position Entity.
+              depends_on:
+              - P3-G2-T2
+              - P3-G2-T3
+              - P3-G2-T4
+              - P3-G2-T5
+              - P3-G2-T6
+              - P1-G8-T1
+              constraints: []
+              acceptance: The Child Service binds exactly the Position Entity as Model publishes it, inherits every Action of Base, and is available under the name of that Entity; a call of any Action on it
+                works on Position records, and an instance of another Entity given to an Action that takes an instance is rejected with the Invalid Input error.
+              status: done
+              log:
+              - at: '2026-10-09T18:39:55Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:40:08Z'
+                event: done
+                note: 'Wrote the Position Child Service in its own unit directly in the Entity Service directory beside the Base unit: class Position inherits BaseEntity, binds the Model Interface''s Position Entity,
+                  and holds nothing else because the Target defines no Behaviour specific to it. Observed: the class is a subclass of the Base, its bound Entity is the identical object Model publishes, an object that
+                  is not an instance of it is rejected with Invalid Input, and its count Action returned 0 on the real default Instance.'
+        P3-G4:
+          id: P3-G4
+          title: Entity Service Interface
+          description: 'Entity Service''s outward surface: the Child Services, the Entities they bind, and three of Database''s groups, passed on unchanged.'
+          area: 'Entity Service: its Interface and published groups'
+          does: A caller imports one gateway and finds everything needed to call Actions, build requests, read results and catch errors without importing Model or Database.
+          constraints: []
+          task_count: 4
+          tasks:
+            P3-G4-T1:
+              id: P3-G4-T1
+              source_id: '011'
+              title: Publish the Service group
+              description: Publish the group that holds one Child Service for every Entity in Model's Entity Collection, each under the name of its Entity.
+              reason: A caller selects an Entity by choosing its Child Service from one place.
+              inputs:
+              - Every Child Service
+              - Model's Entity Collection
+              - Entity Service Interface contract
+              skills: []
+              expected_result: The Service group of Entity Service's Interface.
+              depends_on:
+              - P3-G3-T1
+              - P3-G3-T2
+              - P3-G3-T3
+              - P3-G3-T4
+              - P3-G3-T5
+              - P3-G3-T6
+              - P3-G3-T7
+              - P3-G3-T8
+              - P3-G3-T9
+              - P3-G3-T10
+              - P3-G3-T11
+              - P3-G3-T12
+              - P3-G3-T13
+              - P3-G3-T14
+              - P3-G3-T15
+              constraints: []
+              acceptance: The group holds exactly one Child Service for each Entity in Model's Entity Collection, each under that Entity's name, and no Child Service for anything else; adding an Entity to the
+                Collection changes the group without a change to its structure.
+              status: done
+              log:
+              - at: '2026-10-09T18:40:22Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:41:17Z'
+                event: done
+                note: 'Added the Service group to the Entity Service Interface: a namespace class holding the 15 Child Services, each under the name of its Entity, in the order of Model''s Entity Collection. Observed:
+                  its members equal the Collection''s Entity names exactly, in order, and every member is a subclass of Base bound to the matching Entity.'
+            P3-G4-T2:
+              id: P3-G4-T2
+              source_id: '011'
+              title: Publish the Model group
+              description: Publish the group that holds the Entity each Child Service binds, under the same name as that Child Service, as the original object Model publishes.
+              reason: A caller builds requests with the Entity without reaching Model directly.
+              inputs:
+              - Model's published Entities
+              - Every Child Service
+              - Entity Service Interface contract
+              skills: []
+              expected_result: The Model group of Entity Service's Interface.
+              depends_on:
+              - P3-G3-T1
+              - P3-G3-T2
+              - P3-G3-T3
+              - P3-G3-T4
+              - P3-G3-T5
+              - P3-G3-T6
+              - P3-G3-T7
+              - P3-G3-T8
+              - P3-G3-T9
+              - P3-G3-T10
+              - P3-G3-T11
+              - P3-G3-T12
+              - P3-G3-T13
+              - P3-G3-T14
+              - P3-G3-T15
+              - P1-G8-T1
+              constraints: []
+              acceptance: For every Child Service the group holds an Entity under the same name, and each is the identical object Model publishes, never a copy; the group holds nothing else.
+              status: done
+              log:
+              - at: '2026-10-09T18:40:23Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:41:17Z'
+                event: done
+                note: 'Added the Model group to the Entity Service Interface: a namespace class holding, under the name of each Child Service, the Entity Model publishes. Observed: its members equal the Collection''s
+                  names in order and every member is the identical object Model''s Interface publishes and the Entity its Child Service binds.'
+            P3-G4-T3:
+              id: P3-G4-T3
+              source_id: '011'
+              title: Publish Database's value, instance and error groups
+              description: Publish Database's Value, Instance and Error groups, each under its own name as the identical object Database publishes, read from Database's Interface each time rather than listed
+                member by member.
+              reason: A caller builds queries, selects an Instance and catches errors without importing Database.
+              inputs:
+              - Published Database Interface
+              - Entity Service Interface contract
+              skills: []
+              expected_result: The three Database groups in Entity Service's Interface.
+              depends_on:
+              - P3-G1-T1
+              - P2-G7-T4
+              constraints: []
+              acceptance: Each of the three groups is the identical object Database publishes under its own name, including any member Database adds later; no member is taken out on its own; Database's Interface,
+                Setup and Result groups are not published.
+              status: done
+              log:
+              - at: '2026-10-09T18:40:23Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:41:17Z'
+                event: done
+                note: 'Imported Database''s Value, Instance and Error groups from the Database Interface into the Entity Service Interface and published each whole under its own name, unlisted by member. Observed: each
+                  is the identical object the Database Interface publishes; Database''s Interface, Setup and Result groups are not imported.'
+            P3-G4-T4:
+              id: P3-G4-T4
+              source_id: '011'
+              title: Publish exactly the five groups through the Interface
+              description: Provide the single publication entrypoint of Entity Service that publishes exactly the Service group, the Model group and the three Database groups, and nothing else.
+              reason: Callers import a few fixed names and never reach Base, Child implementations or Database's Interface.
+              inputs:
+              - The five groups
+              - Entity Service Interface contract
+              skills: []
+              expected_result: One Entity Service Interface publishing exactly five groups.
+              depends_on:
+              - P3-G4-T1
+              - P3-G4-T2
+              - P3-G4-T3
+              constraints: []
+              acceptance: Exactly five names are published; Base, Database's Interface, Setup and Result groups and any helper are not reachable as published names; loading the Interface opens no connection
+                and creates no data or file, and performs no check of its own.
+              status: done
+              log:
+              - at: '2026-10-09T18:40:23Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:41:17Z'
+                event: done
+                note: 'Completed the Entity Service Interface file so it holds only imports, the two namespace classes and the published list naming exactly Model, Service, database_error, database_instance and database_value,
+                  with no check of its own. Observed: the module exposes exactly those five public names, none for Base, a Child unit or Database''s other groups; loading it changed no file in the Logic, Database or
+                  Model Components and, with connection creation trapped, opened no connection.'
+        P3-G5:
+          id: P3-G5
+          title: Logic Interface
+          description: 'Logic''s outward surface: one entry for every Service, under that Service''s name.'
+          area: 'Logic: its Interface and published Services'
+          does: A consumer imports Logic's Interface and finds every Service under its configured name.
+          constraints: []
+          task_count: 1
+          tasks:
+            P3-G5-T1:
+              id: P3-G5-T1
+              source_id: '011'
+              title: Publish every Service through the Logic Interface
+              description: Provide the single publication entrypoint of Logic that publishes one entry for every Service listed in Logic's Preferences, each under the name that Service's own Preferences give
+                and as that Service's own Interface, and nothing else.
+              reason: Consumers need one place to find every Service without depending on where a Service lives inside Logic.
+              inputs:
+              - Logic Interface contract
+              - Entity Service Interface
+              - Logic Service list
+              skills: []
+              expected_result: One Logic Interface publishing exactly one entry for every listed Service.
+              depends_on:
+              - P3-G4-T4
+              constraints: []
+              acceptance: Exactly one name is published for each listed Service, equal to its configured name, and it is the identical Interface object of that Service, never a copy or wrapper; nothing else
+                is published and no Action, rule or check is defined by the entrypoint; no Service imports the Logic Interface; loading it opens no connection and creates no data or file.
+              status: done
+              log:
+              - at: '2026-10-09T18:41:25Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:41:29Z'
+                event: done
+                note: 'Wrote the Logic Interface file: it imports Entity Service''s Interface under the Service''s configured name Entity and publishes only that name, with no Action, wrapper, rule or check. Observed:
+                  the published list is exactly [Entity]; the entry is the identical object the Entity Service Interface is; no Logic source imports the Logic Interface; loading it changed no file and, with connection
+                  creation trapped, opened no connection.'
+        P3-G6:
+          id: P3-G6
+          title: Entity Service Documentation
+          description: The documentation of Entity Service, written for callers who learn it without reading internals.
+          area: 'Entity Service: its documentation'
+          does: A caller can learn, use and verify Entity Service from its documentation alone.
+          constraints: []
+          task_count: 2
+          tasks:
+            P3-G6-T1:
+              id: P3-G6-T1
+              source_id: '011'
+              title: Document the Entity Service Overview and Interface sections
+              description: Write the Overview, with one short paragraph and one simple example, and the Interface section, which explains every group with its members, meaning every Child Service and its Actions,
+                every Model Entity and every member of the three Database groups, each with one example.
+              reason: The published contract is only usable if callers can learn it without reading internals.
+              inputs:
+              - Published Entity Service Interface
+              - Entity Service Documentation contract
+              skills: []
+              expected_result: The first two documentation sections of Entity Service.
+              depends_on:
+              - P3-G4-T4
+              constraints: []
+              acceptance: The two sections appear in order; the Interface section covers every group and every member with an example that runs, and no Base, Database Interface, Setup or Result group is described
+                as available.
+              status: done
+              log:
+              - at: '2026-10-09T18:42:01Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:43:18Z'
+                event: decision
+                note: 'The documentation reaches Entity Service the way a consumer outside Logic does, through the Logic Interface entry Entity, and uses only non-destructive examples: every example that adds, changes
+                  or removes a record restores it, and the truncate example empties the Position table, which holds no record after the standard preparation.'
+              - at: '2026-10-09T18:43:18Z'
+                event: done
+                note: 'Wrote the Entity Service documentation file with the Overview (one paragraph and one simple example) and the Interface section: the five-group table; the Service group with the table of its 15
+                  Child Services, an example using one and an example creating all 15, then one subsection with an example for each of the 12 Actions; the Model group with an example and its 15 members; database_value
+                  with Filter, FilterOperator, FilterCombination, Order and OrderDirection, each with an example; database_instance with an example; and database_error with the base error and each of the 7 kinds, each
+                  with an example. Observed: all 31 Python examples ran as separate processes against the real default Instance and ended with the same records as before (the database file was restored to its earlier
+                  state afterwards).'
+            P3-G6-T2:
+              id: P3-G6-T2
+              source_id: '011'
+              title: Document the Entity Service Use and Verify sections
+              description: Write the Use section, explaining how a caller imports a Child Service and how a Child Service adds its own Behaviour, and the Verify section, explaining how to see that Entity Service
+                matches Model's Entity Collection and Database's Interface group.
+              reason: Callers must know how to use Entity Service and how to confirm it is whole.
+              inputs:
+              - Entity Service documentation so far
+              - Entity Service Documentation contract
+              skills: []
+              expected_result: The last two documentation sections of Entity Service.
+              depends_on:
+              - P3-G6-T1
+              constraints: []
+              acceptance: The two sections follow the first two in order; the Use examples run; following the Verify section shows one Child Service per Entity of the Collection and one Action per Entity Operation
+                of Database's group.
+              status: done
+              log:
+              - at: '2026-10-09T18:43:18Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:44:26Z'
+                event: done
+                note: 'Appended the Use and Verify sections to the Entity Service documentation: Use shows how a caller imports a Child Service through the Logic Interface and selects an Entity once, and shows the three
+                  ways a Child Service holds Behaviour of its own (an added Action, an overridden Action, an Action made unavailable) on a subclass of the published Currency Child Service; Verify gives a script that
+                  checks the five published groups, one Child Service per Entity of the Collection in order, the identical Model and Database objects, Base holding the Database Operations in Database''s order with their
+                  parameters, the answers equal to Database''s, the rejection of another Entity''s instance, and that loading opens no connection. Observed: the Use examples and the Verify script ran as separate processes
+                  against the real default Instance and Verify printed Entity Service verified; the database file was restored to its earlier state afterwards.'
+        P3-G7:
+          id: P3-G7
+          title: Logic Documentation
+          description: The root documentation of the Logic library.
+          area: 'Logic: its root documentation'
+          does: A consumer can learn, install, use and verify Logic from its documentation alone.
+          constraints: []
+          task_count: 2
+          tasks:
+            P3-G7-T1:
+              id: P3-G7-T1
+              source_id: '011'
+              title: Document the Logic Overview, Interface and Services sections
+              description: Write the Overview, with one paragraph and one simple example, the Interface section, which lists every name Logic's Interface publishes, and the Services section, which for every
+                Service gives its name and links to its documentation, its Definition and its Preferences without copying its contract.
+              reason: A consumer must find what Logic is and which Services it offers before using it.
+              inputs:
+              - Published Logic Interface
+              - Logic Documentation contract
+              - Entity Service documentation
+              skills: []
+              expected_result: The first three documentation sections of Logic.
+              depends_on:
+              - P3-G5-T1
+              - P3-G6-T2
+              constraints: []
+              acceptance: The three sections appear in order; the Interface section names exactly the published names; every Service has its name and working links and no copy of its contract; the example runs.
+              status: done
+              log:
+              - at: '2026-10-09T18:44:46Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:44:55Z'
+                event: done
+                note: 'Wrote the first three sections of the Logic documentation at the Component root: the Overview (one paragraph and one simple example), the Interface section listing the one published name Entity,
+                  and the Services section giving Entity Service''s name in the Interface and links to its README, its Definition and its Preferences, without copying its contract. Observed: both examples ran as separate
+                  processes against the real default Instance and all three links resolve to existing files.'
+            P3-G7-T2:
+              id: P3-G7-T2
+              source_id: '011'
+              title: Document the Logic Setup, Use, Verify and Troubleshooting sections
+              description: Write the Setup section, explaining how to install Logic and what it needs next to it, the Use section, explaining how a consumer imports from Logic's Interface, the Verify section,
+                explaining how to see that the Interface publishes exactly every listed Service, and the Troubleshooting section, covering real problems a consumer can meet and how to fix them.
+              reason: A consumer must be able to install, use and check Logic without outside help.
+              inputs:
+              - Logic documentation so far
+              - Logic Documentation contract
+              - Established Logic library package
+              skills: []
+              expected_result: The last four documentation sections of Logic.
+              depends_on:
+              - P3-G7-T1
+              - P3-G1-T1
+              constraints: []
+              acceptance: The four sections follow the first three in order; following Setup installs Logic from the repository alone; the Use examples run; following Verify shows exactly one published entry
+                per listed Service; each Troubleshooting entry names a problem that can actually occur and a fix that resolves it.
+              status: done
+              log:
+              - at: '2026-10-09T18:44:58Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:45:22Z'
+                event: done
+                note: 'Appended the Setup, Use, Verify and Troubleshooting sections to the Logic documentation: Setup lists the steps from uv sync to preparing the Database''s default Instance and confirming the import,
+                  with the consumer''s path-dependency declaration; Use shows importing a Service from the Logic Interface by name; Verify gives a script that checks the exactly-one-entry-per-Service publication, the
+                  identical Interface objects, the absence of other names and of Service imports of the Logic Interface, and that loading opens no connection and creates no file; Troubleshooting lists five problems.
+                  Observed: the Use examples and the Verify script ran as separate processes and Verify printed Logic verified; the missing sibling directory error, the unprepared-database error, the attribute error
+                  and the missing-module error were each reproduced and match the text; the database file was restored to its earlier state afterwards.'
+        P3-G8:
+          id: P3-G8
+          title: Quality Standards
+          description: The final conformance of the complete Logic library source to the language's quality standards.
+          area: Library-wide source quality
+          does: The complete Logic library source meets the language's formatting, lint and typing standards.
+          constraints: []
+          task_count: 1
+          tasks:
+            P3-G8-T1:
+              id: P3-G8-T1
+              source_id: '011'
+              title: Bring the Logic library source to the quality standards
+              description: Apply the formatting, lint and type-checking standards that the Development Preferences select for the language to the complete Logic library source and its documentation examples,
+                and resolve every finding without weakening any Logic or Entity Service contract.
+              reason: Consistent, type-sound source is a standing Development standard and must hold for the finished library.
+              inputs:
+              - Complete Logic library source
+              - Development language quality standards
+              skills: []
+              expected_result: The complete Logic library source is free of formatting, lint and type findings.
+              depends_on:
+              - P3-G1-T1
+              - P3-G2-T1
+              - P3-G2-T2
+              - P3-G2-T3
+              - P3-G2-T4
+              - P3-G2-T5
+              - P3-G2-T6
+              - P3-G3-T1
+              - P3-G3-T2
+              - P3-G3-T3
+              - P3-G3-T4
+              - P3-G3-T5
+              - P3-G3-T6
+              - P3-G3-T7
+              - P3-G3-T8
+              - P3-G3-T9
+              - P3-G3-T10
+              - P3-G3-T11
+              - P3-G3-T12
+              - P3-G3-T13
+              - P3-G3-T14
+              - P3-G3-T15
+              - P3-G4-T1
+              - P3-G4-T2
+              - P3-G4-T3
+              - P3-G4-T4
+              - P3-G5-T1
+              - P3-G6-T1
+              - P3-G6-T2
+              - P3-G7-T1
+              - P3-G7-T2
+              constraints: []
+              acceptance: The library reports no formatting, lint or type findings under the standards the Development Preferences select, and every Logic and Entity Service contract still holds.
+              status: done
+
+              log:
+              - at: '2026-10-09T18:45:26Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T18:45:47Z'
+                event: done
+                note: 'Applied the language''s formatting, lint and type-checking standards to the complete Logic library source and the Python examples of both documentation files. The formatter reformatted two documentation
+                  files (long lines inside examples), nothing else needed change; no contract was weakened. Observed afterwards: the formatter reports all 23 files formatted, the linter and the type checker report no
+                  findings, the lock file is consistent with the declared dependencies (model and database, the only packages imported directly), and all 38 Python examples of the two documentation files still run as
+                  separate processes.'
+    P4:
+      id: P4
+      title: API
+      order: 4
+      target: API
+      does: The API executable exists as a separate project-internal application that serves every Group of the Logic library through one network boundary beneath its URL segment, with a generated runtime Configuration,
+        converted Parameters, uniform error responses and interactive documentation, and with the API and Entity Group documented.
+      constraints:
+      - An Endpoint becomes reachable only through the Group registration work of this phase; no Adapter work registers itself or serves a request on its own.
+      task_count: 37
+      groups:
+        P4-G1:
+          id: P4-G1
+          title: Application Package
+          description: The API executable's own packaging, dependency baseline and connection to the Logic library.
+          area: API executable packaging and its Logic connection
+          does: The API application can be installed as a project-internal package that reaches Logic through its declared dependency and runs on its selected server package.
+          constraints: []
+          task_count: 1
+          tasks:
+            P4-G1-T1:
+              id: P4-G1-T1
+              source_id: '016'
+              title: Establish the API application package
+              description: Create the API Component as a self-contained executable application that depends on the Logic library as a local project dependency. Resolve the dependencies its selected technology
+                needs to concrete compatible versions, make the language's quality-standard tooling available to it, and make sure the project's single ignore file covers its environment and caches.
+              reason: Every later API Task needs an application to live in and a resolved connection to Logic.
+              inputs:
+              - API Component identity and selected language profile
+              - Selected API package and its Skill
+              - Development language standards and declared Connections
+              - Published Logic Interface
+              skills:
+              - fastapi
+              expected_result: An importable API application package, containing no behaviour yet, that reaches the Logic Interface through its dependency.
+              depends_on:
+              - P3-G5-T1
+              constraints: []
+              acceptance: The application installs into an isolated environment from the repository alone and imports without error; the Logic Interface can be imported through the declared dependency; among
+                the project's Components only Logic is declared as a dependency; every dependency is recorded at a concrete version in lock metadata; the project's single ignore file covers the application's
+                environment and caches.
+              status: done
+              log:
+              - at: '2026-10-09T19:19:12Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:19:32Z'
+                event: decision
+                note: Python floor set to >=3.14 and the dev tool floors set to the versions the sibling libraries use, because the Preferences set no lower bound; the package floors are the versions uv resolved (fastapi
+                  0.143.0, uvicorn 0.54.0, pyyaml 6.0.3), since FastAPI is selected as latest-compatible.
+              - at: '2026-10-09T19:19:32Z'
+                event: decision
+                note: The direct dependencies are fastapi[standard] (the selected package), logic (local editable path dependency), pyyaml (reads the runtime Configuration) and uvicorn (starts serving with several workers);
+                  Logic's own path dependencies on Database and Model resolve through Logic's declaration, so the application declares no Component dependency other than Logic.
+              - at: '2026-10-09T19:19:32Z'
+                event: done
+                note: 'Created the API Component directory (api/, package api/api with the groups and entity-group directories and empty initialisers) as a flat-layout application built with uv_build, with a script entry
+                  and the FastAPI entrypoint declaration; uv resolved and locked 65 packages (isolated .venv). Added an API section to the root ignore file (api/.venv/, api/**/__pycache__/, api/.ruff_cache/), leaving
+                  every existing entry untouched. Observed: from inside the application''s environment the Logic Interface imports through the declared dependency and publishes its five Entity groups, and git reports
+                  api/.venv, the bytecode caches and the formatter cache as ignored.'
+        P4-G2:
+          id: P4-G2
+          title: Runtime Configuration
+          description: The runtime values that identify and run the API, held in the one place the running application reads them from.
+          area: 'Configuration: the runtime Configuration and its URL Key'
+          does: Every runtime value exists in the Configuration after generation, and the running API takes it from there only.
+          constraints: []
+          task_count: 2
+          tasks:
+            P4-G2-T1:
+              id: P4-G2-T1
+              source_id: '016'
+              title: Generate the runtime Configuration
+              description: 'Generate the runtime Configuration with every value the API Configuration Structure defines: title, description, URL Key, host, port, worker count, transport protocol, the derived
+                Base URL and the interactive documentation addresses. Each value is written even when it equals its default, using the defaults the API Preferences give; the Base URL and the documentation addresses
+                are derived from the other values and never set independently.'
+              reason: An operator must find and change the API's address and behaviour in one place, never in source.
+              inputs:
+              - API Configuration Structure
+              - API Configuration defaults
+              skills: []
+              expected_result: A runtime Configuration holding every defined value.
+              depends_on:
+              - P4-G1-T1
+              constraints: []
+              acceptance: The Configuration holds every value of the structure, including those equal to their default; the Base URL is the protocol, host, port and a non-empty key joined as the structure states;
+                each documentation address is the Base URL followed by its documentation path; the port is a valid network port and the worker count a positive integer.
+              status: done
+              log:
+              - at: '2026-10-09T19:19:38Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:19:58Z'
+                event: decision
+                note: The transport protocol is written as the Preference's value HTTP and the Base URL uses it in lower case (http://host:port/key), because the structure derives the URL from the protocol and the example
+                  shows lower case.
+              - at: '2026-10-09T19:19:58Z'
+                event: done
+                note: 'Generated the runtime Configuration at the Component root with every value of the API Configuration Structure in the structure''s order: title and description from the identity defaults, key, host,
+                  port, worker count, transport protocol, the derived Base URL and the swagger and redoc addresses, each written even when equal to its default. Observed: the file parses; the Base URL is the protocol,
+                  host, port and key joined; each documentation address is the Base URL plus its path; the port is valid and the worker count positive.'
+            P4-G2-T2:
+              id: P4-G2-T2
+              source_id: '016'
+              title: Provide the URL Key behaviour
+              description: 'Make the URL Key follow the key setting: when it is on, generate a random URL-safe key of the configured length once, write it into the Configuration and keep it on every later generation;
+                when it is off, leave the key empty so the Base URL carries no key segment.'
+              reason: An Endpoint need not sit at a bare, guessable address, and a kept key never moves the address under its clients.
+              inputs:
+              - Runtime Configuration
+              - Key setting and key length
+              skills: []
+              expected_result: A Configuration whose URL Key follows its setting.
+              depends_on:
+              - P4-G2-T1
+              constraints: []
+              acceptance: With the setting on, the key is non-empty URL-safe text of the configured length and is the first path segment of the Base URL, and a later generation leaves an existing key unchanged;
+                with the setting off, the key is empty and the Base URL has no key segment.
+              status: done
+              log:
+              - at: '2026-10-09T19:19:38Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:19:58Z'
+                event: done
+                note: 'Generated the URL Key with the key setting on: 32 characters drawn from the URL-safe alphabet, written once into the Configuration and used as the first path segment of the Base URL. Observed:
+                  a second generation over the existing file gives a byte-identical file (the key is kept); a generation with the setting switched off in a scratch file gives an empty key and a Base URL without a key
+                  segment. The key value is not recorded here.'
+        P4-G3:
+          id: P4-G3
+          title: Application Boundary
+          description: 'Bootstrap, the single composition and execution point of the API: the one network boundary every Group is served through.'
+          area: 'Bootstrap: composing and running the one API boundary'
+          does: The API starts from its runtime Configuration as one network boundary that is reachable at the configured address.
+          constraints: []
+          task_count: 3
+          tasks:
+            P4-G3-T1:
+              id: P4-G3-T1
+              source_id: '016'
+              title: Compose the API from its Configuration
+              description: 'Provide Bootstrap''s composition: it takes every value only from the runtime Configuration, creates the one API boundary presenting the configured title and description, and defines
+                no Endpoint, Handler, Parameter, request, response or connection of its own. It reads no Definition or Preferences file at runtime.'
+              reason: Every Group needs one common boundary whose values an operator can change without touching source.
+              inputs:
+              - Runtime Configuration
+              - Selected API package
+              skills:
+              - fastapi
+              expected_result: One API boundary created from the Configuration, ready to receive Groups.
+              depends_on:
+              - P4-G2-T1
+              constraints: []
+              acceptance: The boundary presents the configured title and description; changing a Configuration value changes the running API without a source change; with no Group registered it serves nothing
+                of its own other than its interactive documentation; no Definition or Preferences file is opened while it runs.
+              status: done
+              log:
+              - at: '2026-10-09T19:20:06Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:20:46Z'
+                event: decision
+                note: Bootstrap lives in one unit at the package root that holds the application object, builds it at import and offers the start function; the application takes its address for the interactive documentation
+                  from the Configuration key, so the documentation sits beneath the key like every Group.
+              - at: '2026-10-09T19:20:46Z'
+                event: done
+                note: 'Wrote Bootstrap: it reads the runtime Configuration at the Component root (found from the unit''s location) and creates one FastAPI application presenting the configured title and description,
+                  with its documentation and schema addresses beneath the Configuration key. It defines no Endpoint, Handler or Parameter. Observed with the test client: title and description follow the Configuration
+                  (an empty description is simply absent from the schema), the schema holds 0 paths, the documentation answers beneath the key and not at the bare address, the root answers 404; editing the title in the
+                  Configuration and restarting the application changed the served title (the file was restored byte for byte); an audit of file opens while loading and serving shows no Definition or Preferences file
+                  opened.'
+            P4-G3-T2:
+              id: P4-G3-T2
+              source_id: '016'
+              title: Allow cross-origin requests
+              description: Give the one API boundary the cross-origin access the API Preferences select, applying to every Group alike.
+              reason: Browser clients on other origins must be able to reach every Group.
+              inputs:
+              - API boundary
+              - Cross-origin selection of the API Preferences
+              skills:
+              - fastapi
+              expected_result: Cross-origin access on the boundary.
+              depends_on:
+              - P4-G3-T1
+              constraints: []
+              acceptance: A request from any origin is allowed with any method and header, credentials are not allowed, and a preflight request for any served path is answered accordingly.
+              status: done
+              log:
+              - at: '2026-10-09T19:20:06Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:20:46Z'
+                event: done
+                note: 'Added the cross-origin middleware the Preferences select to the application: any origin, any method, any header, credentials not allowed. Observed: a preflight request from an arbitrary origin
+                  asking for DELETE with an arbitrary header is answered 200 with allow-origin * and the requested header allowed; an ordinary cross-origin request carries allow-origin * and no allow-credentials header.'
+            P4-G3-T3:
+              id: P4-G3-T3
+              source_id: '016'
+              title: Serve on the configured address
+              description: 'Provide the start of serving: the API runs on the configured host and port with the configured number of worker processes and is reachable at the Base URL the Configuration states.'
+              reason: Clients need the API to answer where the Configuration says it does.
+              inputs:
+              - API boundary
+              - Runtime Configuration
+              skills:
+              - fastapi
+              expected_result: A running API answering at the configured address.
+              depends_on:
+              - P4-G3-T1
+              constraints: []
+              acceptance: Starting the API makes it answer requests on the configured host and port; the number of worker processes equals the configured count; changing the host or port in the Configuration
+                changes where it answers.
+              status: done
+              log:
+              - at: '2026-10-09T19:20:06Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:20:47Z'
+                event: done
+                note: 'Added the start function: it runs the application with the configured host, port and worker count, and registered it as the application''s script entry. Observed by really starting it with the
+                  script: it answered 200 on the configured address beneath the key and 404 at the bare address, exactly 2 worker processes were running, and the port was free again after the process was stopped.'
+        P4-G4:
+          id: P4-G4
+          title: Parameter Conversion
+          description: The conversion of non-simple Parameters and results between their transport forms and the types the Logic Interface publishes. It is part of serving and happens before any Handler runs.
+          area: 'Serving: conversion of non-simple Parameters and results'
+          does: Every non-simple Parameter arrives in its stated transport form and reaches its Handler as the published type, and every result leaves in a form that loses nothing.
+          constraints: []
+          task_count: 4
+          tasks:
+            P4-G4-T1:
+              id: P4-G4-T1
+              source_id: '016'
+              title: Convert Filters and Orders
+              description: 'Provide the transport forms of the query values: a Filter as an object of field, operator and value and an Order as an object of field and direction, each in a request body. A field
+                travels as the name of a Field of the bound Entity and resolves to it; operators and directions travel by name. Each is converted to the published value before the Handler runs.'
+              reason: Every client must send query values the same way for every Entity.
+              inputs:
+              - Published value group
+              - Value form table of the API Preferences
+              - Bound Entity's Fields
+              skills:
+              - fastapi
+              expected_result: Conversion of Filter and Order objects into the published values.
+              depends_on:
+              - P4-G3-T1
+              - P3-G4-T3
+              constraints: []
+              acceptance: A Filter or Order object with a known field name and a known operator or direction reaches its Handler as the published value; an unknown field name, operator or direction fails with
+                the source's invalid-input error unchanged; nothing is converted inside a Handler.
+              status: done
+              log:
+              - at: '2026-10-09T19:21:36Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:22:44Z'
+                event: decision
+                note: A combination travels by name as plain text, because the Preferences' value table names only Filter, Order and Instance and the combination is a closed set like an operator or direction; unknown
+                  names fail with the source's invalid-input error.
+              - at: '2026-10-09T19:22:44Z'
+                event: decision
+                note: A Filter value sent as text for a decimal, datetime, date, time or uuid Field is decoded to that type by the Field's declared type before the Filter is built, because the source accepts only typed
+                  values for those Fields; other values pass through, so floats for decimals are still refused by the source.
+              - at: '2026-10-09T19:22:44Z'
+                event: done
+                note: 'Wrote the shared conversion for Filters, Orders and combinations in the application''s conversion unit: Filter and Order transport objects (extra keys refused), the field name resolved to the bound
+                  Entity''s Field attribute, operator and direction resolved by name, applied through validators on the request parameters so they run before any Handler. Observed on a probe application (not part of
+                  the Component): filter plus order plus limit, OR combination, IS_NULL without value and IN with a list reached the source and returned records; an unknown field, operator, direction or combination failed
+                  with the source''s Invalid Input error as 422 Problem Details; no conversion is done inside a route function.'
+            P4-G4-T2:
+              id: P4-G4-T2
+              source_id: '016'
+              title: Convert Instance selections
+              description: 'Provide the transport form of an Instance selection: its name, converted to the published Instance before the Handler runs.'
+              reason: A client must be able to choose where a call runs without knowing any connection detail.
+              inputs:
+              - Published Instance group
+              - Value form table of the API Preferences
+              skills:
+              - fastapi
+              expected_result: Conversion of an Instance name into the published Instance.
+              depends_on:
+              - P4-G3-T1
+              - P3-G4-T3
+              constraints: []
+              acceptance: A known Instance name reaches the Handler as the published Instance; an unknown name fails with the source's invalid-input error unchanged; omitting the selection leaves the Handler's
+                default.
+              status: done
+              log:
+              - at: '2026-10-09T19:21:37Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:22:45Z'
+                event: done
+                note: 'Added the Instance conversion: a name is resolved to the published Instance member, in a request body or query, before the Handler runs; an omitted selection stays None for the source''s default.
+                  Observed on the probe: the name SQLITE reached the Handler as the published member, an omitted name reached it as None, an unknown name failed with the source''s Invalid Input error as 422 Problem Details.'
+            P4-G4-T3:
+              id: P4-G4-T3
+              source_id: '016'
+              title: Convert Entity instances in requests
+              description: 'Provide the transport form of an Entity instance given to a Handler: a JSON object of the Entity''s Fields, built from the bound Entity''s class before the Handler runs.'
+              reason: A client must be able to add and replace records by sending them as JSON.
+              inputs:
+              - Published Entities
+              - Entity JSON conversion the Entity offers
+              skills:
+              - fastapi
+              expected_result: Conversion of a JSON object into an instance of the bound Entity.
+              depends_on:
+              - P4-G3-T1
+              - P3-G4-T2
+              constraints: []
+              acceptance: A complete object of Fields reaches the Handler as an instance of the bound Entity holding the given values; an object the Entity refuses never reaches the Handler.
+              status: done
+              log:
+              - at: '2026-10-09T19:21:37Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:22:45Z'
+                event: decision
+                note: An Entity instance that carries a stored identity (needed by update, whose Entity must hold its stored id) is built by validating every other Field through the Entity's JSON construction and then
+                  constructing the instance with the identity through pydantic's model_construct, because the Entity's construction and JSON conversion refuse a supplied identity and the Model offers no public way to
+                  build an Entity with one; recorded as an Open Question.
+              - at: '2026-10-09T19:22:45Z'
+                event: done
+                note: 'Added the Entity request conversion: a JSON object of Fields becomes an instance of the bound Entity through the Entity''s own JSON construction before the Handler runs; a non-null identity is
+                  carried over after the other Fields validate. Observed on the probe with Currency: an add body built a Currency instance and was stored (id assigned); an update body carrying the stored id built an
+                  instance holding that id and the source updated the record; a wrong value form, a missing key, an unknown key and a non-object were all refused before the Handler (422); a supplied id on add reached
+                  the source and was refused by it with its own Invalid Input error.'
+            P4-G4-T4:
+              id: P4-G4-T4
+              source_id: '016'
+              title: Return results in transport form
+              description: 'Provide the transport form of Handler results: an Entity, a list of Entities, a count, a total, an extreme value, a deleted count or no value are returned as JSON, with every Field
+                value kept without loss.'
+              reason: A client must receive the Action's result unchanged in meaning.
+              inputs:
+              - Published Entities
+              - Entity JSON conversion the Entity offers
+              skills:
+              - fastapi
+              expected_result: Results returned as JSON.
+              depends_on:
+              - P4-G3-T1
+              - P3-G4-T2
+              constraints: []
+              acceptance: A returned Entity appears as a JSON object holding every Field value; a list appears as a JSON array of such objects; numbers, exact decimals, dates and times and the absence of a
+                value survive the round trip; a result of no value is returned as null and is not an error.
+              status: done
+              log:
+              - at: '2026-10-09T19:21:37Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:22:45Z'
+                event: decision
+                note: Results are returned through the framework's own serialization of the returned Entity, with no wrapper, because it keeps every value without loss; the Field order of the JSON object follows the
+                  Entity's stored Field order, which differs from the Model's declaration order and is not part of the acceptance.
+              - at: '2026-10-09T19:22:45Z'
+                event: done
+                note: 'Verified and kept the framework''s serialization of results, adding no code: observed on the probe that an Entity appears as a JSON object with every Field, a list as an array, a count and a total
+                  as numbers and a missing record as null with status 200. Observed with a Position holding exact decimals (0.10, -12.340, 1.1000000000000000000001, 1E+3) and an aware datetime with a 3:30 offset: every
+                  value on the wire is textually equal to the Model''s own JSON conversion, and the wire text rebuilds an equal Entity through the Model''s JSON construction.'
+        P4-G5:
+          id: P4-G5
+          title: Error Mapping
+          description: The mapping of every error an Endpoint returns to its HTTP form, part of serving every Endpoint.
+          area: 'Serving: the mapping of errors to HTTP'
+          does: Every client reads every Group's errors the same way and receives the error's class unchanged.
+          constraints: []
+          task_count: 1
+          tasks:
+            P4-G5-T1:
+              id: P4-G5-T1
+              source_id: '016'
+              title: Return every error as Problem Details
+              description: 'Provide the error mapping: every error an Endpoint returns is sent as RFC 9457 Problem Details with the error''s class name as its type and the status the API Preferences'' error
+                table sets for it; an error the table does not name uses the generic server-error status. The mapping adds no retry, recovery or other behaviour.'
+              reason: Every client must read the errors of every Group the same way.
+              inputs:
+              - Error table of the API Preferences
+              - Published error group
+              skills:
+              - fastapi
+              expected_result: A uniform error response for the whole API.
+              depends_on:
+              - P3-G4-T3
+              - P4-G3-T1
+              constraints: []
+              acceptance: An error from an Action reaches the client as Problem Details with its class name as type and the status the table sets; an error the table does not name returns the generic server-error
+                status; no retry or recovery occurs and a successful result is unaffected.
+              status: done
+              log:
+              - at: '2026-10-09T19:21:37Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:22:45Z'
+                event: decision
+                note: A malformed request (a body or path the framework refuses) is sent as Problem Details of type RequestValidationError with status 422, and an error outside the Database errors gets the generic server-error
+                  status with a fixed neutral detail and its class name as type, because the Preferences' table names only Database errors; the detail of a malformed request names locations and messages and never the
+                  input values.
+              - at: '2026-10-09T19:22:45Z'
+                event: done
+                note: 'Wrote the error mapping unit and registered it in Bootstrap: Database errors are sent as application/problem+json with the class name as type, the table status (invalid input 422, inactive instance
+                  and connection failure 503, execution, declaration mismatch and configuration 500), a status phrase as title and the error''s message as detail; any other error returns 500. Observed on the probe: unknown
+                  field gave InvalidInputError 422, a referenced delete gave ExecutionError 500, a bad path id gave RequestValidationError 422, an unexpected KeyError gave type KeyError 500 with a neutral detail; successful
+                  results (including null) were unaffected and nothing is retried.'
+        P4-G6:
+          id: P4-G6
+          title: Entity Adapters
+          description: One standalone Adapter for every Entity Child Service that Logic presents, each serving the Actions of its Child Service as Endpoints under the rules of API and Entity Group. The Target
+            defines no Behaviour specific to any single Entity, so no Adapter adds, omits or alters an Endpoint.
+          area: 'Entity Group: the Adapter of every Entity'
+          does: Every Entity has exactly one Adapter that serves every Action of its Child Service, in step with Logic's Entity Service.
+          constraints: []
+          task_count: 15
+          tasks:
+            P4-G6-T1:
+              id: P4-G6-T1
+              source_id: '016'
+              title: Provide the User Adapter
+              description: Provide the Adapter bound permanently to the User Entity, serving one Endpoint for every Action of its Child Service.
+              reason: Clients must be able to operate on User records through the API without naming the Entity in a request.
+              inputs:
+              - The User Child Service published through the Logic Interface
+              - API Endpoint rules
+              skills:
+              - fastapi
+              expected_result: The User Adapter with its Endpoints.
+              depends_on:
+              - P3-G5-T1
+              - P4-G1-T1
+              - P4-G3-T1
+              - P4-G4-T1
+              - P4-G4-T2
+              - P4-G4-T3
+              - P4-G4-T4
+              constraints: []
+              acceptance: The Adapter serves exactly one Endpoint for every Action of the User Child Service and none for anything else; each Endpoint's identity, Parameter placement and Handler follow the
+                API rules; calling an Endpoint gives what calling its Action gives, and its errors are the Action's errors; a request cannot supply another Entity; the Adapter stands entirely on its own, sharing
+                nothing with another Adapter.
+              status: done
+              log:
+              - at: '2026-10-09T19:23:13Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:24:55Z'
+                event: decision
+                note: 'Parameter types are taken from what the source''s Operations accept, because the Actions'' signatures are typed as Any: an Entity instance is a JSON object, filters and orders are lists of their
+                  objects, combination and instance travel by name, limit is an integer, id is an integer in the path and a field is a Field name; each Adapter lists every Parameter in the Action''s order with the Action''s
+                  requirement and defaults.'
+              - at: '2026-10-09T19:24:55Z'
+                event: decision
+                note: The Adapter segment is the Entity name in snake case, the tag of an Adapter is the Group name, a middle dot and the Entity name, the route functions are named like the operations, and every request-body
+                  Parameter is declared as an embedded body member so that a body with one or several Parameters has the same shape.
+              - at: '2026-10-09T19:24:55Z'
+                event: decision
+                note: The Adapters are written out by a generator that lives outside the Component, from Logic's Action list and the verb table, placement rule and Parameter forms of the Preferences, so that each of
+                  the 15 units is explicit and the units share nothing.
+              - at: '2026-10-09T19:24:55Z'
+                event: done
+                note: 'Wrote the User Adapter: one router with the segment user and one explicitly written route for each of the 12 Actions of the User Child Service (add POST, update PUT, list POST, get_by_id GET with
+                  the id in the path, delete DELETE, enable and disable PATCH, count, sum, min and max POST, truncate DELETE), each a plain function that calls its Action on the one Child Service and returns the result.
+                  Observed together with the other 14 Adapters on a probe application: the routes equal the 12 expected method and path pairs, the schema places every Parameter as the placement rule requires and marks
+                  field and entity required, and the User endpoints returned what the Child Service returns.'
+            P4-G6-T2:
+              id: P4-G6-T2
+              source_id: '016'
+              title: Provide the Trading Platform Adapter
+              description: Provide the Adapter bound permanently to the Trading Platform Entity, serving one Endpoint for every Action of its Child Service.
+              reason: Clients must be able to operate on Trading Platform records through the API without naming the Entity in a request.
+              inputs:
+              - The Trading Platform Child Service published through the Logic Interface
+              - API Endpoint rules
+              skills:
+              - fastapi
+              expected_result: The Trading Platform Adapter with its Endpoints.
+              depends_on:
+              - P3-G5-T1
+              - P4-G1-T1
+              - P4-G3-T1
+              - P4-G4-T1
+              - P4-G4-T2
+              - P4-G4-T3
+              - P4-G4-T4
+              constraints: []
+              acceptance: The Adapter serves exactly one Endpoint for every Action of the Trading Platform Child Service and none for anything else; each Endpoint's identity, Parameter placement and Handler
+                follow the API rules; calling an Endpoint gives what calling its Action gives, and its errors are the Action's errors; a request cannot supply another Entity; the Adapter stands entirely on
+                its own, sharing nothing with another Adapter.
+              status: done
+              log:
+              - at: '2026-10-09T19:23:14Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:24:55Z'
+                event: done
+                note: 'Wrote the TradingPlatform Adapter: one router with the segment trading_platform and one explicitly written route for each of the 12 Actions of the TradingPlatform Child Service, calling the one
+                  Child Service and returning the result unchanged. Observed on the probe application: the 12 method and path pairs are exactly the expected ones and unique across all Adapters (180 in total), every Parameter
+                  is placed as the rule requires, the count, list and get_by_id endpoints return what the Child Service returns (including null for an unknown id), a request body of another Entity is refused with 422,
+                  and the source of the unit has no loop, class, dynamic call or import of another Adapter.'
+            P4-G6-T3:
+              id: P4-G6-T3
+              source_id: '016'
+              title: Provide the Instance Adapter
+              description: Provide the Adapter bound permanently to the Instance Entity, serving one Endpoint for every Action of its Child Service.
+              reason: Clients must be able to operate on Instance records through the API without naming the Entity in a request.
+              inputs:
+              - The Instance Child Service published through the Logic Interface
+              - API Endpoint rules
+              skills:
+              - fastapi
+              expected_result: The Instance Adapter with its Endpoints.
+              depends_on:
+              - P3-G5-T1
+              - P4-G1-T1
+              - P4-G3-T1
+              - P4-G4-T1
+              - P4-G4-T2
+              - P4-G4-T3
+              - P4-G4-T4
+              constraints: []
+              acceptance: The Adapter serves exactly one Endpoint for every Action of the Instance Child Service and none for anything else; each Endpoint's identity, Parameter placement and Handler follow
+                the API rules; calling an Endpoint gives what calling its Action gives, and its errors are the Action's errors; a request cannot supply another Entity; the Adapter stands entirely on its own,
+                sharing nothing with another Adapter.
+              status: done
+              log:
+              - at: '2026-10-09T19:23:14Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:24:55Z'
+                event: done
+                note: 'Wrote the Instance Adapter: one router with the segment instance and one explicitly written route for each of the 12 Actions of the Instance Child Service, calling the one Child Service and returning
+                  the result unchanged. Observed on the probe application: the 12 method and path pairs are exactly the expected ones and unique across all Adapters (180 in total), every Parameter is placed as the rule
+                  requires, the count, list and get_by_id endpoints return what the Child Service returns (including null for an unknown id), a request body of another Entity is refused with 422, and the source of the
+                  unit has no loop, class, dynamic call or import of another Adapter.'
+            P4-G6-T4:
+              id: P4-G6-T4
+              source_id: '016'
+              title: Provide the Currency Adapter
+              description: Provide the Adapter bound permanently to the Currency Entity, serving one Endpoint for every Action of its Child Service.
+              reason: Clients must be able to operate on Currency records through the API without naming the Entity in a request.
+              inputs:
+              - The Currency Child Service published through the Logic Interface
+              - API Endpoint rules
+              skills:
+              - fastapi
+              expected_result: The Currency Adapter with its Endpoints.
+              depends_on:
+              - P3-G5-T1
+              - P4-G1-T1
+              - P4-G3-T1
+              - P4-G4-T1
+              - P4-G4-T2
+              - P4-G4-T3
+              - P4-G4-T4
+              constraints: []
+              acceptance: The Adapter serves exactly one Endpoint for every Action of the Currency Child Service and none for anything else; each Endpoint's identity, Parameter placement and Handler follow
+                the API rules; calling an Endpoint gives what calling its Action gives, and its errors are the Action's errors; a request cannot supply another Entity; the Adapter stands entirely on its own,
+                sharing nothing with another Adapter.
+              status: done
+              log:
+              - at: '2026-10-09T19:23:14Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:24:55Z'
+                event: done
+                note: 'Wrote the Currency Adapter: one router with the segment currency and one explicitly written route for each of the 12 Actions of the Currency Child Service, calling the one Child Service and returning
+                  the result unchanged. Observed on the probe application: the 12 method and path pairs are exactly the expected ones and unique across all Adapters (180 in total), every Parameter is placed as the rule
+                  requires, the count, list and get_by_id endpoints return what the Child Service returns (including null for an unknown id), a request body of another Entity is refused with 422, and the source of the
+                  unit has no loop, class, dynamic call or import of another Adapter.'
+            P4-G6-T5:
+              id: P4-G6-T5
+              source_id: '016'
+              title: Provide the Broker Adapter
+              description: Provide the Adapter bound permanently to the Broker Entity, serving one Endpoint for every Action of its Child Service.
+              reason: Clients must be able to operate on Broker records through the API without naming the Entity in a request.
+              inputs:
+              - The Broker Child Service published through the Logic Interface
+              - API Endpoint rules
+              skills:
+              - fastapi
+              expected_result: The Broker Adapter with its Endpoints.
+              depends_on:
+              - P3-G5-T1
+              - P4-G1-T1
+              - P4-G3-T1
+              - P4-G4-T1
+              - P4-G4-T2
+              - P4-G4-T3
+              - P4-G4-T4
+              constraints: []
+              acceptance: The Adapter serves exactly one Endpoint for every Action of the Broker Child Service and none for anything else; each Endpoint's identity, Parameter placement and Handler follow the
+                API rules; calling an Endpoint gives what calling its Action gives, and its errors are the Action's errors; a request cannot supply another Entity; the Adapter stands entirely on its own, sharing
+                nothing with another Adapter.
+              status: done
+              log:
+              - at: '2026-10-09T19:23:14Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:24:55Z'
+                event: done
+                note: 'Wrote the Broker Adapter: one router with the segment broker and one explicitly written route for each of the 12 Actions of the Broker Child Service, calling the one Child Service and returning
+                  the result unchanged. Observed on the probe application: the 12 method and path pairs are exactly the expected ones and unique across all Adapters (180 in total), every Parameter is placed as the rule
+                  requires, the count, list and get_by_id endpoints return what the Child Service returns (including null for an unknown id), a request body of another Entity is refused with 422, and the source of the
+                  unit has no loop, class, dynamic call or import of another Adapter.'
+            P4-G6-T6:
+              id: P4-G6-T6
+              source_id: '016'
+              title: Provide the Asset Adapter
+              description: Provide the Adapter bound permanently to the Asset Entity, serving one Endpoint for every Action of its Child Service.
+              reason: Clients must be able to operate on Asset records through the API without naming the Entity in a request.
+              inputs:
+              - The Asset Child Service published through the Logic Interface
+              - API Endpoint rules
+              skills:
+              - fastapi
+              expected_result: The Asset Adapter with its Endpoints.
+              depends_on:
+              - P3-G5-T1
+              - P4-G1-T1
+              - P4-G3-T1
+              - P4-G4-T1
+              - P4-G4-T2
+              - P4-G4-T3
+              - P4-G4-T4
+              constraints: []
+              acceptance: The Adapter serves exactly one Endpoint for every Action of the Asset Child Service and none for anything else; each Endpoint's identity, Parameter placement and Handler follow the
+                API rules; calling an Endpoint gives what calling its Action gives, and its errors are the Action's errors; a request cannot supply another Entity; the Adapter stands entirely on its own, sharing
+                nothing with another Adapter.
+              status: done
+              log:
+              - at: '2026-10-09T19:23:14Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:24:56Z'
+                event: done
+                note: 'Wrote the Asset Adapter: one router with the segment asset and one explicitly written route for each of the 12 Actions of the Asset Child Service, calling the one Child Service and returning the
+                  result unchanged. Observed on the probe application: the 12 method and path pairs are exactly the expected ones and unique across all Adapters (180 in total), every Parameter is placed as the rule requires,
+                  the count, list and get_by_id endpoints return what the Child Service returns (including null for an unknown id), a request body of another Entity is refused with 422, and the source of the unit has
+                  no loop, class, dynamic call or import of another Adapter.'
+            P4-G6-T7:
+              id: P4-G6-T7
+              source_id: '016'
+              title: Provide the Account Group Adapter
+              description: Provide the Adapter bound permanently to the Account Group Entity, serving one Endpoint for every Action of its Child Service.
+              reason: Clients must be able to operate on Account Group records through the API without naming the Entity in a request.
+              inputs:
+              - The Account Group Child Service published through the Logic Interface
+              - API Endpoint rules
+              skills:
+              - fastapi
+              expected_result: The Account Group Adapter with its Endpoints.
+              depends_on:
+              - P3-G5-T1
+              - P4-G1-T1
+              - P4-G3-T1
+              - P4-G4-T1
+              - P4-G4-T2
+              - P4-G4-T3
+              - P4-G4-T4
+              constraints: []
+              acceptance: The Adapter serves exactly one Endpoint for every Action of the Account Group Child Service and none for anything else; each Endpoint's identity, Parameter placement and Handler follow
+                the API rules; calling an Endpoint gives what calling its Action gives, and its errors are the Action's errors; a request cannot supply another Entity; the Adapter stands entirely on its own,
+                sharing nothing with another Adapter.
+              status: done
+              log:
+              - at: '2026-10-09T19:23:14Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:24:56Z'
+                event: done
+                note: 'Wrote the AccountGroup Adapter: one router with the segment account_group and one explicitly written route for each of the 12 Actions of the AccountGroup Child Service, calling the one Child Service
+                  and returning the result unchanged. Observed on the probe application: the 12 method and path pairs are exactly the expected ones and unique across all Adapters (180 in total), every Parameter is placed
+                  as the rule requires, the count, list and get_by_id endpoints return what the Child Service returns (including null for an unknown id), a request body of another Entity is refused with 422, and the
+                  source of the unit has no loop, class, dynamic call or import of another Adapter.'
+            P4-G6-T8:
+              id: P4-G6-T8
+              source_id: '016'
+              title: Provide the Account Adapter
+              description: Provide the Adapter bound permanently to the Account Entity, serving one Endpoint for every Action of its Child Service.
+              reason: Clients must be able to operate on Account records through the API without naming the Entity in a request.
+              inputs:
+              - The Account Child Service published through the Logic Interface
+              - API Endpoint rules
+              skills:
+              - fastapi
+              expected_result: The Account Adapter with its Endpoints.
+              depends_on:
+              - P3-G5-T1
+              - P4-G1-T1
+              - P4-G3-T1
+              - P4-G4-T1
+              - P4-G4-T2
+              - P4-G4-T3
+              - P4-G4-T4
+              constraints: []
+              acceptance: The Adapter serves exactly one Endpoint for every Action of the Account Child Service and none for anything else; each Endpoint's identity, Parameter placement and Handler follow the
+                API rules; calling an Endpoint gives what calling its Action gives, and its errors are the Action's errors; a request cannot supply another Entity; the Adapter stands entirely on its own, sharing
+                nothing with another Adapter.
+              status: done
+              log:
+              - at: '2026-10-09T19:23:14Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:24:56Z'
+                event: done
+                note: 'Wrote the Account Adapter: one router with the segment account and one explicitly written route for each of the 12 Actions of the Account Child Service, calling the one Child Service and returning
+                  the result unchanged. Observed on the probe application: the 12 method and path pairs are exactly the expected ones and unique across all Adapters (180 in total), every Parameter is placed as the rule
+                  requires, the count, list and get_by_id endpoints return what the Child Service returns (including null for an unknown id), a request body of another Entity is refused with 422, and the source of the
+                  unit has no loop, class, dynamic call or import of another Adapter.'
+            P4-G6-T9:
+              id: P4-G6-T9
+              source_id: '016'
+              title: Provide the Trailing Group Adapter
+              description: Provide the Adapter bound permanently to the Trailing Group Entity, serving one Endpoint for every Action of its Child Service.
+              reason: Clients must be able to operate on Trailing Group records through the API without naming the Entity in a request.
+              inputs:
+              - The Trailing Group Child Service published through the Logic Interface
+              - API Endpoint rules
+              skills:
+              - fastapi
+              expected_result: The Trailing Group Adapter with its Endpoints.
+              depends_on:
+              - P3-G5-T1
+              - P4-G1-T1
+              - P4-G3-T1
+              - P4-G4-T1
+              - P4-G4-T2
+              - P4-G4-T3
+              - P4-G4-T4
+              constraints: []
+              acceptance: The Adapter serves exactly one Endpoint for every Action of the Trailing Group Child Service and none for anything else; each Endpoint's identity, Parameter placement and Handler follow
+                the API rules; calling an Endpoint gives what calling its Action gives, and its errors are the Action's errors; a request cannot supply another Entity; the Adapter stands entirely on its own,
+                sharing nothing with another Adapter.
+              status: done
+              log:
+              - at: '2026-10-09T19:23:15Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:24:56Z'
+                event: done
+                note: 'Wrote the TrailingGroup Adapter: one router with the segment trailing_group and one explicitly written route for each of the 12 Actions of the TrailingGroup Child Service, calling the one Child
+                  Service and returning the result unchanged. Observed on the probe application: the 12 method and path pairs are exactly the expected ones and unique across all Adapters (180 in total), every Parameter
+                  is placed as the rule requires, the count, list and get_by_id endpoints return what the Child Service returns (including null for an unknown id), a request body of another Entity is refused with 422,
+                  and the source of the unit has no loop, class, dynamic call or import of another Adapter.'
+            P4-G6-T10:
+              id: P4-G6-T10
+              source_id: '016'
+              title: Provide the Trailing Rule Adapter
+              description: Provide the Adapter bound permanently to the Trailing Rule Entity, serving one Endpoint for every Action of its Child Service.
+              reason: Clients must be able to operate on Trailing Rule records through the API without naming the Entity in a request.
+              inputs:
+              - The Trailing Rule Child Service published through the Logic Interface
+              - API Endpoint rules
+              skills:
+              - fastapi
+              expected_result: The Trailing Rule Adapter with its Endpoints.
+              depends_on:
+              - P3-G5-T1
+              - P4-G1-T1
+              - P4-G3-T1
+              - P4-G4-T1
+              - P4-G4-T2
+              - P4-G4-T3
+              - P4-G4-T4
+              constraints: []
+              acceptance: The Adapter serves exactly one Endpoint for every Action of the Trailing Rule Child Service and none for anything else; each Endpoint's identity, Parameter placement and Handler follow
+                the API rules; calling an Endpoint gives what calling its Action gives, and its errors are the Action's errors; a request cannot supply another Entity; the Adapter stands entirely on its own,
+                sharing nothing with another Adapter.
+              status: done
+              log:
+              - at: '2026-10-09T19:23:15Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:24:56Z'
+                event: done
+                note: 'Wrote the TrailingRule Adapter: one router with the segment trailing_rule and one explicitly written route for each of the 12 Actions of the TrailingRule Child Service, calling the one Child Service
+                  and returning the result unchanged. Observed on the probe application: the 12 method and path pairs are exactly the expected ones and unique across all Adapters (180 in total), every Parameter is placed
+                  as the rule requires, the count, list and get_by_id endpoints return what the Child Service returns (including null for an unknown id), a request body of another Entity is refused with 422, and the
+                  source of the unit has no loop, class, dynamic call or import of another Adapter.'
+            P4-G6-T11:
+              id: P4-G6-T11
+              source_id: '016'
+              title: Provide the Partial Group Adapter
+              description: Provide the Adapter bound permanently to the Partial Group Entity, serving one Endpoint for every Action of its Child Service.
+              reason: Clients must be able to operate on Partial Group records through the API without naming the Entity in a request.
+              inputs:
+              - The Partial Group Child Service published through the Logic Interface
+              - API Endpoint rules
+              skills:
+              - fastapi
+              expected_result: The Partial Group Adapter with its Endpoints.
+              depends_on:
+              - P3-G5-T1
+              - P4-G1-T1
+              - P4-G3-T1
+              - P4-G4-T1
+              - P4-G4-T2
+              - P4-G4-T3
+              - P4-G4-T4
+              constraints: []
+              acceptance: The Adapter serves exactly one Endpoint for every Action of the Partial Group Child Service and none for anything else; each Endpoint's identity, Parameter placement and Handler follow
+                the API rules; calling an Endpoint gives what calling its Action gives, and its errors are the Action's errors; a request cannot supply another Entity; the Adapter stands entirely on its own,
+                sharing nothing with another Adapter.
+              status: done
+              log:
+              - at: '2026-10-09T19:23:15Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:24:56Z'
+                event: done
+                note: 'Wrote the PartialGroup Adapter: one router with the segment partial_group and one explicitly written route for each of the 12 Actions of the PartialGroup Child Service, calling the one Child Service
+                  and returning the result unchanged. Observed on the probe application: the 12 method and path pairs are exactly the expected ones and unique across all Adapters (180 in total), every Parameter is placed
+                  as the rule requires, the count, list and get_by_id endpoints return what the Child Service returns (including null for an unknown id), a request body of another Entity is refused with 422, and the
+                  source of the unit has no loop, class, dynamic call or import of another Adapter.'
+            P4-G6-T12:
+              id: P4-G6-T12
+              source_id: '016'
+              title: Provide the Partial Rule Adapter
+              description: Provide the Adapter bound permanently to the Partial Rule Entity, serving one Endpoint for every Action of its Child Service.
+              reason: Clients must be able to operate on Partial Rule records through the API without naming the Entity in a request.
+              inputs:
+              - The Partial Rule Child Service published through the Logic Interface
+              - API Endpoint rules
+              skills:
+              - fastapi
+              expected_result: The Partial Rule Adapter with its Endpoints.
+              depends_on:
+              - P3-G5-T1
+              - P4-G1-T1
+              - P4-G3-T1
+              - P4-G4-T1
+              - P4-G4-T2
+              - P4-G4-T3
+              - P4-G4-T4
+              constraints: []
+              acceptance: The Adapter serves exactly one Endpoint for every Action of the Partial Rule Child Service and none for anything else; each Endpoint's identity, Parameter placement and Handler follow
+                the API rules; calling an Endpoint gives what calling its Action gives, and its errors are the Action's errors; a request cannot supply another Entity; the Adapter stands entirely on its own,
+                sharing nothing with another Adapter.
+              status: done
+              log:
+              - at: '2026-10-09T19:23:15Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:24:56Z'
+                event: done
+                note: 'Wrote the PartialRule Adapter: one router with the segment partial_rule and one explicitly written route for each of the 12 Actions of the PartialRule Child Service, calling the one Child Service
+                  and returning the result unchanged. Observed on the probe application: the 12 method and path pairs are exactly the expected ones and unique across all Adapters (180 in total), every Parameter is placed
+                  as the rule requires, the count, list and get_by_id endpoints return what the Child Service returns (including null for an unknown id), a request body of another Entity is refused with 422, and the
+                  source of the unit has no loop, class, dynamic call or import of another Adapter.'
+            P4-G6-T13:
+              id: P4-G6-T13
+              source_id: '016'
+              title: Provide the Action Group Adapter
+              description: Provide the Adapter bound permanently to the Action Group Entity, serving one Endpoint for every Action of its Child Service.
+              reason: Clients must be able to operate on Action Group records through the API without naming the Entity in a request.
+              inputs:
+              - The Action Group Child Service published through the Logic Interface
+              - API Endpoint rules
+              skills:
+              - fastapi
+              expected_result: The Action Group Adapter with its Endpoints.
+              depends_on:
+              - P3-G5-T1
+              - P4-G1-T1
+              - P4-G3-T1
+              - P4-G4-T1
+              - P4-G4-T2
+              - P4-G4-T3
+              - P4-G4-T4
+              constraints: []
+              acceptance: The Adapter serves exactly one Endpoint for every Action of the Action Group Child Service and none for anything else; each Endpoint's identity, Parameter placement and Handler follow
+                the API rules; calling an Endpoint gives what calling its Action gives, and its errors are the Action's errors; a request cannot supply another Entity; the Adapter stands entirely on its own,
+                sharing nothing with another Adapter.
+              status: done
+              log:
+              - at: '2026-10-09T19:23:15Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:24:57Z'
+                event: done
+                note: 'Wrote the ActionGroup Adapter: one router with the segment action_group and one explicitly written route for each of the 12 Actions of the ActionGroup Child Service, calling the one Child Service
+                  and returning the result unchanged. Observed on the probe application: the 12 method and path pairs are exactly the expected ones and unique across all Adapters (180 in total), every Parameter is placed
+                  as the rule requires, the count, list and get_by_id endpoints return what the Child Service returns (including null for an unknown id), a request body of another Entity is refused with 422, and the
+                  source of the unit has no loop, class, dynamic call or import of another Adapter.'
+            P4-G6-T14:
+              id: P4-G6-T14
+              source_id: '016'
+              title: Provide the Action Adapter
+              description: Provide the Adapter bound permanently to the Action Entity, serving one Endpoint for every Action of its Child Service.
+              reason: Clients must be able to operate on Action records through the API without naming the Entity in a request.
+              inputs:
+              - The Action Child Service published through the Logic Interface
+              - API Endpoint rules
+              skills:
+              - fastapi
+              expected_result: The Action Adapter with its Endpoints.
+              depends_on:
+              - P3-G5-T1
+              - P4-G1-T1
+              - P4-G3-T1
+              - P4-G4-T1
+              - P4-G4-T2
+              - P4-G4-T3
+              - P4-G4-T4
+              constraints: []
+              acceptance: The Adapter serves exactly one Endpoint for every Action of the Action Child Service and none for anything else; each Endpoint's identity, Parameter placement and Handler follow the
+                API rules; calling an Endpoint gives what calling its Action gives, and its errors are the Action's errors; a request cannot supply another Entity; the Adapter stands entirely on its own, sharing
+                nothing with another Adapter.
+              status: done
+              log:
+              - at: '2026-10-09T19:23:15Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:24:57Z'
+                event: done
+                note: 'Wrote the Action Adapter: one router with the segment action and one explicitly written route for each of the 12 Actions of the Action Child Service, calling the one Child Service and returning
+                  the result unchanged. Observed on the probe application: the 12 method and path pairs are exactly the expected ones and unique across all Adapters (180 in total), every Parameter is placed as the rule
+                  requires, the count, list and get_by_id endpoints return what the Child Service returns (including null for an unknown id), a request body of another Entity is refused with 422, and the source of the
+                  unit has no loop, class, dynamic call or import of another Adapter.'
+            P4-G6-T15:
+              id: P4-G6-T15
+              source_id: '016'
+              title: Provide the Position Adapter
+              description: Provide the Adapter bound permanently to the Position Entity, serving one Endpoint for every Action of its Child Service.
+              reason: Clients must be able to operate on Position records through the API without naming the Entity in a request.
+              inputs:
+              - The Position Child Service published through the Logic Interface
+              - API Endpoint rules
+              skills:
+              - fastapi
+              expected_result: The Position Adapter with its Endpoints.
+              depends_on:
+              - P3-G5-T1
+              - P4-G1-T1
+              - P4-G3-T1
+              - P4-G4-T1
+              - P4-G4-T2
+              - P4-G4-T3
+              - P4-G4-T4
+              constraints: []
+              acceptance: The Adapter serves exactly one Endpoint for every Action of the Position Child Service and none for anything else; each Endpoint's identity, Parameter placement and Handler follow
+                the API rules; calling an Endpoint gives what calling its Action gives, and its errors are the Action's errors; a request cannot supply another Entity; the Adapter stands entirely on its own,
+                sharing nothing with another Adapter.
+              status: done
+              log:
+              - at: '2026-10-09T19:23:15Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:24:57Z'
+                event: done
+                note: 'Wrote the Position Adapter: one router with the segment position and one explicitly written route for each of the 12 Actions of the Position Child Service, calling the one Child Service and returning
+                  the result unchanged. Observed on the probe application: the 12 method and path pairs are exactly the expected ones and unique across all Adapters (180 in total), every Parameter is placed as the rule
+                  requires, the count, list and get_by_id endpoints return what the Child Service returns (including null for an unknown id), a request body of another Entity is refused with 422, and the source of the
+                  unit has no loop, class, dynamic call or import of another Adapter.'
+        P4-G7:
+          id: P4-G7
+          title: Group Registration
+          description: The assembly of Entity Group from its Adapters and the registration of every listed Group beneath its URL segment.
+          area: 'Entity Group and Bootstrap: Group assembly and registration'
+          does: Every Endpoint of every listed Group is served at its address beneath the Base URL, and the API serves nothing else.
+          constraints: []
+          task_count: 2
+          tasks:
+            P4-G7-T1:
+              id: P4-G7-T1
+              source_id: '016'
+              title: Assemble the Entity Group
+              description: 'Provide the Entity Group under its configured name: it presents every Adapter beneath the Adapter segment named from its Entity and presents nothing else. Every Adapter segment and
+                every Method-and-Path combination is valid and unique.'
+              reason: The Group is the unit Bootstrap registers, and clients need unambiguous addresses.
+              inputs:
+              - Every Entity Adapter
+              - Entity Group Preferences
+              skills:
+              - fastapi
+              expected_result: The Entity Group presenting all its Adapters.
+              depends_on:
+              - P4-G6-T1
+              - P4-G6-T2
+              - P4-G6-T3
+              - P4-G6-T4
+              - P4-G6-T5
+              - P4-G6-T6
+              - P4-G6-T7
+              - P4-G6-T8
+              - P4-G6-T9
+              - P4-G6-T10
+              - P4-G6-T11
+              - P4-G6-T12
+              - P4-G6-T13
+              - P4-G6-T14
+              - P4-G6-T15
+              constraints: []
+              acceptance: The Group presents exactly one Adapter segment for each Entity Adapter; no two Adapter segments are equal and no two Endpoints share a Method and Path; an invalid or colliding identity
+                stops generation with a clear error and nothing is renamed.
+              status: done
+              log:
+              - at: '2026-10-09T19:25:08Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:26:19Z'
+                event: decision
+                note: The Entity Group is assembled in Bootstrap as an explicit ordered list of the 15 Adapter routers under the Group's configured name, because the Entity Group's Directory Structure holds only Adapter
+                  units and its documentation; each Adapter router carries its own Adapter segment, and the Group segment is the configured name in lower case.
+              - at: '2026-10-09T19:26:19Z'
+                event: done
+                note: 'Assembled the Entity Group in Bootstrap: an explicit list of the 15 Adapters in the Collection''s order under the Group name Entity, each Adapter carrying its segment and section tag. Observed:
+                  15 distinct Adapter segments equal to the Entities of Logic''s Entity Service in order, 12 Endpoints under each, 180 distinct method and path pairs; no Adapter or Endpoint beyond these.'
+            P4-G7-T2:
+              id: P4-G7-T2
+              source_id: '016'
+              title: Register every listed Group beneath its URL segment
+              description: Register each Group listed in the API Preferences beneath the URL segment of its configured name after the Base URL, so that every Endpoint is served at the Base URL followed by the
+                Group segment, the Adapter segment and the Endpoint path. Register nothing else.
+              reason: Clients need one address for every capability area, and the API has no capability of its own.
+              inputs:
+              - Group list of the API Preferences
+              - Runtime Configuration
+              - Entity Group
+              skills:
+              - fastapi
+              expected_result: Every listed Group served beneath its segment.
+              depends_on:
+              - P4-G7-T1
+              - P4-G3-T1
+              - P4-G2-T2
+              constraints: []
+              acceptance: Every Endpoint of the Entity Group answers at the Base URL followed by the Group segment, the Adapter segment and the Endpoint path; with the key setting on, no Endpoint answers without
+                the key segment; no path outside the registered ones is served and the API has no Endpoint of its own.
+              status: done
+              log:
+              - at: '2026-10-09T19:25:08Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:26:19Z'
+                event: decision
+                note: The interactive documentation's OAuth redirect route is switched off, because the unmodified application served it at the bare address outside the Group segment and key, and nothing in the API uses
+                  OAuth.
+              - at: '2026-10-09T19:26:19Z'
+                event: done
+                note: 'Registered every listed Group in Bootstrap beneath its segment: each Adapter router is included beneath the key, when the Configuration has one, and the lower-case Group name. Observed on the application
+                  itself: all 180 Endpoints are served at the Base URL, the Group segment, the Adapter segment and the Endpoint path, and each answered at its address with a refusal raised before any Handler ran (probe
+                  requests built so that conversion refuses them); the same paths answer 404 without the key, with a wrong key, without the Group segment and with the Group name in upper case; the root, the key root
+                  and the Group root answer 404; apart from the interactive documentation and its schema the application has no route of its own, and the unmodified OAuth redirect route that sat outside the key was found
+                  and removed.'
+        P4-G8:
+          id: P4-G8
+          title: Interactive Documentation
+          description: The interactive documentation of what the API serves.
+          area: 'Serving: the interactive documentation by Group and Adapter'
+          does: A client can discover and try every Endpoint without reading source.
+          constraints: []
+          task_count: 1
+          tasks:
+            P4-G8-T1:
+              id: P4-G8-T1
+              source_id: '016'
+              title: Serve the interactive documentation by Group and Adapter
+              description: Enable the interactive documentation the selected package offers at the documentation addresses of the Configuration. It lists every served Endpoint with one section per Group and,
+                within it, one section per Adapter holding all of that Adapter's Endpoints, and shows only what the Groups serve.
+              reason: Every client can discover and try every Endpoint without reading source.
+              inputs:
+              - Registered Groups
+              - Documentation addresses of the Configuration
+              - Interactive documentation selection of the API Preferences
+              skills:
+              - fastapi
+              expected_result: Interactive documentation sectioned by Group and Adapter.
+              depends_on:
+              - P4-G7-T2
+              - P4-G2-T1
+              constraints: []
+              acceptance: The documentation answers at its configured addresses; it lists every served Endpoint and nothing else; it has one section for the Group and one section for each Adapter, each holding
+                all of that Adapter's Endpoints.
+              status: done
+              log:
+              - at: '2026-10-09T19:25:08Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:26:20Z'
+                event: decision
+                note: The sections are one tag per Adapter named after the Group, a middle dot and the Entity, declared in the Collection's order, with the Group grouped through the x-tagGroups extension of the published
+                  schema, as the Preferences describe.
+              - at: '2026-10-09T19:26:20Z'
+                event: done
+                note: 'Made the application a small subclass whose published schema adds the Group''s tag group, and declared one tag per Adapter. Observed on the application: the documentation answers 200 at the swagger
+                  and redoc addresses of the Configuration and nowhere outside the key; the schema lists exactly the 180 served Endpoints and nothing else; it has 15 sections, one per Adapter in the Collection''s order,
+                  each holding that Adapter''s 12 Endpoints, and one tag group Entity holding the 15 sections.'
+        P4-G9:
+          id: P4-G9
+          title: Entity Group Documentation
+          description: The documentation of Entity Group, written for clients who learn it without reading internals.
+          area: 'Entity Group: its documentation'
+          does: A client can learn, use and verify Entity Group from its documentation alone.
+          constraints: []
+          task_count: 5
+          tasks:
+            P4-G9-T1:
+              id: P4-G9-T1
+              source_id: '016'
+              title: Document the Entity Group Overview
+              description: 'Write the Overview section: what Entity Group is, in one paragraph, with one request example.'
+              reason: A reader must grasp what Entity Group serves before reading its Endpoints.
+              inputs:
+              - Registered Entity Group
+              - Entity Group Documentation contract
+              skills: []
+              expected_result: The first documentation section of Entity Group.
+              depends_on:
+              - P4-G7-T2
+              constraints: []
+              acceptance: The section is a single paragraph with one request example that works against the running API.
+              status: done
+              log:
+              - at: '2026-10-09T19:27:31Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:29:06Z'
+                event: done
+                note: 'Started the Entity Group documentation file with the Overview: one paragraph saying what Entity Group is and how its Endpoints are addressed, and one request example that reads a record through
+                  an Endpoint using the Base URL from the Configuration. Observed: the example ran as a separate process against a server started from a scratch copy and returned the first Currency record.'
+            P4-G9-T2:
+              id: P4-G9-T2
+              source_id: '016'
+              title: Document the Endpoints of the first five Entities
+              description: Write the part of the Endpoints section that gives, for each of the first five Entities of the Collection, every Endpoint with its Method, Path and Parameters, each with one example.
+              reason: A client must learn what each Endpoint takes and returns without reading source.
+              inputs:
+              - Entity Group Endpoints
+              - Model's Entity Collection
+              - Entity Group Documentation contract
+              skills: []
+              expected_result: The Endpoints of the first five Entities documented.
+              depends_on:
+              - P4-G9-T1
+              constraints: []
+              acceptance: Each of the first five Entities of the Collection has its Endpoints listed with Method, Path and Parameters exactly as they are served, and an example for each Endpoint that works
+                against the running API.
+              status: done
+              log:
+              - at: '2026-10-09T19:27:31Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:29:30Z'
+                event: decision
+                note: The Endpoints section opens with the shared rules once (placement and the forms of non-simple Parameters), then gives each Entity a table of its twelve Endpoints and one Python walkthrough that
+                  calls each Endpoint in turn, using the HTTP client the application already installs; the tables and walkthroughs were produced by a generator outside the Component from the real Adapters and from sample
+                  records validated by the Model.
+              - at: '2026-10-09T19:29:30Z'
+                event: done
+                note: 'Wrote the Endpoints introduction and the sections for the first five Entities of the Collection (User, Trading Platform, Instance, Currency, Broker): for each a table with the Method, Path and
+                  Parameters of its twelve Endpoints, copied from the application''s published schema, and one example that adds a record, reads, changes, lists, counts, sums, finds the minimum and maximum, disables,
+                  enables and deletes it and finally calls truncate. Observed: each of the five examples ran as a separate process against a server started from a scratch copy and exited normally; the data was equal
+                  to its earlier state afterwards (truncate was refused with 500 because other records refer to those tables).'
+            P4-G9-T3:
+              id: P4-G9-T3
+              source_id: '016'
+              title: Document the Endpoints of the next five Entities
+              description: Write the part of the Endpoints section that gives, for each of the next five Entities of the Collection, every Endpoint with its Method, Path and Parameters, each with one example.
+              reason: A client must learn what each Endpoint takes and returns without reading source.
+              inputs:
+              - Entity Group Endpoints
+              - Model's Entity Collection
+              - Entity Group Documentation contract
+              skills: []
+              expected_result: The Endpoints of the next five Entities documented.
+              depends_on:
+              - P4-G9-T2
+              constraints: []
+              acceptance: Each of the next five Entities of the Collection has its Endpoints listed with Method, Path and Parameters exactly as they are served, and an example for each Endpoint that works against
+                the running API.
+              status: done
+              log:
+              - at: '2026-10-09T19:27:31Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:29:41Z'
+                event: decision
+                note: The Account example first adds an Account Group of its own and removes it again at the end, because an Account's Group, Broker and Instance must be a new combination and only one Broker and one
+                  Instance exist.
+              - at: '2026-10-09T19:29:41Z'
+                event: done
+                note: 'Wrote the sections for the next five Entities of the Collection (Asset, Account Group, Account, Trailing Group, Trailing Rule): each with its table of twelve Endpoints and its one example walkthrough
+                  in the same form. Observed: each of the five examples ran as a separate process against the scratch server and exited normally with every step answered; no table was changed afterwards for four of them
+                  (truncate refused because other records refer to them) and the Trailing Rule example emptied its already empty table (truncate answered 200).'
+            P4-G9-T4:
+              id: P4-G9-T4
+              source_id: '016'
+              title: Document the Endpoints of the last five Entities
+              description: Write the part of the Endpoints section that gives, for each of the last five Entities of the Collection, every Endpoint with its Method, Path and Parameters, each with one example.
+              reason: A client must learn what each Endpoint takes and returns without reading source.
+              inputs:
+              - Entity Group Endpoints
+              - Model's Entity Collection
+              - Entity Group Documentation contract
+              skills: []
+              expected_result: The Endpoints of the last five Entities documented.
+              depends_on:
+              - P4-G9-T3
+              constraints: []
+              acceptance: Each of the last five Entities of the Collection has its Endpoints listed with Method, Path and Parameters exactly as they are served, and an example for each Endpoint that works against
+                the running API.
+              status: done
+              log:
+              - at: '2026-10-09T19:27:31Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:29:48Z'
+                event: done
+                note: 'Wrote the sections for the last five Entities of the Collection (Partial Group, Partial Rule, Action Group, Action, Position): each with its table of twelve Endpoints and its one example walkthrough.
+                  Observed: each of the five examples ran as a separate process against the scratch server and exited normally with every step answered; the data was unchanged afterwards except that the Action example''s
+                  final truncate emptied the Action table, as the text says, and the empty Partial Rule and Position tables were truncated with 200.'
+            P4-G9-T5:
+              id: P4-G9-T5
+              source_id: '016'
+              title: Document the Entity Group Use and Verify sections
+              description: Write the Use section, explaining how a client calls an Endpoint, and the Verify section, explaining how to see that every Entity has its Adapter and every Action its Endpoint.
+              reason: Clients must know how to call Endpoints and how to confirm the Group is whole.
+              inputs:
+              - Entity Group documentation so far
+              - Entity Group Documentation contract
+              skills: []
+              expected_result: The last two documentation sections of Entity Group.
+              depends_on:
+              - P4-G9-T4
+              constraints: []
+              acceptance: The sections follow the Endpoints section in order; the Use examples work against the running API; following the Verify section shows one Adapter per Entity of Logic's Entity Service
+                and one Endpoint per Action of its Child Service.
+              status: done
+              log:
+              - at: '2026-10-09T19:27:32Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:29:48Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:29:56Z'
+                event: done
+                note: 'Appended the Use and Verify sections: Use explains how an address is formed from the Base URL, the Group and Adapter segments and the Endpoint path, gives a working example with filters, an order,
+                  a limit and an Instance, and shows an error answered as Problem Details with its class name and status; Verify gives a script that checks, from the application and Logic''s Child Services, one Adapter
+                  per Entity in order, one Endpoint per Action, no other Endpoint beneath the Group, and 12 Endpoints in each documentation section. Observed: the three examples ran as separate processes against the
+                  scratch server and the Verify script printed Entity Group verified; the file now holds exactly the sections Overview, Endpoints, Use and Verify in order.'
+        P4-G10:
+          id: P4-G10
+          title: API Documentation
+          description: The root documentation of the API application.
+          area: 'API: its root documentation'
+          does: A client or operator can learn, start, use and verify the API from its documentation alone.
+          constraints: []
+          task_count: 2
+          tasks:
+            P4-G10-T1:
+              id: P4-G10-T1
+              source_id: '016'
+              title: Document the API Overview, Configuration and Groups sections
+              description: Write the Overview, with one paragraph and one request example; the Configuration section, which explains every runtime Configuration value and how the Base URL is formed from it;
+                and the Groups section, which gives every Group beneath its URL segment with a link to its own documentation and never a copy of its Endpoints.
+              reason: A reader must find what the API is, how to configure it and which Groups it serves before using it.
+              inputs:
+              - Runtime Configuration
+              - Registered Groups
+              - API Documentation contract
+              - Entity Group documentation
+              skills: []
+              expected_result: The first three documentation sections of the API.
+              depends_on:
+              - P4-G2-T2
+              - P4-G7-T2
+              - P4-G9-T5
+              constraints: []
+              acceptance: The three sections appear in order; the Configuration section covers every value of the structure and the formation of the Base URL; every Group has its segment and a working link
+                and no copy of its Endpoints; the request example works against the running API.
+              status: done
+              log:
+              - at: '2026-10-09T19:29:56Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:31:09Z'
+                event: done
+                note: 'Wrote the first three sections of the API documentation at the Component root: the Overview (one paragraph and one request example), the Configuration section (a table of every value of the Configuration
+                  Structure and how the Base URL is formed, with the key''s role stated) and the Groups section (the Entity Group beneath its segment with a link to its own documentation and no copy of its Endpoints).
+                  Observed: the request example ran against the scratch server and returned a record; the link resolves to the Entity Group documentation; every value of the generated Configuration appears in the table.'
+            P4-G10-T2:
+              id: P4-G10-T2
+              source_id: '016'
+              title: Document the API Setup, Use, Verify and Troubleshooting sections
+              description: Write the Setup section, explaining how to install and start the API; the Use section, explaining how a client reaches a Group; the Verify section, explaining how to see that every
+                listed Group is served beneath its segment and nothing else is; and the Troubleshooting section, covering real problems a client can meet and how to fix them.
+              reason: A client or operator must be able to start, use and check the API without outside help.
+              inputs:
+              - API documentation so far
+              - API Documentation contract
+              - Established API application package
+              - Interactive documentation
+              skills: []
+              expected_result: The last four documentation sections of the API.
+              depends_on:
+              - P4-G10-T1
+              - P4-G1-T1
+              - P4-G3-T3
+              - P4-G8-T1
+              constraints: []
+              acceptance: The four sections follow the first three in order; following Setup installs and starts the API from the repository alone; the Use examples work against the running API; following Verify
+                shows exactly one served segment per listed Group and no other served path; each Troubleshooting entry names a problem that can actually occur and a fix that resolves it.
+              status: done
+              log:
+              - at: '2026-10-09T19:29:57Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:31:09Z'
+                event: done
+                note: 'Appended the Setup, Use, Verify and Troubleshooting sections to the API documentation: Setup lists installing the locked environment, preparing the Database once and starting the API; Use shows
+                  a client reaching a Group with working requests; Verify gives a script that checks, against the started API, that only Group-segment paths are published and the Entity Group answers beneath the Base
+                  URL while the same paths answer 404 at the bare address, beneath another key and without the Group segment; Troubleshooting lists six problems. Observed: the Use and Verify examples ran as separate
+                  processes against the scratch server and Verify printed API verified; the install, prepare and start steps were followed in the scratch copy; the missing sibling directory error, the missing-module
+                  error, the address-in-use error, the 404 outside the Base URL, the unprepared-database error (500, ExecutionError, no such table, after a fresh start) and the 422 refusal were each reproduced and match
+                  the text.'
+        P4-G11:
+          id: P4-G11
+          title: Quality Standards
+          description: The final conformance of the complete API application source to the language's quality standards.
+          area: Application-wide source quality
+          does: The complete API application source meets the language's formatting, lint and typing standards.
+          constraints: []
+          task_count: 1
+          tasks:
+            P4-G11-T1:
+              id: P4-G11-T1
+              source_id: '016'
+              title: Bring the API application source to the quality standards
+              description: Apply the formatting, lint and type-checking standards that the Development Preferences select for the language to the complete API application source and its documentation examples,
+                and resolve every finding without weakening any API or Entity Group contract.
+              reason: Consistent, type-sound source is a standing Development standard and must hold for the finished application.
+              inputs:
+              - Complete API application source
+              - Development language quality standards
+              skills: []
+              expected_result: The complete API application source is free of formatting, lint and type findings.
+              depends_on:
+              - P4-G1-T1
+              - P4-G2-T1
+              - P4-G2-T2
+              - P4-G3-T1
+              - P4-G3-T2
+              - P4-G3-T3
+              - P4-G4-T1
+              - P4-G4-T2
+              - P4-G4-T3
+              - P4-G4-T4
+              - P4-G5-T1
+              - P4-G6-T1
+              - P4-G6-T2
+              - P4-G6-T3
+              - P4-G6-T4
+              - P4-G6-T5
+              - P4-G6-T6
+              - P4-G6-T7
+              - P4-G6-T8
+              - P4-G6-T9
+              - P4-G6-T10
+              - P4-G6-T11
+              - P4-G6-T12
+              - P4-G6-T13
+              - P4-G6-T14
+              - P4-G6-T15
+              - P4-G7-T1
+              - P4-G7-T2
+              - P4-G8-T1
+              - P4-G9-T1
+              - P4-G9-T2
+              - P4-G9-T3
+              - P4-G9-T4
+              - P4-G9-T5
+              - P4-G10-T1
+              - P4-G10-T2
+              constraints: []
+              acceptance: The application reports no formatting, lint or type findings under the standards the Development Preferences select, and every API and Entity Group contract still holds.
+              status: done
+
+              log:
+              - at: '2026-10-09T19:31:19Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-09T19:31:55Z'
+                event: decision
+                note: pydantic is declared as a direct dependency with the floor of the version already resolved, because the conversion unit imports it directly, even though the selected FastAPI package also installs
+                  it.
+              - at: '2026-10-09T19:31:55Z'
+                event: done
+                note: 'Applied the formatting, lint and type-checking standards to the complete API application source and the Python examples of both documentation files. Resolved two type findings found while writing
+                  (a method assigned onto the application, now a small subclass; a status table typed too narrowly) and declared the directly imported pydantic package. Observed afterwards: the formatter reports all
+                  23 files formatted, the linter and the type checker report nothing, the lock file is consistent with the declared dependencies (fastapi, logic, pydantic, pyyaml, uvicorn, equal to the non-standard-library
+                  packages imported directly), and all 25 Python and bash examples of the two documentation files still ran against the scratch server. The formatter and bytecode caches created by these runs were removed
+                  from the API and Logic Components.'
+              - at: '2026-10-09T19:32:03Z'
+                event: correction
+                note: 'The previous entry says all 25 examples of the two documentation files ran again after the last change; precisely, 22 of them were re-run (19 in the Entity Group file, 3 of 6 in the API file: the
+                  request example, Use and Verify). The three Setup commands of the API file (install, prepare, start) were each performed earlier in the scratch copy and were not re-run after the last change, which
+                  touched only the dependency declaration.'

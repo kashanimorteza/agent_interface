@@ -31,9 +31,9 @@ content:
   active:
     mode: "implementing"
     phase: "P4"
-    mode_reason: "Implement is coordinating Plan, Develop and Review for phase P4 (Log Entry 014)."
+    mode_reason: "Implement completed phase P4 (Log Entry 015): planning completed, development completed, review satisfied."
     set_by: "my-interface-implement"
-    set_at: "2026-10-09T16:08:48Z"
+    set_at: "2026-10-09T19:39:58Z"
   phases:
     P1:
       id: "P1"
@@ -47,6 +47,18 @@ content:
       development: "completed"
       review: "satisfied"
       completed_at: "2026-10-08T07:55:35Z"
+    P3:
+      id: "P3"
+      planning: "completed"
+      development: "completed"
+      review: "satisfied"
+      completed_at: "2026-10-09T19:10:30Z"
+    P4:
+      id: "P4"
+      planning: "completed"
+      development: "completed"
+      review: "satisfied"
+      completed_at: "2026-10-09T19:39:07Z"
   log:
     - id: "001"
       skill: "my-interface-configure"
@@ -455,3 +467,606 @@ content:
           - "A Target Initial Data value that is not concrete is copied as an empty string, and no value is generated: held"
           - "A missing record returns null, never an error: held"
           - "Loading Interface opens no connection and creates no data or file: held"
+    - id: "010"
+      skill: "my-interface-implement"
+      phase: null
+      event: "implement"
+      outcome: "completed"
+      started_at: "2026-10-09T18:31:01Z"
+      completed_at: "2026-10-09T18:52:26Z"
+      duration: "21:25"
+      skills_used: []
+      open_questions: []
+      blockers: []
+      report: "Implemented the requested phase selection 3 (P3, Logic): Config was valid, so Configure was not needed; Plan (011) produced 8 Groups and 32 Tasks, Develop (012) completed all 32, and Review (013) recorded and resolved 2 Findings and judged the phase satisfied. Aggregate Open Questions: 0; Blockers: 0."
+      data:
+        phases: ["P3"]
+        configure_invoked: false
+        operations:
+          - skill: "my-interface-plan"
+            log_entry: "011"
+            phase: "P3"
+            outcome: "completed"
+          - skill: "my-interface-develop"
+            log_entry: "012"
+            phase: "P3"
+            outcome: "completed"
+          - skill: "my-interface-review"
+            log_entry: "013"
+            phase: "P3"
+            outcome: "satisfied"
+        open_question_count: 0
+        blocker_count: 0
+    - id: "011"
+      skill: "my-interface-plan"
+      parent_id: "010"
+      phase: "P3"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-10-09T18:31:53Z"
+      completed_at: "2026-10-09T18:35:18Z"
+      duration: "3:25"
+      skills_used: []
+      open_questions: []
+      blockers: []
+      report: "Planned phase P3 (Logic) from the current Interface, Target, Logic Definition and Preferences and Entity Service Definition and Preferences: 8 Groups and 32 new Tasks, all todo. No earlier P3 Plan existed, so nothing was preserved, replaced or removed; P1 and P2 are unchanged. The Plan-level and total task counts were recalculated."
+      data:
+        phase: "P3"
+        additions:
+          - "Plan P3 with 8 Groups and 32 Tasks: Library Package (1), Entity Service Base (6), Child Services (15, one per Entity of Model's Entity Collection), Entity Service Interface (4), Logic Interface (1), Entity Service Documentation (2), Logic Documentation (2), Quality Standards (1)."
+        changes:
+          - "Top-level task_count recalculated from 113 to 89 (P1 26 + P2 31 + P3 32): the earlier stored value did not equal the sum of the phase task counts the Plan Schema requires."
+        removals: []
+        replacements: []
+        preservations:
+          - "P1 and P2 Plans, Tasks, statuses and Task Logs left unchanged."
+        dependencies_on_other_phases:
+          - "P1-G8-T1 (Model Interface publication) and P2-G7-T4 (Database Interface publication)."
+        notes:
+          - "Task Skills left empty for every Task: no available Provider or other Skill was identified as useful for the Logic work."
+    - id: "012"
+      skill: "my-interface-develop"
+      parent_id: "010"
+      phase: "P3"
+      event: "develop"
+      outcome: "completed"
+      started_at: "2026-10-09T18:35:34Z"
+      completed_at: "2026-10-09T18:45:54Z"
+      duration: "10:20"
+      skills_used: []
+      open_questions: []
+      blockers: []
+      decisions: ["P3-G1-T1", "P3-G2-T2", "P3-G6-T1"]
+      report: "Developed all 32 Tasks of phase P3 (Logic), each claimed, produced and recorded as done in its Task Log: the Logic library package, Entity Service Base with its 12 Actions, 15 Child Services, the Entity Service and Logic Interfaces, the Entity Service and Logic documentation, and the quality standards. Everything was written inside the Logic Component, plus the Logic entries in the project's single ignore file. Conformance is left to Review."
+      data:
+        phase: "P3"
+        tasks_completed: 32
+        tasks_blocked: 0
+        component: "Logic"
+        notes:
+          - "The root ignore file's earlier Python entries are commented out, so a scoped Logic section (environment, caches) was added and no existing entry was changed."
+          - "The Database file was backed up before the documentation examples ran and restored afterwards, so the records and the file are as they were."
+    - id: '013'
+      skill: my-interface-review
+      parent_id: '010'
+      phase: P3
+      event: review
+      outcome: satisfied
+      started_at: '2026-10-09T18:46:08Z'
+      completed_at: '2026-10-09T18:51:28Z'
+      duration: '5:20'
+      skills_used: []
+      open_questions: []
+      blockers: []
+      report: Reviewed phase P3 (Logic) against its Plan and the Review categories of Logic and Entity Service with independent observations on a clean copy installed from the lock file. Two Findings (cache
+        artifacts and a tool-made ignore file left in the Component; documentation examples and a Verify introduction that did not match their use of private members) were recorded, resolved and rechecked.
+        Every Task acceptance and every Review-category observation is established; the outcome is satisfied.
+      data:
+        phase: P3
+        scope: Plan P3 (8 Groups, 32 Tasks) and the Review categories of the Logic Component and of Entity Service, judged against the generated Logic Component.
+        findings:
+        - id: F1
+          state: resolved
+          category: cached artifacts and ignore file inside the Component
+          expected: Generated output contains no cached or compiled artifact and no Component-created ignore file; the project's single root ignore file is the only one (Develop, Generated source meets the
+            selected technology standard; Development, The project has one ignore file).
+          observed: The Logic Component directory holds a formatter cache directory that carries an ignore file of its own, and three compiled-bytecode cache directories.
+          evidence: 'Listing of the Component directory (the isolated environment excluded): logic/.ruff_cache, logic/.ruff_cache/.gitignore, logic/logic/__pycache__, logic/logic/services/__pycache__, logic/logic/services/entity/__pycache__.'
+          plan_reference: P3-G8-T1 (the library source is free of findings and the project's single ignore file covers its environment and caches; nothing is left behind by the standards run) and P3-G1-T1 (single
+            ignore file).
+          resolution: Removed exactly those five cache paths from the Logic Component; the root ignore file already covers them if the tools recreate them.
+          recheck: A listing of the Component directory, the isolated environment excluded, finds no cache directory, no compiled file and no ignore file; the real Component equals the copy on which every other
+            observation was made; the Component's ignore coverage by the root file still holds.
+        - id: F2
+          state: resolved
+          category: documentation does not match what its examples do
+          expected: 'The Entity Service documentation tells callers to use only what the Interface publishes: its Verify section states that it checks from the published Interfaces alone, and its consumer examples
+            use only published members (Entity Service Definition, Interface and Documentation; P3-G6-T1 and P3-G6-T2 acceptance: no Base is described as available).'
+          observed: The Model example reads the private attribute _entity of a Child Service, and the Verify script reads _entity and reaches Base through the parent class of a Child Service (__mro__[1]) while
+            its introduction says it works from the published Interfaces alone.
+          evidence: 'logic/logic/services/entity/README.md line 316 (Entity.Service.User._entity), line 563 (introduction of Verify: ''from the published Interfaces alone''), line 587 (getattr(Entity.Service,
+            name)._entity) and line 601 (Entity.Service.User.__mro__[1]).'
+          plan_reference: P3-G6-T1 (examples that run, Base not described as available) and P3-G6-T2 (following Verify shows one Child Service per Entity and one Action per Entity Operation).
+          resolution: Rewrote the Model example to show a stored record read through a Child Service being an instance of the Entity the Model group publishes; replaced the _entity reads in Verify with a check
+            through published members (a Filter on the Entity's own Field is accepted and a Filter on another Entity's Field is refused with Invalid Input); and corrected the Verify introduction to say that
+            Base is reached only as the parent class of a Child Service (logic/logic/services/entity/README.md, Model and Verify sections).
+          recheck: No private member remains in either documentation file; all 38 Python examples of the two documentation files run as separate processes; the changed Verify script prints Entity Service verified,
+            and with User bound to the Broker Entity in the scratch copy it fails with the Invalid Input error, then passes again once restored; formatter, linter and type checker still report nothing.
+        observations_made:
+        - Installed Logic, Database and Model in a clean scratch copy from the lock file (uv sync --frozen); all three packages resolve to the copy, import without error, import with warnings treated as errors,
+          compile, and the wheel builds with exactly the 21 source files, the Entity Service documentation and the plain-name Requires-Dist entries database and model.
+        - 'Compared the Interface contracts with the real Interfaces: the Logic Interface publishes exactly [Entity] and it is the identical Entity Service Interface object; the Entity Service Interface publishes
+          exactly Model, Service, database_error, database_instance and database_value, with the 15 Child Services and 15 Model members equal to Model''s Entity Collection in names and order, every Model member
+          the identical Model object, and the three Database groups the identical Database objects.'
+        - 'Parsed the Base source: one class with the constructor, one private bound-Entity helper and exactly the 12 public methods in Database''s order, each explicitly written, no dynamic dispatch or generic
+          forwarding, no Command or Setup Action, the Database object created only in the constructor. Compared every Action''s parameter names, order, defaults, kinds and docstring with Database''s Operation
+          (Entity class parameter removed except for add and update).'
+        - 'Recorded exactly what reaches Database for every Action of every one of the 15 Child Services with a recording stand-in: the bound Entity first (or the given instance for add and update), every other
+          argument by identity and in order, nothing added, the stand-in''s answer returned unchanged, omitted arguments arriving as the defaults with no Instance chosen; an instance of another Entity rejected
+          with Invalid Input before any call, for add and update on all 15.'
+        - 'Behaviour on a scratch copy of the real data: count, list and get_by_id equal Database''s for all 15 Entities; sum, min, max, counts with IN, filters, combination, orders and limits (including zero
+          and negative) equal Database''s; add, a duplicate add, update, update of a missing record, disable, enable, delete and a repeated delete return what Database returns; errors for a string id, a string
+          Field, a string Instance and a bad limit equal Database''s in kind and message; a referenced delete raises the same error and changes nothing; truncate returns the deleted count like Database''s.'
+        - 'Static scans: no Service other than Entity Service imports Database, none imports the Logic Interface, Entity Service never uses Database''s Setup or Command or Result groups, the Services directory
+          holds exactly one Service, every __init__ file is empty, the Entity Service directory holds exactly the Interface, Base, one unit per Entity named by the snake-case pattern, and its documentation,
+          with no sub-directory; every Child inherits Base directly, binds its own Entity through the Model Interface and holds nothing else.'
+        - 'Loading: with sqlite3 and engine creation trapped, importing the Logic Interface and creating all 15 Child Services opens no connection; on a copy whose Database storage directory was removed, loading
+          and creating every Child created no data directory or file.'
+        - 'Technical: formatter, linter and type checker report nothing; lock file consistent; declared dependencies (database, model) equal the packages imported directly; every locked package carries a concrete
+          version; the root ignore file ignores the Logic environment and both cache kinds; the real Component directory equals the verified copy file for file.'
+        - 'Regenerated the Base, the 15 Child units, the Entity Service Interface and the Logic Interface with a separately written generator from Model''s Collection and Database''s Interface: every file is
+          byte-identical after formatting except Base, which differs only in where one signature breaks across lines and whose syntax tree is identical; a Collection extended by one Entity changes only the
+          Entity Service Interface and adds one Child unit, leaving the Interface structure unchanged.'
+        - 'Documentation: both files hold exactly their required sections in order; the Entity Service document has an example for each of the 12 Actions, each group, every Filter and enumeration member of
+          database_value, the Instance member and each of the 8 error kinds, and a table naming all 15 Child Services; all 38 Python examples of both files run as separate processes on the real data copy, and
+          the two Verify scripts print their success lines.'
+        notes_about_the_review:
+        - My own pattern for credential-like literals matched the documentation value 'placeholder' used for a User's password and api_key in one example; it is an obvious dummy value (the Model documentation
+          uses the same), so it is reported here and not recorded as a Finding.
+        - 'Zero-difference regeneration of the documentation cannot be observed: no generator exists for it. It is established for the source by the independent regeneration above, and for the documentation
+          by every example running unchanged.'
+        - Develop's generation scripts for the source are not part of the project, so regeneration was observed with a separately written generator resting on the same two authorities (Model's Collection, Database's
+          Interface).
+        - The Interface contract versions in the Logic and Entity Service Preferences have no counterpart in the generated source, so they were not observable and are not a Finding.
+        outcome: satisfied
+        outcome_basis: Every Finding is resolved and rechecked; every Task acceptance and every observation of the Logic and Entity Service Review categories is established by an observation made in this Review;
+          technical and repeatable conformance holds.
+        acceptance_established:
+        - tasks:
+          - P3-G1-T1
+          by: Clean install from the lock file with the sibling Components, import of the Model and Database Interfaces through the declared dependencies, concrete versions for every locked package, ignore
+            coverage checked against the root ignore file (after F1).
+        - tasks:
+          - P3-G2-T1
+          by: Creating a Base holds exactly one Database object that stays the same across Actions, loading and creating opens no connection or file, and a Base names no Entity until a Child binds one.
+        - tasks:
+          - P3-G2-T2
+          - P3-G2-T3
+          - P3-G2-T4
+          - P3-G2-T5
+          - P3-G2-T6
+          by: Parameter-for-parameter comparison with Database, the recording stand-in on all 12 Actions of all 15 Child Services, results and errors compared with Database's on real data, rejection of another
+            Entity's instance before Database, and the Action set equal to the Entity Operations with no Command or Setup Action.
+        - tasks:
+          - P3-G3-T1
+          - P3-G3-T2
+          - P3-G3-T3
+          - P3-G3-T4
+          - P3-G3-T5
+          - P3-G3-T6
+          - P3-G3-T7
+          - P3-G3-T8
+          - P3-G3-T9
+          - P3-G3-T10
+          - P3-G3-T11
+          - P3-G3-T12
+          - P3-G3-T13
+          - P3-G3-T14
+          - P3-G3-T15
+          by: 'Each Child unit parsed and imported: inherits Base directly, binds exactly its Entity, holds nothing else, availability under the Entity''s name, count equal to Database''s, instance of another
+            Entity rejected.'
+        - tasks:
+          - P3-G4-T1
+          - P3-G4-T2
+          - P3-G4-T3
+          - P3-G4-T4
+          by: Exact published names, group members equal to the Collection in order, identity of every Model and Database object, nothing else reachable, no side effect on loading, and regeneration from an
+            extended Collection changing the group without changing the structure.
+        - tasks:
+          - P3-G5-T1
+          by: Exact published list and object identity of the Logic Interface, no Service importing it, no connection or file on loading.
+        - tasks:
+          - P3-G6-T1
+          - P3-G6-T2
+          by: Section order, an example for every Action, group and member, all examples run, no Base or Database Interface, Setup or Result group described as available, the Verify script passing and failing
+            on a wrongly bound Child (after F2).
+        - tasks:
+          - P3-G7-T1
+          - P3-G7-T2
+          by: Section order, exact published names, working links, Setup steps installing from the repository alone, the Use and Verify examples running, and each Troubleshooting entry reproduced.
+        - tasks:
+          - P3-G8-T1
+          by: Formatter, linter and type checker, lock consistency, dependency equality and all documentation examples still running (after F1 and F2).
+        review_category_observations:
+        - 'Logic Interface publishes exactly one entry for every Service listed in Logic Preferences, under its configured name, and nothing else: held'
+        - 'Every entry is the identical Interface object of its Service: held'
+        - 'No Service other than Entity Service imports Database Interface: held'
+        - 'No Service imports Logic Interface: held'
+        - 'No two Services share a name or directory: held'
+        - 'Entity Service Interface publishes exactly Service, Model and Database''s Value, Instance and Error groups, and nothing else: held'
+        - 'Every object in Model and every republished group is the identical object its source Interface publishes: held'
+        - 'Base has exactly one Action for every Entity Operation of Database''s Interface group, in Database''s order, each written out as its own method: held'
+        - 'Each Action has its Operation''s parameter names, order and defaults, without the Entity class parameter: held'
+        - 'Each Action returns its Operation''s result and raises its errors unchanged, and rejects an instance of another Entity with the Invalid Input error: held'
+        - 'Every Action uses the one Database object Base holds, and adds no validation, retry or Instance selection of its own: held'
+        - 'Every Child Service unit and structure name follows the configured patterns, and every name is valid and unique: held'
+        - 'Every Child Service binds exactly its own Entity, inherits Base, and sits in its own unit directly in the Entity Service directory: held'
+        - 'Loading the Interface opens no connection and creates no data or file: held'
+    - id: '014'
+      skill: my-interface-review
+      phase: P3
+      event: review
+      outcome: satisfied
+      started_at: '2026-10-09T19:06:34Z'
+      completed_at: '2026-10-09T19:10:30Z'
+      duration: '3:56'
+      skills_used: []
+      open_questions: []
+      blockers: []
+      report: Second, directly invoked Review of phase P3 (Logic) against its Plan and the Review categories of Logic and Entity Service. Every observation was made again on a fresh copy installed from the
+        lock file, with the Source read anew, the checks themselves tested by injecting defects, and the Setup steps followed end to end. No Finding was raised; the outcome is satisfied.
+      data:
+        phase: P3
+        scope: Plan P3 (8 Groups, 32 Tasks) and the Review categories of the Logic Component and of Entity Service, judged against the generated Logic Component as it stands after Review 013.
+        findings: []
+        context_used:
+        - Review 013 and the Findings it resolved were read as context only; every observation below was made again on a new scratch copy, and the real Component was compared with that copy file for file.
+        observations_made:
+        - Read the current Base, the Entity Service Interface, a Child unit, the Logic Interface and the package declaration; the real Component holds 25 files, no cache directory, no compiled file and no ignore
+          file of its own, and equals the reviewed copy file for file.
+        - 'Installed a fresh copy of Logic, Database and Model from the lock file (uv sync --frozen): the formatter, linter and type checker report nothing, the lock file is consistent, the package imports
+          with warnings treated as errors, compiles, and the wheel builds.'
+        - 'Made the full set of independent observations again (183): the exact published names and object identity of both Interfaces, the 15 Child Services and 15 Model members in Collection order, the 12
+          explicitly written Actions in Database''s order with Database''s parameters, defaults, kinds and docstrings, exact forwarding of every argument for every Action of every Child, rejection of another
+          Entity''s instance before Database, results and errors equal to Database''s on real data, naming and placement of the Child units, no side effect on loading, and both documentation files with every
+          example running. Every observation held except one of my own heuristics (see notes).'
+        - 'Tested the observations themselves by injecting seven defects into the copy one at a time (arguments of one Action in the wrong order, a Child bound to the wrong Entity, an extra published name,
+          a missing bound-Entity check, a changed default, a dropped Instance argument, a republished copy of a Database group): each produced clear failing observations; the first run showed two of them only
+          as an aborted run, so the forwarding observation was made to record a failure instead, after which all seven are detected as failures and the unmutated copy passes.'
+        - 'Followed the Logic Setup steps from a clean state in the copy: the Database''s environment installs, its prepare script creates 15 tables and inserts 23 records, the Logic environment installs, the
+          Interface imports and the counts read through the Child Services are User 1, Currency 8, Asset 4, Position 0.'
+        - 'Regenerated Base, the 15 Child units, the Entity Service Interface and the Logic Interface with a separately written generator: all files are byte-identical after formatting except Base, whose only
+          difference is where one signature breaks across lines (identical syntax tree).'
+        - 'Checked the real project state: the root ignore file ignores the Logic environment and both cache kinds, the Database file is byte-identical to its state before Develop, and nothing outside the Logic
+          Component, the root ignore file and the Config records is modified.'
+        notes_about_the_review:
+        - My pattern for credential-like literals still matches the documentation value 'placeholder' for a User's password and api_key in one example; it is an obvious dummy value (the Model documentation
+          uses the same), so it is reported here and not recorded as a Finding.
+        - Zero-difference regeneration of the documentation cannot be observed because no generator exists for it; it is established for the source by the independent regeneration, and for the documentation
+          by every example running unchanged.
+        - The Interface contract versions in the Logic and Entity Service Preferences have no counterpart in the generated source, so they were not observable and are not a Finding.
+        outcome: satisfied
+        outcome_basis: No Finding was raised; every Task acceptance and every observation of the Logic and Entity Service Review categories is established by an observation made in this Review; technical and
+          repeatable conformance holds.
+        acceptance_established:
+        - tasks:
+          - P3-G1-T1
+          by: Clean install from the lock file with the sibling Components, import of both Interfaces through the declared dependencies, concrete versions for every locked package, ignore coverage checked against
+            the root ignore file, and the Setup steps followed end to end.
+        - tasks:
+          - P3-G2-T1
+          by: One Database object per Base that stays the same across Actions, no connection or file on loading, and no Entity bound until a Child binds one.
+        - tasks:
+          - P3-G2-T2
+          - P3-G2-T3
+          - P3-G2-T4
+          - P3-G2-T5
+          - P3-G2-T6
+          by: Parameter-for-parameter comparison with Database, exact forwarding of every argument of all 12 Actions of all 15 Child Services, results and errors compared with Database's on real data, rejection
+            of another Entity's instance before Database, and the Action set equal to the Entity Operations with no Command or Setup Action; the same observations detect injected defects.
+        - tasks:
+          - P3-G3-T1
+          - P3-G3-T2
+          - P3-G3-T3
+          - P3-G3-T4
+          - P3-G3-T5
+          - P3-G3-T6
+          - P3-G3-T7
+          - P3-G3-T8
+          - P3-G3-T9
+          - P3-G3-T10
+          - P3-G3-T11
+          - P3-G3-T12
+          - P3-G3-T13
+          - P3-G3-T14
+          - P3-G3-T15
+          by: 'Each Child unit parsed and imported: inherits Base directly, binds exactly its Entity, holds nothing else, available under the Entity''s name, count equal to Database''s, instance of another
+            Entity rejected.'
+        - tasks:
+          - P3-G4-T1
+          - P3-G4-T2
+          - P3-G4-T3
+          - P3-G4-T4
+          by: Exact published names, group members equal to the Collection in order, identity of every Model and Database object, nothing else reachable, no side effect on loading, and a regenerated Interface
+            following an extended Collection without a structure change.
+        - tasks:
+          - P3-G5-T1
+          by: Exact published list and object identity of the Logic Interface, no Service importing it, no connection or file on loading.
+        - tasks:
+          - P3-G6-T1
+          - P3-G6-T2
+          by: Section order, an example for every Action, group and member, all examples run, no Base or Database Interface, Setup or Result group described as available, no private member used, and the Verify
+            script passing.
+        - tasks:
+          - P3-G7-T1
+          - P3-G7-T2
+          by: Section order, exact published names, working links, the Setup steps installing and preparing from the repository alone, the Use and Verify examples running, and the Troubleshooting entries reproduced
+            in Review 013 and unchanged since.
+        - tasks:
+          - P3-G8-T1
+          by: Formatter, linter and type checker, lock consistency, dependency equality and all documentation examples running on a fresh copy.
+        review_category_observations:
+        - 'Logic Interface publishes exactly one entry for every Service listed in Logic Preferences, under its configured name, and nothing else: held'
+        - 'Every entry is the identical Interface object of its Service: held'
+        - 'No Service other than Entity Service imports Database Interface: held'
+        - 'No Service imports Logic Interface: held'
+        - 'No two Services share a name or directory: held'
+        - 'Entity Service Interface publishes exactly Service, Model and Database''s Value, Instance and Error groups, and nothing else: held'
+        - 'Every object in Model and every republished group is the identical object its source Interface publishes: held'
+        - 'Base has exactly one Action for every Entity Operation of Database''s Interface group, in Database''s order, each written out as its own method: held'
+        - 'Each Action has its Operation''s parameter names, order and defaults, without the Entity class parameter: held'
+        - 'Each Action returns its Operation''s result and raises its errors unchanged, and rejects an instance of another Entity with the Invalid Input error: held'
+        - 'Every Action uses the one Database object Base holds, and adds no validation, retry or Instance selection of its own: held'
+        - 'Every Child Service unit and structure name follows the configured patterns, and every name is valid and unique: held'
+        - 'Every Child Service binds exactly its own Entity, inherits Base, and sits in its own unit directly in the Entity Service directory: held'
+        - 'Loading the Interface opens no connection and creates no data or file: held'
+    - id: "015"
+      skill: "my-interface-implement"
+      phase: null
+      event: "implement"
+      outcome: "completed"
+      started_at: "2026-10-09T19:13:08Z"
+      completed_at: "2026-10-09T19:39:58Z"
+      duration: "26:50"
+      skills_used: []
+      open_questions: ["017-Q1", "018-Q1"]
+      blockers: []
+      report: "Implemented the requested phase selection 4 (P4, API): Config was valid, so Configure was not needed; Plan (016) produced 11 Groups and 37 Tasks, Develop (017) completed all 37, and Review (018) raised no Finding and judged the phase satisfied. Aggregate Open Questions: 2 (017-Q1 on building an Entity with a stored identity, 018-Q1 on concurrent writes in the Database engine); Blockers: 0."
+      data:
+        phases: ["P4"]
+        configure_invoked: false
+        operations:
+          - skill: "my-interface-plan"
+            log_entry: "016"
+            phase: "P4"
+            outcome: "completed"
+          - skill: "my-interface-develop"
+            log_entry: "017"
+            phase: "P4"
+            outcome: "completed"
+          - skill: "my-interface-review"
+            log_entry: "018"
+            phase: "P4"
+            outcome: "satisfied"
+        open_question_count: 2
+        blocker_count: 0
+    - id: "016"
+      skill: "my-interface-plan"
+      parent_id: "015"
+      phase: "P4"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-10-09T19:13:25Z"
+      completed_at: "2026-10-09T19:16:09Z"
+      duration: "2:44"
+      skills_used: []
+      open_questions: []
+      blockers: []
+      report: "Planned phase P4 (API) from the current Interface, Target, API Definition and Preferences, Entity Group Definition and Preferences and the API Configuration structure: 11 Groups and 37 new Tasks, all todo. No earlier P4 Plan existed, so nothing was preserved, replaced or removed; P1, P2 and P3 are unchanged. The total task count was recalculated."
+      data:
+        phase: "P4"
+        additions:
+          - "Plan P4 with 11 Groups and 37 Tasks: Application Package (1), Runtime Configuration (2), Application Boundary (3), Parameter Conversion (4), Error Mapping (1), Entity Adapters (15, one per Entity Child Service), Group Registration (2), Interactive Documentation (1), Entity Group Documentation (5), API Documentation (2), Quality Standards (1)."
+        changes:
+          - "Top-level task_count recalculated from 89 to 126 (P1 26 + P2 31 + P3 32 + P4 37)."
+        removals: []
+        replacements: []
+        preservations:
+          - "P1, P2 and P3 Plans, Tasks, statuses and Task Logs left unchanged."
+        dependencies_on_other_phases:
+          - "P3-G5-T1 (Logic Interface publication), P3-G4-T2 and P3-G4-T3 (Entity Service Model and Database groups)."
+        notes:
+          - "Task Skills: the provider Skill fastapi is recorded for every Task that realizes the API on the selected server package; the other Tasks name none."
+    - id: "017"
+      skill: "my-interface-develop"
+      parent_id: "015"
+      phase: "P4"
+      event: "develop"
+      outcome: "completed"
+      started_at: "2026-10-09T19:17:20Z"
+      completed_at: "2026-10-09T19:32:15Z"
+      duration: "14:55"
+      skills_used:
+        - name: "fastapi"
+          report: "Read the provider Skill and applied it: Annotated parameter declarations, plain def route functions, one router per Adapter with its prefix and tag, the application subclass for the published schema, no ellipsis defaults and no RootModel."
+      open_questions: ["017-Q1"]
+      blockers: []
+      decisions: ["P4-G1-T1", "P4-G2-T1", "P4-G3-T1", "P4-G4-T1", "P4-G4-T3", "P4-G4-T4", "P4-G5-T1", "P4-G6-T1", "P4-G7-T1", "P4-G7-T2", "P4-G8-T1", "P4-G9-T2", "P4-G9-T3", "P4-G11-T1"]
+      report: "Developed all 37 Tasks of phase P4 (API), each claimed, produced and recorded as done in its Task Log: the API application package, the generated runtime Configuration with its URL Key, Bootstrap (composition, cross-origin access, serving), the shared Parameter conversion and Problem Details mapping, 15 standalone Entity Adapters with 180 Endpoints, Group assembly and registration, the sectioned interactive documentation, the Entity Group and API documentation, and the quality standards. Everything was written inside the API Component plus the API entries in the project's single ignore file. One Open Question is recorded. Conformance is left to Review."
+      data:
+        phase: "P4"
+        tasks_completed: 37
+        tasks_blocked: 0
+        component: "API"
+        open_question_details:
+          - id: "017-Q1"
+            task: "P4-G4-T3"
+            question: "The Model offers no public way to build an Entity that carries a stored identity from JSON, and the update Endpoint needs one. The API validates every other Field through the Entity's JSON construction and then builds the instance with its identity through pydantic's model_construct. Should Model publish a supported construction for an Entity with a stored identity (or should update take the identity separately)?"
+            current_choice: "model_construct after validation, in the API's conversion unit"
+        notes:
+          - "The generation scripts for the Adapters, the Configuration and the documentation tables live outside the project, like those of the earlier phases."
+          - "The documentation examples were run against a server started from a scratch copy; the Database file in the project was not changed (compared byte for byte with its earlier state)."
+          - "The root ignore file's earlier Python entries are commented out, so a scoped API section was added and no existing entry changed."
+    - id: 018
+      skill: my-interface-review
+      parent_id: '015'
+      phase: P4
+      event: review
+      outcome: satisfied
+      started_at: '2026-10-09T19:32:50Z'
+      completed_at: '2026-10-09T19:39:07Z'
+      duration: '6:17'
+      skills_used: []
+      open_questions:
+      - 018-Q1
+      blockers: []
+      report: 'Reviewed phase P4 (API) against its Plan and the Review categories of API and Entity Group with independent observations on a fresh copy of the four Components installed from the lock files:
+        structure and identities derived afresh from Logic''s Actions and the verb table, every Handler of every Adapter observed with spies, the error table, the Configuration, the interactive documentation,
+        live HTTP against a started API, an independent regeneration of the Adapters, and every documentation example. No Finding was raised; the outcome is satisfied. One Open Question is recorded about concurrent
+        writes, which originate in the Database engine and fall outside the Plan.'
+      data:
+        phase: P4
+        scope: Plan P4 (11 Groups, 37 Tasks) and the Review categories of the API Component and of Entity Group, judged against the generated API Component.
+        findings: []
+        open_question_details:
+        - id: 018-Q1
+          question: 'Concurrent writers fail: with 12 threads each adding and then deleting a record, 29 to 34 of 40 deletes (and later calls) fail with ConnectionFailureError ''The SQLite database could not
+            be opened'', which the API correctly sends as 503. The same failure reproduces through Logic alone, with or without a Child Service shared between threads, so it comes from how the Database SQLite
+            engine meets SQLite''s writer lock (an immediate ''locked'' result mapped to that error), not from the API. 300 concurrent reads over two workers all succeed. Plan P4 sets no concurrency criterion,
+            so this is not a Finding. Should Database make concurrent writes reliable (wait or serialize), given that the API serves requests concurrently with several workers?'
+          current_choice: No change; the API forwards Database's error unchanged as the Preferences require.
+        observations_made:
+        - Read the current Source of the API (Bootstrap, conversion, error mapping, an Adapter, package declaration) and the Entity Group and API documentation; the real Component equals the reviewed copy file
+          for file, holds no cache folder, compiled file or ignore file of its own, and the real Database file is byte-identical to its state before Develop.
+        - 'Installed API, Logic, Database and Model in a fresh scratch copy from the lock files: formatter, linter and type checker report nothing, the lock file is consistent, the package imports with warnings
+          treated as errors, compiles, and the wheel builds with the console entry and plain-name dependencies; the direct imports (fastapi, logic, pydantic, pyyaml, uvicorn) equal the declared dependencies
+          and every locked package has a concrete version.'
+        - 'Derived the expected Endpoints afresh from the 12 Actions of each of the 15 Child Services and the verb table: 180 Endpoints with the table''s Method (POST when unlisted or when a Parameter cannot
+          travel in a query), Path with or without the id, Parameter placement and requirements; the published schema equals that set exactly, nothing is served outside the key and the Group segment, the Adapter
+          segments follow the Collection order, and every Endpoint answers at its address (probed so conversion refuses the request before any Handler runs).'
+        - 'Replaced the Child Service of every Adapter with a recording stand-in and called all 12 Endpoints of all 15 Adapters with every Parameter in its transport form: every Handler made exactly one call
+          of its Action with the arguments in the Action''s order, an Entity built from the object (with its identity for update), Filters, Orders, combination, Field attribute, Instance member and ids converted,
+          decimal text decoded to exact decimals, and the stand-in''s answer returned unchanged (an Entity, a list, a number, null); nine kinds of invalid Parameter were refused with 422 Problem Details before
+          any Handler was called.'
+        - 'Error table through a real Endpoint with a stand-in raising each error: invalid input 422, inactive instance and connection failure 503, execution, declaration mismatch and configuration 500, and
+          an unlisted Database error, a ValueError and a KeyError 500, each as application/problem+json with the class name as type and a matching status; an unexpected error leaks no internal message.'
+        - 'Configuration: exactly the nine values of the structure in its order, defaults as the Preferences give, a 32-character URL-safe key, the Base URL and documentation addresses derived from the other
+          values; with the key emptied in a scratch copy the same 180 paths are served without a key segment and the keyed path answers 404; Bootstrap opened no yaml or markdown file other than config.yaml
+          while loading and serving, and no source refers to a Definition or Preferences file.'
+        - 'Interactive documentation: swagger and redoc answer at their configured addresses and nowhere else; the schema lists exactly the 180 served Endpoints; 15 sections in Collection order each hold exactly
+          one Adapter''s 12 Endpoints; one tag group holds them. Documentation tables: 180 table rows equal the served Method and Path pairs and their Parameter columns equal the published Parameters.'
+        - 'Live over HTTP against a started API: two worker processes on the configured address; all 12 operators, AND and OR, orders, limits (including zero and negative), exact decimal and float Filter values,
+          sum, min, max and count equal an independent Python oracle over the stored rows; the add, update, disable, enable and delete life cycle left the table as it was; a duplicate add, a referenced delete
+          and a truncate of a referenced table were refused by the source''s errors; an update of a missing record answered null; an unreadable body answered 422 Problem Details; a cross-origin preflight was
+          allowed without credentials; 300 concurrent mixed reads all answered 200.'
+        - 'Source of the Adapters: every unit has exactly 12 route functions, no class, loop, comprehension or dynamic call, imports no other Adapter, and each Handler is a single call of its Action with its
+          own parameters; no unit of the application imports anything of the application except the Logic Interface. An independently written generator rebuilt all 15 Adapters byte for byte after formatting.'
+        - 'Followed the Setup steps from an empty database in the copy: the Database environment installs, its prepare script creates 15 tables and inserts 23 records, the API starts with its script, and a
+          request answers; every Troubleshooting entry of the API documentation was reproduced in Develop and the unprepared-database and bare-address answers again here; all 19 examples of the Entity Group
+          documentation and the request, Use and Verify examples of the API documentation ran as separate processes against the started API.'
+        - 'Tested the observations themselves by injecting ten defects one at a time (a Parameter in the wrong place, arguments in the wrong order, an Adapter importing Database, a changed status, a missing
+          Adapter, a lost order direction, a wrong derived URL, an Endpoint of the application''s own, a Handler with extra behaviour, the stray OAuth redirect route): every one was detected with clear failing
+          observations; the unmutated copy passes all of them.'
+        notes_about_the_review:
+        - A UTC datetime is written on the wire as ...Z where the Model's own JSON text writes +00:00; the instant is the same and the Model's JSON construction rebuilds an equal Entity from the wire form,
+          so the acceptance (values survive the round trip) holds. Develop's Task Log for P4-G4-T4 says every wire value is textually equal to the Model's JSON; that was observed with a +03:30 offset and does
+          not hold for UTC, which is reported here rather than recorded as a Finding.
+        - The JSON object of an Entity lists the Fields in the stored Field order (identity last) rather than the Model's declaration order; no criterion of the Plan or the Definitions asks for the order.
+        - 'The clause of P4-G7-T1 that an invalid or colliding identity stops generation with a clear error concerns the act of generating and leaves no artifact: its condition never arose, and what can be
+          observed (all Group, Adapter and Method-and-Path identities valid and unique, nothing renamed) holds, so the clause is reported as not observable and not recorded as a Finding.'
+        - The Directory Structure of the API Definition lists only Bootstrap and the Groups; the shared parameter conversion and error mapping that the Definition requires of API live in two further units at
+          the package root. The Definition names no other place for them (Bootstrap imports the Adapters, which use them), and no Review observation concerns the tree, so this is reported here only.
+        - Zero-difference regeneration is established for the Adapters by the independent generator and for the Configuration by the derivation checks; Bootstrap, the shared units and the documentation have
+          no generator, and the documentation is established by every example running and its tables equalling the published schema.
+        - The Starlette test client prints a deprecation notice about its HTTP client when the observations import it; it comes from the test tooling and not from the Component's source.
+        - My own observation of Develop-time request building printed the URL key in a scratch output; the key is a path segment and is not recorded here.
+        outcome: satisfied
+        outcome_basis: No Finding was raised; every Task acceptance and every observation of the API and Entity Group Review categories is established by an observation made in this Review; technical and repeatable
+          conformance holds.
+        acceptance_established:
+        - tasks:
+          - P4-G1-T1
+          by: Clean install from the lock files with the sibling Components, Logic Interface imported through the declared dependency, only Logic declared among the project's Components, concrete locked versions,
+            ignore coverage checked against the root ignore file.
+        - tasks:
+          - P4-G2-T1
+          - P4-G2-T2
+          by: The nine Configuration values, their defaults, derived addresses and validity rules; a 32-character URL-safe key that is the first path segment; the key-off Base URL observed in a scratch copy;
+            Develop's regeneration check that the key is kept (byte-identical file) and its key-off generation.
+        - tasks:
+          - P4-G3-T1
+          - P4-G3-T2
+          - P4-G3-T3
+          by: Title and values from the Configuration, no route of the application's own, no Definition or Preferences file opened, cross-origin preflight and ordinary requests, and a really started API on
+            the configured address with the configured worker count.
+        - tasks:
+          - P4-G4-T1
+          - P4-G4-T2
+          - P4-G4-T3
+          - P4-G4-T4
+          by: Spies on all 15 Adapters showing Filters, Orders, combination, Field, Instance and Entity (with identity) converted before the Handler, nine refusal kinds stopped before any call, live operator
+            and aggregate results against an oracle, and results returned as JSON that rebuilds equal Entities.
+        - tasks:
+          - P4-G5-T1
+          by: The error table through a real Endpoint for ten error kinds, Problem Details media type, class name as type, neutral detail for unexpected errors, and unaffected successful results.
+        - tasks:
+          - P4-G6-T1
+          - P4-G6-T2
+          - P4-G6-T3
+          - P4-G6-T4
+          - P4-G6-T5
+          - P4-G6-T6
+          - P4-G6-T7
+          - P4-G6-T8
+          - P4-G6-T9
+          - P4-G6-T10
+          - P4-G6-T11
+          - P4-G6-T12
+          - P4-G6-T13
+          - P4-G6-T14
+          - P4-G6-T15
+          by: 'For each Adapter: exactly the 12 expected Endpoints with verb-table Method, Path, placement and requirements, single-call Handlers, standalone source, answers equal to its Child Service, another
+            Entity''s object refused, byte-identical independent regeneration.'
+        - tasks:
+          - P4-G7-T1
+          - P4-G7-T2
+          by: Fifteen distinct Adapter segments in Collection order with 180 distinct Method-and-Path pairs; every Endpoint served at the Base URL, Group segment, Adapter segment and path and not without the
+            key, with a wrong key, without the Group segment or in upper case; nothing of the application's own served (the collision-stops-generation clause is reported as not observable).
+        - tasks:
+          - P4-G8-T1
+          by: Swagger and redoc at their configured addresses only, a schema equal to the served Endpoints, 15 Adapter sections of 12 Endpoints each and one Group tag group.
+        - tasks:
+          - P4-G9-T1
+          - P4-G9-T2
+          - P4-G9-T3
+          - P4-G9-T4
+          - P4-G9-T5
+          by: Section order, a single-paragraph Overview with a working request, 180 table rows equal to the served Endpoints and Parameters, 15 walkthrough examples that ran against the started API, and working
+            Use and Verify examples.
+        - tasks:
+          - P4-G10-T1
+          - P4-G10-T2
+          by: Section order, a Configuration table covering all nine values and the Base URL formation, a Groups table with a working link and no copied Endpoints, the Setup steps followed from an empty database,
+            the Use and Verify examples running, and the Troubleshooting entries reproduced.
+        - tasks:
+          - P4-G11-T1
+          by: Formatter, linter and type checker, lock consistency, direct imports equal declared dependencies, and all documentation examples running on a fresh copy.
+        review_category_observations:
+        - 'Every listed Group is registered exactly beneath the URL segment of its name, and nothing else is registered: held'
+        - 'Every Group segment, Adapter segment and Method-and-Path combination is unique: held'
+        - 'Every Group conforms to the Group contract: held'
+        - 'API serves no Endpoint of its own: held'
+        - 'Every Endpoint''s Method follows the verb table, or POST when its verb is unlisted, and its Path is /<operation>, or /<operation>/{id} when it takes an id: held'
+        - 'Every Parameter sits in Path, Query or Body as the placement rule requires: held'
+        - 'Every non-simple Parameter travels in the stated form and is converted before its Handler runs: held'
+        - 'Every returned error is RFC 9457 Problem Details with its class name as type and the status the error table sets: held'
+        - 'When the key setting is on, the Base URL carries a non-empty URL Key: held'
+        - 'When the package offers interactive documentation, it is served, lists every Endpoint, and has one section per Group and per Adapter: held'
+        - 'The runtime Configuration holds every value the API Configuration Structure defines and follows its rules: held'
+        - 'Bootstrap reads no Definition or Preferences file at runtime: held'
+        - 'Entity Group states its source, Adapters and Endpoints in the shape the Group contract defines: held'
+        - 'There is exactly one Adapter for every Entity that Entity Service presents, and nothing else: held'
+        - 'Every Adapter has exactly one Endpoint for every Action of its Child Service, and nothing else, each written out explicitly in that Adapter with no shared base or generated route: held'
+        - 'Every Endpoint''s Parameters keep the Action''s names, requirements and defaults: held'
+        - 'Every Handler calls only its Action through Logic Interface and returns its result and errors unchanged: held'
+        - 'Entity Group imports nothing but Logic Interface for the application: held'
