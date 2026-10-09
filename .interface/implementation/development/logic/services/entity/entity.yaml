@@ -72,6 +72,7 @@ content:
       options:
         python:
           identifier_case: "snake_case"
+          interface_file: "The Interface is the interface file at the Entity Service directory (logic/services/entity/interface.py); every __init__.py stays empty and publishes nothing."
           structure: "One class BaseEntity in the base file"
           constructor: "__init__ creates one database_interface() and keeps it on the instance"
           methods: "One method per database_interface method whose first parameter is entity, in the order Database Interface publishes them, with the method's exact name and docstring. An entity parameter typed as a class is removed and the bound Entity is passed in its place; an entity parameter typed as an instance stays and is checked against the bound Entity, raising InvalidInputError on a mismatch. Every other argument is passed unchanged, in order."

@@ -282,6 +282,7 @@ content:
             agent_avoid:
               - "Never declare or subclass a table class inside Database; Tables come only from the Model Entities."
           table_creation: "Core Tables creates exactly the Tables of the Model Entity Collection's table models through their shared metadata (create_all restricted to those Tables). It writes no per-Entity code."
+          interface_file: "The Interface is the interface file at the package root (database/interface.py); every __init__.py stays empty and publishes nothing."
           value_shapes:
             executable_groups: "the interface and setup groups are plain classes named by their group name and created with no argument, such as database_interface() and database_setup()"
             namespace_groups: "the value, result, and error groups are namespace classes named by their group name; each holds its entities as class attributes under their own names, such as database_value.Filter and database_error.ConnectionFailureError"

@@ -71,7 +71,7 @@ Interface
 └── database_error
 ```
 
-The gateway callers import from: everything a caller needs to call Actions, build requests, read results, and catch errors without importing Model or Database. It publishes its own two groups, Service and Model, named in Entity Service Preferences, and three Database groups, and nothing else. Its Interface contract is these needs, with `contract_version` in Entity Service Preferences:
+The gateway callers import from, in its own `interface` file, the only file of Entity Service that publishes: everything a caller needs to call Actions, build requests, read results, and catch errors without importing Model or Database. It publishes its own two groups, Service and Model, named in Entity Service Preferences, and three Database groups, and nothing else. Its Interface contract is these needs, with `contract_version` in Entity Service Preferences:
 
 1. **Service** — exactly one Child Service for every Entity in Model's Entity Collection, changing when the Collection changes.
 2. **Model** — the Entity every Child Service binds, under the same name as its Child Service, as the original object Model Interface publishes, never a copy, so no caller has to reach Model directly.

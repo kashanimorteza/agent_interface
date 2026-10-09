@@ -237,7 +237,7 @@ Interface
 └── Entity Collection
 ```
 
-The package-root entrypoint through which every Entity is published. It always publishes both forms, and nothing else:
+The entrypoint through which every Entity is published. It always publishes both forms, and nothing else. Interface lives in its own `interface` file, the only file that publishes; the package's own initialiser, where the language has one, publishes nothing. Its two forms:
 
 - **Entity Export** — every Entity on its own, by its own name, for a consumer that works with one specific Entity.
 - **Entity Collection** — every Entity together, once each, in Target order, for a consumer that works with all Entities without knowing their names.

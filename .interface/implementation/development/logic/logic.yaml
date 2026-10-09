@@ -68,4 +68,5 @@ content:
       options:
         python:
           identifier_case: "snake_case"
+          interface_file: "The Interface is the interface file at the package root (logic/interface.py); every __init__.py stays empty and publishes nothing."
           interface: "For every listed Service, `from logic.services.<directory> import interface as <Name>`, then `__all__` with every Name. The interface file holds nothing else and performs no check, because conformance belongs to Review."

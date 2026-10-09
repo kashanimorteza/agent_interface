@@ -201,7 +201,7 @@ Interface
 └── Error
 ```
 
-The only public entry point, in the shape of the Interface contract. It publishes exactly six groups, declared in the Interface entity of `architecture` in Database Preferences, and nothing else. Each group is named by the prefix set there, an underscore, and its key, such as `database_error`. A consumer imports a group and uses the members inside it; no member is published on its own:
+The only public entry point, in the shape of the Interface contract. Interface lives in its own `interface` file, the only file that publishes; the package's own initialiser, where the language has one, publishes nothing. It publishes exactly six groups, declared in the Interface entity of `architecture` in Database Preferences, and nothing else. Each group is named by the prefix set there, an underscore, and its key, such as `database_error`. A consumer imports a group and uses the members inside it; no member is published on its own:
 
 - **Interface** — the class a consumer creates once to call every Entity Operation and Command Operation, such as `database_interface`.
 - **Setup** — the class a consumer creates to call every Setup Operation, such as `database_setup`.

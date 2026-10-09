@@ -59,7 +59,7 @@ Every entity below is declared in `architecture` in Logic Preferences, which als
 <!-------------------------- Interface -->
 ### Interface
 
-Logic's outward surface: one entry for every Service, under that Service's name. Its Interface contract is these needs, with `contract_version` in Logic Preferences:
+Logic's outward surface: one entry for every Service, under that Service's name. Interface lives in its own `interface` file, the only file that publishes; the package's own initialiser, where the language has one, publishes nothing. Its Interface contract is these needs, with `contract_version` in Logic Preferences:
 
 1. **Complete** — exactly one entry for every Service listed in Logic Preferences, under that Service's configured name, changing when the list changes; each Service's name and Interface location come from that Service's own Preferences.
 2. **Unchanged** — each entry is that Service's own Interface, the identical object, never a copy, wrapper, or added Action.

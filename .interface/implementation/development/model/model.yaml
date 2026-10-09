@@ -88,6 +88,7 @@ content:
       selected: python
       options:
         python:
+          interface_file: "The Interface is the interface file at the package root (model/interface.py); every __init__.py stays empty and publishes nothing."
           naming:
             entity: PascalCase
             fields: snake_case
