@@ -23,3 +23,8 @@
 # .pytest_cache/
 # .ruff_cache/
 
+# Components
+.venv/
+__pycache__/
+.ruff_cache/
+database/db/

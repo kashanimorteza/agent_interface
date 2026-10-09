@@ -168,6 +168,16 @@ Every Principle below is mandatory.
 
 <br>
 
+### The project has one ignore file
+
+**Rule:** The project root holds the only version-control ignore file. No Component or package creates an ignore file of its own; when a Component needs a path ignored, generation adds that entry to the root file, scoped to the Component's directory where it applies only there, and never adds an entry that is already present.
+
+**Why:** One ignore file shows in one place everything the repository leaves out, so no Component's rule hides or contradicts another's.
+
+**Boundary:** Generation only adds the entries a Component needs; it never removes or rewrites an existing entry of the root file.
+
+<br>
+
 ### Unstated shared decisions follow one precedence order
 
 **Rule:** Resolve every unstated choice in this order: explicit Component Preference, Development Default, then the executor's own proposal. The executor never stops or asks for an unstated choice: it proceeds with its own proposal and records the decision.
@@ -212,6 +222,11 @@ Every obligation in the file, under the Principle it comes from.
 
 - **Must** — Realize every Connection as a local path dependency within the repository.
 - **Never** — Publish or install a Component package outside the project.
+
+**The project has one ignore file**
+
+- **Must** — Add every needed ignore entry to the root ignore file, once.
+- **Never** — Create an ignore file inside a Component or package, or remove an existing root entry.
 
 **Unstated shared decisions follow one precedence order**
 
