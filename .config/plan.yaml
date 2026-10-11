@@ -26,7 +26,7 @@ content_map:
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
-  task_count: 174
+  task_count: 185
   plans:
     P1:
       id: P1
@@ -4436,11 +4436,11 @@ content:
       title: Presentation
       order: 5
       target: Presentation
-      does: The Presentation executable exists as a separate project-internal application that presents every Group the API serves as an Area with one Section for every Adapter, reaching the API only through
-        API Access and drawing every visual decision from one Theme, and is documented.
+      does: The Presentation executable exists as a separate project-internal application that presents every Group the API serves as an Area with one Section for every Adapter, each Section built from the Entities
+        and Field Declarations Model publishes, reaching the API only through API Access and drawing every visual decision from one Theme, and is documented.
       constraints:
       - A Section becomes reachable only through the Area assembly work of this phase; no Section work makes itself reachable.
-      task_count: 48
+      task_count: 59
       groups:
         P5-G1:
           id: P5-G1
@@ -4449,7 +4449,7 @@ content:
           area: Presentation application packaging and dependency resolution
           does: The Presentation application can be installed and started as a project-internal application with its dependency versions resolved and locked.
           constraints: []
-          task_count: 1
+          task_count: 2
           tasks:
             P5-G1-T1:
               id: P5-G1-T1
@@ -4488,6 +4488,31 @@ content:
               - at: '2026-10-11T13:52:59Z'
                 event: done
                 note: "Created the Presentation Component (presentation/): package declaration and lock file (next, react, react-dom; dev: typescript, types, eslint, eslint-config-next, prettier, openapi-typescript), framework, type, lint and format configuration, an environment example, the framework route directory with only a root layout and an empty root page, and the five layer directories under presentation/presentation. Added a scoped Presentation section (node_modules, build output, generated framework types, build info, local environment file) to the root ignore file. Observed: type check, lint and format check report nothing; in a clean copy without node_modules, npm ci installed from the lock file alone, next build succeeded and next start answered 200 on the root with no Area; git reports node_modules, next-env.d.ts and the build info as ignored. npm audit reports no vulnerability in production dependencies; its 5 findings concern a transitive package of the lint configuration (braces) and were left as locked."
+            P5-G1-T2:
+              id: P5-G1-T2
+              source_id: '024'
+              title: Align the Presentation application identity with its Preferences
+              description: Make the Presentation application carry the package identity that Presentation Preferences currently select, in every place the application states its own identity, and keep installation,
+                dependency lock metadata and starting working under that identity.
+              reason: The selected package identity changed after the application package was established, and the application must carry the identity its Preferences select.
+              inputs:
+              - Presentation Component identity
+              - Established Presentation application package
+              skills: []
+              expected_result: A Presentation application whose identity equals the selected package identity.
+              depends_on:
+              - P5-G1-T1
+              constraints: []
+              acceptance: The application states exactly the package identity the Preferences select and no earlier identity; it installs from the repository alone into an isolated environment from its lock metadata
+                and starts without error; nothing it already presents has changed.
+              status: done
+              log:
+              - at: '2026-10-11T16:56:25Z'
+                event: claimed
+                note: "Claimed before changing its result."
+              - at: '2026-10-11T16:57:42Z'
+                event: done
+                note: "Changed the application's own name in the package declaration and in the lock metadata (both places that state it) from the earlier identity to 'presentation', the package setting of the Presentation Preferences; no other file stated the earlier identity and no dependency changed. Observed in a clean copy without node_modules and local settings: npm ci installed from the lock file alone, the type check reported nothing, next build succeeded and next start answered 200 on the root; what the application presents is unchanged."
         P5-G2:
           id: P5-G2
           title: API Access
@@ -4496,7 +4521,7 @@ content:
           area: 'API Access: the Presentation-side client boundary'
           does: Interaction Logic can call every Endpoint the API serves and receive its result or error as the API gives it, without knowing how it travels.
           constraints: []
-          task_count: 7
+          task_count: 8
           tasks:
             P5-G2-T1:
               id: P5-G2-T1
@@ -4704,6 +4729,93 @@ content:
               - at: '2026-10-11T13:59:54Z'
                 event: done
                 note: "Added the calls to API Access: one function per Endpoint under Group, Adapter and Endpoint name (180: 15 Adapters of 12 Endpoints), the context provider with its hook, the server-side setting loader and the API Access public surface; wired the provider into the root layout. Observed against a running API: 180 of 180 table entries have a call and nothing else exists; count of every Adapter, a filtered, ordered and limited list, get by id, a missing record (null result) and an invalid Field (failure) answer as the same request sent directly; compile-time probes accept the documented argument forms and refuse a missing required Parameter, an unknown Parameter, Endpoint or Adapter, and a string id; the production build is dynamic and started both with a valid setting and with the setting unset (the provider then holds the reason); type check, lint and format check report nothing."
+            P5-G2-T8:
+              id: P5-G2-T8
+              source_id: '024'
+              title: Provide the query vocabulary the API serves
+              description: 'Make the closed sets the API gives to listing, counting and aggregating available to Interaction Logic: the operators a Filter may use, the ways Filters combine, and the directions an Order
+                may take. They are drawn from what the API publishes, its machine-readable description where that defines them and otherwise the API''s own public documentation, and are never invented.'
+              reason: A user may only choose Filters and Orders that the API accepts, and the Fields Model declares do not state them.
+              inputs:
+              - Typed client representations
+              - The API's published contract and public documentation
+              skills: []
+              expected_result: The Filter operators, combinations and Order directions the API serves, available to Interaction Logic.
+              depends_on:
+              - P5-G2-T2
+              - P4-G8-T1
+              - P4-G9-T2
+              constraints: []
+              acceptance: The operators, combinations and directions offered are exactly those the API publishes and no others; each is sent to the API in the form the contract gives; after the API's published contract
+                changes, regenerating changes what is offered with no hand edit.
+              status: done
+              log:
+              - at: '2026-10-11T16:59:45Z'
+                event: claimed
+                note: "Claimed before changing its result."
+              - at: '2026-10-11T17:03:30Z'
+                event: decision
+                note: "The API's machine-readable description types the operators, combinations and directions as plain strings and its Preferences name no place for them, so on Develop's own proposal they are read from the API's public documentation of its Entity Group (the sentence naming the operators, the Filter row stating which take no value or a list, the Order row and the combination row) by the same generator that reads the machine-readable description, and written as one generated file; a form of the documentation the generator cannot read fails the whole generation with a message naming what is missing, and writes nothing. Operators are not tied to Field kinds because the documentation states none, so none is invented."
+              - at: '2026-10-11T17:03:30Z'
+                event: done
+                note: "Extended the API generator to also read the vocabulary from the API's public documentation and write it as a generated file; API Access publishes it as one typed value (12 operator names with whether each takes no value, one value or a list, two combinations, two directions), no Component hand-lists any of it. Observed: regenerating against a running API copy left the three generated files byte-identical; the 12 operators, both directions and both combinations were each accepted by the API, and an invented operator, direction and combination were each refused with 422; with the documentation edited (one operator added, directions renamed) the generated file changed in exactly those places with no hand edit; with the operator sentence made unreadable the generation stopped with a clear message and the previous file was unchanged. Type check, lint and format check report nothing. The generator needs a Node runtime able to run TypeScript; the installed one cannot, so a transient runner outside the project was used for this run."
+        P5-G10:
+          id: P5-G10
+          title: Entity Declarations
+          description: The knowledge of which Entities exist and what each of their Fields is, taken from Model when Presentation is generated and consumed by the Components, flows and Sections that need it.
+          area: 'Entity and Field knowledge: the Entities and Field Declarations drawn from Model'
+          does: Every Entity of Model and every Field of each is described to Presentation exactly as Model declares it, and none is listed by hand.
+          constraints: []
+          task_count: 2
+          tasks:
+            P5-G10-T1:
+              id: P5-G10-T1
+              source_id: '024'
+              title: Provide the Entities Presentation presents, drawn from Model
+              description: Make the set of Entities available to Presentation, each with its name and description and in the order Model's Entity Collection gives, by reading Model's published Interface when Presentation
+                is generated, so that one Section exists for every Entity and an Entity added to or removed from Model adds or removes its Section.
+              reason: The Sections of the Entity Area follow the Entities Model owns, and Presentation must not keep a second hand-written list of them.
+              inputs:
+              - Model's Entity Collection
+              - Established Presentation application package
+              skills: []
+              expected_result: The ordered set of Entities, with names and descriptions, drawn from Model.
+              depends_on:
+              - P5-G1-T1
+              - P1-G8-T1
+              constraints: []
+              acceptance: The Entities provided are exactly the Entities in Model's Entity Collection, in the same order, each with the name and description Model declares; after Model's Entity Collection changes,
+                regenerating changes the set with no hand edit; the running Presentation neither loads nor consults Model.
+              status: blocked
+              blocker: 025-B1
+              log:
+              - at: '2026-10-11T17:18:21Z'
+                event: claimed
+                note: "Claimed before changing its result."
+              - at: '2026-10-11T17:18:21Z'
+                event: blocked
+                note: "Blocked on 025-B1. The Task requires Presentation to read the Entities from Model's published Interface when it is generated. The Presentation Definition states that Presentation consumes Model, but Development requires every cross-Component use to follow one declared direct Connection in the Development Preferences, and those declare only the Connections from Presentation to API, from API to Logic, from Logic to Database and Model, and from Database to Model; none runs from Presentation to Model, and public availability does not create an undeclared Connection. Reading Model without it would depart from a Development Principle, which Develop may not do, and the Connection can only be declared by the Human. The earlier reason for 021-B1 (the API contract does not describe Fields) no longer applies, because Fields now come from Model; this is its remaining reason. Independent work continued; the Tasks that depend on this one stay unstarted."
+            P5-G10-T2:
+              id: P5-G10-T2
+              source_id: '024'
+              title: Provide the Field descriptions of every Entity, drawn from Model
+              description: 'Make the description of every Entity''s Fields available to Interaction Logic and the Components, in the order of the Entity''s Declaration, by reading Model''s published Declarations
+                when Presentation is generated: for each Field its name, description, value kind, whether it is required, its default, whether it is sensitive, whether it is immutable, whether its value is generated,
+                and the Entity and Field it relates to when it has a Relation. The descriptions are never listed by hand.'
+              reason: Every form field, list column, Filter and Order must follow what Model declares, so that Presentation stays in step with Model without a second hand-written copy.
+              inputs:
+              - Model's Entity Declarations
+              - The Entities Presentation presents
+              skills: []
+              replaces: P5-G2-T3
+              expected_result: A description of every Field of every Entity as its Declaration states it.
+              depends_on:
+              - P5-G10-T1
+              - P1-G8-T1
+              constraints: []
+              acceptance: For every Entity each Field its Declaration lists is described, in Declaration order, with the name, description, kind, requirement, default, sensitivity, immutability, value generation
+                and relation the Declaration gives, and no other Field is; after a Declaration changes, regenerating changes the descriptions with no hand edit.
+              status: todo
         P5-G3:
           id: P5-G3
           title: Theme
@@ -4800,7 +4912,7 @@ content:
           area: 'View Layer: reusable user-interface Components'
           does: Every interface concept a Section needs exists as one Component, so that no page defines its own.
           constraints: []
-          task_count: 9
+          task_count: 14
           tasks:
             P5-G4-T1:
               id: P5-G4-T1
@@ -5090,34 +5202,173 @@ content:
               - at: '2026-10-11T14:57:56Z'
                 event: done
                 note: "Added the aggregate panel Component and the Interaction Logic request types it reports in. A user can choose any operation given, a Field among those that operation takes, and Filters for operations that take them; the chosen operation and its arguments are reported to the owner on change and on calculate; a result handed to it is shown as one value (an empty result as No value). Observed in a DOM environment with 12 checks, including that an operation without Filters offers none and drops those built for another."
+            P5-G4-T10:
+              id: P5-G4-T10
+              source_id: '024'
+              title: Name and order every Field by its description
+              description: Make every Component that presents or asks about a Field, meaning the record table, the Filter editor, the order and limit controls, the Field inputs, the record form and the aggregate panel,
+                name that Field to the user by the Field description and offer Fields in the order given, instead of by its technical name.
+              reason: A Field must read to a user as Model describes it, and one Field must carry one label wherever it appears.
+              inputs:
+              - Field descriptions
+              - Record table
+              - Filter editor
+              - Order and limit controls
+              - Field inputs
+              - Record form
+              - Aggregate panel
+              skills:
+              - frontend-design:frontend-design
+              - example-skills:webapp-testing
+              expected_result: Every Field-facing Component labelling and ordering Fields by their descriptions and given order.
+              depends_on:
+              - P5-G10-T2
+              - P5-G4-T2
+              - P5-G4-T3
+              - P5-G4-T4
+              - P5-G4-T5
+              - P5-G4-T6
+              - P5-G4-T9
+              constraints: []
+              acceptance: Given Field descriptions, each of those Components names every Field by its description and offers Fields in the order given; the same Field carries the same label in all of them; no Field's
+                technical name is used as its label.
+              status: todo
+            P5-G4-T11:
+              id: P5-G4-T11
+              source_id: '024'
+              title: Provide the related record choice
+              description: Provide the Component with which a user chooses, for a Field that relates to another Entity, one record of that Entity from the records it is given, each presented so that it can be told
+                apart from the others, and which reports the chosen record value of the related Field.
+              reason: A related Field must be chosen from the records of the Entity it relates to and never typed as a bare value.
+              inputs:
+              - Field descriptions
+              - Records of the related Entity
+              - Theme values
+              skills:
+              - frontend-design:frontend-design
+              - example-skills:webapp-testing
+              expected_result: A related record choice Component.
+              depends_on:
+              - P5-G3-T1
+              - P5-G3-T2
+              - P5-G3-T3
+              - P5-G4-T5
+              constraints: []
+              acceptance: Given the records of a related Entity it offers exactly those records and no others; a user can choose one and, where the Field is optional, choose none or clear the choice; the value reported
+                is the value of the related Field of the chosen record; it uses only Theme values.
+              status: done
+              log:
+              - at: '2026-10-11T17:09:18Z'
+                event: claimed
+                note: "Claimed before changing its result."
+              - at: '2026-10-11T17:18:03Z'
+                event: decision
+                note: "The Task does not say how a record is made recognisable or what the choice is built from, so on Develop's own proposal: the choice is a native select of the records given, and the owner passes the text that tells a record apart instead of the Component showing a default, because any default would put the record's own values on screen, which could include a sensitive one. The choice reports through the same entry type as the Field input (value, empty, or absent), so the record form can use either uniformly, and its options are identified by position so that two records with the same text are still told apart."
+              - at: '2026-10-11T17:18:03Z'
+                event: done
+                note: "Added the related record choice Component (a record picker styled by composing the Field input styles, so it uses only Theme values and adds no raw values). Observed in a DOM environment with 14 checks: it offers exactly the records given after a Choose option and in the order given; choosing one of two records with identical text reports that record's id, and a right-to-left record is reported by its own id; the held entry is shown as chosen; Choose clears; an optional Field offers No value (absent, disables the choice, unchecking returns to empty) and a required Field does not; with no records only Choose is offered; an owner problem is shown beside it; automatic text direction. Type check, lint and format check report nothing."
+            P5-G4-T12:
+              id: P5-G4-T12
+              source_id: '024'
+              title: Provide the record details
+              description: Provide the Component that presents one record as its Fields, each named by its description and in the order given, with a value shown as the exact value the record holds and an absent value
+                shown distinctly, and that presents the state of there being no such record.
+              reason: Opening one record is an interface concept every Section shares, so it must be one Component wherever it appears.
+              inputs:
+              - Field descriptions
+              - Theme values
+              skills:
+              - frontend-design:frontend-design
+              - example-skills:webapp-testing
+              expected_result: A record details Component.
+              depends_on:
+              - P5-G3-T1
+              - P5-G3-T2
+              - P5-G3-T3
+              - P5-G10-T2
+              - P5-G4-T8
+              constraints: []
+              acceptance: Given Field descriptions and one record it presents one labelled value per described Field in the order given, exact decimal values without loss of precision and an absent value distinctly
+                from an empty one; given no record it presents the absence of a record; it uses only Theme values.
+              status: todo
+            P5-G4-T13:
+              id: P5-G4-T13
+              source_id: '024'
+              title: Conceal sensitive Field values
+              description: 'Make a Field that its Declaration marks sensitive be enterable without ever being shown: its entry hides what is typed, and neither the record table, the record details nor the record form
+                displays its stored value, including when a record is opened for editing.'
+              reason: A password or other sensitive value must never appear on screen, yet a user must still be able to set it.
+              inputs:
+              - Field descriptions
+              - Field inputs
+              - Record form
+              - Record table
+              - Record details
+              skills:
+              - frontend-design:frontend-design
+              - example-skills:webapp-testing
+              expected_result: Sensitive Fields that can be entered and are never shown.
+              depends_on:
+              - P5-G10-T2
+              - P5-G4-T2
+              - P5-G4-T5
+              - P5-G4-T6
+              - P5-G4-T12
+              constraints: []
+              acceptance: For a Field described as sensitive, what is typed is not displayed; no stored value of that Field appears in the table, the details or the form, and a form opened on an existing record does
+                not reveal it; for a Field not described as sensitive nothing changes.
+              status: todo
+            P5-G4-T14:
+              id: P5-G4-T14
+              source_id: '024'
+              title: Show immutable and generated Fields without letting them be entered
+              description: 'Make the record form present a Field that its Declaration marks immutable, or whose value Model generates, as shown but never entered: its value is visible when there is one, a user cannot
+                change it, and it is never part of what the form reports as entered.'
+              reason: Identity and generated values are Model to decide, so a user must be able to see them but never supply or alter them.
+              inputs:
+              - Field descriptions
+              - Record form
+              skills:
+              - frontend-design:frontend-design
+              - example-skills:webapp-testing
+              expected_result: A record form that shows but never accepts immutable and generated Fields.
+              depends_on:
+              - P5-G10-T2
+              - P5-G4-T6
+              constraints: []
+              acceptance: In the form an immutable or generated Field is displayed with its label and, when the record has one, its value; it cannot be entered or changed; it is absent from the record the form reports
+                as entered; every other Field is entered as before.
+              status: todo
         P5-G5:
           id: P5-G5
           title: Interaction Logic
-          description: 'The behaviour behind the pages: the interface state and flows of listing, viewing, adding, editing, acting on a record, and counting, each built on API Access and answering only for
-            the interface.'
+          description: 'The behaviour behind the pages: the interface state and flows of listing, viewing, adding, editing, acting on a record, removing every record, choosing related records, and counting, each
+            built on API Access and answering only for the interface.'
           area: 'Interaction Logic: interface state and flows'
           does: Every flow a Section offers has its state and its sequencing in one place behind the Components.
           constraints: []
-          task_count: 5
+          task_count: 7
           tasks:
             P5-G5-T1:
               id: P5-G5-T1
-              source_id: 019
+              source_id: '024'
               title: Provide the listing flow
-              description: 'Provide the interface state and flow for listing records: the Filters, their combination, the order, the limit, the loading state and the result, requesting the list through API
-                Access when the user applies their choices.'
+              description: 'Provide the interface state and flow for listing records: the Filters, their combination, the order, the limit, the loading state and the result, requesting the list through API Access when
+                the user applies their choices.'
               reason: Users must be able to find records by any Field in any order, and every Section lists in the same way.
               inputs:
               - Field descriptions
+              - Query vocabulary
               - Endpoint calls
               skills: []
               expected_result: A listing flow usable for any Entity.
               depends_on:
-              - P5-G2-T3
+              - P5-G10-T2
+              - P5-G2-T8
               - P5-G2-T7
               constraints: []
-              acceptance: Applying Filters, a combination, an order and a limit requests the list with exactly those choices and holds the result; loading is reported while waiting; an error is held as returned;
-                the flow works for any Entity it is given.
+              acceptance: Applying Filters, a combination, an order and a limit requests the list with exactly those choices and holds the result; the operators, combinations and directions offered are those of the
+                query vocabulary; loading is reported while waiting; an error is held as returned; the flow works for any Entity it is given.
               status: todo
             P5-G5-T2:
               id: P5-G5-T2
@@ -5149,22 +5400,24 @@ content:
                 note: "Added the single-record flow to Interaction Logic (a reusable load-by-key helper and the record flow built on it). Observed against a running API through the generated calls with 7 checks: loading is held while waiting; an id gives the record as interface data; an unknown id is held as absence; no id requests nothing; an unreachable API and an undescribed Field are held as failures; with two quick requests the record shown belongs to the latest id."
             P5-G5-T3:
               id: P5-G5-T3
-              source_id: 019
+              source_id: '024'
               title: Provide the record form flow
-              description: 'Provide the interface state and flow of the record form: its entered values, interaction-level checks of requirement taken from the Field descriptions, and submission as an add or
-                as an update of an existing record.'
+              description: 'Provide the interface state and flow of the record form: its entered values, interaction-level checks of requirement taken from the Field descriptions, the exclusion of immutable and generated
+                Fields from what is entered, the value of a related Field taken from the related record choice, and submission as an add or as an update of an existing record.'
               reason: Users must be able to add a record and edit an existing one, and both share one flow.
               inputs:
               - Field descriptions
               - Endpoint calls
+              - Related record choices
               skills: []
               expected_result: A record form flow usable for any Entity.
               depends_on:
-              - P5-G2-T3
+              - P5-G10-T2
               - P5-G2-T7
+              - P5-G5-T7
               constraints: []
-              acceptance: In add mode it submits the entered record as an add and in edit mode as an update of that record; a required Field left empty is reported before anything is submitted; the API's result
-                or error is held as returned; no application rule is decided by the flow.
+              acceptance: In add mode it submits the entered record as an add and in edit mode as an update of that record; a required Field left empty is reported before anything is submitted; an immutable or generated
+                Field is never submitted as entered; a related Field is submitted with the value of the record chosen for it; the API's result or error is held as returned; no application rule is decided by the flow.
               status: todo
             P5-G5-T4:
               id: P5-G5-T4
@@ -5194,48 +5447,101 @@ content:
                 note: "Added the record action flow to Interaction Logic. Observed against a running API with spies on each call (9 checks): disable and enable each call only their own Endpoint for the chosen record and give the record in its new state; the owner is told after each success; a delete waits for confirmation and sends nothing, cancelling leaves the record unchanged, confirming deletes it and the API no longer has it; an unreachable API is held as a failure with the owner not told to refresh, and a failure can be dismissed. Test data created in the scratch copy was removed."
             P5-G5-T5:
               id: P5-G5-T5
-              source_id: 019
+              source_id: '024'
               title: Provide the count and aggregate flow
-              description: Provide the interface state and flow for asking for a count or an aggregate, with the Field and Filters the operation takes, wherever the Adapter offers it, and holding the single
-                result.
+              description: Provide the interface state and flow for asking for a count or an aggregate, with the Field and Filters the operation takes, wherever the Adapter offers it, and holding the single result.
               reason: Users must be able to ask how many records match and to read an aggregate of a Field.
               inputs:
               - Field descriptions
+              - Query vocabulary
               - Endpoint calls
               skills: []
               expected_result: A count and aggregate flow usable for any Entity.
               depends_on:
-              - P5-G2-T3
+              - P5-G10-T2
+              - P5-G2-T8
               - P5-G2-T7
               constraints: []
-              acceptance: Choosing an operation and its arguments requests exactly that operation and holds its single result; loading is reported while waiting; an error is held as returned; an operation the
-                Adapter does not offer cannot be chosen.
+              acceptance: Choosing an operation and its arguments requests exactly that operation and holds its single result; loading is reported while waiting; an error is held as returned; an operation the Adapter
+                does not offer cannot be chosen.
+              status: todo
+            P5-G5-T6:
+              id: P5-G5-T6
+              source_id: '024'
+              title: Provide the remove-all flow
+              description: Provide the interface state and flow for removing every record of an Entity, asking the user to confirm, with a question that names what will be removed, before anything is requested, and
+                refreshing what the user sees after it succeeds.
+              reason: Every Endpoint of an Adapter must have a user action, the Endpoint that removes every record is not covered by the record action flow, and removing everything must never happen by a single accidental
+                action.
+              inputs:
+              - Endpoint calls
+              - Confirmation
+              skills: []
+              expected_result: A remove-all flow usable for any Entity.
+              depends_on:
+              - P5-G2-T7
+              - P5-G4-T7
+              constraints: []
+              acceptance: The request to remove all records is made only after the user confirms and only to the Endpoint of the chosen Entity that removes every record; cancelling changes nothing; after success the
+                user sees no records; a failed request leaves the records the user sees as they were and holds the error as returned.
+              status: done
+              log:
+              - at: '2026-10-11T17:03:45Z'
+                event: claimed
+                note: "Claimed before changing its result."
+              - at: '2026-10-11T17:08:37Z'
+                event: done
+                note: "Added the remove-all flow to Interaction Logic: asking first with a question that names the Entity, calling only the Endpoint that removes every record after the user confirms, ignoring a second confirmation while the request is in flight, telling the owner to refresh after success, and holding a failure exactly as the API returned it without telling the owner to refresh. Observed in a DOM environment against a running API copy with 12 checks: nothing is sent by a request, a bare confirmation or a cancel; one confirmation sends exactly one request; the Action Entity then holds no records (it held one); an invalid Instance gives a held 422 InvalidInputError with its type and status unchanged and no refresh; two confirmations while working send one request; a Broker removal, which accounts reference, came back as the API's 500 Problem and was held as returned. Type check, lint and format check report nothing. The user-facing confirmation is the existing confirmation Component, composed by each Section."
+            P5-G5-T7:
+              id: P5-G5-T7
+              source_id: '024'
+              title: Provide the related record choices flow
+              description: 'Provide the interface state and flow that supplies a related Field with the records of the Entity it relates to: requesting that Entity''s records through API Access, holding them with the
+                loading state, and handing the value of the chosen record back to the record form flow.'
+              reason: A related Field is chosen from the records of the related Entity, which only a call to the API can supply.
+              inputs:
+              - Field descriptions
+              - Endpoint calls
+              - Listing flow
+              skills: []
+              expected_result: Related record choices usable for any related Field.
+              depends_on:
+              - P5-G10-T2
+              - P5-G2-T7
+              - P5-G5-T1
+              constraints: []
+              acceptance: For a Field described as related, the records offered are those the API returns for the related Entity, requested when the choice is needed; loading is reported while waiting; an error is
+                held as returned; the value handed on is the chosen record's value of the related Field; a Field that is not related requests nothing.
               status: todo
         P5-G6:
           id: P5-G6
           title: Entity Sections
-          description: The Section of the Entity Area for every Entity, each presenting one Adapter of the API's Entity Group and composed from the shared Components, Interaction Logic, API Access and Theme.
-            The Target defines no Behaviour specific to any single Entity, so no Section adds, omits or alters an action.
+          description: The Section of the Entity Area for every Entity of Model, each presenting one Adapter of the API's Entity Group and composed from the shared Components, Interaction Logic, API Access and Theme,
+            with its Fields drawn from the Entity's Declaration. The Target defines no Behaviour specific to any single Entity, so no Section adds, omits or alters an action.
           area: 'Entity Area: the Section of every Entity'
-          does: Every Entity has exactly one Section that offers a user action for every Endpoint of its Adapter, in step with the API.
+          does: Every Entity has exactly one Section that offers a user action for every Endpoint of its Adapter, in step with the API; each action calls its Endpoint and presents the result, or the error returned,
+            as the API gives it, and each Section stands entirely on its own, sharing no page or inherited structure with another Section.
           constraints: []
           task_count: 15
           tasks:
             P5-G6-T1:
               id: P5-G6-T1
-              source_id: 019
+              source_id: '024'
               title: Provide the User Section
               description: Provide the Section through which a user works with User records, presenting every Endpoint of the User Adapter as a user action.
               reason: Users must be able to list, open, add, edit, enable, disable and delete User records through the interface, and to count them wherever the Adapter offers it.
               inputs:
               - The User Adapter's Endpoints and Parameters as the API contract describes them
+              - The User Declaration read from Model
               skills:
               - example-skills:webapp-testing
               expected_result: The User Section with an action for every Endpoint of its Adapter.
               depends_on:
               - P4-G6-T1
-              - P5-G2-T3
+              - P5-G10-T1
+              - P5-G10-T2
               - P5-G2-T7
+              - P5-G2-T8
               - P5-G4-T1
               - P5-G4-T2
               - P5-G4-T3
@@ -5245,31 +5551,40 @@ content:
               - P5-G4-T7
               - P5-G4-T8
               - P5-G4-T9
+              - P5-G4-T10
+              - P5-G4-T11
+              - P5-G4-T12
+              - P5-G4-T13
+              - P5-G4-T14
               - P5-G5-T1
               - P5-G5-T2
               - P5-G5-T3
               - P5-G5-T4
               - P5-G5-T5
+              - P5-G5-T6
+              - P5-G5-T7
               constraints: []
-              acceptance: The User Section offers exactly one user action for every Endpoint of the User Adapter and none for anything else; each action calls its Endpoint and presents the result, or the error
-                returned, as the API gives it; every form field, list column, Filter and Order is one the contract describes for User; the Section stands entirely on its own, sharing no page or inherited structure
-                with another Section.
+              acceptance: The User Section offers exactly one user action for every Endpoint of the User Adapter and none for anything else; every form field, list column, Filter and Order is one the User Declaration
+                in Model describes and behaves as that Declaration states.
               status: todo
             P5-G6-T2:
               id: P5-G6-T2
-              source_id: 019
+              source_id: '024'
               title: Provide the Trading Platform Section
               description: Provide the Section through which a user works with Trading Platform records, presenting every Endpoint of the Trading Platform Adapter as a user action.
               reason: Users must be able to list, open, add, edit, enable, disable and delete Trading Platform records through the interface, and to count them wherever the Adapter offers it.
               inputs:
               - The Trading Platform Adapter's Endpoints and Parameters as the API contract describes them
+              - The Trading Platform Declaration read from Model
               skills:
               - example-skills:webapp-testing
               expected_result: The Trading Platform Section with an action for every Endpoint of its Adapter.
               depends_on:
               - P4-G6-T2
-              - P5-G2-T3
+              - P5-G10-T1
+              - P5-G10-T2
               - P5-G2-T7
+              - P5-G2-T8
               - P5-G4-T1
               - P5-G4-T2
               - P5-G4-T3
@@ -5279,31 +5594,40 @@ content:
               - P5-G4-T7
               - P5-G4-T8
               - P5-G4-T9
+              - P5-G4-T10
+              - P5-G4-T11
+              - P5-G4-T12
+              - P5-G4-T13
+              - P5-G4-T14
               - P5-G5-T1
               - P5-G5-T2
               - P5-G5-T3
               - P5-G5-T4
               - P5-G5-T5
+              - P5-G5-T6
+              - P5-G5-T7
               constraints: []
-              acceptance: The Trading Platform Section offers exactly one user action for every Endpoint of the Trading Platform Adapter and none for anything else; each action calls its Endpoint and presents
-                the result, or the error returned, as the API gives it; every form field, list column, Filter and Order is one the contract describes for Trading Platform; the Section stands entirely on its
-                own, sharing no page or inherited structure with another Section.
+              acceptance: The Trading Platform Section offers exactly one user action for every Endpoint of the Trading Platform Adapter and none for anything else; every form field, list column, Filter and Order is
+                one the Trading Platform Declaration in Model describes and behaves as that Declaration states.
               status: todo
             P5-G6-T3:
               id: P5-G6-T3
-              source_id: 019
+              source_id: '024'
               title: Provide the Instance Section
               description: Provide the Section through which a user works with Instance records, presenting every Endpoint of the Instance Adapter as a user action.
               reason: Users must be able to list, open, add, edit, enable, disable and delete Instance records through the interface, and to count them wherever the Adapter offers it.
               inputs:
               - The Instance Adapter's Endpoints and Parameters as the API contract describes them
+              - The Instance Declaration read from Model
               skills:
               - example-skills:webapp-testing
               expected_result: The Instance Section with an action for every Endpoint of its Adapter.
               depends_on:
               - P4-G6-T3
-              - P5-G2-T3
+              - P5-G10-T1
+              - P5-G10-T2
               - P5-G2-T7
+              - P5-G2-T8
               - P5-G4-T1
               - P5-G4-T2
               - P5-G4-T3
@@ -5313,31 +5637,40 @@ content:
               - P5-G4-T7
               - P5-G4-T8
               - P5-G4-T9
+              - P5-G4-T10
+              - P5-G4-T11
+              - P5-G4-T12
+              - P5-G4-T13
+              - P5-G4-T14
               - P5-G5-T1
               - P5-G5-T2
               - P5-G5-T3
               - P5-G5-T4
               - P5-G5-T5
+              - P5-G5-T6
+              - P5-G5-T7
               constraints: []
-              acceptance: The Instance Section offers exactly one user action for every Endpoint of the Instance Adapter and none for anything else; each action calls its Endpoint and presents the result, or
-                the error returned, as the API gives it; every form field, list column, Filter and Order is one the contract describes for Instance; the Section stands entirely on its own, sharing no page or
-                inherited structure with another Section.
+              acceptance: The Instance Section offers exactly one user action for every Endpoint of the Instance Adapter and none for anything else; every form field, list column, Filter and Order is one the Instance
+                Declaration in Model describes and behaves as that Declaration states.
               status: todo
             P5-G6-T4:
               id: P5-G6-T4
-              source_id: 019
+              source_id: '024'
               title: Provide the Currency Section
               description: Provide the Section through which a user works with Currency records, presenting every Endpoint of the Currency Adapter as a user action.
               reason: Users must be able to list, open, add, edit, enable, disable and delete Currency records through the interface, and to count them wherever the Adapter offers it.
               inputs:
               - The Currency Adapter's Endpoints and Parameters as the API contract describes them
+              - The Currency Declaration read from Model
               skills:
               - example-skills:webapp-testing
               expected_result: The Currency Section with an action for every Endpoint of its Adapter.
               depends_on:
               - P4-G6-T4
-              - P5-G2-T3
+              - P5-G10-T1
+              - P5-G10-T2
               - P5-G2-T7
+              - P5-G2-T8
               - P5-G4-T1
               - P5-G4-T2
               - P5-G4-T3
@@ -5347,31 +5680,40 @@ content:
               - P5-G4-T7
               - P5-G4-T8
               - P5-G4-T9
+              - P5-G4-T10
+              - P5-G4-T11
+              - P5-G4-T12
+              - P5-G4-T13
+              - P5-G4-T14
               - P5-G5-T1
               - P5-G5-T2
               - P5-G5-T3
               - P5-G5-T4
               - P5-G5-T5
+              - P5-G5-T6
+              - P5-G5-T7
               constraints: []
-              acceptance: The Currency Section offers exactly one user action for every Endpoint of the Currency Adapter and none for anything else; each action calls its Endpoint and presents the result, or
-                the error returned, as the API gives it; every form field, list column, Filter and Order is one the contract describes for Currency; the Section stands entirely on its own, sharing no page or
-                inherited structure with another Section.
+              acceptance: The Currency Section offers exactly one user action for every Endpoint of the Currency Adapter and none for anything else; every form field, list column, Filter and Order is one the Currency
+                Declaration in Model describes and behaves as that Declaration states.
               status: todo
             P5-G6-T5:
               id: P5-G6-T5
-              source_id: 019
+              source_id: '024'
               title: Provide the Broker Section
               description: Provide the Section through which a user works with Broker records, presenting every Endpoint of the Broker Adapter as a user action.
               reason: Users must be able to list, open, add, edit, enable, disable and delete Broker records through the interface, and to count them wherever the Adapter offers it.
               inputs:
               - The Broker Adapter's Endpoints and Parameters as the API contract describes them
+              - The Broker Declaration read from Model
               skills:
               - example-skills:webapp-testing
               expected_result: The Broker Section with an action for every Endpoint of its Adapter.
               depends_on:
               - P4-G6-T5
-              - P5-G2-T3
+              - P5-G10-T1
+              - P5-G10-T2
               - P5-G2-T7
+              - P5-G2-T8
               - P5-G4-T1
               - P5-G4-T2
               - P5-G4-T3
@@ -5381,31 +5723,40 @@ content:
               - P5-G4-T7
               - P5-G4-T8
               - P5-G4-T9
+              - P5-G4-T10
+              - P5-G4-T11
+              - P5-G4-T12
+              - P5-G4-T13
+              - P5-G4-T14
               - P5-G5-T1
               - P5-G5-T2
               - P5-G5-T3
               - P5-G5-T4
               - P5-G5-T5
+              - P5-G5-T6
+              - P5-G5-T7
               constraints: []
-              acceptance: The Broker Section offers exactly one user action for every Endpoint of the Broker Adapter and none for anything else; each action calls its Endpoint and presents the result, or the
-                error returned, as the API gives it; every form field, list column, Filter and Order is one the contract describes for Broker; the Section stands entirely on its own, sharing no page or inherited
-                structure with another Section.
+              acceptance: The Broker Section offers exactly one user action for every Endpoint of the Broker Adapter and none for anything else; every form field, list column, Filter and Order is one the Broker Declaration
+                in Model describes and behaves as that Declaration states.
               status: todo
             P5-G6-T6:
               id: P5-G6-T6
-              source_id: 019
+              source_id: '024'
               title: Provide the Asset Section
               description: Provide the Section through which a user works with Asset records, presenting every Endpoint of the Asset Adapter as a user action.
               reason: Users must be able to list, open, add, edit, enable, disable and delete Asset records through the interface, and to count them wherever the Adapter offers it.
               inputs:
               - The Asset Adapter's Endpoints and Parameters as the API contract describes them
+              - The Asset Declaration read from Model
               skills:
               - example-skills:webapp-testing
               expected_result: The Asset Section with an action for every Endpoint of its Adapter.
               depends_on:
               - P4-G6-T6
-              - P5-G2-T3
+              - P5-G10-T1
+              - P5-G10-T2
               - P5-G2-T7
+              - P5-G2-T8
               - P5-G4-T1
               - P5-G4-T2
               - P5-G4-T3
@@ -5415,31 +5766,40 @@ content:
               - P5-G4-T7
               - P5-G4-T8
               - P5-G4-T9
+              - P5-G4-T10
+              - P5-G4-T11
+              - P5-G4-T12
+              - P5-G4-T13
+              - P5-G4-T14
               - P5-G5-T1
               - P5-G5-T2
               - P5-G5-T3
               - P5-G5-T4
               - P5-G5-T5
+              - P5-G5-T6
+              - P5-G5-T7
               constraints: []
-              acceptance: The Asset Section offers exactly one user action for every Endpoint of the Asset Adapter and none for anything else; each action calls its Endpoint and presents the result, or the
-                error returned, as the API gives it; every form field, list column, Filter and Order is one the contract describes for Asset; the Section stands entirely on its own, sharing no page or inherited
-                structure with another Section.
+              acceptance: The Asset Section offers exactly one user action for every Endpoint of the Asset Adapter and none for anything else; every form field, list column, Filter and Order is one the Asset Declaration
+                in Model describes and behaves as that Declaration states.
               status: todo
             P5-G6-T7:
               id: P5-G6-T7
-              source_id: 019
+              source_id: '024'
               title: Provide the Account Group Section
               description: Provide the Section through which a user works with Account Group records, presenting every Endpoint of the Account Group Adapter as a user action.
               reason: Users must be able to list, open, add, edit, enable, disable and delete Account Group records through the interface, and to count them wherever the Adapter offers it.
               inputs:
               - The Account Group Adapter's Endpoints and Parameters as the API contract describes them
+              - The Account Group Declaration read from Model
               skills:
               - example-skills:webapp-testing
               expected_result: The Account Group Section with an action for every Endpoint of its Adapter.
               depends_on:
               - P4-G6-T7
-              - P5-G2-T3
+              - P5-G10-T1
+              - P5-G10-T2
               - P5-G2-T7
+              - P5-G2-T8
               - P5-G4-T1
               - P5-G4-T2
               - P5-G4-T3
@@ -5449,31 +5809,40 @@ content:
               - P5-G4-T7
               - P5-G4-T8
               - P5-G4-T9
+              - P5-G4-T10
+              - P5-G4-T11
+              - P5-G4-T12
+              - P5-G4-T13
+              - P5-G4-T14
               - P5-G5-T1
               - P5-G5-T2
               - P5-G5-T3
               - P5-G5-T4
               - P5-G5-T5
+              - P5-G5-T6
+              - P5-G5-T7
               constraints: []
-              acceptance: The Account Group Section offers exactly one user action for every Endpoint of the Account Group Adapter and none for anything else; each action calls its Endpoint and presents the
-                result, or the error returned, as the API gives it; every form field, list column, Filter and Order is one the contract describes for Account Group; the Section stands entirely on its own, sharing
-                no page or inherited structure with another Section.
+              acceptance: The Account Group Section offers exactly one user action for every Endpoint of the Account Group Adapter and none for anything else; every form field, list column, Filter and Order is one
+                the Account Group Declaration in Model describes and behaves as that Declaration states.
               status: todo
             P5-G6-T8:
               id: P5-G6-T8
-              source_id: 019
+              source_id: '024'
               title: Provide the Account Section
               description: Provide the Section through which a user works with Account records, presenting every Endpoint of the Account Adapter as a user action.
               reason: Users must be able to list, open, add, edit, enable, disable and delete Account records through the interface, and to count them wherever the Adapter offers it.
               inputs:
               - The Account Adapter's Endpoints and Parameters as the API contract describes them
+              - The Account Declaration read from Model
               skills:
               - example-skills:webapp-testing
               expected_result: The Account Section with an action for every Endpoint of its Adapter.
               depends_on:
               - P4-G6-T8
-              - P5-G2-T3
+              - P5-G10-T1
+              - P5-G10-T2
               - P5-G2-T7
+              - P5-G2-T8
               - P5-G4-T1
               - P5-G4-T2
               - P5-G4-T3
@@ -5483,31 +5852,40 @@ content:
               - P5-G4-T7
               - P5-G4-T8
               - P5-G4-T9
+              - P5-G4-T10
+              - P5-G4-T11
+              - P5-G4-T12
+              - P5-G4-T13
+              - P5-G4-T14
               - P5-G5-T1
               - P5-G5-T2
               - P5-G5-T3
               - P5-G5-T4
               - P5-G5-T5
+              - P5-G5-T6
+              - P5-G5-T7
               constraints: []
-              acceptance: The Account Section offers exactly one user action for every Endpoint of the Account Adapter and none for anything else; each action calls its Endpoint and presents the result, or
-                the error returned, as the API gives it; every form field, list column, Filter and Order is one the contract describes for Account; the Section stands entirely on its own, sharing no page or
-                inherited structure with another Section.
+              acceptance: The Account Section offers exactly one user action for every Endpoint of the Account Adapter and none for anything else; every form field, list column, Filter and Order is one the Account
+                Declaration in Model describes and behaves as that Declaration states.
               status: todo
             P5-G6-T9:
               id: P5-G6-T9
-              source_id: 019
+              source_id: '024'
               title: Provide the Trailing Group Section
               description: Provide the Section through which a user works with Trailing Group records, presenting every Endpoint of the Trailing Group Adapter as a user action.
               reason: Users must be able to list, open, add, edit, enable, disable and delete Trailing Group records through the interface, and to count them wherever the Adapter offers it.
               inputs:
               - The Trailing Group Adapter's Endpoints and Parameters as the API contract describes them
+              - The Trailing Group Declaration read from Model
               skills:
               - example-skills:webapp-testing
               expected_result: The Trailing Group Section with an action for every Endpoint of its Adapter.
               depends_on:
               - P4-G6-T9
-              - P5-G2-T3
+              - P5-G10-T1
+              - P5-G10-T2
               - P5-G2-T7
+              - P5-G2-T8
               - P5-G4-T1
               - P5-G4-T2
               - P5-G4-T3
@@ -5517,31 +5895,40 @@ content:
               - P5-G4-T7
               - P5-G4-T8
               - P5-G4-T9
+              - P5-G4-T10
+              - P5-G4-T11
+              - P5-G4-T12
+              - P5-G4-T13
+              - P5-G4-T14
               - P5-G5-T1
               - P5-G5-T2
               - P5-G5-T3
               - P5-G5-T4
               - P5-G5-T5
+              - P5-G5-T6
+              - P5-G5-T7
               constraints: []
-              acceptance: The Trailing Group Section offers exactly one user action for every Endpoint of the Trailing Group Adapter and none for anything else; each action calls its Endpoint and presents the
-                result, or the error returned, as the API gives it; every form field, list column, Filter and Order is one the contract describes for Trailing Group; the Section stands entirely on its own,
-                sharing no page or inherited structure with another Section.
+              acceptance: The Trailing Group Section offers exactly one user action for every Endpoint of the Trailing Group Adapter and none for anything else; every form field, list column, Filter and Order is one
+                the Trailing Group Declaration in Model describes and behaves as that Declaration states.
               status: todo
             P5-G6-T10:
               id: P5-G6-T10
-              source_id: 019
+              source_id: '024'
               title: Provide the Trailing Rule Section
               description: Provide the Section through which a user works with Trailing Rule records, presenting every Endpoint of the Trailing Rule Adapter as a user action.
               reason: Users must be able to list, open, add, edit, enable, disable and delete Trailing Rule records through the interface, and to count them wherever the Adapter offers it.
               inputs:
               - The Trailing Rule Adapter's Endpoints and Parameters as the API contract describes them
+              - The Trailing Rule Declaration read from Model
               skills:
               - example-skills:webapp-testing
               expected_result: The Trailing Rule Section with an action for every Endpoint of its Adapter.
               depends_on:
               - P4-G6-T10
-              - P5-G2-T3
+              - P5-G10-T1
+              - P5-G10-T2
               - P5-G2-T7
+              - P5-G2-T8
               - P5-G4-T1
               - P5-G4-T2
               - P5-G4-T3
@@ -5551,31 +5938,40 @@ content:
               - P5-G4-T7
               - P5-G4-T8
               - P5-G4-T9
+              - P5-G4-T10
+              - P5-G4-T11
+              - P5-G4-T12
+              - P5-G4-T13
+              - P5-G4-T14
               - P5-G5-T1
               - P5-G5-T2
               - P5-G5-T3
               - P5-G5-T4
               - P5-G5-T5
+              - P5-G5-T6
+              - P5-G5-T7
               constraints: []
-              acceptance: The Trailing Rule Section offers exactly one user action for every Endpoint of the Trailing Rule Adapter and none for anything else; each action calls its Endpoint and presents the
-                result, or the error returned, as the API gives it; every form field, list column, Filter and Order is one the contract describes for Trailing Rule; the Section stands entirely on its own, sharing
-                no page or inherited structure with another Section.
+              acceptance: The Trailing Rule Section offers exactly one user action for every Endpoint of the Trailing Rule Adapter and none for anything else; every form field, list column, Filter and Order is one
+                the Trailing Rule Declaration in Model describes and behaves as that Declaration states.
               status: todo
             P5-G6-T11:
               id: P5-G6-T11
-              source_id: 019
+              source_id: '024'
               title: Provide the Partial Group Section
               description: Provide the Section through which a user works with Partial Group records, presenting every Endpoint of the Partial Group Adapter as a user action.
               reason: Users must be able to list, open, add, edit, enable, disable and delete Partial Group records through the interface, and to count them wherever the Adapter offers it.
               inputs:
               - The Partial Group Adapter's Endpoints and Parameters as the API contract describes them
+              - The Partial Group Declaration read from Model
               skills:
               - example-skills:webapp-testing
               expected_result: The Partial Group Section with an action for every Endpoint of its Adapter.
               depends_on:
               - P4-G6-T11
-              - P5-G2-T3
+              - P5-G10-T1
+              - P5-G10-T2
               - P5-G2-T7
+              - P5-G2-T8
               - P5-G4-T1
               - P5-G4-T2
               - P5-G4-T3
@@ -5585,31 +5981,40 @@ content:
               - P5-G4-T7
               - P5-G4-T8
               - P5-G4-T9
+              - P5-G4-T10
+              - P5-G4-T11
+              - P5-G4-T12
+              - P5-G4-T13
+              - P5-G4-T14
               - P5-G5-T1
               - P5-G5-T2
               - P5-G5-T3
               - P5-G5-T4
               - P5-G5-T5
+              - P5-G5-T6
+              - P5-G5-T7
               constraints: []
-              acceptance: The Partial Group Section offers exactly one user action for every Endpoint of the Partial Group Adapter and none for anything else; each action calls its Endpoint and presents the
-                result, or the error returned, as the API gives it; every form field, list column, Filter and Order is one the contract describes for Partial Group; the Section stands entirely on its own, sharing
-                no page or inherited structure with another Section.
+              acceptance: The Partial Group Section offers exactly one user action for every Endpoint of the Partial Group Adapter and none for anything else; every form field, list column, Filter and Order is one
+                the Partial Group Declaration in Model describes and behaves as that Declaration states.
               status: todo
             P5-G6-T12:
               id: P5-G6-T12
-              source_id: 019
+              source_id: '024'
               title: Provide the Partial Rule Section
               description: Provide the Section through which a user works with Partial Rule records, presenting every Endpoint of the Partial Rule Adapter as a user action.
               reason: Users must be able to list, open, add, edit, enable, disable and delete Partial Rule records through the interface, and to count them wherever the Adapter offers it.
               inputs:
               - The Partial Rule Adapter's Endpoints and Parameters as the API contract describes them
+              - The Partial Rule Declaration read from Model
               skills:
               - example-skills:webapp-testing
               expected_result: The Partial Rule Section with an action for every Endpoint of its Adapter.
               depends_on:
               - P4-G6-T12
-              - P5-G2-T3
+              - P5-G10-T1
+              - P5-G10-T2
               - P5-G2-T7
+              - P5-G2-T8
               - P5-G4-T1
               - P5-G4-T2
               - P5-G4-T3
@@ -5619,31 +6024,40 @@ content:
               - P5-G4-T7
               - P5-G4-T8
               - P5-G4-T9
+              - P5-G4-T10
+              - P5-G4-T11
+              - P5-G4-T12
+              - P5-G4-T13
+              - P5-G4-T14
               - P5-G5-T1
               - P5-G5-T2
               - P5-G5-T3
               - P5-G5-T4
               - P5-G5-T5
+              - P5-G5-T6
+              - P5-G5-T7
               constraints: []
-              acceptance: The Partial Rule Section offers exactly one user action for every Endpoint of the Partial Rule Adapter and none for anything else; each action calls its Endpoint and presents the result,
-                or the error returned, as the API gives it; every form field, list column, Filter and Order is one the contract describes for Partial Rule; the Section stands entirely on its own, sharing no
-                page or inherited structure with another Section.
+              acceptance: The Partial Rule Section offers exactly one user action for every Endpoint of the Partial Rule Adapter and none for anything else; every form field, list column, Filter and Order is one the
+                Partial Rule Declaration in Model describes and behaves as that Declaration states.
               status: todo
             P5-G6-T13:
               id: P5-G6-T13
-              source_id: 019
+              source_id: '024'
               title: Provide the Action Group Section
               description: Provide the Section through which a user works with Action Group records, presenting every Endpoint of the Action Group Adapter as a user action.
               reason: Users must be able to list, open, add, edit, enable, disable and delete Action Group records through the interface, and to count them wherever the Adapter offers it.
               inputs:
               - The Action Group Adapter's Endpoints and Parameters as the API contract describes them
+              - The Action Group Declaration read from Model
               skills:
               - example-skills:webapp-testing
               expected_result: The Action Group Section with an action for every Endpoint of its Adapter.
               depends_on:
               - P4-G6-T13
-              - P5-G2-T3
+              - P5-G10-T1
+              - P5-G10-T2
               - P5-G2-T7
+              - P5-G2-T8
               - P5-G4-T1
               - P5-G4-T2
               - P5-G4-T3
@@ -5653,31 +6067,40 @@ content:
               - P5-G4-T7
               - P5-G4-T8
               - P5-G4-T9
+              - P5-G4-T10
+              - P5-G4-T11
+              - P5-G4-T12
+              - P5-G4-T13
+              - P5-G4-T14
               - P5-G5-T1
               - P5-G5-T2
               - P5-G5-T3
               - P5-G5-T4
               - P5-G5-T5
+              - P5-G5-T6
+              - P5-G5-T7
               constraints: []
-              acceptance: The Action Group Section offers exactly one user action for every Endpoint of the Action Group Adapter and none for anything else; each action calls its Endpoint and presents the result,
-                or the error returned, as the API gives it; every form field, list column, Filter and Order is one the contract describes for Action Group; the Section stands entirely on its own, sharing no
-                page or inherited structure with another Section.
+              acceptance: The Action Group Section offers exactly one user action for every Endpoint of the Action Group Adapter and none for anything else; every form field, list column, Filter and Order is one the
+                Action Group Declaration in Model describes and behaves as that Declaration states.
               status: todo
             P5-G6-T14:
               id: P5-G6-T14
-              source_id: 019
+              source_id: '024'
               title: Provide the Action Section
               description: Provide the Section through which a user works with Action records, presenting every Endpoint of the Action Adapter as a user action.
               reason: Users must be able to list, open, add, edit, enable, disable and delete Action records through the interface, and to count them wherever the Adapter offers it.
               inputs:
               - The Action Adapter's Endpoints and Parameters as the API contract describes them
+              - The Action Declaration read from Model
               skills:
               - example-skills:webapp-testing
               expected_result: The Action Section with an action for every Endpoint of its Adapter.
               depends_on:
               - P4-G6-T14
-              - P5-G2-T3
+              - P5-G10-T1
+              - P5-G10-T2
               - P5-G2-T7
+              - P5-G2-T8
               - P5-G4-T1
               - P5-G4-T2
               - P5-G4-T3
@@ -5687,31 +6110,40 @@ content:
               - P5-G4-T7
               - P5-G4-T8
               - P5-G4-T9
+              - P5-G4-T10
+              - P5-G4-T11
+              - P5-G4-T12
+              - P5-G4-T13
+              - P5-G4-T14
               - P5-G5-T1
               - P5-G5-T2
               - P5-G5-T3
               - P5-G5-T4
               - P5-G5-T5
+              - P5-G5-T6
+              - P5-G5-T7
               constraints: []
-              acceptance: The Action Section offers exactly one user action for every Endpoint of the Action Adapter and none for anything else; each action calls its Endpoint and presents the result, or the
-                error returned, as the API gives it; every form field, list column, Filter and Order is one the contract describes for Action; the Section stands entirely on its own, sharing no page or inherited
-                structure with another Section.
+              acceptance: The Action Section offers exactly one user action for every Endpoint of the Action Adapter and none for anything else; every form field, list column, Filter and Order is one the Action Declaration
+                in Model describes and behaves as that Declaration states.
               status: todo
             P5-G6-T15:
               id: P5-G6-T15
-              source_id: 019
+              source_id: '024'
               title: Provide the Position Section
               description: Provide the Section through which a user works with Position records, presenting every Endpoint of the Position Adapter as a user action.
               reason: Users must be able to list, open, add, edit, enable, disable and delete Position records through the interface, and to count them wherever the Adapter offers it.
               inputs:
               - The Position Adapter's Endpoints and Parameters as the API contract describes them
+              - The Position Declaration read from Model
               skills:
               - example-skills:webapp-testing
               expected_result: The Position Section with an action for every Endpoint of its Adapter.
               depends_on:
               - P4-G6-T15
-              - P5-G2-T3
+              - P5-G10-T1
+              - P5-G10-T2
               - P5-G2-T7
+              - P5-G2-T8
               - P5-G4-T1
               - P5-G4-T2
               - P5-G4-T3
@@ -5721,15 +6153,21 @@ content:
               - P5-G4-T7
               - P5-G4-T8
               - P5-G4-T9
+              - P5-G4-T10
+              - P5-G4-T11
+              - P5-G4-T12
+              - P5-G4-T13
+              - P5-G4-T14
               - P5-G5-T1
               - P5-G5-T2
               - P5-G5-T3
               - P5-G5-T4
               - P5-G5-T5
+              - P5-G5-T6
+              - P5-G5-T7
               constraints: []
-              acceptance: The Position Section offers exactly one user action for every Endpoint of the Position Adapter and none for anything else; each action calls its Endpoint and presents the result, or
-                the error returned, as the API gives it; every form field, list column, Filter and Order is one the contract describes for Position; the Section stands entirely on its own, sharing no page or
-                inherited structure with another Section.
+              acceptance: The Position Section offers exactly one user action for every Endpoint of the Position Adapter and none for anything else; every form field, list column, Filter and Order is one the Position
+                Declaration in Model describes and behaves as that Declaration states.
               status: todo
         P5-G7:
           id: P5-G7
@@ -5742,17 +6180,20 @@ content:
           tasks:
             P5-G7-T1:
               id: P5-G7-T1
-              source_id: 019
+              source_id: '024'
               title: Assemble the Entity Area
-              description: Provide the Entity Area under the name of its key, presenting every Entity's Section beneath it, each reachable under a name derived from its Adapter, and presenting nothing else.
+              description: Provide the Entity Area under the name of its key, presenting beneath it a Section for every Entity of Model's Entity Collection, each reachable under a name derived from its Adapter, and
+                presenting nothing else.
               reason: A Section is useful only once a user can reach it, and the Area gathers every Section of its API Group.
               inputs:
               - Every Entity Section
+              - The Entities Presentation presents
               - Areas selection of the Presentation Preferences
               skills:
               - example-skills:webapp-testing
               expected_result: The Entity Area presenting all its Sections.
               depends_on:
+              - P5-G10-T1
               - P5-G6-T1
               - P5-G6-T2
               - P5-G6-T3
@@ -5769,7 +6210,8 @@ content:
               - P5-G6-T14
               - P5-G6-T15
               constraints: []
-              acceptance: Every Section is reachable by a distinct name derived from its Adapter and nothing else is reachable beneath the Area; a name matching no Section reports that no such Section exists.
+              acceptance: The Sections are exactly those of the Entities in Model's Entity Collection, in its order; every Section is reachable by a distinct name derived from its Adapter and nothing else is reachable
+                beneath the Area; a name matching no Section reports that no such Section exists.
               status: todo
             P5-G7-T2:
               id: P5-G7-T2
@@ -5816,7 +6258,7 @@ content:
               status: todo
             P5-G8-T2:
               id: P5-G8-T2
-              source_id: 019
+              source_id: '024'
               title: Document the Presentation Setup
               description: 'Write the Setup section: how to install and start Presentation, and the API address it needs.'
               reason: A reader must be able to bring Presentation up without prior knowledge of it.
@@ -5829,18 +6271,20 @@ content:
               - P5-G8-T1
               - P5-G1-T1
               - P5-G2-T1
+              - P5-G1-T2
               constraints: []
               acceptance: Setup follows the Overview; following it from the repository alone installs and starts Presentation against a running API at the address given.
               status: todo
             P5-G8-T3:
               id: P5-G8-T3
-              source_id: 019
+              source_id: '024'
               title: Document the Presentation Use
-              description: 'Write the Use section: how the layers fit together, how each Area and Section presents its API Group, where a new page, Component, interaction or API call belongs, and how the Theme
-                is applied.'
+              description: 'Write the Use section: how the layers fit together, how each Area and Section presents its API Group, where the knowledge of Entities and Fields comes from and when it is read, where a new
+                page, Component, interaction or API call belongs, and how the Theme is applied.'
               reason: A developer must know where each kind of change belongs.
               inputs:
               - Layers, Areas, Sections and Theme as built
+              - Entity and Field knowledge as built
               skills: []
               expected_result: The Use section.
               depends_on:
@@ -5848,9 +6292,10 @@ content:
               - P5-G7-T2
               - P5-G2-T7
               - P5-G3-T3
+              - P5-G10-T2
               constraints: []
-              acceptance: Use follows Setup; it explains the layers and their direction, each Area and Section against its API Group, where each new kind of page, Component, interaction and API call belongs,
-                and how the Theme is applied; every example works as written.
+              acceptance: Use follows Setup; it explains the layers and their direction, each Area and Section against its API Group, where Entity and Field knowledge comes from and when it is read, where each new
+                kind of page, Component, interaction and API call belongs, and how the Theme is applied; every example works as written.
               status: todo
             P5-G8-T4:
               id: P5-G8-T4
@@ -5896,10 +6341,10 @@ content:
           tasks:
             P5-G9-T1:
               id: P5-G9-T1
-              source_id: 019
+              source_id: '024'
               title: Bring the Presentation application source to the quality standards
-              description: Apply the formatting, lint and type-checking standards that the Development Preferences select for the language to the complete Presentation application source and its documentation
-                examples, and resolve every finding without weakening any Presentation contract.
+              description: Apply the formatting, lint and type-checking standards that the Development Preferences select for the language to the complete Presentation application source and its documentation examples,
+                and resolve every finding without weakening any Presentation contract.
               reason: Consistent, type-sound source is a standing Development standard and must hold for the finished application.
               inputs:
               - Complete Presentation application source
@@ -5908,13 +6353,16 @@ content:
               expected_result: The complete Presentation application source is free of formatting, lint and type findings.
               depends_on:
               - P5-G1-T1
+              - P5-G1-T2
               - P5-G2-T1
               - P5-G2-T2
-              - P5-G2-T3
               - P5-G2-T4
               - P5-G2-T5
               - P5-G2-T6
               - P5-G2-T7
+              - P5-G2-T8
+              - P5-G10-T1
+              - P5-G10-T2
               - P5-G3-T1
               - P5-G3-T2
               - P5-G3-T3
@@ -5927,11 +6375,18 @@ content:
               - P5-G4-T7
               - P5-G4-T8
               - P5-G4-T9
+              - P5-G4-T10
+              - P5-G4-T11
+              - P5-G4-T12
+              - P5-G4-T13
+              - P5-G4-T14
               - P5-G5-T1
               - P5-G5-T2
               - P5-G5-T3
               - P5-G5-T4
               - P5-G5-T5
+              - P5-G5-T6
+              - P5-G5-T7
               - P5-G6-T1
               - P5-G6-T2
               - P5-G6-T3

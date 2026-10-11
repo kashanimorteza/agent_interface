@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import openapiTS, { astToString, type OpenAPI3 } from 'openapi-typescript'
@@ -164,6 +164,83 @@ function endpointTable(description: JsonObject): string {
   ].join('\n')
 }
 
+/** The API's public documentation of its Entity Group, where it states the query vocabulary. */
+const DOCUMENTATION = join(
+  dirname(fileURLToPath(import.meta.url)),
+  '..',
+  '..',
+  'api',
+  'api',
+  'groups',
+  'entity',
+  'README.md',
+)
+
+function stated(match: RegExpExecArray | null, what: string): string[] {
+  if (match === null) {
+    fail(`The API documentation does not state ${what} in the form read.`)
+  }
+  return match.slice(1).map((group) => group ?? '')
+}
+
+function names(text: string): string[] {
+  return [...text.matchAll(/`([A-Z][A-Z_]*)`/g)].map((match) => match[1]!)
+}
+
+/**
+ * The query vocabulary the API publishes. The machine-readable description
+ * types these names as plain strings, so they are read from the API's own
+ * public documentation; nothing is added to what it states.
+ */
+function vocabularySource(documentation: string): string {
+  const [operatorText] = stated(
+    /The operator names are ([^.]*)\./.exec(documentation),
+    'the operator names',
+  )
+  const operators = names(operatorText!)
+  const [noneText, manyText] = stated(
+    /`value` is absent for (.+?) and a list for (.+?);/.exec(documentation),
+    'which operators take no value or a list',
+  )
+  const none = names(noneText!)
+  const many = names(manyText!)
+  const [first, second] = stated(
+    /\| `orders` \|[^\n]*"direction": "([A-Z_]+)" or "([A-Z_]+)"/.exec(
+      documentation,
+    ),
+    'the Order directions',
+  )
+  const [one, other] = stated(
+    /\| `combination` \| `([A-Z_]+)` or `([A-Z_]+)` \|/.exec(documentation),
+    'the ways Filters combine',
+  )
+  if (
+    operators.length === 0 ||
+    new Set(operators).size !== operators.length ||
+    [...none, ...many].some((name) => !operators.includes(name))
+  ) {
+    fail('The API documentation states its operators inconsistently.')
+  }
+  const vocabulary = {
+    operators: operators.map((name) => ({
+      name,
+      value: none.includes(name)
+        ? 'none'
+        : many.includes(name)
+          ? 'many'
+          : 'one',
+    })),
+    combinations: [one, other],
+    directions: [first, second],
+  }
+  return [
+    '// Generated from the API documentation. Regenerate; do not edit.',
+    '',
+    `export const queryVocabulary = ${JSON.stringify(vocabulary)} as const`,
+    '',
+  ].join('\n')
+}
+
 async function pretty(source: string, file: string): Promise<string> {
   const options = (await resolveConfig(file)) ?? {}
   return format(source, { ...options, filepath: file })
@@ -182,6 +259,10 @@ async function main(): Promise<void> {
   const prefix = new URL(address.baseUrl).pathname.replace(/\/+$/, '')
   const description = withoutKey((await response.json()) as JsonObject, prefix)
 
+  const documentation = await readFile(DOCUMENTATION, 'utf8').catch(() =>
+    fail('The API documentation could not be read.'),
+  )
+
   const schema = astToString(
     await openapiTS(description as unknown as OpenAPI3),
   )
@@ -191,6 +272,7 @@ async function main(): Promise<void> {
       `// Generated from the API description. Regenerate; do not edit.\n${schema}`,
     ],
     ['endpoints.ts', endpointTable(description)],
+    ['vocabulary.ts', vocabularySource(documentation)],
   ]
   const formatted: [string, string][] = []
   for (const [name, source] of files) {

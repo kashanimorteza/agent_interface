@@ -31,9 +31,9 @@ content:
   active:
     mode: "development"
     phase: "P5"
-    mode_reason: "Develop stopped phase P5 on Blocker 021-B1 (Log Entry 023): 21 of 48 Tasks done, 1 blocked, 26 not started."
+    mode_reason: "Develop stopped phase P5 on Blocker 025-B1 (Log Entry 025): 25 of 59 Tasks done, 2 blocked, 32 not started."
     set_by: "my-interface-develop"
-    set_at: "2026-10-11T14:49:00Z"
+    set_at: "2026-10-11T17:18:27Z"
   phases:
     P1:
       id: "P1"
@@ -1224,3 +1224,97 @@ content:
         corrections:
           - "State: a replace aimed at the active record first matched the same word in the content map; restored at once."
           - "Plan: a stray claim command moved the blocked Task P5-G2-T3 to claimed; restored to blocked and the entry rewritten as a note."
+    - id: "024"
+      skill: "my-interface-plan"
+      phase: "P5"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-10-11T16:28:13Z"
+      completed_at: "2026-10-11T16:54:32Z"
+      duration: "26:19"
+      skills_used: []
+      open_questions: ["024-OQ1"]
+      blockers: []
+      decisions: []
+      report: "Reconciled the Plan for phase P5 (Presentation) against the current Interface, Target, Presentation Definition and Preferences, Model and the API Entity Group: Understanding had changed since Plans 019 and 020, because Fields and Sections now come from Model's Entity Declarations (read when Presentation is generated) instead of the API contract, and the package identity setting changed. The Plan now holds 10 Groups and 59 Tasks (11 added, 22 not-begun Tasks updated, none removed). The blocked Task P5-G2-T3 is replaced by P5-G10-T2; no begun or completed Task was rewritten. Counts, ids and dependencies were rechecked: every dependency resolves and the graph is acyclic. Open Blocker 021-B1 belongs to Develop and was not changed; one Open Question (024-OQ1) records a Connection gap that may stop Develop again. Aggregate Planning progress for P5 stays completed."
+      data:
+        phase: "P5"
+        phase_resolution: "Requested phase '5' resolved to Target phase P5 (Presentation, enabled, ready); earlier phases P1 to P4 are completed and satisfied and carry no open Blocker."
+        understanding_changes:
+          - "Presentation Definition and Preferences: every form field, list column, Filter and Order, and one Section for every Entity, now come from the Entity Declarations and Entity Collection in Model, read only when Presentation is generated and never at run time; Presentation now consumes Model."
+          - "Each Field behaves as its Declaration states: its description labels it, its order orders it, an immutable or generated Field is shown but never entered, a sensitive Field is entered without being shown, and a related Field is chosen from the records of the Entity it relates to."
+          - "Presentation Preferences: the package identity setting changed."
+          - "Review observations added for Model-sourced Sections and Fields and for reading Model only at generation."
+        additions:
+          - "P5-G1-T2: align the application identity with the selected package identity."
+          - "P5-G2-T8: the query vocabulary (Filter operators, combinations, Order directions) drawn from what the API publishes, which its public documentation does state."
+          - "Group P5-G10 (Entity Declarations) with P5-G10-T1 (the Entities, drawn from Model) and P5-G10-T2 (the Field descriptions, drawn from Model)."
+          - "P5-G4-T10 to P5-G4-T14: name and order Fields by description, related record choice, record details (no Component existed for presenting one record), concealing sensitive values, and showing immutable and generated Fields without entry."
+          - "P5-G5-T6 (remove-all flow, covering the Endpoint no flow covered) and P5-G5-T7 (related record choices flow)."
+        changes:
+          - "Plan P5: intended outcome now says each Section is built from the Entities and Field Declarations Model publishes; task counts recalculated (P5 48 to 59, top level 174 to 185)."
+          - "P5-G5-T1, P5-G5-T3, P5-G5-T5 (todo, no log): dependencies on P5-G2-T3 replaced by the new Tasks; the form flow also excludes immutable and generated Fields and takes related values from the related record choice."
+          - "P5-G6-T1 to P5-G6-T15 (todo, no log): Sections follow the Entity Declaration in Model, depend on the new Tasks, and no longer depend on P5-G2-T3; the statements every Section shared (an action calls its Endpoint and presents the result as returned; a Section stands on its own) moved to the Group result so no Task repeats them."
+          - "P5-G7-T1 (todo): the Area presents a Section for every Entity of Model's Entity Collection and nothing else."
+          - "P5-G8-T2 and P5-G8-T3 (todo): Setup depends on the identity Task; Use also explains where Entity and Field knowledge comes from and when it is read."
+          - "P5-G9-T1 (todo): dependencies rebuilt to cover the new Tasks without the replaced one."
+          - "Group P5-G5 and P5-G6 descriptions updated; Group task counts recalculated for P5-G1, P5-G2, P5-G4, P5-G5 and the new P5-G10."
+        removals: []
+        replacements:
+          - "P5-G10-T2 replaces P5-G2-T3 (blocked, begun). The Field descriptions it asked for now come from Model; its second half, the closed sets for Filters and Orders, is carried by the new P5-G2-T8 (a Task has one replaces reference). Develop marks P5-G2-T3 replaced and verifies Blocker 021-B1 itself."
+        preservations:
+          - "P1 to P4 Plans, Tasks, statuses and Task Logs unchanged."
+          - "All 21 done P5 Tasks, the blocked P5-G2-T3 and their Task Logs unchanged; the already built Components remain valid as generic building blocks, with the new Tasks adding what the changed Understanding requires of them."
+          - "Not-begun Tasks not listed above (P5-G7-T2, P5-G8-T1, P5-G8-T4, P5-G8-T5) unchanged."
+        rechecks:
+          - "Group, Plan and top-level task counts equal the stored Tasks (59 in P5, 185 in total)."
+          - "Every Task key equals its id; every dependency and the replaces reference resolve to a stored Task; the graph is acyclic; no Task depends on the replaced P5-G2-T3."
+          - "Every added or changed Task records source_id 024; none stores its phase or Group; planning text names no file, path, module, symbol or command."
+          - "The two statements formerly repeated across the 15 Section Tasks are held once in their Group."
+        related_blockers: ["021-B1"]
+        addressed_open_questions:
+          - "023-OQ1 (no flow for removing every record): resolved by planning P5-G5-T6 and making the Section Tasks depend on it, because the Presentation Area contract gives every Endpoint of an Adapter one user action."
+        related_open_questions: ["019-OQ1"]
+        notes:
+          - "Task Skills: the Skills identified in Plan 019 (frontend-design:frontend-design, example-skills:webapp-testing) are named on the new View Layer Tasks; no other available Skill is relevant, and Open Question 019-OQ1 is unchanged."
+          - "The query vocabulary for P5-G2-T8 is stated in the API's own Entity Group documentation, while its machine-readable description types it as plain strings; this removes the second reason recorded for Blocker 021-B1."
+          - "The API Preferences (version 17.0) name description keywords in their content map that the file's content does not hold, and P4 was satisfied under an earlier version; P4 is outside this request and was not replanned."
+        open_question_details:
+          - id: "024-OQ1"
+            skill: null
+            current_choice: "Plan P5 on the Presentation Definition, which states that Presentation consumes Model's published Interface when it is generated; the new Entity and Field Tasks depend on Model's published Interface."
+            alternative: "The Human declares a direct Connection from Presentation to Model in Development Preferences, which Development requires for every cross-Component use; until it exists, Develop may treat P5-G10-T1 and P5-G10-T2 as blocked, as it did for 021-B1."
+            reason: "Development Preferences declare Connections only from Presentation to API, while Presentation's Definition now also consumes Model."
+    - id: "025"
+      skill: "my-interface-develop"
+      phase: "P5"
+      event: "develop"
+      outcome: "blocked"
+      started_at: "2026-10-11T16:55:40Z"
+      completed_at: "2026-10-11T17:18:27Z"
+      duration: "22:47"
+      skills_used: []
+      open_questions: []
+      blockers: ["025-B1"]
+      decisions: ["P5-G2-T8", "P5-G4-T11"]
+      report: "Developed the four Tasks of phase P5 that do not need Model: the application identity (P5-G1-T2), the query vocabulary drawn from the API's documentation (P5-G2-T8), the remove-all flow (P5-G5-T6) and the related record choice Component (P5-G4-T11). Phase P5 now has 25 of 59 Tasks done, 2 blocked and 32 not started. P5-G10-T1 is blocked on 025-B1: Presentation must read Model's Entities, but Development Preferences declare no Connection from Presentation to Model. Every remaining Task depends on P5-G10-T1 or on P5-G10-T2, so Development of P5 is stopped and needs a Human decision outside Presentation (the earlier Blocker 021-B1 stays open until P5-G10-T2 replaces the blocked P5-G2-T3)."
+      data:
+        phase: "P5"
+        task_totals: {done: 25, blocked: 2, todo: 32}
+        tasks_done_in_this_entry: ["P5-G1-T2", "P5-G2-T8", "P5-G5-T6", "P5-G4-T11"]
+        tasks_blocked: ["P5-G10-T1", "P5-G2-T3"]
+        tasks_not_started: ["P5-G10-T2", "P5-G4-T10", "P5-G4-T12 to P5-G4-T14", "P5-G5-T1", "P5-G5-T3", "P5-G5-T5", "P5-G5-T7", "P5-G6-T1 to P5-G6-T15", "P5-G7-T1", "P5-G7-T2", "P5-G8-T1 to P5-G8-T5", "P5-G9-T1"]
+        component_location: "presentation/"
+        blocker_details:
+          - id: "025-B1"
+            task: "P5-G10-T1"
+            condition: "Presentation's Definition states that it consumes Model's published Interface when it is generated, but Development requires every cross-Component use to follow one declared direct Connection, and the Development Preferences declare Connections only from Presentation to API, API to Logic, Logic to Database and Model, and Database to Model. Reading Model without a declared Connection would depart from a Development Principle."
+            needed: "The Human declares a direct Connection from Presentation to Model in the Development Preferences, or settles the conflict between the two sources. This is the same condition as Open Question 024-OQ1, which is now a Blocker. After it, P5-G10-T1 can be developed again and P5-G10-T2 replaces the blocked P5-G2-T3."
+        superseded_blocker_note: "021-B1: its reason that the API contract does not describe Fields no longer applies, because Fields now come from Model; its remaining reason is 025-B1. Its Task P5-G2-T3 is marked replaced when P5-G10-T2 is developed."
+        related_open_questions: ["024-OQ1"]
+        observations:
+          - "The query vocabulary is stated in the API's own documentation and is generated from it; the API accepted all 12 operators, both directions and both combinations and refused invented ones with 422."
+          - "Removing every record of Broker came back from the API as a 500 constraint Problem because accounts reference brokers; the flow holds such a failure as returned, and the Section Tasks present it."
+          - "No real browser is available here, so rendered appearance was not observed, only DOM behaviour, type check, lint and format check; Review may need a browser."
+          - "The installed Node cannot run TypeScript directly, which the API generator needs; a transient runner outside the project was used. The project's own database and API were not touched: the running API copy and its database lived in the session scratchpad and were stopped."
+          - "The repository tracks presentation/node_modules, the Presentation local environment file and build output, and the root ignore file has its Presentation entries commented out; Develop left these as found."

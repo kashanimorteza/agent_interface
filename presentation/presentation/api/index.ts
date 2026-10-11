@@ -3,6 +3,11 @@ export { createApiClient, type ApiClient } from './calls.ts'
 export type { ApiFailure, ApiProblem, ApiResult } from './errors.ts'
 export { ApiAccessProvider, useApiAccess, type ApiAccess } from './provider.tsx'
 export { loadApiSetting } from './setting.ts'
+export {
+  queryVocabulary,
+  type OperatorForm,
+  type QueryVocabulary,
+} from './vocabulary.ts'
 export type {
   FilterCondition,
   OrderTerm,
