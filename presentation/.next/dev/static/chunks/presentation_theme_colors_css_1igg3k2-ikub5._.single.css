@@ -1,0 +1,69 @@
+/* [project]/presentation/theme/colors.css [app-client] (css) */
+:root {
+  --lightningcss-light: initial;
+  --lightningcss-dark: ;
+  color-scheme: light dark;
+  --color-surface: #fff;
+  --color-surface-raised: #fff;
+  --color-surface-sunken: #f3f5f8;
+  --color-text: #151a22;
+  --color-text-muted: #505b6b;
+  --color-border: #d5dae2;
+  --color-border-strong: #8a94a3;
+  --color-accent: #0a5c9e;
+  --color-accent-text: #fff;
+  --color-accent-subtle: #e4f0fa;
+  --color-danger: #b3261e;
+  --color-danger-subtle: #fcebe9;
+  --color-success: #176b3a;
+  --color-success-subtle: #e3f4ea;
+  --color-warning: #8a5a00;
+  --color-warning-subtle: #fbf0d9;
+  --color-focus: var(--color-accent);
+  --color-overlay: #0a0e1480;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --lightningcss-light: ;
+    --lightningcss-dark: initial;
+    --color-surface: #0e1217;
+    --color-surface-raised: #161b22;
+    --color-surface-sunken: #0a0d11;
+    --color-text: #e9edf2;
+    --color-text-muted: #9ba6b5;
+    --color-border: #29313c;
+    --color-border-strong: #6a7585;
+    --color-accent: #7ab8f0;
+    --color-accent-text: #08131f;
+    --color-accent-subtle: #12283d;
+    --color-danger: #ff9a92;
+    --color-danger-subtle: #3a1a18;
+    --color-success: #6fd596;
+    --color-success-subtle: #123322;
+    --color-warning: #f0c060;
+    --color-warning-subtle: #3a2d0f;
+    --color-overlay: #000000a6;
+  }
+}
+
+body {
+  background: var(--color-surface-sunken);
+  color: var(--color-text);
+}
+
+a {
+  color: var(--color-accent);
+}
+
+::selection {
+  background: var(--color-accent-subtle);
+  color: var(--color-text);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/*# sourceMappingURL=presentation_theme_colors_css_1igg3k2-ikub5._.single.css.map*/
