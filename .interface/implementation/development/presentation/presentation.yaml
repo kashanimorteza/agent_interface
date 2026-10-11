@@ -1,12 +1,11 @@
 # <!--------------------------------------------------------------------------------- Meta -->
 meta:
   path: ".interface/implementation/development/presentation/presentation.yaml"
-  path_note: "The Preferences layer of the Presentation Component — supported technical choices and defaults used when a Presentation choice is unstated."
-  purpose: "Defaults and supported Theme, technical, and layer settings for the Presentation package."
+  path_note: "The Preferences layer of the Presentation Component."
+  purpose: "Identity, the entities of architecture with API Access, Theme, Interaction Logic, and documentation choices, and the language profile for Presentation."
   standard: "Agent Project Interface"
-  version: "5.1"
-  updated: "2026-09-25"
-
+  version: "7.0"
+  updated: "2026-10-11"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -15,96 +14,89 @@ policy:
   changed_by: "The human, directly."
   precedence: "An explicit project value and every applicable Presentation Principle take precedence over this file."
 
-
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read component and packages for Presentation's technical selection, then resolve Presentation-owned defaults from this file and the current project definition. Use a Development Default only when this file leaves a shared choice unstated."
+  consumption: "Read the content sections in read_order; realize the entities of architecture through the selected language profile in development. Use a Development Default only when this file leaves a shared choice unstated."
   selection: "Preserve explicit compatible Target choices. Use these Preferences for choices the Target leaves unstated; for anything still unset, follow Development's resolution order."
   version_resolution: "This file resolves versions for Presentation-owned packages. Development resolves versions only for its shared Defaults."
   matching: "Match each Presentation-owned selected key to its option entry. An explicit project value takes priority over the selection recorded here."
 
-
-
-
 # <!--------------------------------------------------------------------------------- Read_Order -->
 read_order:
-  - "component"
-  - "capabilities"
-  - "packages"
-  - "selected"
-  - "options"
-  - "settings"
-
+  - settings
+  - architecture
+  - development
 
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
-  component: "Presentation type, language, and platform."
-  capabilities: "Component capabilities that are currently inactive."
-  packages: "Presentation-owned package selections."
-  selected: "The Presentation-owned Theme."
-  options: "Supported Presentation-owned Themes."
-  settings: "Component directory and package name, plus configuration grouped by the Presentation, Interaction Logic, and API Access layers."
-
+  settings: "Presentation's identity: type, platform, directory, and package."
+  architecture: "The entities of the Architecture tree — Interaction Logic with its state management, API Access with its contract source and type generation, Theme with the selected Theme and its supported options, Areas with the API Group and Section naming of every Area, and Documentation with its file, location, and format."
+  development: "Development capabilities and the selected language with its packages."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
 
-  # <!-------------------------------------------- component -->
-  component:
-    type: "executable"
-    language: "TypeScript"
-    platform: "VPS"
-
-  # <!-------------------------------------------- capabilities -->
-  capabilities:
-    testing: false
-    error_handling: false
-    logging: false
-    encryption: false
-
-  # <!-------------------------------------------- packages -->
-  packages:
-    user_interface:
-      name: "React"
-      package: "react"
-      version: "latest-compatible"
-      component_style: "Function components"
-    application_framework:
-      name: "Next.js"
-      package: "next"
-      version: "latest-compatible"
-      user_interface: "React"
-      router: "App Router"
-      run: "npm run dev"
-    api_client:
-      name: "Fetch"
-      package: null
-      version: "runtime-provided"
-
-  # <!-------------------------------------------- selected -->
-  selected:
-    theme: "Default"
-
-  # <!-------------------------------------------- options -->
-  options:
-
-    themes:
-      Default:
-        version: "1.0"
-        color_mode: "system"
-        direction: "auto"
-        token_based: true
-
   # <!-------------------------------------------- settings -->
   settings:
-
     component:
-      directory: "presentation"
-      package: "trading-assistant-presentation"
+      type: executable
+      platform: VPS
+      directory: presentation
+      package: trading-assistant-presentation
 
-    interaction_logic:
-      state_management: "framework-native"
+  # <!-------------------------------------------- architecture -->
+  architecture:
+    entities:
+      interaction_logic:
+        state_management: framework-native
+      api_access:
+        contract_source: api_openapi_description
+        generated_types: true
+      theme:
+        selected: Default
+        options:
+          Default:
+            version: '1.0'
+            color_mode: system
+            direction: auto
+            token_based: true
+      areas:
+        entity:
+          api_group: entity
+          section_naming: <entity>
+      documentation:
+        file: README.md
+        location: the Component root
+        format: markdown
 
-    api_access:
-      contract_source: "api_openapi_description"
-      generated_types: true
+  # <!-------------------------------------------- development -->
+  development:
+    capabilities:
+      testing: false
+      error_handling: false
+      logging: false
+      encryption: false
+    language:
+      selected: typescript
+      options:
+        typescript:
+          name: TypeScript
+          packages:
+            user_interface:
+              name: React
+              package: react
+              version: latest-compatible
+              component_style: Function components
+            application_framework:
+              name: Next.js
+              package: next
+              version: latest-compatible
+              user_interface: React
+              router: App Router
+              run: npm run dev
+            api_client:
+              name: Fetch
+              package: null
+              version: runtime-provided
+          framework_layout: Directories the selected framework requires, such as the Next.js App Router app directory, hold only what the framework needs and import from view/, interaction/, api/, and theme/; no layer moves out of its own directory.
+          areas: Each Area is a route segment named by its key, and each Section a route beneath it named by its Adapter, such as /entity/user; the route files only import the Section's page from areas/.
