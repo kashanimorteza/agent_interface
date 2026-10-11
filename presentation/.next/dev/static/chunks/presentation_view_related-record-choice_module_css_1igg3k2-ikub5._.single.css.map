@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/presentation/view/related-record-choice.module.css"],"sourcesContent":[".field {\n  composes: field from './field-input.module.css';\n}\n\n.label {\n  composes: label from './field-input.module.css';\n}\n\n.required {\n  composes: required from './field-input.module.css';\n}\n\n.visuallyHidden {\n  composes: visuallyHidden from './visually-hidden.module.css';\n}\n\n.control {\n  composes: control from './field-input.module.css';\n}\n\n.absent {\n  composes: absent from './field-input.module.css';\n}\n\n.problem {\n  composes: problem from './field-input.module.css';\n}\n"],"names":[],"mappings":"AAAA;;;;AAIA;;;;AAIA;;;;AAIA;;;;AAIA;;;;AAIA;;;;AAIA"}}]
+}

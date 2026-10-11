@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/presentation/view/shown-field.module.css"],"sourcesContent":[".field {\n  composes: field from './field-input.module.css';\n}\n\n.label {\n  composes: label from './field-input.module.css';\n}\n\n.value {\n  min-block-size: var(--size-control);\n  margin: 0;\n  padding: var(--space-1) var(--space-3);\n  border: var(--border-width) dashed var(--color-border);\n  border-radius: var(--radius-sm);\n  background: var(--color-surface-sunken);\n  color: var(--color-text);\n  overflow-wrap: anywhere;\n  display: flex;\n  align-items: center;\n}\n\n.absent {\n  color: var(--color-text-muted);\n}\n"],"names":[],"mappings":"AAAA;;;;AAIA;;;;AAIA;;;;;;;;;;;;;AAaA"}}]
+}

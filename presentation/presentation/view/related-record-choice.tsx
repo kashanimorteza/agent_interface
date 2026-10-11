@@ -50,7 +50,7 @@ export function RelatedRecordChoice({
     entry.state === 'value'
       ? records.findIndex((record) => record[valueField] === entry.value)
       : -1
-  const label = given ?? fieldLabel(field.name)
+  const label = given ?? fieldLabel(field)
   return (
     <div className={styles.field}>
       <label

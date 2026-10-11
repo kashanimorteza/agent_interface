@@ -1,13 +1,35 @@
 import { valueFromWire, type FieldValue, type ValueKind } from '@/api'
 
-/** What a Field is, as Interaction Logic receives it from the API contract. */
+/** The Field of another Entity that a related Field takes its value from. */
+export type FieldRelation = {
+  /** The Adapter that serves the related Entity. */
+  readonly entity: string
+  readonly field: string
+}
+
+/** What a Field is, as its Declaration in Model states it. */
 export type FieldDescription = {
   readonly name: string
+  /** What the Declaration says the Field is; it names the Field to the user. Absent when the Declaration gives none. */
+  readonly description?: string
   readonly kind: ValueKind
   /** A value must be supplied; an optional Field may be left unset. */
   readonly required: boolean
-  /** The value the contract gives when none is supplied; absent when it gives none. */
+  /** The value the Declaration gives when none is supplied; absent when it gives none. */
   readonly default?: FieldValue
+  /** The value is a credential or otherwise secret: it can be entered but is never shown. */
+  readonly sensitive?: boolean
+  /** The value cannot be changed by a user once the record exists. */
+  readonly immutable?: boolean
+  /** Model supplies the value itself, so a user never enters it. */
+  readonly generated?: boolean
+  /** The Field takes its value from a record of another Entity. */
+  readonly relation?: FieldRelation
+}
+
+/** A user enters a Field unless it is fixed once the record exists or Model supplies its value. */
+export function isEnterable(field: FieldDescription): boolean {
+  return field.immutable !== true && field.generated !== true
 }
 
 /** An operator of a Filter, how many values it takes, and the kinds of Field it applies to. */

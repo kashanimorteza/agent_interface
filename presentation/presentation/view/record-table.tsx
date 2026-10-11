@@ -5,8 +5,10 @@ import type {
   RecordValues,
 } from '@/interaction/fields'
 import { autoDirection } from '@/theme/theme'
+import { Concealed } from './concealed'
 import { Empty } from './feedback'
 import { fieldLabel } from './field-label'
+import { valueText } from './field-value'
 import styles from './record-table.module.css'
 
 const NUMERIC: ReadonlySet<FieldDescription['kind']> = new Set([
@@ -31,10 +33,19 @@ type Props = {
 function Cell({
   kind,
   value,
+  sensitive,
 }: {
   kind: FieldDescription['kind']
   value: FieldValue | undefined
+  sensitive: boolean
 }) {
+  if (sensitive) {
+    return (
+      <td className={styles.text}>
+        <Concealed />
+      </td>
+    )
+  }
   if (value === null || value === undefined) {
     return (
       <td className={styles.absent} aria-label="No value">
@@ -42,14 +53,12 @@ function Cell({
       </td>
     )
   }
-  const text =
-    typeof value === 'boolean' ? (value ? 'Yes' : 'No') : String(value)
   return (
     <td
       className={NUMERIC.has(kind) ? styles.number : styles.text}
       {...autoDirection}
     >
-      {text}
+      {valueText(value)}
     </td>
   )
 }
@@ -83,7 +92,7 @@ export function RecordTable({
                 scope="col"
                 className={NUMERIC.has(field.kind) ? styles.number : undefined}
               >
-                {fieldLabel(field.name)}
+                {fieldLabel(field)}
               </th>
             ))}
             {rowActions !== undefined && (
@@ -101,6 +110,7 @@ export function RecordTable({
                   key={field.name}
                   kind={field.kind}
                   value={record[field.name]}
+                  sensitive={field.sensitive === true}
                 />
               ))}
               {rowActions !== undefined && (

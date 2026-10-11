@@ -1,0 +1,8 @@
+.concealed {
+  color: var(--color-text-muted);
+  letter-spacing: var(--space-1);
+}
+
+.visuallyHidden {
+  composes: visuallyHidden from './visually-hidden.module.css';
+}

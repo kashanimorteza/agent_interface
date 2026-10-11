@@ -9,6 +9,7 @@
     "build": "next build",
     "start": "next start",
     "generate:api": "node --env-file-if-exists=.env.local scripts/generate-api.ts",
+    "generate:entities": "node scripts/generate-entities.ts",
     "format": "prettier --write app presentation scripts",
     "format:check": "prettier --check app presentation scripts",
     "lint": "eslint .",

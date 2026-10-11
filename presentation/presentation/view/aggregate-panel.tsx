@@ -29,6 +29,8 @@ type Props = {
   onRun: (value: AggregateRequest) => void
   /** The single value the last request gave; absent until there is one. */
   result?: FieldValue
+  /** One entry per Filter condition: why it is not complete, or null. */
+  problems?: readonly (string | null)[]
   busy?: boolean
 }
 
@@ -48,6 +50,7 @@ export function AggregatePanel({
   onChange,
   onRun,
   result,
+  problems,
   busy = false,
 }: Props) {
   const operation = operations.find((o) => o.name === value.operation)
@@ -89,7 +92,7 @@ export function AggregatePanel({
             >
               {operation.fields.map((f) => (
                 <option key={f.name} value={f.name}>
-                  {fieldLabel(f.name)}
+                  {fieldLabel(f)}
                 </option>
               ))}
             </select>
@@ -103,6 +106,7 @@ export function AggregatePanel({
           combinations={combinations}
           draft={value.filters}
           onChange={(filters) => onChange({ ...value, filters })}
+          problems={problems}
         />
       )}
       <div className={styles.run}>

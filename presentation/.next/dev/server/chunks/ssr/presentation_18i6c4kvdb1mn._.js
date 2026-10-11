@@ -1237,7 +1237,7 @@ function AggregatePanel({ operations, filterFields, filterOperators, combination
                                     }),
                                 children: operation.fields.map((f)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                         value: f.name,
-                                        children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$presentation$2f$view$2f$field$2d$label$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["fieldLabel"])(f.name)
+                                        children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$presentation$2f$view$2f$field$2d$label$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["fieldLabel"])(f)
                                     }, f.name, false, {
                                         fileName: "[project]/presentation/view/aggregate-panel.tsx",
                                         lineNumber: 91,
@@ -1743,7 +1743,7 @@ function FieldInput({ field, entry, onChange, hideLabel = false, label: given, a
     // What the user typed is kept as typed while it still means the entry the owner holds.
     const [typed, setTyped] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
     const shown = typed !== null && same((0, __TURBOPACK__imported__module__$5b$project$5d2f$presentation$2f$interaction$2f$fields$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["parseFieldText"])(field.kind, typed), entry) ? typed : textOf(entry);
-    const label = given ?? (0, __TURBOPACK__imported__module__$5b$project$5d2f$presentation$2f$view$2f$field$2d$label$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["fieldLabel"])(field.name);
+    const label = given ?? (0, __TURBOPACK__imported__module__$5b$project$5d2f$presentation$2f$view$2f$field$2d$label$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["fieldLabel"])(field);
     const message = entry.state === 'invalid' ? `Enter ${FORM[field.kind]}.` : problem;
     const describedBy = message === undefined ? undefined : hint;
     const common = {
@@ -1878,13 +1878,16 @@ function FieldInput({ field, entry, onChange, hideLabel = false, label: given, a
 "[project]/presentation/view/field-label.ts [app-ssr] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
-/** The name of a Field as a person reads it: "user_id" becomes "User id". */ __turbopack_context__.s([
+__turbopack_context__.s([
     "fieldLabel",
     ()=>fieldLabel
 ]);
-function fieldLabel(name) {
-    const words = name.replace(/_/g, ' ').trim();
-    return words === '' ? name : words.charAt(0).toUpperCase() + words.slice(1);
+function fieldLabel(field) {
+    if (field.description !== undefined && field.description !== '') {
+        return field.description;
+    }
+    const words = field.name.replace(/_/g, ' ').trim();
+    return words === '' ? field.name : words.charAt(0).toUpperCase() + words.slice(1);
 }
 }),
 "[project]/presentation/view/filter-editor.tsx [app-ssr] (ecmascript)", ((__turbopack_context__) => {
@@ -1984,7 +1987,7 @@ function FilterEditor({ fields, operators, combinations, draft, onChange, proble
                                         },
                                         children: fields.map((f)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                                 value: f.name,
-                                                children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$presentation$2f$view$2f$field$2d$label$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["fieldLabel"])(f.name)
+                                                children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$presentation$2f$view$2f$field$2d$label$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["fieldLabel"])(f)
                                             }, f.name, false, {
                                                 fileName: "[project]/presentation/view/filter-editor.tsx",
                                                 lineNumber: 96,
@@ -2255,7 +2258,7 @@ function OrderControls({ fields, directions, value, onChange }) {
                             }, this),
                             fields.map((f)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                     value: f.name,
-                                    children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$presentation$2f$view$2f$field$2d$label$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["fieldLabel"])(f.name)
+                                    children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$presentation$2f$view$2f$field$2d$label$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["fieldLabel"])(f)
                                 }, f.name, false, {
                                     fileName: "[project]/presentation/view/order-controls.tsx",
                                     lineNumber: 46,
@@ -2640,7 +2643,7 @@ function RecordTable({ fields, records, caption, emptyTitle = 'No records', empt
                             fields.map((field)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
                                     scope: "col",
                                     className: NUMERIC.has(field.kind) ? __TURBOPACK__imported__module__$5b$project$5d2f$presentation$2f$view$2f$record$2d$table$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].number : undefined,
-                                    children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$presentation$2f$view$2f$field$2d$label$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["fieldLabel"])(field.name)
+                                    children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$presentation$2f$view$2f$field$2d$label$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["fieldLabel"])(field)
                                 }, field.name, false, {
                                     fileName: "[project]/presentation/view/record-table.tsx",
                                     lineNumber: 81,

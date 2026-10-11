@@ -44,7 +44,7 @@ export function OrderControls({ fields, directions, value, onChange }: Props) {
           <option value="">No order</option>
           {fields.map((f) => (
             <option key={f.name} value={f.name}>
-              {fieldLabel(f.name)}
+              {fieldLabel(f)}
             </option>
           ))}
         </select>

@@ -4596,8 +4596,7 @@ content:
               constraints: []
               acceptance: For every Entity each Field the contract describes is described with its name, kind, requirement and default, and no other Field is; the Filter operators and Order directions offered
                 are exactly those the contract defines; after the contract changes, regenerating changes the descriptions with no hand edit.
-              status: blocked
-              blocker: '021-B1'
+              status: replaced
               log:
               - at: '2026-10-11T14:00:06Z'
                 event: claimed
@@ -4608,6 +4607,9 @@ content:
               - at: '2026-10-11T14:50:23Z'
                 event: note
                 note: "A claim was recorded here in error by Develop Entry 022 while completing another Task; no work was done on this Task, and its status is restored to blocked on 021-B1 (the underlying condition is unchanged)."
+              - at: '2026-10-11T18:10:34Z'
+                event: replaced
+                note: 'Replaced by P5-G10-T2 (its replaces reference). The Field descriptions it asked for now come from Model''s Declarations, which the Connection from Presentation to Model (Development Preferences 10.0) permits; its second half, the closed sets of Filter operators and Order directions, is carried by P5-G2-T8 (done). Blocker 021-B1 no longer applies to this Task: the Task is no longer executable, so the reference is cleared.'
             P5-G2-T4:
               id: P5-G2-T4
               source_id: 019
@@ -4786,8 +4788,7 @@ content:
               constraints: []
               acceptance: The Entities provided are exactly the Entities in Model's Entity Collection, in the same order, each with the name and description Model declares; after Model's Entity Collection changes,
                 regenerating changes the set with no hand edit; the running Presentation neither loads nor consults Model.
-              status: blocked
-              blocker: 025-B1
+              status: done
               log:
               - at: '2026-10-11T17:18:21Z'
                 event: claimed
@@ -4795,6 +4796,21 @@ content:
               - at: '2026-10-11T17:18:21Z'
                 event: blocked
                 note: "Blocked on 025-B1. The Task requires Presentation to read the Entities from Model's published Interface when it is generated. The Presentation Definition states that Presentation consumes Model, but Development requires every cross-Component use to follow one declared direct Connection in the Development Preferences, and those declare only the Connections from Presentation to API, from API to Logic, from Logic to Database and Model, and from Database to Model; none runs from Presentation to Model, and public availability does not create an undeclared Connection. Reading Model without it would depart from a Development Principle, which Develop may not do, and the Connection can only be declared by the Human. The earlier reason for 021-B1 (the API contract does not describe Fields) no longer applies, because Fields now come from Model; this is its remaining reason. Independent work continued; the Tasks that depend on this one stay unstarted."
+              - at: '2026-10-11T18:06:59Z'
+                event: unblocked
+                note: 'Blocker 025-B1 verified resolved: the Development Preferences (version 10.0) now declare the direct Connection presentation_to_model (consumer presentation, provider model), the condition the Blocker needed. The Blocker reference is cleared and the Task returns to todo; its dependencies (P5-G1-T1, P1-G8-T1) are done and no other condition blocks it.'
+              - at: '2026-10-11T18:06:59Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-11T18:09:22Z'
+                event: decision
+                note: 'Where the Entities are held: the generated Entity set lives with Interaction Logic (interaction/generated/entities.ts), because Entity and Field knowledge feeds interface behavior and Components receive it from there; nothing in Preferences placed it, so this is Develop''s own proposal.'
+              - at: '2026-10-11T18:09:22Z'
+                event: decision
+                note: 'How Model is read: a generation script (scripts/generate-entities.ts, npm run generate:entities) installs Model from its directory into a throw-away uv environment and reads only the Interface symbols Model''s Preferences publish (the entity collection and each Entity''s declaration), so nothing is written into Model or kept; the Adapter of an Entity is its Declaration name in lower case with words joined by underscores, checked against the Adapters the API''s Entity Group serves (an Entity without one stops the generation). Nothing in Preferences chose either mechanism.'
+              - at: '2026-10-11T18:09:22Z'
+                event: done
+                note: 'Added the generation script and its output interaction/generated/entities.ts: 15 Entities (name, description, Adapter) in the order of Model''s Entity Collection. Observed: the output equals the collection exactly and in order; a second run produced byte-identical output; Model''s directory was left unchanged (git status clean there); the application source imports the generated file only and never loads or consults Model. Run through a transient TypeScript runner outside the project because the installed Node (22.22.1) has no TypeScript support; typecheck, lint and format check pass.'
             P5-G10-T2:
               id: P5-G10-T2
               source_id: '024'
@@ -4815,7 +4831,20 @@ content:
               constraints: []
               acceptance: For every Entity each Field its Declaration lists is described, in Declaration order, with the name, description, kind, requirement, default, sensitivity, immutability, value generation
                 and relation the Declaration gives, and no other Field is; after a Declaration changes, regenerating changes the descriptions with no hand edit.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-11T18:10:35Z'
+                event: claimed
+                note: Claimed before changing its result; the Task it replaces, P5-G2-T3, was marked replaced first.
+              - at: '2026-10-11T18:11:59Z'
+                event: decision
+                note: A Field is required when its Declaration is not nullable; a nullable Field is optional and may be left unset. Nothing in Preferences defined requirement; this is the meaning the existing Components already give 'required' (an optional Field offers the choice to leave it unset).
+              - at: '2026-10-11T18:11:59Z'
+                event: decision
+                note: An absent Default Value is told from an explicit null default by the printed form Model documents for it (NO_DEFAULT), because Model's Interface publishes no symbol for it; a decimal default is carried as its exact text. A date or time Type, for which Presentation holds no form, stops the generation instead of being converted.
+              - at: '2026-10-11T18:11:59Z'
+                event: done
+                note: 'Extended scripts/generate-entities.ts to also write interaction/generated/declarations.ts and gave FieldDescription (interaction/fields.ts) the Declaration''s meaning as optional members: description, sensitive, immutable, generated and relation (the related Entity''s Adapter and Field). Observed: an independent comparison against Model''s Declarations over all 15 Entities found no difference in 1116 checks (Field set, order, description, kind, requirement, stated default, sensitivity, immutability, value generation, relation); a second generation was byte-identical. Typecheck, lint and format check pass. Note: no Field in Model currently carries a Sensitivity Marker, so none is described as sensitive.'
         P5-G3:
           id: P5-G3
           title: Theme
@@ -5232,7 +5261,17 @@ content:
               constraints: []
               acceptance: Given Field descriptions, each of those Components names every Field by its description and offers Fields in the order given; the same Field carries the same label in all of them; no Field's
                 technical name is used as its label.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-11T18:14:56Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-11T18:17:39Z'
+                event: decision
+                note: A Field whose Declaration gives no description (only the identity Field id has none) is named by the words of its name, 'Id', because the Task requires a label and nothing else exists to name it; a description is otherwise shown exactly as Model declares it, with no shortening or rewording.
+              - at: '2026-10-11T18:17:39Z'
+                event: done
+                note: 'The one label function (view/field-label.ts) now takes a Field description and returns its description; the record table, Filter editor, order and limit controls, Field input, related record choice and aggregate panel all use it, and the record form labels through the Field input. Observed by rendering each Component with the 13 Account Field descriptions: every Field is named by its description, in the order given, with the same text in the table headers, Filter and order choices, aggregate choices and form labels; no technical name appears as a label. Typecheck, lint and format check pass.'
             P5-G4-T11:
               id: P5-G4-T11
               source_id: '024'
@@ -5290,7 +5329,14 @@ content:
               constraints: []
               acceptance: Given Field descriptions and one record it presents one labelled value per described Field in the order given, exact decimal values without loss of precision and an absent value distinctly
                 from an empty one; given no record it presents the absence of a record; it uses only Theme values.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-11T18:17:50Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-11T18:18:43Z'
+                event: done
+                note: 'Added the record details Component (view/record-details.tsx and its style) and one shared value text (view/field-value.ts) that the record table now also uses, so a value reads the same in both. Observed by rendering it with an Account record: one labelled value per described Field in the order given; a 29-digit decimal shown as its exact text; a null value shown as a dash with the label ''No value'', distinct from an empty text shown as ''Empty''; a boolean as Yes or No; given no record it presents ''No such record''. Every visual value comes from Theme tokens. Typecheck, lint and format check pass.'
             P5-G4-T13:
               id: P5-G4-T13
               source_id: '024'
@@ -5317,7 +5363,17 @@ content:
               constraints: []
               acceptance: For a Field described as sensitive, what is typed is not displayed; no stored value of that Field appears in the table, the details or the form, and a form opened on an existing record does
                 not reveal it; for a Field not described as sensitive nothing changes.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-11T18:19:34Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-11T18:20:01Z'
+                event: decision
+                note: A sensitive Field is concealed in the table and the details by a fixed marker whatever its stored value (including no value), so that nothing about it is rendered; a form opened on a record starts its sensitive Field empty with the placeholder 'Leave empty to keep the current value'. Nothing in Preferences chose either wording or marker.
+              - at: '2026-10-11T18:20:01Z'
+                event: done
+                note: 'Added a shared Concealed Component (view/concealed.tsx). A Field described as sensitive is now entered in a password input (the Field input and the value input of the Filter editor), is rendered as the marker in the record table and the record details, and starts empty in the record form even when editing. Observed by rendering a user record whose password and API key were described as sensitive: the stored secrets appear nowhere in the table, details, edit form or add form output, both inputs are of password type, and a Field not described as sensitive is shown exactly as before. The flow that keeps the stored value when the entry is left empty belongs to the record form flow Task. Typecheck, lint and format check pass.'
             P5-G4-T14:
               id: P5-G4-T14
               source_id: '024'
@@ -5338,7 +5394,17 @@ content:
               constraints: []
               acceptance: In the form an immutable or generated Field is displayed with its label and, when the record has one, its value; it cannot be entered or changed; it is absent from the record the form reports
                 as entered; every other Field is entered as before.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-11T18:20:48Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-11T18:21:38Z'
+                event: decision
+                note: A Field without a value to show (no record yet) is displayed with the muted words 'No value'; nothing in Preferences chose this wording.
+              - at: '2026-10-11T18:21:38Z'
+                event: done
+                note: 'Added the ShownField Component (view/shown-field.tsx) and made the record form show every Field its description marks immutable or generated with ShownField instead of an input; such a Field is also left out of the entries the form starts with and reports, so it is never part of what is entered. Observed by rendering the User form: in edit mode the identity Field appears with its label and value 41 and has no input; in add mode it appears with ''No value''; every other Field keeps its input and its initial entry; a sensitive immutable Field would be shown as the concealed marker. Typecheck, lint and format check pass.'
         P5-G5:
           id: P5-G5
           title: Interaction Logic
@@ -5369,7 +5435,20 @@ content:
               constraints: []
               acceptance: Applying Filters, a combination, an order and a limit requests the list with exactly those choices and holds the result; the operators, combinations and directions offered are those of the
                 query vocabulary; loading is reported while waiting; an error is held as returned; the flow works for any Entity it is given.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-11T18:23:16Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-11T18:25:35Z'
+                event: decision
+                note: The list is requested once when the flow starts, with no choices, and again each time the user applies choices or the owner asks for a refresh; the Task states only that it requests when the user applies, so showing the records on opening is Develop's own proposal. The operators, combinations and directions offered are the API's published query vocabulary without any restriction by Field kind, because the vocabulary states none.
+              - at: '2026-10-11T18:25:35Z'
+                event: done
+                note: 'Added the listing flow (interaction/listing.ts): Filter, order and limit choices, their problems, the loading state and the result as interface data, requesting the list through the Endpoint call it is given. Observed in a real browser against a scratch copy of the API (Currency, 8 records): the opening request carried no choices and showed 8 rows; applying a Filter (code CONTAINS ''U''), an order (decimal digits, DESCENDING) and a limit of 3 sent exactly {filters:[code CONTAINS U], orders:[decimal_digits DESCENDING], limit:3} and held 3 rows; an incomplete Filter sent nothing and reported ''Enter a value.''; loading showed while waiting. An error held as returned is the failed state the flow gives the Section to present. Typecheck, lint and format check pass.'
+              - at: '2026-10-11T18:25:47Z'
+                event: note
+                note: 'Error path observed afterwards in the same browser run: a Filter the API refuses (CONTAINS on the integer identity Field) was sent as chosen, and the flow held the API''s Problem Details unchanged (type InvalidInputError, status 422, detail ''A text operator needs a textual Field and a text value.'') for the Section to present.'
             P5-G5-T2:
               id: P5-G5-T2
               source_id: 019
@@ -5418,7 +5497,20 @@ content:
               constraints: []
               acceptance: In add mode it submits the entered record as an add and in edit mode as an update of that record; a required Field left empty is reported before anything is submitted; an immutable or generated
                 Field is never submitted as entered; a related Field is submitted with the value of the record chosen for it; the API's result or error is held as returned; no application rule is decided by the flow.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-11T18:27:55Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-11T18:31:09Z'
+                event: decision
+                note: 'What a form submits: an optional Field left empty is submitted as no value (null); an entry left exactly as the record holds it is passed through unchecked, so a record whose stored value is an empty text (as the initial User record holds for its credentials) can still be edited; an empty entry for a sensitive Field keeps the value the record holds; when updating, the record''s identity and every other Field a user cannot enter are carried as the record holds them, because the API''s update takes the stored id and stores the whole record. None of this was stated in Preferences or the Task.'
+              - at: '2026-10-11T18:31:09Z'
+                event: decision
+                note: The record form Component now renders a related Field through the related record choice (a loading note while the records load, the failure as returned, or the choice), taking the choices the related record choices flow supplies; the Task requires the related value to come from that choice and no earlier Task connected the two.
+              - at: '2026-10-11T18:31:09Z'
+                event: done
+                note: 'Added the record form flow (interaction/form.ts: recordFromEntries and useRecordForm), moved the one rule for which Fields can be entered to interaction/fields.ts for the form and the flow to share, and connected related choices to the record form (view/record-form.tsx). Observed in a real browser against a scratch copy of the API: adding a Broker with required Fields empty sent nothing and reported ''Enter a value.'' for both; the completed add sent {name, user_id (the chosen User''s id), is_active, description:null} with no id and held the stored record; editing it showed the id as shown-only and sent {id, name, user_id, is_active, description} as an update; a refused add (duplicate name) held the API''s Problem Details unchanged and kept the entries; for a User form whose password was described as sensitive, the input was a password input, the stored secret appeared nowhere on the page, and submitting untouched sent the held value. No application rule is decided by the flow. Typecheck, lint and format check pass.'
             P5-G5-T4:
               id: P5-G5-T4
               source_id: 019
@@ -5464,7 +5556,17 @@ content:
               constraints: []
               acceptance: Choosing an operation and its arguments requests exactly that operation and holds its single result; loading is reported while waiting; an error is held as returned; an operation the Adapter
                 does not offer cannot be chosen.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-11T18:31:49Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-11T18:32:31Z'
+                event: decision
+                note: 'Which Fields an operation is offered for: a total for numeric Fields (integer, float, decimal) and a smallest or largest value for every Field except a boolean, as the API itself states when it refuses others (''sum needs a numeric Field'', ''min needs a comparable Field''); a sensitive Field is never offered because its value would be shown. The API''s documentation lists no such restriction, so this follows its observed refusals.'
+              - at: '2026-10-11T18:32:31Z'
+                event: done
+                note: 'Extended interaction/aggregate.ts with the count and aggregate flow (operationsOf, useAggregate) and gave the aggregate panel a problems input forwarded to its Filter editor so an incomplete Filter is reported there. Observed in a real browser against a scratch copy of the API (Account): the operations offered were exactly those of the calls given (count, sum, min, max; without a max call, max is not offered); count sent {} and showed 1; sum sent {field: ''instance_id''} and showed the single result; with username described as sensitive it was not among min''s Fields; an incomplete Filter sent nothing and reported ''Enter a value.''. Loading is held while waiting and an error as returned. Typecheck, lint and format check pass.'
             P5-G5-T6:
               id: P5-G5-T6
               source_id: '024'
@@ -5512,7 +5614,17 @@ content:
               constraints: []
               acceptance: For a Field described as related, the records offered are those the API returns for the related Entity, requested when the choice is needed; loading is reported while waiting; an error is
                 held as returned; the value handed on is the chosen record's value of the related Field; a Field that is not related requests nothing.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-11T18:26:24Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-11T18:26:57Z'
+                event: decision
+                note: A related record is told apart by its value of the related Field followed by its first text Field that is not sensitive ('1 · Default'), and by the value alone when it has none; the Task leaves what a record shows of itself to the owner and nothing in Preferences chose it. Only Fields a user may enter are supplied with choices, so an immutable or generated related Field requests nothing.
+              - at: '2026-10-11T18:26:57Z'
+                event: done
+                note: 'Added the related record choices flow (interaction/related.ts): for the related Fields of a form it requests the related Entity''s list through API Access (reusing the listing request), holds the loading state, the records and a failure per Field, and describes each record. Observed in a real browser against a scratch copy of the API: the Account form requested exactly the group, broker, instance and currency lists when shown, offered the returned records (''1 · Default'' for the group) and, once chosen, held the chosen record''s id as the Field''s value; the User form, which has no related Field, requested nothing. A failed list is held as returned through the same path observed in the listing flow. Typecheck, lint and format check pass.'
         P5-G6:
           id: P5-G6
           title: Entity Sections
@@ -5566,7 +5678,17 @@ content:
               constraints: []
               acceptance: The User Section offers exactly one user action for every Endpoint of the User Adapter and none for anything else; every form field, list column, Filter and Order is one the User Declaration
                 in Model describes and behaves as that Declaration states.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-11T18:34:31Z'
+                event: claimed
+                note: Claimed before changing its result; every dependency is done.
+              - at: '2026-10-11T18:37:07Z'
+                event: decision
+                note: 'The Section is one explicit unit (areas/entity/user.tsx) holding its pages as views of one page (the records with Filters, order, limit, row actions and aggregates; one record; the add form; the edit form), rather than several routes, because the Preferences name one route per Section; each Endpoint has one user action: list (List the User records), get_by_id (Open, and loading a record to edit), add, update (Save the changes), enable, disable, delete (with confirmation), truncate (Remove every User record, with confirmation) and count, sum, min, max (Count and aggregates). The Section obtains its calls through Interaction Logic (interaction/entity.ts) so the page never reaches API Access itself, and two small layout Components (view/stack.tsx, view/application.ts) were added for its composition; the Task states neither.'
+              - at: '2026-10-11T18:37:07Z'
+                event: done
+                note: 'Provided the User Section. Observed in a real browser against a scratch copy of the API: the Section titled ''User'' lists the records; adding a User, opening it, editing it from its details, disabling and enabling it, deleting it after confirming, calculating count, sum, min and max, and removing every record (the API refused it with a FOREIGN KEY Problem, which the Section showed unchanged) each called their own Endpoint, and exactly twelve Endpoints were used: add, count, delete, disable, enable, get_by_id, list, max, min, sum, truncate, update, none other; every column, Filter, order choice and form field is one of the 7 User Fields from its Declaration in Model. The Section is not reachable yet: reaching it belongs to the Area assembly Task. Typecheck, lint and format check pass.'
             P5-G6-T2:
               id: P5-G6-T2
               source_id: '024'
@@ -5609,7 +5731,11 @@ content:
               constraints: []
               acceptance: The Trading Platform Section offers exactly one user action for every Endpoint of the Trading Platform Adapter and none for anything else; every form field, list column, Filter and Order is
                 one the Trading Platform Declaration in Model describes and behaves as that Declaration states.
-              status: todo
+              status: claimed
+              log:
+              - at: '2026-10-11T18:37:19Z'
+                event: claimed
+                note: Claimed before changing its result; every dependency is done.
             P5-G6-T3:
               id: P5-G6-T3
               source_id: '024'
@@ -5652,7 +5778,11 @@ content:
               constraints: []
               acceptance: The Instance Section offers exactly one user action for every Endpoint of the Instance Adapter and none for anything else; every form field, list column, Filter and Order is one the Instance
                 Declaration in Model describes and behaves as that Declaration states.
-              status: todo
+              status: claimed
+              log:
+              - at: '2026-10-11T18:37:25Z'
+                event: claimed
+                note: Claimed before changing its result; every dependency is done.
             P5-G6-T4:
               id: P5-G6-T4
               source_id: '024'
@@ -5695,7 +5825,11 @@ content:
               constraints: []
               acceptance: The Currency Section offers exactly one user action for every Endpoint of the Currency Adapter and none for anything else; every form field, list column, Filter and Order is one the Currency
                 Declaration in Model describes and behaves as that Declaration states.
-              status: todo
+              status: claimed
+              log:
+              - at: '2026-10-11T18:37:30Z'
+                event: claimed
+                note: Claimed before changing its result; every dependency is done.
             P5-G6-T5:
               id: P5-G6-T5
               source_id: '024'
@@ -5738,7 +5872,11 @@ content:
               constraints: []
               acceptance: The Broker Section offers exactly one user action for every Endpoint of the Broker Adapter and none for anything else; every form field, list column, Filter and Order is one the Broker Declaration
                 in Model describes and behaves as that Declaration states.
-              status: todo
+              status: claimed
+              log:
+              - at: '2026-10-11T18:37:36Z'
+                event: claimed
+                note: Claimed before changing its result; every dependency is done.
             P5-G6-T6:
               id: P5-G6-T6
               source_id: '024'
@@ -5781,7 +5919,11 @@ content:
               constraints: []
               acceptance: The Asset Section offers exactly one user action for every Endpoint of the Asset Adapter and none for anything else; every form field, list column, Filter and Order is one the Asset Declaration
                 in Model describes and behaves as that Declaration states.
-              status: todo
+              status: claimed
+              log:
+              - at: '2026-10-11T18:37:41Z'
+                event: claimed
+                note: Claimed before changing its result; every dependency is done.
             P5-G6-T7:
               id: P5-G6-T7
               source_id: '024'
@@ -5824,7 +5966,11 @@ content:
               constraints: []
               acceptance: The Account Group Section offers exactly one user action for every Endpoint of the Account Group Adapter and none for anything else; every form field, list column, Filter and Order is one
                 the Account Group Declaration in Model describes and behaves as that Declaration states.
-              status: todo
+              status: claimed
+              log:
+              - at: '2026-10-11T18:37:47Z'
+                event: claimed
+                note: Claimed before changing its result; every dependency is done.
             P5-G6-T8:
               id: P5-G6-T8
               source_id: '024'
@@ -5867,7 +6013,11 @@ content:
               constraints: []
               acceptance: The Account Section offers exactly one user action for every Endpoint of the Account Adapter and none for anything else; every form field, list column, Filter and Order is one the Account
                 Declaration in Model describes and behaves as that Declaration states.
-              status: todo
+              status: claimed
+              log:
+              - at: '2026-10-11T18:37:52Z'
+                event: claimed
+                note: Claimed before changing its result; every dependency is done.
             P5-G6-T9:
               id: P5-G6-T9
               source_id: '024'
@@ -5910,7 +6060,11 @@ content:
               constraints: []
               acceptance: The Trailing Group Section offers exactly one user action for every Endpoint of the Trailing Group Adapter and none for anything else; every form field, list column, Filter and Order is one
                 the Trailing Group Declaration in Model describes and behaves as that Declaration states.
-              status: todo
+              status: claimed
+              log:
+              - at: '2026-10-11T18:37:58Z'
+                event: claimed
+                note: Claimed before changing its result; every dependency is done.
             P5-G6-T10:
               id: P5-G6-T10
               source_id: '024'
@@ -5953,7 +6107,11 @@ content:
               constraints: []
               acceptance: The Trailing Rule Section offers exactly one user action for every Endpoint of the Trailing Rule Adapter and none for anything else; every form field, list column, Filter and Order is one
                 the Trailing Rule Declaration in Model describes and behaves as that Declaration states.
-              status: todo
+              status: claimed
+              log:
+              - at: '2026-10-11T18:38:03Z'
+                event: claimed
+                note: Claimed before changing its result; every dependency is done.
             P5-G6-T11:
               id: P5-G6-T11
               source_id: '024'
@@ -5996,7 +6154,11 @@ content:
               constraints: []
               acceptance: The Partial Group Section offers exactly one user action for every Endpoint of the Partial Group Adapter and none for anything else; every form field, list column, Filter and Order is one
                 the Partial Group Declaration in Model describes and behaves as that Declaration states.
-              status: todo
+              status: claimed
+              log:
+              - at: '2026-10-11T18:38:09Z'
+                event: claimed
+                note: Claimed before changing its result; every dependency is done.
             P5-G6-T12:
               id: P5-G6-T12
               source_id: '024'
@@ -6039,7 +6201,11 @@ content:
               constraints: []
               acceptance: The Partial Rule Section offers exactly one user action for every Endpoint of the Partial Rule Adapter and none for anything else; every form field, list column, Filter and Order is one the
                 Partial Rule Declaration in Model describes and behaves as that Declaration states.
-              status: todo
+              status: claimed
+              log:
+              - at: '2026-10-11T18:38:15Z'
+                event: claimed
+                note: Claimed before changing its result; every dependency is done.
             P5-G6-T13:
               id: P5-G6-T13
               source_id: '024'
@@ -6082,7 +6248,11 @@ content:
               constraints: []
               acceptance: The Action Group Section offers exactly one user action for every Endpoint of the Action Group Adapter and none for anything else; every form field, list column, Filter and Order is one the
                 Action Group Declaration in Model describes and behaves as that Declaration states.
-              status: todo
+              status: claimed
+              log:
+              - at: '2026-10-11T18:38:20Z'
+                event: claimed
+                note: Claimed before changing its result; every dependency is done.
             P5-G6-T14:
               id: P5-G6-T14
               source_id: '024'
@@ -6125,7 +6295,11 @@ content:
               constraints: []
               acceptance: The Action Section offers exactly one user action for every Endpoint of the Action Adapter and none for anything else; every form field, list column, Filter and Order is one the Action Declaration
                 in Model describes and behaves as that Declaration states.
-              status: todo
+              status: claimed
+              log:
+              - at: '2026-10-11T18:38:26Z'
+                event: claimed
+                note: Claimed before changing its result; every dependency is done.
             P5-G6-T15:
               id: P5-G6-T15
               source_id: '024'
@@ -6168,7 +6342,11 @@ content:
               constraints: []
               acceptance: The Position Section offers exactly one user action for every Endpoint of the Position Adapter and none for anything else; every form field, list column, Filter and Order is one the Position
                 Declaration in Model describes and behaves as that Declaration states.
-              status: todo
+              status: claimed
+              log:
+              - at: '2026-10-11T18:38:31Z'
+                event: claimed
+                note: Claimed before changing its result; every dependency is done.
         P5-G7:
           id: P5-G7
           title: Area Assembly

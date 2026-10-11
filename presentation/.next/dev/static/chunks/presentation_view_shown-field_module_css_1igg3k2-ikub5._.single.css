@@ -1,0 +1,27 @@
+/* [project]/presentation/view/shown-field.module.css [app-client] (css) */
+.shown-field-module__xy-7ha__field {
+  
+}
+
+.shown-field-module__xy-7ha__label {
+  
+}
+
+.shown-field-module__xy-7ha__value {
+  min-block-size: var(--size-control);
+  padding: var(--space-1) var(--space-3);
+  border: var(--border-width) dashed var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-sunken);
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+  align-items: center;
+  margin: 0;
+  display: flex;
+}
+
+.shown-field-module__xy-7ha__absent {
+  color: var(--color-text-muted);
+}
+
+/*# sourceMappingURL=presentation_view_shown-field_module_css_1igg3k2-ikub5._.single.css.map*/

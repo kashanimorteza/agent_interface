@@ -52,6 +52,8 @@ type Props = {
   absentLabel?: string
   /** A problem the owner found with the entry, shown beside it. */
   problem?: string
+  /** Shown while the input is empty; the Field's default is shown when absent. */
+  placeholder?: string
   disabled?: boolean
 }
 
@@ -64,6 +66,7 @@ export function FieldInput({
   label: given,
   absentLabel = 'No value',
   problem,
+  placeholder,
   disabled = false,
 }: Props) {
   const id = useId()
@@ -75,7 +78,7 @@ export function FieldInput({
     typed !== null && same(parseFieldText(field.kind, typed), entry)
       ? typed
       : textOf(entry)
-  const label = given ?? fieldLabel(field.name)
+  const label = given ?? fieldLabel(field)
   const message =
     entry.state === 'invalid' ? `Enter ${FORM[field.kind]}.` : problem
   const describedBy = message === undefined ? undefined : hint
@@ -97,7 +100,7 @@ export function FieldInput({
         {label}
         {field.required && <span className={styles.required}> (required)</span>}
       </label>
-      {field.kind === 'boolean' ? (
+      {field.kind === 'boolean' && field.sensitive !== true ? (
         <select
           {...common}
           value={entry.state === 'value' ? String(entry.value) : ''}
@@ -112,12 +115,15 @@ export function FieldInput({
       ) : (
         <input
           {...common}
-          type="text"
+          type={field.sensitive === true ? 'password' : 'text'}
           inputMode={MODE[field.kind]}
-          autoComplete="off"
+          autoComplete={field.sensitive === true ? 'new-password' : 'off'}
           value={shown}
           placeholder={
-            field.default === undefined ? undefined : fieldText(field.default)
+            placeholder ??
+            (field.default === undefined || field.sensitive === true
+              ? undefined
+              : fieldText(field.default))
           }
           onChange={(event) => {
             setTyped(event.target.value)
