@@ -1,0 +1,36 @@
+/* [project]/presentation/view/confirmation.module.css [app-client] (css) */
+.confirmation-module__J6w2rq__dialog {
+  max-inline-size: calc(var(--size-navigation) * 2);
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+  box-shadow: var(--shadow-raised);
+  padding: 0;
+}
+
+.confirmation-module__J6w2rq__dialog::backdrop {
+  background: var(--color-overlay);
+}
+
+.confirmation-module__J6w2rq__content {
+  gap: var(--space-5);
+  padding: var(--space-5);
+  flex-direction: column;
+  display: flex;
+}
+
+.confirmation-module__J6w2rq__question {
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-tight);
+  margin: 0;
+}
+
+.confirmation-module__J6w2rq__actions {
+  justify-content: flex-end;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  display: flex;
+}
+
+/*# sourceMappingURL=presentation_view_confirmation_module_css_1igg3k2-ikub5._.single.css.map*/

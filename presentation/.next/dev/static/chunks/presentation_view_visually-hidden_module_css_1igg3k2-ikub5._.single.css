@@ -1,0 +1,13 @@
+/* [project]/presentation/view/visually-hidden.module.css [app-client] (css) */
+.visually-hidden-module__P-L1eG__visuallyHidden {
+  clip-path: inset(50%);
+  white-space: nowrap;
+  block-size: 1px;
+  inline-size: 1px;
+  margin: -1px;
+  padding: 0;
+  position: absolute;
+  overflow: hidden;
+}
+
+/*# sourceMappingURL=presentation_view_visually-hidden_module_css_1igg3k2-ikub5._.single.css.map*/

@@ -1,0 +1,78 @@
+/* [project]/presentation/view/feedback.module.css [app-client] (css) */
+.feedback-module__EK75ra__loading {
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  margin: 0;
+  display: flex;
+}
+
+.feedback-module__EK75ra__spinner {
+  inline-size: var(--space-4);
+  block-size: var(--space-4);
+  border: calc(var(--border-width) * 2) solid var(--color-border);
+  border-block-start-color: var(--color-accent);
+  animation: feedback-module__EK75ra__spin calc(var(--duration-short) * 8) linear infinite;
+  border-radius: 50%;
+}
+
+@keyframes feedback-module__EK75ra__spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.feedback-module__EK75ra__empty {
+  padding: var(--space-6) var(--space-4);
+  border: var(--border-width) dashed var(--color-border-strong);
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.feedback-module__EK75ra__emptyTitle {
+  margin: 0 0 var(--space-2);
+  color: var(--color-text);
+  font-weight: var(--font-weight-medium);
+}
+
+.feedback-module__EK75ra__success {
+  padding: var(--space-3) var(--space-4);
+  border: var(--border-width) solid var(--color-success);
+  border-radius: var(--radius-md);
+  background: var(--color-success-subtle);
+  color: var(--color-text);
+  margin: 0;
+}
+
+.feedback-module__EK75ra__error {
+  padding: var(--space-3) var(--space-4);
+  border: var(--border-width) solid var(--color-danger);
+  border-radius: var(--radius-md);
+  background: var(--color-danger-subtle);
+  color: var(--color-text);
+}
+
+.feedback-module__EK75ra__message {
+  margin: 0;
+}
+
+.feedback-module__EK75ra__details {
+  gap: var(--space-1) var(--space-4);
+  grid-template-columns: max-content 1fr;
+  margin: 0;
+  display: grid;
+}
+
+.feedback-module__EK75ra__details dt {
+  color: var(--color-danger);
+  font-weight: var(--font-weight-medium);
+}
+
+.feedback-module__EK75ra__details dd {
+  overflow-wrap: anywhere;
+  margin: 0;
+}
+
+/*# sourceMappingURL=presentation_view_feedback_module_css_1igg3k2-ikub5._.single.css.map*/

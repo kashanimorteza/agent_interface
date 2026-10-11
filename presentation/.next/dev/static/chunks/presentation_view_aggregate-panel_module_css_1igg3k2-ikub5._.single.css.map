@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/presentation/view/aggregate-panel.module.css"],"sourcesContent":[".panel {\n  display: flex;\n  flex-direction: column;\n  gap: var(--space-4);\n  padding: var(--space-4);\n  border: var(--border-width) solid var(--color-border);\n  border-radius: var(--radius-md);\n  background: var(--color-surface-raised);\n}\n\n.choices {\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-4);\n}\n\n.part {\n  display: flex;\n  flex-direction: column;\n  gap: var(--space-1);\n  font-size: var(--font-size-sm);\n  font-weight: var(--font-weight-medium);\n}\n\n.select {\n  min-block-size: var(--size-control);\n  padding: var(--space-1) var(--space-3);\n  border: var(--border-width) solid var(--color-border-strong);\n  border-radius: var(--radius-sm);\n  background: var(--color-surface-raised);\n  color: var(--color-text);\n  font-weight: var(--font-weight-regular);\n}\n\n.run {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: var(--space-4);\n}\n\n.result {\n  font-size: var(--font-size-lg);\n}\n\n.resultLabel {\n  color: var(--color-text-muted);\n  font-size: var(--font-size-sm);\n}\n"],"names":[],"mappings":"AAAA;;;;;;;;;;AAUA;;;;;;AAMA;;;;;;;;AAQA;;;;;;;;;;AAUA;;;;;;;AAOA;;;;AAIA"}}]
+}

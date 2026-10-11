@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/presentation/preview/demo.module.css"],"sourcesContent":[".block {\n  margin-block-end: var(--space-7);\n}\n\n.title {\n  margin: 0 0 var(--space-4);\n}\n\n.stack {\n  display: flex;\n  flex-direction: column;\n  gap: var(--space-4);\n}\n\n.row {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(var(--size-navigation), 1fr));\n  gap: var(--space-4);\n  align-items: start;\n}\n\n.note {\n  max-inline-size: var(--measure);\n  margin: 0 0 var(--space-6);\n  color: var(--color-text-muted);\n}\n\n.nav {\n  display: flex;\n  flex-direction: column;\n  gap: var(--space-2);\n  margin: 0;\n  padding: 0;\n  list-style: none;\n}\n\n.swatches {\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-4);\n  margin-block-end: var(--space-4);\n}\n\n.swatch {\n  display: flex;\n  align-items: center;\n  gap: var(--space-2);\n}\n\n.chip {\n  inline-size: var(--space-6);\n  block-size: var(--space-6);\n  border: var(--border-width) solid var(--color-border-strong);\n  border-radius: var(--radius-sm);\n}\n"],"names":[],"mappings":"AAAA;;;;AAIA;;;;AAIA;;;;;;AAMA;;;;;;;AAOA;;;;;;AAMA;;;;;;;;;AASA;;;;;;;AAOA;;;;;;AAMA"}}]
+}
