@@ -29,11 +29,11 @@ content_map:
 # <!--------------------------------------------------------------------------------- Content -->
 content:
   active:
-    mode: "implementing"
-    phase: "P4"
-    mode_reason: "Implement completed phase P4 (Log Entry 015): planning completed, development completed, review satisfied."
-    set_by: "my-interface-implement"
-    set_at: "2026-10-09T19:39:58Z"
+    mode: "development"
+    phase: "P5"
+    mode_reason: "Develop stopped phase P5 on Blocker 021-B1 (Log Entry 023): 21 of 48 Tasks done, 1 blocked, 26 not started."
+    set_by: "my-interface-develop"
+    set_at: "2026-10-11T14:49:00Z"
   phases:
     P1:
       id: "P1"
@@ -59,6 +59,12 @@ content:
       development: "completed"
       review: "satisfied"
       completed_at: "2026-10-09T19:39:07Z"
+    P5:
+      id: "P5"
+      planning: "completed"
+      development: "blocked"
+      review: "not started"
+      completed_at: null
   log:
     - id: "001"
       skill: "my-interface-configure"
@@ -1070,3 +1076,151 @@ content:
         - 'Every Endpoint''s Parameters keep the Action''s names, requirements and defaults: held'
         - 'Every Handler calls only its Action through Logic Interface and returns its result and errors unchanged: held'
         - 'Entity Group imports nothing but Logic Interface for the application: held'
+    - id: "019"
+      skill: "my-interface-plan"
+      phase: "P5"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-10-11T13:18:30Z"
+      completed_at: "2026-10-11T13:22:20Z"
+      duration: "3:50"
+      skills_used:
+        - name: "frontend-design:frontend-design"
+          report: "Read to identify its use for Theme and View work; recorded as a Task Skill on those Tasks and its differing recommendation recorded as Open Question 019-OQ1."
+      open_questions: ["019-OQ1"]
+      blockers: []
+      decisions: []
+      report: "Planned phase P5 (Presentation) from the current Interface, Target, Presentation Definition and Preferences, and the API and Entity Group Definitions: 9 Groups and 48 new Tasks, all todo, dependencies explicit and acyclic. No earlier P5 Plan existed, so nothing was preserved, replaced or removed; P1 to P4 are unchanged. The total task count was recalculated and aggregate Planning progress for P5 set to completed."
+      data:
+        phase: "P5"
+        phase_resolution: "Requested phase '5' resolved to Target phase P5 (Presentation, enabled, ready); earlier phases P1 to P4 are satisfied and carry no open Blocker."
+        additions:
+          - "Plan P5 with 9 Groups and 48 Tasks: Application Package (1), API Access (7), Theme (3), Reusable Components (9), Interaction Logic (5), Entity Sections (15, one per Entity), Area Assembly (2), Documentation (5), Quality Standards (1)."
+        changes:
+          - "Top-level task_count recalculated from 126 to 174 (P1 26 + P2 31 + P3 32 + P4 37 + P5 48)."
+        removals: []
+        replacements: []
+        preservations:
+          - "P1, P2, P3 and P4 Plans, Tasks, statuses and Task Logs left unchanged."
+        dependencies_on_other_phases:
+          - "P4-G2-T1 (runtime Configuration giving the API address), P4-G8-T1 (published machine-readable description), P4-G6-T1 to P4-G6-T15 (the Adapter of each Entity, one for each Section)."
+        notes:
+          - "Task Skills: frontend-design:frontend-design on the Theme, Component and navigation Tasks; example-skills:webapp-testing on the Tasks whose result is a rendered page. No provider Skill for the selected application framework is installed, so none is named for it."
+          - "Presentation Preferences select no testing, error handling, logging or encryption capability, so no Task plans them."
+          - "Development Preferences select no formatter, linter or type checker for the selected language, so Develop resolves them by Development's precedence order and records a decision in the Task Log."
+          - "Development requires a Connection to be a local path dependency on the provider's directory; Presentation reaches API over the network, so Develop resolves how the Connection is realized and records a decision."
+        open_question_details:
+          - id: "019-OQ1"
+            skill: "frontend-design:frontend-design"
+            current_choice: "Presentation Preferences: one coherent token-based Theme named Default, with system display mode and automatic direction."
+            alternative: "Design a distinct, opinionated visual identity (palette, typography, layout) specific to the product instead of a neutral default Theme."
+            reason: "The Skill advises that a neutral default reads as templated and that a distinct point of view serves the subject better; the Preferences choose a Default Theme, so the Plan continues with it."
+    - id: "020"
+      skill: "my-interface-plan"
+      phase: "P5"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-10-11T13:27:29Z"
+      completed_at: "2026-10-11T13:28:50Z"
+      duration: "1:21"
+      skills_used: []
+      open_questions: []
+      blockers: []
+      decisions: []
+      report: "Reconciled the existing Plan for phase P5 (Presentation) against the current Interface, Target, Presentation Definition and Preferences, and the API and Entity Group Definitions: Understanding is unchanged since Plan 019 (no source changed after it), so the Plan of 9 Groups and 48 Tasks was preserved as is. No Task was added, changed, removed or replaced; every Task is still todo with source_id 019. Counts and dependencies were rechecked and hold. No Blocker; the one Open Question (019-OQ1) is unchanged."
+      data:
+        phase: "P5"
+        phase_resolution: "Requested phase '5' resolved to Target phase P5 (Presentation, enabled, ready); earlier phases P1 to P4 are completed and carry no open Blocker."
+        additions: []
+        changes: []
+        removals: []
+        replacements: []
+        preservations:
+          - "Plan P5 (9 Groups, 48 Tasks, all todo, source_id 019) kept unchanged: the Presentation, API and Entity Group sources are unchanged since Plan 019, so the Plan still covers the phase goal and every Presentation obligation."
+          - "P1 to P4 Plans, Tasks, statuses and Task Logs left unchanged."
+        rechecks:
+          - "Group task counts, the Plan task count (48) and the top-level task count (174) equal the stored Tasks."
+          - "Every dependency resolves to a stored Task and the dependency graph is acyclic; all 17 dependencies on earlier phases are developed Tasks."
+          - "Each of the 15 Sections depends on its own Entity's Adapter Task and on the shared Components and flows; no statement repeats across Tasks."
+        related_open_questions: ["019-OQ1"]
+    - id: "021"
+      skill: "my-interface-develop"
+      phase: "P5"
+      event: "develop"
+      outcome: "stopped"
+      started_at: "2026-10-11T13:39:03Z"
+      completed_at: "2026-10-11T14:48:00Z"
+      duration: "1:08:57"
+      skills_used:
+        - name: "frontend-design:frontend-design"
+          report: "Read for the Theme Tasks; its advice to give the product a distinct identity is the existing Open Question 019-OQ1 (the Preferences' Default Theme was kept), and its quality floor (visible focus, readable contrast, reduced motion) was applied."
+        - name: "example-skills:webapp-testing"
+          report: "Read for rendered-page observation; a real browser could not be installed here (the browser download service refuses this location and the system package is a snap stub), so rendered behaviour is observed in a DOM environment and in built output."
+      open_questions: []
+      blockers: ["021-B1"]
+      decisions: ["P5-G1-T1", "P5-G2-T1", "P5-G2-T2", "P5-G2-T4", "P5-G2-T5", "P5-G2-T6", "P5-G2-T7", "P5-G3-T1", "P5-G3-T2", "P5-G3-T3"]
+      report: "Stopped when a new /my-interface-develop invocation arrived (continued by Entry 022). Completed 10 Tasks of phase P5: the Presentation package, API Access (address setting, description generator, transport, value translation, error handling, 180 calls) and the Theme. G2-T3 is blocked on 021-B1. Nine View Layer Tasks (G4) were claimed and their first Components written but none completed."
+      data:
+        phase: "P5"
+        tasks_done: ["P5-G1-T1", "P5-G2-T1", "P5-G2-T2", "P5-G2-T4", "P5-G2-T5", "P5-G2-T6", "P5-G2-T7", "P5-G3-T1", "P5-G3-T2", "P5-G3-T3"]
+        tasks_blocked: ["P5-G2-T3"]
+        tasks_claimed_unfinished: ["P5-G4-T1", "P5-G4-T2", "P5-G4-T3", "P5-G4-T4", "P5-G4-T5", "P5-G4-T6", "P5-G4-T7", "P5-G4-T8", "P5-G4-T9"]
+        blocker_details:
+          - id: "021-B1"
+            task: "P5-G2-T3"
+            condition: "The API's published contract does not describe Entity Fields. Its machine-readable description types every Entity body as a free object, every result as an unconstrained value, and Filter operators, Order directions and combination as plain strings; its documentation gives only illustrative example records and prose lists of names, with no Field kinds, requirements or defaults. Presentation may neither invent nor hand-list Fields, and no declared Connection lets it read the Model that owns them."
+            needed: "A change to API's published contract (for example, typed Entity schemas and enumerated operators and directions in its machine-readable description) is a Human decision outside Presentation. Until then every Task that consumes the Field descriptions through its dependencies (listing, form and aggregate flows, all 15 Sections and what depends on them) cannot start."
+        environment:
+          - "A Node LTS toolchain was placed in the session scratchpad, outside the project, because none was installed; project dependencies were resolved with npm."
+    - id: "022"
+      skill: "my-interface-develop"
+      phase: "P5"
+      event: "develop"
+      outcome: "stopped"
+      started_at: "2026-10-11T14:48:30Z"
+      completed_at: "2026-10-11T14:55:00Z"
+      duration: "6:30"
+      skills_used: []
+      open_questions: []
+      blockers: ["021-B1"]
+      decisions: ["P5-G4-T5", "P5-G4-T7"]
+      report: "Stopped when a new /my-interface-develop invocation arrived (continued by Entry 023). Completed 5 View Layer Tasks of phase P5: feedback Components, Field inputs, page frame, confirmation with the shared button, and the record table. The Filter editor (G4-T3) was written and awaits its checks; order and limit controls (G4-T4), the record form (G4-T6) and the aggregate panel (G4-T9) are claimed and not yet started."
+      data:
+        phase: "P5"
+        tasks_done: ["P5-G4-T8", "P5-G4-T5", "P5-G4-T1", "P5-G4-T7", "P5-G4-T2"]
+        tasks_claimed_unfinished: ["P5-G4-T3", "P5-G4-T4", "P5-G4-T6", "P5-G4-T9"]
+        corrections:
+          - "State: a replace aimed at the active record first matched the same word in the content map and altered it; it was restored at once and the active record was then set correctly."
+          - "Plan: a stray claim command moved the blocked Task P5-G2-T3 to claimed; its status was restored to blocked and the stray entry was rewritten as a note saying so."
+    - id: "023"
+      skill: "my-interface-develop"
+      phase: "P5"
+      event: "develop"
+      outcome: "blocked"
+      started_at: "2026-10-11T14:55:08Z"
+      completed_at: "2026-10-11T15:05:32Z"
+      duration: "10:24"
+      skills_used: []
+      open_questions: ["023-OQ1"]
+      blockers: ["021-B1"]
+      decisions: ["P5-G4-T3", "P5-G4-T4", "P5-G4-T6", "P5-G4-T9", "P5-G5-T2", "P5-G5-T4"]
+      report: "Developed the remaining Tasks that do not depend on the Field descriptions: the rest of the View Layer (Filter editor, order and limit controls, record form, aggregate panel) and the single-record and record-action flows. Phase P5 now has 21 of 48 Tasks done, 1 blocked (P5-G2-T3, Blocker 021-B1) and 26 not started; none of those 26 can start because each depends, directly or through the Sections, on the blocked Task. Development of P5 is therefore stopped on 021-B1 and needs a Human decision outside Presentation."
+      data:
+        phase: "P5"
+        task_totals: {done: 21, blocked: 1, todo: 26}
+        tasks_done_in_this_entry: ["P5-G4-T8", "P5-G4-T5", "P5-G4-T1", "P5-G4-T7", "P5-G4-T2", "P5-G4-T3", "P5-G4-T4", "P5-G4-T6", "P5-G4-T9", "P5-G5-T2", "P5-G5-T4"]
+        tasks_not_started: ["P5-G5-T1", "P5-G5-T3", "P5-G5-T5", "P5-G6-T1 to P5-G6-T15", "P5-G7-T1", "P5-G7-T2", "P5-G8-T1 to P5-G8-T5", "P5-G9-T1"]
+        component_location: "presentation/"
+        open_question_details:
+          - id: "023-OQ1"
+            skill: null
+            current_choice: "No flow or action for truncate is built: Develop does not add work to a Task, and no planned Task covers it."
+            alternative: "Planning adds a Task for a truncate flow (with confirmation) and the Section Tasks name its action, since every Adapter offers a truncate Endpoint and Presentation gives one user action to every Endpoint."
+            reason: "The Section acceptance requires an action for every Endpoint of an Adapter, but the record action flow is planned for enable, disable and delete only."
+        observations:
+          - "Type check, lint and format check report nothing; 136 checks over the View Layer Components, translation, calls and flows pass in a DOM environment and against a running API."
+          - "No real browser could be installed here, so rendered appearance (spacing, colors in a browser, right-to-left text in a layout engine) was not observed, only computed contrast and DOM behaviour; Review may need a browser."
+          - "The project's own Database file and API were not touched: the running API and its Database copy lived in the session scratchpad and were stopped; the local environment file holding the API address was removed."
+        corrections:
+          - "State: a replace aimed at the active record first matched the same word in the content map; restored at once."
+          - "Plan: a stray claim command moved the blocked Task P5-G2-T3 to claimed; restored to blocked and the entry rewritten as a note."

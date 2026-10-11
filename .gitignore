@@ -22,3 +22,10 @@
 # dist/
 # .pytest_cache/
 # .ruff_cache/
+
+# # Presentation
+# presentation/node_modules/
+# presentation/.next/
+# presentation/next-env.d.ts
+# presentation/*.tsbuildinfo
+# presentation/.env.local

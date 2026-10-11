@@ -1,0 +1,57 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-inline-size: 0;
+}
+
+.label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.required {
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-regular);
+}
+
+.visuallyHidden {
+  composes: visuallyHidden from './visually-hidden.module.css';
+}
+
+.control {
+  inline-size: 100%;
+  min-block-size: var(--size-control);
+  padding: var(--space-1) var(--space-3);
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+}
+
+.control::placeholder {
+  color: var(--color-text-muted);
+}
+
+.control:disabled {
+  background: var(--color-surface-sunken);
+  color: var(--color-text-muted);
+}
+
+.control[aria-invalid='true'] {
+  border-color: var(--color-danger);
+}
+
+.absent {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.problem {
+  margin: 0;
+  color: var(--color-danger);
+  font-size: var(--font-size-sm);
+}

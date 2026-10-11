@@ -1,0 +1,38 @@
+/* Theme Default: spacing and shape. Every distance, radius and motion duration a Component may use is a value named here. */
+:root {
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+
+  --size-control: 2.25rem;
+  --size-page: 80rem;
+  --size-navigation: 15rem;
+
+  --border-width: 1px;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --shadow-raised: 0 1px 2px rgb(10 14 20 / 0.08);
+
+  --duration-short: 120ms;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-short: 0ms;
+  }
+}

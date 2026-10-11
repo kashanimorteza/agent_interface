@@ -1,0 +1,13 @@
+/*
+ * Theme Default: text direction is automatic. Content decides its own direction:
+ * the root and every Component that shows content carry the automatic direction
+ * attribute (see theme.ts), and all layout uses logical properties, so controls
+ * are placed from the start of the content, whichever way it reads.
+ */
+:root {
+  text-align: start;
+}
+
+:where(input, textarea, select, th, td, caption, legend) {
+  text-align: start;
+}
