@@ -44,11 +44,10 @@ Before any other step, prepare the Agent Native. Step 1 is needed only once, or 
 Define the Target before selecting a Workflow Path:
 
 ```text
-Human Definition = .interface/target/non-technical.md
-Technical Definition = .interface/target/technical.md
+Target Definition = .interface/target/target.md (with the files it references: entities.md, trading.md, behavior.md, development.md, phases.md)
 ```
 
-The Human states the intended outcome in Human Definition, then records its corresponding technical definition without changing that intent.
+The Human states the intended outcome in the Target Definition.
 
 After the Project is defined, select Default, Normal, or Detailed. The path controls only how much of the Workflow the Human invokes directly; it does not change any operation contract or verification gate.
 

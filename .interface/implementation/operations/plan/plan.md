@@ -163,7 +163,7 @@ The Task itself carries only what is its own: the activity, its reason, its inpu
 
 ### A Task is independent of the implementation structure
 
-**Rule:** Planning content in Plans, Groups, and Tasks is expressed in terms of responsibilities, behaviour, and observable results. It never states where anything lives: no file, folder, path, module, package layout, class, function, symbol, or command appears in that planning content, and it never asserts that a particular artifact already exists at a particular location. The target and work area identify a Component and a responsibility inside it, not a directory. Planning content carries no list of sources to consult. Execution history is distinct: a Task's log records what was actually done, relevant locations, and the observed outcome, with secret values excluded.
+**Rule:** Planning content in Plans, Groups, and Tasks is expressed in terms of responsibilities, behavior, and observable results. It never states where anything lives: no file, folder, path, module, package layout, class, function, symbol, or command appears in that planning content, and it never asserts that a particular artifact already exists at a particular location. The target and work area identify a Component and a responsibility inside it, not a directory. Planning content carries no list of sources to consult. Execution history is distinct: a Task's log records what was actually done, relevant locations, and the observed outcome, with secret values excluded.
 
 **Why:** The shared understanding a Task depends on is produced by the Interface itself — the human project definition together with the applicable Principles and Preferences. That understanding is established from those current sources at the moment the Task is executed, so a Task remains valid when the implementation is rearranged and is never invalidated by a path that has moved.
 
@@ -191,11 +191,11 @@ The Task itself carries only what is its own: the activity, its reason, its inpu
 
 <br>
 
-### Completion is defined as observable behaviour
+### Completion is defined as observable behavior
 
-**Rule:** Every Task states an acceptance criterion expressed as observable behaviour, in terms of the interfaces and behaviour the result publishes, without naming the command, tool, path, or code that would observe it. Acceptance states what the result must deliver. Plan checks nothing; whether acceptance holds is established by the Review Operation.
+**Rule:** Every Task states an acceptance criterion expressed as observable behavior, in terms of the interfaces and behavior the result publishes, without naming the command, tool, path, or code that would observe it. Acceptance states what the result must deliver. Plan checks nothing; whether acceptance holds is established by the Review Operation.
 
-**Why:** Writing code or changing a file is never sufficient evidence of completion, and a criterion expressed as behaviour survives every rearrangement of the implementation that produces it.
+**Why:** Writing code or changing a file is never sufficient evidence of completion, and a criterion expressed as behavior survives every rearrangement of the implementation that produces it.
 
 **Boundary:** Acceptance describes what must be true after implementation. It never doubles as a hidden implementation procedure or as a check.
 
@@ -279,7 +279,7 @@ Every obligation in the file, under the Principle it comes from.
 
 **A Task is independent of the implementation structure**
 
-- **Must** — a Task is expressed in responsibilities, behaviour, and observable results
+- **Must** — a Task is expressed in responsibilities, behavior, and observable results
 - **Never** — planning content names a file, folder, path, module, layout, class, function, symbol, or command, asserts an artifact's location, or carries a list of sources to consult
 - **Must** — execution history records what was done, relevant locations, and observed results without secret values or prescriptions for future implementation
 
@@ -293,9 +293,9 @@ Every obligation in the file, under the Principle it comes from.
 - **Must** — a Task names every other Task whose completed result it requires
 - **Never** — readiness is guessed from file order or proximity inside a Group
 
-**Completion is defined as observable behaviour**
+**Completion is defined as observable behavior**
 
-- **Must** — every Task states acceptance as observable behaviour
+- **Must** — every Task states acceptance as observable behavior
 - **Never** — acceptance names the command, tool, path, or code that observes it, or doubles as an implementation procedure or a check
 
 **Task progress and Workflow State remain separate**

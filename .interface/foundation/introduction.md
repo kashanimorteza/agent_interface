@@ -50,7 +50,7 @@ Its purpose is to let a Human define a Target in natural language, provide commo
 <!--------------------------------------------------------------------------------- How It Works --->
 ## How It Works
 
-The Human states the Target in the Non-Technical Definition and translates that intent into the Technical Definition without changing its meaning. Skills then read the current sources required by their role before acting. Planning records activities as Tasks; Development implements and verifies those Tasks; Review evaluates the result; and Launch brings the completed Target online. Mechanical actions such as Config initialization do not interpret the Target.
+The Human states the Target in the Target Definition. Skills then read the current sources required by their role before acting. Planning records activities as Tasks; Development implements and verifies those Tasks; Review evaluates the result; and Launch brings the completed Target online. Mechanical actions such as Config initialization do not interpret the Target.
 
 Config contains only the mutable operational records used to coordinate this work. Schemas define their storage format.
 

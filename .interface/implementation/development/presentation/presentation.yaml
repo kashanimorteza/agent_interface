@@ -2,9 +2,9 @@
 meta:
   path: ".interface/implementation/development/presentation/presentation.yaml"
   path_note: "The Preferences layer of the Presentation Component."
-  purpose: "Identity, the entities of architecture with API Access, Theme, Interaction Logic, and documentation choices, and the language profile for Presentation."
+  purpose: "Identity, the entities of architecture with API Access, Entity Pages, Navigation, and documentation choices, and the general and client profiles for Presentation."
   standard: "Agent Project Interface"
-  version: "9.0"
+  version: "11.0"
   updated: "2026-10-12"
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -16,7 +16,7 @@ policy:
 
 # <!--------------------------------------------------------------------------------- Resolution -->
 resolution:
-  consumption: "Read the content sections in read_order; realize the entities of architecture through the selected language profile in development. Use a Development Default only when this file leaves a shared choice unstated."
+  consumption: "Read the content sections in read_order; realize the entities of architecture through the general rules and the selected client profile in development. Use a Development Default only when this file leaves a shared choice unstated."
   selection: "Preserve explicit compatible Target choices. Use these Preferences for choices the Target leaves unstated; for anything still unset, follow Development's resolution order."
   version_resolution: "This file resolves versions for Presentation-owned packages. Development resolves versions only for its shared Defaults."
   matching: "Match each Presentation-owned selected key to its option entry. An explicit project value takes priority over the selection recorded here."
@@ -30,8 +30,8 @@ read_order:
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
   settings: "Presentation's identity: type, platform, directory, and package."
-  architecture: "The entities of the Architecture tree — Interaction Logic with its state management, API Access with its contract source and type generation, Theme with the selected Theme and its supported options, Areas with the API Group, Section naming, and the Entity and field sources of every Area, and Documentation with its file, location, and format."
-  development: "Development capabilities and the selected language with its packages."
+  architecture: "The entities of the Architecture tree — API Access with its contract source and type generation, Entity Pages with the API Group and the Entity, Field, and page naming sources, Navigation with its entry naming, and Documentation with its file, location, and format."
+  development: "Development capabilities, the general architecture and conventions every client follows, and the selected client with its technology and realization profile."
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
@@ -47,25 +47,16 @@ content:
   # <!-------------------------------------------- architecture -->
   architecture:
     entities:
-      interaction_logic:
-        state_management: framework-native
       api_access:
         contract_source: api_openapi_description
         generated_types: true
-      theme:
-        selected: Default
-        options:
-          Default:
-            version: '1.0'
-            color_mode: system
-            direction: auto
-            token_based: true
-      areas:
-        entity:
-          api_group: entity
-          section_naming: <entity>
-          entity_source: model_entity_collection
-          field_source: model_entity_declaration
+      entity_pages:
+        api_group: entity
+        entity_source: model_entity_collection
+        field_source: model_entity_declaration
+        page_naming: <entity>
+      navigation:
+        entry_naming: <entity>
       documentation:
         file: README.md
         location: the Component root
@@ -78,27 +69,95 @@ content:
       error_handling: false
       logging: false
       encryption: false
-    language:
-      selected: typescript
+
+    # <!------------------------------------------ general -->
+    general:
+      architecture:
+        modularity: "Presentation is built from focused, separate units: each Component, page, and part is its own unit with one responsibility."
+        entity_pages: "Every Entity Page is written out explicitly in its own unit, using shared Components; no generic List, Create, Edit, or Show page serves several Entities."
+        entity_metadata: "Entities, Fields, Relations, and their dependencies come from the Entity Declarations in Model, read when Presentation is generated into one generated metadata unit; Navigation, routes, and Entity Pages read it, and no Entity or Field is listed by hand. Adding, removing, or changing an Entity changes that unit and its page only."
+        api_access: "One Data Provider inside API Access is the only unit that communicates with API; its address comes from one environment setting."
+      conventions:
+        typing: "Strict typing with no untyped value."
+        text: "Every visible text comes through the internationalization layer in Persian and English; no fixed text appears in code."
+        api_address: "The API address is read from one environment setting and never written in source."
+
+    # <!------------------------------------------ client -->
+    client:
+      selected: react_web
       options:
-        typescript:
-          name: TypeScript
-          packages:
-            user_interface:
-              name: React
-              package: react
-              version: latest-compatible
-              component_style: Function components
-            application_framework:
-              name: Next.js
-              package: next
-              version: latest-compatible
-              user_interface: React
-              router: App Router
-              run: npm run dev
-            api_client:
-              name: Fetch
-              package: null
-              version: runtime-provided
-          framework_layout: Directories the selected framework requires, such as the Next.js App Router app directory, hold only what the framework needs and import from view/, interaction/, api/, and theme/; no layer moves out of its own directory.
-          areas: Each Area is a route segment named by its key, and each Section a route beneath it named by its Adapter, such as /entity/user; the route files only import the Section's page from areas/.
+        react_web:
+          name: "Web dashboard (single-page application)"
+          language:
+            name: TypeScript
+            mode: strict
+            markup: HTML
+            styles: CSS
+          runtime:
+            name: Node.js
+            version: LTS
+            use: "Running tools only."
+          package_manager:
+            name: npm
+            version: latest-compatible
+          build_tool:
+            name: Vite
+            version: latest-compatible
+          user_interface:
+            name: React
+            package: react
+            version: latest-compatible
+            component_style: Function components
+          application_framework:
+            name: Refine
+            package: "@refinedev/core"
+            version: latest-compatible
+            mode: headless
+            use: "CRUD logic through its Hooks."
+          component_library:
+            name: Ant Design
+            package: antd
+            version: latest-compatible
+            use: "Every user-interface part."
+          routing:
+            name: React Router
+            version: latest-compatible
+          data_fetching:
+            name: TanStack Query
+            version: latest-compatible
+            use: "Only through Refine; never used directly."
+          data_provider:
+            package: "@refinedev/simple-rest"
+            custom: "One Custom Data Provider when the API differs from the standard."
+            location: "Inside API Access."
+          validation:
+            name: zod
+            version: latest-compatible
+          internationalization:
+            name: i18next
+            languages: [fa, en]
+          charts:
+            name: Ant Design Charts
+            version: latest-compatible
+          font:
+            name: Vazirmatn
+          api_address:
+            setting: VITE_API_URL
+            location: .env
+          realization:
+            project_layout: "Feature-based folders; the parts keep their own directories as architecture states."
+            framework_layout: "Directories the selected build tool and framework require, such as the Vite entry files, hold only what they need and import from api/, pages/, and navigation/; no part moves out of its own directory."
+            metadata_unit: "resources.config.ts holds the generated Entity metadata (resource endpoint, Fields, Field types, Relations, dependencies); the menu and routes derive from it, and each Entity Page is declared as its own explicit Refine resource."
+            routes: "Each Entity Page is a route named by its Entity, such as /user; the route declarations only import the page from pages/."
+            layout: "ThemedLayout and Sider from Refine; menu groups through meta.parent."
+            table: "useTable with Table, with pagination, sorting, and filtering done on the server."
+            form: "useForm with Form."
+            field_inputs: "A shared FieldRenderer Component picks the input by Field type: Input, InputNumber, Select, DatePicker, Switch, or Upload."
+            related_records: "useMany shows the related record's name instead of its id."
+            cascading_select: "useSelect with Form.useWatch; when a parent changes, its children are cleared and loaded again; the dependency is declared as dependsOn in the metadata, for example country, city, district. Cascader with loadData is the alternative."
+            master_detail: "Table with expandable rows or a two-pane view; Tree or TreeSelect for tree data."
+            theme:
+              tokens: "All appearance comes from Design Tokens in ConfigProvider (colorPrimary, borderRadius, fontFamily, and the rest), never from scattered CSS."
+              direction: "The direction in ConfigProvider follows the language: rtl for Persian, ltr for English."
+              modes: "darkAlgorithm and defaultAlgorithm for dark and light mode; compactAlgorithm for tables with much data."
+              custom_styles: "Only CSS Modules (.module.css)."

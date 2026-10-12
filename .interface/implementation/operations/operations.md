@@ -147,7 +147,7 @@ Every Principle below is mandatory.
 
 ### Operations governs implementation work without becoming product implementation
 
-**Rule:** Operations defines how Target implementation work is configured, developed, coordinated, reviewed, launched, reset, and recorded. It never owns or implements the product behaviour, source, or public interfaces governed by Development.
+**Rule:** Operations defines how Target implementation work is configured, developed, coordinated, reviewed, launched, reset, and recorded. It never owns or implements the product behavior, source, or public interfaces governed by Development.
 
 **Why:** Separating the way work is controlled from the product being built prevents operational records and workflow mechanics from becoming product architecture.
 
@@ -183,7 +183,7 @@ Every obligation in the file, under the Principle it comes from.
 **Operations governs implementation work without becoming product implementation**
 
 - **Must** — Operations governs configuration, planning, development, review, implementation, launch, reset, coordination, and operational recording.
-- **Never** — Operations owns or implements Development product behaviour, source, or public interfaces.
+- **Never** — Operations owns or implements Development product behavior, source, or public interfaces.
 
 **Each operational concern has one owning Component**
 

@@ -15,10 +15,10 @@ This section defines the shared vocabulary used to understand Agent Interface, i
 - **Component** — one named part of the Implementation or Executor Module perspective that owns a responsibility and is described through Principles together with Implementation Preferences or Executor Preferences; some Implementation Components also own operational records.
 - **Implementation Module** — the Module that defines the reusable programming philosophy, Principles, Preferences, and Component composition applied to a Target.
 - **Implementation Component** — one independent Component inside the Implementation Module with a defined responsibility, Public Interface, Principles, and Implementation Preferences.
-- **Logic Component** — the reusable library Component that implements application Behaviour and publishes a Public Logic Interface.
+- **Logic Component** — the reusable library Component that implements application Behavior and publishes a Public Logic Interface.
 - **API Component** — the executable Component that starts the API process, owns transport concerns, and invokes Logic through its Public Interface.
 - **Presentation Component** — the executable Component that presents the application to users and consumes the API Component.
-- **Public Logic Interface** — the provider-owned public library surface through which API invokes application Behaviour.
+- **Public Logic Interface** — the provider-owned public library surface through which API invokes application Behavior.
 - **API Contract** — the public description of API operations, transport schemas, versions, and approved outcomes.
 - **Technical Purpose** — a language-level use such as modeling, API delivery, database access, ORM, or migration that may be shared by compatible Components.
 - **Principles** — mandatory portable philosophy, responsibilities, rules, and boundaries owned by an Implementation or Executor Component.

@@ -25,13 +25,11 @@ Interface Understanding is the understanding of Agent Interface that an Agent es
 <!--------------------------------------------------------------------------------- Target Understanding --->
 ## Target Understanding
 
-Target Understanding is the understanding of the project's Target that an Agent establishes when the role needs Target meaning. Human Definition provides the Human's stated intent and context; Technical Definition is the primary Target authority and takes precedence wherever they conflict. Configure uses only the phase identities and Platform selections required for its role. Reset establishes the minimum Target Understanding needed for a phase scope, omits it for Config scope, and uses only phase identity and ownership for Complete scope.
+Target Understanding is the understanding of the project's Target that an Agent establishes when the role needs Target meaning. Target Definition is the Target authority. Configure uses only the phase identities and Platform selections required for its role. Reset establishes the minimum Target Understanding needed for a phase scope, omits it for Config scope, and uses only phase identity and ownership for Complete scope.
 
-An empty Human Definition contributes no information. Understanding is reconstructed from the current sources under their declared precedence when required and is never copied into Config as a second project definition.
+Understanding is reconstructed from the current source when required and is never copied into Config as a second project definition.
 
-→ [Read more about the Non-Technical Definition](../target/non-technical.md)
-
-→ [Read more about the Technical Definition](../target/technical.md)
+→ [Read more about the Target Definition](../target/target.md)
 
 <br>
 

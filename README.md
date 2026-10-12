@@ -1,3 +1,4 @@
 # Agent Interface
 
-All documentation and project definitions are contained in the [Interface document](.interface/interface.md).
+[Interface document](.interface/interface.md)   
+[Target document](.interface/target/target.md)  

@@ -83,7 +83,7 @@ Responsibility: The product composition and technical realization of the indepen
 
 ### Operations
 
-Operations governs how Development work is configured, planned, developed, reviewed, implemented, launched, reset, coordinated, and recorded without owning product Behaviour or Source.
+Operations governs how Development work is configured, planned, developed, reviewed, implemented, launched, reset, coordinated, and recorded without owning product Behavior or Source.
 
 Responsibility: The configuration, planning, development, review, implementation, launch, reset, coordination, and recording of Implementation work.
 
@@ -126,7 +126,7 @@ The mandatory Principles are stated by the Definition files of the owning subjec
 
 **Why:** Product architecture and work control require different ownership while still needing one reusable Implementation perspective with explicit Subsystems.
 
-**Boundary:** Development does not own Operations records, and Operations does not own product Behaviour, Source, or public interfaces.
+**Boundary:** Development does not own Operations records, and Operations does not own product Behavior, Source, or public interfaces.
 
 ### Each Subsystem and Component has an explicit source pair
 

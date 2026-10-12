@@ -3,8 +3,7 @@
 ```text
 Agent Interface
 ├── Target
-│   ├── Non-Technical Definition
-│   └── Technical Definition
+│   └── Target Definition
 ├── Implementation
 │   ├── Development
 │   │   ├── Model

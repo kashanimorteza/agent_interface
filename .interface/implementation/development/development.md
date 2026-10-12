@@ -81,7 +81,7 @@ Storage, offered through its Public Interface.
 
 ### Logic
 
-The application's Behaviour, held in its Services.
+The application's Behavior, held in its Services.
 
 → [Definition of Logic](logic/logic.md)<br>
 → [Preferences of Logic](logic/logic.yaml)
