@@ -27,7 +27,7 @@ Presentation is the Component that presents the application to users, manages us
 
 ### Purpose
 
-Decisions about appearance and interface behavior are made once and reused everywhere, so the interface stays coherent as it grows. Presentation reaches the application only through API, so domain meaning and application rules are never decided a second time in the interface.
+Decisions about appearance and interface behavior are made once and reused everywhere, so the interface stays coherent as it grows. Presentation reaches the running application only through API, and reads Model only to know each Entity's fields, so domain meaning and application rules are never decided a second time in the interface.
 
 ### How It Works
 
@@ -112,16 +112,16 @@ Areas
 What Presentation offers its users, organized like API: one Area for every Group API serves, presenting exactly what that Group serves. An Area is built from the layers above: its pages and views in the View Layer, its behavior in Interaction Logic, its calls in API Access, and its appearance from the Theme. Every Area follows the same Area contract:
 
 - **Source** — the API Group it presents, read from API's machine-readable description or, when none is available, from API-owned public definitions and documentation.
-- **Sections** — one Section for every Adapter of that Group, named from the Adapter; an Adapter added or removed adds or removes its Section.
+- **Sections** — one Section for every Adapter of that Group, named from the Adapter; when the Adapters are bound to Entities, one Section for every Entity in Model's Entity Collection, read when Presentation is generated, so an Entity added to or removed from Model adds or removes its Section.
 - **Actions** — one user action for every Endpoint of the Adapter; an Endpoint that does not exist has no action.
-- **Fields** — every form field, list column, Filter, and Order a Section offers comes from the API contract, never listed by hand.
+- **Fields** — every form field, list column, Filter, and Order a Section offers comes from the Entity Declaration, in Model, of the Entity its Section presents, read when Presentation is generated and never listed by hand. Each field follows that Declaration: its description labels it, its order orders it, an immutable or generated field is shown but never entered, a sensitive field is entered without being shown, and a related field is chosen from the records of the Entity it relates to.
 - **Behavior** — every action calls its Endpoint through API Access and presents the result, or the returned error, as API returns it; no action decides an application rule.
 
 Every Section is standalone: it writes its pages and actions out explicitly and shares no generated or dynamic page with another Section, while still composing shared Components and the Theme.
 
 #### Entity Area
 
-The Area of API's Entity Group: one Section for every Entity, through which a user works with that Entity's records. Its actions follow the Endpoints the Entity's Adapter offers:
+The Area of API's Entity Group: one Section for every Entity in Model, through which a user works with that Entity's records. The Entities and their Fields come from Model, and its actions follow the Endpoints API's Entity Group offers for that Entity:
 
 - **List** — the Entity's records, with Filters on any Field and their combination, ordering by any Field and direction, and a limit.
 - **View** — one record by its id.
@@ -172,6 +172,7 @@ The root of this tree is the Component directory; it and the package directory t
 <!--------------------------------------------------------------------------------- Relationships --->
 ## Relationships
 
+- **Consumes Model** — reads every Entity and its Declaration through Model's published Interface, only when Presentation is generated, to build every Section and its fields.
 - **Consumes API** — the public API, its Groups, and its machine-readable description when one is available, through which all application data and application capabilities are reached.
 - **Consumes Development** — the common package standard and the cross-cutting capabilities selected for the project.
 
@@ -184,6 +185,7 @@ The root of this tree is the Component directory; it and the package directory t
 - **Authoritative application behavior and rules** — are not Presentation's, because they have one home behind API; Presentation requests their outcome and presents it.
 - **Cross-layer composition** — is not Presentation's, because Presentation owns only its own layers.
 - **The external API contract** — is not Presentation's, because API owns it.
+- **The meaning and structure of Entities** — are not Presentation's, because Model owns them; Presentation only reads them when it is generated.
 
 <br>
 
@@ -273,9 +275,9 @@ When a machine-readable description is unavailable, API Access derives its clien
 
 #### Every API Group has one Area
 
-**Rule:** Presentation has exactly one Area for every Group API serves, with one Section for every Adapter of that Group and one action for every Endpoint of that Adapter. Every field, column, Filter, and Order comes from the API contract.
+**Rule:** Presentation has exactly one Area for every Group API serves, with one Section for every Adapter of that Group and one action for every Endpoint of that Adapter; when the Adapters are bound to Entities, there is one Section for every Entity in Model. Every field, column, Filter, and Order comes from the Entity Declaration in Model, read when Presentation is generated, and behaves as that Declaration states: its description labels it, its order orders it, an immutable or generated field is shown but never entered, a sensitive field is entered without being shown, and a related field is chosen from the records of the Entity it relates to.
 **Why:** Users reach everything API serves, and Presentation stays in step with API without a second, hand-written copy of its surface.
-**Boundary:** An Endpoint that does not exist has no action, and no action is added for anything API does not serve.
+**Boundary:** An Endpoint that does not exist has no action, and no action is added for anything API does not serve. Model is read only to generate fields, never at run time.
 
 #### Every Section writes its own actions
 
@@ -291,7 +293,7 @@ When a machine-readable description is unavailable, API Access derives its clien
 
 **Rule:** Presentation is conformant only when its real output shows every layer and Area Architecture names with the responsibility stated there, and every observation below holds.
 **Why:** A gap here lets an interface that bypasses API or breaks its own consistency look complete.
-**Boundary:** Review reads API's published contract only to compare; it changes nothing outside Presentation.
+**Boundary:** Review reads API's published contract and the Entity Declarations in Model only to compare; it changes nothing outside Presentation.
 
 #### Review observes Presentation through a fixed set of checks
 
@@ -305,7 +307,10 @@ When a machine-readable description is unavailable, API Access derives its clien
 - API Access uses only Endpoints, fields, and behavior the API contract publishes, and invents none.
 - Every visual decision comes from the selected Theme; no page or Component invents its own.
 - There is one Area for every API Group, one Section for every Adapter, and one action for every Endpoint, with no action for anything API does not serve.
-- Every field, column, Filter, and Order a Section offers comes from the API contract.
+- There is one Section for every Entity in Model's Entity Collection, and none for anything else.
+- Every field, column, Filter, and Order a Section offers comes from the Entity Declaration in Model.
+- Every field behaves as that Declaration states: labeled by its description, ordered by its order, immutable and generated fields never entered, sensitive fields never shown, and related fields chosen from the records of the related Entity.
+- Presentation reads Model only when it is generated and never at run time.
 - Every Section is written out explicitly in its own unit, with no generated page and no inheritance between Sections.
 - Documentation has its sections in order.
 
@@ -378,8 +383,9 @@ Every obligation in the file, under the Principle it comes from.
 
 **Every API Group has one Area**
 
-- **Must** — Give every API Group one Area, every Adapter one Section, and every Endpoint one action, with fields from the API contract.
-- **Never** — Add an action for anything API does not serve, or list fields by hand.
+- **Must** — Give every API Group one Area, every Adapter one Section, and every Endpoint one action, with Sections and fields from the Entities and Declarations in Model.
+- **Must** — Make every field behave as that Declaration states: label, order, immutable or generated, sensitive, and related.
+- **Never** — Add an action for anything API does not serve, list fields by hand, or read Model at run time.
 
 **Every Section writes its own actions**
 

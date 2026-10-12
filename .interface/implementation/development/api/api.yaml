@@ -4,8 +4,8 @@ meta:
   path_note: "The Preferences layer of the API Component."
   purpose: "Identity, the entities of architecture with the Interface and Group contract versions, Group list, Endpoint rules, Configuration defaults, and documentation, and the language profile for API."
   standard: "Agent Project Interface"
-  version: "15.0"
-  updated: "2026-10-09"
+  version: "17.0"
+  updated: "2026-10-12"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -29,7 +29,7 @@ read_order:
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
   settings: "API's identity."
-  architecture: "The entities of the Architecture tree — Groups with the Interface and Group contract versions and every Group's Definition and Preferences, Endpoints with the verb-to-Method table, Path and Parameter placement, URL shape, value forms, and error statuses, Configuration with its file, location, format, structure, and the network, identity, and runtime defaults it is generated with, and Documentation with its file, location, and format."
+  architecture: "The entities of the Architecture tree — Groups with the Interface and Group contract versions and every Group's Definition and Preferences, Endpoints with the verb-to-Method table, Path and Parameter placement, URL shape, value forms, error statuses, and description keywords, Configuration with its file, location, format, structure, and the network, identity, and runtime defaults it is generated with, and Documentation with its file, location, and format."
   development: "Development capabilities and the selected language with its realization profile."
 
 # <!--------------------------------------------------------------------------------- Content -->

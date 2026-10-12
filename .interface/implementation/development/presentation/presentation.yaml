@@ -4,8 +4,8 @@ meta:
   path_note: "The Preferences layer of the Presentation Component."
   purpose: "Identity, the entities of architecture with API Access, Theme, Interaction Logic, and documentation choices, and the language profile for Presentation."
   standard: "Agent Project Interface"
-  version: "7.0"
-  updated: "2026-10-11"
+  version: "9.0"
+  updated: "2026-10-12"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:
@@ -30,7 +30,7 @@ read_order:
 # <!--------------------------------------------------------------------------------- Content_Map -->
 content_map:
   settings: "Presentation's identity: type, platform, directory, and package."
-  architecture: "The entities of the Architecture tree — Interaction Logic with its state management, API Access with its contract source and type generation, Theme with the selected Theme and its supported options, Areas with the API Group and Section naming of every Area, and Documentation with its file, location, and format."
+  architecture: "The entities of the Architecture tree — Interaction Logic with its state management, API Access with its contract source and type generation, Theme with the selected Theme and its supported options, Areas with the API Group, Section naming, and the Entity and field sources of every Area, and Documentation with its file, location, and format."
   development: "Development capabilities and the selected language with its packages."
 
 # <!--------------------------------------------------------------------------------- Content -->
@@ -42,7 +42,7 @@ content:
       type: executable
       platform: VPS
       directory: presentation
-      package: trading-assistant-presentation
+      package: presentation
 
   # <!-------------------------------------------- architecture -->
   architecture:
@@ -64,6 +64,8 @@ content:
         entity:
           api_group: entity
           section_naming: <entity>
+          entity_source: model_entity_collection
+          field_source: model_entity_declaration
       documentation:
         file: README.md
         location: the Component root
