@@ -12,3 +12,10 @@
 /model/.ruff_cache/
 /model/dist/
 /model/**/__pycache__/
+
+# Database
+/database/.venv/
+/database/.ruff_cache/
+/database/dist/
+/database/**/__pycache__/
+/database/db/

@@ -26,7 +26,7 @@ content_map:
 
 # <!--------------------------------------------------------------------------------- Content -->
 content:
-  task_count: 28
+  task_count: 54
   plans:
     P1:
       id: "P1"
@@ -909,3 +909,941 @@ content:
                     - unset: "How the Entity reference tables are produced."
                       chosen: "Generated from the Entities' own Declarations through the Interface."
                       why: "It keeps the documentation identical to the published Declarations and reproducible from unchanged sources."
+
+    P2:
+      id: "P2"
+      title: "Database"
+      order: 2
+      target: "Database"
+      does: "The Database library persists every Model Entity through its single public Interface on the active default Instance, with checked queries, repeatable Setup Operations that create the Tables and insert the Target Initial Data, generated configuration, manual entry points, and documentation."
+      constraints: []
+      task_count: 26
+      groups:
+
+        P2-G1:
+          id: "P2-G1"
+          title: "Component setup"
+          description: "Establishes the Database library as a project-internal package that consumes the Model Component, with its isolated environment, resolved dependencies, applied quality standards, and version-control exclusions."
+          area: "Component setup: the package identity, environment, dependencies, and development standards of the Database library."
+          does: "The Database library exists as a project-internal package that can use the published Model Interface, whose dependencies are resolved and locked, whose quality standards can be applied, and whose environment and runtime storage stay out of version control."
+          constraints: []
+          task_count: 3
+          tasks:
+            P2-G1-T1:
+              id: "P2-G1-T1"
+              source_id: "007"
+              title: "Establish the Database library package and its environment"
+              description: "Create the Database library as a project-internal package with its own isolated environment, consuming the Model Component through the declared Connection and declaring the selected modeling package, with every unpinned version resolved to a concrete compatible version preserved in lock metadata."
+              reason: "Every other Database Task needs an existing package that can reach the published Model Interface and a reproducible environment."
+              inputs:
+                - "Database component identity and language profile"
+                - "The declared Connection from Database to Model"
+                - "Development language standards and package-management defaults"
+              skills:
+                - "sqlmodel"
+              expected_result: "An empty, importable Database package exists in an isolated environment from which the Model Interface can be imported."
+              acceptance: "The Database package imports cleanly in its isolated environment, the published Model Interface imports from that same environment through the local Model Component, and the dependency metadata records a concrete resolved version for every third-party package."
+              depends_on: []
+              constraints: []
+              status: "done"
+              log:
+                - at: "2026-10-12T20:02:23Z"
+                  by: "009"
+                  transition: "todo -> claimed"
+                - at: "2026-10-12T20:02:47Z"
+                  by: "009"
+                  transition: "claimed -> done"
+                  done: "Created the Database Component directory with its project metadata and an empty package initialiser, added the Model Component as an editable local path dependency and the selected modeling package plus the packages the source imports directly with uv, creating the isolated environment and lockfile."
+                  locations: ["database/pyproject.toml", "database/uv.lock", "database/database/__init__.py"]
+                  evidence: "uv resolved and locked 10 packages (sqlmodel 0.0.48, sqlalchemy 2.1.4, pydantic 2.14.1, pydantic-core 2.50.1, pyyaml 6.0.3, annotated-types 0.8.0, typing-extensions 4.16.0, typing-inspection 0.4.4, model 0.1.0 from ../model, database 0.1.0); in the .venv environment the database package imports and the Model Interface imports with its 15 Entities."
+                  decisions:
+                    - unset: "Build backend, layout, and Python version."
+                      chosen: "uv_build with a flat module root and requires-python >=3.14, resolved to CPython 3.14.4."
+                      why: "Matches the selected package manager, the Database Directory Structure (package directly under the Component root), and the Model Component's interpreter."
+                    - unset: "Whether the Model path dependency is editable."
+                      chosen: "editable = true."
+                      why: "The Model Component stays the single source; its current Interface is used without reinstalling a copy into the Database environment."
+                    - unset: "Direct dependencies beyond the modeling package."
+                      chosen: "sqlalchemy, pydantic, and pyyaml declared directly."
+                      why: "The Database source imports them directly (Core statements and reflection, Model's validation error, and the YAML Database Configuration); undeclared transitive imports were a Model Review Finding (F-005-1)."
+                    - unset: "Whether to run the Development skill-provisioning step."
+                      chosen: "Not run."
+                      why: "It writes outside the Database Component, and the required sqlmodel Skill is already available at project scope."
+            P2-G1-T2:
+              id: "P2-G1-T2"
+              source_id: "007"
+              title: "Apply the shared quality standards to the Database package"
+              description: "Configure the selected formatter, linter, and type checker for the Database package so its source can be checked against the shared language standards."
+              reason: "Development standards require every Python Component to be formatted, linted, and type-checked consistently."
+              inputs:
+                - "Development quality-tool defaults"
+                - "The established Database package"
+              skills: []
+              expected_result: "The formatter, linter, and type checker are available to and configured for the Database package."
+              acceptance: "Formatting, linting, and type checking each run against the Database package as it stands and report no violation."
+              depends_on:
+                - "P2-G1-T1"
+              constraints: []
+              status: "done"
+              log:
+                - at: "2026-10-12T20:02:47Z"
+                  by: "009"
+                  transition: "todo -> claimed"
+                - at: "2026-10-12T20:02:57Z"
+                  by: "009"
+                  transition: "claimed -> done"
+                  done: "Added the selected formatter, linter, and type checker to the Database package's development dependency group with uv, using their default configurations."
+                  locations: ["database/pyproject.toml", "database/uv.lock"]
+                  evidence: "ruff 0.17.0 and ty 0.0.86 resolved and locked; ruff format --check, ruff check, and ty check each reported no violation on the package as it stood."
+                  decisions:
+                    - unset: "Quality-tool configuration beyond the tool selection."
+                      chosen: "Tool defaults, with the target Python version inferred from requires-python."
+                      why: "No Preference sets rules; the Model Component uses the same defaults."
+            P2-G1-T3:
+              id: "P2-G1-T3"
+              source_id: "007"
+              title: "Exclude the Database environment, generated artifacts, and stored data from version control"
+              description: "Add to the project's single root ignore file only the entries the Database Component needs, including its runtime database files in Storage, scoped to the Component, without duplicating or altering any existing entry."
+              reason: "The environment, generated artifacts, and runtime data of the Database Component must not enter version control, and the project keeps exactly one ignore file."
+              inputs:
+                - "The established Database package and its environment"
+              skills: []
+              expected_result: "Environment, generated artifacts, and stored database files of the Database Component are ignored by version control."
+              acceptance: "After the environment has been created and Storage has been prepared, version control reports none of the Database environment, generated artifacts, or stored database files as untracked, and every pre-existing root ignore entry is unchanged."
+              depends_on:
+                - "P2-G1-T1"
+              constraints: []
+              status: "done"
+              log:
+                - at: "2026-10-12T20:02:57Z"
+                  by: "009"
+                  transition: "todo -> claimed"
+                - at: "2026-10-12T20:16:26Z"
+                  by: "010"
+                  transition: "claimed -> claimed"
+                  note: "The claiming execution 009 was superseded by a new invocation; execution 010 continues this claim."
+                - at: "2026-10-12T20:28:18Z"
+                  by: "010"
+                  transition: "claimed -> done"
+                  done: "Appended a Database section to the root ignore file with the Component-scoped environment, lint cache, build output, bytecode cache, and Storage entries; existing entries were left unchanged and no ignore file was created inside the Component."
+                  locations: [".gitignore"]
+                  evidence: "After the environment was created and used, the quality tools ran, and Storage was prepared, version control listed only the Database source, Configuration, Entry Points, project metadata, and lockfile as untracked and marked database/.venv/, database/.ruff_cache/, the __pycache__ directories, and database/db/ as ignored; the diff of the root ignore file is 7 added lines and no removed or changed line."
+                  decisions:
+                    - unset: "Exact ignore entries for the Database Component."
+                      chosen: "/database/.venv/, /database/.ruff_cache/, /database/dist/, /database/**/__pycache__/, /database/db/; the lockfile and the Configuration stay tracked."
+                      why: "These are the artifacts the selected package manager, linter, build backend, and interpreter produce plus the runtime Storage; the lockfile stabilizes versions and the Configuration is generated source."
+
+        P2-G2:
+          id: "P2-G2"
+          title: "Database Configuration"
+          description: "Produces the generated Database Configuration and the Core loading that makes it the sole runtime source for Engines, Instances, Settings, and Initial Data."
+          area: "Configuration: the generated Database Configuration and its loading and validation in Core."
+          does: "The Database Configuration exists in the Schema's shape with the Engines, Instances, Settings, and complete Initial Data, and Core loads and validates it before any connection is opened."
+          constraints: []
+          task_count: 3
+          tasks:
+            P2-G2-T1:
+              id: "P2-G2-T1"
+              source_id: "007"
+              title: "Generate the Engines, Instances, and Settings of the Database Configuration"
+              description: "Produce the Engines, the complete Instance definitions, and the runtime Settings (default Instance, Database-owned storage root, query defaults, and after-generation Setup behavior) of the Database Configuration from the Database Preferences, in the shape the Database Configuration Schema defines."
+              reason: "The runtime reads only the Database Configuration, so every Engine, Instance, and Setting it needs must be generated into it."
+              inputs:
+                - "Database Preferences for Engines, Instances, query defaults, and Setup behavior"
+                - "The Database Configuration Schema"
+                - "The established Database package"
+              skills: []
+              expected_result: "The Database Configuration holds every Engine, every complete Instance, and the runtime Settings."
+              acceptance: "The Database Configuration conforms to the Schema's structure and rules for Engines, Instances, and Settings: every Instance is complete and names an existing Engine, the default Instance is an active existing Instance, the storage root is owned by the Database Component, and query defaults use canonical member names."
+              depends_on:
+                - "P2-G1-T1"
+              constraints: []
+              status: "done"
+              log:
+                - at: "2026-10-12T20:03:08Z"
+                  by: "009"
+                  transition: "todo -> claimed"
+                - at: "2026-10-12T20:03:27Z"
+                  by: "009"
+                  transition: "claimed -> done"
+                  done: "Generated the engines, instances, and settings sections of the Database Configuration at the Component root from the Database Preferences in the Schema's shape: both Engines with their driver and Engine profile, both complete Instances (SQLite active and default, PostgreSQL inactive), the Database-owned storage root, the query defaults by canonical member name, and the after-generation Setup behavior."
+                  locations: ["database/config.yaml"]
+                  evidence: "The file parses as YAML with exactly engines, instances, settings, and initial_data; each Instance has exactly name, active, engine, host, port, database, username, password, and options and names an existing Engine; default_instance names the active sqlite Instance; storage_root is the relative directory db inside the Component."
+                  decisions:
+                    - unset: "What an Engine's parameters mapping carries."
+                      chosen: "The Engine profile the runtime needs without reading Preferences: storage kind, required connection parameters, foreign-key enforcement and connect arguments for sqlite, and the default port for postgresql."
+                      why: "The Schema leaves parameters Engine-specific and the runtime may read only the Database Configuration."
+                    - unset: "The driver value of each Engine."
+                      chosen: "The Preference url_scheme: sqlite and postgresql+psycopg."
+                      why: "The Schema asks for the driver or dialect; the url scheme names exactly that and matches the Schema example for sqlite."
+                    - unset: "The storage_root directory name."
+                      chosen: "db."
+                      why: "The Storage directory of the Database Directory Structure, and the Schema example."
+                    - unset: "The inactive PostgreSQL Instance's password value (Open Question OQ-007-2)."
+                      chosen: "An empty string; every other PostgreSQL value is copied from the Preferences."
+                      why: "The project Rules forbid copying a credential into a project declaration, the Schema's own example uses an empty password, and the Instance is inactive so no connection uses it; the Open Question stays open for the Human."
+            P2-G2-T2:
+              id: "P2-G2-T2"
+              source_id: "007"
+              title: "Copy the Target Initial Data into the Database Configuration"
+              description: "Copy every Initial Data record the Target defines into the shared Initial Data collection of the Database Configuration, Entity by Entity in Target order, copying each value unchanged and each value that is not concrete as an empty string."
+              reason: "Initial Data reaches storage only through the Database Configuration, and preparation must be able to insert every Target record."
+              inputs:
+                - "Target Initial Data for every Entity"
+                - "The Database Configuration Schema"
+              skills: []
+              expected_result: "The Initial Data collection holds every Target Initial Data record with its values."
+              acceptance: "Every Target Initial Data record appears exactly once in the Initial Data collection under its Entity with its Target values, each value the Target leaves not concrete is an empty string, no value is generated, and no record is omitted because of a credential, sensitivity, or at-rest instruction."
+              depends_on:
+                - "P2-G2-T1"
+              constraints: []
+              status: "done"
+              log:
+                - at: "2026-10-12T20:03:27Z"
+                  by: "009"
+                  transition: "todo -> claimed"
+                - at: "2026-10-12T20:03:59Z"
+                  by: "009"
+                  transition: "claimed -> done"
+                  done: "Copied all 23 Target Initial Data records into the shared initial_data collection of the Database Configuration, one item per Entity in Target order (12 Entities; Trailing Rule, Partial Rule, and Position declare none), each record holding exactly the Target's Fields in the Target's order; every 'Generate securely' value (User password and api_key, Instance password and api_key, Account password) is an empty string."
+                  locations: ["database/config.yaml"]
+                  evidence: "Every record built its Entity through the Entity's own JSON Object construction (from_json) without error: 23 records valid; the item order equals the Entity Collection order restricted to Entities with Initial Data."
+                  decisions:
+                    - unset: "The public Entity identity an initial_data item names."
+                      chosen: "The Entity Export name the Model Interface publishes (for example TradingPlatform)."
+                      why: "It is the public identity a consumer imports, and it resolves unambiguously against the Entity Collection."
+                    - unset: "How a Target decimal value is written in the YAML collection."
+                      chosen: "As its decimal text ('1'), the Entity's JSON Object form of the decimal Type; integers, floats, and strings keep their YAML scalar form."
+                      why: "The value stays exact and unchanged, and each record is directly an Entity-compatible field mapping its JSON Object construction accepts."
+                    - unset: "Whether Fields the Target record omits are added."
+                      chosen: "Not added; each record holds only the Fields the Target gives."
+                      why: "Database never produces a value; omitted Fields take their Entity defaults or pending generation when the record is built."
+            P2-G2-T3:
+              id: "P2-G2-T3"
+              source_id: "007"
+              title: "Load and validate the Database Configuration in Core"
+              description: "Make Core load the Database Configuration as the sole runtime source, validate it against the Schema's rules, resolve every Instance's connection and file-backed storage location beneath the storage root, and fail loading on an invalid Configuration, an escaping storage path, or an unresolved Instance before any connection is opened."
+              reason: "Every Operation depends on a checked Configuration, and a bad one must fail before storage is touched."
+              inputs:
+                - "The generated Database Configuration"
+                - "The Database Configuration Schema rules"
+              skills: []
+              expected_result: "Core provides the validated Configuration and each Instance's resolved connection and storage location."
+              acceptance: "A valid Configuration loads and resolves the default Instance's database file beneath the Database-owned storage root; a Configuration with a missing Instance value, an unknown Engine, an inactive or unknown default Instance, an unknown query member name, or a storage path escaping the storage root fails loading with the configuration error before any connection is opened."
+              depends_on:
+                - "P2-G2-T1"
+                - "P2-G3-T3"
+              constraints: []
+              status: "done"
+              log:
+                - at: "2026-10-12T20:05:00Z"
+                  by: "009"
+                  transition: "todo -> claimed"
+                - at: "2026-10-12T20:06:36Z"
+                  by: "009"
+                  transition: "claimed -> done"
+                  done: "Wrote Core configuration: it reads the YAML Database Configuration beside the package at the Component root, validates the sections, every Engine, every complete Instance (exact members, types, unique names, existing Engine, required non-empty connection values for active Instances), the default Instance, the storage root, the query defaults by canonical member name with the limit normalized, the after-generation Setup behavior, and the shape of the Initial Data collection, collecting every problem into one ConfigurationError without echoing values; it resolves each file-backed Instance's location beneath the storage root and exposes the result once through a cached loader. Resolved Instances hide connection values from their representation."
+                  locations: ["database/database/core/configuration.py"]
+                  evidence: "A scratch probe loaded the real Configuration (default sqlite, location db/application.db, AND, -1, id ASCENDING, 12 Initial Data items) and saw each of these refused with ConfigurationError: a missing Instance value, an unknown Engine, an inactive default, an unknown default, an unknown query member name, a database path escaping the storage root, a storage root escaping the Component, an active Instance without a database, and a missing file; a zero limit normalized to -1; no storage directory was created and nothing connected."
+                  decisions:
+                    - unset: "How Core locates the Database Configuration."
+                      chosen: "The config file at the Component root found from the package's own location; when it is absent (for example a copy of the package installed elsewhere) loading fails with ConfigurationError."
+                      why: "Storage must resolve inside the Database Component and never from an installed package, virtual environment, working directory, or consumer."
+                    - unset: "When the Configuration is loaded."
+                      chosen: "On the first request, once, cached for the process."
+                      why: "Loading the Interface must not depend on storage, and every Operation still validates the Configuration before any connection."
+                    - unset: "Which Instances must carry their Engine's required connection values."
+                      chosen: "Active Instances only; every Instance must still be complete and typed."
+                      why: "An inactive Instance is never used, and its password is intentionally empty (OQ-007-2)."
+                    - unset: "Where a missing Engine unit is detected."
+                      chosen: "In Core routing when an Instance is resolved, before any connection."
+                      why: "It is part of resolving the selected Instance rather than of the Configuration's structure."
+
+        P2-G3:
+          id: "P2-G3"
+          title: "Public values, results, errors, and Instances"
+          description: "Provides the immutable forms and closed enumerations consumers pass and read, the error kinds they catch, and the enumeration of active Instances they select."
+          area: "Core values and errors: the query vocabulary, Results, Errors, and the DatabaseInstance enumeration."
+          does: "Every value, Result, Error, and Instance member the Interface contract names exists with exactly its listed members and fields."
+          constraints: []
+          task_count: 4
+          tasks:
+            P2-G3-T1:
+              id: "P2-G3-T1"
+              source_id: "007"
+              title: "Provide the query vocabulary"
+              description: "Provide the immutable Filter and Order forms and the closed enumerations of filter operators, filter combinations, and order directions, with exactly the members and fields the Interface contract lists."
+              reason: "Consumers narrow and order reads only through imported values of this vocabulary, never strings."
+              inputs:
+                - "The query entity of the Database Interface contract"
+              skills: []
+              expected_result: "The query vocabulary exists as immutable forms and closed enumerations."
+              acceptance: "Each enumeration holds exactly its listed members, each form holds exactly its listed fields in order and cannot be changed after creation, and an Order created without a direction ascends."
+              depends_on:
+                - "P2-G1-T1"
+              constraints: []
+              status: "done"
+              log:
+                - at: "2026-10-12T20:03:59Z"
+                  by: "009"
+                  transition: "todo -> claimed"
+                - at: "2026-10-12T20:05:00Z"
+                  by: "009"
+                  transition: "claimed -> done"
+                  done: "Wrote the query vocabulary in Core values: the FilterOperator, FilterCombination, and OrderDirection enumerations with exactly their Preference members, each value equal to its name, and the frozen Filter (field, operator, value) and Order (field, direction) forms, plus the unpublished checked forms CheckedFilter (field, type, operator, value) and CheckedOrder (field, type, descending)."
+                  locations: ["database/database/core/values.py"]
+                  evidence: "A scratch check listed exactly the 12 operator, 2 combination, and 2 direction members with value equal to name; Filter and Order fields are in contract order; an Order created without a direction holds ASCENDING; assigning a field of a created Order raised FrozenInstanceError."
+                  decisions:
+                    - unset: "How an absent Filter value is represented."
+                      chosen: "value defaults to None."
+                      why: "IS_NULL and IS_NOT_NULL take no value, and None is the language's absent value; Core refuses a value for those operators."
+            P2-G3-T2:
+              id: "P2-G3-T2"
+              source_id: "007"
+              title: "Provide the command and setup Results"
+              description: "Provide the immutable command Result and setup Result with exactly the fields the Interface contract lists."
+              reason: "Command and Setup Operations report their outcome only through these Results."
+              inputs:
+                - "The result entity of the Database Interface contract"
+              skills: []
+              expected_result: "Both Results exist as immutable forms."
+              acceptance: "Each Result holds exactly its listed fields in order and cannot be changed after creation."
+              depends_on:
+                - "P2-G1-T1"
+              constraints: []
+              status: "done"
+              log:
+                - at: "2026-10-12T20:03:59Z"
+                  by: "009"
+                  transition: "todo -> claimed"
+                - at: "2026-10-12T20:05:00Z"
+                  by: "009"
+                  transition: "claimed -> done"
+                  done: "Wrote the frozen CommandResult (rows, affected, columns, success, message, instance) and SetupResult (command, instance, success, affected, message) in Core values; their instance field is typed by the DatabaseInstance enumeration of P2-G3-T4."
+                  locations: ["database/database/core/values.py"]
+                  evidence: "A scratch check listed both Results' fields in contract order; both are frozen dataclasses."
+            P2-G3-T3:
+              id: "P2-G3-T3"
+              source_id: "007"
+              title: "Provide the Database error kinds"
+              description: "Provide one base error and one distinguishable error for every failure kind the Interface contract declares, none of which carries a connection value or credential."
+              reason: "Consumers must distinguish each failure kind and catch Database failures as one family."
+              inputs:
+                - "The error entity of the Database Interface contract"
+              skills: []
+              expected_result: "Every declared failure kind has its own error derived from one base error."
+              acceptance: "Exactly one error exists per declared failure kind, each is caught as the base error and is distinguishable from every other kind, and no error message or attribute contains a connection value or credential."
+              depends_on:
+                - "P2-G1-T1"
+              constraints: []
+              status: "done"
+              log:
+                - at: "2026-10-12T20:03:59Z"
+                  by: "009"
+                  transition: "todo -> claimed"
+                - at: "2026-10-12T20:05:00Z"
+                  by: "009"
+                  transition: "claimed -> done"
+                  done: "Wrote Core errors: DatabaseError as the base and one subclass per declared failure kind under the Preference class names (ConfigurationError, InactiveInstanceError, InvalidInputError, DeclarationMismatchError, ConnectionFailureError, ExecutionError, SetupError), carrying no attribute beyond the message."
+                  locations: ["database/database/core/errors.py"]
+                  evidence: "A scratch check saw all seven kinds derive from DatabaseError, distinct and none a subclass of another; the classes define no connection or credential attribute."
+            P2-G3-T4:
+              id: "P2-G3-T4"
+              source_id: "007"
+              title: "Provide the enumeration of active Instances"
+              description: "Provide the DatabaseInstance enumeration with exactly one member per active configured Instance and none for an inactive one, carrying no connection value."
+              reason: "Every Operation selects where it runs only through a DatabaseInstance member."
+              inputs:
+                - "The validated Database Configuration"
+              skills: []
+              expected_result: "The DatabaseInstance enumeration mirrors the active Instances."
+              acceptance: "The enumeration holds exactly one member for each active configured Instance and none for an inactive one, and no member exposes a host, port, username, password, or storage path."
+              depends_on:
+                - "P2-G2-T3"
+              constraints: []
+              status: "done"
+              log:
+                - at: "2026-10-12T20:06:36Z"
+                  by: "009"
+                  transition: "todo -> claimed"
+                - at: "2026-10-12T20:07:34Z"
+                  by: "009"
+                  transition: "claimed -> done"
+                  done: "Wrote the DatabaseInstance enumeration in Core values as the enum.Enum named by its group name, database_instance, with one member per active configured Instance (SQLITE = 'sqlite'), each member carrying only its Instance key; configuration loading now fails when the members differ from the active Instances of the Configuration."
+                  locations: ["database/database/core/values.py", "database/database/core/configuration.py"]
+                  evidence: "A scratch check listed exactly the member SQLITE with value 'sqlite' and no PostgreSQL member; a member exposes only name and value; a Configuration activating PostgreSQL was refused with the membership-difference ConfigurationError; ruff format, ruff check, and ty report no violation."
+                  decisions:
+                    - unset: "Whether the enumeration is generated from the Configuration or built at import."
+                      chosen: "Generated as a static enumeration, with configuration loading verifying it against the active Instances."
+                      why: "The Schema makes a change of active membership take effect through config and the next generation; a static enumeration keeps loading the Interface free of file reads and keeps the members visible to type checking."
+
+        P2-G4:
+          id: "P2-G4"
+          title: "Core routing and query checking"
+          description: "Provides the shared Core behavior every public request passes through: checking input against the given Entity, resolving the Instance, routing to the Engine unit, and normalizing results."
+          area: "Core routing: request validation, query checking, Instance resolution, routing, Entity materialization, and result normalization."
+          does: "Every public request is validated, routed to the selected Instance's Engine unit, and returned in its published form, with every returned Entity built through its own construction."
+          constraints: []
+          task_count: 2
+          tasks:
+            P2-G4-T1:
+              id: "P2-G4-T1"
+              source_id: "007"
+              title: "Check Filters and Orders against the given Entity"
+              description: "Check every Filter, Order, and aggregate Field against the given Entity before any Instance is accessed, producing checked Filters and Orders with the Field's name and declared Type, refusing a Field that does not belong to the Entity, an operator incompatible with the Field's Type, or a value incompatible with the operator, and applying the query defaults when combination, Orders, or limit are omitted."
+              reason: "A bad query must fail before storage is touched, and the same call must resolve the same way on every Instance."
+              inputs:
+                - "The query vocabulary"
+                - "The Entity Declarations published by Model"
+                - "The query defaults of the validated Database Configuration"
+              skills:
+                - "sqlmodel"
+              expected_result: "Valid queries become checked Filters and Orders with resolved defaults; invalid ones are refused before any storage access."
+              acceptance: "A Filter or Order on a Field of another Entity, a textual operator on a non-textual Field, an incompatible value, and a string in place of a Field reference are each refused with the invalid-input error and no storage access; omitted combination, Orders, and limit resolve to the configured defaults; zero and negative limits mean no limit."
+              depends_on:
+                - "P2-G3-T1"
+                - "P2-G3-T3"
+                - "P2-G2-T3"
+              constraints: []
+              status: "done"
+              log:
+                - at: "2026-10-12T20:07:34Z"
+                  by: "009"
+                  transition: "todo -> claimed"
+                - at: "2026-10-12T20:08:57Z"
+                  by: "009"
+                  transition: "claimed -> done"
+                  done: "Wrote Core query: it accepts only Entity classes (or instances) of the Model Entity Collection by identity, accepts a Field only as the Entity's own class-attribute Field reference, checks each Filter's FilterOperator, Type compatibility (textual operators only on string Fields, strict per-Type values, IN with a collection, no value for IS_NULL and IS_NOT_NULL) and normalizes aware datetimes to UTC, checks Orders and their OrderDirection, resolves omitted combination, Orders, and limit from the configured query defaults with zero and negative limits as -1, and checks aggregate Fields as numeric or comparable; every refusal is an InvalidInputError naming the Entity and Field without echoing the value."
+                  locations: ["database/database/core/query.py"]
+                  evidence: "A scratch probe saw these refused with InvalidInputError, with no Instance resolved and nothing opened: a Field of another Entity, CONTAINS on a boolean Field, an int for a string Field, a string as Field reference in a Filter and an Order, a string operator, a value for IS_NULL, a naive datetime, a float for a decimal Field, a sum over a string Field, and an Entity name string; omitted combination resolved to AND, omitted Orders to id ascending, omitted, zero, and negative limits to -1, a positive limit kept; a +03:00 datetime was normalized to UTC and an IN collection to a tuple."
+                  decisions:
+                    - unset: "Whether an empty Order list counts as supplied."
+                      chosen: "An empty Order list resolves to the default Order, like an omitted one."
+                      why: "A list without Orders would leave the result order undefined, and the Query defaults must make the same call return the same result."
+                    - unset: "Which Field Types are comparable for min and max."
+                      chosen: "integer, float, decimal, string, datetime, date, and time; boolean and uuid are refused."
+                      why: "Those Types have a meaningful ordering of values; a boolean or identifier extreme carries no ordering meaning."
+                    - unset: "How strictly a Filter value must match the Field's Type."
+                      chosen: "The Model's strict Type realization: no coercion (no bool for an integer, no float for a decimal, no naive datetime); an int is accepted for a float Field."
+                      why: "Model enforces Types without implicit coercion, and its JSON conversion accepts an integer for a float Field."
+            P2-G4-T2:
+              id: "P2-G4-T2"
+              source_id: "007"
+              title: "Route every public request through Core"
+              description: "Make Core validate each public request, resolve the selected or default DatabaseInstance, load its configuration, forward the work with its connection to its Engine unit, build every returned Entity through that Entity's own construction, treat a row that breaks the Entity contract as an error, return null for a missing record, and normalize every result."
+              reason: "Shared validation and routing make every Engine receive the same checked request and return the same normalized result."
+              inputs:
+                - "The validated Database Configuration and the DatabaseInstance enumeration"
+                - "Checked queries"
+                - "The error kinds and Results"
+              skills:
+                - "sqlmodel"
+              expected_result: "Core routes every request to the selected Instance's Engine unit and returns published results."
+              acceptance: "A call without an Instance runs on the configured default Instance; an inactive or unknown Instance fails before storage is touched; every returned Entity is built through its own construction and equals the stored record; a stored row that breaks its Entity's contract raises an error instead of being repaired; a missing record returns null."
+              depends_on:
+                - "P2-G3-T2"
+                - "P2-G3-T3"
+                - "P2-G3-T4"
+                - "P2-G4-T1"
+              constraints: []
+              status: "done"
+              log:
+                - at: "2026-10-12T20:10:31Z"
+                  by: "009"
+                  transition: "todo -> claimed"
+                - at: "2026-10-12T20:16:26Z"
+                  by: "010"
+                  transition: "claimed -> claimed"
+                  note: "The claiming execution 009 was superseded by a new invocation; execution 010 continues this claim."
+                - at: "2026-10-12T20:17:54Z"
+                  by: "010"
+                  transition: "claimed -> done"
+                  done: "Wrote Core data, the shared routing of every public request: each Operation validates its public input through Core query (Entity identity, Field references, Filters, Orders, limit, integer id, command and parameters) before any Instance is accessed, resolves the given or default DatabaseInstance member against the Configuration (unknown or non-member -> ConfigurationError, inactive -> InactiveInstanceError, missing Engine unit -> ConfigurationError), forwards the checked request with the resolved Instance to its Engine unit, builds every returned row into its Entity through the Entity's own JSON Object construction, returns null for a missing record, and normalizes results (an empty sum becomes the Field Type's zero; a failed native command becomes a failed CommandResult)."
+                  locations: ["database/database/core/data.py"]
+                  evidence: "A scratch probe resolved the default Instance to database_instance.SQLITE with the sqlite Engine unit; the strings 'sqlite' and 'SQLITE' and the integer 1 were refused with ConfigurationError; a Configuration marking sqlite inactive was refused with InactiveInstanceError; a stored Position row with decimals and a UTC datetime became a Position equal to its own JSON round trip; a missing row returned None; a row with a wrong-Type value, a null in a required Field, or an extra column raised DeclarationMismatchError naming only Fields, and a User row with an invalid marked Field raised it with no value and no cause. Equality with stored records end to end is observed with the Engine Operations."
+                  decisions:
+                    - unset: "Which construction builds a stored row into an Entity (Open Question OQ-007-1)."
+                      chosen: "The Entity's own JSON Object construction (from_json) from all Field values, rather than its constructor."
+                      why: "The Database Principle requires the Entity's own construction, and the Model Definition accepts the storage-assigned id only in JSON Object construction; the Preference 'own constructor' would refuse every stored id. Principles take precedence; the Open Question stays open for the Human."
+                    - unset: "Which error kind a stored row that breaks its Entity contract raises."
+                      chosen: "DeclarationMismatchError (Declaration incompatibility), naming the Entity and the failing Fields only."
+                      why: "The row is incompatible with the Entity's Declaration; values are never echoed because a Field may carry a Sensitivity Marker."
+                    - unset: "What add does with an Entity whose Auto Increment id is already assigned."
+                      chosen: "Refuse it with InvalidInputError before any Instance is accessed."
+                      why: "add accepts one complete new Entity, and storage alone assigns the Auto Increment value."
+                    - unset: "What update does with an Entity whose id is pending."
+                      chosen: "Return null after resolving the Instance."
+                      why: "Its id only locates the record, and a pending id locates none."
+                    - unset: "Whether a failing native command raises or returns."
+                      chosen: "It returns a CommandResult with success false and the driver's message; invalid input still raises."
+                      why: "CommandResult carries success and message for exactly this outcome, and the Engine leaves no partial change."
+
+        P2-G5:
+          id: "P2-G5"
+          title: "Engine unit"
+          description: "Implements the storage behavior for the only Engine used by an active Instance, behind Core, returning raw results for Core to normalize."
+          area: "Engine: the single unit for the Engine the active Instance uses."
+          does: "The Engine unit implements every Entity Operation, the Command Operation, and the capabilities the Setup Operations need, atomically, on its file-backed storage."
+          constraints:
+            - "Each Task implements only its own Operations inside the Engine unit."
+          task_count: 7
+          tasks:
+            P2-G5-T1:
+              id: "P2-G5-T1"
+              source_id: "008"
+              title: "Connect the Engine unit to its file-backed storage"
+              description: "Open the Engine's connection to the database file Core resolves beneath the Database-owned storage root, with the connection options the Engine's profile names, and report a connection failure without exposing connection values."
+              reason: "Every Operation of the Engine unit runs over this connection."
+              inputs:
+                - "The resolved Instance connection and storage location from Core"
+                - "The Engine profile in Database Preferences"
+              skills:
+                - "sqlmodel"
+              expected_result: "The Engine unit connects to its database file in Storage with the Engine's options enforced."
+              acceptance: "A connection opens the database file named by the Instance's database value inside Storage with every connection option of the Engine's profile in effect, and an unreachable storage location raises the connection error with no connection value in it."
+              depends_on:
+                - "P2-G2-T3"
+                - "P2-G3-T3"
+              constraints: []
+              status: "done"
+              log:
+                - at: "2026-10-12T20:08:57Z"
+                  by: "009"
+                  transition: "todo -> claimed"
+                - at: "2026-10-12T20:10:31Z"
+                  by: "009"
+                  transition: "claimed -> done"
+                  done: "Wrote the SQLite Engine unit's connection: one engine per resolved storage file, built from the Instance's driver and the database file Core resolves beneath the storage root, with the Engine profile's connect arguments, foreign-key enforcement on every connection, explicit transaction begin so every unit of work (including table creation) is atomic, and the exact-decimal collation and exact-sum aggregate the Operations use; a transaction context creates the storage directory when missing, opens the connection, and turns a failure to open into ConnectionFailureError and a driver failure inside the work into ExecutionError carrying only the driver's message, never statements, parameters, or paths."
+                  locations: ["database/database/engine/sqlite.py"]
+                  evidence: "A scratch probe pointed a copy of the resolved Instance at a scratch storage directory: the transaction created application.db there, PRAGMA foreign_keys returned 1, and the connect arguments held check_same_thread False; a location beneath a regular file raised ConnectionFailureError with no cause and no path in its message."
+                  decisions:
+                    - unset: "How transactions are made atomic on SQLite, whose driver otherwise commits table creation implicitly."
+                      chosen: "Disable the driver's implicit transaction handling on connect and emit BEGIN when a transaction starts."
+                      why: "Changes and create_tables must be all-or-nothing; this is SQLAlchemy's documented pattern for transactional DDL on pysqlite."
+                    - unset: "How exact decimals, stored as text by Model's decimal column, are compared, ordered, and summed."
+                      chosen: "A connection-level collation that compares decimal text numerically and an aggregate that sums decimal text exactly."
+                      why: "Text comparison would order 10 before 9 and a floating sum would lose exactness."
+                    - unset: "Who creates the storage directory."
+                      chosen: "The Engine unit, on the first connection."
+                      why: "Only Database creates and manages its storage files, and loading the Interface must create nothing."
+            P2-G5-T2:
+              id: "P2-G5-T2"
+              source_id: "008"
+              title: "Add and update Entities"
+              description: "Implement the Operations that add one complete new Entity and that replace every mutable Field of an existing Entity located by its id, returning the stored Entity with generated values or null when no record exists."
+              reason: "Consumers create and change records only through these Operations."
+              inputs:
+                - "The Engine connection"
+                - "Core routing"
+              skills:
+                - "sqlmodel"
+              expected_result: "Entities can be added and updated in storage."
+              acceptance: "Adding an Entity returns it with its storage-assigned id; updating changes every mutable Field and never the id or another immutable Field; updating a missing record returns null; a failing change leaves no partial data."
+              depends_on:
+                - "P2-G4-T2"
+                - "P2-G5-T1"
+              constraints: []
+              status: "done"
+              log:
+                - at: "2026-10-12T20:17:54Z"
+                  by: "010"
+                  transition: "todo -> claimed"
+                - at: "2026-10-12T20:20:44Z"
+                  by: "010"
+                  transition: "claimed -> done"
+                  done: "Added to the SQLite Engine unit the insert and update Operations: insert writes one new record from the Field values Core passes (without the pending Auto Increment value) and returns the stored row with its storage-assigned id; update locates the record by id, returns null when absent, otherwise replaces the mutable Field values Core passes (Core excludes id and every other immutable Field) and returns the stored row; each runs in one transaction, so a failure leaves no change."
+                  locations: ["database/database/engine/sqlite.py"]
+                  evidence: "A scratch probe on a scratch storage file added a User through Core and received it with id 1; a second User with the same unique name raised ExecutionError ('UNIQUE constraint failed: User.name') and the stored count stayed 1; an Entity with an assigned id was refused by add; update changed name and description, kept id 1, and returned an Entity equal to the one read back by id; updating a missing id and a pending id each returned None; ruff and ty report no violation."
+            P2-G5-T3:
+              id: "P2-G5-T3"
+              source_id: "007"
+              title: "Read Entities by id and by query"
+              description: "Implement the Operations that read one Entity by its id and that list Entities with checked Filters, combination, ordered Orders, and limit."
+              reason: "Consumers read stored records only through these Operations."
+              inputs:
+                - "The Engine connection"
+                - "Core routing and checked queries"
+              skills:
+                - "sqlmodel"
+              expected_result: "Entities can be read by id and listed by query."
+              acceptance: "Reading by id returns the stored Entity or null; listing returns exactly the matching Entities in the requested order, each operator and both combinations select the expected records, the default order applies when none is given, and a positive limit bounds the count."
+              depends_on:
+                - "P2-G4-T2"
+                - "P2-G5-T1"
+              constraints: []
+              status: "done"
+              log:
+                - at: "2026-10-12T20:17:54Z"
+                  by: "010"
+                  transition: "todo -> claimed"
+                - at: "2026-10-12T20:20:44Z"
+                  by: "010"
+                  transition: "claimed -> done"
+                  done: "Added to the SQLite Engine unit the get and select Operations: get returns the row located by id or null; select applies checked Filters combined by AND or OR, the checked Orders in supplied order, and a positive limit. Text operators are case-sensitive (instr and substr), NOT_EQUALS includes null values, decimal Fields compare and order through the exact-decimal collation, and datetimes bind in UTC through Model's column type."
+                  locations: ["database/database/engine/sqlite.py"]
+                  evidence: "A scratch probe saw: missing id -> None; default order by id; a descending Order and a two-Order sequence applied in supplied order; limit 2 bounding the count and limit 0 returning all; each of the 12 operators and both combinations selecting exactly the expected Currencies; CONTAINS 'u' matching nothing against upper-case codes; Positions ordered by volume as 1.50, 1.5, 9, 10, 100.001, volume > 9 selecting 10 and 100.001, volume == 1.5 selecting both 1.50 and 1.5 with their stored text kept; a +02:00 datetime read back as the same instant in UTC and a UTC datetime cut-off selecting the expected Positions in descending order."
+                  decisions:
+                    - unset: "Whether CONTAINS, STARTS_WITH, and ENDS_WITH are case-sensitive."
+                      chosen: "Case-sensitive, through instr and substr rather than LIKE."
+                      why: "SQLite's LIKE ignores ASCII case while other Engines do not; exact matching keeps the same call returning the same result on every Instance."
+                    - unset: "Whether NOT_EQUALS selects records whose Field is null."
+                      chosen: "Yes (IS DISTINCT FROM)."
+                      why: "A null value is not equal to the given value; IS_NULL and IS_NOT_NULL remain the explicit null tests."
+                    - unset: "How an empty text for a text operator behaves."
+                      chosen: "It matches every record whose Field is not null."
+                      why: "Every text contains, starts with, and ends with the empty text."
+            P2-G5-T4:
+              id: "P2-G5-T4"
+              source_id: "008"
+              title: "Delete and truncate Entities"
+              description: "Implement the Operations that delete one Entity located by its id and that remove every record of one Entity while keeping its Table."
+              reason: "Consumers remove stored records only through these Operations."
+              inputs:
+                - "The Engine connection"
+                - "Core routing"
+              skills:
+                - "sqlmodel"
+              expected_result: "Entities can be deleted one at a time and truncated."
+              acceptance: "Deleting returns the final deleted Entity, after which reading it by id returns null, or returns null when no record exists; truncating returns the deleted count, leaves no record of that Entity, keeps its Table, and leaves every other Entity's records unchanged."
+              depends_on:
+                - "P2-G4-T2"
+                - "P2-G5-T1"
+              constraints: []
+              status: "done"
+              log:
+                - at: "2026-10-12T20:20:44Z"
+                  by: "010"
+                  transition: "todo -> claimed"
+                - at: "2026-10-12T20:22:12Z"
+                  by: "010"
+                  transition: "claimed -> done"
+                  done: "Added to the SQLite Engine unit the delete Operation, which reads the record located by id and deletes it in the same transaction, returning that final row or null, and the truncate Operation, which counts and deletes every record of the Entity in one transaction, keeping its Table and returning the count."
+                  locations: ["database/database/engine/sqlite.py"]
+                  evidence: "A scratch probe deleted a Currency and received it, after which get by id returned None and a second delete returned None; deleting a User still referenced raised ExecutionError ('FOREIGN KEY constraint failed') and the User remained; truncating Currency returned 2, left 0 Currencies and the Broker untouched, and a new Currency could then be added to the kept Table; truncating a referenced User table raised ExecutionError and left the User."
+            P2-G5-T5:
+              id: "P2-G5-T5"
+              source_id: "007"
+              title: "Count and aggregate Entities"
+              description: "Implement the Operations that count matching Entities and return the sum, minimum, and maximum of one Field over matching Entities, ignoring null values."
+              reason: "Consumers summarize stored records only through these Operations."
+              inputs:
+                - "The Engine connection"
+                - "Core routing and checked queries"
+              skills:
+                - "sqlmodel"
+              expected_result: "Matching Entities can be counted and aggregated."
+              acceptance: "Counting returns the matching count; the sum returns the exact total or zero when nothing matches; the minimum and maximum return the extreme value or null when nothing matches; null values are ignored; a non-numeric Field for a sum is refused before storage access."
+              depends_on:
+                - "P2-G4-T2"
+                - "P2-G5-T1"
+              constraints: []
+              status: "done"
+              log:
+                - at: "2026-10-12T20:20:44Z"
+                  by: "010"
+                  transition: "todo -> claimed"
+                - at: "2026-10-12T20:22:12Z"
+                  by: "010"
+                  transition: "claimed -> done"
+                  done: "Added to the SQLite Engine unit the count Operation and the aggregate Operation for sum, min, and max over one Field of the matching records: decimal sums use the exact-sum aggregate and return a Decimal, integer and float sums use SUM with the column's type, and min and max compare decimals through the exact-decimal collation and return values through the Field's column type; null values are ignored. Core turns an empty sum into the Field Type's zero."
+                  locations: ["database/database/engine/sqlite.py"]
+                  evidence: "A scratch probe counted 4 Trailing Rules and 2 with a null adjustment; summed trigger percentages exactly to Decimal('119.251') and the nullable adjustment to Decimal('3.75') ignoring nulls; summed integer digits to 10 and float point sizes to 0.0201; an empty decimal sum returned Decimal('0') and an empty integer sum 0; decimal min and max returned Decimal('0.25') and Decimal('100.001'), min ignored nulls, and min and max over no match returned None; max over a string Field returned XAU/USD; a sum over a string Field was refused with InvalidInputError before storage access."
+            P2-G5-T6:
+              id: "P2-G5-T6"
+              source_id: "008"
+              title: "Run native commands"
+              description: "Implement the Command Operation that runs a native command of the Engine's query language with bound parameters on the selected Instance and returns a command Result."
+              reason: "Consumers need a supported path for native commands beyond the Entity Operations."
+              inputs:
+                - "The Engine connection"
+                - "Core routing"
+                - "The command Result"
+              skills:
+                - "sqlmodel"
+              expected_result: "Native commands run and report their rows, affected count, columns, and success."
+              acceptance: "A valid query command returns its rows and column names, a valid changing command returns its affected count, and an invalid command returns a failed result or raises the execution error without leaving a partial change."
+              depends_on:
+                - "P2-G4-T2"
+                - "P2-G5-T1"
+              constraints: []
+              status: "done"
+              log:
+                - at: "2026-10-12T20:20:44Z"
+                  by: "010"
+                  transition: "todo -> claimed"
+                - at: "2026-10-12T20:22:12Z"
+                  by: "010"
+                  transition: "claimed -> done"
+                  done: "Added to the SQLite Engine unit the execute Operation: it runs one native SQLite command through the driver with its bound parameters (positional or named) in one transaction and returns the rows and column names for a command that returns rows, or the affected count (null when the driver reports none); a driver failure rolls the transaction back and Core reports it as a failed CommandResult."
+                  locations: ["database/database/engine/sqlite.py", "database/database/core/data.py"]
+                  evidence: "A scratch probe ran a positional SELECT and received success, columns ['code', 'decimal_digits'], one row mapping, affected None, the instance member, and 'returned 1 rows'; a named UPDATE returned success with affected 1 and the change stored; a two-row INSERT whose second row broke a foreign key returned success false with the driver message and left neither row; a syntax error returned success false; a CREATE TABLE returned success with affected None."
+                  decisions:
+                    - unset: "How the driver's unknown affected count (-1) is reported."
+                      chosen: "As null, with the message 'command completed'."
+                      why: "The CommandResult field is the affected row count or null; -1 is not a count."
+            P2-G5-T7:
+              id: "P2-G5-T7"
+              source_id: "008"
+              title: "Enable and disable Entities"
+              description: "Implement the Operations that set only the Activity Field of one Entity located by its id to true or to false, returning the final Entity or null when no record exists."
+              reason: "Consumers take stored records in and out of use only through these Operations."
+              inputs:
+                - "The Engine connection"
+                - "Core routing"
+              skills:
+                - "sqlmodel"
+              expected_result: "Entities can be enabled and disabled."
+              acceptance: "Enabling and disabling change only the Activity Field and return the final Entity, also when it already had that value; every other Field stays unchanged; a missing record returns null."
+              depends_on:
+                - "P2-G4-T2"
+                - "P2-G5-T1"
+              constraints: []
+              status: "done"
+              log:
+                - at: "2026-10-12T20:20:44Z"
+                  by: "010"
+                  transition: "todo -> claimed"
+                - at: "2026-10-12T20:22:12Z"
+                  by: "010"
+                  transition: "claimed -> done"
+                  done: "Added to the SQLite Engine unit the set_activity Operation that Core calls for enable (true) and disable (false): it locates the record by id, returns null when absent, otherwise sets only the Activity Field in one transaction and returns the final row."
+                  locations: ["database/database/engine/sqlite.py"]
+                  evidence: "A scratch probe disabled a Broker and received it with is_active false and name, user_id, and description unchanged; disabling it again returned the Entity with is_active false; enabling returned it with is_active true; a missing id returned None."
+
+        P2-G6:
+          id: "P2-G6"
+          title: "Setup Operations"
+          description: "Provides the explicit preparation commands that create the Tables and insert the Initial Data, coordinated by Core."
+          area: "Setup: table creation, Initial Data insertion, and their coordination in Core."
+          does: "Storage on any active Instance can be prepared repeatably, and each Setup Operation reports a setup Result."
+          constraints: []
+          task_count: 3
+          tasks:
+            P2-G6-T1:
+              id: "P2-G6-T1"
+              source_id: "007"
+              title: "Create the Tables from the Model Entities"
+              description: "Create exactly the Tables of the Entities in the Model Entity Collection from their Declarations and shared table metadata, leave matching Tables unchanged, and stop with a declaration-incompatibility failure on any difference with an existing Table."
+              reason: "Storage must hold exactly the Tables the Model Entities define, and repeated preparation must be safe."
+              inputs:
+                - "The Model Entity Collection and Declarations"
+                - "The Engine connection"
+              skills:
+                - "sqlmodel"
+              expected_result: "Every Model Entity has its Table in the selected Instance."
+              acceptance: "On empty storage every Entity's Table is created with its keys, Relations, Uniqueness Constraints, and Indexes and no other Table; running again changes nothing and succeeds; an existing Table that differs from its Declaration stops the command with a declaration-incompatibility result."
+              depends_on:
+                - "P2-G5-T1"
+                - "P2-G3-T2"
+              constraints: []
+              status: "done"
+              log:
+                - at: "2026-10-12T20:22:12Z"
+                  by: "010"
+                  transition: "todo -> claimed"
+                - at: "2026-10-12T20:23:42Z"
+                  by: "010"
+                  transition: "claimed -> done"
+                  done: "Wrote Core tables, which resolves the Instance and passes exactly the Tables of the Model Entity Collection (from their shared table metadata) to the Engine unit and reports a SetupResult, and added to the SQLite Engine unit the create_tables capability: in one transaction it reflects every existing Entity Table, compares its Fields, nullability, column types, Primary Key, Relations, Uniqueness Constraints, and Indexes with the Entity's table, stops with DeclarationMismatchError listing every difference (reported as a failed SetupResult), and otherwise creates only the missing Entity Tables."
+                  locations: ["database/database/core/tables.py", "database/database/engine/sqlite.py"]
+                  evidence: "A scratch probe on empty scratch storage created exactly the 15 Entity Tables (Account with 4 foreign keys and its two named Uniqueness Constraints) and reported success with affected 15; a second run reported '0 Tables created, 15 already matched'; an unrelated Table did not affect success; after adding a column to Broker the command returned success false naming Broker's different Fields; on storage holding only a differing User Table it failed naming User's Fields and Uniqueness Constraints and created no other Table."
+                  decisions:
+                    - unset: "What a SetupResult's affected value counts for create_tables."
+                      chosen: "The number of Entity Tables processed (created or already matching); the message states how many were created."
+                      why: "The field is 'the processed Table or record count', and a repeated run processes the same Tables without change."
+                    - unset: "Whether Tables outside the Entity Collection affect create_tables."
+                      chosen: "They are ignored."
+                      why: "create_tables uses only the Entities of the Model Entity Collection and their Declarations, and Database does not change structure it does not derive from them."
+            P2-G6-T2:
+              id: "P2-G6-T2"
+              source_id: "007"
+              title: "Insert the Initial Data repeatably"
+              description: "Insert every configured Initial Data record that is missing, validating each through its public Entity contract, skip an identical record that is already present, fail on a conflicting one, and do all of it atomically."
+              reason: "Preparation must seed the Target's records without ever duplicating, losing, or overwriting data."
+              inputs:
+                - "The Initial Data collection of the Database Configuration"
+                - "The Engine connection"
+              skills:
+                - "sqlmodel"
+              expected_result: "The configured Initial Data is present in the selected Instance."
+              acceptance: "A first run inserts every configured record with its values unchanged; a second run inserts nothing and succeeds; a conflicting present record fails the run with no partial change; a record that breaks its Entity contract fails clearly."
+              depends_on:
+                - "P2-G2-T2"
+                - "P2-G6-T1"
+              constraints: []
+              status: "done"
+              log:
+                - at: "2026-10-12T20:23:42Z"
+                  by: "010"
+                  transition: "todo -> claimed"
+                - at: "2026-10-12T20:24:52Z"
+                  by: "010"
+                  transition: "claimed -> done"
+                  done: "Wrote Core initial_data, which builds every configured record through its Entity's own JSON Object construction (collecting every invalid record into one failed SetupResult before storage is touched) and passes each prepared record with its given Fields and the Uniqueness Constraints those Fields cover to the Engine unit, and added to the SQLite Engine unit the insert_initial_data capability: in one transaction it looks each record up by its covered Uniqueness Constraints (or by all given Fields when none is covered), skips a stored record whose given Fields are identical, fails on a differing one, and inserts the missing records with every value unchanged."
+                  locations: ["database/database/core/initial_data.py", "database/database/engine/sqlite.py"]
+                  evidence: "A scratch probe on fresh scratch Tables inserted all 23 configured records (12 Entities) with values unchanged (User Admin/admin with empty password and api_key, active; Action risk_by_reward Decimal('1'); Asset point_size 0.0001); a second run inserted 0 and succeeded; after deleting one Currency and changing the stored User's username, a run failed with 'User Initial Data record 1 conflicts with a stored record' and the deleted Currency was still absent; after restoring the username a run inserted exactly that Currency; a record with an integer username failed naming the Field; an empty collection succeeded with 0 affected."
+                  decisions:
+                    - unset: "How an already-present Initial Data record is recognized."
+                      chosen: "By the Entity's Uniqueness Constraints whose Fields the record gives, or by all given Fields when none is covered; it is identical when every given Field equals the stored value."
+                      why: "Initial Data records carry no id, and the Uniqueness Constraints are the Declaration's own identity of a record."
+            P2-G6-T3:
+              id: "P2-G6-T3"
+              source_id: "007"
+              title: "Coordinate preparation"
+              description: "Provide the preparation command that runs table creation and then Initial Data insertion on the selected Instance and stops without inserting when table creation fails."
+              reason: "Storage is prepared in one step on any active Instance."
+              inputs:
+                - "Table creation and Initial Data insertion"
+              skills: []
+              expected_result: "Preparation runs both Setup steps in order and reports one setup Result."
+              acceptance: "Preparation on empty storage creates the Tables and inserts the Initial Data; when table creation fails, no Initial Data is inserted and the failure is reported in the setup Result."
+              depends_on:
+                - "P2-G6-T1"
+                - "P2-G6-T2"
+              constraints: []
+              status: "done"
+              log:
+                - at: "2026-10-12T20:24:52Z"
+                  by: "010"
+                  transition: "todo -> claimed"
+                - at: "2026-10-12T20:25:24Z"
+                  by: "010"
+                  transition: "claimed -> done"
+                  done: "Wrote Core setup with prepare: it resolves the Instance, runs create_tables, stops with a failed SetupResult (insert_initial_data not run) when create_tables fails, and otherwise runs insert_initial_data and reports one SetupResult combining both outcomes."
+                  locations: ["database/database/core/setup.py"]
+                  evidence: "A scratch probe on empty scratch storage ran prepare: success, 15 Tables created and 23 Initial Data records inserted; a second run succeeded with 15 Tables matched and 23 records present, still 1 User; on storage holding a differing User Table prepare returned success false naming the difference, and the User Table held 0 records."
+                  decisions:
+                    - unset: "What prepare's SetupResult affected value counts."
+                      chosen: "The Initial Data records inserted by its second step; the message reports both steps."
+                      why: "One SetupResult carries one count, and the inserted records are prepare's data effect; the Table count is reported in the message."
+
+        P2-G7:
+          id: "P2-G7"
+          title: "Interface and entry points"
+          description: "Publishes the Database contract through its single Interface and provides the manual and after-generation preparation paths that use it."
+          area: "Interface and Entry Points: the public groups and the three preparation scripts."
+          does: "Consumers reach every Operation, value, Instance, Result, and Error through the six prefixed groups, and storage can be prepared by hand or after generation through the same public commands."
+          constraints: []
+          task_count: 3
+          tasks:
+            P2-G7-T1:
+              id: "P2-G7-T1"
+              source_id: "008"
+              title: "Publish the six Interface groups"
+              description: "Publish exactly the six prefixed groups the Interface contract declares, with the Entity and Command Operations in the interface group and the Setup Operations in the setup group, each taking exactly its listed parameters in order with the Instance last, and nothing else."
+              reason: "Consumers depend on one versioned contract with a fixed shape."
+              inputs:
+                - "Core routing and Setup coordination"
+                - "The query vocabulary, Results, Errors, and DatabaseInstance enumeration"
+              skills: []
+              expected_result: "The Interface publishes exactly the six groups."
+              acceptance: "Loading the Interface publishes exactly the six prefixed groups and opens no connection and creates no data or file; every Operation and Setup Operation has exactly its listed parameters in order with the Instance last and optional; no Operation accepts an Entity name, Field name, or other string in place of an imported value."
+              depends_on:
+                - "P2-G4-T2"
+                - "P2-G5-T2"
+                - "P2-G5-T3"
+                - "P2-G5-T4"
+                - "P2-G5-T5"
+                - "P2-G5-T6"
+                - "P2-G5-T7"
+                - "P2-G6-T3"
+              constraints: []
+              status: "done"
+              log:
+                - at: "2026-10-12T20:25:24Z"
+                  by: "010"
+                  transition: "todo -> claimed"
+                - at: "2026-10-12T20:26:32Z"
+                  by: "010"
+                  transition: "claimed -> done"
+                  done: "Wrote the Interface as the package's only publishing file: the six groups named by the prefix and key — database_interface (every Entity Operation and execute_command, each forwarding to Core data with exactly its listed parameters in order, instance last and optional), database_setup (create_tables, insert_initial_data, prepare), database_value, database_result, and database_error as namespace classes holding their members under their own names, and database_instance as the DatabaseInstance enumeration itself; __all__ lists only the six group names. The package initialiser stays empty."
+                  locations: ["database/database/interface.py"]
+                  evidence: "A scratch probe imported the Interface in a fresh interpreter: __all__ held exactly the six group names; loading created no file in the Component, opened no SQLite connection, and did not load the Configuration; every Entity Operation, execute_command, and Setup Operation signature matched the Preference parameter lists in order, with only entity, id, field, and command required; the value, result, and error groups held exactly their members; on scratch storage prepare succeeded, an Entity name string, Field name strings in a Filter and in a sum, and a combination string were refused with InvalidInputError and an Instance string with ConfigurationError; calls without and with database_instance.SQLITE returned the stored User. ruff and ty report no violation."
+                  decisions:
+                    - unset: "How public parameters and results are typed."
+                      chosen: "Generic over the Entity type (an Entity class in, its instances out), with Filters and Orders as sequences and the instance as database_instance | None."
+                      why: "Consumers get precise types for the Entities they pass while the contract's shape stays exactly the listed parameters."
+            P2-G7-T2:
+              id: "P2-G7-T2"
+              source_id: "007"
+              title: "Provide the manual preparation entry points"
+              description: "Provide one entry point for each Setup Operation that runs it through the Interface on the default Instance and reports its setup Result, holding no logic of its own."
+              reason: "A person must be able to prepare storage by hand."
+              inputs:
+                - "The published Interface"
+              skills: []
+              expected_result: "Each Setup Operation can be run by hand."
+              acceptance: "Running each entry point performs its Setup Operation on the default Instance and reports the same setup Result the Interface returns, and running preparation twice succeeds without duplicating data."
+              depends_on:
+                - "P2-G7-T1"
+              constraints: []
+              status: "done"
+              log:
+                - at: "2026-10-12T20:26:32Z"
+                  by: "010"
+                  transition: "todo -> claimed"
+                - at: "2026-10-12T20:27:05Z"
+                  by: "010"
+                  transition: "claimed -> done"
+                  done: "Wrote the three Entry Points at the Component root, one per Setup Operation and named by it; each runs its Setup Operation through the Interface's database_setup group on the default Instance, prints the command, Instance, and the SetupResult message, and exits 0 on success or 1 on failure, holding no logic of its own."
+                  locations: ["database/scripts/create_tables.py", "database/scripts/insert_initial_data.py", "database/scripts/prepare.py"]
+                  evidence: "A scratch probe ran create_tables, insert_initial_data, prepare, and prepare again against scratch storage substituted for the default Instance's file: each printed the Interface's SetupResult message (15 Tables created; 23 records inserted; then 15 matched and 23 present twice) and exited 0, and one User existed after both prepares."
+                  decisions:
+                    - unset: "How an Entry Point reports its result."
+                      chosen: "One printed line with the command, the Instance member name, and the SetupResult message, and exit status 0 or 1 from its success."
+                      why: "A person and the after-generation step both need the outcome, and fail_on_error needs a failure the caller can detect."
+            P2-G7-T3:
+              id: "P2-G7-T3"
+              source_id: "007"
+              title: "Prepare the default Instance after generation"
+              description: "Run preparation on the active default Instance once generation of the Database Component is complete, as the after-generation Setup behavior directs, failing preparation when it fails."
+              reason: "The Database Preferences enable after-generation preparation so the default Instance is ready to use."
+              inputs:
+                - "The manual preparation entry point"
+              skills: []
+              expected_result: "The default Instance's storage holds every Table and the Initial Data after generation."
+              acceptance: "After generation the default Instance's database file exists in Storage with every Entity's Table and every configured Initial Data record, and no other Instance was prepared."
+              depends_on:
+                - "P2-G7-T2"
+              constraints: []
+              status: "done"
+              log:
+                - at: "2026-10-12T20:27:05Z"
+                  by: "010"
+                  transition: "todo -> claimed"
+                - at: "2026-10-12T20:28:18Z"
+                  by: "010"
+                  transition: "claimed -> done"
+                  done: "Ran prepare on the active default Instance through its Entry Point once generation of the Database Component's source, Configuration, and Interface was complete, as the after-generation Setup behavior (enabled, fail_on_error true, command prepare) directs; it succeeded, so preparation did not fail."
+                  locations: ["database/scripts/prepare.py", "database/db/application.db"]
+                  evidence: "The Entry Point printed 'prepare on SQLITE: 15 Tables created, 0 already matched; 23 Initial Data records inserted, 0 already present' and exited 0; the database file exists in Storage as db/application.db with the 15 Entity Tables (plus SQLite's internal sqlite_sequence) and the Interface counts 23 records across the 12 Entities with Initial Data; the inactive PostgreSQL Instance has no DatabaseInstance member and was not touched."
+
+        P2-G8:
+          id: "P2-G8"
+          title: "Component documentation"
+          description: "Documents the Database library for its consumers from its actual published contract."
+          area: "Documentation: the root documentation of the Database Component."
+          does: "A consumer can understand, set up, use, prepare, and verify Database from its documentation alone."
+          constraints: []
+          task_count: 1
+          tasks:
+            P2-G8-T1:
+              id: "P2-G8-T1"
+              source_id: "007"
+              title: "Write the Database root documentation"
+              description: "Write the root documentation with its Overview, Interface, Instances, Setup, Use, Setup Operations, Initial Data, Verify, and Troubleshooting sections in that order, describing the published contract exactly as realized."
+              reason: "Consumers of Database must learn its contract from its documentation rather than from its internals."
+              inputs:
+                - "The published Interface"
+                - "The Initial Data collection"
+              skills: []
+              expected_result: "The Database root documentation exists with all nine sections."
+              acceptance: "The documentation presents the nine sections in order, explains every group, member, Operation, parameter, enumeration member, default, Result, and Error with an example, lists every Target Initial Data record, its examples work as written against the published Interface, and it exposes no credential, connection value, or Engine internal."
+              depends_on:
+                - "P2-G7-T3"
+              constraints: []
+              status: "claimed"
+              log:
+                - at: "2026-10-12T20:28:18Z"
+                  by: "010"
+                  transition: "todo -> claimed"

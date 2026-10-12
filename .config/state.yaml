@@ -29,17 +29,23 @@ content_map:
 # <!--------------------------------------------------------------------------------- Content -->
 content:
   active:
-    mode: "reviewing"
-    phase: "P1"
-    mode_reason: "Review of phase P1 was invoked directly by the Human."
-    set_by: "my-interface-review (Log Entry 005)"
-    set_at: "2026-10-12T19:11:38Z"
+    mode: "planning"
+    phase: "P2"
+    mode_reason: "Planning of phase P2 was invoked directly by the Human to reconcile the existing P2 Plan; the P1 Review of Log Entry 006 is still recorded in progress."
+    set_by: "my-interface-plan (Log Entry 008)"
+    set_at: "2026-10-12T19:54:05Z"
   phases:
     P1:
       id: "P1"
       planning: "completed"
       development: "completed"
       review: "not satisfied"
+      completed_at: null
+    P2:
+      id: "P2"
+      planning: "completed"
+      development: "not started"
+      review: "not started"
       completed_at: null
   log:
     - id: "001"
@@ -327,3 +333,158 @@ content:
             expected: "No ignore file inside the Model Component."
             observed: "model/.venv/.gitignore (uv) and model/.ruff_cache/.gitignore (ruff) still exist inside version-control-excluded tool directories; Open Question OQ-005-1 has no Human answer."
             evidence: "Both files listed in the Component directory at this review."
+    - id: "007"
+      skill: "my-interface-plan"
+      phase: "P2"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-10-12T19:45:56Z"
+      completed_at: "2026-10-12T19:48:30Z"
+      duration: "2:34"
+      skills_used:
+        - name: "my-interface-plan"
+          duration: "2:34"
+          report: "Created the P2 Plan."
+      open_questions:
+        - "OQ-007-1"
+        - "OQ-007-2"
+      blockers: []
+      decisions: []
+      report: "Created the first Plan for phase P2 (Database): 8 Groups, 25 Tasks, all status todo, source_id 007; the Plan total is now 53 Tasks. No prior P2 Plan existed, so nothing was preserved, changed, removed, or replaced. Planning proceeded because the earlier phase's Blocker B-005-1 is verified resolved at its source: the Human changed the Model Definition (commit b57ba527c) so JSON Object construction accepts the stored id, and the P1 Review of Log Entry 006 recorded the implementation change (F-006-1, rechecked); that Review is still in progress and P1 review progress remains not satisfied, with only an Open Question outstanding. Two conflicts between Database authorities were found and recorded as Open Questions."
+      data:
+        phase_selection:
+          requested: ["2"]
+          planned: ["P2"]
+          skipped: []
+        earlier_phase_blockers:
+          - blocker: "B-005-1"
+            phase: "P1"
+            verified_resolved: "The condition was a conflict inside the Model Definition; commit b57ba527c removes it, and Log Entry 006 finding F-006-1 records the implementation now rebuilding stored Entities from JSON (rechecked 2026-10-12T19:43:53Z)."
+        changes:
+          - action: "added"
+            group: "P2-G1"
+            tasks: ["P2-G1-T1", "P2-G1-T2", "P2-G1-T3"]
+            reason: "New Plan; the Database library needs its package with the Model Connection, quality standards, and version-control exclusions before other work."
+          - action: "added"
+            group: "P2-G2"
+            tasks: ["P2-G2-T1", "P2-G2-T2", "P2-G2-T3"]
+            reason: "New Plan; the Database Definition makes the generated Configuration, including the copied Initial Data, the sole runtime source, loaded and validated by Core."
+          - action: "added"
+            group: "P2-G3"
+            tasks: ["P2-G3-T1", "P2-G3-T2", "P2-G3-T3", "P2-G3-T4"]
+            reason: "New Plan; the Interface contract names a query vocabulary, Results, error kinds, and an Instance enumeration, one observable result each."
+          - action: "added"
+            group: "P2-G4"
+            tasks: ["P2-G4-T1", "P2-G4-T2"]
+            reason: "New Plan; Core owns query checking and shared routing."
+          - action: "added"
+            group: "P2-G5"
+            tasks: ["P2-G5-T1", "P2-G5-T2", "P2-G5-T3", "P2-G5-T4", "P2-G5-T5", "P2-G5-T6"]
+            reason: "New Plan; one Engine unit for the only Engine an active Instance uses, split by Operation family."
+          - action: "added"
+            group: "P2-G6"
+            tasks: ["P2-G6-T1", "P2-G6-T2", "P2-G6-T3"]
+            reason: "New Plan; the Setup Operations create Tables, insert Initial Data, and prepare storage."
+          - action: "added"
+            group: "P2-G7"
+            tasks: ["P2-G7-T1", "P2-G7-T2", "P2-G7-T3"]
+            reason: "New Plan; the Interface publishes the contract, and the entry points and after-generation preparation use it."
+          - action: "added"
+            group: "P2-G8"
+            tasks: ["P2-G8-T1"]
+            reason: "New Plan; the Database Definition requires root documentation of the published contract."
+        open_question_details:
+          - id: "OQ-007-1"
+            question: "Should the Database Preference 'Build the Entity with its own constructor from all Field values' be updated?"
+            context: "The Model Definition now refuses a caller-supplied id at direct construction and accepts the stored id only in JSON Object construction, so a constructor call with a stored id is refused. The Database Principle requires each stored row to become an Entity 'through that Entity's own construction'."
+            current_choice: "Principles take precedence over the Preference: Develop builds stored rows through a construction the Model Entity itself provides that accepts the stored id, and records the decision in the Task Log of P2-G4-T2."
+          - id: "OQ-007-2"
+            question: "Should the inactive PostgreSQL Instance's password in the Database Preferences be generated into the Database Configuration?"
+            context: "The Database Preferences carry a password value for the inactive PostgreSQL Instance, the Configuration Schema requires every Instance to be complete, and the project Rules forbid copying a credential into a project declaration; the Schema's own example uses an empty password."
+            current_choice: "Left for Develop to resolve under precedence when it generates the Configuration (P2-G2-T1), recording the decision in that Task's Log."
+    - id: "008"
+      skill: "my-interface-plan"
+      phase: "P2"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-10-12T19:54:05Z"
+      completed_at: "2026-10-12T19:57:32Z"
+      duration: "3:27"
+      skills_used:
+        - name: "my-interface-plan"
+          duration: "3:27"
+          report: "Reconciled the P2 Plan."
+      open_questions: []
+      blockers: []
+      decisions: []
+      report: "Reconciled the existing P2 Plan (Database) against current Understanding. No Interface, Target, Implementation, or Schema source changed since Log Entry 007 (the last authority change, commit b57ba527c, was already in its Understanding), so the Plan was preserved and only Principle-conformance defects were corrected: one Task was split, five Tasks were changed, and one Group was corrected. P2 now has 8 Groups and 26 Tasks, all todo; the Plan total is 54. No Task had been begun, so nothing was replaced. Planning proceeded because the earlier phase P1 has no open Blocker (B-005-1 verified resolved in Log Entry 007; only Open Question OQ-005-1 remains). Open Questions OQ-007-1 and OQ-007-2 remain open and unchanged."
+      data:
+        phase_selection:
+          requested: ["2"]
+          planned: ["P2"]
+          skipped: []
+        understanding:
+          authorities_changed_since_previous_plan: false
+          basis: "No change under the Interface, Target, Implementation, or Foundation sources since commit b57ba527c, which Log Entry 007 already accounted for; the working tree changes only the Config records."
+        changes:
+          - action: "changed"
+            group: "P2-G5"
+            reason: "The title named the resolved Engine technology, and the constraint clause 'shared routing stays in Core' restates the Database Principle 'Core owns shared routing'. Title is now 'Engine unit'; the constraint keeps only the decomposition scope boundary. task_count 6 -> 7."
+          - action: "changed"
+            task: "P2-G5-T4"
+            reason: "It combined two unrelated behaviors (removing records, and toggling the Activity Field) under one title. It now covers delete and truncate only, with acceptance covering the effect on other Entities."
+          - action: "added"
+            task: "P2-G5-T7"
+            reason: "Split from P2-G5-T4: enable and disable form their own observable result."
+          - action: "changed"
+            task: "P2-G5-T2"
+            reason: "Removed 'each atomically', which was repeated in P2-G5-T4 and restates the Database Principle 'Changes are atomic'; acceptance is unchanged."
+          - action: "changed"
+            task: "P2-G5-T1"
+            reason: "Acceptance named one copied Preference value (foreign keys); it now requires every connection option of the Engine's profile, resolved from its source."
+          - action: "changed"
+            task: "P2-G5-T6"
+            reason: "Added the sqlmodel Task Skill; Database Preferences require it for realizing Engine units, and every other Engine-unit Task already lists it."
+          - action: "changed"
+            task: "P2-G7-T1"
+            reason: "Added the dependency on the new P2-G5-T7, since the Interface publishes the enable and disable Operations."
+          - action: "preserved"
+            tasks: ["P2-G1-T1", "P2-G1-T2", "P2-G1-T3", "P2-G2-T1", "P2-G2-T2", "P2-G2-T3", "P2-G3-T1", "P2-G3-T2", "P2-G3-T3", "P2-G3-T4", "P2-G4-T1", "P2-G4-T2", "P2-G5-T3", "P2-G5-T5", "P2-G6-T1", "P2-G6-T2", "P2-G6-T3", "P2-G7-T2", "P2-G7-T3", "P2-G8-T1"]
+            reason: "Still valid against current Understanding; coverage of every Database Architecture part, Entry Point, Storage, and after-generation preparation was rechecked."
+        open_questions_carried: ["OQ-007-1", "OQ-007-2"]
+    - id: "009"
+      skill: "my-interface-develop"
+      phase: "P2"
+      event: "develop"
+      outcome: "stopped"
+      started_at: "2026-10-12T19:58:47Z"
+      completed_at: "2026-10-12T20:16:10Z"
+      duration: "17:23"
+      skills_used:
+        - name: "my-interface-develop"
+          duration: "17:23"
+          report: "Developed 11 P2 Tasks before a new invocation superseded this execution."
+        - name: "sqlmodel"
+          duration: null
+          report: "Applied its session, engine, and SQLite guidance to the Engine unit connection."
+      open_questions: []
+      blockers: []
+      decisions: ["P2-G1-T1", "P2-G1-T2", "P2-G2-T1", "P2-G2-T2", "P2-G2-T3", "P2-G3-T1", "P2-G3-T4", "P2-G4-T1", "P2-G5-T1"]
+      report: "Interrupted by a new Human invocation of /my-interface-develop 2 after completing P2-G1-T1, P2-G1-T2, P2-G2-T1, P2-G2-T2, P2-G2-T3, P2-G3-T1, P2-G3-T2, P2-G3-T3, P2-G3-T4, P2-G4-T1, and P2-G5-T1 (each todo -> claimed -> done with its Task Log); P2-G1-T3 and P2-G4-T2 were claimed and unfinished and are carried over. Superseded by Log Entry 010."
+      data:
+        component: "Database"
+        tasks:
+          done: 11
+          claimed: 2
+        open_questions_applied:
+          - id: "OQ-007-2"
+            applied: "The inactive PostgreSQL Instance's password is generated as an empty string (P2-G2-T1 Task Log)."
+    - id: "010"
+      skill: "my-interface-develop"
+      phase: "P2"
+      event: "develop"
+      outcome: "in progress"
+      started_at: "2026-10-12T20:16:10Z"
+      completed_at: null
+      duration: null
+      report: "Developing phase P2 (requested as 2), continuing the work of the superseded Log Entry 009."
