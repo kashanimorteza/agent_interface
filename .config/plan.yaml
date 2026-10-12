@@ -4506,6 +4506,11 @@ content:
                   nothing. Added a Presentation section (node_modules, dist, .env, tsbuildinfo) to the root ignore file; no ignore file exists inside Presentation. Observed:
                   in a scratch copy, a clean install from the lock file added 363 packages and the build succeeded; in the project, the type check, lint and format check
                   report nothing; git lists only source files as untracked and reports node_modules and .env as ignored by the root file.'
+              - at: '2026-10-12T17:32:58Z'
+                event: note
+                note: 'Observation made while developing later Tasks: the project''s root ignore file now holds the Presentation section only as comments (changed by
+                  the Human after this Task was completed), and the repository tracks the Component''s installed packages. The Task''s ignore coverage therefore no longer
+                  holds as completed; Develop left the Human''s change as found and recorded it as Open Question 028-OQ1.'
         P5-G2:
           id: P5-G2
           title: API Access
@@ -5224,11 +5229,26 @@ content:
               constraints: []
               acceptance: Any Field of the Entity can be chosen; only operators API publishes are offered and a value compatible with the Field is required; several Filters combine as API's combinations allow;
                 the table shows exactly the records the combined Filters select; removing every Filter shows all records.
-              status: claimed
+              status: done
               log:
               - at: '2026-10-12T17:09:54Z'
                 event: claimed
                 note: Claimed before changing its result.
+              - at: '2026-10-12T17:24:41Z'
+                event: decision
+                note: 'A page filter set is a list of filters with one combination for all (all must match, or any may match), because API takes a single combination.
+                  The text operators are offered for text Fields only, as the API documentation restricts them; the empty tests carry no value input. The framework drops
+                  a filter without a value, so the empty tests carry a marker value that API''s translation ignores (found while testing: without it the filter was silently
+                  not applied). A value list for ''is one of'' is typed as comma-separated text and each item is translated by the Field''s type. Option lists in the
+                  editor are not virtualized because they are short.'
+              - at: '2026-10-12T17:24:41Z'
+                event: done
+                note: 'Added src/components/FilterEditor.tsx with its texts (including the 12 operator names) in both languages. Observed in rendered pages against a
+                  scratch API copy with an oracle over the stored Currency records: a code starts-with filter shows exactly the records API selects; adding an ends-with
+                  filter under ''any may match'' shows the union and under ''all must match'' the intersection; removing every filter and applying shows all records again;
+                  an is-empty filter needs no value input and selects exactly the records whose Field is null; ''is one of'' with two identities selects those two; the
+                  text operators are absent for a whole-number Field; applying an incomplete filter shows the warning and changes nothing; type check, lint and format
+                  check report nothing.'
             P5-G5-T4:
               id: P5-G5-T4
               source_id: '027'
@@ -5248,11 +5268,21 @@ content:
               - P5-G5-T2
               constraints: []
               acceptance: Every Field can be chosen and either direction orders the records accordingly across all pages, not only the page shown; the current order is visible.
-              status: claimed
+              status: done
               log:
               - at: '2026-10-12T17:09:54Z'
                 event: claimed
                 note: Claimed before changing its result.
+              - at: '2026-10-12T17:24:42Z'
+                event: done
+                note: 'Added src/components/OrderControl.tsx with its texts. Observed in a rendered page with 25 Currency records: choosing a Field orders the table by
+                  it ascending across the whole result (the first page equals API''s first 10 in that order), switching to descending shows API''s descending order, the
+                  next page continues the same order (records 11 to 20 of API''s descending list), and switching back to ascending reorders; the current Field and direction
+                  stay visible in the control; type check, lint and format check report nothing.'
+              - at: '2026-10-12T17:24:49Z'
+                event: note
+                note: 'Correction to the entry above: the page held more than 10 Currency records (8 stored plus 3 added by the check, so 11 in a clean copy), not 25;
+                  the records 11 to 20 of the descending list were therefore the remaining ones.'
             P5-G5-T5:
               id: P5-G5-T5
               source_id: '027'
@@ -5411,11 +5441,25 @@ content:
               constraints: []
               acceptance: For any Entity the form holds exactly its enterable Fields in Declaration order; adding sends a new record and editing sends the changed record to API through API Access; input the
                 Declaration forbids is refused before anything is sent and shows why; a refusal returned by API is shown as returned.
-              status: claimed
+              status: done
               log:
               - at: '2026-10-12T17:09:54Z'
                 event: claimed
                 note: Claimed before changing its result.
+              - at: '2026-10-12T17:24:42Z'
+                event: decision
+                note: On adding, the form starts from the Default Values the Declaration states (shown and sent explicitly); a stored record is loaded into it when editing.
+                  The form shows an API refusal as an error state under the inputs and keeps what the user entered; nothing is retried. Validation runs before anything
+                  is sent.
+              - at: '2026-10-12T17:24:42Z'
+                event: done
+                note: 'Added src/components/RecordForm.tsx (the framework''s form hook with the shared field items): the enterable Fields in Declaration order, a related
+                  Field through the related choice, a generated or immutable Field shown (editing) or omitted (adding). Observed against a scratch API copy: the add form
+                  for Trading Platform lists exactly the labels of its enterable Fields (not the identity) with the active switch starting on; saving with empty required
+                  Fields shows the required message and sends nothing; saving valid input stores the record (name, active, description null); saving the same name again
+                  shows API''s error (ExecutionError, UNIQUE constraint failed, status) as returned and the form keeps its inputs; the edit form loads the stored record,
+                  shows its identity without an input, saves a changed name and the stored record has the new name; the Broker form lets the owner be chosen from the
+                  User records by name; type check, lint and format check report nothing.'
             P5-G5-T10:
               id: P5-G5-T10
               source_id: '027'
@@ -5528,7 +5572,24 @@ content:
               constraints: []
               acceptance: The User page offers exactly the operations API serves for User, with the columns, filters, orders and form fields that are User's Fields as its Declaration states; each operation
                 produces what the User Endpoint of API produces.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-12T17:25:34Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-12T17:27:56Z'
+                event: done
+                note: 'Added the User page as its own unit (src/pages), written out explicitly from the shared Components and the User metadata: heading, add button,
+                  filter editor, order control, record table with view, edit, delete, enable and disable actions, an add and edit dialog with the record form, and a details
+                  drawer; every control is shown only when API serves the operation for User. Observed in a rendered page against a scratch API copy: the heading is the
+                  Entity name; the table headings are the 7 Fields'' descriptions in Declaration order plus the actions heading; the scratch data held 1 User record(s)
+                  and the table showed 1 row(s); the page imports no other Entity''s metadata and no other page; type check, lint and format check report nothing.'
+              - at: '2026-10-12T17:27:58Z'
+                event: decision
+                note: 'Each page holds the same explicit composition of shared Components (the Definition forbids a generic page, so none exists); the pages were written
+                  from one template by the generation step outside the project, and an Entity page offers view and edit through a drawer and a dialog, with delete, enable
+                  and disable in the shared record actions. Served-only offering was also observed with a mocked served table: with add, edit, delete and disable not
+                  served for Currency, the page showed no such control while the view action remained.'
             P5-G6-T2:
               id: P5-G6-T2
               source_id: '027'
@@ -5556,7 +5617,19 @@ content:
               constraints: []
               acceptance: The Trading Platform page offers exactly the operations API serves for Trading Platform, with the columns, filters, orders and form fields that are Trading Platform's Fields as its
                 Declaration states; each operation produces what the Trading Platform Endpoint of API produces.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-12T17:25:34Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-12T17:27:56Z'
+                event: done
+                note: 'Added the Trading Platform page as its own unit (src/pages), written out explicitly from the shared Components and the Trading Platform metadata:
+                  heading, add button, filter editor, order control, record table with view, edit, delete, enable and disable actions, an add and edit dialog with the
+                  record form, and a details drawer; every control is shown only when API serves the operation for Trading Platform. Observed in a rendered page against
+                  a scratch API copy: the heading is the Entity name; the table headings are the 5 Fields'' descriptions in Declaration order plus the actions heading;
+                  the scratch data held 2 Trading Platform record(s) and the table showed 2 row(s); the page imports no other Entity''s metadata and no other page; type
+                  check, lint and format check report nothing.'
             P5-G6-T3:
               id: P5-G6-T3
               source_id: '027'
@@ -5584,7 +5657,19 @@ content:
               constraints: []
               acceptance: The Instance page offers exactly the operations API serves for Instance, with the columns, filters, orders and form fields that are Instance's Fields as its Declaration states; each
                 operation produces what the Instance Endpoint of API produces.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-12T17:25:34Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-12T17:27:56Z'
+                event: done
+                note: 'Added the Instance page as its own unit (src/pages), written out explicitly from the shared Components and the Instance metadata: heading, add
+                  button, filter editor, order control, record table with view, edit, delete, enable and disable actions, an add and edit dialog with the record form,
+                  and a details drawer; every control is shown only when API serves the operation for Instance. Observed in a rendered page against a scratch API copy:
+                  the heading is the Entity name; the table headings are the 10 Fields'' descriptions in Declaration order plus the actions heading; the scratch data
+                  held 1 Instance record(s) and the table showed 1 row(s); the page imports no other Entity''s metadata and no other page; type check, lint and format
+                  check report nothing.'
             P5-G6-T4:
               id: P5-G6-T4
               source_id: '027'
@@ -5612,7 +5697,19 @@ content:
               constraints: []
               acceptance: The Currency page offers exactly the operations API serves for Currency, with the columns, filters, orders and form fields that are Currency's Fields as its Declaration states; each
                 operation produces what the Currency Endpoint of API produces.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-12T17:25:34Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-12T17:27:56Z'
+                event: done
+                note: 'Added the Currency page as its own unit (src/pages), written out explicitly from the shared Components and the Currency metadata: heading, add
+                  button, filter editor, order control, record table with view, edit, delete, enable and disable actions, an add and edit dialog with the record form,
+                  and a details drawer; every control is shown only when API serves the operation for Currency. Observed in a rendered page against a scratch API copy:
+                  the heading is the Entity name; the table headings are the 8 Fields'' descriptions in Declaration order plus the actions heading; the scratch data held
+                  8 Currency record(s) and the table showed 8 row(s); the page imports no other Entity''s metadata and no other page; type check, lint and format check
+                  report nothing.'
             P5-G6-T5:
               id: P5-G6-T5
               source_id: '027'
@@ -5640,7 +5737,18 @@ content:
               constraints: []
               acceptance: The Broker page offers exactly the operations API serves for Broker, with the columns, filters, orders and form fields that are Broker's Fields as its Declaration states; each operation
                 produces what the Broker Endpoint of API produces.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-12T17:25:34Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-12T17:27:56Z'
+                event: done
+                note: 'Added the Broker page as its own unit (src/pages), written out explicitly from the shared Components and the Broker metadata: heading, add button,
+                  filter editor, order control, record table with view, edit, delete, enable and disable actions, an add and edit dialog with the record form, and a details
+                  drawer; every control is shown only when API serves the operation for Broker. Observed in a rendered page against a scratch API copy: the heading is
+                  the Entity name; the table headings are the 5 Fields'' descriptions in Declaration order plus the actions heading; the scratch data held 1 Broker record(s)
+                  and the table showed 1 row(s); the page imports no other Entity''s metadata and no other page; type check, lint and format check report nothing.'
             P5-G6-T6:
               id: P5-G6-T6
               source_id: '027'
@@ -5668,7 +5776,18 @@ content:
               constraints: []
               acceptance: The Asset page offers exactly the operations API serves for Asset, with the columns, filters, orders and form fields that are Asset's Fields as its Declaration states; each operation
                 produces what the Asset Endpoint of API produces.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-12T17:25:34Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-12T17:27:57Z'
+                event: done
+                note: 'Added the Asset page as its own unit (src/pages), written out explicitly from the shared Components and the Asset metadata: heading, add button,
+                  filter editor, order control, record table with view, edit, delete, enable and disable actions, an add and edit dialog with the record form, and a details
+                  drawer; every control is shown only when API serves the operation for Asset. Observed in a rendered page against a scratch API copy: the heading is
+                  the Entity name; the table headings are the 8 Fields'' descriptions in Declaration order plus the actions heading; the scratch data held 4 Asset record(s)
+                  and the table showed 4 row(s); the page imports no other Entity''s metadata and no other page; type check, lint and format check report nothing.'
             P5-G6-T7:
               id: P5-G6-T7
               source_id: '027'
@@ -5696,7 +5815,19 @@ content:
               constraints: []
               acceptance: The Account Group page offers exactly the operations API serves for Account Group, with the columns, filters, orders and form fields that are Account Group's Fields as its Declaration
                 states; each operation produces what the Account Group Endpoint of API produces.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-12T17:25:34Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-12T17:27:57Z'
+                event: done
+                note: 'Added the Account Group page as its own unit (src/pages), written out explicitly from the shared Components and the Account Group metadata: heading,
+                  add button, filter editor, order control, record table with view, edit, delete, enable and disable actions, an add and edit dialog with the record form,
+                  and a details drawer; every control is shown only when API serves the operation for Account Group. Observed in a rendered page against a scratch API
+                  copy: the heading is the Entity name; the table headings are the 5 Fields'' descriptions in Declaration order plus the actions heading; the scratch
+                  data held 1 Account Group record(s) and the table showed 1 row(s); the page imports no other Entity''s metadata and no other page; type check, lint
+                  and format check report nothing.'
             P5-G6-T8:
               id: P5-G6-T8
               source_id: '027'
@@ -5724,7 +5855,18 @@ content:
               constraints: []
               acceptance: The Account page offers exactly the operations API serves for Account, with the columns, filters, orders and form fields that are Account's Fields as its Declaration states; each operation
                 produces what the Account Endpoint of API produces.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-12T17:25:34Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-12T17:27:57Z'
+                event: done
+                note: 'Added the Account page as its own unit (src/pages), written out explicitly from the shared Components and the Account metadata: heading, add button,
+                  filter editor, order control, record table with view, edit, delete, enable and disable actions, an add and edit dialog with the record form, and a details
+                  drawer; every control is shown only when API serves the operation for Account. Observed in a rendered page against a scratch API copy: the heading is
+                  the Entity name; the table headings are the 13 Fields'' descriptions in Declaration order plus the actions heading; the scratch data held 1 Account
+                  record(s) and the table showed 1 row(s); the page imports no other Entity''s metadata and no other page; type check, lint and format check report nothing.'
             P5-G6-T9:
               id: P5-G6-T9
               source_id: '027'
@@ -5752,7 +5894,19 @@ content:
               constraints: []
               acceptance: The Trailing Group page offers exactly the operations API serves for Trailing Group, with the columns, filters, orders and form fields that are Trailing Group's Fields as its Declaration
                 states; each operation produces what the Trailing Group Endpoint of API produces.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-12T17:25:34Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-12T17:27:57Z'
+                event: done
+                note: 'Added the Trailing Group page as its own unit (src/pages), written out explicitly from the shared Components and the Trailing Group metadata: heading,
+                  add button, filter editor, order control, record table with view, edit, delete, enable and disable actions, an add and edit dialog with the record form,
+                  and a details drawer; every control is shown only when API serves the operation for Trailing Group. Observed in a rendered page against a scratch API
+                  copy: the heading is the Entity name; the table headings are the 5 Fields'' descriptions in Declaration order plus the actions heading; the scratch
+                  data held 1 Trailing Group record(s) and the table showed 1 row(s); the page imports no other Entity''s metadata and no other page; type check, lint
+                  and format check report nothing.'
             P5-G6-T10:
               id: P5-G6-T10
               source_id: '027'
@@ -5780,7 +5934,19 @@ content:
               constraints: []
               acceptance: The Trailing Rule page offers exactly the operations API serves for Trailing Rule, with the columns, filters, orders and form fields that are Trailing Rule's Fields as its Declaration
                 states; each operation produces what the Trailing Rule Endpoint of API produces.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-12T17:25:34Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-12T17:27:57Z'
+                event: done
+                note: 'Added the Trailing Rule page as its own unit (src/pages), written out explicitly from the shared Components and the Trailing Rule metadata: heading,
+                  add button, filter editor, order control, record table with view, edit, delete, enable and disable actions, an add and edit dialog with the record form,
+                  and a details drawer; every control is shown only when API serves the operation for Trailing Rule. Observed in a rendered page against a scratch API
+                  copy: the heading is the Entity name; the table headings are the 8 Fields'' descriptions in Declaration order plus the actions heading; the scratch
+                  data held 0 Trailing Rule record(s) and the table showed 0 row(s) (empty state when none); the page imports no other Entity''s metadata and no other
+                  page; type check, lint and format check report nothing.'
             P5-G6-T11:
               id: P5-G6-T11
               source_id: '027'
@@ -5808,7 +5974,19 @@ content:
               constraints: []
               acceptance: The Partial Group page offers exactly the operations API serves for Partial Group, with the columns, filters, orders and form fields that are Partial Group's Fields as its Declaration
                 states; each operation produces what the Partial Group Endpoint of API produces.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-12T17:25:34Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-12T17:27:58Z'
+                event: done
+                note: 'Added the Partial Group page as its own unit (src/pages), written out explicitly from the shared Components and the Partial Group metadata: heading,
+                  add button, filter editor, order control, record table with view, edit, delete, enable and disable actions, an add and edit dialog with the record form,
+                  and a details drawer; every control is shown only when API serves the operation for Partial Group. Observed in a rendered page against a scratch API
+                  copy: the heading is the Entity name; the table headings are the 5 Fields'' descriptions in Declaration order plus the actions heading; the scratch
+                  data held 1 Partial Group record(s) and the table showed 1 row(s); the page imports no other Entity''s metadata and no other page; type check, lint
+                  and format check report nothing.'
             P5-G6-T12:
               id: P5-G6-T12
               source_id: '027'
@@ -5836,7 +6014,19 @@ content:
               constraints: []
               acceptance: The Partial Rule page offers exactly the operations API serves for Partial Rule, with the columns, filters, orders and form fields that are Partial Rule's Fields as its Declaration
                 states; each operation produces what the Partial Rule Endpoint of API produces.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-12T17:25:34Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-12T17:27:58Z'
+                event: done
+                note: 'Added the Partial Rule page as its own unit (src/pages), written out explicitly from the shared Components and the Partial Rule metadata: heading,
+                  add button, filter editor, order control, record table with view, edit, delete, enable and disable actions, an add and edit dialog with the record form,
+                  and a details drawer; every control is shown only when API serves the operation for Partial Rule. Observed in a rendered page against a scratch API
+                  copy: the heading is the Entity name; the table headings are the 7 Fields'' descriptions in Declaration order plus the actions heading; the scratch
+                  data held 0 Partial Rule record(s) and the table showed 0 row(s) (empty state when none); the page imports no other Entity''s metadata and no other
+                  page; type check, lint and format check report nothing.'
             P5-G6-T13:
               id: P5-G6-T13
               source_id: '027'
@@ -5864,7 +6054,19 @@ content:
               constraints: []
               acceptance: The Action Group page offers exactly the operations API serves for Action Group, with the columns, filters, orders and form fields that are Action Group's Fields as its Declaration
                 states; each operation produces what the Action Group Endpoint of API produces.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-12T17:25:34Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-12T17:27:58Z'
+                event: done
+                note: 'Added the Action Group page as its own unit (src/pages), written out explicitly from the shared Components and the Action Group metadata: heading,
+                  add button, filter editor, order control, record table with view, edit, delete, enable and disable actions, an add and edit dialog with the record form,
+                  and a details drawer; every control is shown only when API serves the operation for Action Group. Observed in a rendered page against a scratch API
+                  copy: the heading is the Entity name; the table headings are the 5 Fields'' descriptions in Declaration order plus the actions heading; the scratch
+                  data held 1 Action Group record(s) and the table showed 1 row(s); the page imports no other Entity''s metadata and no other page; type check, lint and
+                  format check report nothing.'
             P5-G6-T14:
               id: P5-G6-T14
               source_id: '027'
@@ -5892,7 +6094,18 @@ content:
               constraints: []
               acceptance: The Action page offers exactly the operations API serves for Action, with the columns, filters, orders and form fields that are Action's Fields as its Declaration states; each operation
                 produces what the Action Endpoint of API produces.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-12T17:25:34Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-12T17:27:58Z'
+                event: done
+                note: 'Added the Action page as its own unit (src/pages), written out explicitly from the shared Components and the Action metadata: heading, add button,
+                  filter editor, order control, record table with view, edit, delete, enable and disable actions, an add and edit dialog with the record form, and a details
+                  drawer; every control is shown only when API serves the operation for Action. Observed in a rendered page against a scratch API copy: the heading is
+                  the Entity name; the table headings are the 12 Fields'' descriptions in Declaration order plus the actions heading; the scratch data held 1 Action record(s)
+                  and the table showed 1 row(s); the page imports no other Entity''s metadata and no other page; type check, lint and format check report nothing.'
             P5-G6-T15:
               id: P5-G6-T15
               source_id: '027'
@@ -5920,7 +6133,19 @@ content:
               constraints: []
               acceptance: The Position page offers exactly the operations API serves for Position, with the columns, filters, orders and form fields that are Position's Fields as its Declaration states; each
                 operation produces what the Position Endpoint of API produces.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-12T17:25:34Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-12T17:27:58Z'
+                event: done
+                note: 'Added the Position page as its own unit (src/pages), written out explicitly from the shared Components and the Position metadata: heading, add
+                  button, filter editor, order control, record table with view, edit, delete, enable and disable actions, an add and edit dialog with the record form,
+                  and a details drawer; every control is shown only when API serves the operation for Position. Observed in a rendered page against a scratch API copy:
+                  the heading is the Entity name; the table headings are the 21 Fields'' descriptions in Declaration order plus the actions heading; the scratch data
+                  held 0 Position record(s) and the table showed 0 row(s) (empty state when none); the page imports no other Entity''s metadata and no other page; type
+                  check, lint and format check report nothing.'
         P5-G7:
           id: P5-G7
           title: Navigation
@@ -5962,7 +6187,23 @@ content:
               constraints: []
               acceptance: Opening the location of an Entity shows exactly that Entity's page in the page frame; there is one location for every Entity page and none for anything else; a location does nothing
                 but present its page.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-12T17:28:44Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-12T17:29:33Z'
+                event: decision
+                note: A location is the Entity's name in lower case with its words joined by hyphens (for example trading-platform); the Preferences give a route per
+                  Entity named by the Entity and name no spelling. The route declarations are written out one per Entity by the generation step and only import their
+                  page; the framework's resources are derived from the metadata so the menu and the locations come from one source.
+              - at: '2026-10-12T17:29:33Z'
+                event: done
+                note: 'Added src/navigation/locations.ts (the location of an Entity), src/navigation/routes.tsx (15 explicit route declarations, each importing only its
+                  page) and src/navigation/resources.ts (resources derived from the metadata). Observed in rendered output inside the page frame: the 15 location paths
+                  equal the Entities'' locations in Collection order and are unique; opening each location shows exactly that Entity''s page (one level-3 heading, the
+                  Entity''s name) in the frame with the Navigation area; an unknown location shows no page; no route has children or an index; type check, lint and format
+                  check report nothing.'
             P5-G7-T2:
               id: P5-G7-T2
               source_id: '027'
@@ -5986,7 +6227,22 @@ content:
               constraints: []
               acceptance: The menu holds exactly one entry for every Entity of the metadata, in its order, named from the Entity, and none for anything else; choosing an entry shows that Entity's page; regenerating
                 after an Entity is added to or removed from Model adds or removes only its entry.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-12T17:29:33Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-12T17:30:49Z'
+                event: decision
+                note: The menu is built with the framework's menu hook from the resources, which are derived from the metadata; entries are named by the Entity's declared
+                  name in every language (the Declarations hold no other text), and the menu's own label is translated. Selecting follows the current location.
+              - at: '2026-10-12T17:30:49Z'
+                event: done
+                note: 'Added src/navigation/Navigation.tsx (a menu of links) and its label text in both languages. Observed in rendered output inside the page frame:
+                  the menu holds exactly 15 entries in Collection order, named by the Entities'' names, each a link to its location; the entry for the current location
+                  is selected; choosing an entry shows that Entity''s page (checked for the first five and for Trading Platform) and moves the selection; with the Currency
+                  resource removed the menu shows the other 14 entries and nothing else changes; entry names are identical in Persian and English; type check, lint and
+                  format check report nothing.'
         P5-G8:
           id: P5-G8
           title: Application Composition
@@ -6021,7 +6277,25 @@ content:
               constraints: []
               acceptance: Started with the address setting pointing to a running API, the application shows the menu; choosing any entry shows that Entity's page with its records from API; the language, reading
                 direction and display mode controls act on the whole application.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-12T17:30:49Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-12T17:32:59Z'
+                event: decision
+                note: The application redirects its root location to the first Entity of the metadata, shows the frame for every location (an unknown location shows an
+                  empty content area), and sets the framework's query retry to none so a failed call is shown at once as returned instead of after repeated attempts.
+                  The address setting is read from the environment at start; the example file shows its form.
+              - at: '2026-10-12T17:32:59Z'
+                event: done
+                note: 'Added src/App.tsx (router, display mode, the framework with the one data provider and the metadata-derived resources, the frame with the menu,
+                  the routes, a document title in the selected language) and completed src/main.tsx (typeface, language layer, application). Observed: in the test harness
+                  against a scratch API copy the application opens at the root, redirects to the first Entity page, shows the 15-entry menu with the User record from
+                  API, and choosing each of the 15 entries shows that Entity''s page and table headings; switching to English makes the document left to right and changes
+                  the title and button texts; choosing the dark mode keeps the page; an unknown location shows the frame and no page. With the real bundler, a production
+                  build succeeds and the development server serves the entry and the modules (status 200). Rendered appearance in a real browser was not observed (none
+                  is available here); type check, lint and format check report nothing.'
         P5-G9:
           id: P5-G9
           title: Documentation
@@ -6046,7 +6320,17 @@ content:
               - P5-G6-T1
               constraints: []
               acceptance: The section is one paragraph followed by one example that matches the real page of an Entity.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-12T17:33:29Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-12T17:35:00Z'
+                event: done
+                note: 'Wrote the Overview section of the Component''s root documentation (README.md): one paragraph saying what Presentation is, followed by the Currency
+                  page as the example, with its location, its controls and a table of its column headings generated from the Currency Declaration (the 8 Fields'' descriptions
+                  or names, in order, then the actions). Observed: the example matches the rendered Currency page, whose table headings equal those descriptions in Declaration
+                  order plus the actions heading (page test).'
             P5-G9-T2:
               id: P5-G9-T2
               source_id: '027'
@@ -6064,7 +6348,17 @@ content:
               constraints: []
               acceptance: Following the section on a clean machine with a running API installs and starts Presentation and shows its menu; the address setting is explained; the section holds no key or credential
                 value.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-12T17:33:29Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-12T17:35:00Z'
+                event: done
+                note: 'Wrote the Setup section: requirements, the install, the creation of the environment file from API''s published address, the start, the build and
+                  the preview, and what the address setting is. Observed by following it in a clean scratch copy with a sibling API configuration: the install added 363
+                  packages, the environment file was created, the development server started at the stated address, answered the root request with status 200 and served
+                  the address module with the setting''s value applied; the section names no key or credential value (the key comes from the file at run time).'
             P5-G9-T3:
               id: P5-G9-T3
               source_id: '027'
@@ -6080,7 +6374,17 @@ content:
               - P5-G7-T2
               constraints: []
               acceptance: The section explains the three parts and their relation as built, and names where a new page and a new call belong; each example in it works.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-12T17:33:29Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-12T17:35:01Z'
+                event: done
+                note: 'Wrote the Use section: a table of the parts and their directories, the way a page reaches API through the hooks, the data provider, the operations
+                  and the single transport, the menu built from the metadata, where a new page belongs (its own unit named from its Entity, with its location, and only
+                  for an Entity of Model) and where a new call to API belongs (inside API Access), and a working example. Observed: the example, run against a scratch
+                  API copy, lists the first five Currency records in order and prints the total and the number of rows.'
             P5-G9-T4:
               id: P5-G9-T4
               source_id: '027'
@@ -6097,7 +6401,17 @@ content:
               constraints: []
               acceptance: Following the section shows one page and one menu entry for every Entity of Model and none for anything else, and shows that no part except API Access communicates with API; each step
                 gives the stated result.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-12T17:33:29Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-12T17:35:01Z'
+                event: done
+                note: 'Wrote the Verify section: commands that compare the number of Entities, page units and locations, the instruction to count the menu entries, and
+                  commands that show only API Access sends requests or reads the address. Observed by running each command in the Component directory: the three counts
+                  each print 15; the search for request calls prints only the transport; the search for the address setting prints only the address module and its type
+                  declaration; the search for the transport outside API Access prints nothing.'
             P5-G9-T5:
               id: P5-G9-T5
               source_id: '027'
@@ -6114,7 +6428,19 @@ content:
               - P5-G9-T2
               constraints: []
               acceptance: Every listed problem has been reproduced and its stated fix resolves it; the five sections appear in the order Overview, Setup, Use, Verify, Troubleshooting.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-12T17:35:01Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-12T17:35:31Z'
+                event: done
+                note: 'Wrote the Troubleshooting section with five problems and their fixes, and confirmed the five sections appear in the order Overview, Setup, Use,
+                  Verify, Troubleshooting. Each problem was reproduced: with the setting empty the address function stops with the message the section quotes; with the
+                  address pointing at a port nothing listens on the Currency page shows the unreachable message; with the address lacking the URL Key the page shows the
+                  error titled Error with the detail Not Found and the status 404; a second Trading Platform with an existing name shows ExecutionError with the UNIQUE
+                  constraint detail from API (status 500); an unknown location shows the frame with an empty content area. The fixes are the ones stated (set the environment
+                  file, start API and match its address, copy the whole address with its key, change the value, use the menu).'
         P5-G10:
           id: P5-G10
           title: Quality Standards
@@ -6146,4 +6472,26 @@ content:
               constraints: []
               acceptance: The source is free of formatting, lint and type findings under the selected quality standard; no untyped value remains; the directly imported packages equal the declared dependencies;
                 lock metadata is consistent; nothing is left behind by the standards run.
-              status: todo
+              status: done
+              log:
+              - at: '2026-10-12T17:35:31Z'
+                event: claimed
+                note: Claimed before changing its result.
+              - at: '2026-10-12T17:35:31Z'
+                event: decision
+                note: The query library is declared although no source imports it, because the framework requires it as a peer and uses it internally; the Preferences
+                  forbid using it directly, which holds. The tooling packages (compiler, linter, formatter, type declarations) are used through the package scripts and
+                  not imported.
+              - at: '2026-10-12T17:35:32Z'
+                event: done
+                note: 'Brought all Presentation source to the quality standard. Observed: the formatter check, the linter (strict type-aware rules, including a ban on
+                  explicit any) and the strict compiler check report no findings over the source, the configuration and the documentation (the generated contract types
+                  are excluded from the linter only); a search finds no explicit any or untyped value in hand-written source; every package the source imports directly
+                  is declared and the only declared package no source imports is the query library the framework needs as a peer, apart from tooling used by the package
+                  scripts; the lock file is consistent (a dry-run clean install succeeds); the Component holds no cache, build output, local environment file or ignore
+                  file of its own. The root ignore file''s Presentation section is commented out by the Human (Open Question 028-OQ1).'
+              - at: '2026-10-12T17:37:50Z'
+                event: note
+                note: 'Side effect of the lock check above: the npm clean-install dry run removed the installed packages from the Component directory. They were reinstalled
+                  from the lock file (363 packages) and git then showed no difference from the tracked files; the formatter, linter and type check were repeated afterwards
+                  (see the final check).'

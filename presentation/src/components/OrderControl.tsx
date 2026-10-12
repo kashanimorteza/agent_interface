@@ -11,6 +11,7 @@ export function OrderControl({ list }: { readonly list: RecordList }) {
     <Flex gap={8} wrap align="center">
       <Select
         aria-label={t('order.by')}
+        virtual={false}
         placeholder={t('order.by')}
         style={{ minWidth: 200 }}
         allowClear

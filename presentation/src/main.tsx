@@ -1,9 +1,16 @@
+import './theme/font';
+import './i18n';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { App } from './App';
 
 const root = document.getElementById('root');
 if (root === null) {
   throw new Error('The root element is missing.');
 }
 
-createRoot(root).render(<StrictMode />);
+createRoot(root).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+);

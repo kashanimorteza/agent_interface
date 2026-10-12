@@ -42,6 +42,7 @@ export const fa: Texts = {
     actions: 'عملیات',
   },
   actions: {
+    add: 'افزودن',
     view: 'مشاهده',
     edit: 'ویرایش',
     delete: 'حذف',
@@ -53,6 +54,9 @@ export const fa: Texts = {
     deleted: 'رکورد حذف شد.',
     enabled: 'رکورد فعال شد.',
     disabled: 'رکورد غیرفعال شد.',
+  },
+  navigation: {
+    menu: 'منو',
   },
   related: {
     placeholder: 'یک رکورد را انتخاب کنید',

@@ -31,9 +31,9 @@ content:
   active:
     mode: "development"
     phase: "P5"
-    mode_reason: "Develop started phase P5 (Presentation) (Log Entry 028)."
+    mode_reason: "Develop completed phase P5 (Presentation): 53 of 53 Tasks done (Log Entry 028); Review is the next Operation."
     set_by: "my-interface-develop"
-    set_at: "2026-10-12T16:24:30Z"
+    set_at: "2026-10-12T17:36:11Z"
   phases:
     P1:
       id: "P1"
@@ -62,7 +62,7 @@ content:
     P5:
       id: "P5"
       planning: "completed"
-      development: "in progress"
+      development: "completed"
       review: "not started"
       completed_at: null
   log:
@@ -1390,11 +1390,46 @@ content:
       skill: "my-interface-develop"
       phase: "P5"
       event: "develop"
-      outcome: "in progress"
+      outcome: "completed"
       started_at: "2026-10-12T16:24:30Z"
-      completed_at: null
-      duration: null
-      skills_used: []
-      open_questions: []
+      completed_at: "2026-10-12T17:36:11Z"
+      duration: "1:11:41"
+      skills_used:
+        - name: "frontend-design:frontend-design"
+          report: "Its quality floor was applied to the appearance, display modes and shell (readable contrast checked for both modes, visible focus left to the component library, reduced decoration); its advice for a distinct identity stays Open Question 027-OQ1."
+        - name: "example-skills:webapp-testing"
+          report: "Its approach of observing rendered output was followed in a DOM test environment, because no real browser could be installed here; rendered appearance in a real browser was not observed."
+      open_questions: ["028-OQ1", "028-OQ2", "028-OQ3"]
       blockers: []
-      report: "Develop started for phase P5 (Presentation)."
+      decisions: ['P5-G1-T1', 'P5-G2-T1', 'P5-G2-T2', 'P5-G2-T3', 'P5-G2-T4', 'P5-G2-T5', 'P5-G2-T7', 'P5-G2-T8', 'P5-G3-T1', 'P5-G3-T2', 'P5-G4-T1', 'P5-G4-T3', 'P5-G4-T4', 'P5-G4-T5', 'P5-G5-T2', 'P5-G5-T3', 'P5-G5-T5', 'P5-G5-T8', 'P5-G5-T9', 'P5-G5-T11', 'P5-G6-T1', 'P5-G7-T1', 'P5-G7-T2', 'P5-G8-T1', 'P5-G10-T1']
+      report: "Developed all 53 Tasks of phase P5 (Presentation) in dependency order: the application package, API Access (address, generated contract types, transport, query and value translation, errors as returned, served operations, read, write and change operations, data provider), the generated Entity metadata, the application shell (language layer, direction, appearance, display modes, page frame), the 11 shared page Components, the 15 Entity pages, Navigation and routes, the application composition, the documentation and the quality standard. Every Task is done with evidence in its Task Log. The Presentation Component is at presentation/. Observed at the end: formatter, linter and strict type check report no findings; the production build succeeds; 83 behavioural and rendered checks in 19 test files pass against a scratch API copy; the project's own database, API and other Components were not touched. Conformance is not judged here; Review establishes it. Three Open Questions are recorded; no Blockers."
+      data:
+        phase: "P5"
+        task_totals: {done: 53, blocked: 0, todo: 0}
+        component_location: "presentation/"
+        resolved_blockers:
+          - "021-B1 and 025-B1 belonged to Tasks of the removed Plan; their conditions are gone (Fields come from Model, and Development declares the Connection from Presentation to Model). No Task is blocked."
+        open_question_details:
+          - id: "028-OQ1"
+            skill: null
+            current_choice: "Leave the root ignore file as the Human left it (its Presentation section is commented out) and the repository tracking the installed packages; Develop adds nothing more."
+            alternative: "Uncomment the Presentation section (installed packages, build output, local environment file) and untrack the installed packages, so that the one root ignore file covers the Component as the Development Principle requires."
+            reason: "The local environment file holds the URL Key, and a tracked environment, build output or installed packages contradict the single-ignore-file Principle; the Human's commit after Task P5-G1-T1 reversed what that Task had recorded."
+          - id: "028-OQ2"
+            skill: null
+            current_choice: "A page of records is read as the first current-page times page-size records of the query, cut where the page begins, with the total from API's count, because API's list Action takes a limit and no offset."
+            alternative: "Add an offset (or page) Parameter to API's list Action so Presentation can read exactly one page."
+            reason: "Reading page n fetches every earlier record too, so the cost of a page grows with its number on large tables."
+          - id: "028-OQ3"
+            skill: null
+            current_choice: "Entity names and Field descriptions are shown as the Declarations state them (English) in both languages; only the interface texts are translated into Persian and English."
+            alternative: "Model's Declarations carry Persian names and descriptions, or a translation source, that Presentation reads when it is generated."
+            reason: "Presentation Preferences require every visible text in Persian and English, but the Entity and Field texts come from Model, which holds one language."
+        related_open_questions: ["027-OQ1", "027-OQ2"]
+        environment:
+          - "Node 22 and npm were available; the generation steps (contract types, Entity metadata, served operations, query vocabulary, pages, routes) ran from scripts outside the project, reading Model's published Interface and API's description with the URL Key removed; runtime checks used a scratch copy of the API stack with its own database in the session scratchpad, stopped afterwards."
+          - "A transient jsdom test environment outside the project ran the rendered checks; two test-environment issues (duplicate module instances, unfinished animations) were fixed in that environment and are not product behavior."
+        corrections:
+          - "Task Logs: three figures logged from memory were checked and corrected by notes (Relations total, Currency Field count, record count in the order check)."
+          - "Mistake repaired: a lock-file dry-run clean install removed the Component's installed packages; they were reinstalled from the lock file and match the files git tracks (recorded in the Task Log of P5-G10-T1)."
+          - "Defects found by the checks and fixed before the Tasks were completed: empty text on a nullable Field was turned into null (P5-G2-T5); an empty-test filter without a value was silently dropped by the framework (P5-G5-T3)."

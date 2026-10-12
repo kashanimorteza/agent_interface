@@ -40,6 +40,7 @@ export const en = {
     actions: 'Actions',
   },
   actions: {
+    add: 'Add',
     view: 'View',
     edit: 'Edit',
     delete: 'Delete',
@@ -51,6 +52,9 @@ export const en = {
     deleted: 'The record was deleted.',
     enabled: 'The record was enabled.',
     disabled: 'The record was disabled.',
+  },
+  navigation: {
+    menu: 'Menu',
   },
   related: {
     placeholder: 'Choose a record',

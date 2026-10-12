@@ -34,7 +34,8 @@ function toFilter(draft: Draft, fields: readonly FieldMeta[]): CrudFilter {
   }
   const operator = pageOperatorOf[draft.operator];
   if (emptyOperators.includes(draft.operator)) {
-    return { field: field.name, operator, value: undefined };
+    // the framework drops a filter without a value; an empty-test filter carries a marker that API's translation ignores
+    return { field: field.name, operator, value: true };
   }
   if (draft.operator === 'IN') {
     const parts = (typeof draft.value === 'string' ? draft.value : '')
@@ -97,6 +98,7 @@ export function FilterEditor({ list }: { readonly list: RecordList }) {
           <Flex key={draft.key} gap={8} wrap align="start">
             <Select
               aria-label={t('filter.field')}
+              virtual={false}
               placeholder={t('filter.field')}
               style={{ minWidth: 200 }}
               value={draft.field}
@@ -110,6 +112,7 @@ export function FilterEditor({ list }: { readonly list: RecordList }) {
             />
             <Select
               aria-label={t('filter.operator')}
+              virtual={false}
               placeholder={t('filter.operator')}
               style={{ minWidth: 180 }}
               value={draft.operator}
