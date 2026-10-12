@@ -4,8 +4,8 @@ meta:
   path_note: "The Preferences layer of the Development Subsystem — shared defaults, development standards, and Connections."
   purpose: "Configurable shared coordination for the Development Components."
   standard: "Agent Project Interface"
-  version: "9.0"
-  updated: "2026-10-02"
+  version: "10.0"
+  updated: "2026-10-12"
 
 
 # <!--------------------------------------------------------------------------------- Policy -->
@@ -93,6 +93,9 @@ content:
     presentation_to_api:
       consumer: "presentation"
       provider: "api"
+    presentation_to_model:
+      consumer: "presentation"
+      provider: "model"
     api_to_logic:
       consumer: "api"
       provider: "logic"
