@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/presentation/view/record-form.module.css"],"sourcesContent":[".form {\n  display: flex;\n  flex-direction: column;\n  gap: var(--space-5);\n  padding: var(--space-5);\n  border: var(--border-width) solid var(--color-border);\n  border-radius: var(--radius-md);\n  background: var(--color-surface-raised);\n}\n\n.fields {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(var(--size-navigation), 1fr));\n  gap: var(--space-4);\n}\n\n.actions {\n  display: flex;\n  justify-content: flex-start;\n  gap: var(--space-3);\n}\n"],"names":[],"mappings":"AAAA;;;;;;;;;;AAUA;;;;;;AAMA"}}]
-}

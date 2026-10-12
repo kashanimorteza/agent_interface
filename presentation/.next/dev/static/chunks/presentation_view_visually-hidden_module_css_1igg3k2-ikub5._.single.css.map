@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/presentation/view/visually-hidden.module.css"],"sourcesContent":["/* Hides text from the eye while leaving it available to assistive technology. */\n.visuallyHidden {\n  position: absolute;\n  inline-size: 1px;\n  block-size: 1px;\n  margin: -1px;\n  padding: 0;\n  overflow: hidden;\n  clip-path: inset(50%);\n  white-space: nowrap;\n}\n"],"names":[],"mappings":"AACA"}}]
-}

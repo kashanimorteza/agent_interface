@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/presentation/theme/direction.css"],"sourcesContent":["/*\n * Theme Default: text direction is automatic. Content decides its own direction:\n * the root and every Component that shows content carry the automatic direction\n * attribute (see theme.ts), and all layout uses logical properties, so controls\n * are placed from the start of the content, whichever way it reads.\n */\n:root {\n  text-align: start;\n}\n\n:where(input, textarea, select, th, td, caption, legend) {\n  text-align: start;\n}\n"],"names":[],"mappings":"AAMA"}}]
-}

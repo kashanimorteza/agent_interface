@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/presentation/view/order-controls.module.css"],"sourcesContent":[".controls {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: flex-start;\n  gap: var(--space-4);\n  margin: 0;\n  padding: var(--space-4);\n  border: var(--border-width) solid var(--color-border);\n  border-radius: var(--radius-md);\n  background: var(--color-surface-raised);\n}\n\n.legend {\n  padding-inline: var(--space-2);\n  font-weight: var(--font-weight-medium);\n}\n\n.part {\n  display: flex;\n  flex-direction: column;\n  gap: var(--space-1);\n  font-size: var(--font-size-sm);\n  font-weight: var(--font-weight-medium);\n}\n\n.select {\n  min-block-size: var(--size-control);\n  padding: var(--space-1) var(--space-3);\n  border: var(--border-width) solid var(--color-border-strong);\n  border-radius: var(--radius-sm);\n  background: var(--color-surface-raised);\n  color: var(--color-text);\n  font-weight: var(--font-weight-regular);\n}\n\n.select:disabled {\n  background: var(--color-surface-sunken);\n  color: var(--color-text-muted);\n}\n\n.limit {\n  min-inline-size: var(--size-navigation);\n}\n"],"names":[],"mappings":"AAAA;;;;;;;;;;;;AAYA;;;;;AAKA;;;;;;;;AAQA;;;;;;;;;;AAUA;;;;;AAKA"}}]
-}
