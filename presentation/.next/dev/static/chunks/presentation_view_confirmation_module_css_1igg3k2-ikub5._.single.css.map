@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/presentation/view/confirmation.module.css"],"sourcesContent":[".dialog {\n  max-inline-size: calc(var(--size-navigation) * 2);\n  padding: 0;\n  border: var(--border-width) solid var(--color-border-strong);\n  border-radius: var(--radius-md);\n  background: var(--color-surface-raised);\n  color: var(--color-text);\n  box-shadow: var(--shadow-raised);\n}\n\n.dialog::backdrop {\n  background: var(--color-overlay);\n}\n\n.content {\n  display: flex;\n  flex-direction: column;\n  gap: var(--space-5);\n  padding: var(--space-5);\n}\n\n.question {\n  margin: 0;\n  font-size: var(--font-size-lg);\n  line-height: var(--line-height-tight);\n}\n\n.actions {\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: flex-end;\n  gap: var(--space-3);\n}\n"],"names":[],"mappings":"AAAA;;;;;;;;;;AAUA;;;;AAIA;;;;;;;AAOA;;;;;;AAMA"}}]
+}

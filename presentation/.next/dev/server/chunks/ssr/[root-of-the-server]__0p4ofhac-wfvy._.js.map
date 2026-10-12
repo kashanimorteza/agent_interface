@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 10, "column": 0}, "map": {"version":3,"sources":["file:///root/agent_interface/presentation/app/page.tsx"],"sourcesContent":["export default function Page() {\n  return null\n}\n"],"names":["Page"],"mappings":";;;;AAAe,SAASA;IACtB,OAAO;AACT"}}]
+}

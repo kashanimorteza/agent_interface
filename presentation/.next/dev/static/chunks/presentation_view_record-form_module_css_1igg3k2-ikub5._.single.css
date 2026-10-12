@@ -1,0 +1,24 @@
+/* [project]/presentation/view/record-form.module.css [app-client] (css) */
+.record-form-module__x2EZnW__form {
+  gap: var(--space-5);
+  padding: var(--space-5);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-raised);
+  flex-direction: column;
+  display: flex;
+}
+
+.record-form-module__x2EZnW__fields {
+  grid-template-columns: repeat(auto-fill, minmax(var(--size-navigation), 1fr));
+  gap: var(--space-4);
+  display: grid;
+}
+
+.record-form-module__x2EZnW__actions {
+  justify-content: flex-start;
+  gap: var(--space-3);
+  display: flex;
+}
+
+/*# sourceMappingURL=presentation_view_record-form_module_css_1igg3k2-ikub5._.single.css.map*/

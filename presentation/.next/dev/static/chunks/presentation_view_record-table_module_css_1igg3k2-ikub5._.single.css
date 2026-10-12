@@ -1,0 +1,65 @@
+/* [project]/presentation/view/record-table.module.css [app-client] (css) */
+.record-table-module__PL-sTW__scroll {
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-raised);
+  overflow-x: auto;
+}
+
+.record-table-module__PL-sTW__table {
+  border-collapse: collapse;
+  inline-size: 100%;
+  font-size: var(--font-size-sm);
+}
+
+.record-table-module__PL-sTW__caption {
+  
+}
+
+.record-table-module__PL-sTW__table th, .record-table-module__PL-sTW__table td {
+  padding: var(--space-2) var(--space-4);
+  border-block-end: var(--border-width) solid var(--color-border);
+  text-align: start;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+
+.record-table-module__PL-sTW__table th {
+  background: var(--color-surface-sunken);
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-medium);
+}
+
+.record-table-module__PL-sTW__table tbody tr:last-child td {
+  border-block-end: 0;
+}
+
+.record-table-module__PL-sTW__table tbody tr:hover {
+  background: var(--color-accent-subtle);
+}
+
+.record-table-module__PL-sTW__number, .record-table-module__PL-sTW__table th.record-table-module__PL-sTW__number {
+  text-align: end;
+}
+
+.record-table-module__PL-sTW__text {
+  max-inline-size: var(--measure);
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.record-table-module__PL-sTW__absent {
+  color: var(--color-text-muted);
+}
+
+.record-table-module__PL-sTW__actions {
+  gap: var(--space-2);
+  justify-content: flex-end;
+  display: flex;
+}
+
+.record-table-module__PL-sTW__visuallyHidden {
+  
+}
+
+/*# sourceMappingURL=presentation_view_record-table_module_css_1igg3k2-ikub5._.single.css.map*/
