@@ -53,7 +53,11 @@ class Foundation(Base):
 
     @classmethod
     def from_json(cls, text: str) -> Self:
-        """Build an Entity from JSON text with the same rules as direct construction."""
+        """Build an Entity from JSON text with the same rules as direct construction.
+
+        An Auto Increment value present in the JSON Object is accepted as the value
+        storage assigned, so a stored Entity rebuilds from its JSON Object.
+        """
         root, reason = _decode(text)
         if root is None:
             marked = any(
@@ -73,5 +77,4 @@ class Foundation(Base):
                     )
                 ],
             )
-        decoded = cls._validated(root, json_object=True)
-        return cls(**{name: decoded.__dict__[name] for name in cls.model_fields})
+        return cls._validated(root, json_object=True)

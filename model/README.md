@@ -422,7 +422,7 @@ account = Account(
 print(account.to_json())
 ```
 
-`from_json(text)` builds an Entity from JSON text with the same rules as direct construction:
+`from_json(text)` builds an Entity from JSON text with the same rules as direct construction, except that an `id` present in the JSON text is accepted as the value storage assigned:
 
 ```python
 from model.interface import Broker
@@ -463,7 +463,7 @@ assert Position.from_json(text) == position
 print(text)
 ```
 
-JSON forms: `decimal`, `datetime`, `date`, `time`, and `uuid` are strings (a datetime always carries its offset); `float` and `integer` are numbers; `boolean` is `true` or `false`; an absent value is `null`. A not-yet-generated `id` is `null`.
+JSON forms: `decimal`, `datetime`, `date`, `time`, and `uuid` are strings (a datetime always carries its offset); `float` and `integer` are numbers; `boolean` is `true` or `false`; an absent value is `null`. A not-yet-generated `id` is `null`; an `id` that storage assigned is kept, so a stored Entity rebuilds from its JSON text.
 
 ## Setup
 
@@ -629,7 +629,7 @@ print("Model verified:", len(entities), "Entities")
 
 ## Troubleshooting
 
-- **`ValidationError` with type `generated_value`** — a value was supplied or assigned for `id`. Leave `id` out; storage assigns it.
+- **`ValidationError` with type `generated_value`** — a value was supplied for `id` in direct construction or assigned to `id`. Leave `id` out; storage assigns it. `from_json` accepts the `id` storage assigned.
 - **`ValidationError` with type `frozen_field`** — an immutable Field was assigned after construction.
 - **`ValidationError` with type `extra_forbidden`, `missing`, or a `*_type` error** — the input has an undeclared Field, lacks a required Field, or has a value of the wrong Type. Values are never coerced: pass `Decimal` objects for decimal Fields, timezone-aware datetimes for datetime Fields, and floats for float Fields.
 - **`ValidationError` with type `text_form` or `json_invalid` from `from_json`** — the JSON text is malformed, repeats a key, uses `NaN` or `Infinity`, has a root that is not an object, or gives a decimal, datetime, date, time, or uuid value in a form other than its text form.

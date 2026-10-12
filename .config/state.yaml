@@ -298,3 +298,32 @@ content:
           - "Physical Field naming would accept a Field name that shadows a member such as to_json; no Target Field does."
           - "Full regeneration from unchanged authorities was not re-run; the deterministic README reference was regenerated with zero difference."
           - "An independent read-only Agent Instance examined the Component without the implementer's context; every candidate it reported was reproduced or checked before being recorded here."
+    - id: "006"
+      skill: "my-interface-review"
+      phase: "P1"
+      event: "review"
+      outcome: "in progress"
+      started_at: "2026-10-12T19:41:53Z"
+      completed_at: null
+      duration: null
+      report: "Reviewing phase P1 (requested as 1) after the Human's change to the Model Definition."
+      data:
+        context:
+          - "The Human changed the Model Definition (commit b57ba527c): JSON Object construction now accepts the Auto Increment value storage assigned, while direct construction and assignment still refuse a caller-supplied value. This addresses Blocker B-005-1 of Log Entry 005."
+          - "The Human committed the Model Component, the Config records, and the root ignore file (commit 11dbe35e7) and removed the earlier Planning Log Entry 006 that recorded the P2 stop; this execution therefore takes the next sequential id, 006."
+        findings:
+          - id: "F-006-1"
+            state: "resolved"
+            resolution: "Validation refuses a non-pending Auto Increment value only outside JSON Object construction; from_json now returns the Entity it validated instead of rebuilding it through direct construction. The JSON-construction flag is a private context variable set only by from_json: a first version carried it in the pydantic validation context, which let a caller pass it to model_validate and supply an id; that bypass was observed and closed before this record was written. The README Foundation and Troubleshooting text and the from_json docstring state the new rule."
+            rechecked_at: "2026-10-12T19:43:53Z"
+            recheck: "A User and a Position stored in SQLite and loaded back serialize their id and rebuild through from_json into equal Entities; direct construction with id and assignment of id are still refused; model_validate with the former context key no longer accepts an id; all probes, the 11 README examples, ruff, ty, compile, build, fresh install, and zero-diff README regeneration pass."
+            baseline: "Model Conversion › from_json (an Auto Increment value present in the JSON Object is accepted as the value storage assigned); Principles 'Entity runtime behavior enforces Field contracts only' and 'Generated identities follow their declaration'; Review observation 'Converting any Entity to its JSON Object and back returns an equal Entity'."
+            expected: "from_json accepts the id storage assigned, so a stored Entity rebuilds from its JSON Object into an equal Entity, while direct construction and assignment still refuse a caller-supplied id."
+            observed: "from_json refuses the stored id with generated_value: a User loaded from storage serializes as {\"id\":1,...} and User.from_json of that text raises ValidationError."
+            evidence: "model/model/core/_base.py _enforce_declaration refuses any non-null Auto Increment value in every context; model/model/core/foundation.py from_json rebuilds through direct construction; scratch t_candidates.py 'C5 round trip stored: ValidationError'."
+          - id: "F-006-2"
+            state: "open"
+            baseline: "P1-G1-T3 acceptance 'no ignore file exists inside the Component'; Development Principle 'No Component or package creates an ignore file of its own'."
+            expected: "No ignore file inside the Model Component."
+            observed: "model/.venv/.gitignore (uv) and model/.ruff_cache/.gitignore (ruff) still exist inside version-control-excluded tool directories; Open Question OQ-005-1 has no Human answer."
+            evidence: "Both files listed in the Component directory at this review."
