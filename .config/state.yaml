@@ -31,9 +31,9 @@ content:
   active:
     mode: "development"
     phase: "P5"
-    mode_reason: "Develop stopped phase P5 on Blocker 025-B1 (Log Entry 025): 25 of 59 Tasks done, 2 blocked, 32 not started."
+    mode_reason: "Develop started phase P5 (Presentation) (Log Entry 028)."
     set_by: "my-interface-develop"
-    set_at: "2026-10-11T17:18:27Z"
+    set_at: "2026-10-12T16:24:30Z"
   phases:
     P1:
       id: "P1"
@@ -62,7 +62,7 @@ content:
     P5:
       id: "P5"
       planning: "completed"
-      development: "blocked"
+      development: "in progress"
       review: "not started"
       completed_at: null
   log:
@@ -1324,6 +1324,74 @@ content:
       event: "develop"
       outcome: "in progress"
       started_at: "2026-10-11T18:02:28Z"
+      completed_at: null
+      duration: null
+      skills_used: []
+      open_questions: []
+      blockers: []
+      report: "Develop started for phase P5 (Presentation)."
+    - id: "027"
+      skill: "my-interface-plan"
+      phase: "P5"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-10-12T16:16:21Z"
+      completed_at: "2026-10-12T16:21:38Z"
+      duration: "5:17"
+      skills_used:
+        - name: "frontend-design:frontend-design"
+          report: "Read to identify its use for the appearance, display mode, page frame and shared Component Tasks; recorded as a Task Skill on those Tasks. Its advice to give the product a distinct visual identity is recorded as Open Question 027-OQ1."
+        - name: "example-skills:webapp-testing"
+          report: "Read to identify its use for the Tasks whose result is a rendered page; recorded as a Task Skill on those Tasks."
+      open_questions: ["027-OQ1", "027-OQ2"]
+      blockers: []
+      decisions: []
+      report: "Planned phase P5 (Presentation) from the current Interface, Target, Presentation Definition and Preferences, and the API and Model Definitions: 10 Groups and 53 new Tasks, all todo, dependencies explicit and acyclic. The Human had already removed the earlier P5 Plan and its phase record, so no P5 Task existed to preserve, replace or remove; P1 to P4 are unchanged. The top-level task count was recalculated (185 to 179) and the P5 phase record was recreated with Planning completed. Two Open Questions are recorded for the Human; no Blocker was raised by Plan."
+      data:
+        phase: "P5"
+        phase_resolution: "Requested phase '5' resolved to Target phase P5 (Presentation, enabled, ready); earlier phases P1 to P4 are completed and satisfied and carry no open Blocker."
+        understanding_changes:
+          - "Target restructured into Entities, Trading, Behavior, Development and Phases; Part 1 of Behavior asks for add, edit, list, retrieve by id, enable, disable and delete for every Entity."
+          - "Presentation Definition rewritten: Architecture is API Access, Entity Pages, Navigation and Documentation; every Entity of Model's Entity Collection has one standalone Entity Page and one Navigation entry; every field, column, filter and order comes from the Entity Declaration in Model and is read only when Presentation is generated; Documentation has five sections."
+          - "Presentation Preferences (version 11.0) select a different client profile, an Entity metadata unit generated from Model, generated API types, and keep testing, error handling, logging and encryption off."
+          - "Development Preferences now declare the Connection from Presentation to Model, in addition to Presentation to API."
+        additions:
+          - "Plan P5 with 10 Groups and 53 Tasks: Application Package (1), API Access (10), Entity Metadata (2), Application Shell (5), Page Components (11), Entity Pages (15, one per Entity of Model's Entity Collection), Navigation (2), Application Composition (1), Documentation (5), Quality Standards (1)."
+        changes:
+          - "Top-level task_count recalculated from 185 to 179 (P1 26 + P2 31 + P3 32 + P4 37 + P5 53); the earlier value still counted the removed P5 Plan."
+          - "Phase record P5 recreated in State with Planning completed, Development and Review not started."
+        removals: []
+        replacements: []
+        preservations:
+          - "P1, P2, P3 and P4 Plans, Tasks, statuses and Task Logs unchanged (compared with the committed Plan)."
+        dependencies_on_other_phases:
+          - "P1-G8-T1 (Model Interface publication), P4-G2-T1 (runtime Configuration giving the API address), P4-G7-T2 (Groups registered), P4-G8-T1 (published machine-readable description), P4-G6-T1 to P4-G6-T15 (the Adapter of each Entity, one for each Entity Page)."
+        notes:
+          - "Task Skills: frontend-design:frontend-design on the appearance, display mode, page frame, shared Component and menu Tasks; example-skills:webapp-testing on the Tasks whose result is a rendered page. No provider Skill for the selected application framework is installed, so none is named for it."
+          - "Presentation Preferences select no testing, error handling, logging or encryption capability, so no Task plans them."
+          - "Development Preferences select no formatter, linter or type checker for the selected language, so Develop resolves them by Development's precedence order and records a decision in the Task Log."
+          - "The earlier Plan's operations beyond the Presentation Definition's list (aggregates, removing every record) are not planned: the Definition lists list, view, search and filter, order, add, edit, delete, enable and disable only."
+          - "Log Entry 026 (a Develop execution for the removed P5 Plan) is still recorded as in progress; Plan does not change another execution's Entry."
+        related_blockers:
+          - "021-B1 and 025-B1 were raised against Tasks of the removed P5 Plan. Their conditions no longer appear in the sources (Fields now come from Model, and Development declares the Connection from Presentation to Model); Develop verifies and records their resolution."
+        open_question_details:
+          - id: "027-OQ1"
+            skill: "frontend-design:frontend-design"
+            current_choice: "Presentation Preferences: all appearance comes from one set of design tokens, with display modes, reading direction and typeface the selected client profile defines; values the Preferences leave open are resolved by Develop under Development's precedence order."
+            alternative: "Design a distinct, opinionated visual identity (palette, typography, layout) specific to this product instead of a neutral token set."
+            reason: "The Skill advises that unchosen defaults read as templated and that a distinct point of view serves the subject better; the Preferences choose a token-based appearance, so the Plan continues with it."
+          - id: "027-OQ2"
+            skill: null
+            current_choice: "Plan P5 on the Presentation Definition and the declared Connections from Presentation to Model and to API; the Connection Tasks depend on the published Model Interface and on the registered API, and Develop resolves how each Connection is realized and records a decision."
+            alternative: "The Human states how a Connection is realized for a consumer in a different language from its provider, since Development requires every Connection to be a local path dependency on the provider's directory while Presentation reads Model only when generated and reaches API over the network."
+            reason: "The requirement cannot be met literally for a consumer that is not written in its providers' language; Develop proceeds with its own proposal but the Human may want to state the intended form."
+        related_open_questions: ["019-OQ1", "024-OQ1"]
+    - id: "028"
+      skill: "my-interface-develop"
+      phase: "P5"
+      event: "develop"
+      outcome: "in progress"
+      started_at: "2026-10-12T16:24:30Z"
       completed_at: null
       duration: null
       skills_used: []

@@ -29,3 +29,9 @@
 # presentation/next-env.d.ts
 # presentation/*.tsbuildinfo
 # presentation/.env.local
+
+# # Presentation
+# presentation/node_modules/
+# presentation/dist/
+# presentation/.env
+# presentation/*.tsbuildinfo
