@@ -1,0 +1,300 @@
+# <!--------------------------------------------------------------------------------- Meta -->
+meta:
+  path: ".config/state.yaml"
+  path_note: "Mutable Workflow position, Phase progress, and execution Log."
+
+# <!--------------------------------------------------------------------------------- Policy -->
+policy:
+  agent_may_edit: true
+  rule: "Apply the current State Component and the active operation's ownership rules."
+
+# <!--------------------------------------------------------------------------------- Resolution -->
+resolution:
+  consumption: "Read active, then the Phase selected by stable Target phase identifier, then the Log Entries by identifier."
+  selection: "A requested phase resolves to the phases entry keyed by that phase identifier; a Log Entry resolves by its identifier."
+  absence: "No matching phases entry means no progress is recorded for that phase."
+
+# <!--------------------------------------------------------------------------------- Read_Order -->
+read_order:
+  - "active"
+  - "phases"
+  - "log"
+
+# <!--------------------------------------------------------------------------------- Content_Map -->
+content_map:
+  active: "Current Workflow position."
+  phases: "Aggregate progress for each Target phase."
+  log: "Recorded Skill executions and their outcomes."
+
+# <!--------------------------------------------------------------------------------- Content -->
+content:
+  active:
+    mode: "reviewing"
+    phase: "P1"
+    mode_reason: "Review of phase P1 was invoked directly by the Human."
+    set_by: "my-interface-review (Log Entry 005)"
+    set_at: "2026-10-12T19:11:38Z"
+  phases:
+    P1:
+      id: "P1"
+      planning: "completed"
+      development: "completed"
+      review: "not satisfied"
+      completed_at: null
+  log:
+    - id: "001"
+      skill: "my-interface-configure"
+      phase: null
+      event: "configure"
+      outcome: "completed"
+      started_at: "2026-10-12T18:36:10Z"
+      completed_at: "2026-10-12T18:36:33Z"
+      duration: "23 seconds"
+      report: "Generated the missing State Config and Plan Config records in .config/ from their Schemas composed with the general YAML structure; both verified to conform to their current Schemas."
+      data:
+        records:
+          - file: ".config/state.yaml"
+            action: "generated"
+          - file: ".config/plan.yaml"
+            action: "generated"
+    - id: "002"
+      skill: "my-interface-plan"
+      phase: "P1"
+      event: "plan"
+      outcome: "stopped"
+      started_at: "2026-10-12T18:37:20Z"
+      completed_at: "2026-10-12T18:42:17Z"
+      duration: "4:57"
+      report: "Interrupted by a new Human invocation of /my-interface-plan 1 after establishing Understanding and before writing any Plan content; the Plan Config was left unchanged. Superseded by Log Entry 003."
+    - id: "003"
+      skill: "my-interface-plan"
+      phase: "P1"
+      event: "plan"
+      outcome: "completed"
+      started_at: "2026-10-12T18:42:17Z"
+      completed_at: "2026-10-12T18:44:07Z"
+      duration: "1:50"
+      skills_used:
+        - name: "my-interface-plan"
+          duration: "1:50"
+          report: "Created the P1 Plan."
+      open_questions: []
+      blockers: []
+      decisions: []
+      report: "Created the first Plan for phase P1 (Model): 5 Groups, 28 Tasks, all status todo, source_id 003. No prior Plan existed, so nothing was preserved, changed, removed, or replaced. Requested phase 1 resolved to Target phase P1 (Enabled, Ready). Authority sources were confirmed unchanged since Log Entry 002 established Understanding."
+      data:
+        phase_selection:
+          requested: ["1"]
+          planned: ["P1"]
+          skipped: []
+        changes:
+          - action: "added"
+            group: "P1-G1"
+            tasks: ["P1-G1-T1", "P1-G1-T2", "P1-G1-T3"]
+            reason: "New Plan; the Model library needs its package, environment, quality standards, and version-control exclusions before any other work."
+          - action: "added"
+            group: "P1-G2"
+            tasks: ["P1-G2-T1", "P1-G2-T2", "P1-G2-T3", "P1-G2-T4", "P1-G2-T5", "P1-G2-T6", "P1-G2-T7", "P1-G2-T8"]
+            reason: "New Plan; the Model Definition requires shared Declaration, Field Type, Storage Mapping, Validation, and Foundation behavior, split into one Task per observable result."
+          - action: "added"
+            group: "P1-G3"
+            tasks: ["P1-G3-T1", "P1-G3-T2", "P1-G3-T3", "P1-G3-T4", "P1-G3-T5", "P1-G3-T6", "P1-G3-T7", "P1-G3-T8", "P1-G3-T9", "P1-G3-T10", "P1-G3-T11", "P1-G3-T12", "P1-G3-T13", "P1-G3-T14", "P1-G3-T15"]
+            reason: "New Plan; one Task per Target Entity, in Target order, so each Entity unit is independently executable."
+          - action: "added"
+            group: "P1-G4"
+            tasks: ["P1-G4-T1"]
+            reason: "New Plan; the Interface contract requires publishing every Entity and the Entity Collection."
+          - action: "added"
+            group: "P1-G5"
+            tasks: ["P1-G5-T1"]
+            reason: "New Plan; the Model Definition requires root documentation of the published surface."
+    - id: "004"
+      skill: "my-interface-develop"
+      phase: "P1"
+      event: "develop"
+      outcome: "completed"
+      started_at: "2026-10-12T18:46:10Z"
+      completed_at: "2026-10-12T19:10:20Z"
+      duration: "24:10"
+      skills_used:
+        - name: "my-interface-develop"
+          duration: "24:10"
+          report: "Executed all 28 P1 Tasks."
+        - name: "sqlmodel"
+          duration: null
+          report: "Applied its table-model, datetime (UTCDateTime), and validation guidance while realizing Core and the Entity units."
+      open_questions:
+        - "OQ-004-1"
+      blockers: []
+      decisions: ["P1-G1-T1", "P1-G1-T2", "P1-G1-T3", "P1-G2-T1", "P1-G2-T2", "P1-G2-T3", "P1-G2-T4", "P1-G2-T8", "P1-G3-T1", "P1-G3-T2", "P1-G3-T3", "P1-G3-T4", "P1-G3-T5", "P1-G3-T6", "P1-G3-T7", "P1-G3-T8", "P1-G3-T9", "P1-G3-T10", "P1-G3-T11", "P1-G3-T12", "P1-G3-T13", "P1-G3-T14", "P1-G3-T15", "P1-G4-T1", "P1-G5-T1"]
+      report: "Developed phase P1 (Model): all 28 Tasks moved todo -> claimed -> done. The Model Component now holds the package and locked environment, the Core contracts (Declaration, Field Types, Storage Mapping, Base validation, Foundation), 15 Entity units matching the Target (124 of 124 Fields), the Interface, and the root documentation; ruff format, ruff check, and ty report no violation. Two record-keeping faults occurred and were corrected in this execution: eight Task Log timestamps were first written as unmeasured estimates (one in the future) and were replaced with an explicit measured range marked not measured; and the claims of P1-G2-T3 to P1-G2-T8 were recorded after their work, which their Task Logs state. Conformance is for Review to establish."
+      data:
+        component: "Model"
+        tasks:
+          done: 28
+          blocked: 0
+        open_questions:
+          - id: "OQ-004-1"
+            question: "Should a stored Entity, whose id storage has assigned, be reconstructable from its JSON Object?"
+            context: "The Target declares id as Auto Increment without permitting caller-supplied values, so Model refuses any non-pending id at construction and in from_json, as the Model Definition requires. A newly built Entity round-trips (its id is pending), but JSON from a stored Entity with id 5 is refused by from_json. Consumers that move stored records through JSON (Database, Logic, API) will need another path or a Target change permitting caller-supplied id values."
+            current_choice: "Follow the Model Definition and Target as written: refuse every caller-supplied id."
+        process_corrections:
+          - "Eight Task Log transition times written as estimates were replaced with 'between 2026-10-12T18:48:10Z and 2026-10-12T18:58:44Z (not measured)'; all later times come from the system clock."
+          - "P1-G2-T3 to P1-G2-T8 were claimed in their Task Logs after their work was done; each claim entry states this."
+    - id: "005"
+      skill: "my-interface-review"
+      phase: "P1"
+      event: "review"
+      outcome: "not satisfied"
+      started_at: "2026-10-12T19:11:38Z"
+      completed_at: "2026-10-12T19:28:52Z"
+      duration: "17:14"
+      skills_used:
+        - name: "my-interface-review"
+          duration: "17:14"
+          report: "Reviewed P1; the duration includes a pause while the Human interrupted the session."
+        - name: "general-purpose Agent Instance (independent read-only review)"
+          duration: "10:46"
+          report: "Examined the Model Component without the implementer's context and reported 12 candidate Findings with reproducible scripts; each candidate was reproduced or checked before recording."
+      open_questions:
+        - "OQ-005-1"
+      blockers:
+        - "B-005-1"
+      report: "Phase P1 is not satisfied. Twelve Findings were recorded; ten were resolved in the Model Component and rechecked (undeclared direct dependencies, model_validate poisoning later constructions, deletable Fields, unvalidated copy and reconstruction paths, to_json key order and expiry after storage, raw errors for oversized JSON numbers, a README Verify example that did not check order or side effects, a Core import cycle, the Declaration symbol name, and non-ASCII decimal digits). Two remain: B-005-1 (the Model Definition requires a lossless JSON round trip for any Entity and also refuses a caller-supplied Auto Increment id, which cannot both hold for a stored Entity) and OQ-005-1 (tool-created ignore files inside the Component's excluded tool directories versus P1-G1-T3's acceptance). All other Model Review observations and P1 acceptance criteria were observed to hold. Technical conformance holds: uv lock check and locked sync, ruff format and check, ty, compile with warnings as errors, build, fresh-wheel install and import, and zero-difference regeneration of the README reference. One reported candidate was rejected with evidence."
+      data:
+        outcome: "not satisfied"
+        blockers:
+          - id: "B-005-1"
+            finding: "F-005-6"
+            condition: "The Model Review observation 'Converting any Entity to its JSON Object and back returns an equal Entity' and the Model Principle that a caller-supplied Auto Increment value is refused unless the Target explicitly permits one (with from_json applying direct-construction rules) cannot both hold for an Entity whose id storage has assigned."
+            needs: "A Human decision: either the Target explicitly permits a caller-supplied id (for example when reconstructing a stored Entity), or the Model Definition limits the round-trip observation to Entities whose id is pending."
+        open_question_details:
+          - id: "OQ-005-1"
+            finding: "F-005-9"
+            question: "Do tool-created ignore files inside version-control-excluded tool directories (model/.venv/.gitignore from uv, model/.ruff_cache/.gitignore from ruff) count against P1-G1-T3's 'no ignore file exists inside the Component'?"
+            current_choice: "The files are left in place; they are recreated by the selected tools on every run and are not part of the Component's source or the repository."
+        acceptance_observed:
+          holding: ["P1-G1-T1", "P1-G1-T2", "P1-G2-T1", "P1-G2-T2", "P1-G2-T3", "P1-G2-T4", "P1-G2-T5", "P1-G2-T6", "P1-G2-T7", "P1-G3-T1", "P1-G3-T2", "P1-G3-T3", "P1-G3-T4", "P1-G3-T5", "P1-G3-T6", "P1-G3-T7", "P1-G3-T8", "P1-G3-T9", "P1-G3-T10", "P1-G3-T11", "P1-G3-T12", "P1-G3-T13", "P1-G3-T14", "P1-G3-T15", "P1-G4-T1", "P1-G5-T1"]
+          holding_note: "P1-G2-T4, P1-G2-T8, and P1-G5-T1 hold after resolving F-005-2, F-005-5, and F-005-8."
+          not_established: ["P1-G1-T3 (OQ-005-1)", "P1-G2-T8 for stored Entities only (B-005-1); it holds for Entities with a pending id, as its acceptance states"]
+        review_category:
+          holding: ["Interface publishes exactly its needs", "one Entity Export per Target Entity", "Entity Collection holds exactly the exports in Target order", "Relations reach compatible integer id Fields and no names collide before or after physical naming", "Declarations match the Target (124 of 124 Fields)", "immutable id and Boolean is_active", "construction accepts valid values and rejects unknown Field, wrong Type, missing Required Field", "decimal and datetime keep exact values through JSON", "loading Interface has no side effect", "an unknown Type is refused", "storage mapping names, constraint and index names, and identity column match Model Preferences"]
+          not_holding: ["Converting any Entity to its JSON Object and back returns an equal Entity: holds for Entities with a pending id; blocked for stored Entities (B-005-1)"]
+        findings:
+          - id: "F-005-1"
+            state: "resolved"
+            resolution: "Declared pydantic, pydantic-core, and sqlalchemy as direct dependencies; uv resolved them to the already-locked versions (pydantic 2.14.1, pydantic-core 2.50.1, sqlalchemy 2.1.4)."
+            rechecked_at: "2026-10-12T19:28:27Z"
+            recheck: "model/pyproject.toml lists all four directly imported packages; uv lock --check and uv sync --locked pass; build and fresh-wheel install import cleanly."
+            baseline: "Review technical conformance (dependency checks); Develop generation standard: declare only necessary dependencies, with concrete versions stabilized."
+            expected: "Every third-party package the Model source imports directly is declared as a dependency of the Model package."
+            observed: "The source imports sqlalchemy (5 imports), pydantic (4), and pydantic_core (2) directly, but the package declares only sqlmodel; these three resolve only transitively through sqlmodel."
+            evidence: "model/pyproject.toml dependencies = [\"sqlmodel>=0.0.48\"]; direct imports in model/model/core/_storage.py (sqlalchemy), model/model/core/_base.py (pydantic, pydantic_core), model/model/core/_types.py (pydantic), model/model/core/foundation.py (pydantic, pydantic_core), model/model/entity/position.py (pydantic)."
+          - id: "F-005-2"
+            state: "resolved"
+            resolution: "Base now overrides model_validate: it runs SQLModel's validation inside Model's own internal flag, always strictly, and raises the hidden-value error; construction and from_json use it."
+            rechecked_at: "2026-10-12T19:28:27Z"
+            recheck: "Broker.model_validate of valid input returns the Entity; afterwards from_json and User(...) return complete JSON; the reviewer's poisoning scripts t4 and t10 now show complete Entities."
+            baseline: "Model Principle 'Entity runtime behavior enforces Field contracts only'; Model Review observation 'Each Entity constructs from valid values'; P1-G2-T4 and P1-G2-T8 acceptance."
+            expected: "Valid input is accepted on every construction path, and one call never changes the behaviour of later constructions."
+            observed: "Broker.model_validate({'name': 'FxPro', 'user_id': 1}) raises two 'missing' errors; afterwards, in the same context, Broker.from_json of the same data and User(...) both produce Entities whose to_json() is '{}'. Base.__init__ raises inside SQLModel's partial-initialization block, which never restores its flag."
+            evidence: "model/model/core/_base.py Base.__init__; reproduced by scratch t_candidates.py ('model_validate valid: ValidationError', 'then from_json: returned {}', 'then construct: returned {}')."
+          - id: "F-005-3"
+            state: "resolved"
+            resolution: "Base refuses deleting any declared Field with AttributeError."
+            rechecked_at: "2026-10-12T19:28:27Z"
+            recheck: "delattr of id and of name are refused; the Entity's JSON still holds every Field."
+            baseline: "Model Validation › Assignment and Principle 'an immutable Field cannot change'; Conversion › to_json 'keys are exactly the Entity's Field names'."
+            expected: "Removing a Field from an Entity is refused, including the immutable id."
+            observed: "delattr(user, 'id') and delattr(user, 'name') succeed; to_json() then omits both keys."
+            evidence: "t_candidates.py: 'delattr id: returned None', 'delattr name: returned None', JSON without id and name."
+          - id: "F-005-4"
+            state: "resolved"
+            resolution: "Base refuses model_copy, the deprecated copy, copy.copy, copy.deepcopy, model_construct, model_validate_json, and model_validate_strings with a TypeError, and refuses non-strict model_validate."
+            rechecked_at: "2026-10-12T19:28:27Z"
+            recheck: "Each of these paths raises TypeError in the scratch recheck; ordinary construction, storage insert, and load still work."
+            baseline: "Model Principle 'Entity runtime behavior enforces Field contracts only': Model defines no copy, clone, merge, or reconstruction beyond the JSON Object round trip; generated identities refuse caller-supplied values."
+            expected: "No copy or reconstruction path bypasses the Field contracts."
+            observed: "The inherited model_copy(update={'id': 77, 'name': 5}) yields an Entity with id 77 and an integer name; model_construct(name=5) yields an Entity with an integer name."
+            evidence: "t_candidates.py: model_copy JSON shows \"id\":77,\"name\":5; model_construct returned 5."
+          - id: "F-005-5"
+            state: "resolved"
+            resolution: "to_json now reads every Field through the Entity in Declaration order (loading expired values) and encodes that ordered mapping."
+            rechecked_at: "2026-10-12T19:28:27Z"
+            recheck: "After commit the User serializes all Fields; a loaded User and Position serialize keys in Declaration order (reviewer t5: 'keys in declaration order: True'); fresh-Entity JSON and round trips are unchanged."
+            baseline: "Model Conversion › to_json: keys exactly the Field names in Declaration order; P1-G2-T8."
+            expected: "to_json returns every Field in Declaration order for any Entity, including one loaded from or refreshed by storage."
+            observed: "After session.commit() a User serializes as '{}'; a User loaded from storage serializes its keys in storage-load order (description, api_key, name, ...)."
+            evidence: "model/model/core/foundation.py to_json returns model_dump_json(); t_candidates.py 'after commit: {}', 'order ok: False'."
+          - id: "F-005-6"
+            state: "blocked"
+            resolution: "Not resolvable within Review: satisfying the round-trip observation for stored Entities requires accepting a caller-supplied id, which the Model Principle and the Target refuse. Recorded as Blocker B-005-1."
+            rechecked_at: "2026-10-12T19:28:27Z"
+            recheck: "Recheck: a stored User's JSON is still refused by from_json (generated_value)."
+            baseline: "Model Review observation 'Converting any Entity to its JSON Object and back returns an equal Entity', together with Model Principle 'Generated identities follow their declaration' (a caller-supplied Auto Increment value is refused unless the Target explicitly permits one) and Conversion › from_json 'builds the Entity with the same rules as direct construction'."
+            expected: "Both binding statements hold for an Entity whose id storage has assigned."
+            observed: "An Entity loaded from storage serializes its assigned id, and from_json refuses that id (generated_value); the Target declares id Auto Increment without permitting caller-supplied values."
+            evidence: "t_candidates.py 'C5 round trip stored: ValidationError'; same condition as Open Question OQ-004-1."
+          - id: "F-005-7"
+            state: "resolved"
+            resolution: "JSON integers too large for a float Field and numbers too long for the parser now produce validation errors instead of raw exceptions."
+            rechecked_at: "2026-10-12T19:28:27Z"
+            recheck: "A 400-digit integer for point_size and a 5000-digit integer each raise ValidationError."
+            baseline: "Model Principle: direct and JSON Object construction identically enforce Types; Failure is explicit (Develop Generation)."
+            expected: "Invalid numeric JSON input is refused with a validation error."
+            observed: "A 400-digit integer for a float Field raises a raw OverflowError, and a 5000-digit integer raises a raw ValueError from JSON parsing."
+            evidence: "model/model/core/_base.py float(value) in _enforce_declaration; model/model/core/foundation.py _decode; t_candidates.py C6 output."
+          - id: "F-005-8"
+            state: "resolved"
+            resolution: "Rewrote the README Verify example: it checks side-effect freedom of loading (files, threads, Entity instances), Collection order against the explicit Target order, export membership and correspondence, actual Entity and Declaration identity, immutability, construction, Declaration access, and a JSON round trip; Troubleshooting now covers the refused copy and deletion paths."
+            rechecked_at: "2026-10-12T19:28:27Z"
+            recheck: "The Verify block runs in a fresh interpreter and prints 'Model verified: 15 Entities'; all 11 README examples run; README regeneration from the Declarations has zero difference."
+            baseline: "Model Documentation › Verify: verify Entity Collection membership and order and its correspondence with the Exports, and side-effect freedom; P1-G5-T1 acceptance."
+            expected: "The README Verify section checks Collection order against Target order and checks side-effect freedom."
+            observed: "The Verify code compares only names derived from the Collection itself (no Target-order check) and states side-effect freedom only in prose; its comment claims an order check it does not perform."
+            evidence: "model/README.md, section Verify."
+          - id: "F-005-9"
+            state: "open_question"
+            resolution: "Not resolvable without interpreting the acceptance's scope: the files are created by uv and ruff inside version-control-excluded tool directories and are recreated whenever those tools run. Recorded as Open Question OQ-005-1."
+            rechecked_at: "2026-10-12T19:28:27Z"
+            recheck: "Recheck: model/.venv/.gitignore and model/.ruff_cache/.gitignore still exist; version control ignores both."
+            baseline: "P1-G1-T3 acceptance 'no ignore file exists inside the Component'; Development Principle 'No Component or package creates an ignore file of its own'."
+            expected: "No ignore file inside the Model Component."
+            observed: "model/.venv/.gitignore (created by uv) and model/.ruff_cache/.gitignore (created by ruff) exist inside version-control-excluded tool directories of the Component."
+            evidence: "find model -name .gitignore lists both files; git status --ignored marks them ignored."
+          - id: "F-005-10"
+            state: "resolved"
+            resolution: "The Field Type module now keys its realizations by Field Type value and imports no Core file; the Declaration contract imports it at module level, so the dependency runs one way."
+            rechecked_at: "2026-10-12T19:28:27Z"
+            recheck: "core/_types.py has no 'from model' import; no Core file imports entity or interface; ruff, ty, compile, and all probes pass."
+            baseline: "Model Principle 'Model has one canonical structure': Never create a dependency cycle."
+            expected: "No import cycle between Core files."
+            observed: "core/declaration.py imports model.core._types inside FieldDeclaration.__post_init__, and core/_types.py imports model.core.declaration at module level."
+            evidence: "model/model/core/declaration.py (function-local import of _types); model/model/core/_types.py line 13."
+          - id: "F-005-11"
+            state: "resolved"
+            resolution: "Renamed the Entity record of the Declaration contract to Declaration throughout Core, all Entity units, and the README."
+            rechecked_at: "2026-10-12T19:28:27Z"
+            recheck: "model.core.declaration defines class Declaration and no EntityDeclaration; every Entity's declaration attribute is a Declaration; all probes and README examples pass."
+            baseline: "Model Preferences python symbols: declaration: Declaration, foundation: Foundation."
+            expected: "The public Declaration contract's Entity record is published under the symbol Declaration."
+            observed: "The record is named EntityDeclaration; no symbol named Declaration exists."
+            evidence: "model/model/core/declaration.py class EntityDeclaration; model.yaml symbols.declaration = Declaration."
+          - id: "F-005-12"
+            state: "resolved"
+            resolution: "Text-form decoding now accepts ASCII text only, and the decimal pattern matches ASCII digits only."
+            rechecked_at: "2026-10-12T19:28:27Z"
+            recheck: "A decimal given as Arabic-Indic digits is refused with ValidationError."
+            baseline: "Model Conversion › from_json decodes the text forms by each Field's Type; no implicit coercion."
+            expected: "Only the standard text form of a decimal is decoded."
+            observed: "A decimal given as Arabic-Indic digits ('١٢') decodes to Decimal('12'), because the pattern's digit class matches non-ASCII digits."
+            evidence: "model/model/core/_types.py _DECIMAL_TEXT; t_candidates.py 'arabic-indic digits: returned Decimal(12)'."
+        rejected_candidates:
+          - candidate: "Pre-existing commented entries were removed from the root ignore file during Develop."
+            reason: "The removal predates this session: the session-start git status already showed .gitignore modified, and Develop's git diff at 2026-10-12T18:46:10Z, before its own edit, showed the same 28-line removal; Develop only appended the Model section."
+        observations:
+          - "The README imports NO_DEFAULT from the public Declaration contract module; whether consumers may import public Core contracts directly or only through the Interface is not settled by the Model Definition."
+          - "Decimals are stored as text, so 1.0 and 1.00 are distinct values for uniqueness constraints involving decimal Fields; not observed against a constraint violation."
+          - "Physical Field naming would accept a Field name that shadows a member such as to_json; no Target Field does."
+          - "Full regeneration from unchanged authorities was not re-run; the deterministic README reference was regenerated with zero difference."
+          - "An independent read-only Agent Instance examined the Component without the implementer's context; every candidate it reported was reproduced or checked before being recorded here."

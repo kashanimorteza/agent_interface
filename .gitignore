@@ -7,31 +7,8 @@
 .Trashes
 .fseventsd
 
-# # Database
-# database/data/
-# database/db/
-# database/.secrets/
-# my_database/data/
-# my_database/.secrets/
-
-# # Python
-# .venv/
-# __pycache__/
-# *.pyc
-# *.egg-info/
-# dist/
-# .pytest_cache/
-# .ruff_cache/
-
-# # Presentation
-# presentation/node_modules/
-# presentation/.next/
-# presentation/next-env.d.ts
-# presentation/*.tsbuildinfo
-# presentation/.env.local
-
-# # Presentation
-# presentation/node_modules/
-# presentation/dist/
-# presentation/.env
-# presentation/*.tsbuildinfo
+# Model
+/model/.venv/
+/model/.ruff_cache/
+/model/dist/
+/model/**/__pycache__/
