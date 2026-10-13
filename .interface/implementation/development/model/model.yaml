@@ -4,8 +4,8 @@ meta:
   path_note: "The Preferences layer of the Model Component."
   purpose: "Configurable component, the entities of architecture with their Interface contract, Entity defaults, and documentation choices, and the language profile for Model."
   standard: "Agent Project Interface"
-  version: "26.0"
-  updated: "2026-10-08"
+  version: "27.0"
+  updated: "2026-10-13"
 
 # <!--------------------------------------------------------------------------------- Policy -->
 policy:

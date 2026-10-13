@@ -165,7 +165,7 @@ Value Generation
 
 The declared ways a Field value is supplied automatically. Auto Increment leaves the value pending until storage assigns it; a Generated Identifier is produced during Entity creation with the algorithm Model Preferences select, unless the Target names another.
 
-Auto Increment requires an integer Field, and a Generated Identifier requires a uuid or string Field. A caller-supplied value for an Auto Increment Field is refused at construction and at assignment, unless the Target explicitly permits one.
+Auto Increment requires an integer Field, and a Generated Identifier requires a uuid or string Field. A caller-supplied value for an Auto Increment Field is refused at direct construction and at assignment, unless the Target explicitly permits one. JSON Object construction accepts the value storage already assigned, so a stored Entity rebuilds from its JSON Object.
 
 ##### Sensitivity
 
@@ -207,7 +207,7 @@ Conversion
 Foundation, the public shared conversion contract between an Entity and its JSON Object, giving every Entity a lossless round trip through JSON text.
 
 - **to_json** — returns JSON text with one root object whose keys are exactly the Entity's Field names, in Declaration order.
-- **from_json** — rejects malformed text, a repeated key, a non-standard constant, and a root that is not one object; decodes the text forms of decimal, datetime, date, time, and uuid by each Field's Type; then builds the Entity with the same rules as direct construction.
+- **from_json** — rejects malformed text, a repeated key, a non-standard constant, and a root that is not one object; decodes the text forms of decimal, datetime, date, time, and uuid by each Field's Type; then builds the Entity with the same rules as direct construction, except that an Auto Increment value present in the JSON Object is accepted as the value storage assigned.
 
 #### Storage Mapping
 
@@ -380,13 +380,13 @@ Every Principle below is mandatory and belongs to the Architecture category that
 
 #### Entity runtime behavior enforces Field contracts only
 
-**Rule:** Direct and JSON Object construction accept only declared Fields and identically enforce Required Fields, nullability, Types, defaults, generation, and constraints without implicit coercion; explicit false, zero, empty string, and null remain supplied values. Assignment to a mutable Field revalidates atomically, a failed assignment keeps the prior value, and an immutable Field cannot change. Model defines no equality, ordering, hashing, copy, clone, merge, or reconstruction beyond the JSON Object round trip, and mutable Entities are not hashable.
+**Rule:** Direct and JSON Object construction accept only declared Fields and identically enforce Required Fields, nullability, Types, defaults, generation, and constraints without implicit coercion, except that JSON Object construction accepts an Auto Increment value storage assigned; explicit false, zero, empty string, and null remain supplied values. Assignment to a mutable Field revalidates atomically, a failed assignment keeps the prior value, and an immutable Field cannot change. Model defines no equality, ordering, hashing, copy, clone, merge, or reconstruction beyond the JSON Object round trip, and mutable Entities are not hashable.
 **Why:** One runtime contract stops package-specific construction, mutation, and object conventions from changing data or inventing behavior.
 **Boundary:** Construction and mutation perform no storage, network, application, or workflow operation. A language-required diagnostic representation may exist internally but is not a portable contract.
 
 #### Generated identities follow their declaration
 
-**Rule:** An omitted Auto Increment Field remains in an explicit pending state without becoming nullable, rejects a caller-supplied value unless Target explicitly permits one, and is never assigned by Model. A Generated Identifier is produced during Entity creation when declared, using the algorithm Model Preferences select unless the Target names another.
+**Rule:** An omitted Auto Increment Field remains in an explicit pending state without becoming nullable, rejects a caller-supplied value at direct construction and assignment unless Target explicitly permits one, accepts in JSON Object construction the value storage assigned, and is never assigned by Model. A Generated Identifier is produced during Entity creation when declared, using the algorithm Model Preferences select unless the Target names another.
 **Why:** Generation ownership prevents callers from choosing values that another realization is responsible for assigning.
 **Boundary:** The pending representation may use JSON null solely to represent not-yet-generated Auto Increment state; it does not change the Field's nullability.
 
@@ -489,8 +489,8 @@ Every obligation below derives from the Principle with the same title.
 
 **Generated identities follow their declaration**
 
-- **Must** — keep an omitted Auto Increment Field pending and never assign it inside Model.
-- **Never** — accept caller-supplied Auto Increment values unless Target explicitly permits them.
+- **Must** — keep an omitted Auto Increment Field pending, accept in JSON Object construction the value storage assigned, and never assign it inside Model.
+- **Never** — accept caller-supplied Auto Increment values at direct construction or assignment unless Target explicitly permits them.
 
 **Sensitivity remains metadata**
 
